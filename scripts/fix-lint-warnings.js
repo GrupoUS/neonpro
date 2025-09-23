@@ -101,7 +101,7 @@ const PATTERNS = [
   },
 ];
 
-function extractLintWarnings(lintOutput) {
+// function extractLintWarnings(lintOutput) {
   const warnings = [];
   const lines = lintOutput.split("\n");
 

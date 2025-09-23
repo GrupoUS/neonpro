@@ -13,7 +13,7 @@ import {
   validateProfessionalLicense,
   validateHealthcareDocument,
   validateHealthcareDocuments,
-  sanitizeHealthcareData,
+  // sanitizeHealthcareData,
   type HealthcareValidationResult,
 } from "../index.js";
 
@@ -250,56 +250,56 @@ describe("Brazilian Healthcare Validators", () => {
 
   describe("Comprehensive Healthcare Document Validation", () => {
     test("should validate CNS documents with detailed results", () => {
-      const result: HealthcareValidationResult = validateHealthcareDocument(
+      const _result: HealthcareValidationResult = validateHealthcareDocument(
         "123456789012345",
         "cns",
       );
     });
 
     test("should return errors for invalid CNS documents", () => {
-      const result: HealthcareValidationResult = validateHealthcareDocument(
+      const _result: HealthcareValidationResult = validateHealthcareDocument(
         "12345678901234", // Invalid (14 digits)
         "cns",
       );
     });
 
     test("should validate TUSS documents", () => {
-      const result: HealthcareValidationResult = validateHealthcareDocument(
+      const _result: HealthcareValidationResult = validateHealthcareDocument(
         "10101",
         "tuss",
       );
     });
 
     test("should validate CRM documents", () => {
-      const result: HealthcareValidationResult = validateHealthcareDocument(
+      const _result: HealthcareValidationResult = validateHealthcareDocument(
         "CRM/SP123456",
         "crm",
       );
     });
 
     test("should validate COREN documents", () => {
-      const result: HealthcareValidationResult = validateHealthcareDocument(
+      const _result: HealthcareValidationResult = validateHealthcareDocument(
         "COREN/SP123456",
         "coren",
       );
     });
 
     test("should validate CFF documents", () => {
-      const result: HealthcareValidationResult = validateHealthcareDocument(
+      const _result: HealthcareValidationResult = validateHealthcareDocument(
         "CFF/SP123456",
         "cff",
       );
     });
 
     test("should validate CNEP documents", () => {
-      const result: HealthcareValidationResult = validateHealthcareDocument(
+      const _result: HealthcareValidationResult = validateHealthcareDocument(
         "CNEP/SP123456",
         "cnep",
       );
     });
 
     test("should validate professional licenses", () => {
-      const result: HealthcareValidationResult = validateHealthcareDocument(
+      const _result: HealthcareValidationResult = validateHealthcareDocument(
         "CRM/SP123456",
         "professional",
       );

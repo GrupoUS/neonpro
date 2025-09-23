@@ -197,6 +197,8 @@ export function authentication() {
 
       await next();
     } catch (_error: unknown) {
+      // TODO: consider logging _error at debug level if needed
+
       if (error instanceof Error) {
         console.error("JWT validation error:", error.message);
       }

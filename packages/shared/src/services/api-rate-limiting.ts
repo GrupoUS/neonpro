@@ -14,7 +14,7 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { nanoid } from "nanoid";
+// import { nanoid } from "nanoid";
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -400,7 +400,8 @@ class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
     key: string,
     _context: RateLimitContext,
   ): Promise<RateLimitResult> {
-    const now = Date.now();
+    const _now = Date.now();
+    void _now;
     const windowMs = 60 * 1000; // 1 minute window
     const limit = this.config.requestsPerMinute;
 
@@ -463,7 +464,8 @@ class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
     key: string,
     _context: RateLimitContext,
   ): Promise<RateLimitResult> {
-    const now = Date.now();
+    const _now = Date.now();
+    void _now;
     const capacity = this.config.burstSize;
     const refillRate = this.config.requestsPerMinute / 60; // tokens per second
 
@@ -1021,7 +1023,8 @@ export class APIRateLimitingService {
    * Collect metrics
    */
   private collectMetrics(): void {
-    const now = Date.now();
+    const _now = Date.now();
+    void _now;
     const metricsSnapshot = new Map(this.metrics);
 
     console.log("📊 [APIRateLimitingService] Metrics collected:", {

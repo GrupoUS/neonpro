@@ -229,7 +229,7 @@ export class BrazilianPIIRedactionService {
     let redactedText = text;
 
     // Apply Brazilian identifier patterns
-    Object.entries(BRAZILIAN_PATTERNS).forEach(([type, _config]) => {
+    Object.entries(BRAZILIAN_PATTERNS).forEach(([_type, _config]) => {
       redactedText = redactedText.replace(_config.pattern, (match, ...args) => {
         const fullMatch = args[args.length - 2]; // Full match is the second to last argument
 
@@ -298,7 +298,7 @@ export class BrazilianPIIRedactionService {
   extractBrazilianIdentifiers(text: string): BrazilianIdentifier[] {
     const identifiers: BrazilianIdentifier[] = [];
 
-    Object.entries(BRAZILIAN_PATTERNS).forEach(([type, _config]) => {
+    Object.entries(BRAZILIAN_PATTERNS).forEach(([_type, _config]) => {
       const matches = text.match(config.pattern);
 
       if (matches) {
@@ -407,7 +407,7 @@ export class BrazilianPIIRedactionService {
   getDetectedPIITypes(text: string): string[] {
     const types: string[] = [];
 
-    Object.entries(BRAZILIAN_PATTERNS).forEach(([type, _config]) => {
+    Object.entries(BRAZILIAN_PATTERNS).forEach(([_type, _config]) => {
       if (config.pattern.test(text)) {
         types.push(type);
       }

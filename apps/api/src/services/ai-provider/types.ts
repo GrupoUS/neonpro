@@ -6,7 +6,7 @@
 import {
   AIModelCategory,
   AIModelConfigOpt,
-  AIPerformanceMetricsOpt,
+
   AIProviderOpt,
   HealthcareAIUseCase,
   HealthcareDataClassification,

@@ -48,6 +48,13 @@ model Clinic {
   serviceTypes      ServiceType[]
   serviceCategories ServiceCategory[]
   googleCalendarIntegrations GoogleCalendarIntegration[]
+  aestheticClientProfiles AestheticClientProfile[]
+  treatmentCatalogs       TreatmentCatalog[]
+  aestheticSessions        AestheticSession[]
+  photoAssessments        PhotoAssessment[]
+  treatmentPlans           TreatmentPlan[]
+  financialTransactions    FinancialTransaction[]
+  clientRetentionRecords   ClientRetentionRecord[]
 
   @@map("clinics")
 }
@@ -163,6 +170,12 @@ model Patient {
   auditTrails           AuditTrail[]
   auditLogs             AuditLog[]
   telemedicineSessions  TelemedicineSession[]
+  aestheticClientProfile    AestheticClientProfile?
+  aestheticSessions          AestheticSession[]
+  photoAssessments          PhotoAssessment[]
+  treatmentPlans            TreatmentPlan[]
+  financialTransactions     FinancialTransaction[]
+  clientRetentionRecords    ClientRetentionRecord[]
 
   // Database indexes for performance
   @@index([clinicId, isActive])
@@ -290,6 +303,7 @@ model Appointment {
   // Relations
   telemedicineSession    TelemedicineSession?
   googleCalendarEvent    GoogleCalendarEvent?
+  aestheticSession      AestheticSession?
 
   // Indexes for performance optimization
   @@index([clinicId, startTime])
@@ -493,6 +507,8 @@ model Professional {
   appointmentBuffer     Int?      @default(15) @map("appointment_buffer") // Minutes between appointments
 
   appointments         Appointment[]
+  aestheticSessions     AestheticSession[]
+  treatmentPlans        TreatmentPlan[]
 
   @@map("professionals")
 }

@@ -92,7 +92,7 @@ function fixFile(filePath) {
 
   try {
     let content = fs.readFileSync(filePath, "utf8");
-    const originalContent = content;
+    const _originalContent = content;
     let changesMade = false;
 
     // Apply each fix pattern

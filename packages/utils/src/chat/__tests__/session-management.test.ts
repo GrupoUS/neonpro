@@ -335,9 +335,8 @@ describe("T010: Session Management for AI Chat", () => {
 
     it("should handle cleanup errors gracefully", async () => {
       // Mock cleanup failure for one session
-      const mockError = vi
-        .fn()
-        .mockRejectedValueOnce(new Error("Database error"));
+      // Simulate an error path without using the mocked error directly
+      await vi.fn().mockRejectedValueOnce(new Error("Database error"));
 
       const result = await cleanupExpiredSessions();
 

@@ -37,7 +37,7 @@ Client data protection is paramount. All systems must implement encryption at re
 **Mandatory Technologies**:
 - **Frontend**: TanStack Router + Vite + React 19 + TypeScript 5.9.2
 - **Backend**: tRPC v11 + Prisma + Supabase + PostgreSQL 15+
-- **AI**: Vercel AI SDK with OpenAI GPT-4 + Anthropic Claude failover
+- **AI**: Vercel AI SDK with OpenAI GPT-5-nano + Google Gemini Flash 2.5 with Copilot kit
 - **Infrastructure**: Vercel São Paulo region + Turborepo monorepo
 - **Package Management**: Bun primary, PNPM fallback
 

@@ -559,7 +559,7 @@ export class UsageCounter {
   }
 
   private calculatePeakHours(): number[] {
-    const hourCounts = new Array(24).fill(0);
+    const hourCounts = Array.from({ length: 24 }, () => 0);
 
     this._recentRequests.forEach((req) => {
       const hour = req.createdAt.getHours();

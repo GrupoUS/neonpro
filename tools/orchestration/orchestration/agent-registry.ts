@@ -91,7 +91,7 @@ export class TDDAgentRegistry {
   }
 
   // Method names expected by tests
-  getAgentsForPhase(phase: string, context?: any): AgentCapability[] {
+  getAgentsForPhase(phase: string, _context?: any): AgentCapability[] {
     return this.getAllAgents().filter((agent) =>
       agent.phases.includes(phase as any),
     );
@@ -103,7 +103,7 @@ export class TDDAgentRegistry {
     );
   }
 
-  selectOptimalAgents(context: any, requirements?: any): AgentCapability[] {
+  selectOptimalAgents(_context: any, _requirements?: any): AgentCapability[] {
     // Mock implementation for tests
     const allAgents = this.getAllAgents();
     return allAgents.slice(0, 2);
@@ -127,7 +127,7 @@ export class TDDAgentRegistry {
     return false;
   }
 
-  getRecommendedWorkflow(context: any): string {
+  getRecommendedWorkflow(_context: any): string {
     return "standard-workflow";
   }
 

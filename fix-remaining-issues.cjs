@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
-const path = require("path");
+// Removed unused import: const path = require("path");
 
 class ComprehensiveFixer {
   constructor() {

@@ -2,6 +2,9 @@
  * Supabase-specific database types
  */
 
+// Prisma Json type workaround
+export type Json = any;
+
 export interface Database {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)

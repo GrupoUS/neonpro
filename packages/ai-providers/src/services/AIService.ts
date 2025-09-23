@@ -61,7 +61,8 @@ export class AIService {
       if (processed["appointmentType"] === "consultation") confidence += 0.05;
       if (confidence > 0.95) confidence = 0.95;
 
-      const { patientId, ...rest } = processed;
+      const { patientId: _patientId, ...rest } = processed;
+      void _patientId;
       if (typeof rest["patientAge"] === "number") delete rest["patientAge"];
 
       return {

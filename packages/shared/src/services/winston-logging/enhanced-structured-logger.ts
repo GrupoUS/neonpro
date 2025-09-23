@@ -152,7 +152,7 @@ const EnhancedLGPDComplianceSchema = z.object({
   purposeLimitation: z.string().optional(),
 });
 
-const WinstonLogEntrySchema = z.object({
+export const WinstonLogEntrySchema = z.object({
   level: WinstonLogLevelSchema,
   message: z.string(),
   timestamp: z.string().optional(),
@@ -184,7 +184,7 @@ const WinstonLogEntrySchema = z.object({
   source: z.string().optional(),
 });
 
-const EnhancedStructuredLoggingConfigSchema = z.object({
+export const EnhancedStructuredLoggingConfigSchema = z.object({
   _service: z.string(),
   environment: z
     .enum(["development", "staging", "production"])

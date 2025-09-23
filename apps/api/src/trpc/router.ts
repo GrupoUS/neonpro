@@ -5,8 +5,10 @@
 
 import { agentRouter } from './routers/agent';
 import { aiRouter } from './routers/ai';
+import { aiClinicalSupportRouter } from './routers/ai-clinical-support';
 import { appointmentsRouter } from './routers/appointments';
 import { aestheticSchedulingRouter } from './routers/aesthetic-scheduling';
+import { aestheticClinicRouter } from './routers/aesthetic-clinic';
 import { crudRouter } from './routers/crud';
 import { financialAgentRouter } from './routers/financial-agent';
 import { healthcareServicesRouter } from './routers/healthcare-services';
@@ -54,6 +56,24 @@ import { apiRouter } from './contracts';
  *   - Contraindication checking with pregnancy and age validation
  *   - Variable duration calculation based on procedure factors
  *   - ANVISA compliance for aesthetic medical devices and procedures
+ * - AI Clinical Decision Support router with advanced features:
+ *   - Treatment recommendation engine based on comprehensive patient assessment
+ *   - Contraindication analysis for aesthetic procedures with AI-powered detection
+ *   - Outcome prediction algorithms using machine learning models
+ *   - Progress monitoring and adaptive treatment recommendations
+ *   - Evidence-based treatment planning with ANVISA compliance
+ *   - Risk assessment and mitigation strategies
+ *   - LGPD-compliant patient data handling with anonymization
+ *   - CFM-compliant medical decision support with validation
+ * - Comprehensive Aesthetic Clinic router with full operational capabilities:
+ *   - Client profile management with comprehensive medical history tracking
+ *   - Treatment catalog management with ANVISA compliance and safety protocols
+ *   - Aesthetic session management with professional validation and resource optimization
+ *   - Photo assessment management with secure storage and AI-powered analysis
+ *   - Treatment planning with contraindication checking and progress tracking
+ *   - Financial transaction management with Brazilian payment system integration
+ *   - Client retention analytics with predictive insights and performance metrics
+ *   - Full Brazilian healthcare compliance (LGPD, ANVISA, CFM) across all operations
  * - Comprehensive audit logging for all operations
  */
 export const appRouter = router({
@@ -70,6 +90,12 @@ export const appRouter = router({
   
   // Enhanced aesthetic scheduling router with Brazilian healthcare compliance
   aestheticScheduling: aestheticSchedulingRouter,
+
+  // Comprehensive aesthetic clinic operations with full Brazilian healthcare compliance
+  aestheticClinic: aestheticClinicRouter,
+
+  // AI Clinical Decision Support router with comprehensive treatment planning
+  aiClinicalSupport: aiClinicalSupportRouter,
 
   // Comprehensive API contracts with tRPC v11 (T016)
   // New healthcare-compliant API contracts with enhanced features

@@ -108,7 +108,7 @@ export class Logger {
     if (!this.config.redactPII) return obj;
 
     // Simple PII redaction - can be enhanced
-    const piiFields = [
+    // const piiFields = [
       "email",
       "phone",
       "ssn",

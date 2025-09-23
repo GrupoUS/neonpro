@@ -456,7 +456,7 @@ export class HealthcareMiddlewareService {
       console.log(
         "🔄 [HealthcareMiddlewareService] Healthcare middleware service initialized",
       );
-    } catch (error) {
+    } catch (_error) {
       console.error(
         "Failed to initialize healthcare middleware _service:",
         error,
@@ -587,7 +587,7 @@ export class HealthcareMiddlewareService {
 
         // Phase 8: Post-processing
         await this.performPostProcessing(c, requestContext, startTime);
-      } catch (error) {
+      } catch (_error) {
         // Error handling
         await this.handleMiddlewareError(c, error, requestContext!, startTime);
       }
@@ -598,7 +598,7 @@ export class HealthcareMiddlewareService {
    * Initialize request context with healthcare-specific data
    */
   private async initializeRequestContext(
-    c: Context,
+    _c: Context,
   ): Promise<HealthcareRequestContext> {
     const requestId = `req_${nanoid(12)}`;
     const correlationId =
@@ -633,7 +633,7 @@ export class HealthcareMiddlewareService {
    * Extract user context from request
    */
   private async extractUserContext(
-    c: Context,
+    _c: Context,
   ): Promise<HealthcareRequestContext["userContext"]> {
     // TODO: Integrate with authentication service
     const authHeader = c.req.header("authorization");
@@ -664,7 +664,7 @@ export class HealthcareMiddlewareService {
    * Extract technical context from request
    */
   private extractTechnicalContext(
-    c: Context,
+    _c: Context,
   ): HealthcareRequestContext["technicalContext"] {
     const req = c.req;
 
@@ -699,8 +699,8 @@ export class HealthcareMiddlewareService {
    * Determine compliance context
    */
   private determineComplianceContext(
-    c: Context,
-    userContext: HealthcareRequestContext["userContext"],
+    _c: Context,
+    _userContext: HealthcareRequestContext["userContext"],
   ): HealthcareRequestContext["complianceContext"] {
     // Determine legal basis based on request type and user context
     let legalBasis:
@@ -754,8 +754,8 @@ export class HealthcareMiddlewareService {
    * Detect healthcare workflow context
    */
   private async detectWorkflowContext(
-    c: Context,
-    userContext: HealthcareRequestContext["userContext"],
+    _c: Context,
+    _userContext: HealthcareRequestContext["userContext"],
   ): Promise<HealthcareRequestContext["workflowContext"]> {
     const path = c.req.path.toLowerCase();
     const method = c.req.method;
@@ -825,7 +825,7 @@ export class HealthcareMiddlewareService {
    * Perform security validation
    */
   private async performSecurityValidation(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
     if (!this.config.security.enableInputValidation) return;
@@ -853,7 +853,7 @@ export class HealthcareMiddlewareService {
    * Validate LGPD compliance
    */
   private async validateLGPDCompliance(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
     // Check if user has required consent for data processing
@@ -882,7 +882,7 @@ export class HealthcareMiddlewareService {
    * Perform rate limiting check
    */
   private async performRateLimitingCheck(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
     // TODO: Integrate with API rate limiting service
@@ -908,7 +908,7 @@ export class HealthcareMiddlewareService {
    * Inject healthcare context into request
    */
   private async injectHealthcareContext(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
     // Add healthcare context headers to response
@@ -956,7 +956,7 @@ export class HealthcareMiddlewareService {
    * Log request for audit purposes
    */
   private async logRequest(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
     const logData = {
@@ -983,7 +983,7 @@ export class HealthcareMiddlewareService {
    * Perform post-processing after request completion
    */
   private async performPostProcessing(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
     startTime: number,
   ): Promise<void> {
@@ -1018,7 +1018,7 @@ export class HealthcareMiddlewareService {
    * Handle middleware errors
    */
   private async handleMiddlewareError(
-    c: Context,
+    _c: Context,
     error: Error & { code?: string; name?: string },
     _context: HealthcareRequestContext,
     startTime: number,
@@ -1165,7 +1165,7 @@ export class HealthcareMiddlewareService {
    * Detect and redact PII in request
    */
   private async detectAndRedactPII(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
     // TODO: Implement PII detection and redaction
@@ -1200,7 +1200,7 @@ export class HealthcareMiddlewareService {
    * Validate data minimization principles
    */
   private async validateDataMinimization(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
     // Check if request is collecting more data than necessary
@@ -1294,7 +1294,7 @@ export class HealthcareMiddlewareService {
   /**
    * Estimate response size
    */
-  private estimateResponseSize(response: Response): number {
+  private estimateResponseSize(_response: Response): number {
     // TODO: Implement actual response size calculation
     return 0;
   }
@@ -1329,7 +1329,7 @@ export class HealthcareMiddlewareService {
    * Log response
    */
   private async logResponse(
-    c: Context,
+    _c: Context,
     _context: HealthcareRequestContext,
     duration: number,
   ): Promise<void> {
@@ -1357,7 +1357,7 @@ export class HealthcareMiddlewareService {
       if (contentType?.includes("application/json")) {
         return await c.req.json();
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore parsing errors
     }
     return null;

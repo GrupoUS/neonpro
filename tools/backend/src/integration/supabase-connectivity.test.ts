@@ -119,7 +119,7 @@ describe("Supabase Connectivity Tests", () => {
     it("should complete queries within acceptable time limits", async () => {
       const startTime = Date.now();
 
-      const { data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from("clinics")
         .select("id, name")
         .limit(10);

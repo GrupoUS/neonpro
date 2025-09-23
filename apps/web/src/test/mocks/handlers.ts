@@ -1,4 +1,5 @@
 import { http, HttpResponse } from 'msw';
+import { setupServer } from 'msw/node';
 
 // Mock data for aesthetic clinic
 export const mockPatients = [
@@ -151,3 +152,20 @@ export const handlers = [
     });
   }),
 ];
+
+// Setup MSW server for API mocking in Node.js environment
+export const server = setupServer(...handlers);
+
+// Server lifecycle functions for test setup
+export const startServer = () => server.listen({
+  onUnhandledRequest: 'warn', // Warn about unhandled requests during development
+});
+
+export const stopServer = () => server.close();
+
+export const resetServerHandlers = () => server.resetHandlers();
+
+// Utility to add custom handlers during tests
+export const addCustomHandlers = (newHandlers: any[]) => {
+  server.use(...newHandlers);
+};

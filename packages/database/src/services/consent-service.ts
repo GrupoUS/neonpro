@@ -287,7 +287,7 @@ export class ConsentService {
    */
   private async persistConsent(consent: ConsentRecord): Promise<void> {
     try {
-      const { data: data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from("patient_consents")
         .insert({
           id: consent.id,
@@ -357,7 +357,7 @@ export class ConsentService {
     patientId: string,
   ): Promise<ConsentRecord[]> {
     try {
-      const { data: data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from("patient_consents")
         .select("*")
         .eq("patient_id", patientId)
@@ -416,7 +416,7 @@ export class ConsentService {
     consentId: string,
   ): Promise<ConsentRecord | null> {
     try {
-      const { data: data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from("patient_consents")
         .select("*")
         .eq("id", consentId)
@@ -474,7 +474,7 @@ export class ConsentService {
    */
   private async updateConsent(consent: ConsentRecord): Promise<void> {
     try {
-      const { data: data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from("patient_consents")
         .update({
           status: consent.status,

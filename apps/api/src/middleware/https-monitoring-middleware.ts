@@ -150,12 +150,12 @@ export class HTTPSMonitoringMiddleware {
         certificateTransparency: socket.certificateTransparency || false,
         timing,
       };
-    } catch (error) {
+    } catch (_error) {
       logger.debug(
         'https_monitoring_middleware',
         'Failed to extract TLS info',
         {
-          error: (error as Error).message,
+          error: (_error as Error).message,
         },
       );
       return null;

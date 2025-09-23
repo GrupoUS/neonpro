@@ -15,7 +15,7 @@
 
 import { Redis } from "ioredis";
 import { createHash } from "crypto";
-import { z } from "zod";
+// import { z } from "zod";
 import {
   CacheBackend,
   CacheEntry,
@@ -75,7 +75,8 @@ export class RedisCacheBackend implements CacheBackend {
    * Get value from Redis cache
    */
   async get(key: string): Promise<CacheEntry | null> {
-    const startTime = Date.now();
+    const _startTime = Date.now();
+    void _startTime;
 
     try {
       if (!this.isConnected || !this.redis) {
@@ -284,7 +285,7 @@ export class RedisCacheBackend implements CacheBackend {
         const performanceInfo = await this.safeRedisOperation(() =>
           this.redis.info("stats"),
         );
-        const totalCommands = performanceInfo.match(
+        const _totalCommands = performanceInfo.match(
           /total_commands_processed:([^\r\n]+)/,
         );
         const keyspaceHits = performanceInfo.match(/keyspace_hits:([^\r\n]+)/);

@@ -818,7 +818,8 @@ export class TelemedicineServer {
     res: express.Response,
   ): Promise<void> {
     try {
-      const { sessionId: sessionId } = req.params;
+      const { sessionId: _sessionId } = req.params;
+      void _sessionId;
 
       // This would implement secure recording download
       res.status(501).json({ error: "Recording download not implemented" });
@@ -871,7 +872,7 @@ export class TelemedicineServer {
         error: any,
         _req: express.Request,
         res: express.Response,
-        next: express.NextFunction,
+        _next: express.NextFunction,
       ) => {
         console.error("Global error handler:", error);
 

@@ -3,6 +3,7 @@ export * from "./resilience/index";
 export * from "./services/AIService";
 export * from "./services/health-analysis/index";
 export * from "./services/ai-service-management";
+export * from "./services/ai-clinical-decision-support";
 export * from "./services/governance/index";
 
 // Phase 4 Compliance & Audit Module

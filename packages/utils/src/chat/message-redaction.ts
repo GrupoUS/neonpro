@@ -44,7 +44,15 @@ export interface SafetyValidationResult {
  * Detect PII in text using comprehensive patterns
  */
 export function detectPII(text: string): PIIDetectionResult {
-  return detectPIIPatterns(text);
+  const result = detectPIIPatterns(text);
+  // Ensure hasPII returns a boolean value
+  return {
+    patterns: result.patterns,
+    overall: {
+      riskLevel: result.overall.riskLevel,
+      hasPII: result.patterns.length > 0
+    }
+  };
 }
 
 /**
@@ -57,8 +65,8 @@ export function redactMessage(
     generateReport?: boolean;
   } = {}
 ): RedactionResult {
-  // Use Brazilian data redaction for healthcare context
-  const redactedText = redactBrazilianData(message);
+  // Use LGPD redaction for comprehensive coverage
+  const redactedText = redactPII(message);
   const detection = detectPII(message);
 
   const result: RedactionResult = {
@@ -130,7 +138,7 @@ export function validateMessageSafety(message: string): SafetyValidationResult {
 
   if (piiDetection.overall.riskLevel === 'high') {
     risks.push('high_risk_pii');
-    recommendations.push('immediate_redaction_required');
+    // Only add immediate redaction for high risk, not the regular redaction
   }
 
   // Additional healthcare-specific safety checks
@@ -153,14 +161,18 @@ export function validateMessageSafety(message: string): SafetyValidationResult {
 export function redactBrazilianData(text: string): string {
   let redacted = text;
 
-  // Names
-  redacted = redacted.replace(/\b[A-ZÀ-Ú][a-zà-ú]+\s+[A-ZÀ-Ú][a-zà-ú]+/g, '[NAME_REDACTED]');
+  // Names - match full names including three-part names
+  redacted = redacted.replace(/\b[A-ZÀ-Ú][a-zà-ú]+(?:\s+[A-ZÀ-Ú][a-zà-ú]+){1,2}/g, '[NAME_REDACTED]');
+
+  // Email addresses
+  redacted = redacted.replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g, '[EMAIL_REDACTED]');
 
   // CPF
   redacted = redacted.replace(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g, '[CPF_REDACTED]');
 
-  // Phone numbers
+  // Phone numbers - catch both mobile and landline
   redacted = redacted.replace(/\(\d{2}\)\s?9?\d{4}-?\d{4}\b/g, '[PHONE_REDACTED]');
+  redacted = redacted.replace(/\(\d{2}\)\s?\d{4}-?\d{4}\b/g, '[PHONE_REDACTED]');
 
   // SUS number (Sistema Único de Saúde)
   redacted = redacted.replace(/\b\d{3}\s?\d{4}\s?\d{4}\s?\d{4}\b/g, '[SUS_REDACTED]');

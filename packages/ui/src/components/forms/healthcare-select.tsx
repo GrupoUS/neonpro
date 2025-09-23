@@ -390,7 +390,7 @@ export const HealthcareSelect = forwardRef<
       if (schema) {
         try {
           schema.parse(valueToValidate);
-        } catch (validationError) {
+        } catch (_validationError) {
           if (_validationError instanceof z.ZodError) {
             errors.push(
               ..._validationError.errors.map((error) => error.message),

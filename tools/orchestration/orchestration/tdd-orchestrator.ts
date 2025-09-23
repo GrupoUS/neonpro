@@ -7,7 +7,7 @@ import type {
 
 export class TDDOrchestrator implements TDDOrchestratorInterface {
   async executeTDDCycle(
-    context: OrchestrationContext,
+    _context: OrchestrationContext,
   ): Promise<TDDCycleResult> {
     return {
       success: true,
@@ -20,8 +20,8 @@ export class TDDOrchestrator implements TDDOrchestratorInterface {
   }
 
   async executeFullTDDCycle(
-    feature: FeatureContext,
-    options?: any,
+    _feature: FeatureContext,
+    _options?: any,
   ): Promise<TDDCycleResult> {
     return {
       success: true,

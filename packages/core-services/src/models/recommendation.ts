@@ -248,7 +248,7 @@ export class RecommendationModel {
     // usageInsights calculated for potential future use
 
     // Low cache hit rate optimization
-    if (false /* usageInsights.efficiency.cacheOptimization < 50 */) {
+    // if (usageInsights.efficiency.cacheOptimization < 50) {
       const cacheOptimization: CostOptimizationRecommendation = {
         id: `cost-cache-${Date.now()}`,
         type: "cost_optimization",

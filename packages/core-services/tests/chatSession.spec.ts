@@ -3,7 +3,7 @@
 // File: packages/core-services/tests/chatSession.spec.ts
 
 import { describe, expect, it, beforeEach, vi, afterEach } from "vitest";
-import type { ChatSession } from "@neonpro/types";
+// import type { ChatSession } from "@neonpro/types";
 import { SessionRepo } from "../src/chat/SessionRepo";
 import {
   SessionManager,

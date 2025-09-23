@@ -37,59 +37,7 @@ export default defineConfig(({ mode }) => {
         fileName: format => `index.${format}${isEdge ? '.edge' : ''}`,
         formats: ['es'],
       },
-      rollupOptions: {
-        external: [
-          'hono',
-          '@hono/node-server',
-          '@prisma/client',
-          '@supabase/supabase-js',
-          '@trpc/server',
-          '@trpc/client',
-          '@opentelemetry/api',
-          '@opentelemetry/auto-instrumentations-node',
-          '@opentelemetry/exporter-prometheus',
-          '@opentelemetry/sdk-node',
-          '@opentelemetry/semantic-conventions',
-          '@sentry/node',
-          '@sentry/profiling-node',
-          // Node.js built-ins
-          'fs',
-          'path',
-          'https',
-          'crypto',
-          'stream',
-          'util',
-          'perf_hooks',
-          'zlib',
-          'buffer',
-          'process',
-        ],
-        output: {
-          chunkFileNames: chunkInfo => {
-            return `chunks/[name]-[hash]${isEdge ? '.edge' : ''}.js`;
-          },
-          entryFileNames: entryInfo => {
-            return `entries/[name]-[hash]${isEdge ? '.edge' : ''}.js`;
-          },
-          globals: {
-            hono: 'Hono',
-          },
-          manualChunks: {
-            // Split vendor chunks for better caching
-            vendor: ['hono', '@hono/node-server'],
-            trpc: ['@trpc/server', '@trpc/client', 'superjson'],
-            validation: ['zod', 'valibot'],
-            database: ['@prisma/client'],
-            auth: ['@supabase/supabase-js', 'jose'],
-            ai: ['@ai-sdk/anthropic', '@ai-sdk/openai', 'ai'],
-            monitoring: [
-              '@opentelemetry/api',
-              '@opentelemetry/sdk-node',
-              '@sentry/node',
-            ],
-          },
-        },
-      },
+
       target: isEdge ? 'es2022' : 'node18',
       minify: 'terser',
       sourcemap: true,

@@ -1,4 +1,4 @@
-import { beforeAll } from 'vitest';
+import { beforeAll, vi } from 'vitest';
 import { setupServer } from 'msw/node';
 import { handlers } from './mocks/handlers';
 

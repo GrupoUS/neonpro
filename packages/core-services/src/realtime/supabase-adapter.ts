@@ -105,7 +105,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
       this.isInitialized = true;
       console.log("SupabaseRealtimeAdapter initialized successfully");
-    } catch (error) {
+    } catch (_error) {
       throw new Error(`Failed to initialize SupabaseRealtimeAdapter: ${error}`);
     }
   }
@@ -189,7 +189,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       console.log(
         `Participant ${fullParticipant.id} joined channel ${channelId}`,
       );
-    } catch (error) {
+    } catch (_error) {
       await this.handleError({
         code: "JOIN_CHANNEL_FAILED",
         message: `Failed to join channel ${channelId}: ${error}`,
@@ -260,7 +260,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       }
 
       console.log(`Participant ${participantId} left channel ${channelId}`);
-    } catch (error) {
+    } catch (_error) {
       await this.handleError({
         code: "LEAVE_CHANNEL_FAILED",
         message: `Failed to leave channel ${channelId}: ${error}`,
@@ -392,7 +392,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       if (result.error) throw result.error;
       this.healthStatus.latency = Date.now() - start;
       this.healthStatus.status = "healthy";
-    } catch (error) {
+    } catch (_error) {
       this.healthStatus.latency = -1;
       this.healthStatus.status = "unhealthy";
     }
@@ -463,7 +463,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
           await this.eventHandlers.onPresenceSync?.(event);
           break;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error(`Error emitting event ${event.type}:`, error);
     }
   }
@@ -485,7 +485,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
       // Mark as logged for compliance
       event.metadata.compliance.lgpdLogged = true;
-    } catch (error) {
+    } catch (_error) {
       console.error("Failed to log audit event:", error);
     }
   }

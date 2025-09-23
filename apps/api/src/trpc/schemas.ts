@@ -340,3 +340,389 @@ export type UpdateAppointmentInput = v.Input<typeof UpdateAppointmentSchema>;
 export type GetAppointmentInput = v.Input<typeof GetAppointmentSchema>;
 export type ListAppointmentsInput = v.Input<typeof ListAppointmentsSchema>;
 export type CreateConsentInput = v.Input<typeof CreateConsentSchema>;
+
+/**
+ * Aesthetic Clinic Client Profile Schemas
+ * Comprehensive validation for aesthetic client management with Brazilian healthcare compliance
+ */
+
+/**
+ * Aesthetic Client Profile Creation Schema
+ */
+export const CreateAestheticClientProfileSchema = v.object({
+  patientId: v.string([v.uuid('Invalid patient ID')]),
+  skinType: v.optional(v.picklist(['I', 'II', 'III', 'IV', 'V', 'VI'])),
+  skinConditions: v.optional(v.array(v.string())),
+  aestheticHistory: v.optional(v.array(v.string())),
+  previousProcedures: v.optional(v.array(v.string())),
+  allergies: v.optional(v.array(v.string())),
+  currentMedications: v.optional(v.array(v.string())),
+  lifestyleFactors: v.optional(v.object({
+    smokingStatus: v.picklist(['never', 'former', 'current']),
+    alcoholConsumption: v.picklist(['none', 'occasional', 'moderate', 'frequent']),
+    sunExposure: v.picklist(['minimal', 'moderate', 'significant', 'extensive']),
+    stressLevel: v.picklist(['low', 'moderate', 'high', 'very_high']),
+    sleepQuality: v.picklist(['poor', 'fair', 'good', 'excellent']),
+  })),
+  aestheticGoals: v.optional(v.array(v.string())),
+  budgetRange: v.optional(v.object({
+    min: v.number([v.minValue(0, 'Minimum budget must be positive')]),
+    max: v.number([v.minValue(0, 'Maximum budget must be positive')]),
+  })),
+  preferredContactMethod: v.optional(v.picklist(['email', 'phone', 'whatsapp', 'sms'])),
+  marketingConsent: v.optional(v.boolean()),
+  photoConsent: v.optional(v.boolean()),
+  emergencyContact: v.optional(v.object({
+    name: v.string([v.minLength(1, 'Emergency contact name is required')]),
+    phone: v.string([v.regex(PHONE_REGEX, 'Invalid phone format')]),
+    relationship: v.string([v.minLength(1, 'Relationship is required')]),
+  })),
+});
+
+/**
+ * Aesthetic Client Profile Update Schema
+ */
+export const UpdateAestheticClientProfileSchema = v.partial(CreateAestheticClientProfileSchema);
+
+/**
+ * Get Aesthetic Client Profile Schema
+ */
+export const GetAestheticClientProfileSchema = v.object({
+  id: v.string([v.uuid('Invalid client profile ID format')]),
+});
+
+/**
+ * Search Aesthetic Clients Schema
+ */
+export const SearchAestheticClientsSchema = v.object({
+  query: v.optional(v.string()),
+  skinType: v.optional(v.picklist(['I', 'II', 'III', 'IV', 'V', 'VI'])),
+  treatmentHistory: v.optional(v.string()),
+  lastVisitAfter: v.optional(v.date()),
+  lastVisitBefore: v.optional(v.date()),
+  isActive: v.optional(v.boolean()),
+  limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
+  offset: v.optional(v.number([v.integer(), v.minValue(0)])),
+});
+
+/**
+ * Aesthetic Treatment Catalog Schemas
+ */
+
+/**
+ * Create Aesthetic Treatment Schema
+ */
+export const CreateAestheticTreatmentSchema = v.object({
+  name: v.string([v.minLength(1, 'Treatment name is required')]),
+  description: v.string([v.minLength(1, 'Description is required')]),
+  category: v.string([v.minLength(1, 'Category is required')]),
+  procedureType: v.picklist(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination']),
+  baseDurationMinutes: v.number([v.minValue(1, 'Duration must be positive')]),
+  basePrice: v.number([v.minValue(0, 'Price must be non-negative')]),
+  requiredCertifications: v.array(v.string()),
+  contraindications: v.array(v.string()),
+  aftercareInstructions: v.array(v.string()),
+  recoveryPeriodDays: v.number([v.minValue(0, 'Recovery period must be non-negative')]),
+  anestheticType: v.picklist(['none', 'topical', 'local', 'sedation']),
+  sessionCount: v.number([v.minValue(1, 'Session count must be positive')]),
+  intervalBetweenSessionsDays: v.number([v.minValue(0, 'Interval must be non-negative')]),
+  specialRequirements: v.array(v.string()),
+  isActive: v.boolean([v.literal(true, 'Treatment must be active upon creation')]),
+  anvisaRegistration: v.optional(v.string()),
+  manufacturer: v.optional(v.string()),
+  productCode: v.optional(v.string()),
+});
+
+/**
+ * Update Aesthetic Treatment Schema
+ */
+export const UpdateAestheticTreatmentSchema = v.partial(CreateAestheticTreatmentSchema);
+
+/**
+ * Get Aesthetic Treatment Schema
+ */
+export const GetAestheticTreatmentSchema = v.object({
+  id: v.string([v.uuid('Invalid treatment ID format')]),
+});
+
+/**
+ * Get Treatment Catalog Schema
+ */
+export const GetTreatmentCatalogSchema = v.object({
+  category: v.optional(v.string()),
+  procedureType: v.optional(v.picklist(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination'])),
+  isActive: v.optional(v.boolean()),
+  minPrice: v.optional(v.number([v.minValue(0)])),
+  maxPrice: v.optional(v.number([v.minValue(0)])),
+  search: v.optional(v.string()),
+  limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
+  offset: v.optional(v.number([v.integer(), v.minValue(0)])),
+});
+
+/**
+ * Aesthetic Session Management Schemas
+ */
+
+/**
+ * Create Aesthetic Session Schema
+ */
+export const CreateAestheticSessionSchema = v.object({
+  clientProfileId: v.string([v.uuid('Invalid client profile ID')]),
+  treatmentId: v.string([v.uuid('Invalid treatment ID')]),
+  professionalId: v.string([v.uuid('Invalid professional ID')]),
+  scheduledStartTime: v.date(),
+  scheduledEndTime: v.date(),
+  roomNumber: v.optional(v.string()),
+  notes: v.optional(v.string()),
+  specialRequirements: v.optional(v.array(v.string())),
+  preSessionAssessment: v.optional(v.object({
+    skinCondition: v.string(),
+    painLevel: v.optional(v.number([v.minValue(0), v.maxValue(10)])),
+    concerns: v.array(v.string()),
+    readiness: v.picklist(['ready', 'needs_consultation', 'contraindicated']),
+  })),
+  status: v.optional(v.picklist(['scheduled', 'in_progress', 'completed', 'cancelled', 'no_show'])),
+});
+
+/**
+ * Update Aesthetic Session Schema
+ */
+export const UpdateAestheticSessionSchema = v.partial(CreateAestheticSessionSchema);
+
+/**
+ * Get Aesthetic Session Schema
+ */
+export const GetAestheticSessionSchema = v.object({
+  id: v.string([v.uuid('Invalid session ID format')]),
+});
+
+/**
+ * List Aesthetic Sessions Schema
+ */
+export const ListAestheticSessionsSchema = v.object({
+  clientProfileId: v.optional(v.string([v.uuid('Invalid client profile ID')])),
+  professionalId: v.optional(v.string([v.uuid('Invalid professional ID')])),
+  treatmentId: v.optional(v.string([v.uuid('Invalid treatment ID')])),
+  status: v.optional(v.picklist(['scheduled', 'in_progress', 'completed', 'cancelled', 'no_show'])),
+  startDate: v.optional(v.date()),
+  endDate: v.optional(v.date()),
+  limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
+  offset: v.optional(v.number([v.integer(), v.minValue(0)])),
+});
+
+/**
+ * Photo Assessment Schemas
+ */
+
+/**
+ * Create Photo Assessment Schema
+ */
+export const CreatePhotoAssessmentSchema = v.object({
+  clientProfileId: v.string([v.uuid('Invalid client profile ID')]),
+  sessionId: v.optional(v.string([v.uuid('Invalid session ID')])),
+  photos: v.array(v.object({
+    url: v.string([v.minLength(1, 'Photo URL is required')]),
+    type: v.picklist(['front', 'side', 'oblique', 'closeup', 'treatment_area', 'progress']),
+    description: v.optional(v.string()),
+    captureDate: v.date(),
+  }), [v.minLength(1, 'At least one photo is required')]),
+  assessmentNotes: v.string([v.minLength(1, 'Assessment notes are required')]),
+  skinAnalysis: v.optional(v.object({
+    wrinkles: v.number([v.minValue(0), v.maxValue(10)]),
+    elasticity: v.number([v.minValue(0), v.maxValue(10)]),
+    hydration: v.number([v.minValue(0), v.maxValue(10)]),
+    pigmentation: v.number([v.minValue(0), v.maxValue(10)]),
+    texture: v.number([v.minValue(0), v.maxValue(10)]),
+  })),
+  treatmentRecommendations: v.optional(v.array(v.string())),
+  followUpDate: v.optional(v.date()),
+  professionalId: v.string([v.uuid('Invalid professional ID')]),
+  consentForAnalysis: v.boolean([v.literal(true, 'Consent for photo analysis is required')]),
+});
+
+/**
+ * Update Photo Assessment Schema
+ */
+export const UpdatePhotoAssessmentSchema = v.partial(CreatePhotoAssessmentSchema);
+
+/**
+ * Get Photo Assessment Schema
+ */
+export const GetPhotoAssessmentSchema = v.object({
+  id: v.string([v.uuid('Invalid assessment ID format')]),
+});
+
+/**
+ * List Photo Assessments Schema
+ */
+export const ListPhotoAssessmentsSchema = v.object({
+  clientProfileId: v.optional(v.string([v.uuid('Invalid client profile ID')])),
+  professionalId: v.optional(v.string([v.uuid('Invalid professional ID')])),
+  sessionId: v.optional(v.string([v.uuid('Invalid session ID')])),
+  startDate: v.optional(v.date()),
+  endDate: v.optional(v.date()),
+  limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
+  offset: v.optional(v.number([v.integer(), v.minValue(0)])),
+});
+
+/**
+ * Treatment Planning Schemas
+ */
+
+/**
+ * Create Treatment Plan Schema
+ */
+export const CreateTreatmentPlanSchema = v.object({
+  clientProfileId: v.string([v.uuid('Invalid client profile ID')]),
+  name: v.string([v.minLength(1, 'Treatment plan name is required')]),
+  description: v.string([v.minLength(1, 'Description is required')]),
+  treatments: v.array(v.object({
+    treatmentId: v.string([v.uuid('Invalid treatment ID')]),
+    sessionCount: v.number([v.minValue(1, 'Session count must be positive')]),
+    intervalDays: v.number([v.minValue(0, 'Interval must be non-negative')]),
+    notes: v.optional(v.string()),
+  }), [v.minLength(1, 'At least one treatment is required')]),
+  estimatedDuration: v.number([v.minValue(1, 'Duration must be positive')]),
+  totalCost: v.number([v.minValue(0, 'Cost must be non-negative')]),
+  startDate: v.optional(v.date()),
+  expectedCompletionDate: v.optional(v.date()),
+  goals: v.array(v.string()),
+  contraindications: v.array(v.string()),
+  specialInstructions: v.optional(v.array(v.string())),
+  professionalId: v.string([v.uuid('Invalid professional ID')]),
+  status: v.optional(v.picklist(['draft', 'active', 'completed', 'paused', 'cancelled'])),
+});
+
+/**
+ * Update Treatment Plan Schema
+ */
+export const UpdateTreatmentPlanSchema = v.partial(CreateTreatmentPlanSchema);
+
+/**
+ * Get Treatment Plan Schema
+ */
+export const GetTreatmentPlanSchema = v.object({
+  id: v.string([v.uuid('Invalid treatment plan ID format')]),
+});
+
+/**
+ * Get Treatment Plans by Client Schema
+ */
+export const GetTreatmentPlansByClientSchema = v.object({
+  clientProfileId: v.string([v.uuid('Invalid client profile ID')]),
+  status: v.optional(v.picklist(['draft', 'active', 'completed', 'paused', 'cancelled'])),
+  limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
+  offset: v.optional(v.number([v.integer(), v.minValue(0)])),
+});
+
+/**
+ * Financial Transaction Schemas
+ */
+
+/**
+ * Create Financial Transaction Schema
+ */
+export const CreateFinancialTransactionSchema = v.object({
+  clientProfileId: v.string([v.uuid('Invalid client profile ID')]),
+  sessionId: v.optional(v.string([v.uuid('Invalid session ID')])),
+  type: v.picklist(['payment', 'refund', 'credit', 'debit', 'adjustment']),
+  amount: v.number([v.minValue(0, 'Amount must be non-negative')]),
+  currency: v.optional(v.string([v.value('BRL')])),
+  paymentMethod: v.picklist(['cash', 'credit_card', 'debit_card', 'bank_transfer', 'pix', 'installment']),
+  description: v.string([v.minLength(1, 'Description is required')]),
+  transactionDate: v.date(),
+  dueDate: v.optional(v.date()),
+  installmentCount: v.optional(v.number([v.minValue(1), v.maxValue(12)])),
+  installmentAmount: v.optional(v.number([v.minValue(0)])),
+  status: v.optional(v.picklist(['pending', 'completed', 'failed', 'refunded', 'cancelled'])),
+  notes: v.optional(v.string()),
+  professionalId: v.string([v.uuid('Invalid professional ID')]),
+});
+
+/**
+ * Update Financial Transaction Schema
+ */
+export const UpdateFinancialTransactionSchema = v.partial(CreateFinancialTransactionSchema);
+
+/**
+ * Get Financial Transaction Schema
+ */
+export const GetFinancialTransactionSchema = v.object({
+  id: v.string([v.uuid('Invalid transaction ID format')]),
+});
+
+/**
+ * List Financial Transactions Schema
+ */
+export const ListFinancialTransactionsSchema = v.object({
+  clientProfileId: v.optional(v.string([v.uuid('Invalid client profile ID')])),
+  professionalId: v.optional(v.string([v.uuid('Invalid professional ID')])),
+  type: v.optional(v.picklist(['payment', 'refund', 'credit', 'debit', 'adjustment'])),
+  status: v.optional(v.picklist(['pending', 'completed', 'failed', 'refunded', 'cancelled'])),
+  startDate: v.optional(v.date()),
+  endDate: v.optional(v.date()),
+  limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
+  offset: v.optional(v.number([v.integer(), v.minValue(0)])),
+});
+
+/**
+ * Client Analytics Schemas
+ */
+
+/**
+ * Get Client Retention Metrics Schema
+ */
+export const GetClientRetentionMetricsSchema = v.object({
+  startDate: v.date(),
+  endDate: v.date(),
+  groupBy: v.optional(v.picklist(['month', 'quarter', 'year'])),
+  segmentBy: v.optional(v.picklist(['treatment_type', 'spending_level', 'visit_frequency'])),
+});
+
+/**
+ * Get Revenue Analytics Schema
+ */
+export const GetRevenueAnalyticsSchema = v.object({
+  startDate: v.date(),
+  endDate: v.date(),
+  groupBy: v.optional(v.picklist(['day', 'week', 'month', 'quarter'])),
+  category: v.optional(v.string()),
+  professionalId: v.optional(v.string([v.uuid('Invalid professional ID')])),
+});
+
+/**
+ * Get Predictive Analytics Schema
+ */
+export const GetPredictiveAnalyticsSchema = v.object({
+  clientId: v.string([v.uuid('Invalid client ID')]),
+  modelType: v.optional(v.picklist(['retention', 'spending', 'treatment_completion', 'satisfaction'])),
+});
+
+// Type exports for use in routers
+export type CreateAestheticClientProfileInput = v.Input<typeof CreateAestheticClientProfileSchema>;
+export type UpdateAestheticClientProfileInput = v.Input<typeof UpdateAestheticClientProfileSchema>;
+export type GetAestheticClientProfileInput = v.Input<typeof GetAestheticClientProfileSchema>;
+export type SearchAestheticClientsInput = v.Input<typeof SearchAestheticClientsSchema>;
+export type CreateAestheticTreatmentInput = v.Input<typeof CreateAestheticTreatmentSchema>;
+export type UpdateAestheticTreatmentInput = v.Input<typeof UpdateAestheticTreatmentSchema>;
+export type GetAestheticTreatmentInput = v.Input<typeof GetAestheticTreatmentSchema>;
+export type GetTreatmentCatalogInput = v.Input<typeof GetTreatmentCatalogSchema>;
+export type CreateAestheticSessionInput = v.Input<typeof CreateAestheticSessionSchema>;
+export type UpdateAestheticSessionInput = v.Input<typeof UpdateAestheticSessionSchema>;
+export type GetAestheticSessionInput = v.Input<typeof GetAestheticSessionSchema>;
+export type ListAestheticSessionsInput = v.Input<typeof ListAestheticSessionsSchema>;
+export type CreatePhotoAssessmentInput = v.Input<typeof CreatePhotoAssessmentSchema>;
+export type UpdatePhotoAssessmentInput = v.Input<typeof UpdatePhotoAssessmentSchema>;
+export type GetPhotoAssessmentInput = v.Input<typeof GetPhotoAssessmentSchema>;
+export type ListPhotoAssessmentsInput = v.Input<typeof ListPhotoAssessmentsSchema>;
+export type CreateTreatmentPlanInput = v.Input<typeof CreateTreatmentPlanSchema>;
+export type UpdateTreatmentPlanInput = v.Input<typeof UpdateTreatmentPlanSchema>;
+export type GetTreatmentPlanInput = v.Input<typeof GetTreatmentPlanSchema>;
+export type GetTreatmentPlansByClientInput = v.Input<typeof GetTreatmentPlansByClientSchema>;
+export type CreateFinancialTransactionInput = v.Input<typeof CreateFinancialTransactionSchema>;
+export type UpdateFinancialTransactionInput = v.Input<typeof UpdateFinancialTransactionSchema>;
+export type GetFinancialTransactionInput = v.Input<typeof GetFinancialTransactionSchema>;
+export type ListFinancialTransactionsInput = v.Input<typeof ListFinancialTransactionsSchema>;
+export type GetClientRetentionMetricsInput = v.Input<typeof GetClientRetentionMetricsSchema>;
+export type GetRevenueAnalyticsInput = v.Input<typeof GetRevenueAnalyticsSchema>;
+export type GetPredictiveAnalyticsInput = v.Input<typeof GetPredictiveAnalyticsSchema>;

@@ -892,7 +892,7 @@ export class StructuredLogger {
 
     if (data) {
       for (const key of Object.keys(data)) {
-        if (_piiFields.some((field) => key.toLowerCase().includes(field))) {
+        if (piiFields.some((field) => key.toLowerCase().includes(field))) {
           return true;
         }
       }
@@ -975,7 +975,7 @@ export class StructuredLogger {
     ];
 
     Object.keys(redactedObj).forEach((key) => {
-      if (_piiFields.some((field) => key.toLowerCase().includes(field))) {
+      if (piiFields.some((field) => key.toLowerCase().includes(field))) {
         redactedObj[key] = "[REDACTED]";
       } else if (typeof redactedObj[key] === "string") {
         redactedObj[key] = this.redactPIIFromText(redactedObj[key] as string);

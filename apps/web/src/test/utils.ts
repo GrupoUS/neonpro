@@ -1,8 +1,12 @@
 import { render, RenderOptions } from '@testing-library/react';
-import { ReactElement } from 'react';
+import { ReactElement, ReactNode, createElement as ReactCreateElement } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter } from '@tanstack/react-router';
 import { routeTree } from '../routeTree.gen';
+import { vi } from 'vitest';
+import '@testing-library/jest-dom';
+
+// Note: DOM setup is now handled in individual test files
 
 // Custom render function with providers
 export function renderWithProviders(
@@ -30,11 +34,13 @@ export function renderWithProviders(
   // Create router for navigation testing
   const router = createRouter({ routeTree });
 
-  const Wrapper = ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={queryClient}>
-      {children}
-    </QueryClientProvider>
+  const Wrapper = ({ children }: { children: ReactNode }) => {
+  return ReactCreateElement(
+    QueryClientProvider,
+    { client: queryClient },
+    children
   );
+};
 
   return {
     ...render(ui, { wrapper: Wrapper, ...options }),

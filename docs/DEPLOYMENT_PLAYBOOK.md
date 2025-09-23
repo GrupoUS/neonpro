@@ -1,8 +1,8 @@
-# NeonPro Healthcare Platform - Deployment Playbook
+# NeonPro Aesthetic Clinic Platform - Deployment Playbook
 
 ## 🎯 Mission Objective
 
-Successfully deploy the NeonPro Healthcare Platform to production environment with zero downtime, ensuring all healthcare compliance requirements are met and patient safety is maintained throughout the deployment process.
+Successfully deploy the NeonPro Aesthetic Clinic Platform to production environment with zero downtime, ensuring all aesthetic clinic compliance requirements are met and client safety is maintained throughout the deployment process.
 
 ## 📋 Pre-Deployment Checklist
 
@@ -20,8 +20,8 @@ Successfully deploy the NeonPro Healthcare Platform to production environment wi
 #### Compliance Requirements
 
 - [ ] LGPD compliance validation completed
-- [ ] ANVISA registration verified and current
-- [ ] CFM compliance certification up to date
+- [ ] ANVISA cosmetic product registration verified and current
+- [ ] Professional council compliance certification up to date
 - [ ] Data Protection Officer (DPO) notified of deployment
 - [ ] Security assessment completed with no critical findings
 - [ ] Compliance documentation updated and approved
@@ -33,7 +33,7 @@ Successfully deploy the NeonPro Healthcare Platform to production environment wi
 - [ ] Stakeholder communication plan prepared
 - [ ] Rollback strategy documented and tested
 - [ ] Emergency procedures reviewed and updated
-- [ ] Medical director notified of deployment window
+- [ ] Clinic director notified of deployment window
 
 ### ✅ Phase 2: Code Verification (T-12 hours)
 
@@ -55,14 +55,14 @@ Successfully deploy the NeonPro Healthcare Platform to production environment wi
 - [ ] Monitoring alerts configured
 - [ ] Backup schedules verified
 
-#### Healthcare-Specific
+#### Aesthetic Clinic-Specific
 
-- [ ] Patient data encryption verified
+- [ ] Client data encryption verified
 - [ ] Audit logging enabled and tested
-- [ ] Medical device compliance validated
-- [ ] Telemedicine functionality tested
-- [ ] Prescription system validated
-- [ ] Appointment scheduling verified
+- [ ] Aesthetic equipment compliance validated
+- [ ] Virtual consultation functionality tested
+- [ ] Product inventory system validated
+- [ ] Treatment appointment scheduling verified
 
 ## 🚀 Deployment Process
 
@@ -72,12 +72,12 @@ Successfully deploy the NeonPro Healthcare Platform to production environment wi
 # Execute comprehensive health check
 ./monitoring/scripts/health-check.sh
 
-# Validate healthcare compliance
+# Validate aesthetic clinic compliance
 ./monitoring/scripts/compliance-validator.sh
 
 # Verify system readiness
-curl -f https://staging.neonpro.healthcare/health
-curl -f https://api.staging.neonpro.healthcare/health
+curl -f https://staging.neonpro.aesthetic/health
+curl -f https://api.staging.neonpro.aesthetic/health
 ```
 
 **Acceptance Criteria**: All health checks must pass with 100% success rate.
@@ -98,7 +98,7 @@ bunx prisma db validate
 bunx prisma db seed
 ```
 
-**Healthcare Compliance**: Verify all patient data remains encrypted and accessible.
+**Aesthetic Clinic Compliance**: Verify all client data remains encrypted and accessible.
 
 ### Step 3: Asset Preparation (T-15 minutes)
 
@@ -106,8 +106,8 @@ bunx prisma db seed
 # Build frontend assets
 bun run build
 
-# Optimize assets for healthcare performance
-bun run optimize:healthcare
+# Optimize assets for aesthetic clinic performance
+bun run optimize:aesthetic
 
 # Generate SRI hashes for security
 ./scripts/generate-sri.sh
@@ -127,8 +127,8 @@ kubectl apply -f k8s/monitoring/
 # Deploy security services
 kubectl apply -f k8s/security/
 
-# Deploy healthcare-specific services
-kubectl apply -f k8s/healthcare/
+# Deploy aesthetic clinic-specific services
+kubectl apply -f k8s/aesthetic/
 ```
 
 #### B. Deploy Application

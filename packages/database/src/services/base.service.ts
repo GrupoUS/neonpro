@@ -92,7 +92,7 @@ export abstract class BaseService {
           status: "SUCCESS",
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Failed to create audit log:", error);
     }
   }
@@ -118,7 +118,7 @@ export abstract class BaseService {
       );
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       await this.createAuditLog(
         "CREATE",
         model,
@@ -151,7 +151,7 @@ export abstract class BaseService {
       await this.createAuditLog("UPDATE", model, { id, data }, userId);
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       await this.createAuditLog(
         "UPDATE",
         model,
@@ -181,7 +181,7 @@ export abstract class BaseService {
       });
 
       await this.createAuditLog("DELETE", model, { id }, userId);
-    } catch (error) {
+    } catch (_error) {
       await this.createAuditLog(
         "DELETE",
         model,
@@ -205,7 +205,7 @@ export abstract class BaseService {
         where: { id },
       });
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error(`Error finding ${model} by id ${id}:`, error);
       throw error;
     }
@@ -221,7 +221,7 @@ export abstract class BaseService {
     try {
       const result = await (prisma as any)[model].findMany(options);
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error(`Error finding many ${model}:`, error);
       throw error;
     }
@@ -240,7 +240,7 @@ export abstract class BaseService {
         timestamp: new Date(),
         _service: this.serviceName,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         status: "unhealthy",
         timestamp: new Date(),

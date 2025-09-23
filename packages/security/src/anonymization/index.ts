@@ -1,4 +1,4 @@
-export function maskCPF(cpf: string): string {
+export function maskCPF(_cpf: string): string {
   return "***.***.***-**";
 }
 
@@ -8,11 +8,11 @@ export function maskEmail(email: string): string {
   return maskedLocal + "@" + domain;
 }
 
-export function maskPhone(phone: string): string {
+export function maskPhone(_phone: string): string {
   return "(11) 9****-****";
 }
 
-export function maskName(name: string): string {
+export function maskName(_name: string): string {
   return "*** *** ***";
 }
 

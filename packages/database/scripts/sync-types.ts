@@ -10,11 +10,13 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 
 // ES module equivalents for __dirname
-const filename = fileURLToPath(import.meta.url);
+const _filename = fileURLToPath(import.meta.url);
+void _filename;
 const dirname = dirname(__filename);
 
 // Read Prisma schema and generate basic Supabase types
-const prismaSchemaPath = path.join(__dirname, "..", "prisma", "schema.prisma");
+const _prismaSchemaPath = path.join(__dirname, "..", "prisma", "schema.prisma");
+void _prismaSchemaPath;
 const typesOutputPath = path.join(
   __dirname,
   "..",

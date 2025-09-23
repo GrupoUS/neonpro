@@ -63,7 +63,7 @@ export const authTestUtils = {
       "access", // Access tokens
     ];
 
-    return output.some((log) =>
+    return output.some((_log) =>
       tokenPatterns.some((pattern) =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase()),
       ),
@@ -87,7 +87,7 @@ export const authTestUtils = {
       "\\d{2}\\.\\d{3}\\.\\d{3}-\\d{1}",
     ];
 
-    return output.some((log) =>
+    return output.some((_log) =>
       piiPatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return output.some((call) => regex.test(JSON.stringify(call)));

@@ -763,7 +763,7 @@ export class CacheManagementService {
       );
 
       // Try each tier in order
-      for (const [tier, backend] of this.backends.entries()) {
+      for (const [_tier, backend] of this.backends.entries()) {
         const entry = await backend.get(scopedKey);
 
         if (entry) {
@@ -967,7 +967,7 @@ export class CacheManagementService {
       let deletedTier: CacheTier | undefined;
 
       // Try to delete from all tiers
-      for (const [tier, backend] of this.backends.entries()) {
+      for (const [_tier, backend] of this.backends.entries()) {
         const result = await backend.delete(scopedKey);
         if (result) {
           deleted = true;
@@ -1027,7 +1027,7 @@ export class CacheManagementService {
   ): Promise<number> {
     let invalidatedCount = 0;
 
-    for (const [tier, backend] of this.backends.entries()) {
+    for (const [_tier, backend] of this.backends.entries()) {
       const keys = await backend.getKeys(pattern);
 
       for (const key of keys) {
@@ -1047,7 +1047,7 @@ export class CacheManagementService {
   async getStatistics(): Promise<Map<CacheTier, CacheStatistics>> {
     const stats = new Map<CacheTier, CacheStatistics>();
 
-    for (const [tier, backend] of this.backends.entries()) {
+    for (const [_tier, backend] of this.backends.entries()) {
       const tierStats = await backend.getStats();
       stats.set(tier, tierStats);
     }
@@ -1061,7 +1061,7 @@ export class CacheManagementService {
   async cleanup(): Promise<Map<CacheTier, number>> {
     const results = new Map<CacheTier, number>();
 
-    for (const [tier, backend] of this.backends.entries()) {
+    for (const [_tier, backend] of this.backends.entries()) {
       const cleanedCount = await backend.cleanup();
       results.set(tier, cleanedCount);
     }
@@ -1075,7 +1075,7 @@ export class CacheManagementService {
   async lgpdCleanup(): Promise<number> {
     let anonymizedCount = 0;
 
-    for (const [tier, backend] of this.backends.entries()) {
+    for (const [_tier, backend] of this.backends.entries()) {
       const sensitiveEntries = await backend.getEntriesBySensitivity(
         CacheDataSensitivity.RESTRICTED,
       );
