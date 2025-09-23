@@ -28,8 +28,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     
-    // Mock Supabase client
-    mockSupabase = {
+    // Mock Supabase client: mockSupabase = [ {
       from: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -39,8 +38,8 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
       delete: vi.fn().mockReturnThis(),
     };
 
-    lgpdService = new LGPDService();
-    aestheticService = new AestheticComplianceService({
+    lgpdServic: e = [ new LGPDService();
+    aestheticServic: e = [ new AestheticComplianceService({
       lgpdEncryptionKey: 'test-key',
       auditLogRetention: 365,
       enableAutoReporting: false,
@@ -54,7 +53,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
 
   describe('Article 7 Compliance - Legal Bases for Processing', () => {
     it('should validate consent as legal basis for aesthetic treatments', async () => {
-      const consentData: ConsentCreation = {
+      const consentData: ConsentCreatio: n = [ {
         patientId: 'patient-123',
         dataProcessing: true,
         marketing: false,
@@ -63,7 +62,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         purpose: 'Aesthetic treatment procedures and patient management'
       };
 
-      const result = await lgpdService.createConsent(consentData);
+      const: result = [ await lgpdService.createConsent(consentData);
 
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
@@ -72,7 +71,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
     });
 
     it('should validate legal obligation as legal basis for medical records', async () => {
-      const consentData: ConsentCreation = {
+      const consentData: ConsentCreatio: n = [ {
         patientId: 'patient-123',
         dataProcessing: true,
         marketing: false,
@@ -81,7 +80,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         purpose: 'Medical record retention as required by CFM Resolution 1821/2007'
       };
 
-      const result = await lgpdService.createConsent(consentData);
+      const: result = [ await lgpdService.createConsent(consentData);
 
       expect(result.success).toBe(true);
       expect(result.data?.legalBasis).toBe('legal_obligation');
@@ -89,7 +88,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
     });
 
     it('should reject consent without valid legal basis', async () => {
-      const consentData: ConsentCreation = {
+      const consentData: ConsentCreatio: n = [ {
         patientId: 'patient-123',
         dataProcessing: true,
         marketing: false,
@@ -98,16 +97,16 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         purpose: 'Test purpose'
       };
 
-      const result = await lgpdService.createConsent(consentData);
+      const: result = [ await lgpdService.createConsent(consentData);
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
-      expect(result.errors?.some(e => e.field === 'legalBasis')).toBe(true);
+      expect(result.errors?.some(e => e.fiel: d = [== 'legalBasis')).toBe(true);
     });
 
     it('should validate multiple legal bases for complex processing', async () => {
       // Test case where both consent and vital interests apply
-      const emergencyConsent: ConsentCreation = {
+      const emergencyConsent: ConsentCreatio: n = [ {
         patientId: 'patient-123',
         dataProcessing: true,
         marketing: false,
@@ -116,7 +115,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         purpose: 'Emergency aesthetic treatment procedure'
       };
 
-      const result = await lgpdService.createConsent(emergencyConsent);
+      const: result = [ await lgpdService.createConsent(emergencyConsent);
 
       expect(result.success).toBe(true);
       expect(result.data?.legalBasis).toBe('vital_interests');
@@ -125,7 +124,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
 
   describe('Article 11 Compliance - Sensitive Personal Data Processing', () => {
     it('should require explicit consent for health data processing', async () => {
-      const consentData: LGPDConsentData = {
+      const consentData: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'treatment',
         purpose: 'Processing of sensitive health data for aesthetic treatments',
@@ -135,7 +134,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(consentData);
+      const: verification = [ await aestheticService.verifyLGPDConsent(consentData);
 
       expect(verification.isConsentValid).toBe(true);
       expect(verification.consentRecord.consentType).toBe('treatment');
@@ -143,7 +142,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
     });
 
     it('should validate photo processing consent with enhanced requirements', async () => {
-      const photoConsent: LGPDConsentData = {
+      const photoConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'photos',
         purpose: 'Before and after treatment photos for medical documentation',
@@ -155,7 +154,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         expiresAt: new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toISOString()
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(photoConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(photoConsent);
 
       expect(verification.isConsentValid).toBe(true);
       expect(verification.consentRecord.consentType).toBe('photos');
@@ -164,7 +163,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
     });
 
     it('should require specific consent for genetic data processing', async () => {
-      const geneticConsent: LGPDConsentData = {
+      const geneticConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'research',
         purpose: 'Genetic analysis for personalized treatment planning',
@@ -174,7 +173,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(geneticConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(geneticConsent);
 
       expect(verification.isConsentValid).toBe(true);
       expect(verification.consentRecord.consentType).toBe('research');
@@ -182,7 +181,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
     });
 
     it('should reject overly broad data categories for sensitive data', async () => {
-      const broadConsent: LGPDConsentData = {
+      const broadConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'treatment',
         purpose: 'General data processing',
@@ -192,16 +191,16 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(broadConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(broadConsent);
 
       expect(verification.isConsentValid).toBe(false);
-      expect(verification.issues.some(i => i.type === 'data_minimization')).toBe(true);
+      expect(verification.issues.some(i => i.typ: e = [== 'data_minimization')).toBe(true);
     });
   });
 
   describe('Data Subject Rights Implementation', () => {
     it('should process data access requests within legal timeframe', async () => {
-      const accessRequest = {
+      const: accessRequest = [ {
         patientId: 'patient-123',
         requestType: 'access',
         requestedBy: 'patient-123',
@@ -209,22 +208,22 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         urgency: 'medium'
       };
 
-      const result = await lgpdService.processDataAccessRequest(accessRequest);
+      const: result = [ await lgpdService.processDataAccessRequest(accessRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.status).toBe('processing');
       
       // LGPD requires response within 15 days
-      const estimatedDate = new Date(result.data?.estimatedCompletion);
-      const requestDate = new Date();
-      const daysDifference = Math.ceil((estimatedDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
+      const: estimatedDate = [ new Date(result.data?.estimatedCompletion);
+      const: requestDate = [ new Date();
+      const: daysDifference = [ Math.ceil((estimatedDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
       
       expect(daysDifference).toBeLessThanOrEqual(15);
       expect(daysDifference).toBeGreaterThan(0);
     });
 
     it('should process data portability requests in specified format', async () => {
-      const portabilityRequest = {
+      const: portabilityRequest = [ {
         patientId: 'patient-123',
         format: 'json' as const,
         includeHistory: true,
@@ -232,7 +231,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         encryptionRequired: true
       };
 
-      const result = await lgpdService.processDataPortabilityRequest(portabilityRequest);
+      const: result = [ await lgpdService.processDataPortabilityRequest(portabilityRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.format).toBe('json');
@@ -240,7 +239,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
     });
 
     it('should process data deletion requests with proper grace period', async () => {
-      const deletionRequest = {
+      const: deletionRequest = [ {
         patientId: 'patient-123',
         requestedBy: 'patient-123',
         reason: 'Exercise right to be forgotten',
@@ -248,21 +247,21 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         retainStatistical: false
       };
 
-      const result = await lgpdService.processDataDeletionRequest(deletionRequest);
+      const: result = [ await lgpdService.processDataDeletionRequest(deletionRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.status).toBe('approved');
       
       // Should schedule deletion for future date (grace period)
-      const scheduledDate = new Date(result.data?.scheduledDeletion);
-      const requestDate = new Date();
-      const daysDifference = Math.ceil((scheduledDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
+      const: scheduledDate = [ new Date(result.data?.scheduledDeletion);
+      const: requestDate = [ new Date();
+      const: daysDifference = [ Math.ceil((scheduledDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
       
       expect(daysDifference).toBeGreaterThan(0); // Should not be immediate
     });
 
     it('should process data rectification requests with validation', async () => {
-      const rectificationRequest = {
+      const: rectificationRequest = [ {
         patientId: 'patient-123',
         field: 'contact_information',
         currentValue: 'old-email@example.com',
@@ -271,7 +270,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         evidenceProvided: true
       };
 
-      const result = await lgpdService.processDataRectificationRequest(rectificationRequest);
+      const: result = [ await lgpdService.processDataRectificationRequest(rectificationRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.field).toBe('contact_information');
@@ -281,7 +280,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
 
   describe('Aesthetic Clinic Specific Consent Scenarios', () => {
     it('should handle treatment photo consent with proper data minimization', async () => {
-      const photoConsent: LGPDConsentData = {
+      const photoConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'photos',
         purpose: 'Before and after treatment photos for medical record and progress tracking',
@@ -293,8 +292,8 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         userAgent: 'NeonPro/1.0'
       };
 
-      const consentId = await aestheticService.registerLGPDConsent(photoConsent);
-      const verification = await aestheticService.verifyLGPDConsent(photoConsent);
+      const: consentId = [ await aestheticService.registerLGPDConsent(photoConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(photoConsent);
 
       expect(consentId).toBeDefined();
       expect(verification.isConsentValid).toBe(true);
@@ -302,7 +301,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
     });
 
     it('should validate marketing consent separately from treatment consent', async () => {
-      const marketingConsent: LGPDConsentData = {
+      const marketingConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'marketing',
         purpose: 'Send promotional materials about new aesthetic treatments',
@@ -312,14 +311,14 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(marketingConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(marketingConsent);
 
       expect(verification.isConsentValid).toBe(true);
       expect(verification.consentRecord.consentType).toBe('marketing');
     });
 
     it('should handle emergency contact consent with vital interests basis', async () => {
-      const emergencyConsent: LGPDConsentData = {
+      const emergencyConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'emergency_contact',
         purpose: 'Emergency contact information for treatment safety',
@@ -329,14 +328,14 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: false // Cannot withdraw emergency contact consent
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(emergencyConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(emergencyConsent);
 
       expect(verification.isConsentValid).toBe(true);
       expect(verification.consentRecord.consentType).toBe('emergency_contact');
     });
 
     it('should validate consent withdrawal and data processing cessation', async () => {
-      const consentData: LGPDConsentData = {
+      const consentData: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'treatment',
         purpose: 'General aesthetic treatment',
@@ -345,10 +344,10 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const consentId = await aestheticService.registerLGPDConsent(consentData);
+      const: consentId = [ await aestheticService.registerLGPDConsent(consentData);
       
       // Withdraw consent
-      const withdrawn = await aestheticService.withdrawLGPDConsent(consentId, 'Patient requested withdrawal');
+      const: withdrawn = [ await aestheticService.withdrawLGPDConsent(consentId, 'Patient requested withdrawal');
       
       expect(withdrawn).toBe(true);
     });
@@ -356,7 +355,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
 
   describe('Consent History and Audit Trail', () => {
     it('should maintain complete consent history with timestamps', async () => {
-      const consentData: ConsentCreation = {
+      const consentData: ConsentCreatio: n = [ {
         patientId: 'patient-123',
         dataProcessing: true,
         marketing: false,
@@ -365,10 +364,10 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         purpose: 'Initial treatment consent'
       };
 
-      const createResult = await lgpdService.createConsent(consentData);
+      const: createResult = [ await lgpdService.createConsent(consentData);
       expect(createResult.success).toBe(true);
 
-      const historyResult = await lgpdService.getConsentHistory('patient-123');
+      const: historyResult = [ await lgpdService.getConsentHistory('patient-123');
       expect(historyResult.success).toBe(true);
       expect(historyResult.data?.history).toBeDefined();
       expect(historyResult.data?.currentConsent).toBeDefined();
@@ -376,7 +375,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
 
     it('should track consent modifications with proper audit trail', async () => {
       // Create initial consent
-      const initialConsent: ConsentCreation = {
+      const initialConsent: ConsentCreatio: n = [ {
         patientId: 'patient-123',
         dataProcessing: true,
         marketing: false,
@@ -385,26 +384,26 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         purpose: 'Initial consent'
       };
 
-      const createResult = await lgpdService.createConsent(initialConsent);
-      const consentId = createResult.data?.id || '';
+      const: createResult = [ await lgpdService.createConsent(initialConsent);
+      const: consentId = [ createResult.data?.id || '';
 
       // Update consent
-      const update: ConsentUpdate = {
+      const update: ConsentUpdat: e = [ {
         analytics: true,
         updatedBy: 'patient-123',
         reason: 'Patient wants to enable analytics'
       };
 
-      const updateResult = await lgpdService.updateConsent(consentId, update);
+      const: updateResult = [ await lgpdService.updateConsent(consentId, update);
       expect(updateResult.success).toBe(true);
 
       // Verify history contains update
-      const history = await lgpdService.getConsentHistory('patient-123');
-      expect(history.data?.history.some(h => h.action === 'updated')).toBe(true);
+      const: history = [ await lgpdService.getConsentHistory('patient-123');
+      expect(history.data?.history.some(h => h.actio: n = [== 'updated')).toBe(true);
     });
 
     it('should log consent revocation with detailed reasoning', async () => {
-      const consentData: ConsentCreation = {
+      const consentData: ConsentCreatio: n = [ {
         patientId: 'patient-123',
         dataProcessing: true,
         marketing: false,
@@ -413,28 +412,28 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         purpose: 'Treatment consent'
       };
 
-      const createResult = await lgpdService.createConsent(consentData);
-      const consentId = createResult.data?.id || '';
+      const: createResult = [ await lgpdService.createConsent(consentData);
+      const: consentId = [ createResult.data?.id || '';
 
       // Revoke consent
-      const revocation: ConsentRevocation = {
+      const revocation: ConsentRevocatio: n = [ {
         revokedBy: 'patient-123',
         reason: 'No longer receiving treatments at this clinic',
         effectiveDate: new Date()
       };
 
-      const revokeResult = await lgpdService.revokeConsent(consentId, revocation);
+      const: revokeResult = [ await lgpdService.revokeConsent(consentId, revocation);
       expect(revokeResult.success).toBe(true);
 
       // Verify revocation is logged
-      const history = await lgpdService.getConsentHistory('patient-123');
-      expect(history.data?.history.some(h => h.action === 'revoked')).toBe(true);
+      const: history = [ await lgpdService.getConsentHistory('patient-123');
+      expect(history.data?.history.some(h => h.actio: n = [== 'revoked')).toBe(true);
     });
   });
 
   describe('Data Minimization and Purpose Limitation', () => {
     it('should enforce data minimization principles', async () => {
-      const excessiveConsent: LGPDConsentData = {
+      const excessiveConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'treatment',
         purpose: 'Simple facial treatment',
@@ -443,14 +442,14 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(excessiveConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(excessiveConsent);
 
       expect(verification.isConsentValid).toBe(false);
-      expect(verification.issues.some(i => i.type === 'data_minimization')).toBe(true);
+      expect(verification.issues.some(i => i.typ: e = [== 'data_minimization')).toBe(true);
     });
 
     it('should validate purpose limitation compliance', async () => {
-      const vaguePurposeConsent: LGPDConsentData = {
+      const vaguePurposeConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'treatment',
         purpose: 'For various purposes and uses', // Too vague
@@ -459,14 +458,14 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(vaguePurposeConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(vaguePurposeConsent);
 
       expect(verification.isConsentValid).toBe(false);
       expect(verification.issues.some(i => i.description.includes('purpose'))).toBe(true);
     });
 
     it('should validate appropriate retention periods', async () => {
-      const invalidRetentionConsent: LGPDConsentData = {
+      const invalidRetentionConsent: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'treatment',
         purpose: 'Facial treatment',
@@ -475,7 +474,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(invalidRetentionConsent);
+      const: verification = [ await aestheticService.verifyLGPDConsent(invalidRetentionConsent);
 
       expect(verification.isConsentValid).toBe(false);
       expect(verification.issues.some(i => i.description.includes('retention'))).toBe(true);
@@ -484,7 +483,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
 
   describe('Cross-border Data Transfer Compliance', () => {
     it('should validate international data transfer restrictions', async () => {
-      const internationalTransfer: LGPDConsentData = {
+      const internationalTransfer: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'treatment',
         purpose: 'Treatment with international data processing',
@@ -494,14 +493,14 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(internationalTransfer);
+      const: verification = [ await aestheticService.verifyLGPDConsent(internationalTransfer);
 
       // Should have specific validation for international transfers
       expect(verification.verificationResult.rightsGuarantees).toBe(true);
     });
 
     it('should require enhanced consent for international health data transfers', async () => {
-      const internationalHealthTransfer: LGPDConsentData = {
+      const internationalHealthTransfer: LGPDConsentDat: a = [ {
         clientId: 'patient-123',
         consentType: 'treatment',
         purpose: 'International health data processing for consultation',
@@ -511,7 +510,7 @@ describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
         withdrawalAllowed: true
       };
 
-      const verification = await aestheticService.verifyLGPDConsent(internationalHealthTransfer);
+      const: verification = [ await aestheticService.verifyLGPDConsent(internationalHealthTransfer);
 
       expect(verification.isConsentValid).toBe(true);
       expect(verification.verificationResult.securityMeasures).toBe(true);

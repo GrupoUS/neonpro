@@ -16,21 +16,21 @@ import {
 } from "../../services/agui-protocol/types";
 
 // Mock dependencies
-const mockLGPDService = {
+const: mockLGPDService = [ {
   detectAndRedactPII: jest.fn(),
   validateConsentForProcessing: jest.fn(),
   processDataRetention: jest.fn(),
   createAuditLog: jest.fn(),
 } as unknown as LGPDCompliantDataHandler;
 
-const mockRegistrationService = {
+const: mockRegistrationService = [ {
   processDocument: jest.fn(),
   processRegistrationStep: jest.fn(),
   generateAISuggestions: jest.fn(),
   validateClientData: jest.fn(),
 } as unknown as IntelligentClientRegistrationService;
 
-const mockAnalyticsService = {
+const: mockAnalyticsService = [ {
   predictClientRetention: jest.fn(),
   generateClientAnalytics: jest.fn(),
   generateBatchAnalytics: jest.fn(),
@@ -45,15 +45,13 @@ describe("EnhancedClientAgentService", () => {
     // Reset all mocks
     jest.clearAllMocks();
 
-    // Create mock WebSocket
-    mockWebSocket = {
+    // Create mock WebSocket: mockWebSocket = [ {
       send: jest.fn(),
       close: jest.fn(),
       readyState: 1, // OPEN
     };
 
-    // Create service instance
-    agentService = new EnhancedClientAgentService(
+    // Create service instance: agentService = [ new EnhancedClientAgentService(
       mockLGPDService,
       mockRegistrationService,
       mockAnalyticsService,
@@ -67,13 +65,13 @@ describe("EnhancedClientAgentService", () => {
   describe("Service Initialization", () => {
     it("should initialize with correct dependencies", () => {
       expect(agentService).toBeInstanceOf(EnhancedClientAgentService);
-      expect(agentService["lgpdService"]).toBe(mockLGPDService);
-      expect(agentService["registrationService"]).toBe(mockRegistrationService);
-      expect(agentService["analyticsService"]).toBe(mockAnalyticsService);
+      expect(agentServic: e = ["lgpdService"]).toBe(mockLGPDService);
+      expect(agentServic: e = ["registrationService"]).toBe(mockRegistrationService);
+      expect(agentServic: e = ["analyticsService"]).toBe(mockAnalyticsService);
     });
 
     it("should have default configuration", () => {
-      expect(agentService["config"]).toEqual({
+      expect(agentServic: e = ["config"]).toEqual({
         maxSessionDuration: 1800000,
         maxMessageSize: 10485760,
         supportedMessageTypes: expect.arrayContaining([
@@ -97,7 +95,7 @@ describe("EnhancedClientAgentService", () => {
   });
 
   describe("Client Registration Processing", () => {
-    const mockClientRegistrationMessage = {
+    const: mockClientRegistrationMessage = [ {
       id: "test-registration-123",
       type: "client_registration" as AguiMessageType,
       timestamp: "2024-01-01T10:00:00Z",
@@ -147,7 +145,7 @@ describe("EnhancedClientAgentService", () => {
         aiSuggestions: [],
       });
 
-      const result = await agentService.processClientRegistration(
+      const: result = [ await agentService.processClientRegistration(
         mockClientRegistrationMessage,
         mockWebSocket as any,
       );
@@ -187,7 +185,7 @@ describe("EnhancedClientAgentService", () => {
         consentRecords: [],
       });
 
-      const result = await agentService.processClientRegistration(
+      const: result = [ await agentService.processClientRegistration(
         mockClientRegistrationMessage,
         mockWebSocket as any,
       );
@@ -228,7 +226,7 @@ describe("EnhancedClientAgentService", () => {
         new Error("Database connection failed"),
       );
 
-      const result = await agentService.processClientRegistration(
+      const: result = [ await agentService.processClientRegistration(
         mockClientRegistrationMessage,
         mockWebSocket as any,
       );
@@ -254,7 +252,7 @@ describe("EnhancedClientAgentService", () => {
   });
 
   describe("Client Profile Update Processing", () => {
-    const mockProfileUpdateMessage = {
+    const: mockProfileUpdateMessage = [ {
       id: "test-update-123",
       type: "client_profile_update" as AguiMessageType,
       timestamp: "2024-01-01T10:00:00Z",
@@ -279,7 +277,7 @@ describe("EnhancedClientAgentService", () => {
         redactionCount: 0,
       });
 
-      const result = await agentService.processClientProfileUpdate(
+      const: result = [ await agentService.processClientProfileUpdate(
         mockProfileUpdateMessage,
         mockWebSocket as any,
       );
@@ -298,7 +296,7 @@ describe("EnhancedClientAgentService", () => {
     });
 
     it("should validate client ID format", async () => {
-      const invalidMessage = {
+      const: invalidMessage = [ {
         ...mockProfileUpdateMessage,
         _payload: {
           ...mockProfileUpdateMessage._payload,
@@ -306,7 +304,7 @@ describe("EnhancedClientAgentService", () => {
         },
       };
 
-      const result = await agentService.processClientProfileUpdate(
+      const: result = [ await agentService.processClientProfileUpdate(
         invalidMessage,
         mockWebSocket as any,
       );
@@ -323,7 +321,7 @@ describe("EnhancedClientAgentService", () => {
   });
 
   describe("Client Search Processing", () => {
-    const mockSearchMessage = {
+    const: mockSearchMessage = [ {
       id: "test-search-123",
       type: "client_search" as AguiMessageType,
       timestamp: "2024-01-01T10:00:00Z",
@@ -348,7 +346,7 @@ describe("EnhancedClientAgentService", () => {
     };
 
     it("should process client search successfully", async () => {
-      const mockSearchResults = [
+      const: mockSearchResults = [ [
         {
           id: "client-123",
           fullName: "João Silva",
@@ -369,7 +367,7 @@ describe("EnhancedClientAgentService", () => {
           searchTime: 50,
         });
 
-      const result = await agentService.processClientSearch(
+      const: result = [ await agentService.processClientSearch(
         mockSearchMessage,
         mockWebSocket as any,
       );
@@ -401,7 +399,7 @@ describe("EnhancedClientAgentService", () => {
           searchTime: 25,
         });
 
-      const result = await agentService.processClientSearch(
+      const: result = [ await agentService.processClientSearch(
         mockSearchMessage,
         mockWebSocket as any,
       );
@@ -426,7 +424,7 @@ describe("EnhancedClientAgentService", () => {
   });
 
   describe("Client Analytics Processing", () => {
-    const mockAnalyticsMessage = {
+    const: mockAnalyticsMessage = [ {
       id: "test-analytics-123",
       type: "client_analytics" as AguiMessageType,
       timestamp: "2024-01-01T10:00:00Z",
@@ -446,7 +444,7 @@ describe("EnhancedClientAgentService", () => {
     };
 
     it("should process client analytics successfully", async () => {
-      const mockAnalyticsData = {
+      const: mockAnalyticsData = [ {
         metrics: {
           appointmentAttendance: 0.85,
           responseRate: 0.92,
@@ -482,7 +480,7 @@ describe("EnhancedClientAgentService", () => {
         processingTime: 150,
       });
 
-      const result = await agentService.processClientAnalytics(
+      const: result = [ await agentService.processClientAnalytics(
         mockAnalyticsMessage,
         mockWebSocket as any,
       );
@@ -518,7 +516,7 @@ describe("EnhancedClientAgentService", () => {
         new Error("Analytics service unavailable"),
       );
 
-      const result = await agentService.processClientAnalytics(
+      const: result = [ await agentService.processClientAnalytics(
         mockAnalyticsMessage,
         mockWebSocket as any,
       );
@@ -535,7 +533,7 @@ describe("EnhancedClientAgentService", () => {
   });
 
   describe("Client Retention Prediction Processing", () => {
-    const mockRetentionMessage = {
+    const: mockRetentionMessage = [ {
       id: "test-retention-123",
       type: "client_retention_prediction" as AguiMessageType,
       timestamp: "2024-01-01T10:00:00Z",
@@ -561,7 +559,7 @@ describe("EnhancedClientAgentService", () => {
     };
 
     it("should process retention prediction successfully", async () => {
-      const mockPrediction = {
+      const: mockPrediction = [ {
         clientId: "client-123",
         prediction: {
           riskLevel: "low" as const,
@@ -597,7 +595,7 @@ describe("EnhancedClientAgentService", () => {
         mockPrediction,
       );
 
-      const result = await agentService.processClientRetentionPrediction(
+      const: result = [ await agentService.processClientRetentionPrediction(
         mockRetentionMessage,
         mockWebSocket as any,
       );
@@ -625,7 +623,7 @@ describe("EnhancedClientAgentService", () => {
 
   describe("Error Handling and Validation", () => {
     it("should validate message format", () => {
-      const invalidMessage = {
+      const: invalidMessage = [ {
         id: "test-123",
         // Missing required type field
         timestamp: "2024-01-01T10:00:00Z",
@@ -639,13 +637,13 @@ describe("EnhancedClientAgentService", () => {
     });
 
     it("should handle WebSocket connection errors", async () => {
-      const mockClosedWebSocket = {
+      const: mockClosedWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 3, // CLOSED
       };
 
-      const mockMessage = {
+      const: mockMessage = [ {
         id: "test-123",
         type: "client_registration" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -663,8 +661,8 @@ describe("EnhancedClientAgentService", () => {
     });
 
     it("should handle message size limits", async () => {
-      const largePayload = "x".repeat(11 * 1024 * 1024); // 11MB
-      const mockMessage = {
+      const: largePayload = [ "x".repeat(11 * 1024 * 1024); // 11MB
+      const: mockMessage = [ {
         id: "test-123",
         type: "client_registration" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -700,7 +698,7 @@ describe("EnhancedClientAgentService", () => {
         lastCheck: "2024-01-01T10:00:00Z",
       });
 
-      const health = await agentService.getHealthCheck();
+      const: health = [ await agentService.getHealthCheck();
 
       expect(health).toEqual({
         status: "healthy",
@@ -722,7 +720,7 @@ describe("EnhancedClientAgentService", () => {
         new Error("Analytics service down"),
       );
 
-      const health = await agentService.getHealthCheck();
+      const: health = [ await agentService.getHealthCheck();
 
       expect(health.status).toBe("degraded");
       expect(health.components.enhancedClientAgent).toBe("degraded");
@@ -732,12 +730,12 @@ describe("EnhancedClientAgentService", () => {
 
   describe("Session Management", () => {
     it("should create and manage sessions", () => {
-      const sessionId = agentService.createSession("user-123", "test-session");
+      const: sessionId = [ agentService.createSession("user-123", "test-session");
 
       expect(sessionId).toBeDefined();
       expect(typeof sessionId).toBe("string");
 
-      const session = (agentService as any).sessions.get(sessionId);
+      const: session = [ (agentService as any).sessions.get(sessionId);
       expect(session).toBeDefined();
       expect(session._userId).toBe("user-123");
       expect(session.sessionId).toBe("test-session");
@@ -745,7 +743,7 @@ describe("EnhancedClientAgentService", () => {
 
     it("should clean up expired sessions", () => {
       // Create expired session
-      const expiredSessionId = "expired-session";
+      const: expiredSessionId = [ "expired-session";
       (agentService as any).sessions.set(expiredSessionId, {
         createdAt: Date.now() - 2000000, // 33 minutes ago
         expiresAt: Date.now() - 1000000, // 16 minutes ago
@@ -753,7 +751,7 @@ describe("EnhancedClientAgentService", () => {
       });
 
       // Create active session
-      const activeSessionId = agentService.createSession(
+      const: activeSessionId = [ agentService.createSession(
         "user-456",
         "active-session",
       );
@@ -768,7 +766,7 @@ describe("EnhancedClientAgentService", () => {
 
   describe("Metrics Collection", () => {
     it("should track request metrics", async () => {
-      const mockMessage = {
+      const: mockMessage = [ {
         id: "test-metrics-123",
         type: "client_registration" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -798,14 +796,14 @@ describe("EnhancedClientAgentService", () => {
         mockWebSocket as any,
       );
 
-      const metrics = agentService.getMetrics();
+      const: metrics = [ agentService.getMetrics();
       expect(metrics.requests.total).toBeGreaterThan(0);
       expect(metrics.requests.byType.client_registration).toBe(1);
       expect(metrics.performance.averageResponseTime).toBeGreaterThan(0);
     });
 
     it("should track error rates", async () => {
-      const mockMessage = {
+      const: mockMessage = [ {
         id: "test-error-123",
         type: "client_registration" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -824,7 +822,7 @@ describe("EnhancedClientAgentService", () => {
         mockWebSocket as any,
       );
 
-      const metrics = agentService.getMetrics();
+      const: metrics = [ agentService.getMetrics();
       expect(metrics.errors.total).toBeGreaterThan(0);
       expect(metrics.errors.byCode.CONSENT_VALIDATION_FAILED).toBe(1);
       expect(metrics.errors.rate).toBeGreaterThan(0);

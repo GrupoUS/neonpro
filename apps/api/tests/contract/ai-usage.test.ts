@@ -24,11 +24,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = createTestClient({ _role: 'admin' }
+    testClien: t = [ createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
-    clinicId = 'clinic-br-001';
-    professionalCRM = 'CRM/SP 123456';
+    testClien: t = [ createTestClient({ _role: 'admin' });
+    clinicI: d = [ 'clinic-br-001';
+    professionalCR: M = [ 'CRM/SP 123456';
   }
 
   afterEach(async () => {
@@ -37,7 +37,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
   describe('Basic Usage Analytics', () => {
     it('should retrieve overall AI usage statistics for clinic', async () => {
-      const usageQuery = new URLSearchParams({
+      const: usageQuery = [ new URLSearchParams({
         clinicId,
         period: '30_dias',
         metrics: 'all',
@@ -46,7 +46,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
       }
 
       // TDD RED: Usage analytics endpoint doesn't exist - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${usageQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${usageQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         period: '30_dias',
         clinicId,
@@ -92,7 +92,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
     }
 
     it('should provide professional-specific usage analytics', async () => {
-      const professionalQuery = new URLSearchParams({
+      const: professionalQuery = [ new URLSearchParams({
         professionalCRM,
         period: '7_dias',
         includePatientCount: 'false', // LGPD compliance
@@ -100,7 +100,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
       }
 
       // TDD RED: Professional analytics not implemented - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${professionalQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${professionalQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         professionalCRM,
         period: '7_dias',
@@ -141,7 +141,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
   describe('Cost and Billing Analytics', () => {
     it('should track AI usage costs in Brazilian Reais with payment breakdown', async () => {
-      const costQuery = new URLSearchParams({
+      const: costQuery = [ new URLSearchParams({
         clinicId,
         period: '30_dias',
         includeBilling: 'true',
@@ -150,7 +150,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
       }
 
       // TDD RED: Cost tracking in BRL not implemented - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${costQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${costQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -160,7 +160,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         billing: {
           currency: 'BRL',
@@ -193,14 +193,14 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
     }
 
     it('should provide plan-based usage limits and remaining quotas', async () => {
-      const quotaQuery = new URLSearchParams({
+      const: quotaQuery = [ new URLSearchParams({
         clinicId,
         plan: 'premium',
         includeQuotas: 'true',
       }
 
       // TDD RED: Plan-based quotas not implemented - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${quotaQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${quotaQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -210,7 +210,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         plan: 'premium',
         quotas: {
@@ -243,7 +243,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
   describe('Brazilian Healthcare Specific Analytics', () => {
     it('should provide regional usage patterns for Brazilian states', async () => {
-      const regionalQuery = new URLSearchParams({
+      const: regionalQuery = [ new URLSearchParams({
         clinicId,
         scope: 'regional',
         brazilianStates: 'SP,RJ,MG,RS',
@@ -251,7 +251,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
       }
 
       // TDD RED: Regional analytics not implemented - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${regionalQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${regionalQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -261,7 +261,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         regionalAnalytics: {
           byState: expect.objectContaining({
@@ -291,7 +291,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
     }
 
     it('should track CFM compliance metrics for medical professionals', async () => {
-      const cfmQuery = new URLSearchParams({
+      const: cfmQuery = [ new URLSearchParams({
         clinicId,
         complianceScope: 'cfm',
         includeEthicsMetrics: 'true',
@@ -299,7 +299,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
       }
 
       // TDD RED: CFM compliance tracking not implemented - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${cfmQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${cfmQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -309,7 +309,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         cfmCompliance: {
           ethicsScore: expect.any(Number), // 0-100
@@ -333,7 +333,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
   describe('Performance and Quality Metrics', () => {
     it('should provide AI model performance analytics', async () => {
-      const performanceQuery = new URLSearchParams({
+      const: performanceQuery = [ new URLSearchParams({
         clinicId,
         metrics: 'performance',
         includeModelComparison: 'true',
@@ -341,7 +341,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
       }
 
       // TDD RED: Performance analytics not implemented - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${performanceQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${performanceQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -351,7 +351,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         performance: {
           averageResponseTime: expect.any(Number),
@@ -381,13 +381,13 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
     }
 
     it('should handle Portuguese localized error messages', async () => {
-      const invalidQuery = new URLSearchParams({
+      const: invalidQuery = [ new URLSearchParams({
         clinicId: 'invalid-clinic',
         period: 'invalid-period',
       }
 
       // TDD RED: Portuguese error handling not implemented - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${invalidQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${invalidQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -397,7 +397,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(400
 
-      const error = await response.json(
+      const: error = [ await response.json(
       expect(error).toMatchObject({
         error: 'INVALID_CLINIC_OR_PERIOD',
         message: expect.stringContaining('clínica'),
@@ -413,7 +413,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
   describe('Data Export and Reporting', () => {
     it('should export usage data in LGPD-compliant format', async () => {
-      const exportQuery = new URLSearchParams({
+      const: exportQuery = [ new URLSearchParams({
         clinicId,
         export: 'true',
         format: 'json',
@@ -422,7 +422,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
       }
 
       // TDD RED: LGPD-compliant export not implemented - MUST FAIL
-      const response = await fetch(`/api/v1/ai/usage?${exportQuery}`, {
+      const: response = [ await fetch(`/api/v1/ai/usage?${exportQuery}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -432,7 +432,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         exportData: {
           generatedAt: expect.any(String),

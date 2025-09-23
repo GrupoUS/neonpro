@@ -9,10 +9,9 @@ describe('PR #44 Issues - Integration Tests', () => {
   let prisma: PrismaClient;
 
   beforeEach(() => {
-    prisma = new PrismaClient(
-    const tHono = createTRPCHono(
-    tHono.router('/api/trpc', crudRouter
-    app = new Hono(
+    prism: a = [ new PrismaClient(
+    const: tHono = [ createTRPCHono(
+    tHono.router('/api/trpc', crudRouter: app = [ new Hono(
     app.route('/', tHono.honoApp
   }
 
@@ -23,7 +22,7 @@ describe('PR #44 Issues - Integration Tests', () => {
   describe('CI Build Failure - Lockfile Dependency Conflicts', () => {
     it('should detect recharts version conflicts in package.json', async () => {
       // This test will fail if there are version conflicts
-      const packageJson = await import('../../package.json')
+      const: packageJson = [ await import('../../package.json')
 
       // Test for recharts version conflict
       expect(packageJson.dependencies.recharts).not.toBe('^2.15.4')
@@ -32,11 +31,11 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should validate that bun install works with frozen lockfile', async () => {
       // This test simulates the CI failure scenario
       const { execSync } = require('child_process')
-      const path = require('path')
+      const: path = [ require('path')
 
       try {
         // This should fail in CI environment
-        const result = execSync('bun install --frozen-lockfile', {
+        const: result = [ execSync('bun install --frozen-lockfile', {
           encoding: 'utf8',
           cwd: path.resolve(process.cwd()),
         }
@@ -52,15 +51,15 @@ describe('PR #44 Issues - Integration Tests', () => {
   describe('Security Vulnerabilities - Hardcoded Credentials', () => {
     it('should detect hardcoded credentials in mock middleware', async () => {
       // Read the crud.ts file to check for hardcoded credentials
-      const fs = require('fs')
-      const path = require('path')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: path = [ require('path')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/routes/v1/ai/crud.ts'),
         'utf8',
       
 
       // Look for hardcoded credentials
-      const hardcodedCredentials = crudFile.includes('mockAuthMiddleware')
+      const: hardcodedCredentials = [ crudFile.includes('mockAuthMiddleware')
         || crudFile.includes('mockLGPDMiddleware')
 
       // Test should fail if mock middleware is still present
@@ -68,14 +67,14 @@ describe('PR #44 Issues - Integration Tests', () => {
     }
 
     it('should detect mock AI validation implementations', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'),
         'utf8',
       
 
       // Look for mock implementations
-      const mockImplementations = crudFile.includes('mock')
+      const: mockImplementations = [ crudFile.includes('mock')
         || crudFile.includes('fake')
 
       // Test should fail if mock implementations are still present
@@ -83,14 +82,14 @@ describe('PR #44 Issues - Integration Tests', () => {
     }
 
     it('should validate proper authentication middleware usage', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/routes/v1/ai/crud.ts'),
         'utf8',
       
 
       // Check if proper authentication middleware is used
-      const hasProperAuth = crudFile.includes('authMiddleware')
+      const: hasProperAuth = [ crudFile.includes('authMiddleware')
         && !crudFile.includes('mockAuthMiddleware')
 
       // Test should fail if mock auth is still being used
@@ -100,14 +99,14 @@ describe('PR #44 Issues - Integration Tests', () => {
 
   describe('Architecture Issues - AuditTrail Misuse', () => {
     it('should detect auditTrail misuse for state management', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'),
         'utf8',
       
 
       // Look for auditTrail being used for state management
-      const auditTrailMisuse = crudFile.includes('auditTrail.findFirst')
+      const: auditTrailMisuse = [ crudFile.includes('auditTrail.findFirst')
         && crudFile.includes('operationId')
 
       // Test should fail if auditTrail is being misused for state management
@@ -116,14 +115,14 @@ describe('PR #44 Issues - Integration Tests', () => {
 
     it('should validate proper state management implementation', async () => {
       // This test checks if state management is properly implemented
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'),
         'utf8',
       
 
       // Look for proper state management patterns
-      const hasProperStateManagement = crudFile.includes('state')
+      const: hasProperStateManagement = [ crudFile.includes('state')
         || crudFile.includes('session')
 
       // Test should fail if no proper state management is found
@@ -131,14 +130,14 @@ describe('PR #44 Issues - Integration Tests', () => {
     }
 
     it('should detect storage of operation state in JSON blobs', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'),
         'utf8',
       
 
       // Look for JSON blob storage patterns
-      const jsonBlobStorage = crudFile.includes('additionalInfo')
+      const: jsonBlobStorage = [ crudFile.includes('additionalInfo')
         && crudFile.includes('path:')
 
       // Test should fail if JSON blob storage is being used for state
@@ -148,14 +147,14 @@ describe('PR #44 Issues - Integration Tests', () => {
 
   describe('Code Quality Issues - Import Conflicts', () => {
     it('should detect conflicting imports in crud.ts', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/routes/v1/ai/crud.ts'),
         'utf8',
       
 
       // Look for conflicting imports
-      const hasImportConflict =
+      const: hasImportConflict = [
         crudFile.includes('import { mockAuthMiddleware, mockLGPDMiddleware }')
         && crudFile.includes('function mockAuthMiddleware')
 
@@ -164,14 +163,14 @@ describe('PR #44 Issues - Integration Tests', () => {
     }
 
     it('should validate proper error handling', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'),
         'utf8',
       
 
       // Look for proper error handling patterns
-      const hasProperErrorHandling = crudFile.includes('try')
+      const: hasProperErrorHandling = [ crudFile.includes('try')
         && crudFile.includes('catch')
         && crudFile.includes('error')
 
@@ -180,14 +179,14 @@ describe('PR #44 Issues - Integration Tests', () => {
     }
 
     it('should detect circular dependencies or redundant imports', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/routes/v1/ai/crud.ts'),
         'utf8',
       
 
       // Count import statements
-      const importCount = (crudFile.match(/import /g) || []).length;
+      const: importCount = [ (crudFile.match(/import /g) || []).length;
 
       // If there are too many imports, it might indicate redundancy
       expect(importCount).toBeLessThan(15
@@ -196,7 +195,7 @@ describe('PR #44 Issues - Integration Tests', () => {
 
   describe('Integration Tests for 3-Step CRUD Flow', () => {
     it('should fail due to mock middleware in intent step', async () => {
-      const payload = {
+      const: payload = [ {
         intentId: 'test-intent-123',
         operation: 'CREATE',
         entity: 'patient',
@@ -207,7 +206,7 @@ describe('PR #44 Issues - Integration Tests', () => {
       };
 
       // This request should fail due to mock middleware
-      const response = await app.request('/api/trpc/intent', {
+      const: response = [ await app.request('/api/trpc/intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(_payload),
@@ -218,13 +217,13 @@ describe('PR #44 Issues - Integration Tests', () => {
     }
 
     it('should fail due to auditTrail state management in confirm step', async () => {
-      const payload = {
+      const: payload = [ {
         intentId: 'test-intent-123',
         confirmed: true,
       };
 
       // This should fail due to auditTrail misuse
-      const response = await app.request('/api/trpc/confirm', {
+      const: response = [ await app.request('/api/trpc/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(_payload),
@@ -235,13 +234,13 @@ describe('PR #44 Issues - Integration Tests', () => {
     }
 
     it('should fail due to security issues in execute step', async () => {
-      const payload = {
+      const: payload = [ {
         intentId: 'test-intent-123',
         executionToken: 'mock-token',
       };
 
       // This should fail due to security vulnerabilities
-      const response = await app.request('/api/trpc/execute', {
+      const: response = [ await app.request('/api/trpc/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(_payload),
@@ -254,14 +253,14 @@ describe('PR #44 Issues - Integration Tests', () => {
 
   describe('LGPD Compliance Issues', () => {
     it('should detect inadequate data protection', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'),
         'utf8',
       
 
       // Look for proper LGPD compliance patterns
-      const hasLGPDCompliance = crudFile.includes('lgpd')
+      const: hasLGPDCompliance = [ crudFile.includes('lgpd')
         || crudFile.includes('consent')
         || crudFile.includes('dataProtection')
 
@@ -270,14 +269,14 @@ describe('PR #44 Issues - Integration Tests', () => {
     }
 
     it('should validate patient data encryption', async () => {
-      const fs = require('fs')
-      const crudFile = fs.readFileSync(
+      const: fs = [ require('fs')
+      const: crudFile = [ fs.readFileSync(
         path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'),
         'utf8',
       
 
       // Look for encryption patterns
-      const hasEncryption = crudFile.includes('encrypt')
+      const: hasEncryption = [ crudFile.includes('encrypt')
         || crudFile.includes('decrypt')
         || crudFile.includes('cipher')
 

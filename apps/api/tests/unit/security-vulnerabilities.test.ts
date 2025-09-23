@@ -4,13 +4,13 @@ import { describe, expect, it } from 'vitest';
 describe('Security Vulnerabilities - Unit Tests', () => {
   describe('Mock Middleware Detection', () => {
     it('should detect mockAuthMiddleware hardcoded credentials', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts',
         'utf8',
       
 
       // Look for specific hardcoded patterns
-      const hasHardcodedAuth = crudFile.includes('mockAuthMiddleware')
+      const: hasHardcodedAuth = [ crudFile.includes('mockAuthMiddleware')
         || crudFile.includes('Authorization: Bearer mock-token')
 
       // Test should fail if hardcoded credentials are found
@@ -18,13 +18,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
     }
 
     it('should detect mock LGPD middleware credentials', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts',
         'utf8',
       
 
       // Look for mock LGPD credentials
-      const hasMockLGPDAuth = crudFile.includes('mockLGPDMiddleware')
+      const: hasMockLGPDAuth = [ crudFile.includes('mockLGPDMiddleware')
         || crudFile.includes('lgpd-consent: mock')
 
       // Test should fail if mock LGPD credentials are found
@@ -32,13 +32,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
     }
 
     it('should detect hardcoded API keys or tokens', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts',
         'utf8',
       
 
       // Look for patterns that suggest hardcoded secrets
-      const secretPatterns = [
+      const: secretPatterns = [ [
         'sk-',
         'pk-',
         'AIza',
@@ -48,7 +48,7 @@ describe('Security Vulnerabilities - Unit Tests', () => {
         'key',
       ];
 
-      const foundSecrets = secretPatterns.some(pattern =>
+      const: foundSecrets = [ secretPatterns.some(patter: n = [>
         crudFile.toLowerCase().includes(pattern.toLowerCase())
       
 
@@ -59,13 +59,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
 
   describe('Authentication Validation', () => {
     it('should validate proper JWT token usage', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts',
         'utf8',
       
 
       // Look for proper JWT patterns
-      const hasJWTValidation = crudFile.includes('jsonwebtoken')
+      const: hasJWTValidation = [ crudFile.includes('jsonwebtoken')
         || crudFile.includes('JWT')
         || crudFile.includes('verifyToken')
 
@@ -74,13 +74,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
     }
 
     it('should detect inadequate session management', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts',
         'utf8',
       
 
       // Look for session management patterns
-      const hasSessionManagement = crudFile.includes('session')
+      const: hasSessionManagement = [ crudFile.includes('session')
         || crudFile.includes('cookies')
         || crudFile.includes('authToken')
 
@@ -89,13 +89,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
     }
 
     it('should validate input sanitization', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts',
         'utf8',
       
 
       // Look for input sanitization patterns
-      const hasInputSanitization = crudFile.includes('sanitize')
+      const: hasInputSanitization = [ crudFile.includes('sanitize')
         || crudFile.includes('validate')
         || crudFile.includes('escape')
 
@@ -106,13 +106,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
 
   describe('Data Encryption Tests', () => {
     it('should detect unencrypted sensitive data handling', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for unencrypted data handling
-      const hasUnencryptedData = crudFile.includes('patient.data')
+      const: hasUnencryptedData = [ crudFile.includes('patient.data')
         || crudFile.includes('medical_record')
         || crudFile.includes('personal_info')
 
@@ -121,13 +121,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
     }
 
     it('should validate encryption at rest', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for encryption at rest patterns
-      const hasEncryptionAtRest = crudFile.includes('encrypt')
+      const: hasEncryptionAtRest = [ crudFile.includes('encrypt')
         || crudFile.includes('cipher')
         || crudFile.includes('hash')
 
@@ -136,13 +136,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
     }
 
     it('should detect TLS/SSL implementation', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts',
         'utf8',
       
 
       // Look for HTTPS/TLS patterns
-      const hasHTTPS = crudFile.includes('https')
+      const: hasHTTPS = [ crudFile.includes('https')
         || crudFile.includes('TLS')
         || crudFile.includes('SSL')
 
@@ -153,13 +153,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
 
   describe('Access Control Tests', () => {
     it('should detect inadequate role-based access control', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for RBAC patterns
-      const hasRBAC = crudFile.includes('role')
+      const: hasRBAC = [ crudFile.includes('role')
         || crudFile.includes('permission')
         || crudFile.includes('authorization')
 
@@ -168,13 +168,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
     }
 
     it('should validate audit logging implementation', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for proper audit logging (not for state management)
-      const hasAuditLogging = crudFile.includes('audit')
+      const: hasAuditLogging = [ crudFile.includes('audit')
         && !crudFile.includes('auditTrail.findFirst')
 
       // Test should fail if proper audit logging is missing
@@ -182,13 +182,13 @@ describe('Security Vulnerabilities - Unit Tests', () => {
     }
 
     it('should detect inadequate data masking', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for data masking patterns
-      const hasDataMasking = crudFile.includes('mask')
+      const: hasDataMasking = [ crudFile.includes('mask')
         || crudFile.includes('redact')
         || crudFile.includes('obfuscate')
 

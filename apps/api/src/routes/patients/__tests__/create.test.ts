@@ -7,25 +7,25 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
-const mockPatientService = {
+const: mockPatientService = [ {
   createPatient: vi.fn(,
   validatePatientData: vi.fn(,
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(,
 };
 
-const mockNotificationService = {
+const: mockNotificationService = [ {
   sendNotification: vi.fn(,
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateConsent: vi.fn(,
   createConsentRecord: vi.fn(,
 };
 
-const mockBrazilianValidator = {
+const: mockBrazilianValidator = [ {
   validateCPF: vi.fn(,
   validatePhone: vi.fn(,
   validateCEP: vi.fn(,
@@ -88,7 +88,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
   it('should export create patient route handler', async () => {
     expect(async () => {
-      const module = await import('../create')
+      const: module = [ await import('../create')
       expect(module.default).toBeDefined(
     }).not.toThrow(
   }
@@ -97,7 +97,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should create a new patient with complete data', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         cpf: '123.456.789-00'),
         email: 'joao@example.com'),
@@ -116,7 +116,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -126,14 +126,14 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
+      const: response = [ await createRoute.request(mockRequest
 
       // Debug: Log raw response
-      const responseText = await response.text(
+      const: responseText = [ await response.text(
       console.log('Raw response:', responseText
 
       // Parse as JSON
-      const data = JSON.parse(responseText
+      const: data = [ JSON.parse(responseText
 
       expect(response.status).toBe(201
       expect(data.success).toBe(true);
@@ -145,7 +145,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should create patient with minimal required data', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'Maria Santos'),
         email: 'maria@example.com'),
         lgpdConsent: {
@@ -153,7 +153,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -163,8 +163,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await createRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(201
       expect(data.success).toBe(true);
@@ -181,13 +181,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should include Location header with created patient URL', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -197,7 +197,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
+      const: response = [ await createRoute.request(mockRequest
 
       expect(response.status).toBe(201
       expect(response.headers.get('Location')).toBe(
@@ -208,14 +208,14 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should send welcome notification after patient creation', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         phone: '(11) 99999-9999'),
         lgpdConsent: { dataProcessing: true, marketing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -245,14 +245,14 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should validate CPF format', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         cpf: '123.456.789-00'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -274,14 +274,14 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         cpf: '111.111.111-11', // Invalid CPF
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -291,8 +291,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await createRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -307,14 +307,14 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should validate Brazilian phone number format', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         phone: '(11) 99999-9999'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -334,7 +334,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should validate CEP format in address', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         address: {
@@ -346,7 +346,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -368,7 +368,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should validate LGPD consent before creation', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         lgpdConsent: {
@@ -377,7 +377,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -399,13 +399,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should reject creation without required LGPD consent', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         // Missing lgpdConsent
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -415,8 +415,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await createRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -431,7 +431,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should create consent record after patient creation', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         lgpdConsent: {
@@ -440,7 +440,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -465,13 +465,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should log patient creation activity', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -505,13 +505,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should include LGPD compliance in audit log', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -536,7 +536,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should handle authentication errors', async () => {
       const { default: createRoute } = await import('../create')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -545,8 +545,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify({ name: 'Test' },
       };
 
-      const response = await createRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await createRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
@@ -556,13 +556,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should handle validation errors', async () => {
       const { default: createRoute } = await import('../create')
 
-      const invalidData = {
+      const: invalidData = [ {
         // Missing required name field
         email: 'invalid-email'),
         phone: 'invalid-phone'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -572,8 +572,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(invalidData),
       };
 
-      const response = await createRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await createRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -589,13 +589,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -605,8 +605,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await createRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -622,14 +622,14 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         cpf: '123.456.789-00'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -639,8 +639,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await createRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(409
       expect(data.success).toBe(false);
@@ -653,13 +653,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should include CFM compliance headers', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -669,7 +669,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
+      const: response = [ await createRoute.request(mockRequest
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true')
       expect(response.headers.get('X-Medical-Record-Created')).toBe('true')
@@ -679,13 +679,13 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     it('should validate healthcare professional context', async () => {
       const { default: createRoute } = await import('../create')
 
-      const patientData = {
+      const: patientData = [ {
         name: 'João Silva'),
         email: 'joao@example.com'),
         lgpdConsent: { dataProcessing: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients'),
         headers: new Headers({
@@ -696,7 +696,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
         body: JSON.stringify(patientData),
       };
 
-      const response = await createRoute.request(mockRequest
+      const: response = [ await createRoute.request(mockRequest
 
       expect(response.status).toBe(201
       expect(mockPatientService.createPatient).toHaveBeenCalledWith(

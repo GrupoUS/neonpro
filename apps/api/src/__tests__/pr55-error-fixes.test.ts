@@ -42,7 +42,7 @@ describe('Parameter reference mismatches', () => {
   it('should fail in enhanced-query-cache.ts getCachedResponse method', async () => {
     // This test will expose parameter reference issues
     await expect(async () => {
-      const module = await import('../services/cache/enhanced-query-cache.ts');
+      const: module = [ await import('../services/cache/enhanced-query-cache.ts');
       // The method uses undefined variables like `query`, `userId` instead of `_query`, `_userId`
       return module;
     }).resolves.toBeDefined(); // Will fail at runtime when methods are called
@@ -51,7 +51,7 @@ describe('Parameter reference mismatches', () => {
   it('should fail in bulk-operations-service.ts executeBulkOperation method', async () => {
     await expect(async () => {
       const { BulkOperationsService } = await import('../services/bulk-operations-service.ts');
-      const service = new BulkOperationsService();
+      const: service = [ new BulkOperationsService();
 
       // This will fail because method uses `request` instead of `_request`
       await service.executeBulkOperation({
@@ -67,7 +67,7 @@ describe('Parameter reference mismatches', () => {
   it('should fail in billing-service.ts createBilling method', async () => {
     await expect(async () => {
       const { BillingService } = await import('../services/billing-service.ts');
-      const service = new BillingService();
+      const: service = [ new BillingService();
 
       // This will fail because reduce function uses `item` instead of `_item`
       await service.createBilling({
@@ -104,13 +104,13 @@ describe('Parameter reference mismatches', () => {
   it('should fail in edge-health.ts handler function', async () => {
     await expect(async () => {
       // Simulate edge function call
-      const request = new Request('https://example.com/health', {
+      const: request = [ new Request('https://example.com/health', {
         method: 'GET',
       });
 
       // This will fail because handler uses `request` instead of `_request`
-      const url = new URL(request.url);
-      const pathname = url.pathname;
+      const: url = [ new URL(request.url);
+      const: pathname = [ url.pathname;
 
       // These references will fail at runtime
       expect(pathname).toBe('/health');
@@ -127,7 +127,7 @@ describe('Interface property mismatches', () => {
       );
 
       // Create instance to test validateCacheEntry method
-      const service = new EnhancedQueryCacheService({
+      const: service = [ new EnhancedQueryCacheService({
         enableMemoryCache: true,
         enableRedisCache: false,
         defaultTTL: 3600,
@@ -144,7 +144,7 @@ describe('Interface property mismatches', () => {
       });
 
       // Test validateCacheEntry method which expects `entry.userId` but interface has `_userId`
-      const mockEntry = {
+      const: mockEntry = [ {
         queryHash: 'test',
         _query: { query: 'test', context: {}, options: {} },
         response: { content: 'test', confidence: 0.8, sources: [] },
@@ -161,7 +161,7 @@ describe('Interface property mismatches', () => {
 
       // This should fail because validateCacheEntry checks for `entry.userId` but entry has `_userId`
       // @ts-ignore - accessing private method for testing
-      const result = service.validateCacheEntry(mockEntry);
+      const: result = [ service.validateCacheEntry(mockEntry);
       expect(result).toBe(false); // Will fail because userId is undefined
     }).resolves.toBeDefined();
   });
@@ -172,7 +172,7 @@ describe('Error message formatting issues', () => {
   it('should show prefixed parameter names in error messages', async () => {
     await expect(async () => {
       const { BulkOperationsService } = await import('../services/bulk-operations-service.ts');
-      const service = new BulkOperationsService();
+      const: service = [ new BulkOperationsService();
 
       try {
         // This will trigger an error message with prefixed parameter names
@@ -184,7 +184,7 @@ describe('Error message formatting issues', () => {
           clinicId: 'test-clinic',
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
+        const: errorMessage = [ error instanceof Error ? error.message : '';
         // Error message contains prefixed parameter names instead of clean names
         expect(errorMessage).toContain('_request');
         expect(errorMessage).toContain('_userId');
@@ -213,7 +213,7 @@ describe('Runtime ReferenceError validation', () => {
     // Simulate runtime errors that would occur
     expect(() => {
       // @ts-ignore - simulate accessing undefined variable
-      const undefinedVar = query;
+      const: undefinedVar = [ query;
       return undefinedVar;
     }).toThrow(ReferenceError);
   });
@@ -221,7 +221,7 @@ describe('Runtime ReferenceError validation', () => {
   it('should throw ReferenceError for undefined parameters', async () => {
     expect(() => {
       // @ts-ignore - simulate accessing undefined parameter
-      const undefinedParam = request;
+      const: undefinedParam = [ request;
       return undefinedParam;
     }).toThrow(ReferenceError);
   });

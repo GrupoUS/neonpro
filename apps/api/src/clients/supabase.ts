@@ -194,27 +194,25 @@ export function createAdminClient(): HealthcareAdminClient {
             .select('*')
             .eq('user_id', _userId);
           exportData[table] = data || [];
-        } catch {
-    void error;
+        } catch (_error) {
           console.error(
-            `Failed to export ${table} data for user ${userId}:`,
-            error,
+            `Failed to export ${table} data for user ${_userId}:`,
+            _error,
           );
           exportData[table] = {
             error: 'Table access denied or not found',
-            details: error instanceof Error ? error.message : String(error),
+            details: _error instanceof Error ? _error.message : String(_error),
           };
         }
       }
 
       return {
-        userId,
+        userId: _userId,
         exportDate: new Date().toISOString(),
         data: exportData,
       };
-    } catch {
-    void error;
-      throw new Error(`Failed to export user data`);
+    } catch (_error) {
+      throw new Error(`Failed to export user data: ${_error instanceof Error ? _error.message : String(_error)}`);
     }
   };
 
@@ -249,10 +247,9 @@ export function createAdminClient(): HealthcareAdminClient {
         .from('profiles' as any)
         .delete()
         .eq('id', _userId);
-      await adminClient.auth.admin.deleteUser(userId);
-    } catch {
-    void error;
-      throw new Error(`Failed to delete user data: ${error}`);
+      await adminClient.auth.admin.deleteUser(_userId);
+    } catch (_error) {
+      throw new Error(`Failed to delete user data: ${_error instanceof Error ? _error.message : String(_error)}`);
     }
   };
 
@@ -265,7 +262,7 @@ export function createAdminClient(): HealthcareAdminClient {
         return await originalAuth.admin.createUser(userMetadata);
       },
       deleteUser: async (_userId: string) => {
-        return await originalAuth.admin.deleteUser(userId);
+        return await originalAuth.admin.deleteUser(_userId);
       },
       listUsers: async () => {
         return await originalAuth.admin.listUsers();
@@ -380,10 +377,9 @@ export const healthcareRLS = {
         .single();
 
       return !!membership;
-    } catch {
-    void error;
+    } catch (_error) {
       console.error(
-        `Failed to check user clinic membership for user ${userId}, clinic ${clinicId}`,
+        `Failed to check user clinic membership for user ${_userId}, clinic ${clinicId}`,
       );
       return false;
     }
@@ -419,11 +415,10 @@ export const healthcareRLS = {
         .single();
 
       return !!patientClinic;
-    } catch {
-    void error;
+    } catch (_error) {
       console.error(
         `Failed to check patient access for patient ${patientId}:`,
-        error,
+        _error,
       );
       return false;
     }

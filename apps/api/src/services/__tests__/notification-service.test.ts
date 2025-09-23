@@ -16,16 +16,16 @@ describe('Real-time Notification Service (T042)', () => {
   });
 
   it('should export NotificationService class', async () => {
-    const module = await import('../notification-service');
+    const: module = [ await import('../notification-service');
     expect(module.NotificationService).toBeDefined();
   });
 
   describe('Multi-channel Notification Delivery', () => {
     it('should send email notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'email',
         templateId: 'appointment_reminder',
@@ -48,9 +48,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should send SMS notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'sms',
         templateId: 'appointment_confirmation',
@@ -71,9 +71,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should send WhatsApp notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'whatsapp',
         templateId: 'treatment_followup',
@@ -97,9 +97,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should send push notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'push',
         templateId: 'appointment_reminder_push',
@@ -123,9 +123,9 @@ describe('Real-time Notification Service (T042)', () => {
   describe('Real-time Notification Streaming', () => {
     it('should start notification stream', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.startNotificationStream({
+      const: result = [ await service.startNotificationStream({
         streamId: 'stream-123',
         recipientId: 'patient-123',
         channels: ['email', 'sms', 'push'],
@@ -143,9 +143,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should stop notification stream', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.stopNotificationStream('stream-123');
+      const: result = [ await service.stopNotificationStream('stream-123');
 
       expect(result.success).toBe(true);
       expect(result.data.streamId).toBe('stream-123');
@@ -155,9 +155,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should get real-time notification status', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.getNotificationStatus('notification-123');
+      const: result = [ await service.getNotificationStatus('notification-123');
 
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBe('notification-123');
@@ -168,9 +168,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should list active notification streams', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.listActiveStreams();
+      const: result = [ await service.listActiveStreams();
 
       expect(result.success).toBe(true);
       expect(Array.isArray(result.data.streams)).toBe(true);
@@ -181,9 +181,9 @@ describe('Real-time Notification Service (T042)', () => {
   describe('Brazilian Healthcare Context', () => {
     it('should send LGPD compliant notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'email',
         templateId: 'lgpd_consent_update',
@@ -209,9 +209,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should send ANVISA compliant medical notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'sms',
         templateId: 'medical_device_alert',
@@ -237,9 +237,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should send CFM compliant professional notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: 'doctor-123',
         channel: 'email',
         templateId: 'cfm_professional_update',
@@ -266,9 +266,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should validate Brazilian phone number format', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.validateRecipientContact({
+      const: result = [ await service.validateRecipientContact({
         recipientId: 'patient-123',
         channel: 'sms',
         contactInfo: {
@@ -287,9 +287,9 @@ describe('Real-time Notification Service (T042)', () => {
   describe('Template Management', () => {
     it('should create notification template', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.createTemplate({
+      const: result = [ await service.createTemplate({
         templateId: 'custom_reminder',
         name: 'Lembrete Personalizado',
         description: 'Template para lembretes personalizados',
@@ -328,9 +328,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should render template with dynamic content', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.renderTemplate({
+      const: result = [ await service.renderTemplate({
         templateId: 'appointment_reminder',
         data: {
           patientName: 'João Silva',
@@ -352,9 +352,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should update notification template', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.updateTemplate('custom_reminder', {
+      const: result = [ await service.updateTemplate('custom_reminder', {
         subject: 'ATUALIZADO: {{appointmentType}} em {{clinicName}}',
         content: 'Conteúdo atualizado do template...',
         variables: ['patientName', 'appointmentType', 'clinicName'],
@@ -370,9 +370,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should list available templates', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.listTemplates({
+      const: result = [ await service.listTemplates({
         channel: 'email',
         language: 'pt-BR',
         category: 'appointment',
@@ -389,9 +389,9 @@ describe('Real-time Notification Service (T042)', () => {
   describe('Delivery Tracking and Status Monitoring', () => {
     it('should track notification delivery', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.trackDelivery('notification-123');
+      const: result = [ await service.trackDelivery('notification-123');
 
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBe('notification-123');
@@ -403,9 +403,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should retry failed notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.retryNotification('notification-123', {
+      const: result = [ await service.retryNotification('notification-123', {
         reason: 'Temporary delivery failure',
         maxRetries: 3,
         retryDelay: 300, // 5 minutes
@@ -421,9 +421,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should get delivery statistics', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.getDeliveryStatistics({
+      const: result = [ await service.getDeliveryStatistics({
         startDate: new Date('2024-01-01'),
         endDate: new Date('2024-01-31'),
         channels: ['email', 'sms', 'whatsapp'],
@@ -439,9 +439,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should update notification status', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.updateNotificationStatus(
+      const: result = [ await service.updateNotificationStatus(
         'notification-123',
         {
           status: 'delivered',
@@ -469,9 +469,9 @@ describe('Real-time Notification Service (T042)', () => {
   describe('Priority-based Queuing and Rate Limiting', () => {
     it('should queue high priority notification', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.queueNotification({
+      const: result = [ await service.queueNotification({
         recipientId: 'patient-123',
         channel: 'sms',
         templateId: 'emergency_alert',
@@ -491,9 +491,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should apply rate limiting', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.checkRateLimit({
+      const: result = [ await service.checkRateLimit({
         recipientId: 'patient-123',
         channel: 'sms',
         timeWindow: '1 hour',
@@ -508,9 +508,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should process notification queue', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.processNotificationQueue({
+      const: result = [ await service.processNotificationQueue({
         batchSize: 10,
         priorityOrder: ['critical', 'high', 'medium', 'low'],
         respectRateLimits: true,
@@ -525,9 +525,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should get queue status', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.getQueueStatus();
+      const: result = [ await service.getQueueStatus();
 
       expect(result.success).toBe(true);
       expect(result.data.totalQueued).toBeGreaterThanOrEqual(0);
@@ -540,9 +540,9 @@ describe('Real-time Notification Service (T042)', () => {
   describe('Integration with Existing Data Models', () => {
     it('should integrate with Patient model', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendPatientNotification({
+      const: result = [ await service.sendPatientNotification({
         patientId: 'patient-123',
         notificationType: 'appointment_reminder',
         appointmentId: 'appointment-456',
@@ -559,9 +559,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should validate LGPD consent before sending', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.validateLGPDConsent({
+      const: result = [ await service.validateLGPDConsent({
         patientId: 'patient-123',
         channel: 'email',
         purpose: 'marketing',
@@ -577,9 +577,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should log notification to audit trail', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.logNotificationToAudit({
+      const: result = [ await service.logNotificationToAudit({
         notificationId: 'notification-123',
         recipientId: 'patient-123',
         channel: 'email',
@@ -600,9 +600,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should sync with notification preferences', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.syncNotificationPreferences('patient-123');
+      const: result = [ await service.syncNotificationPreferences('patient-123');
 
       expect(result.success).toBe(true);
       expect(result.data.patientId).toBe('patient-123');
@@ -615,9 +615,9 @@ describe('Real-time Notification Service (T042)', () => {
   describe('Database Integration', () => {
     it('should handle database connection errors gracefully', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: 'patient-123',
         channel: 'email',
         templateId: 'test_template',
@@ -631,9 +631,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should validate database schema', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.validateDatabaseSchema();
+      const: result = [ await service.validateDatabaseSchema();
 
       expect(result.success).toBe(true);
       expect(result.data.schemaValid).toBe(true);
@@ -643,9 +643,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should perform database maintenance', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.performDatabaseMaintenance({
+      const: result = [ await service.performDatabaseMaintenance({
         operation: 'cleanup_old_notifications',
         retentionDays: 90,
         dryRun: true,
@@ -660,9 +660,9 @@ describe('Real-time Notification Service (T042)', () => {
   describe('Error Handling and Validation', () => {
     it('should handle invalid notification parameters', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const result = await service.sendNotification({
+      const: result = [ await service.sendNotification({
         recipientId: '',
         channel: '',
         templateId: '',
@@ -676,9 +676,9 @@ describe('Real-time Notification Service (T042)', () => {
 
     it('should validate service configuration', async () => {
       const { NotificationService } = await import('../notification-service');
-      const service = new NotificationService();
+      const: service = [ new NotificationService();
 
-      const config = service.getServiceConfiguration();
+      const: config = [ service.getServiceConfiguration();
 
       expect(config.databaseConnection).toBeDefined();
       expect(config.supportedChannels).toBeDefined();

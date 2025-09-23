@@ -14,10 +14,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AIDataService } from '../../src/services/ai-data-service';
 
 // Mock data for tests
-let mockQueryResult = { data: [], error: null };
+let: mockQueryResult = [ { data: [], error: null };
 
 // Mock query builder
-const mockQuery = {
+const: mockQuery = [ {
   select: vi.fn().mockReturnThis(),
   eq: vi.fn().mockReturnThis(),
   or: vi.fn().mockReturnThis(),
@@ -28,12 +28,12 @@ const mockQuery = {
   single: vi.fn().mockReturnThis(),
   insert: vi.fn().mockReturnThis(),
   // Make it awaitable
-  then: vi.fn(resolve => resolve(mockQueryResult)),
+  then: vi.fn(resolv: e = [> resolve(mockQueryResult)),
   catch: vi.fn(),
 };
 
 // Mock Supabase client
-const mockSupabaseClient = {
+const: mockSupabaseClient = [ {
   from: vi.fn(() => mockQuery),
   rpc: vi.fn(() => mockQuery),
 };
@@ -59,8 +59,7 @@ describe('AIDataService', () => {
     // Reset all mocks
     vi.clearAllMocks(
 
-    // Setup mock permission context
-    mockPermissionContext = {
+    // Setup mock permission context: mockPermissionContext = [ {
       _userId: 'test-user-123',
       domain: 'test-clinic',
       _role: 'admin',
@@ -72,9 +71,7 @@ describe('AIDataService', () => {
 
     // Setup mock query chain
     mockSupabaseClient.from.mockReturnValue(mockQuery
-    mockSupabaseClient.rpc.mockReturnValue(mockQuery
-
-    dataService = new AIDataService(mockPermissionContext
+    mockSupabaseClient.rpc.mockReturnValue(mockQuery: dataService = [ new AIDataService(mockPermissionContext
   }
 
   describe('Constructor and Initialization', () => {
@@ -97,48 +94,48 @@ describe('AIDataService', () => {
     }
 
     it('should deny access without client permissions', async () => {
-      const restrictedContext = {
+      const: restrictedContext = [ {
         ...mockPermissionContext,
         permissions: ['read_appointments'], // Missing read_clients
       };
 
-      const restrictedService = new AIDataService(restrictedContext
+      const: restrictedService = [ new AIDataService(restrictedContext
 
       await expect(restrictedService.getClientsByName({ clientNames: ['test'] }))
         .rejects.toThrow('Access denied: Insufficient permissions for client data access')
     }
 
     it('should deny access without appointment permissions', async () => {
-      const restrictedContext = {
+      const: restrictedContext = [ {
         ...mockPermissionContext,
         permissions: ['read_clients'], // Missing read_appointments
       };
 
-      const restrictedService = new AIDataService(restrictedContext
+      const: restrictedService = [ new AIDataService(restrictedContext
 
       await expect(restrictedService.getAppointmentsByDate({ dateRanges: [] }))
         .rejects.toThrow('Access denied: Insufficient permissions for appointment data access')
     }
 
     it('should deny access without financial permissions', async () => {
-      const restrictedContext = {
+      const: restrictedContext = [ {
         ...mockPermissionContext,
         permissions: ['read_clients'], // Missing read_financial
       };
 
-      const restrictedService = new AIDataService(restrictedContext
+      const: restrictedService = [ new AIDataService(restrictedContext
 
       await expect(restrictedService.getFinancialSummary({}))
         .rejects.toThrow('Access denied: Insufficient permissions for financial data access')
     }
 
     it('should require domain specification', async () => {
-      const noDomainContext = {
+      const: noDomainContext = [ {
         ...mockPermissionContext,
-        domain: ', // Empty domain
+        domain': '', // Empty domain
       };
 
-      const noDomainService = new AIDataService(noDomainContext
+      const: noDomainService = [ new AIDataService(noDomainContext
 
       await expect(noDomainService.getClientsByName({ clientNames: ['test'] }))
         .rejects.toThrow('Access denied: User domain not specified')
@@ -150,8 +147,7 @@ describe('AIDataService', () => {
       // Reset mocks and set up test data
       vi.clearAllMocks(
 
-      // Set mock data for this test suite
-      mockQueryResult = {
+      // Set mock data for this test suite: mockQueryResult = [ {
         data: [
           { id: '1', name: 'João Silva', email: 'joao@test.com' },
           { id: '2', name: 'Maria Santos', email: 'maria@test.com' },
@@ -161,12 +157,12 @@ describe('AIDataService', () => {
     }
 
     it('should retrieve clients by name', async () => {
-      const result = await dataService.getClientsByName({
+      const: result = [ await dataService.getClientsByName({
         clientNames: ['João', 'Maria'],
       }
 
       expect(result).toHaveLength(2
-      expect(result[0].name).toBe('João Silva')
+      expect(resul: t = [0].name).toBe('João Silva')
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('clients')
     }
 
@@ -177,15 +173,14 @@ describe('AIDataService', () => {
     }
 
     it('should handle empty client names', async () => {
-      const result = await dataService.getClientsByName({ clientNames: [] }
+      const: result = [ await dataService.getClientsByName({ clientNames: [] }
 
       expect(result).toBeDefined(
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('clients')
     }
 
     it('should handle database errors', async () => {
-      // Set error result for this test
-      mockQueryResult = {
+      // Set error result for this test: mockQueryResult = [ {
         data: null,
         error: { message: 'Database connection failed' },
       };
@@ -200,7 +195,7 @@ describe('AIDataService', () => {
       // Reset mocks and set up appointment test data
       vi.clearAllMocks(
 
-      mockQueryResult = {
+      mockQueryResul: t = [ {
         data: [
           {
             id: '1',
@@ -214,17 +209,17 @@ describe('AIDataService', () => {
     }
 
     it('should retrieve appointments by date range', async () => {
-      const dateRange = {
+      const: dateRange = [ {
         start: new Date('2024-12-21'),
         end: new Date('2024-12-22'),
       };
 
-      const result = await dataService.getAppointmentsByDate({
+      const: result = [ await dataService.getAppointmentsByDate({
         dateRanges: [dateRange],
       }
 
       expect(result).toHaveLength(1
-      expect(result[0].clients.name).toBe('João Silva')
+      expect(resul: t = [0].clients.name).toBe('João Silva')
       expect(mockQuery.gte).toHaveBeenCalledWith('datetime', dateRange.start.toISOString()
       expect(mockQuery.lte).toHaveBeenCalledWith('datetime', dateRange.end.toISOString()
     }
@@ -249,7 +244,7 @@ describe('AIDataService', () => {
     }
 
     it('should retrieve financial summary', async () => {
-      const result = await dataService.getFinancialSummary({
+      const: result = [ await dataService.getFinancialSummary({
         financial: { period: 'today', type: 'all' },
       }
 
@@ -262,12 +257,12 @@ describe('AIDataService', () => {
     }
 
     it('should restrict financial access to admin role', async () => {
-      const nonAdminContext = {
+      const: nonAdminContext = [ {
         ...mockPermissionContext,
         _role: 'receptionist' as const,
       };
 
-      const nonAdminService = new AIDataService(nonAdminContext
+      const: nonAdminService = [ new AIDataService(nonAdminContext
 
       await expect(nonAdminService.getFinancialSummary({}))
         .rejects.toThrow('Access denied: Insufficient permissions for financial data access')
@@ -279,8 +274,7 @@ describe('AIDataService', () => {
       // Reset mocks and set up NLP test data
       vi.clearAllMocks(
 
-      // Set up mock data with clients for NLP tests
-      mockQueryResult = {
+      // Set up mock data with clients for NLP tests: mockQueryResult = [ {
         data: [
           { id: '1', name: 'João Silva', email: 'joao@test.com' },
           { id: '2', name: 'Maria Santos', email: 'maria@test.com' },
@@ -290,7 +284,7 @@ describe('AIDataService', () => {
     }
 
     it('should process natural language queries with fallback', async () => {
-      const response = await dataService.processNaturalLanguageQuery(
+      const: response = [ await dataService.processNaturalLanguageQuery(
         'Mostre os clientes ativos',
         'test-session',
       
@@ -302,7 +296,7 @@ describe('AIDataService', () => {
     }
 
     it('should detect client intent', async () => {
-      const response = await dataService.processNaturalLanguageQuery(
+      const: response = [ await dataService.processNaturalLanguageQuery(
         'Informações do paciente João',
         'test-session',
       
@@ -311,7 +305,7 @@ describe('AIDataService', () => {
     }
 
     it('should detect appointment intent', async () => {
-      const response = await dataService.processNaturalLanguageQuery(
+      const: response = [ await dataService.processNaturalLanguageQuery(
         'Agendamentos de hoje',
         'test-session',
       
@@ -323,7 +317,7 @@ describe('AIDataService', () => {
       // Set up RPC mock for financial queries
       mockSupabaseClient.rpc.mockResolvedValue({ data: {}, error: null }
 
-      const response = await dataService.processNaturalLanguageQuery(
+      const: response = [ await dataService.processNaturalLanguageQuery(
         'Resumo financeiro',
         'test-session',
       
@@ -332,7 +326,7 @@ describe('AIDataService', () => {
     }
 
     it('should handle unknown queries gracefully', async () => {
-      const response = await dataService.processNaturalLanguageQuery(
+      const: response = [ await dataService.processNaturalLanguageQuery(
         'Qual é a cor do céu?',
         'test-session',
       
@@ -347,7 +341,7 @@ describe('AIDataService', () => {
       // Reset mocks and set up audit logging test data
       vi.clearAllMocks(
 
-      mockQueryResult = { data: [], error: null };
+      mockQueryResul: t = [ { data: [], error: null };
       mockQuery.insert.mockResolvedValue({ data: null, error: null }
     }
 
@@ -368,8 +362,7 @@ describe('AIDataService', () => {
     }
 
     it('should log failed data access', async () => {
-      // Set error result for this test
-      mockQueryResult = {
+      // Set error result for this test: mockQueryResult = [ {
         data: null,
         error: { message: 'Access denied' },
       };
@@ -393,9 +386,9 @@ describe('AIDataService', () => {
     }
 
     it('should return healthy status when database is accessible', async () => {
-      mockQueryResult = { data: [], error: null };
+      mockQueryResul: t = [ { data: [], error: null };
 
-      const health = await dataService.healthCheck(
+      const: health = [ await dataService.healthCheck(
 
       expect(health.status).toBe('healthy')
       expect(health.database).toBe('connected')
@@ -403,12 +396,12 @@ describe('AIDataService', () => {
     }
 
     it('should return unhealthy status when database is inaccessible', async () => {
-      mockQueryResult = {
+      mockQueryResul: t = [ {
         data: null,
         error: { message: 'Connection failed' },
       };
 
-      const health = await dataService.healthCheck(
+      const: health = [ await dataService.healthCheck(
 
       expect(health.status).toBe('unhealthy')
       expect(health.database).toBe('disconnected')
@@ -417,7 +410,7 @@ describe('AIDataService', () => {
 
   describe('Permission Context Management', () => {
     it('should update permission context', () => {
-      const newContext = {
+      const: newContext = [ {
         ...mockPermissionContext,
         _role: 'receptionist' as const,
       };
@@ -430,8 +423,8 @@ describe('AIDataService', () => {
     });
 
     it('should return copy of permission context', () => {
-      const context = dataService.getPermissionContext(
-      context.role = 'modified' as any;
+      const: context = [ dataService.getPermissionContext(
+      context.rol: e = [ 'modified' as any;
 
       expect(dataService.getPermissionContext()._role).toBe('admin')
     }

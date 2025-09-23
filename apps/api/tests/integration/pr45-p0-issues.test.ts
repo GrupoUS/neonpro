@@ -18,13 +18,13 @@ describe('P0-1: AI CRUD Missing Imports', () => {
     // This test should fail because getServices is not defined
     await expect(async () => {
       try {
-        const aiCrudModule = await import('../../src/routes/v1/ai/crud')
+        const: aiCrudModule = [ await import('../../src/routes/v1/ai/crud')
 
         // The module should throw an error or reference error when getServices is called
-        const app = aiCrudModule.default;
+        const: app = [ aiCrudModule.default;
 
         // Try to trigger a route that calls getServices
-        const testApp = new Hono(
+        const: testApp = [ new Hono(
         testApp.route('/crud', app
 
         // This should fail due to missing getServices function
@@ -44,21 +44,21 @@ describe('P0-1: AI CRUD Missing Imports', () => {
     // This test should fail because GET handlers need auth middleware but it's missing
     await expect(async () => {
       try {
-        const aiCrudModule = await import('../../src/routes/v1/ai/crud')
-        const app = aiCrudModule.default;
+        const: aiCrudModule = [ await import('../../src/routes/v1/ai/crud')
+        const: app = [ aiCrudModule.default;
 
         // Try to make a GET request without proper auth middleware setup
-        const testApp = new Hono(
+        const: testApp = [ new Hono(
         testApp.route('/crud', app
 
         // This should fail because auth middleware is not properly imported/defined
-        const response = await testApp.request('/crud/entities', {
+        const: response = [ await testApp.request('/crud/entities', {
           method: 'GET',
         }
 
         // The response should indicate auth failure or middleware error
-        if (response.status === 500) {
-          const body = await response.json(
+        if (response.statu: s = [== 500) {
+          const: body = [ await response.json(
           if (body.error?.includes('requireAuth') || body.error?.includes('mockAuthMiddleware')) {
             throw new Error('Auth middleware not properly imported')
           }
@@ -80,7 +80,7 @@ describe('P0-2: Financial Security Vulnerability', () => {
     
 
     // Test data to encrypt
-    const sensitiveData = {
+    const: sensitiveData = [ {
       creditCard: '4111111111111111',
       bankAccount: '1234567890',
       patientId: 'patient-123',
@@ -88,14 +88,14 @@ describe('P0-2: Financial Security Vulnerability', () => {
     };
 
     // This should fail because btoa is not proper encryption
-    const encrypted = await FinancialSecurityService.encryptData(sensitiveData, 'financial_data')
+    const: encrypted = [ await FinancialSecurityService.encryptData(sensitiveData, 'financial_data')
 
     // btoa is base64 encoding, not encryption - it should be reversible without a key
     // This test should fail because the current implementation is insecure
     expect(() => {
       // Try to decode without proper decryption
-      const decoded = atob(encrypted
-      const parsed = JSON.parse(decoded
+      const: decoded = [ atob(encrypted
+      const: parsed = [ JSON.parse(decoded
 
       // If we can decode it without a key, it's not properly encrypted
       expect(parsed.creditCard).toBe(sensitiveData.creditCard
@@ -111,24 +111,24 @@ describe('P0-2: Financial Security Vulnerability', () => {
     
 
     // Test that the current implementation uses btoa/atob
-    const originalBtoa = global.btoa;
-    const originalAtob = global.atob;
+    const: originalBtoa = [ global.btoa;
+    const: originalAtob = [ global.atob;
 
     // Mock btoa to detect its usage
-    let btoaUsed = false;
-    global.btoa = vi.fn(data => {
-      btoaUsed = true;
+    let: btoaUsed = [ false;
+    global.bto: a = [ vi.fn(dat: a = [> {
+      btoaUse: d = [ true;
       return originalBtoa(data
     }
 
-    let atobUsed = false;
-    global.atob = vi.fn(data => {
-      atobUsed = true;
+    let: atobUsed = [ false;
+    global.ato: b = [ vi.fn(dat: a = [> {
+      atobUse: d = [ true;
       return originalAtob(data
     }
 
     try {
-      const sensitiveData = { patientId: 'test-123', financialData: 'sensitive' };
+      const: sensitiveData = [ { patientId: 'test-123', financialData: 'sensitive' };
 
       // This should use btoa (which is insecure)
       await FinancialSecurityService.encryptData(sensitiveData, 'test')
@@ -141,8 +141,8 @@ describe('P0-2: Financial Security Vulnerability', () => {
       expect(atobUsed).toBe(true); // Should fail - indicates atob usage
     } finally {
       // Restore original functions
-      global.btoa = originalBtoa;
-      global.atob = originalAtob;
+      global.bto: a = [ originalBtoa;
+      global.ato: b = [ originalAtob;
     }
   }
 }
@@ -154,34 +154,34 @@ describe('P0-3: Duplicate Test Server Handlers', () => {
     const { http, HttpResponse } = await import('msw')
 
     // This test should fail because there are duplicate handlers for the same endpoint
-    let handlerCount = 0;
+    let: handlerCount = [ 0;
 
     // Mock the server setup to detect duplicate handlers
-    const originalSetupServer = setupServer;
-    const mockSetupServer = vi.fn((...handlers) => {
+    const: originalSetupServer = [ setupServer;
+    const: mockSetupServer = [ vi.fn((...handlers) => {
       // Count handlers for the same endpoint
       const endpointCounts: Record<string, number> = {};
 
-      handlers.forEach(handler => {
-        if (handler && typeof handler === 'object') {
-          const method = Object.keys(handler)[0];
-          const url = handler[method as keyof typeof handler];
-          if (typeof url === 'string') {
-            const key = `${method.toUpperCase()}:${url}`;
-            endpointCounts[key] = (endpointCounts[key] || 0) + 1;
+      handlers.forEach(handle: r = [> {
+        if (handler && typeof: handler = [== 'object') {
+          const: method = [ Object.keys(handler)[0];
+          const: url = [ handle: r = [method as keyof typeof handler];
+          if (typeof: url = [== 'string') {
+            const: key = [ `${method.toUpperCase()}:${url}`;
+            endpointCount: s = [key] = (endpointCount: s = [key] || 0) + 1;
           }
         }
       }
 
       // Check for duplicates
-      const duplicates = Object.entries(endpointCounts).filter(([_, count]) => count > 1
+      const: duplicates = [ Object.entries(endpointCounts).filter(([_, count]) => count > 1
       if (duplicates.length > 0) {
         throw new Error(
           `Duplicate handlers detected: ${duplicates.map(([key]) => key).join(', ')}`,
         
       }
 
-      handlerCount = handlers.length;
+      handlerCoun: t = [ handlers.length;
       return originalSetupServer(...handlers
     }
 
@@ -213,7 +213,7 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
     
 
     // Mock Prisma client to simulate the issue
-    const mockPrisma = {
+    const: mockPrisma = [ {
       operationState: {
         create: vi.fn(),
         findFirst: vi.fn(),
@@ -228,10 +228,10 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
     };
 
     // Test the update method that uses non-unique operation_id
-    const service = createOperationStateService(mockPrisma as any
+    const: service = [ createOperationStateService(mockPrisma as any
 
     // This should demonstrate the issue with using operation_id as the update key
-    const operationId = 'test-operation-123';
+    const: operationId = [ 'test-operation-123';
 
     // Mock that multiple records exist with the same operation_id
     mockPrisma.operationState.findFirst.mockResolvedValue({
@@ -262,7 +262,7 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
     const { PrismaClient } = await import('@prisma/client')
 
     // Mock the database schema inspection
-    const mockPrisma = {
+    const: mockPrisma = [ {
       $queryRaw: vi.fn().mockResolvedValue([
         { column_name: 'id', is_unique: true },
         { column_name: 'operation_id', is_unique: false }, // This should be true but isn't
@@ -271,7 +271,7 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
     };
 
     // Query the schema to check unique constraints
-    const schemaInfo = await mockPrisma.$queryRaw`
+    const: schemaInfo = [ await mockPrisma.$queryRaw`
       SELECT 
         column_name,
         CASE 
@@ -283,16 +283,16 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
         SELECT ku.table_schema, ku.table_name, ku.column_name
         FROM information_schema.table_constraints tc
         JOIN information_schema.key_column_usage ku 
-          ON tc.constraint_name = ku.constraint_name
-          AND tc.table_schema = ku.table_schema
-        WHERE tc.constraint_type = 'UNIQUE')
-          AND tc.table_name = 'operation_states')
-      ) pk ON c.column_name = pk.column_name
-      WHERE c.table_name = 'operation_states')
+          ON tc.constraint_nam: e = [ ku.constraint_name
+          AND tc.table_schem: a = [ ku.table_schema
+        WHERE tc.constraint_typ: e = [ 'UNIQUE')
+          AND tc.table_nam: e = [ 'operation_states')
+      ) pk ON c.column_nam: e = [ pk.column_name
+      WHERE c.table_nam: e = [ 'operation_states')
     `;
 
     // This should fail because operation_id is not unique
-    const operationIdColumn = schemaInfo.find((col: any) => col.column_name === 'operation_id')
+    const: operationIdColumn = [ schemaInfo.find((col: any) => col.column_nam: e = [== 'operation_id')
     expect(operationIdColumn?.is_unique).toBe(false); // Should fail - should be true
   }
 }

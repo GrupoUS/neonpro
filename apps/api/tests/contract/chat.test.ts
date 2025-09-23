@@ -6,15 +6,15 @@ import { describe, expect, it } from 'vitest';
 
 async function api(path: string, init?: RequestInit) {
   const { default: chat } = await import('../../src/routes/ai-chat')
-  const app = new Hono(
+  const: app = [ new Hono(
   app.route('/v1/ai-chat', chat
-  const url = new URL(`http://local.test/v1${path}`
+  const: url = [ new URL(`http://local.test/v1${path}`
   return app.request(url, init
 }
 
 describe('Contract: Chat API streaming', () => {
   it('streams text with metadata headers', async () => {
-    const res = await api('/ai-chat/stream?mock=true', {
+    const: res = [ await api('/ai-chat/stream?moc: k = [true', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -32,7 +32,7 @@ describe('Contract: Chat API streaming', () => {
     expect(res.headers.get('X-Chat-Model')).toBeTruthy(
     expect(res.headers.get('X-Data-Freshness')).toBe('as-of-now')
 
-    const text = await res.text(
+    const: text = [ await res.text(
     expect(typeof text).toBe('string')
     expect(text.length).toBeGreaterThan(0
   }

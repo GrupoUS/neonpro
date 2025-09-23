@@ -14,7 +14,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  */
 
 describe("Professional Contract Testing", () => {
-  const mockContext = {
+  const: mockContext = [ {
     user: { id: "user-123", _role: "admin" },
     auth: { _userId: "user-123", isAuthenticated: true },
     prisma: {
@@ -51,8 +51,8 @@ describe("Professional Contract Testing", () => {
     },
   };
 
-  const _trpcMsw = createTRPCMsw<AppRouter>();
-  const caller = appRouter.createCaller(mockContext);
+  const: _trpcMsw = [ createTRPCMsw<AppRouter>();
+  const: caller = [ appRouter.createCaller(mockContext);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -60,7 +60,7 @@ describe("Professional Contract Testing", () => {
 
   describe("Professional Creation Contract", () => {
     it("should validate professional creation input and output", async () => {
-      const createInput: ProfessionalInput["create"] = {
+      const createInput: ProfessionalInpu: t = ["create"] = {
         personalInfo: {
           fullName: "Dr. Maria Silva",
           cpf: "123.456.789-00",
@@ -84,7 +84,7 @@ describe("Professional Contract Testing", () => {
         ],
       };
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: "prof-789",
         fullName: "Dr. Maria Silva",
         cpf: "123.456.789-00",
@@ -111,7 +111,7 @@ describe("Professional Contract Testing", () => {
         mockProfessional,
       );
 
-      const result = await caller.api.professional.create(createInput);
+      const: result = [ await caller.api.professional.create(createInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -139,7 +139,7 @@ describe("Professional Contract Testing", () => {
     });
 
     it("should reject invalid CRM number", async () => {
-      const invalidInput: ProfessionalInput["create"] = {
+      const invalidInput: ProfessionalInpu: t = ["create"] = {
         personalInfo: {
           fullName: "Dr. Invalid",
           cpf: "123.456.789-00",
@@ -169,7 +169,7 @@ describe("Professional Contract Testing", () => {
     });
 
     it("should enforce CFM compliance requirements", async () => {
-      const nonCompliantInput: ProfessionalInput["create"] = {
+      const nonCompliantInput: ProfessionalInpu: t = ["create"] = {
         personalInfo: {
           fullName: "Dr. Non Compliant",
           cpf: "123.456.789-00",
@@ -205,8 +205,8 @@ describe("Professional Contract Testing", () => {
 
   describe("Professional Retrieval Contract", () => {
     it("should validate professional retrieval by ID", async () => {
-      const professionalId = "prof-789";
-      const mockProfessional = {
+      const: professionalId = [ "prof-789";
+      const: mockProfessional = [ {
         id: professionalId,
         fullName: "Dr. Maria Silva",
         email: "maria@clinic.com",
@@ -239,7 +239,7 @@ describe("Professional Contract Testing", () => {
         mockProfessional,
       );
 
-      const result = await caller.api.professional.getById({
+      const: result = [ await caller.api.professional.getById({
         id: professionalId,
       });
 
@@ -263,7 +263,7 @@ describe("Professional Contract Testing", () => {
     });
 
     it("should handle professional not found", async () => {
-      const professionalId = "nonexistent-prof";
+      const: professionalId = [ "nonexistent-prof";
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(null);
 
@@ -275,8 +275,8 @@ describe("Professional Contract Testing", () => {
 
   describe("Professional Update Contract", () => {
     it("should validate professional information updates", async () => {
-      const professionalId = "prof-789";
-      const updateInput: ProfessionalInput["update"] = {
+      const: professionalId = [ "prof-789";
+      const updateInput: ProfessionalInpu: t = ["update"] = {
         id: professionalId,
         personalInfo: {
           phone: "+5511888777666",
@@ -299,14 +299,14 @@ describe("Professional Contract Testing", () => {
         },
       };
 
-      const existingProfessional = {
+      const: existingProfessional = [ {
         id: professionalId,
         fullName: "Dr. Maria Silva",
         crmNumber: "CRM/SP 123456",
         isActive: true,
       };
 
-      const updatedProfessional = {
+      const: updatedProfessional = [ {
         ...existingProfessional,
         phone: "+5511888777666",
         email: "maria.new@clinic.com",
@@ -321,7 +321,7 @@ describe("Professional Contract Testing", () => {
         updatedProfessional,
       );
 
-      const result = await caller.api.professional.update(updateInput);
+      const: result = [ await caller.api.professional.update(updateInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -347,8 +347,8 @@ describe("Professional Contract Testing", () => {
     });
 
     it("should prevent unauthorized updates to critical fields", async () => {
-      const professionalId = "prof-789";
-      const unauthorizedUpdate: ProfessionalInput["update"] = {
+      const: professionalId = [ "prof-789";
+      const unauthorizedUpdate: ProfessionalInpu: t = ["update"] = {
         id: professionalId,
         professionalInfo: {
           crmNumber: "CRM/SP 999999", // Changing CRM should require special authorization
@@ -356,7 +356,7 @@ describe("Professional Contract Testing", () => {
         },
       };
 
-      const existingProfessional = {
+      const: existingProfessional = [ {
         id: professionalId,
         crmNumber: "CRM/SP 123456",
         crmState: "SP",
@@ -374,7 +374,7 @@ describe("Professional Contract Testing", () => {
 
   describe("Professional Schedule Management Contract", () => {
     it("should validate schedule updates", async () => {
-      const scheduleInput: ProfessionalInput["updateSchedule"] = {
+      const scheduleInput: ProfessionalInpu: t = ["updateSchedule"] = {
         professionalId: "prof-789",
         schedule: {
           workingHours: {
@@ -393,7 +393,7 @@ describe("Professional Contract Testing", () => {
         effectiveFrom: "2024-03-01",
       };
 
-      const updatedProfessional = {
+      const: updatedProfessional = [ {
         id: "prof-789",
         schedule: scheduleInput.schedule,
         scheduleUpdatedAt: new Date(),
@@ -404,7 +404,7 @@ describe("Professional Contract Testing", () => {
         updatedProfessional,
       );
 
-      const result =
+      const: result = [
         await caller.api.professional.updateSchedule(scheduleInput);
 
       expect(result).toMatchObject({
@@ -421,7 +421,7 @@ describe("Professional Contract Testing", () => {
     });
 
     it("should validate schedule conflicts", async () => {
-      const conflictingSchedule: ProfessionalInput["updateSchedule"] = {
+      const conflictingSchedule: ProfessionalInpu: t = ["updateSchedule"] = {
         professionalId: "prof-789",
         schedule: {
           workingHours: {
@@ -438,7 +438,7 @@ describe("Professional Contract Testing", () => {
 
   describe("Professional List Contract", () => {
     it("should validate professional listing with filters", async () => {
-      const listInput: ProfessionalInput["list"] = {
+      const listInput: ProfessionalInpu: t = ["list"] = {
         page: 1,
         limit: 10,
         filters: {
@@ -451,7 +451,7 @@ describe("Professional Contract Testing", () => {
         orderDirection: "asc",
       };
 
-      const mockProfessionals = [
+      const: mockProfessionals = [ [
         {
           id: "prof-1",
           fullName: "Dr. Ana Costa",
@@ -475,7 +475,7 @@ describe("Professional Contract Testing", () => {
       );
       mockContext.prisma.professional.count.mockResolvedValue(25);
 
-      const result = await caller.api.professional.list(listInput);
+      const: result = [ await caller.api.professional.list(listInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -504,7 +504,7 @@ describe("Professional Contract Testing", () => {
 
   describe("Professional Qualification Management Contract", () => {
     it("should validate qualification addition", async () => {
-      const qualificationInput: ProfessionalInput["addQualification"] = {
+      const qualificationInput: ProfessionalInpu: t = ["addQualification"] = {
         professionalId: "prof-789",
         qualification: {
           name: "Advanced Laser Therapy Certification",
@@ -516,7 +516,7 @@ describe("Professional Contract Testing", () => {
         },
       };
 
-      const newQualification = {
+      const: newQualification = [ {
         id: "qual-new",
         professionalId: "prof-789",
         ...qualificationInput.qualification,
@@ -527,7 +527,7 @@ describe("Professional Contract Testing", () => {
         newQualification,
       );
 
-      const result =
+      const: result = [
         await caller.api.professional.addQualification(qualificationInput);
 
       expect(result).toMatchObject({
@@ -541,8 +541,8 @@ describe("Professional Contract Testing", () => {
     });
 
     it("should validate qualification expiry monitoring", async () => {
-      const professionalId = "prof-789";
-      const mockExpiringQualifications = [
+      const: professionalId = [ "prof-789";
+      const: mockExpiringQualifications = [ [
         {
           id: "qual-expiring",
           name: "Basic Certification",
@@ -555,7 +555,7 @@ describe("Professional Contract Testing", () => {
         mockExpiringQualifications,
       );
 
-      const result = await caller.api.professional.getExpiringQualifications({
+      const: result = [ await caller.api.professional.getExpiringQualifications({
         professionalId,
       });
 
@@ -573,7 +573,7 @@ describe("Professional Contract Testing", () => {
 
   describe("Contract Type Safety", () => {
     it("should enforce input type constraints at compile time", () => {
-      const validInput: ProfessionalInput["create"] = {
+      const validInput: ProfessionalInpu: t = ["create"] = {
         personalInfo: {
           fullName: "Dr. Test",
           cpf: "123.456.789-00",
@@ -596,7 +596,7 @@ describe("Professional Contract Testing", () => {
     });
 
     it("should enforce output type constraints", () => {
-      const mockOutput: ProfessionalOutput["getById"] = {
+      const mockOutput: ProfessionalOutpu: t = ["getById"] = {
         success: true,
         data: {
           id: "prof-789",

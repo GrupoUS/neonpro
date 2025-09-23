@@ -89,7 +89,7 @@ function extractFeatureFromUrl(url: string): string {
     admin: "administration",
   };
 
-  return featureMap[segments[0]] || segments[0];
+  return featureMap[segments[0]] || segments[0] || 'unknown';
 }
 
 // Healthcare-aware telemetry middleware

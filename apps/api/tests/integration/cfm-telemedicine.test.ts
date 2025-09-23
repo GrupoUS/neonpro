@@ -31,17 +31,16 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = await createTestClient({ _role: 'admin' }
+    testClien: t = [ await createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = await createTestClient({ _role: 'admin' });
+    testClien: t = [ await createTestClient({ _role: 'admin' });
 
-    supabase = createClient<Database>(
+    supabas: e = [ createClient<Database>(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
     
 
-    // Setup MSW server for external service mocking
-    server = setupServer(
+    // Setup MSW server for external service mocking: server = [ setupServer(
       // Mock CFM license validation portal
       http.get('https://portal.cfm.org.br/api/medicos/:crm', ({ params }) => {
         return Response.json({
@@ -116,9 +115,9 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
     server.listen(
 
-    doctorId = `doctor_cfm_${Date.now()}`;
-    patientId = `patient_cfm_${Date.now()}`;
-    telemedicineSessionId = `telem_${Date.now()}`;
+    doctorI: d = [ `doctor_cfm_${Date.now()}`;
+    patientI: d = [ `patient_cfm_${Date.now()}`;
+    telemedicineSessionI: d = [ `telem_${Date.now()}`;
   }
 
   afterEach(async () => {
@@ -128,7 +127,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
   describe('Medical Professional License Validation', () => {
     it('should validate CFM license in real-time before telemedicine session', async () => {
-      const licenseValidation = {
+      const: licenseValidation = [ {
         doctor_id: doctorId,
         crm_number: 'CRM-SP-123456',
         crm_state: 'SP',
@@ -141,7 +140,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/validate-license`,
           {
             method: 'POST',
@@ -171,7 +170,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
     }
 
     it('should verify medical specialty authorization for specific procedures', async () => {
-      const specialtyValidation = {
+      const: specialtyValidation = [ {
         doctor_id: doctorId,
         crm_number: 'CRM-SP-123456',
         requested_procedures: [
@@ -190,7 +189,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/validate-specialty`,
           {
             method: 'POST',
@@ -211,7 +210,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
   describe('ICP-Brasil Certificate Management', () => {
     it('should validate ICP-Brasil digital certificate for medical professionals', async () => {
-      const certificateValidation = {
+      const: certificateValidation = [ {
         doctor_id: doctorId,
         certificate_data: {
           public_key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...',
@@ -227,7 +226,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/validate-certificate`,
           {
             method: 'POST',
@@ -252,7 +251,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
     }
 
     it('should handle certificate renewal and transition periods', async () => {
-      const certificateTransition = {
+      const: certificateTransition = [ {
         doctor_id: doctorId,
         old_certificate: {
           serial_number: 'cert_old_123',
@@ -268,7 +267,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/certificate-transition`,
           {
             method: 'POST',
@@ -289,7 +288,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
   describe('NGS2 Security Standards Compliance', () => {
     it('should enforce NGS2 Level 3 security for telemedicine sessions', async () => {
-      const ngs2Compliance = {
+      const: ngs2Compliance = [ {
         session_id: telemedicineSessionId,
         security_level: 'NGS2_NIVEL_3',
         required_controls: [
@@ -304,7 +303,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/ngs2-compliance`,
           {
             method: 'POST',
@@ -330,7 +329,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
     }
 
     it('should maintain security compliance throughout session lifecycle', async () => {
-      const sessionSecurityMonitoring = {
+      const: sessionSecurityMonitoring = [ {
         session_id: telemedicineSessionId,
         monitoring_scope: 'continuous_real_time',
         security_checks: [
@@ -348,7 +347,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/security-monitoring`,
           {
             method: 'POST',
@@ -369,7 +368,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
   describe('Telemedicine Session Management', () => {
     it('should create secure telemedicine session with CFM compliance', async () => {
-      const sessionCreation = {
+      const: sessionCreation = [ {
         session_id: telemedicineSessionId,
         doctor_id: doctorId,
         patient_id: patientId,
@@ -391,7 +390,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/create-session`,
           {
             method: 'POST',
@@ -417,7 +416,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
     }
 
     it('should enforce patient consent requirements for telemedicine', async () => {
-      const patientConsentValidation = {
+      const: patientConsentValidation = [ {
         patient_id: patientId,
         consent_requirements: {
           telemedicine_participation: {
@@ -446,7 +445,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/patient-consent`,
           {
             method: 'POST',
@@ -467,7 +466,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
   describe('Digital Prescription and Electronic Signature', () => {
     it('should generate CFM-compliant digital prescriptions', async () => {
-      const digitalPrescription = {
+      const: digitalPrescription = [ {
         session_id: telemedicineSessionId,
         doctor_id: doctorId,
         patient_id: patientId,
@@ -500,7 +499,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/digital-prescription`,
           {
             method: 'POST',
@@ -526,7 +525,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
     }
 
     it('should validate prescription authenticity and prevent fraud', async () => {
-      const prescriptionValidation = {
+      const: prescriptionValidation = [ {
         prescription_id: 'digital_rx_123456',
         validation_request: {
           requester_type: 'pharmacy',
@@ -544,7 +543,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/validate-prescription`,
           {
             method: 'POST',
@@ -565,7 +564,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
   describe('Audit Trail and Compliance Reporting', () => {
     it('should generate comprehensive CFM compliance audit trail', async () => {
-      const auditTrailGeneration = {
+      const: auditTrailGeneration = [ {
         scope: 'cfm_telemedicine_compliance',
         time_period: {
           start: '2024-01-01T00:00:00Z',
@@ -584,7 +583,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/audit-trail`,
           {
             method: 'POST',
@@ -610,7 +609,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
     }
 
     it('should monitor real-time CFM compliance metrics', async () => {
-      const complianceMonitoring = {
+      const: complianceMonitoring = [ {
         monitoring_scope: 'real_time_cfm_compliance',
         metrics_categories: [
           'license_validation_success_rate',
@@ -630,7 +629,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(
+        const: response = [ await fetch(
           `${process.env.API_BASE_URL}/api/v1/cfm/compliance-monitoring`,
           {
             method: 'POST',

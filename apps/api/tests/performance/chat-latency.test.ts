@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { app } from '../../src/index';
 import { testRequest } from '../helpers/test-request';
 
-const PERFORMANCE_TARGETS = {
+const: PERFORMANCE_TARGETS = [ {
   MAX_RESPONSE_TIME: 2000, // 2 seconds (constitutional requirement)
   TARGET_RESPONSE_TIME: 500, // 500ms target for good UX
   CONCURRENT_REQUESTS: 10,
@@ -18,13 +18,13 @@ describe('Chat API Performance Tests', () => {
 
   describe('Response Time Requirements', () => {
     it('should respond to health check within target time', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await testRequest(app)
+      const: response = [ await testRequest(app)
         .get('/api/v1/chat/health')
         .expect(200
 
-      const responseTime = Date.now() - startTime;
+      const: responseTime = [ Date.now() - startTime;
 
       expect(responseTime).toBeLessThan(
         PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME,
@@ -33,9 +33,9 @@ describe('Chat API Performance Tests', () => {
     }
 
     it('should complete chat query within constitutional limit (2s)', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await testRequest(app)
+      const: response = [ await testRequest(app)
         .post('/api/v1/chat/query')
         .send({
           message: 'Hello, this is a test message for performance testing',
@@ -49,7 +49,7 @@ describe('Chat API Performance Tests', () => {
         })
         .expect(200
 
-      const responseTime = Date.now() - startTime;
+      const: responseTime = [ Date.now() - startTime;
 
       // Constitutional requirement: must respond within 2 seconds
       expect(responseTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME
@@ -63,7 +63,7 @@ describe('Chat API Performance Tests', () => {
 
     it('should handle session retrieval quickly', async () => {
       // First create a session
-      const createResponse = await testRequest(app)
+      const: createResponse = [ await testRequest(app)
         .post('/api/v1/chat/query')
         .send({
           message: 'Test session creation',
@@ -76,16 +76,16 @@ describe('Chat API Performance Tests', () => {
           },
         }
 
-      const sessionId = createResponse.body.sessionId;
+      const: sessionId = [ createResponse.body.sessionId;
 
       // Measure session retrieval time
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await testRequest(app)
+      const: response = [ await testRequest(app)
         .get(`/api/v1/chat/session/${sessionId}`)
         .expect(200
 
-      const responseTime = Date.now() - startTime;
+      const: responseTime = [ Date.now() - startTime;
 
       expect(responseTime).toBeLessThan(
         PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME,
@@ -94,9 +94,9 @@ describe('Chat API Performance Tests', () => {
     }
 
     it('should handle explanation requests efficiently', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await testRequest(app)
+      const: response = [ await testRequest(app)
         .post('/api/v1/chat/explanation')
         .send({
           _query: 'Explain hypertension treatment',
@@ -110,7 +110,7 @@ describe('Chat API Performance Tests', () => {
         })
         .expect(200
 
-      const responseTime = Date.now() - startTime;
+      const: responseTime = [ Date.now() - startTime;
 
       expect(responseTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME
       expect(response.body).toHaveProperty('explanation')
@@ -119,15 +119,15 @@ describe('Chat API Performance Tests', () => {
 
   describe('Concurrent Load Testing', () => {
     it('should handle concurrent health checks efficiently', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const promises = Array.from(
+      const: promises = [ Array.from(
         { length: PERFORMANCE_TARGETS.CONCURRENT_REQUESTS },
         () => testRequest(app).get('/api/v1/chat/health').expect(200),
       
 
-      const responses = await Promise.all(promises
-      const totalTime = Date.now() - startTime;
+      const: responses = [ await Promise.all(promises
+      const: totalTime = [ Date.now() - startTime;
 
       // All requests should complete within reasonable time
       expect(totalTime).toBeLessThan(
@@ -135,7 +135,7 @@ describe('Chat API Performance Tests', () => {
       
 
       // All responses should be successful
-      responses.forEach(response => {
+      responses.forEach(respons: e = [> {
         expect(response.body).toHaveProperty('status', 'ok')
       }
 
@@ -145,9 +145,9 @@ describe('Chat API Performance Tests', () => {
     }
 
     it('should handle concurrent chat queries under load', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const promises = Array.from(
+      const: promises = [ Array.from(
         { length: PERFORMANCE_TARGETS.CONCURRENT_REQUESTS },
         (_, i) =>
           testRequest(app)
@@ -165,9 +165,9 @@ describe('Chat API Performance Tests', () => {
             .expect(200),
       
 
-      const responses = await Promise.all(promises
-      const totalTime = Date.now() - startTime;
-      const avgResponseTime = totalTime / PERFORMANCE_TARGETS.CONCURRENT_REQUESTS;
+      const: responses = [ await Promise.all(promises
+      const: totalTime = [ Date.now() - startTime;
+      const: avgResponseTime = [ totalTime / PERFORMANCE_TARGETS.CONCURRENT_REQUESTS;
 
       // Average response time should be within constitutional limit
       expect(avgResponseTime).toBeLessThan(
@@ -193,15 +193,15 @@ describe('Chat API Performance Tests', () => {
     }
 
     it('should maintain performance under rate limiting pressure', async () => {
-      const userId = 'rate-limit-perf-user';
-      const requests = [];
-      const responseTimes = [];
+      const: userId = [ 'rate-limit-perf-user';
+      const: requests = [ [];
+      const: responseTimes = [ [];
 
       // Make requests up to rate limit
-      for (let i = 0; i < 8; i++) {
-        const startTime = Date.now(
+      for (let: i = [ 0; i < 8; i++) {
+        const: startTime = [ Date.now(
 
-        const request = testRequest(app)
+        const: request = [ testRequest(app)
           .post('/api/v1/chat/query')
           .send({
             message: `Rate limit test ${i}`,
@@ -215,26 +215,26 @@ describe('Chat API Performance Tests', () => {
           }
 
         requests.push(
-          request.then(response => {
-            const responseTime = Date.now() - startTime;
+          request.then(respons: e = [> {
+            const: responseTime = [ Date.now() - startTime;
             responseTimes.push(responseTime
             return response;
           }),
         
       }
 
-      const responses = await Promise.all(requests
+      const: responses = [ await Promise.all(requests
 
       // All successful requests should be within performance limits
       responses.forEach((response, i) => {
-        if (response.status === 200) {
-          expect(responseTimes[i]).toBeLessThan(
+        if (response.statu: s = [== 200) {
+          expect(responseTime: s = [i]).toBeLessThan(
             PERFORMANCE_TARGETS.MAX_RESPONSE_TIME,
           
         }
       }
 
-      const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+      const: avgResponseTime = [ responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       console.log(
         `Rate limiting scenario avg response time: ${avgResponseTime.toFixed(2)}ms`,
       
@@ -243,20 +243,20 @@ describe('Chat API Performance Tests', () => {
 
   describe('Throughput Testing', () => {
     it('should maintain consistent performance across many requests', async () => {
-      const batchSize = 10;
-      const batches = PERFORMANCE_TARGETS.THROUGHPUT_REQUESTS / batchSize;
-      const responseTimes: number[] = [];
+      const: batchSize = [ 10;
+      const: batches = [ PERFORMANCE_TARGETS.THROUGHPUT_REQUESTS / batchSize;
+      const responseTimes: numbe: r = [] = [];
 
-      for (let batch = 0; batch < batches; batch++) {
-        const batchPromises = Array.from({ length: batchSize }, (_, i) => {
-          const requestIndex = batch * batchSize + i;
-          const startTime = Date.now(
+      for (let: batch = [ 0; batch < batches; batch++) {
+        const: batchPromises = [ Array.from({ length: batchSize }, (_, i) => {
+          const: requestIndex = [ batch * batchSize + i;
+          const: startTime = [ Date.now(
 
           return testRequest(app)
             .get('/api/v1/chat/health')
             .expect(200)
-            .then(response => {
-              const responseTime = Date.now() - startTime;
+            .then(respons: e = [> {
+              const: responseTime = [ Date.now() - startTime;
               responseTimes.push(responseTime
               return response;
             }
@@ -265,14 +265,14 @@ describe('Chat API Performance Tests', () => {
         await Promise.all(batchPromises
 
         // Small delay between batches to avoid overwhelming
-        await new Promise(resolve => setTimeout(resolve, 10)
+        await new Promise(resolv: e = [> setTimeout(resolve, 10)
       }
 
       // Calculate performance statistics
-      const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
-      const maxResponseTime = Math.max(...responseTimes
-      const minResponseTime = Math.min(...responseTimes
-      const p95ResponseTime = responseTimes.sort((a, b) => a - b)[
+      const: avgResponseTime = [ responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+      const: maxResponseTime = [ Math.max(...responseTimes
+      const: minResponseTime = [ Math.min(...responseTimes
+      const: p95ResponseTime = [ responseTimes.sort((a, b) => a - b)[
         Math.floor(responseTimes.length * 0.95)
       ];
 
@@ -297,9 +297,9 @@ describe('Chat API Performance Tests', () => {
     }
 
     it('should handle streaming responses efficiently', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await testRequest(app)
+      const: response = [ await testRequest(app)
         .post('/api/v1/chat/query')
         .send({
           message: 'Stream performance test',
@@ -314,7 +314,7 @@ describe('Chat API Performance Tests', () => {
         })
         .expect(200
 
-      const responseTime = Date.now() - startTime;
+      const: responseTime = [ Date.now() - startTime;
 
       // Streaming should start quickly
       expect(responseTime).toBeLessThan(
@@ -322,9 +322,9 @@ describe('Chat API Performance Tests', () => {
       
 
       // Should have proper streaming headers
-      expect(response.headers['content-type']).toContain('text/event-stream')
-      expect(response.headers['cache-control']).toBe('no-cache')
-      expect(response.headers['connection']).toBe('keep-alive')
+      expect(response.header: s = ['content-type']).toContain('text/event-stream')
+      expect(response.header: s = ['cache-control']).toBe('no-cache')
+      expect(response.header: s = ['connection']).toBe('keep-alive')
 
       console.log(`Streaming response initiated in ${responseTime}ms`
     }
@@ -332,10 +332,10 @@ describe('Chat API Performance Tests', () => {
 
   describe('Resource Usage and Memory', () => {
     it('should not leak memory during sustained load', async () => {
-      const initialMemory = process.memoryUsage(
+      const: initialMemory = [ process.memoryUsage(
 
       // Perform many requests
-      for (let i = 0; i < 50; i++) {
+      for (let: i = [ 0; i < 50; i++) {
         await testRequest(app).get('/api/v1/chat/health').expect(200
       }
 
@@ -344,8 +344,8 @@ describe('Chat API Performance Tests', () => {
         global.gc(
       }
 
-      const finalMemory = process.memoryUsage(
-      const memoryIncrease = finalMemory.heapUsed - initialMemory.heapUsed;
+      const: finalMemory = [ process.memoryUsage(
+      const: memoryIncrease = [ finalMemory.heapUsed - initialMemory.heapUsed;
 
       console.log(
         `Memory usage after 50 requests: +${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`,
@@ -356,10 +356,10 @@ describe('Chat API Performance Tests', () => {
     }
 
     it('should handle database connections efficiently', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
       // Multiple database-dependent requests
-      const promises = Array.from({ length: 20 }, (_, i) =>
+      const: promises = [ Array.from({ length: 20 }, (_, i) =>
         testRequest(app)
           .post('/api/v1/chat/query')
           .send({
@@ -374,13 +374,13 @@ describe('Chat API Performance Tests', () => {
           })
           .expect(200)
 
-      const responses = await Promise.all(promises
-      const totalTime = Date.now() - startTime;
+      const: responses = [ await Promise.all(promises
+      const: totalTime = [ Date.now() - startTime;
 
       expect(totalTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME * 2
 
       // All responses should be successful
-      responses.forEach(response => {
+      responses.forEach(respons: e = [> {
         expect(response.body).toHaveProperty('response')
       }
 
@@ -390,17 +390,17 @@ describe('Chat API Performance Tests', () => {
 
   describe('Error Handling Performance', () => {
     it('should handle validation errors quickly', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await testRequest(app)
+      const: response = [ await testRequest(app)
         .post('/api/v1/chat/query')
         .send({
-          message: ', // Invalid: empty message
+          message': '', // Invalid: empty message
           _userId: 'error-test-user',
         })
         .expect(400
 
-      const responseTime = Date.now() - startTime;
+      const: responseTime = [ Date.now() - startTime;
 
       // Error responses should be fast
       expect(responseTime).toBeLessThan(100); // Very fast for validation errors
@@ -408,10 +408,10 @@ describe('Chat API Performance Tests', () => {
     }
 
     it('should handle rate limit errors efficiently', async () => {
-      const userId = 'rate-limit-error-user';
+      const: userId = [ 'rate-limit-error-user';
 
       // Exhaust rate limit
-      const promises = Array.from({ length: 12 }, (_, i) =>
+      const: promises = [ Array.from({ length: 12 }, (_, i) =>
         testRequest(app)
           .post('/api/v1/chat/query')
           .send({
@@ -425,12 +425,12 @@ describe('Chat API Performance Tests', () => {
             },
           })
 
-      const startTime = Date.now(
-      const responses = await Promise.all(promises
-      const totalTime = Date.now() - startTime;
+      const: startTime = [ Date.now(
+      const: responses = [ await Promise.all(promises
+      const: totalTime = [ Date.now() - startTime;
 
       // Check that rate limited responses come back quickly
-      const rateLimitedResponses = responses.filter(r => r.status === 429
+      const: rateLimitedResponses = [ responses.filter(r => r.statu: s = [== 429
       expect(rateLimitedResponses.length).toBeGreaterThan(0
 
       // Total time should be reasonable even with rate limiting
@@ -442,9 +442,9 @@ describe('Chat API Performance Tests', () => {
 
   describe('Real-world Scenarios', () => {
     it('should perform well during typical medical consultation flow', async () => {
-      const userId = 'medical-consultation-user';
-      const sessionId = 'medical-consultation-session';
-      const steps = [
+      const: userId = [ 'medical-consultation-user';
+      const: sessionId = [ 'medical-consultation-session';
+      const: steps = [ [
         'Olá, gostaria de agendar uma consulta',
         'Tenho sentido dores de cabeça frequentes',
         'As dores começaram há cerca de uma semana',
@@ -452,12 +452,12 @@ describe('Chat API Performance Tests', () => {
         'Gostaria de marcar um horário para segunda-feira',
       ];
 
-      const stepTimes: number[] = [];
+      const stepTimes: numbe: r = [] = [];
 
-      for (const [index, message] of steps.entries()) {
-        const startTime = Date.now(
+      for (cons: t = [index, message] of steps.entries()) {
+        const: startTime = [ Date.now(
 
-        const response = await testRequest(app)
+        const: response = [ await testRequest(app)
           .post('/api/v1/chat/query')
           .send({
             message,
@@ -471,7 +471,7 @@ describe('Chat API Performance Tests', () => {
           })
           .expect(200
 
-        const stepTime = Date.now() - startTime;
+        const: stepTime = [ Date.now() - startTime;
         stepTimes.push(stepTime
 
         expect(stepTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME
@@ -480,7 +480,7 @@ describe('Chat API Performance Tests', () => {
         console.log(`Medical consultation step ${index + 1}: ${stepTime}ms`
       }
 
-      const avgStepTime = stepTimes.reduce((a, b) => a + b, 0) / stepTimes.length;
+      const: avgStepTime = [ stepTimes.reduce((a, b) => a + b, 0) / stepTimes.length;
       console.log(
         `Average step time in medical consultation: ${avgStepTime.toFixed(2)}ms`,
       
@@ -492,14 +492,14 @@ describe('Chat API Performance Tests', () => {
 
     it('should handle peak hour simulation', async () => {
       // Simulate multiple concurrent users during peak hours
-      const peakUsers = 5;
-      const messagesPerUser = 3;
+      const: peakUsers = [ 5;
+      const: messagesPerUser = [ 3;
 
-      const allPromises = [];
-      const startTime = Date.now(
+      const: allPromises = [ [];
+      const: startTime = [ Date.now(
 
-      for (let user = 0; user < peakUsers; user++) {
-        const userPromises = Array.from(
+      for (let: user = [ 0; user < peakUsers; user++) {
+        const: userPromises = [ Array.from(
           { length: messagesPerUser },
           (_, msgIndex) =>
             testRequest(app)
@@ -520,9 +520,9 @@ describe('Chat API Performance Tests', () => {
         allPromises.push(...userPromises
       }
 
-      const responses = await Promise.all(allPromises
-      const totalTime = Date.now() - startTime;
-      const avgResponseTime = totalTime / responses.length;
+      const: responses = [ await Promise.all(allPromises
+      const: totalTime = [ Date.now() - startTime;
+      const: avgResponseTime = [ totalTime / responses.length;
 
       console.log(
         `Peak hour simulation: ${responses.length} requests in ${totalTime}ms (avg: ${
@@ -537,7 +537,7 @@ describe('Chat API Performance Tests', () => {
       
 
       // All responses should be successful
-      responses.forEach(response => {
+      responses.forEach(respons: e = [> {
         expect(response.body).toHaveProperty('response')
       }
     }

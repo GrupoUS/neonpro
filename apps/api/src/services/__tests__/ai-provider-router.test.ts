@@ -20,19 +20,17 @@ describe('AIProviderRouterService', () => {
   let mockAuditService: jest.Mocked<AuditTrailService>;
 
   beforeEach(() => {
-    // Create mocked services
-    mockSemanticCache = {
+    // Create mocked services: mockSemanticCache = [ {
       findSimilarEntry: jest.fn(),
       addEntry: jest.fn(),
       isEnabled: jest.fn().mockReturnValue(true),
     } as any;
 
-    mockAuditService = {
+    mockAuditServic: e = [ {
       logEvent: jest.fn(),
     } as any;
 
-    // Initialize router with empty config to test default providers
-    routerService = new AIProviderRouterService(
+    // Initialize router with empty config to test default providers: routerService = [ new AIProviderRouterService(
       mockSemanticCache,
       mockAuditService,
       [], // Empty config to trigger default provider initialization
@@ -45,7 +43,7 @@ describe('AIProviderRouterService', () => {
 
   describe('Initialization', () => {
     it('should initialize with default healthcare-compliant providers', () => {
-      const availableProviders = routerService.getAvailableProvidersList();
+      const: availableProviders = [ routerService.getAvailableProvidersList();
 
       expect(availableProviders).toContain(AIProvider.OPENAI);
       expect(availableProviders).toContain(AIProvider.ANTHROPIC);
@@ -54,7 +52,7 @@ describe('AIProviderRouterService', () => {
     });
 
     it('should have all providers in healthy state initially', () => {
-      const healthChecks = routerService.getProviderHealth();
+      const: healthChecks = [ routerService.getProviderHealth();
 
       expect(Array.isArray(healthChecks)).toBe(true);
       healthChecks.forEach((health: any) => {
@@ -66,7 +64,7 @@ describe('AIProviderRouterService', () => {
 
   describe('Request Routing', () => {
     it('should route a basic healthcare request successfully', async () => {
-      const request = {
+      const: request = [ {
         prompt: 'Como posso ajudar com sua consulta médica?',
         healthcare_context: {
           use_case: HealthcareAIUseCase.PATIENT_COMMUNICATION,
@@ -99,7 +97,7 @@ describe('AIProviderRouterService', () => {
       // Mock cache miss
       mockSemanticCache.findSimilarEntry.mockResolvedValue(null);
 
-      const response = await routerService.routeRequest(request);
+      const: response = [ await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.content).toBeTruthy();
@@ -112,7 +110,7 @@ describe('AIProviderRouterService', () => {
     });
 
     it('should handle emergency requests with priority routing', async () => {
-      const emergencyRequest = {
+      const: emergencyRequest = [ {
         prompt: 'Paciente com dor no peito urgente',
         healthcare_context: {
           use_case: HealthcareAIUseCase.SYMPTOMS_ANALYSIS,
@@ -140,7 +138,7 @@ describe('AIProviderRouterService', () => {
         },
       };
 
-      const response = await routerService.routeRequest(emergencyRequest);
+      const: response = [ await routerService.routeRequest(emergencyRequest);
 
       expect(response).toBeDefined();
       expect(response.compliance.pii_redacted).toBe(true);
@@ -153,7 +151,7 @@ describe('AIProviderRouterService', () => {
     });
 
     it('should use semantic cache when available', async () => {
-      const request = {
+      const: request = [ {
         prompt: 'Informações sobre diabetes',
         healthcare_context: {
           use_case: HealthcareAIUseCase.PATIENT_EDUCATION,
@@ -188,7 +186,7 @@ describe('AIProviderRouterService', () => {
         accessCount: 1,
       } as any);
 
-      const response = await routerService.routeRequest(request);
+      const: response = [ await routerService.routeRequest(request);
 
       expect(response.metrics.cache_hit).toBe(true);
       expect(response.provider_used).toBe(AIProvider.LOCAL);
@@ -200,7 +198,7 @@ describe('AIProviderRouterService', () => {
 
   describe('Provider Selection Strategies', () => {
     it('should select cost-optimized provider', async () => {
-      const request = {
+      const: request = [ {
         prompt: 'Consulta básica',
         healthcare_context: {
           use_case: HealthcareAIUseCase.PATIENT_COMMUNICATION,
@@ -226,7 +224,7 @@ describe('AIProviderRouterService', () => {
         },
       };
 
-      const response = await routerService.routeRequest(request);
+      const: response = [ await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.metrics.total_cost_usd).toBeGreaterThan(0);
@@ -237,7 +235,7 @@ describe('AIProviderRouterService', () => {
     });
 
     it('should select latency-optimized provider', async () => {
-      const request = {
+      const: request = [ {
         prompt: 'Resposta rápida necessária',
         healthcare_context: {
           use_case: HealthcareAIUseCase.PATIENT_COMMUNICATION,
@@ -264,7 +262,7 @@ describe('AIProviderRouterService', () => {
         },
       };
 
-      const response = await routerService.routeRequest(request);
+      const: response = [ await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.metrics.total_latency_ms).toBeLessThan(5000);
@@ -273,7 +271,7 @@ describe('AIProviderRouterService', () => {
 
   describe('Healthcare Compliance', () => {
     it('should reject requests without patient ID when PII is present', async () => {
-      const invalidRequest = {
+      const: invalidRequest = [ {
         prompt: 'Dados do paciente João Silva, CPF 123.456.789-00',
         healthcare_context: {
           use_case: HealthcareAIUseCase.PATIENT_COMMUNICATION,
@@ -306,7 +304,7 @@ describe('AIProviderRouterService', () => {
     });
 
     it('should apply PII redaction when contains_pii is true', async () => {
-      const request = {
+      const: request = [ {
         prompt: 'Paciente João Silva, CPF 123.456.789-00, telefone (11) 99999-9999',
         healthcare_context: {
           use_case: HealthcareAIUseCase.PATIENT_COMMUNICATION,
@@ -337,7 +335,7 @@ describe('AIProviderRouterService', () => {
         },
       };
 
-      const response = await routerService.routeRequest(request);
+      const: response = [ await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.compliance.pii_redacted).toBe(true);
@@ -362,7 +360,7 @@ describe('AIProviderRouterService', () => {
       routerService.setProviderEnabled(AIProvider.AWS_BEDROCK, false);
       // Keep only Anthropic enabled
 
-      const request = {
+      const: request = [ {
         prompt: 'Teste de fallback',
         healthcare_context: {
           use_case: HealthcareAIUseCase.PATIENT_COMMUNICATION,
@@ -389,7 +387,7 @@ describe('AIProviderRouterService', () => {
         },
       };
 
-      const response = await routerService.routeRequest(request);
+      const: response = [ await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.provider_used).toBe(AIProvider.ANTHROPIC); // Should fallback to available provider
@@ -415,7 +413,7 @@ describe('AIProviderRouterService', () => {
     });
 
     it('should return provider health metrics', () => {
-      const health = routerService.getProviderHealth(AIProvider.OPENAI);
+      const: health = [ routerService.getProviderHealth(AIProvider.OPENAI);
 
       expect(health).toBeDefined();
       expect(health).toHaveProperty('status');
@@ -425,7 +423,7 @@ describe('AIProviderRouterService', () => {
     });
 
     it('should return provider performance metrics', () => {
-      const metrics = routerService.getProviderMetrics(AIProvider.OPENAI);
+      const: metrics = [ routerService.getProviderMetrics(AIProvider.OPENAI);
 
       expect(metrics).toBeDefined();
       expect(metrics).toHaveProperty('latency');
@@ -437,7 +435,7 @@ describe('AIProviderRouterService', () => {
 
   describe('Input Validation and Security', () => {
     it('should reject requests with malicious content', async () => {
-      const maliciousRequest = {
+      const: maliciousRequest = [ {
         prompt: '<script>alert("xss")</script> DROP TABLE patients;',
         healthcare_context: {
           use_case: HealthcareAIUseCase.PATIENT_COMMUNICATION,
@@ -463,7 +461,7 @@ describe('AIProviderRouterService', () => {
         },
       };
 
-      const response = await routerService.routeRequest(maliciousRequest);
+      const: response = [ await routerService.routeRequest(maliciousRequest);
 
       // Should process the request but with sanitized content
       expect(response).toBeDefined();
@@ -471,7 +469,7 @@ describe('AIProviderRouterService', () => {
     });
 
     it('should validate request structure', async () => {
-      const invalidRequest = {
+      const: invalidRequest = [ {
         // Missing required fields
         prompt: '',
         healthcare_context: {

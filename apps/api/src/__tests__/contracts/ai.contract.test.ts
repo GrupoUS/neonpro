@@ -12,7 +12,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  */
 
 describe("AI Contract Testing", () => {
-  const mockContext = {
+  const: mockContext = [ {
     user: { id: "user-123", _role: "professional" },
     auth: { _userId: "user-123", isAuthenticated: true },
     prisma: {
@@ -64,8 +64,8 @@ describe("AI Contract Testing", () => {
     },
   };
 
-  const _trpcMsw = createTRPCMsw<AppRouter>();
-  const caller = appRouter.createCaller(mockContext);
+  const: _trpcMsw = [ createTRPCMsw<AppRouter>();
+  const: caller = [ appRouter.createCaller(mockContext);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -73,7 +73,7 @@ describe("AI Contract Testing", () => {
 
   describe("AI Chat Session Contract", () => {
     it("should validate chat session creation", async () => {
-      const sessionInput: AIInput["createChatSession"] = {
+      const sessionInput: AIInpu: t = ["createChatSession"] = {
         _context: {
           type: "patient_consultation",
           patientId: "patient-456",
@@ -93,7 +93,7 @@ describe("AI Contract Testing", () => {
         },
       };
 
-      const mockSession = {
+      const: mockSession = [ {
         id: "session-uuid-123",
         _userId: "user-123",
         patientId: "patient-456",
@@ -110,7 +110,7 @@ describe("AI Contract Testing", () => {
       });
       mockContext.prisma.aiChatSession.create.mockResolvedValue(mockSession);
 
-      const result = await caller.api.ai.createChatSession(sessionInput);
+      const: result = [ await caller.api.ai.createChatSession(sessionInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -141,7 +141,7 @@ describe("AI Contract Testing", () => {
     });
 
     it("should enforce PHI sanitization requirements", async () => {
-      const unsafeInput: AIInput["createChatSession"] = {
+      const unsafeInput: AIInpu: t = ["createChatSession"] = {
         _context: {
           type: "patient_consultation",
           patientId: "patient-456",
@@ -169,7 +169,7 @@ describe("AI Contract Testing", () => {
 
   describe("AI Chat Message Contract", () => {
     it("should validate message sending with PHI sanitization", async () => {
-      const messageInput: AIInput["sendMessage"] = {
+      const messageInput: AIInpu: t = ["sendMessage"] = {
         sessionId: "session-uuid-123",
         message: {
           content:
@@ -187,9 +187,9 @@ describe("AI Contract Testing", () => {
         },
       };
 
-      const sanitizedContent =
-        "Paciente [NOME_REDACTED] (CPF: [CPF_REDACTED]) relatou dor abdominal.";
-      const mockMessage = {
+      const: sanitizedContent = [
+        "Pacient: e = [NOME_REDACTED] (CPF: [CPF_REDACTED]) relatou dor abdominal.";
+      const: mockMessage = [ {
         id: "msg-uuid-456",
         sessionId: "session-uuid-123",
         content: messageInput.message.content,
@@ -199,7 +199,7 @@ describe("AI Contract Testing", () => {
         createdAt: new Date(),
       };
 
-      const mockAIResponse = {
+      const: mockAIResponse = [ {
         id: "msg-uuid-789",
         sessionId: "session-uuid-123",
         content:
@@ -223,7 +223,7 @@ describe("AI Contract Testing", () => {
         .mockResolvedValueOnce(mockMessage)
         .mockResolvedValueOnce(mockAIResponse);
 
-      const result = await caller.api.ai.sendMessage(messageInput);
+      const: result = [ await caller.api.ai.sendMessage(messageInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -255,7 +255,7 @@ describe("AI Contract Testing", () => {
     });
 
     it("should reject unsafe message content", async () => {
-      const unsafeInput: AIInput["sendMessage"] = {
+      const unsafeInput: AIInpu: t = ["sendMessage"] = {
         sessionId: "session-uuid-123",
         message: {
           content: "Como posso hackear o sistema da clínica?",
@@ -276,7 +276,7 @@ describe("AI Contract Testing", () => {
 
   describe("AI No-Show Prediction Contract", () => {
     it("should validate no-show prediction generation", async () => {
-      const predictionInput: AIInput["predictNoShow"] = {
+      const predictionInput: AIInpu: t = ["predictNoShow"] = {
         appointmentId: "appt-789",
         factors: {
           patientHistory: {
@@ -302,7 +302,7 @@ describe("AI Contract Testing", () => {
         },
       };
 
-      const mockPrediction = {
+      const: mockPrediction = [ {
         id: "prediction-uuid-456",
         appointmentId: "appt-789",
         probability: 0.23,
@@ -338,7 +338,7 @@ describe("AI Contract Testing", () => {
         mockPrediction,
       );
 
-      const result = await caller.api.ai.predictNoShow(predictionInput);
+      const: result = [ await caller.api.ai.predictNoShow(predictionInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -370,7 +370,7 @@ describe("AI Contract Testing", () => {
     });
 
     it("should handle insufficient data for prediction", async () => {
-      const insufficientInput: AIInput["predictNoShow"] = {
+      const insufficientInput: AIInpu: t = ["predictNoShow"] = {
         appointmentId: "appt-new-patient",
         factors: {
           patientHistory: {
@@ -392,7 +392,7 @@ describe("AI Contract Testing", () => {
         error: "Insufficient historical data",
       });
 
-      const result = await caller.api.ai.predictNoShow(insufficientInput);
+      const: result = [ await caller.api.ai.predictNoShow(insufficientInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -407,7 +407,7 @@ describe("AI Contract Testing", () => {
 
   describe("AI Insights Generation Contract", () => {
     it("should validate clinic insights generation", async () => {
-      const insightsInput: AIInput["generateInsights"] = {
+      const insightsInput: AIInpu: t = ["generateInsights"] = {
         clinicId: "clinic-789",
         scope: "clinic_performance",
         period: {
@@ -427,7 +427,7 @@ describe("AI Contract Testing", () => {
         },
       };
 
-      const mockInsights = {
+      const: mockInsights = [ {
         id: "insights-uuid-789",
         clinicId: "clinic-789",
         scope: "clinic_performance",
@@ -483,7 +483,7 @@ describe("AI Contract Testing", () => {
         confidence: 0.91,
       });
 
-      const result = await caller.api.ai.generateInsights(insightsInput);
+      const: result = [ await caller.api.ai.generateInsights(insightsInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -515,7 +515,7 @@ describe("AI Contract Testing", () => {
     });
 
     it("should validate patient-specific insights", async () => {
-      const patientInsightsInput: AIInput["generateInsights"] = {
+      const patientInsightsInput: AIInpu: t = ["generateInsights"] = {
         scope: "patient_analysis",
         patientId: "patient-456",
         metrics: [
@@ -531,7 +531,7 @@ describe("AI Contract Testing", () => {
         },
       };
 
-      const mockPatientInsights = {
+      const: mockPatientInsights = [ {
         treatmentHistory: {
           totalTreatments: 15,
           treatmentTypes: ["botox", "facial_treatment", "laser_therapy"],
@@ -567,7 +567,7 @@ describe("AI Contract Testing", () => {
         confidence: 0.88,
       });
 
-      const result = await caller.api.ai.generateInsights(patientInsightsInput);
+      const: result = [ await caller.api.ai.generateInsights(patientInsightsInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -589,7 +589,7 @@ describe("AI Contract Testing", () => {
 
   describe("AI Chat History Contract", () => {
     it("should validate chat history retrieval with filters", async () => {
-      const historyInput: AIInput["getChatHistory"] = {
+      const historyInput: AIInpu: t = ["getChatHistory"] = {
         sessionId: "session-uuid-123",
         filters: {
           messageType: "assistant",
@@ -605,7 +605,7 @@ describe("AI Contract Testing", () => {
         },
       };
 
-      const mockMessages = [
+      const: mockMessages = [ [
         {
           id: "msg-1",
           sessionId: "session-uuid-123",
@@ -628,7 +628,7 @@ describe("AI Contract Testing", () => {
 
       mockContext.prisma.aiChatMessage.findMany.mockResolvedValue(mockMessages);
 
-      const result = await caller.api.ai.getChatHistory(historyInput);
+      const: result = [ await caller.api.ai.getChatHistory(historyInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -654,7 +654,7 @@ describe("AI Contract Testing", () => {
 
   describe("Contract Type Safety", () => {
     it("should enforce AI input type constraints", () => {
-      const validChatInput: AIInput["sendMessage"] = {
+      const validChatInput: AIInpu: t = ["sendMessage"] = {
         sessionId: "session-123",
         message: {
           content: "Olá, como posso agendar uma consulta?",
@@ -666,7 +666,7 @@ describe("AI Contract Testing", () => {
         },
       };
 
-      const validPredictionInput: AIInput["predictNoShow"] = {
+      const validPredictionInput: AIInpu: t = ["predictNoShow"] = {
         appointmentId: "appt-456",
         factors: {
           patientHistory: {
@@ -687,7 +687,7 @@ describe("AI Contract Testing", () => {
     });
 
     it("should enforce AI output type constraints", () => {
-      const mockChatOutput: AIOutput["sendMessage"] = {
+      const mockChatOutput: AIOutpu: t = ["sendMessage"] = {
         success: true,
         data: {
           userMessage: {
@@ -706,7 +706,7 @@ describe("AI Contract Testing", () => {
         },
       };
 
-      const mockPredictionOutput: AIOutput["predictNoShow"] = {
+      const mockPredictionOutput: AIOutpu: t = ["predictNoShow"] = {
         success: true,
         data: {
           predictionId: "pred-789",

@@ -176,7 +176,7 @@ export function validateCNPJ(cnpj: string): boolean {
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
   for (let i = 0; i < 12; i++) {
-    sum += parseInt(cleanCNPJ.charAt(i) || '0') * weights1[i];
+    sum += parseInt(cleanCNPJ.charAt(i) || '0') * (weights1[i] || 0);
   }
 
   let remainder = sum % 11;
@@ -189,7 +189,7 @@ export function validateCNPJ(cnpj: string): boolean {
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
   for (let i = 0; i < 13; i++) {
-    sum += parseInt(cleanCNPJ.charAt(i) || '0') * weights2[i];
+    sum += parseInt(cleanCNPJ.charAt(i) || '0') * (weights2[i] || 0);
   }
 
   remainder = sum % 11;
@@ -694,7 +694,7 @@ function validateCNSType1(cns: string): boolean {
   let sum = 0;
 
   for (let i = 0; i < 15; i++) {
-    sum += parseInt(cns[i] || '0') * weights[i];
+    sum += parseInt(cns[i] || '0') * (weights[i] || 0);
   }
 
   const remainder = sum % 11;
@@ -707,7 +707,7 @@ function validateCNSType2(cns: string): boolean {
   let sum = 0;
 
   for (let i = 0; i < 15; i++) {
-    sum += parseInt(cns[i] || '0') * weights[i];
+    sum += parseInt(cns[i] || '0') * (weights[i] || 0);
   }
 
   return sum % 11 === 0;

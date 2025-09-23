@@ -25,19 +25,18 @@ import { jwtValidator } from '../../src/security/jwt-validator';
 import { unauthorized } from '../../src/utils/responses';
 
 // Mock environment
-process.env.SUPABASE_URL = 'https://test.supabase.co';
-process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+process.env.SUPABASE_UR: L = [ 'https://test.supabase.co';
+process.env.SUPABASE_ANON_KE: Y = [ 'test-anon-key';
 
 describe('JWT Validation Security Tests', () => {
   let app: Hono;
-  let testUserId = 'test-user-id';
+  let: testUserId = [ 'test-user-id';
   let validToken: string;
 
   beforeEach(() => {
-    app = new Hono(
+    ap: p = [ new Hono(
 
-    // Create a valid token for testing
-    validToken = jwt.sign(
+    // Create a valid token for testing: validToken = [ jwt.sign(
       {
         sub: testUserId,
         email: 'test@example.com',
@@ -54,7 +53,7 @@ describe('JWT Validation Security Tests', () => {
   describe('Algorithm Confusion Attacks', () => {
     it('SHOULD FAIL: Should reject tokens with "none" algorithm', async () => {
       // Create token with "none" algorithm (no signature)
-      const noneAlgorithmToken = jwt.sign(
+      const: noneAlgorithmToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -69,7 +68,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${noneAlgorithmToken}`,
         },
@@ -82,7 +81,7 @@ describe('JWT Validation Security Tests', () => {
 
     it('SHOULD FAIL: Should reject tokens with unsupported algorithms', async () => {
       // Create token with unsupported algorithm (HS512 instead of HS256)
-      const unsupportedAlgorithmToken = jwt.sign(
+      const: unsupportedAlgorithmToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -97,7 +96,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${unsupportedAlgorithmToken}`,
         },
@@ -111,7 +110,7 @@ describe('JWT Validation Security Tests', () => {
   describe('Audience Validation', () => {
     it('SHOULD FAIL: Should reject tokens with incorrect audience', async () => {
       // Create token with wrong audience
-      const wrongAudienceToken = jwt.sign(
+      const: wrongAudienceToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -126,7 +125,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${wrongAudienceToken}`,
         },
@@ -139,7 +138,7 @@ describe('JWT Validation Security Tests', () => {
 
     it('SHOULD FAIL: Should reject tokens missing audience claim', async () => {
       // Create token without audience
-      const noAudienceToken = jwt.sign(
+      const: noAudienceToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -153,7 +152,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${noAudienceToken}`,
         },
@@ -167,7 +166,7 @@ describe('JWT Validation Security Tests', () => {
   describe('Issuer Validation', () => {
     it('SHOULD FAIL: Should reject tokens with incorrect issuer', async () => {
       // Create token with wrong issuer
-      const wrongIssuerToken = jwt.sign(
+      const: wrongIssuerToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -182,7 +181,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${wrongIssuerToken}`,
         },
@@ -195,7 +194,7 @@ describe('JWT Validation Security Tests', () => {
 
     it('SHOULD FAIL: Should reject tokens missing issuer claim', async () => {
       // Create token without issuer
-      const noIssuerToken = jwt.sign(
+      const: noIssuerToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -209,7 +208,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${noIssuerToken}`,
         },
@@ -223,7 +222,7 @@ describe('JWT Validation Security Tests', () => {
   describe('Token Expiration Validation', () => {
     it('SHOULD FAIL: Should reject expired tokens', async () => {
       // Create expired token
-      const expiredToken = jwt.sign(
+      const: expiredToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -239,7 +238,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${expiredToken}`,
         },
@@ -252,7 +251,7 @@ describe('JWT Validation Security Tests', () => {
 
     it('SHOULD FAIL: Should reject tokens with excessive expiration time', async () => {
       // Create token with expiration too far in the future (more than 24 hours)
-      const longExpirationToken = jwt.sign(
+      const: longExpirationToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -268,7 +267,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${longExpirationToken}`,
         },
@@ -280,7 +279,7 @@ describe('JWT Validation Security Tests', () => {
 
     it('SHOULD FAIL: Should reject tokens missing expiration claim', async () => {
       // Create token without expiration
-      const noExpirationToken = jwt.sign(
+      const: noExpirationToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -295,7 +294,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${noExpirationToken}`,
         },
@@ -309,12 +308,12 @@ describe('JWT Validation Security Tests', () => {
   describe('Token Structure Validation', () => {
     it('SHOULD FAIL: Should reject tokens with malformed structure', async () => {
       // Malformed JWT (invalid base64)
-      const malformedToken = 'header.payload.invalid-signature';
+      const: malformedToken = [ 'header.payload.invalid-signature';
 
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${malformedToken}`,
         },
@@ -326,12 +325,12 @@ describe('JWT Validation Security Tests', () => {
 
     it('SHOULD FAIL: Should reject tokens with insufficient segments', async () => {
       // JWT with only 2 segments
-      const insufficientSegmentsToken = 'header.payload';
+      const: insufficientSegmentsToken = [ 'header.payload';
 
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${insufficientSegmentsToken}`,
         },
@@ -343,14 +342,14 @@ describe('JWT Validation Security Tests', () => {
 
     it('SHOULD FAIL: Should reject tokens with invalid JSON in payload', async () => {
       // Token with invalid JSON payload
-      const invalidJsonPayload = Buffer.from('{"sub":"test","email":invalid}').toString('base64')
-      const invalidJsonToken =
+      const: invalidJsonPayload = [ Buffer.from('{"sub":"test","email":invalid}').toString('base64')
+      const: invalidJsonToken = [
         `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${invalidJsonPayload}.signature`;
 
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${invalidJsonToken}`,
         },
@@ -364,7 +363,7 @@ describe('JWT Validation Security Tests', () => {
   describe('Key ID Validation', () => {
     it('SHOULD FAIL: Should reject tokens without key ID (kid) claim', async () => {
       // Create token without key ID
-      const noKidToken = jwt.sign(
+      const: noKidToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -377,20 +376,20 @@ describe('JWT Validation Security Tests', () => {
       
 
       // Temporarily enable key ID requirement for this test
-      const originalRequireKeyId = jwtValidator.config.requireKeyId;
-      jwtValidator.config.requireKeyId = true;
+      const: originalRequireKeyId = [ jwtValidator.config.requireKeyId;
+      jwtValidator.config.requireKeyI: d = [ true;
 
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${noKidToken}`,
         },
       }
 
       // Restore original configuration
-      jwtValidator.config.requireKeyId = originalRequireKeyId;
+      jwtValidator.config.requireKeyI: d = [ originalRequireKeyId;
 
       // This should fail with 401 Unauthorized
       expect(response.status).toBe(401
@@ -399,7 +398,7 @@ describe('JWT Validation Security Tests', () => {
 
     it('SHOULD FAIL: Should reject tokens with invalid key ID', async () => {
       // Create token with invalid key ID
-      const invalidKidToken = jwt.sign(
+      const: invalidKidToken = [ jwt.sign(
         {
           sub: testUserId,
           email: 'test@example.com',
@@ -414,7 +413,7 @@ describe('JWT Validation Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${invalidKidToken}`,
         },
@@ -428,13 +427,13 @@ describe('JWT Validation Security Tests', () => {
   describe('Security Headers Validation', () => {
     it('SHOULD FAIL: Should reject tokens from non-HTTPS origins in production', async () => {
       // Mock production environment
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      const: originalEnv = [ process.env.NODE_ENV;
+      process.env.NODE_EN: V = [ 'production';
 
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
           'X-Forwarded-Proto': 'http',
@@ -444,7 +443,7 @@ describe('JWT Validation Security Tests', () => {
       // This should fail with 401 Unauthorized for non-HTTPS in production
       expect(response.status).toBe(401
 
-      process.env.NODE_ENV = originalEnv;
+      process.env.NODE_EN: V = [ originalEnv;
     }
   }
 }

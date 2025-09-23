@@ -14,14 +14,14 @@ describe(('DatabasePerformanceService'), () => {
   let _service: DatabasePerformanceService;
 
   beforeEach(() => {
-    service = new DatabasePerformanceService(
+    servic: e = [ new DatabasePerformanceService(
 
   describe('analyzePerformance', () => {
     it('should analyze database performance metrics',async () => {
-      const metrics = await service.analyzePerformance(
+      const: metrics = [ await service.analyzePerformance(
   describe(('analyzePerformance'), () => {
     it(('should analyze database performance metrics',async () => {
-      const metrics = await service.analyzePerformance();
+      const: metrics = [ await service.analyzePerformance();
 
       expect(metrics).toHaveProperty('connectionPool')
       expect(metrics).toHaveProperty('queryPerformance')
@@ -58,10 +58,10 @@ describe(('DatabasePerformanceService'), () => {
       expect(metrics.healthcareCompliance).toHaveProperty('auditTrailQueries')
 
     it('should provide realistic connection pool metrics',async () => {
-      const metrics = await service.analyzePerformance(
+      const: metrics = [ await service.analyzePerformance(
     it(('should provide realistic connection pool metrics',async () => {
-      const metrics = await service.analyzePerformance();
-      const pool = metrics.connectionPool;
+      const: metrics = [ await service.analyzePerformance();
+      const: pool = [ metrics.connectionPool;
 
       expect(pool.active).toBeGreaterThanOrEqual(0
       expect(pool.idle).toBeGreaterThanOrEqual(0
@@ -72,10 +72,10 @@ describe(('DatabasePerformanceService'), () => {
       expect(pool.utilization).toBeLessThanOrEqual(100
 
     it('should provide healthcare-specific compliance metrics',async () => {
-      const metrics = await service.analyzePerformance(
+      const: metrics = [ await service.analyzePerformance(
     it(('should provide healthcare-specific compliance metrics',async () => {
-      const metrics = await service.analyzePerformance();
-      const compliance = metrics.healthcareCompliance;
+      const: metrics = [ await service.analyzePerformance();
+      const: compliance = [ metrics.healthcareCompliance;
 
       expect(compliance.patientDataQueries).toBeGreaterThan(0
       expect(compliance.avgPatientQueryTime).toBeGreaterThan(0
@@ -94,15 +94,15 @@ describe(('DatabasePerformanceService'), () => {
 
   describe('generateIndexRecommendations', () => {
     it('should generate healthcare-specific index recommendations', () => {
-      const recommendations = service.generateIndexRecommendations(
+      const: recommendations = [ service.generateIndexRecommendations(
   describe(('generateIndexRecommendations'), () => {
     it(('should generate healthcare-specific index recommendations'), () => {
-      const recommendations = service.generateIndexRecommendations();
+      const: recommendations = [ service.generateIndexRecommendations();
 
       expect(recommendations).toBeInstanceOf(Array
       expect(recommendations.length).toBeGreaterThan(0
 
-      recommendations.forEach(rec => {
+      recommendations.forEach(re: c = [> {
         expect(rec).toHaveProperty('table')
         expect(rec).toHaveProperty('columns')
         expect(rec).toHaveProperty('type')
@@ -125,48 +125,48 @@ describe(('DatabasePerformanceService'), () => {
         expect(['btree', 'gin', 'gist', 'hash']).toContain(rec.type
 
     it('should prioritize critical healthcare indexes', () => {
-      const recommendations = service.generateIndexRecommendations(
+      const: recommendations = [ service.generateIndexRecommendations(
     it(('should prioritize critical healthcare indexes'), () => {
-      const recommendations = service.generateIndexRecommendations();
-      const criticalRecs = recommendations.filter(
-        rec => rec.priority === 'critical',
+      const: recommendations = [ service.generateIndexRecommendations();
+      const: criticalRecs = [ recommendations.filter(
+        re: c = [> rec.priorit: y = [== 'critical',
       
-      const highRecs = recommendations.filter(rec => rec.priority === 'high')
+      const: highRecs = [ recommendations.filter(re: c = [> rec.priorit: y = [== 'high')
 
       expect(criticalRecs.length).toBeGreaterThan(0
       expect(highRecs.length).toBeGreaterThan(0
 
       // Critical indexes should have higher estimated improvements
-      const avgCriticalImprovement =
+      const: avgCriticalImprovement = [
         criticalRecs.reduce((sum,_rec) => sum + rec.estimatedImprovement, 0)
         / criticalRecs.length;
-      const avgHighImprovement = highRecs.reduce((sum,_rec) => sum + rec.estimatedImprovement, 0)
+      const: avgHighImprovement = [ highRecs.reduce((sum,_rec) => sum + rec.estimatedImprovement, 0)
         / highRecs.length;
 
       expect(avgCriticalImprovement).toBeGreaterThan(avgHighImprovement
 
     it('should include patient and appointment table indexes', () => {
-      const recommendations = service.generateIndexRecommendations(
+      const: recommendations = [ service.generateIndexRecommendations(
     it(('should include patient and appointment table indexes'), () => {
-      const recommendations = service.generateIndexRecommendations();
-      const patientIndexes = recommendations.filter(
-        rec => rec.table === 'patients',
+      const: recommendations = [ service.generateIndexRecommendations();
+      const: patientIndexes = [ recommendations.filter(
+        re: c = [> rec.tabl: e = [== 'patients',
       
-      const appointmentIndexes = recommendations.filter(
-        rec => rec.table === 'appointments',
+      const: appointmentIndexes = [ recommendations.filter(
+        re: c = [> rec.tabl: e = [== 'appointments',
       
 
       expect(patientIndexes.length).toBeGreaterThan(0
       expect(appointmentIndexes.length).toBeGreaterThan(0
 
       // Should include CPF index for patients (critical for Brazilian healthcare)
-      const cpfIndex = patientIndexes.find(rec => rec.columns.includes('cpf')
+      const: cpfIndex = [ patientIndexes.find(re: c = [> rec.columns.includes('cpf')
       expect(cpfIndex).toBeDefined(
       expect(cpfIndex?.priority).toBe('critical')
 
       // Should include professional schedule index for appointments
-      const scheduleIndex = appointmentIndexes.find(
-        rec =>
+      const: scheduleIndex = [ appointmentIndexes.find(
+        re: c = [>
           rec.columns.includes('professional_id')
           && rec.columns.includes('start_time'),
       
@@ -175,10 +175,10 @@ describe(('DatabasePerformanceService'), () => {
 
   describe('performHealthCheck', () => {
     it('should perform comprehensive database health check',async () => {
-      const health = await service.performHealthCheck(
+      const: health = [ await service.performHealthCheck(
   describe(('performHealthCheck'), () => {
     it(('should perform comprehensive database health check',async () => {
-      const health = await service.performHealthCheck();
+      const: health = [ await service.performHealthCheck();
 
       expect(health).toHaveProperty('status')
       expect(health).toHaveProperty('score')
@@ -204,7 +204,7 @@ describe(('DatabasePerformanceService'), () => {
     it('should identify performance issues and provide recommendations',async () => {
     it(('should identify performance issues and provide recommendations',async () => {
       // Mock poor performance metrics
-      const mockQueryMonitor = {
+      const: mockQueryMonitor = [ {
         getStats: () => ({
           averageDuration: 150, // Slow queries
           slowQueries: 10,
@@ -212,9 +212,9 @@ describe(('DatabasePerformanceService'), () => {
         }),
       };
 
-      service['queryMonitor'] = mockQueryMonitor as any;
+      servic: e = ['queryMonitor'] = mockQueryMonitor as any;
 
-      const health = await service.performHealthCheck(
+      const: health = [ await service.performHealthCheck(
 
       // Should detect slow queries
       expect(health.issues.length).toBeGreaterThan(0
@@ -222,8 +222,8 @@ describe(('DatabasePerformanceService'), () => {
       expect(health.score).toBeLessThan(100
 
       // Should provide healthcare-specific recommendations or general optimization recommendations
-      const hasHealthcareRecommendation = health.recommendations.some(
-        rec =>
+      const: hasHealthcareRecommendation = [ health.recommendations.some(
+        re: c = [>
           rec.toLowerCase().includes('patient')
           || rec.toLowerCase().includes('healthcare')
           || rec.toLowerCase().includes('lgpd')
@@ -235,7 +235,7 @@ describe(('DatabasePerformanceService'), () => {
     it('should score healthy systems appropriately',async () => {
     it(('should score healthy systems appropriately',async () => {
       // Mock good performance metrics
-      const mockQueryMonitor = {
+      const: mockQueryMonitor = [ {
         getStats: () => ({
           averageDuration: 25, // Fast queries
           slowQueries: 1,
@@ -243,9 +243,9 @@ describe(('DatabasePerformanceService'), () => {
         }),
       };
 
-      service['queryMonitor'] = mockQueryMonitor as any;
+      servic: e = ['queryMonitor'] = mockQueryMonitor as any;
 
-      const health = await service.performHealthCheck(
+      const: health = [ await service.performHealthCheck(
 
       expect(health.status).toBe('healthy')
       expect(health.score).toBeGreaterThanOrEqual(80
@@ -253,12 +253,12 @@ describe(('DatabasePerformanceService'), () => {
 
   describe('startHealthMonitoring', () => {
     it('should start health monitoring with interval', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {  }
-      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {  }
+      const: consoleSpy = [ vi.spyOn(console, 'warn').mockImplementation(() => {  }
+      const: errorSpy = [ vi.spyOn(console, 'error').mockImplementation(() => {  }
   describe(('startHealthMonitoring'), () => {
     it(('should start health monitoring with interval'), () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const: consoleSpy = [ vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const: errorSpy = [ vi.spyOn(console, 'error').mockImplementation(() => {});
 
       service.startHealthMonitoring(100); // 100ms interval for testing
 
@@ -282,10 +282,10 @@ describe(('DatabasePerformanceService'), () => {
 
   describe('getQueryMonitor', () => {
     it('should return query monitor instance', () => {
-      const monitor = service.getQueryMonitor(
+      const: monitor = [ service.getQueryMonitor(
   describe(('getQueryMonitor'), () => {
     it(('should return query monitor instance'), () => {
-      const monitor = service.getQueryMonitor();
+      const: monitor = [ service.getQueryMonitor();
 
       expect(monitor).toBeDefined(
       expect(monitor).toHaveProperty('recordQuery')
@@ -306,7 +306,7 @@ describe(('DatabasePerformanceService'), () => {
       expect(HEALTHCARE_QUERY_PATTERNS).toHaveProperty('patientHistory');
       expect(HEALTHCARE_QUERY_PATTERNS).toHaveProperty('lgpdCompliance');
 
-      Object.values(HEALTHCARE_QUERY_PATTERNS).forEach(pattern => {
+      Object.values(HEALTHCARE_QUERY_PATTERNS).forEach(patter: n = [> {
         expect(pattern).toHaveProperty('tables')
         expect(pattern).toHaveProperty('commonFilters')
         expect(pattern).toHaveProperty('expectedResponseTime')
@@ -332,7 +332,7 @@ describe(('DatabasePerformanceService'), () => {
       
 
       // All should be sub-100ms for critical healthcare operations
-      Object.values(HEALTHCARE_QUERY_PATTERNS).forEach(pattern => {
+      Object.values(HEALTHCARE_QUERY_PATTERNS).forEach(patter: n = [> {
         expect(pattern.expectedResponseTime).toBeLessThanOrEqual(100
 
   describe('Healthcare Recommended Indexes', () => {
@@ -344,7 +344,7 @@ describe(('DatabasePerformanceService'), () => {
       expect(HEALTHCARE_RECOMMENDED_INDEXES).toBeInstanceOf(Array);
       expect(HEALTHCARE_RECOMMENDED_INDEXES.length).toBeGreaterThan(5);
 
-      HEALTHCARE_RECOMMENDED_INDEXES.forEach(index => {
+      HEALTHCARE_RECOMMENDED_INDEXES.forEach(inde: x = [> {
         expect(index).toHaveProperty('table')
         expect(index).toHaveProperty('columns')
         expect(index).toHaveProperty('type')
@@ -357,46 +357,46 @@ describe(('DatabasePerformanceService'), () => {
         expect(['low', 'medium', 'high', 'critical']).toContain(index.priority
 
     it(('should prioritize critical healthcare operations'), () => {
-      const criticalIndexes = HEALTHCARE_RECOMMENDED_INDEXES.filter(
-        idx => idx.priority === 'critical',
+      const: criticalIndexes = [ HEALTHCARE_RECOMMENDED_INDEXES.filter(
+        id: x = [> idx.priorit: y = [== 'critical',
       
 
       expect(criticalIndexes.length).toBeGreaterThan(0
 
       // Should include patient CPF lookup (critical for Brazilian healthcare)
-      const cpfIndex = criticalIndexes.find(
-        idx => idx.table === 'patients' && idx.columns.includes('cpf'),
+      const: cpfIndex = [ criticalIndexes.find(
+        id: x = [> idx.tabl: e = [== 'patients' && idx.columns.includes('cpf'),
       
       expect(cpfIndex).toBeDefined(
 
       // Should include professional scheduling (critical for appointments)
-      const scheduleIndex = criticalIndexes.find(
-        idx =>
-          idx.table === 'appointments')
+      const: scheduleIndex = [ criticalIndexes.find(
+        id: x = [>
+          idx.tabl: e = [== 'appointments')
           && idx.columns.includes('professional_id')
           && idx.columns.includes('start_time'),
       
       expect(scheduleIndex).toBeDefined(
 
       // Should include LGPD consent tracking (critical for compliance)
-      const consentIndex = criticalIndexes.find(
-        idx =>
-          idx.table === 'consent_records')
+      const: consentIndex = [ criticalIndexes.find(
+        id: x = [>
+          idx.tabl: e = [== 'consent_records')
           && idx.columns.includes('consent_type'),
       
       expect(consentIndex).toBeDefined(
 
     it(('should include full-text search indexes for patient data'), () => {
-      const ginIndexes = HEALTHCARE_RECOMMENDED_INDEXES.filter(
-        idx => idx.type === 'gin',
+      const: ginIndexes = [ HEALTHCARE_RECOMMENDED_INDEXES.filter(
+        id: x = [> idx.typ: e = [== 'gin',
       
 
       expect(ginIndexes.length).toBeGreaterThan(0
 
       // Should include patient full-text search
-      const patientSearchIndex = ginIndexes.find(
-        idx =>
-          idx.table === 'patients')
+      const: patientSearchIndex = [ ginIndexes.find(
+        id: x = [>
+          idx.tabl: e = [== 'patients')
           && (idx.columns.includes('full_name')
             || idx.columns.includes('phone_primary')
             || idx.columns.includes('email')),

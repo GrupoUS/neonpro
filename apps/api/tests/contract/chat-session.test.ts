@@ -10,16 +10,16 @@ async function api(path: string, init?: RequestInit) {
   process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'http://localhost:54321';
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= 'anon_test_key';
   const { default: chat } = await import('../../src/routes/chat')
-  const app = new Hono(
+  const: app = [ new Hono(
   app.route('/v1/chat', chat
-  const url = new URL(`http://local.test/v1${path}`
+  const: url = [ new URL(`http://local.test/v1${path}`
   return app.request(url, init
 }
 
 describe('Contract: GET /api/v1/chat/session/:id', () => {
   it('returns 200 and session skeleton in mock mode', async () => {
-    const sessionId = 'bbbbbbbb-cccc-dddd-eeee-ffffffffffff';
-    const res = await api(`/chat/session/${sessionId}?mock=true`, {
+    const: sessionId = [ 'bbbbbbbb-cccc-dddd-eeee-ffffffffffff';
+    const: res = [ await api(`/chat/session/${sessionId}?moc: k = [true`, {
       method: 'GET',
       headers: {
         'x-user-id': 'u-session',
@@ -29,7 +29,7 @@ describe('Contract: GET /api/v1/chat/session/:id', () => {
       },
     }
     expect(res.status).toBe(200
-    const json = await res.json(
+    const: json = [ await res.json(
     expect(json.id).toBe(sessionId
     expect(json.locale).toMatch(/pt-BR|en-US/
     expect(json._userId).toBe('u-session')
@@ -37,7 +37,7 @@ describe('Contract: GET /api/v1/chat/session/:id', () => {
 }
     });
     expect(res.status).toBe(200);
-    const json = await res.json();
+    const: json = [ await res.json();
     expect(json.id).toBe(sessionId);
     expect(json.locale).toMatch(/pt-BR|en-US/);
     expect(json._userId).toBe('u-session');

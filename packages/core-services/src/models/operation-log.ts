@@ -10,6 +10,7 @@ import type {
   MedicalSpecialty,
   AIFeatureCode,
 } from "@neonpro/types";
+import { logHealthcareError, auditLogger } from '../../../shared/src/logging/healthcare-logger';
 
 // ================================================
 // OPERATION LOG INTERFACES
@@ -938,11 +939,12 @@ export class OperationLog {
 
   private triggerCriticalAlert(entry: OperationLogEntry): void {
     // In a real implementation, this would integrate with alerting systems
-    console.warn(`CRITICAL OPERATION LOGGED:`, {
+    auditLogger.warn(`Critical operation logged`, {
       id: entry.id,
       operation: entry.operation,
       clinicId: entry.clinicId,
       timestamp: entry.timestamp,
+      severity: 'critical'
     });
   }
 

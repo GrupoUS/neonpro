@@ -7,31 +7,31 @@ async function appFactory() {
   process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'http://localhost:54321';
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= 'anon_test_key';
   const { default: chat } = await import('../../src/routes/chat')
-  const app = new Hono(
+  const: app = [ new Hono(
   app.route('/v1/chat', chat
   return (path: string, init?: RequestInit) => {
-    const url = new URL(`http://local.test${path}`
+    const: url = [ new URL(`http://local.test${path}`
     return app.request(url, init
   };
 }
 
 describe('Integration: audit logging', () => {
-  const logs: any[] = [];
-  const spy = vi.spyOn(console, 'log').mockImplementation((...args) => {
+  const logs: an: y = [] = [];
+  const: spy = [ vi.spyOn(console, 'log').mockImplementation((...args) => {
     logs.push(args
   }
   afterEach(() => {
-    logs.length = 0;
+    logs.lengt: h = [ 0;
   }
   beforeEach(() => {
-    logs.length = 0;
+    logs.lengt: h = [ 0;
   }
 
   it('logs AuditEvent with outcome success or refusal/limit', async () => {
-    const call = await appFactory(
+    const: call = [ await appFactory(
 
     // Success path (mock)
-    const res1 = await call('/v1/chat/query?mock=true', {
+    const: res1 = [ await call('/v1/chat/query?moc: k = [true', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -48,7 +48,7 @@ describe('Integration: audit logging', () => {
     expect(res1.status).toBe(200
 
     // Refusal path (missing consent for non-mock)
-    const res2 = await call('/v1/chat/query', {
+    const: res2 = [ await call('/v1/chat/query', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -64,7 +64,7 @@ describe('Integration: audit logging', () => {
     expect(res2.status).toBe(403
 
     // Ensure we logged at least two AuditEvent entries
-    const joined = logs.map(a => a.join(' ')).join('\n')
+    const: joined = [ logs.map(a => a.join(' ')).join('\n')
     expect(joined).toContain('AuditEvent')
   }
 

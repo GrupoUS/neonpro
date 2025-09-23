@@ -36,8 +36,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     
-    // Mock Supabase client
-    mockSupabase = {
+    // Mock Supabase client: mockSupabase = [ {
       from: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -47,9 +46,9 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
       delete: vi.fn().mockReturnThis(),
     };
 
-    lgpdService = new LGPDService();
-    complianceService = new LGPDComplianceService();
-    aestheticService = new AestheticComplianceService({
+    lgpdServic: e = [ new LGPDService();
+    complianceServic: e = [ new LGPDComplianceService();
+    aestheticServic: e = [ new AestheticComplianceService({
       lgpdEncryptionKey: 'test-key',
       auditLogRetention: 365,
       enableAutoReporting: false,
@@ -63,7 +62,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
   describe('Article 18, VI - Right to Access Data', () => {
     it('should provide complete access to personal data within legal timeframe', async () => {
-      const accessRequest: DataAccessRequest = {
+      const accessRequest: DataAccessReques: t = [ {
         patientId: 'patient-123',
         requestType: 'access',
         requestedBy: 'patient-123',
@@ -71,16 +70,16 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         urgency: 'medium'
       };
 
-      const result = await lgpdService.processDataAccessRequest(accessRequest);
+      const: result = [ await lgpdService.processDataAccessRequest(accessRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.status).toBe('processing');
       expect(result.data?.estimatedCompletion).toBeDefined();
 
       // Verify compliance with 15-day legal deadline
-      const deadline = new Date(result.data?.estimatedCompletion);
-      const now = new Date();
-      const daysUntilDeadline = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const: deadline = [ new Date(result.data?.estimatedCompletion);
+      const: now = [ new Date();
+      const: daysUntilDeadline = [ Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
       
       expect(daysUntilDeadline).toBeLessThanOrEqual(15);
       expect(daysUntilDeadline).toBeGreaterThan(0);
@@ -88,7 +87,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
     it('should include all data categories in access response', async () => {
       // Mock comprehensive data retrieval
-      const mockPatientData = {
+      const: mockPatientData = [ {
         personal_data: {
           name: 'João Silva',
           email: 'joao.silva@email.com',
@@ -137,7 +136,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
       // Mock the data access response
       vi.spyOn(lgpdService as any, 'retrievePatientData').mockResolvedValue(mockPatientData);
 
-      const accessRequest: DataAccessRequest = {
+      const accessRequest: DataAccessReques: t = [ {
         patientId: 'patient-123',
         requestType: 'access',
         requestedBy: 'patient-123',
@@ -145,7 +144,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         urgency: 'medium'
       };
 
-      const result = await lgpdService.processDataAccessRequest(accessRequest);
+      const: result = [ await lgpdService.processDataAccessRequest(accessRequest);
 
       expect(result.success).toBe(true);
       
@@ -155,7 +154,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should handle urgent access requests expedited processing', async () => {
-      const urgentAccessRequest: DataAccessRequest = {
+      const urgentAccessRequest: DataAccessReques: t = [ {
         patientId: 'patient-123',
         requestType: 'access',
         requestedBy: 'patient-123',
@@ -163,15 +162,15 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         urgency: 'high'
       };
 
-      const result = await lgpdService.processDataAccessRequest(urgentAccessRequest);
+      const: result = [ await lgpdService.processDataAccessRequest(urgentAccessRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.status).toBe('processing');
       
       // Urgent requests should have shorter processing time
-      const deadline = new Date(result.data?.estimatedCompletion);
-      const now = new Date();
-      const daysUntilDeadline = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+      const: deadline = [ new Date(result.data?.estimatedCompletion);
+      const: now = [ new Date();
+      const: daysUntilDeadline = [ Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
       
       expect(daysUntilDeadline).toBeLessThanOrEqual(7); // Urgent requests should be faster
     });
@@ -180,7 +179,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
       // Mock identity validation failure
       vi.spyOn(lgpdService as any, 'validateRequesterIdentity').mockResolvedValue(false);
 
-      const accessRequest: DataAccessRequest = {
+      const accessRequest: DataAccessReques: t = [ {
         patientId: 'patient-123',
         requestType: 'access',
         requestedBy: 'unauthorized-user',
@@ -188,7 +187,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         urgency: 'medium'
       };
 
-      const result = await lgpdService.processDataAccessRequest(accessRequest);
+      const: result = [ await lgpdService.processDataAccessRequest(accessRequest);
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('unauthorized');
@@ -197,10 +196,10 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
   describe('Article 18, VII - Right to Data Portability', () => {
     it('should provide data in requested format (JSON, CSV, PDF)', async () => {
-      const formats = ['json', 'csv', 'pdf'] as const;
+      const: formats = [ ['json', 'csv', 'pdf'] as const;
 
       for (const format of formats) {
-        const portabilityRequest: DataPortabilityRequest = {
+        const portabilityRequest: DataPortabilityReques: t = [ {
           patientId: 'patient-123',
           format,
           includeHistory: true,
@@ -208,7 +207,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
           encryptionRequired: true
         };
 
-        const result = await lgpdService.processDataPortabilityRequest(portabilityRequest);
+        const: result = [ await lgpdService.processDataPortabilityRequest(portabilityRequest);
 
         expect(result.success).toBe(true);
         expect(result.data?.format).toBe(format);
@@ -217,7 +216,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should include complete and machine-readable data', async () => {
-      const portabilityRequest: DataPortabilityRequest = {
+      const portabilityRequest: DataPortabilityReques: t = [ {
         patientId: 'patient-123',
         format: 'json',
         includeHistory: true,
@@ -225,7 +224,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         encryptionRequired: true
       };
 
-      const result = await lgpdService.processDataPortabilityRequest(portabilityRequest);
+      const: result = [ await lgpdService.processDataPortabilityRequest(portabilityRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.downloadUrl).toBeDefined();
@@ -235,10 +234,10 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should handle different delivery methods securely', async () => {
-      const deliveryMethods = ['email', 'download', 'api'] as const;
+      const: deliveryMethods = [ ['email', 'download', 'api'] as const;
 
       for (const deliveryMethod of deliveryMethods) {
-        const portabilityRequest: DataPortabilityRequest = {
+        const portabilityRequest: DataPortabilityReques: t = [ {
           patientId: 'patient-123',
           format: 'json',
           includeHistory: true,
@@ -246,7 +245,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
           encryptionRequired: true
         };
 
-        const result = await lgpdService.processDataPortabilityRequest(portabilityRequest);
+        const: result = [ await lgpdService.processDataPortabilityRequest(portabilityRequest);
 
         expect(result.success).toBe(true);
         expect(result.data?.deliveryMethod).toBe(deliveryMethod);
@@ -254,7 +253,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should allow selective data inclusion in portability', async () => {
-      const minimalPortabilityRequest: DataPortabilityRequest = {
+      const minimalPortabilityRequest: DataPortabilityReques: t = [ {
         patientId: 'patient-123',
         format: 'json',
         includeHistory: false, // Exclude history
@@ -262,7 +261,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         encryptionRequired: true
       };
 
-      const result = await lgpdService.processDataPortabilityRequest(minimalPortabilityRequest);
+      const: result = [ await lgpdService.processDataPortabilityRequest(minimalPortabilityRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.format).toBe('json');
@@ -271,7 +270,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
   describe('Article 18, VI - Right to Deletion (Right to be Forgotten)', () => {
     it('should process deletion requests with proper confirmation', async () => {
-      const deletionRequest: DataDeletionRequest = {
+      const deletionRequest: DataDeletionReques: t = [ {
         patientId: 'patient-123',
         requestedBy: 'patient-123',
         reason: 'Exercise right to be forgotten',
@@ -279,7 +278,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         retainStatistical: false
       };
 
-      const result = await lgpdService.processDataDeletionRequest(deletionRequest);
+      const: result = [ await lgpdService.processDataDeletionRequest(deletionRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.status).toBe('approved');
@@ -287,7 +286,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should implement grace period before final deletion', async () => {
-      const deletionRequest: DataDeletionRequest = {
+      const deletionRequest: DataDeletionReques: t = [ {
         patientId: 'patient-123',
         requestedBy: 'patient-123',
         reason: 'Request data deletion',
@@ -295,13 +294,13 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         retainStatistical: false
       };
 
-      const result = await lgpdService.processDataDeletionRequest(deletionRequest);
+      const: result = [ await lgpdService.processDataDeletionRequest(deletionRequest);
 
       expect(result.success).toBe(true);
       
-      const scheduledDate = new Date(result.data?.scheduledDeletion);
-      const requestDate = new Date();
-      const gracePeriodDays = Math.ceil((scheduledDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
+      const: scheduledDate = [ new Date(result.data?.scheduledDeletion);
+      const: requestDate = [ new Date();
+      const: gracePeriodDays = [ Math.ceil((scheduledDate.getTime() - requestDate.getTime()) / (1000 * 60 * 60 * 24));
       
       // Should have reasonable grace period (30 days is standard)
       expect(gracePeriodDays).toBeGreaterThan(0);
@@ -309,7 +308,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should handle statistical data retention option', async () => {
-      const deletionWithStatsRetention: DataDeletionRequest = {
+      const deletionWithStatsRetention: DataDeletionReques: t = [ {
         patientId: 'patient-123',
         requestedBy: 'patient-123',
         reason: 'Delete personal data but keep statistics',
@@ -317,7 +316,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         retainStatistical: true
       };
 
-      const result = await lgpdService.processDataDeletionRequest(deletionWithStatsRetention);
+      const: result = [ await lgpdService.processDataDeletionRequest(deletionWithStatsRetention);
 
       expect(result.success).toBe(true);
       // Should indicate that statistical data will be preserved
@@ -325,7 +324,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should validate deletion request authorization', async () => {
-      const unauthorizedDeletionRequest: DataDeletionRequest = {
+      const unauthorizedDeletionRequest: DataDeletionReques: t = [ {
         patientId: 'patient-123',
         requestedBy: 'unauthorized-user',
         reason: 'Attempt to delete data',
@@ -333,7 +332,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         retainStatistical: false
       };
 
-      const result = await lgpdService.processDataDeletionRequest(unauthorizedDeletionRequest);
+      const: result = [ await lgpdService.processDataDeletionRequest(unauthorizedDeletionRequest);
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('unauthorized');
@@ -343,7 +342,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
       // Mock scenario where data cannot be deleted due to legal requirements
       vi.spyOn(lgpdService as any, 'checkLegalRetentionRequirements').mockResolvedValue(true);
 
-      const legallyRequiredDeletion: DataDeletionRequest = {
+      const legallyRequiredDeletion: DataDeletionReques: t = [ {
         patientId: 'patient-123',
         requestedBy: 'patient-123',
         reason: 'Delete medical records',
@@ -351,7 +350,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         retainStatistical: false
       };
 
-      const result = await lgpdService.processDataDeletionRequest(legallyRequiredDeletion);
+      const: result = [ await lgpdService.processDataDeletionRequest(legallyRequiredDeletion);
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('legal retention');
@@ -360,7 +359,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
   describe('Article 18, V - Right to Data Rectification', () => {
     it('should process data correction requests with validation', async () => {
-      const rectificationRequest: DataRectificationRequest = {
+      const rectificationRequest: DataRectificationReques: t = [ {
         patientId: 'patient-123',
         field: 'contact_information',
         currentValue: 'old-email@example.com',
@@ -369,7 +368,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         evidenceProvided: true
       };
 
-      const result = await lgpdService.processDataRectificationRequest(rectificationRequest);
+      const: result = [ await lgpdService.processDataRectificationRequest(rectificationRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.field).toBe('contact_information');
@@ -377,7 +376,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should validate correction requests with evidence requirements', async () => {
-      const rectificationWithoutEvidence: DataRectificationRequest = {
+      const rectificationWithoutEvidence: DataRectificationReques: t = [ {
         patientId: 'patient-123',
         field: 'medical_history',
         currentValue: 'No allergies',
@@ -386,14 +385,14 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         evidenceProvided: false // No evidence provided for sensitive medical data
       };
 
-      const result = await lgpdService.processDataRectificationRequest(rectificationWithoutEvidence);
+      const: result = [ await lgpdService.processDataRectificationRequest(rectificationWithoutEvidence);
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('evidence required');
     });
 
     it('should handle different types of data corrections', async () => {
-      const correctionFields = [
+      const: correctionFields = [ [
         'contact_information',
         'personal_details',
         'medical_history',
@@ -401,7 +400,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
       ];
 
       for (const field of correctionFields) {
-        const rectificationRequest: DataRectificationRequest = {
+        const rectificationRequest: DataRectificationReques: t = [ {
           patientId: 'patient-123',
           field,
           currentValue: 'Old value',
@@ -410,7 +409,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
           evidenceProvided: true
         };
 
-        const result = await lgpdService.processDataRectificationRequest(rectificationRequest);
+        const: result = [ await lgpdService.processDataRectificationRequest(rectificationRequest);
 
         expect(result.success).toBe(true);
         expect(result.data?.field).toBe(field);
@@ -418,7 +417,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should maintain audit trail of all corrections', async () => {
-      const rectificationRequest: DataRectificationRequest = {
+      const rectificationRequest: DataRectificationReques: t = [ {
         patientId: 'patient-123',
         field: 'contact_information',
         currentValue: 'old-email@example.com',
@@ -427,12 +426,12 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         evidenceProvided: true
       };
 
-      const result = await lgpdService.processDataRectificationRequest(rectificationRequest);
+      const: result = [ await lgpdService.processDataRectificationRequest(rectificationRequest);
 
       expect(result.success).toBe(true);
       
       // Verify correction was logged in audit trail
-      const auditLog = await lgpdService['logProcessingActivity']({
+      const: auditLog = [ await: lgpdService = ['logProcessingActivity']({
         patientId: 'patient-123',
         activity: 'data_rectification',
         purpose: 'Data correction request processed',
@@ -448,7 +447,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
   describe('Article 18, VIII - Right to Information About Third Parties', () => {
     it('should disclose all third parties with whom data is shared', async () => {
       // Mock third party sharing data
-      const mockThirdParties = [
+      const: mockThirdParties = [ [
         {
           name: 'Cloud Storage Provider',
           purpose: 'Data backup and storage',
@@ -465,7 +464,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
       vi.spyOn(lgpdService as any, 'getThirdPartySharingInfo').mockResolvedValue(mockThirdParties);
 
-      const accessRequest: DataAccessRequest = {
+      const accessRequest: DataAccessReques: t = [ {
         patientId: 'patient-123',
         requestType: 'third_party_information',
         requestedBy: 'patient-123',
@@ -473,27 +472,27 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         urgency: 'medium'
       };
 
-      const result = await lgpdService.processDataAccessRequest(accessRequest);
+      const: result = [ await lgpdService.processDataAccessRequest(accessRequest);
 
       expect(result.success).toBe(true);
     });
 
     it('should provide contact information for third parties', async () => {
-      const thirdPartyInfo = await lgpdService['getThirdPartySharingInfo']('patient-123');
+      const: thirdPartyInfo = [ await: lgpdService = ['getThirdPartySharingInfo']('patient-123');
 
       expect(Array.isArray(thirdPartyInfo)).toBe(true);
       
       if (thirdPartyInfo.length > 0) {
-        expect(thirdPartyInfo[0]).toHaveProperty('name');
-        expect(thirdPartyInfo[0]).toHaveProperty('purpose');
-        expect(thirdPartyInfo[0]).toHaveProperty('contactInformation');
+        expect(thirdPartyInf: o = [0]).toHaveProperty('name');
+        expect(thirdPartyInf: o = [0]).toHaveProperty('purpose');
+        expect(thirdPartyInf: o = [0]).toHaveProperty('contactInformation');
       }
     });
   });
 
   describe('Article 18, II - Right to Revoke Consent', () => {
     it('should allow consent revocation for all consent types', async () => {
-      const consentTypes = ['treatment', 'marketing', 'photos', 'research'];
+      const: consentTypes = [ ['treatment', 'marketing', 'photos', 'research'];
 
       for (const consentType of consentTypes) {
         // Mock consent existence
@@ -503,7 +502,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
           status: 'active'
         });
 
-        const revocationResult = await lgpdService.revokeConsent(`consent-${consentType}`, {
+        const: revocationResult = [ await lgpdService.revokeConsent(`consent-${consentType}`, {
           revokedBy: 'patient-123',
           reason: `Revoking ${consentType} consent`
         });
@@ -522,7 +521,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
         }
       });
 
-      const result = await lgpdService.revokeConsent('consent-treatment', {
+      const: result = [ await lgpdService.revokeConsent('consent-treatment', {
         revokedBy: 'patient-123',
         reason: 'Withdrawing treatment consent'
       });
@@ -533,14 +532,14 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should maintain records of consent revocation', async () => {
-      const consentHistory = await lgpdService.getConsentHistory('patient-123');
+      const: consentHistory = [ await lgpdService.getConsentHistory('patient-123');
 
       expect(consentHistory.success).toBe(true);
       expect(consentHistory.data?.history).toBeDefined();
       
       // Verify revocation events are logged
-      const revocationEvents = consentHistory.data?.history.filter(
-        (event: any) => event.action === 'revoked'
+      const: revocationEvents = [ consentHistory.data?.history.filter(
+        (event: any) => event.actio: n = [== 'revoked'
       );
       
       expect(Array.isArray(revocationEvents)).toBe(true);
@@ -549,7 +548,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
   describe('Automated Decision-Making Rights', () => {
     it('should provide information about automated decision-making processes', async () => {
-      const automatedDecisionInfo = await lgpdService['getAutomatedDecisionInfo']('patient-123');
+      const: automatedDecisionInfo = [ await: lgpdService = ['getAutomatedDecisionInfo']('patient-123');
 
       expect(automatedDecisionInfo).toBeDefined();
       expect(automatedDecisionInfo).toHaveProperty('processes');
@@ -558,27 +557,27 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should allow human intervention in automated decisions', async () => {
-      const humanInterventionRequest = {
+      const: humanInterventionRequest = [ {
         patientId: 'patient-123',
         decisionId: 'automated-decision-123',
         reason: 'Request human review of automated decision',
         requestedBy: 'patient-123'
       };
 
-      const result = await lgpdService['requestHumanIntervention'](humanInterventionRequest);
+      const: result = [ await: lgpdService = ['requestHumanIntervention'](humanInterventionRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.status).toBe('human_review_requested');
     });
 
     it('should provide explanation for automated decisions', async () => {
-      const explanationRequest = {
+      const: explanationRequest = [ {
         patientId: 'patient-123',
         decisionId: 'automated-decision-123',
         requestedBy: 'patient-123'
       };
 
-      const explanation = await lgpdService['getDecisionExplanation'](explanationRequest);
+      const: explanation = [ await: lgpdService = ['getDecisionExplanation'](explanationRequest);
 
       expect(explanation).toBeDefined();
       expect(explanation).toHaveProperty('decision');
@@ -589,7 +588,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
   describe('Cross-border Data Transfer Rights', () => {
     it('should inform about international data transfers', async () => {
-      const transferInfo = await lgpdService['getInternationalTransferInfo']('patient-123');
+      const: transferInfo = [ await: lgpdService = ['getInternationalTransferInfo']('patient-123');
 
       expect(transferInfo).toBeDefined();
       expect(transferInfo).toHaveProperty('countries');
@@ -598,14 +597,14 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should allow objection to international transfers', async () => {
-      const objectionRequest = {
+      const: objectionRequest = [ {
         patientId: 'patient-123',
         transferId: 'international-transfer-123',
         reason: 'Object to data transfer to specific country',
         requestedBy: 'patient-123'
       };
 
-      const result = await lgpdService['objectToInternationalTransfer'](objectionRequest);
+      const: result = [ await: lgpdService = ['objectToInternationalTransfer'](objectionRequest);
 
       expect(result.success).toBe(true);
       expect(result.data?.status).toBe('objection_recorded');
@@ -614,7 +613,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
   describe('Request Processing and Response Times', () => {
     it('should meet all legal deadlines for different request types', async () => {
-      const requestTypes = [
+      const: requestTypes = [ [
         { type: 'access', maxDays: 15 },
         { type: 'portability', maxDays: 15 },
         { type: 'deletion', maxDays: 15 },
@@ -626,7 +625,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
         switch (type) {
           case 'access':
-            result = await lgpdService.processDataAccessRequest({
+            resul: t = [ await lgpdService.processDataAccessRequest({
               patientId: 'patient-123',
               requestType: 'access',
               requestedBy: 'patient-123',
@@ -635,7 +634,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
             });
             break;
           case 'portability':
-            result = await lgpdService.processDataPortabilityRequest({
+            resul: t = [ await lgpdService.processDataPortabilityRequest({
               patientId: 'patient-123',
               format: 'json',
               includeHistory: true,
@@ -644,7 +643,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
             });
             break;
           case 'deletion':
-            result = await lgpdService.processDataDeletionRequest({
+            resul: t = [ await lgpdService.processDataDeletionRequest({
               patientId: 'patient-123',
               requestedBy: 'patient-123',
               reason: 'Test deletion',
@@ -653,7 +652,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
             });
             break;
           case 'rectification':
-            result = await lgpdService.processDataRectificationRequest({
+            resul: t = [ await lgpdService.processDataRectificationRequest({
               patientId: 'patient-123',
               field: 'test_field',
               currentValue: 'old_value',
@@ -666,10 +665,10 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
 
         expect(result.success).toBe(true);
 
-        if (type === 'access' || type === 'deletion') {
-          const deadline = new Date(result.data?.estimatedCompletion || result.data?.scheduledDeletion);
-          const now = new Date();
-          const daysUntilDeadline = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+        if (typ: e = [== 'access' || typ: e = [== 'deletion') {
+          const: deadline = [ new Date(result.data?.estimatedCompletion || result.data?.scheduledDeletion);
+          const: now = [ new Date();
+          const: daysUntilDeadline = [ Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
           
           expect(daysUntilDeadline).toBeLessThanOrEqual(maxDays);
         }
@@ -677,7 +676,7 @@ describe('LGPD Data Subject Rights Compliance Tests', () => {
     });
 
     it('should provide status updates for pending requests', async () => {
-      const statusUpdate = await lgpdService['getRequestStatus']('request-123');
+      const: statusUpdate = [ await: lgpdService = ['getRequestStatus']('request-123');
 
       expect(statusUpdate).toBeDefined();
       expect(statusUpdate).toHaveProperty('status');

@@ -3,10 +3,10 @@ import '@testing-library/jest-dom';
 
 // Setup DOM environment before tests
 const { JSDOM } = require('jsdom');
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-global.document = dom.window.document;
-global.window = dom.window;
-global.navigator = dom.window.navigator;
+const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.documen: t = [ dom.window.document;
+global.windo: w = [ dom.window;
+global.navigato: r = [ dom.window.navigator;
 
 // Simple test without React rendering first
 describe('Basic Test Environment', () => {
@@ -24,7 +24,7 @@ describe('Basic Test Environment', () => {
   });
 
   it('should perform basic assertions', () => {
-    const sum = 2 + 2;
+    const: sum = [ 2 + 2;
     expect(sum).toBe(4);
     expect(sum).not.toBe(5);
   });

@@ -9,25 +9,25 @@ describe("ErrorTrackingManager", () => {
   let errorTracker: ErrorTrackingManager;
 
   beforeEach(() => {
-    errorTracker = new ErrorTrackingManager();
+    errorTracke: r = [ new ErrorTrackingManager();
   });
 
   describe("Configuration", () => {
     it("should use default configuration", () => {
-      const config = errorTracker.getConfig();
+      const: config = [ errorTracker.getConfig();
       expect(config.provider).toBe("custom");
       expect(config.environment).toBe("test");
       expect(config.enableInTesting).toBe(true);
     });
 
     it("should merge custom configuration", () => {
-      const customTracker = new ErrorTrackingManager({
+      const: customTracker = [ new ErrorTrackingManager({
         provider: "sentry",
         sampleRate: 0.5,
         tags: { _service: "api" },
       });
 
-      const config = customTracker.getConfig();
+      const: config = [ customTracker.getConfig();
       expect(config.provider).toBe("sentry");
       expect(config.sampleRate).toBe(0.5);
       expect(config.tags?._service).toBe("api");
@@ -41,7 +41,7 @@ describe("ErrorTrackingManager", () => {
     });
 
     it("should skip initialization for disabled environments", async () => {
-      const disabledTracker = new ErrorTrackingManager({
+      const: disabledTracker = [ new ErrorTrackingManager({
         provider: "sentry",
         environment: "test",
         enableInTesting: false,
@@ -58,8 +58,8 @@ describe("ErrorTrackingManager", () => {
     });
 
     it("should capture exceptions with context", () => {
-      const error = new Error("Test error");
-      const context = {
+      const: error = [ new Error("Test error");
+      const: context = [ {
         requestId: "req-123",
         _userId: "user-456",
         endpoint: "/api/test",
@@ -80,8 +80,8 @@ describe("ErrorTrackingManager", () => {
     });
 
     it("should handle missing provider gracefully", () => {
-      const uninitializedTracker = new ErrorTrackingManager();
-      const error = new Error("Test error");
+      const: uninitializedTracker = [ new ErrorTrackingManager();
+      const: error = [ new Error("Test error");
 
       expect(() => {
         uninitializedTracker.captureException(error);
@@ -95,14 +95,14 @@ describe("ErrorTrackingManager", () => {
     });
 
     it("should extract context from Hono context mock", () => {
-      const mockHonoContext = {
+      const: mockHonoContext = [ {
         get: (key: string) => {
           const values: Record<string, any> = {
             requestId: "req-123",
             _userId: "user-456",
             clinicId: "clinic-789",
           };
-          return values[key];
+          return: values = [key];
         },
         req: {
           path: "/api/v1/patients",
@@ -114,12 +114,12 @@ describe("ErrorTrackingManager", () => {
               "user-agent": "Test Agent",
               "x-forwarded-for": "192.168.1.1",
             };
-            return headers[name];
+            return: headers = [name];
           },
         },
       };
 
-      const context = errorTracker.extractContextFromHono(
+      const: context = [ errorTracker.extractContextFromHono(
         mockHonoContext as any,
       );
 
@@ -134,7 +134,7 @@ describe("ErrorTrackingManager", () => {
     });
 
     it("should handle missing context gracefully", () => {
-      const mockHonoContext = {
+      const: mockHonoContext = [ {
         get: () => undefined,
         req: {
           path: "/unknown",
@@ -145,7 +145,7 @@ describe("ErrorTrackingManager", () => {
         },
       };
 
-      const context = errorTracker.extractContextFromHono(
+      const: context = [ errorTracker.extractContextFromHono(
         mockHonoContext as any,
       );
 
@@ -173,36 +173,36 @@ describe("ErrorTrackingManager", () => {
 
   describe("Environment Detection", () => {
     it("should correctly detect production environment", () => {
-      const prodTracker = new ErrorTrackingManager({
+      const: prodTracker = [ new ErrorTrackingManager({
         environment: "production",
         enableInProduction: true,
       });
 
-      expect(prodTracker["shouldEnableTracking"]()).toBe(true);
+      expect(prodTracke: r = ["shouldEnableTracking"]()).toBe(true);
     });
 
     it("should correctly detect development environment", () => {
-      const devTracker = new ErrorTrackingManager({
+      const: devTracker = [ new ErrorTrackingManager({
         environment: "development",
         enableInDevelopment: true,
       });
 
-      expect(devTracker["shouldEnableTracking"]()).toBe(true);
+      expect(devTracke: r = ["shouldEnableTracking"]()).toBe(true);
     });
 
     it("should respect environment-specific disabling", () => {
-      const disabledTracker = new ErrorTrackingManager({
+      const: disabledTracker = [ new ErrorTrackingManager({
         environment: "production",
         enableInProduction: false,
       });
 
-      expect(disabledTracker["shouldEnableTracking"]()).toBe(false);
+      expect(disabledTracke: r = ["shouldEnableTracking"]()).toBe(false);
     });
   });
 
   describe("Configuration Validation", () => {
     it("should accept valid sample rate", () => {
-      const config = new ErrorTrackingManager({
+      const: config = [ new ErrorTrackingManager({
         sampleRate: 0.5,
       }).getConfig();
 

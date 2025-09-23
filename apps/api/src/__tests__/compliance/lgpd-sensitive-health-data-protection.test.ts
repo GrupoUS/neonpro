@@ -35,7 +35,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
   let securityAudit: SecurityAuditService;
   let retentionService: DataRetentionService;
 
-  const mockPatientData = {
+  const: mockPatientData = [ {
     id: 'patient-123',
     name: 'João Silva',
     cpf: '123.456.789-00',
@@ -55,7 +55,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     }
   };
 
-  const mockMedicalHistory = {
+  const: mockMedicalHistory = [ {
     patientId: 'patient-123',
     conditions: [
       {
@@ -87,7 +87,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     ]
   };
 
-  const mockPatientPhotos = {
+  const: mockPatientPhotos = [ {
     patientId: 'patient-123',
     photos: [
       {
@@ -119,7 +119,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     ]
   };
 
-  const mockTreatmentData = {
+  const: mockTreatmentData = [ {
     patientId: 'patient-123',
     treatmentPlan: {
       id: 'treatment-plan-1',
@@ -171,8 +171,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
   };
 
   beforeEach(() => {
-    // Mock implementations
-    lgpdService = {
+    // Mock implementations: lgpdService = [ {
       validateSensitiveDataProcessing: vi.fn(),
       logSensitiveDataAccess: vi.fn(),
       checkDataAnonymizationRequirements: vi.fn(),
@@ -181,7 +180,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
       generateSensitiveDataReport: vi.fn()
     } as any;
 
-    dataMaskingService = {
+    dataMaskingServic: e = [ {
       maskSensitiveFields: vi.fn(),
       anonymizePatientData: vi.fn(),
       redactMedicalImages: vi.fn(),
@@ -190,7 +189,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
       createDataPseudonym: vi.fn()
     } as any;
 
-    enhancedService = {
+    enhancedServic: e = [ {
       performPrivacyImpactAssessment: vi.fn(),
       validateDataMinimization: vi.fn(),
       assessProcessingRisks: vi.fn(),
@@ -198,7 +197,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
       monitorDataProcessing: vi.fn()
     } as any;
 
-    aestheticService = {
+    aestheticServic: e = [ {
       validateTreatmentConsent: vi.fn(),
       checkANVISACompliance: vi.fn(),
       verifyProfessionalLicensing: vi.fn(),
@@ -206,7 +205,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
       monitorAestheticProcedureSafety: vi.fn()
     } as any;
 
-    privacyControls = {
+    privacyControl: s = [ {
       enablePrivacyMode: vi.fn(),
       setAccessControls: vi.fn(),
       configureDataRetention: vi.fn(),
@@ -214,7 +213,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
       generatePrivacyReport: vi.fn()
     } as any;
 
-    securityAudit = {
+    securityAudi: t = [ {
       performSecurityAssessment: vi.fn(),
       checkDataEncryption: vi.fn(),
       auditAccessLogs: vi.fn(),
@@ -222,7 +221,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
       generateSecurityReport: vi.fn()
     } as any;
 
-    retentionService = {
+    retentionServic: e = [ {
       applyRetentionPolicies: vi.fn(),
       scheduleDataDeletion: vi.fn(),
       verifyDataArchival: vi.fn(),
@@ -237,7 +236,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Article 11 Compliance - Sensitive Data Processing', () => {
     it('should validate legal bases for processing sensitive health data', async () => {
-      const validLegalBases = [
+      const: validLegalBases = [ [
         { type: 'consent', description: 'Explicit consent for aesthetic treatment' },
         { type: 'professional_obligation', description: 'Medical treatment necessity' },
         { type: 'health_protection', description: 'Patient health monitoring' }
@@ -249,7 +248,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         mockPatientData,
         'aesthetic_treatment'
       );
@@ -267,7 +266,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         mockPatientData,
         'marketing'
       );
@@ -277,7 +276,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should ensure explicit consent for sensitive data processing', async () => {
-      const consentRecord = {
+      const: consentRecord = [ {
         id: 'consent-123',
         patientId: 'patient-123',
         type: 'sensitive_data',
@@ -295,7 +294,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         mockMedicalHistory,
         'medical_records'
       );
@@ -308,7 +307,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Medical Imaging and Photo Protection', () => {
     it('should validate secure storage of patient photos', async () => {
-      const securityRequirements = {
+      const: securityRequirements = [ {
         encryption: 'AES-256',
         accessControl: 'role_based',
         retention: '20_years',
@@ -322,7 +321,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await aestheticService.validateMedicalPhotoHandling(mockPatientPhotos);
+      const: result = [ await aestheticService.validateMedicalPhotoHandling(mockPatientPhotos);
 
       expect(result.isValid).toBe(true);
       expect(result.securityMeasures.encryption).toBe('AES-256');
@@ -330,7 +329,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should prevent unauthorized photo access', async () => {
-      const unauthorizedAccess = {
+      const: unauthorizedAccess = [ {
         userId: 'unauthorized-user',
         patientId: 'patient-123',
         photoId: 'photo-1',
@@ -344,7 +343,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         violation: true
       });
 
-      const result = await lgpdService.validateAccessAuthorization(
+      const: result = [ await lgpdService.validateAccessAuthorization(
         'unauthorized-user',
         'patient-123',
         'medical_photos'
@@ -355,7 +354,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should ensure photo deletion upon patient request', async () => {
-      const deletionRequest = {
+      const: deletionRequest = [ {
         patientId: 'patient-123',
         photoIds: ['photo-1', 'photo-2'],
         reason: 'right_to_erasure',
@@ -370,7 +369,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await retentionService.scheduleDataDeletion(deletionRequest);
+      const: result = [ await retentionService.scheduleDataDeletion(deletionRequest);
 
       expect(result.success).toBe(true);
       expect(result.deletedPhotos).toHaveLength(2);
@@ -391,14 +390,14 @@ describe('LGPD Sensitive Health Data Protection', () => {
         };
       });
 
-      const maskedData = dataMaskingService.maskSensitiveFields(mockTreatmentData);
+      const: maskedData = [ dataMaskingService.maskSensitiveFields(mockTreatmentData);
 
-      expect(maskedData.treatmentPlan.procedures[0].notes).toBe('[REDACTED - Medical confidentiality]');
-      expect(maskedData.progressTracking[0].notes).not.toBe('[REDACTED - Medical confidentiality]');
+      expect(maskedData.treatmentPlan.procedure: s = [0].notes).toBe('[REDACTED - Medical confidentiality]');
+      expect(maskedData.progressTrackin: g = [0].notes).not.toBe('[REDACTED - Medical confidentiality]');
     });
 
     it('should validate access to treatment progress data', async () => {
-      const accessRequest = {
+      const: accessRequest = [ {
         userId: 'professional-123',
         patientId: 'patient-123',
         treatmentId: 'treatment-plan-1',
@@ -412,7 +411,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateAccessAuthorization(
+      const: result = [ await lgpdService.validateAccessAuthorization(
         accessRequest.userId,
         accessRequest.patientId,
         'treatment_records'
@@ -423,7 +422,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should audit all treatment record accesses', async () => {
-      const auditEntry = {
+      const: auditEntry = [ {
         userId: 'professional-123',
         patientId: 'patient-123',
         action: 'view_treatment_progress',
@@ -440,7 +439,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.logSensitiveDataAccess(auditEntry);
+      const: result = [ await lgpdService.logSensitiveDataAccess(auditEntry);
 
       expect(result.logged).toBe(true);
       expect(result.retentionConfigured).toBe(true);
@@ -449,7 +448,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Data Encryption and Security', () => {
     it('should verify encryption standards for sensitive data', async () => {
-      const encryptionStandards = {
+      const: encryptionStandards = [ {
         atRest: 'AES-256',
         inTransit: 'TLS 1.3',
         keyManagement: 'HSM',
@@ -464,7 +463,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.verifyEncryptionStandards();
+      const: result = [ await lgpdService.verifyEncryptionStandards();
 
       expect(result.compliant).toBe(true);
       expect(result.standards.atRest).toBe('AES-256');
@@ -489,7 +488,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await lgpdService.verifyEncryptionStandards();
+      const: result = [ await lgpdService.verifyEncryptionStandards();
 
       expect(result.compliant).toBe(false);
       expect(result.vulnerabilities).toContain('AES-128 encryption is below LGPD requirements');
@@ -506,7 +505,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await enhancedService.validateDataMinimization(mockPatientData);
+      const: result = [ await enhancedService.validateDataMinimization(mockPatientData);
 
       expect(result.minimized).toBe(true);
       expect(result.unnecessaryFields).toHaveLength(0);
@@ -525,7 +524,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await enhancedService.validateDataMinimization({
+      const: result = [ await enhancedService.validateDataMinimization({
         ...mockPatientData,
         religion: 'Católico',
         political_opinion: 'Centro',
@@ -541,7 +540,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Biometric and Genetic Data Protection', () => {
     it('should validate biometric data processing', async () => {
-      const biometricData = {
+      const: biometricData = [ {
         patientId: 'patient-123',
         faceScan: 'encrypted-face-template-123',
         fingerprint: 'encrypted-fingerprint-456',
@@ -557,7 +556,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         biometricData,
         'biometric_verification'
       );
@@ -568,7 +567,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should restrict genetic data processing', async () => {
-      const geneticData = {
+      const: geneticData = [ {
         patientId: 'patient-123',
         dnaProfile: 'genetic-sequence-data',
         predispositions: ['sensitive_skin'],
@@ -584,7 +583,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         geneticData,
         'genetic_analysis'
       );
@@ -596,7 +595,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Emergency Treatment Data Processing', () => {
     it('should allow processing without consent in medical emergencies', async () => {
-      const emergencyData = {
+      const: emergencyData = [ {
         patientId: 'patient-123',
         emergencyType: 'anaphylactic_reaction',
         allergies: ['Penicilina', 'Amoxicilina'],
@@ -614,18 +613,18 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         emergencyData,
         'emergency_treatment'
       );
 
       expect(result.isValid).toBe(true);
-      expect(result.legalBasis[0].type).toBe('vital_interests');
+      expect(result.legalBasi: s = [0].type).toBe('vital_interests');
       expect(result.emergencyProcessing).toBe(true);
     });
 
     it('should document emergency data processing appropriately', async () => {
-      const emergencyProcessing = {
+      const: emergencyProcessing = [ {
         patientId: 'patient-123',
         emergencyType: 'severe_allergic_reaction',
         dataProcessed: ['allergies', 'medications', 'emergency_contact'],
@@ -642,7 +641,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.logSensitiveDataAccess(emergencyProcessing);
+      const: result = [ await lgpdService.logSensitiveDataAccess(emergencyProcessing);
 
       expect(result.logged).toBe(true);
       expect(result.emergencyJustification).toBe(true);
@@ -651,7 +650,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('ANVISA and CFM Compliance Integration', () => {
     it('should validate ANVISA RDC 15/2012 compliance for aesthetic treatments', async () => {
-      const anvisaRequirements = {
+      const: anvisaRequirements = [ {
         treatmentSafety: true,
         productRegistration: true,
         adverseEventReporting: true,
@@ -666,7 +665,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await aestheticService.checkANVISACompliance(mockTreatmentData);
+      const: result = [ await aestheticService.checkANVISACompliance(mockTreatmentData);
 
       expect(result.compliant).toBe(true);
       expect(result.requirements.treatmentSafety).toBe(true);
@@ -674,7 +673,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should ensure CFM Resolution 2228/2018 compliance for medical records', async () => {
-      const cfmRequirements = {
+      const: cfmRequirements = [ {
         recordRetention: '20_years',
         professionalIdentification: true,
         patientIdentification: true,
@@ -689,7 +688,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await aestheticService.verifyProfessionalLicensing(
+      const: result = [ await aestheticService.verifyProfessionalLicensing(
         'CRM 123456',
         'Dra. Ana Santos'
       );
@@ -700,7 +699,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should monitor aesthetic procedure safety', async () => {
-      const safetyMonitoring = {
+      const: safetyMonitoring = [ {
         patientId: 'patient-123',
         procedureId: 'treatment-plan-1',
         monitoringPeriod: '6_months',
@@ -717,7 +716,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await aestheticService.monitorAestheticProcedureSafety(safetyMonitoring);
+      const: result = [ await aestheticService.monitorAestheticProcedureSafety(safetyMonitoring);
 
       expect(result.monitoringActive).toBe(true);
       expect(result.safetyScore).toBeGreaterThan(8.0);
@@ -727,7 +726,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Data Subject Rights for Sensitive Data', () => {
     it('should facilitate access to sensitive health data', async () => {
-      const accessRequest = {
+      const: accessRequest = [ {
         patientId: 'patient-123',
         dataType: 'sensitive_health',
         format: 'pdf',
@@ -744,7 +743,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.generateSensitiveDataReport(accessRequest);
+      const: result = [ await lgpdService.generateSensitiveDataReport(accessRequest);
 
       expect(result.generated).toBe(true);
       expect(result.encrypted).toBe(true);
@@ -752,7 +751,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should support portability of sensitive health data', async () => {
-      const portabilityRequest = {
+      const: portabilityRequest = [ {
         patientId: 'patient-123',
         dataTypes: ['medical_history', 'treatment_records', 'photos'],
         format: 'fhir',
@@ -767,7 +766,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await dataMaskingService.generateAnonymizedDataset(portabilityRequest);
+      const: result = [ await dataMaskingService.generateAnonymizedDataset(portabilityRequest);
 
       expect(result.datasetId).toContain('portability');
       expect(result.anonymizationLevel).toBe('pseudonymized');
@@ -775,7 +774,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should handle deletion requests for sensitive data', async () => {
-      const deletionRequest = {
+      const: deletionRequest = [ {
         patientId: 'patient-123',
         dataTypes: ['photos', 'biometric_data', 'treatment_notes'],
         reason: 'withdrawal_of_consent',
@@ -790,7 +789,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await retentionService.scheduleDataDeletion(deletionRequest);
+      const: result = [ await retentionService.scheduleDataDeletion(deletionRequest);
 
       expect(result.success).toBe(true);
       expect(result.deletedDataTypes).toContain('photos');
@@ -800,7 +799,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Cross-Border Data Transfer Restrictions', () => {
     it('should prevent transfer of sensitive health data abroad without proper safeguards', async () => {
-      const transferRequest = {
+      const: transferRequest = [ {
         data: mockMedicalHistory,
         destination: 'international_server',
         purpose: 'backup',
@@ -817,7 +816,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         transferRequest,
         'cross_border_transfer'
       );
@@ -827,7 +826,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should allow international transfer with proper consent and safeguards', async () => {
-      const compliantTransfer = {
+      const: compliantTransfer = [ {
         data: mockMedicalHistory,
         destination: 'international_server',
         purpose: 'continuity_of_care',
@@ -852,7 +851,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         compliantTransfer,
         'international_transfer_with_safeguards'
       );
@@ -865,7 +864,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Privacy Impact Assessment for Sensitive Data', () => {
     it('should conduct comprehensive DPIA for sensitive health data processing', async () => {
-      const piaAssessment = {
+      const: piaAssessment = [ {
         processingPurpose: 'aesthetic_treatment_management',
         dataTypes: ['health_data', 'biometric_data', 'photos'],
         riskLevel: 'high',
@@ -890,7 +889,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await enhancedService.performPrivacyImpactAssessment(piaAssessment);
+      const: result = [ await enhancedService.performPrivacyImpactAssessment(piaAssessment);
 
       expect(result.assessmentCompleted).toBe(true);
       expect(result.approved).toBe(true);
@@ -911,7 +910,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false // Until DPIA is completed
       });
 
-      const result = await enhancedService.assessProcessingRisks({
+      const: result = [ await enhancedService.assessProcessingRisks({
         dataType: 'sensitive_health',
         scale: 'large',
         monitoring: 'systematic',
@@ -926,7 +925,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Automated Processing and Profiling', () => {
     it('should restrict automated decision-making for sensitive health data', async () => {
-      const automatedProcessing = {
+      const: automatedProcessing = [ {
         algorithm: 'treatment_recommendation',
         dataType: 'sensitive_health',
         decisions: ['recommended_procedures', 'treatment_plans'],
@@ -944,7 +943,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         automatedProcessing,
         'automated_decision_making'
       );
@@ -954,7 +953,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should allow automated processing with human oversight', async () => {
-      const compliantAutomatedProcessing = {
+      const: compliantAutomatedProcessing = [ {
         algorithm: 'treatment_analysis',
         dataType: 'anonymized_health_data',
         decisions: ['trend_analysis', 'outcome_predictions'],
@@ -976,7 +975,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         compliantAutomatedProcessing,
         'automated_processing_with_oversight'
       );
@@ -988,7 +987,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Data Security Incident Response', () => {
     it('should detect unauthorized access to sensitive health data', async () => {
-      const securityIncident = {
+      const: securityIncident = [ {
         incidentType: 'unauthorized_access',
         affectedData: 'sensitive_health_records',
         affectedPatients: 15,
@@ -1010,7 +1009,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await securityAudit.performSecurityAssessment(securityIncident);
+      const: result = [ await securityAudit.performSecurityAssessment(securityIncident);
 
       expect(result.incidentDetected).toBe(true);
       expect(result.severity).toBe('high');
@@ -1018,7 +1017,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should coordinate data breach notification for sensitive health data', async () => {
-      const breachNotification = {
+      const: breachNotification = [ {
         incidentId: 'security-incident-123',
         affectedPatients: ['patient-123', 'patient-456'],
         dataTypes: ['medical_history', 'treatment_records', 'photos'],
@@ -1043,7 +1042,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         followUpRequired: true
       });
 
-      const result = await securityAudit.generateSecurityReport(breachNotification);
+      const: result = [ await securityAudit.generateSecurityReport(breachNotification);
 
       expect(result.reportGenerated).toBe(true);
       expect(result.notificationsSent).toBe(true);
@@ -1053,7 +1052,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Staff Training and Awareness', () => {
     it('should validate staff training on sensitive health data protection', async () => {
-      const trainingRequirements = {
+      const: trainingRequirements = [ {
         staffCategory: 'healthcare_professionals',
         requiredTopics: [
           'LGPD Article 11 compliance',
@@ -1075,7 +1074,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await securityAudit.validateSecurityMeasures(trainingRequirements);
+      const: result = [ await securityAudit.validateSecurityMeasures(trainingRequirements);
 
       expect(result.trainingCompliant).toBe(true);
       expect(result.complianceRate).toBeGreaterThan(0.90);
@@ -1097,7 +1096,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await securityAudit.validateSecurityMeasures({
+      const: result = [ await securityAudit.validateSecurityMeasures({
         staffCategory: 'all_healthcare_staff',
         requiredTraining: 'lgpd_sensitive_data_v2.0'
       });
@@ -1110,7 +1109,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Third-Party Data Processing', () => {
     it('should validate third-party processors of sensitive health data', async () => {
-      const thirdPartyProcessor = {
+      const: thirdPartyProcessor = [ {
         name: 'CloudStorage Provider',
         service: 'medical_image_storage',
         dataTypes: ['patient_photos', 'treatment_records'],
@@ -1128,7 +1127,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing(
+      const: result = [ await lgpdService.validateSensitiveDataProcessing(
         thirdPartyProcessor,
         'third_party_processing'
       );
@@ -1150,7 +1149,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateSensitiveDataProcessing({
+      const: result = [ await lgpdService.validateSensitiveDataProcessing({
         name: 'Unverified Provider',
         service: 'data_backup',
         securityCertifications: [],
@@ -1165,7 +1164,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Data Retention for Sensitive Health Data', () => {
     it('should apply CFM 1821/2007 retention periods for medical records', async () => {
-      const retentionConfig = {
+      const: retentionConfig = [ {
         dataType: 'medical_records',
         retentionPeriod: '20_years',
         archivalMethod: 'encrypted_storage',
@@ -1181,7 +1180,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await retentionService.applyRetentionPolicies(retentionConfig);
+      const: result = [ await retentionService.applyRetentionPolicies(retentionConfig);
 
       expect(result.policyApplied).toBe(true);
       expect(result.retentionPeriod).toBe('20_years');
@@ -1189,7 +1188,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
     });
 
     it('should handle early deletion requests with proper documentation', async () => {
-      const earlyDeletion = {
+      const: earlyDeletion = [ {
         patientId: 'patient-123',
         dataType: 'treatment_photos',
         requestedEarlyDeletion: true,
@@ -1211,7 +1210,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await retentionService.scheduleDataDeletion(earlyDeletion);
+      const: result = [ await retentionService.scheduleDataDeletion(earlyDeletion);
 
       expect(result.success).toBe(true);
       expect(result.earlyDeletionApproved).toBe(true);
@@ -1221,7 +1220,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
 
   describe('Integration with Existing Security Measures', () => {
     it('should integrate sensitive data protection with existing security infrastructure', async () => {
-      const securityIntegration = {
+      const: securityIntegration = [ {
         encryption: true,
         accessControl: true,
         auditLogging: true,
@@ -1240,7 +1239,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: true
       });
 
-      const result = await securityAudit.validateSecurityMeasures(securityIntegration);
+      const: result = [ await securityAudit.validateSecurityMeasures(securityIntegration);
 
       expect(result.integrationComplete).toBe(true);
       expect(result.securityScore).toBeGreaterThan(9.0);
@@ -1275,7 +1274,7 @@ describe('LGPD Sensitive Health Data Protection', () => {
         compliance: false
       });
 
-      const result = await securityAudit.validateSecurityMeasures({
+      const: result = [ await securityAudit.validateSecurityMeasures({
         sensitiveDataSystems: true,
         mobileAccess: true
       });

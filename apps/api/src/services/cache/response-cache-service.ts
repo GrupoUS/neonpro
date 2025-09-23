@@ -5,6 +5,7 @@
 
 import { createHash } from 'crypto';
 import { Redis } from 'ioredis';
+import { z } from 'zod';
 import { AguiQueryMessage, AguiResponseMessage, AguiSource } from '../agui-protocol/types';
 
 // Input validation schemas
@@ -85,26 +86,26 @@ export class ResponseCacheService {
    */
   private generateCacheKey(_query: AguiQueryMessage, _userId: string): string {
     // Validate inputs
-    const validatedUserId = UserIdSchema.parse(userId);
+    const validatedUserId = UserIdSchema.parse(_userId);
 
     const queryData = {
-      _query: this.sanitizeQueryString(query._query),
+      _query: this.sanitizeQueryString(_query._query),
       _context: {
-        patientId: query.context?.patientId
-          ? this.sanitizeString(query.context.patientId)
+        patientId: _query.context?.patientId
+          ? this.sanitizeString(_query.context.patientId)
           : undefined,
-        _userId: query.context?.userId
-          ? this.sanitizeString(query.context._userId)
+        _userId: _query.context?.userId
+          ? this.sanitizeString(_query.context._userId)
           : undefined,
-        previousTopics: query.context?.previousTopics?.map(t => this.sanitizeString(t))
+        previousTopics: _query.context?.previousTopics?.map(t => this.sanitizeString(t))
           || [],
       },
       options: {
-        maxResults: Math.min(query.options?.maxResults || 10, 100), // Limit max results
-        model: this.sanitizeString(query.options?.model || 'default'),
+        maxResults: Math.min(_query.options?.maxResults || 10, 100), // Limit max results
+        model: this.sanitizeString(_query.options?.model || 'default'),
         temperature: Math.max(
           0,
-          Math.min(1, query.options?.temperature || 0.7),
+          Math.min(1, _query.options?.temperature || 0.7),
         ), // Clamp temperature
       },
     };
@@ -196,7 +197,7 @@ export class ResponseCacheService {
 
     try {
       // Validate inputs and check rate limits
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedUserId = UserIdSchema.parse(_userId);
 
       if (!(await this.checkCacheRateLimit(validatedUserId))) {
         console.warn(
@@ -205,7 +206,7 @@ export class ResponseCacheService {
         return null;
       }
 
-      const cacheKey = this.generateCacheKey(query, validatedUserId);
+      const cacheKey = this.generateCacheKey(_query, validatedUserId);
 
       // Check local cache first
       const localEntry = this.localCache.get(cacheKey);
@@ -278,7 +279,7 @@ export class ResponseCacheService {
 
     try {
       // Validate inputs
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedUserId = UserIdSchema.parse(_userId);
       const validatedTTL = TTLSchema.parse(
         options.customTTL || this.config.defaultTTL,
       );
@@ -290,11 +291,11 @@ export class ResponseCacheService {
         return;
       }
 
-      const cacheKey = this.generateCacheKey(query, validatedUserId);
+      const cacheKey = this.generateCacheKey(_query, validatedUserId);
 
       // Sanitize metadata
-      const patientId = query.context?.patientId
-        ? this.sanitizeString(query.context.patientId)
+      const patientId = _query.context?.patientId
+        ? this.sanitizeString(_query.context.patientId)
         : undefined;
 
       const entry: CacheEntry = {

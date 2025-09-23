@@ -7,7 +7,6 @@
 
 import { z } from 'zod';
 import {
-  AgentTypeSchema,
   AgentMessageRoleSchema,
   AgentSessionResponseSchema,
   // AgentMessageResponseSchema,

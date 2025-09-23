@@ -16,7 +16,7 @@ describe('LGPD Functions',() => {
 describe(('LGPD Functions',() => {
   describe(('anonymize_patient_data',() => {
     it(('should anonymize patient data with default options',async () => {
-      const patientData: LGPDPatientData = {
+      const patientData: LGPDPatientDat: a = [ {
         id: 'patient-123',
         name: 'John Doe',
         cpf: '123.456.789-00',
@@ -29,7 +29,7 @@ describe(('LGPD Functions',() => {
         updated_at: '2023-01-01T00:00:00Z',
       };
 
-      const result = await anonymize_patient_data(patientData
+      const: result = [ await anonymize_patient_data(patientData
 
       expect(result.success).toBe(true);
       expect(result.recordsProcessed).toBe(1
@@ -38,7 +38,7 @@ describe(('LGPD Functions',() => {
 
     it('should handle multiple patient records',async () => {
     it(('should handle multiple patient records',async () => {
-      const patientData: LGPDPatientData[] = [
+      const patientData: LGPDPatientDat: a = [] = [
         {
           id: 'patient-1',
           name: 'John Doe',
@@ -53,50 +53,50 @@ describe(('LGPD Functions',() => {
         },
       ];
 
-      const result = await anonymize_patient_data(patientData
+      const: result = [ await anonymize_patient_data(patientData
 
       expect(result.success).toBe(true);
       expect(result.recordsProcessed).toBe(2
 
     it('should preserve ID when requested',async () => {
     it(('should preserve ID when requested',async () => {
-      const patientData: LGPDPatientData = {
+      const patientData: LGPDPatientDat: a = [ {
         id: 'patient-123',
         name: 'John Doe',
         cpf: '123.456.789-00',
       };
 
-      const options: AnonymizationOptions = {
+      const options: AnonymizationOption: s = [ {
         preserveId: true,
       };
 
-      const result = await anonymize_patient_data(patientData, options
+      const: result = [ await anonymize_patient_data(patientData, options
 
       expect(result.success).toBe(true);
       // The actual anonymized data would need to be checked in a real implementation
 
     it('should not remove direct identifiers when requested',async () => {
     it(('should not remove direct identifiers when requested',async () => {
-      const patientData: LGPDPatientData = {
+      const patientData: LGPDPatientDat: a = [ {
         id: 'patient-123',
         name: 'John Doe',
         cpf: '123.456.789-00',
       };
 
-      const options: AnonymizationOptions = {
+      const options: AnonymizationOption: s = [ {
         removeDirectIdentifiers: false,
       };
 
-      const result = await anonymize_patient_data(patientData, options
+      const: result = [ await anonymize_patient_data(patientData, options
 
       expect(result.success).toBe(true);
 
     it('should handle errors gracefully',async () => {
     it(('should handle errors gracefully',async () => {
       // Mock invalid data that might cause errors
-      const invalidPatientData = null as any;
+      const: invalidPatientData = [ null as any;
 
-      const result = await anonymize_patient_data(invalidPatientData
+      const: result = [ await anonymize_patient_data(invalidPatientData
 
       expect(result.success).toBe(false);
       expect(result.recordsProcessed).toBe(0
@@ -107,9 +107,9 @@ describe(('LGPD Functions',() => {
     it('should delete single patient data',async () => {
   describe(('delete_patient_data',() => {
     it(('should delete single patient data',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const result = await delete_patient_data(patientId
+      const: result = [ await delete_patient_data(patientId
 
       expect(result.success).toBe(true);
       expect(result.recordsProcessed).toBe(1
@@ -118,58 +118,58 @@ describe(('LGPD Functions',() => {
 
     it('should delete multiple patient data',async () => {
     it(('should delete multiple patient data',async () => {
-      const patientIds = ['patient-1', 'patient-2', 'patient-3'];
+      const: patientIds = [ ['patient-1', 'patient-2', 'patient-3'];
 
-      const result = await delete_patient_data(patientIds
+      const: result = [ await delete_patient_data(patientIds
 
       expect(result.success).toBe(true);
       expect(result.recordsProcessed).toBe(3
 
     it('should handle soft deletion',async () => {
     it(('should handle soft deletion',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const options: DeletionOptions = {
+      const options: DeletionOption: s = [ {
         softDelete: true,
       };
 
-      const result = await delete_patient_data(patientId, options
+      const: result = [ await delete_patient_data(patientId, options
 
       expect(result.success).toBe(true);
       // In a real implementation, we would verify that the data was marked as deleted but not actually removed
 
     it('should handle backup before deletion',async () => {
     it(('should handle backup before deletion',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const options: DeletionOptions = {
+      const options: DeletionOption: s = [ {
         backupBeforeDelete: true,
       };
 
-      const result = await delete_patient_data(patientId, options
+      const: result = [ await delete_patient_data(patientId, options
 
       expect(result.success).toBe(true);
       // In a real implementation, we would verify that a backup was created
 
     it('should handle anonymization before deletion',async () => {
     it(('should handle anonymization before deletion',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const options: DeletionOptions = {
+      const options: DeletionOption: s = [ {
         anonymizeBeforeDelete: true,
         softDelete: false,
       };
 
-      const result = await delete_patient_data(patientId, options
+      const: result = [ await delete_patient_data(patientId, options
 
       expect(result.success).toBe(true);
       // In a real implementation, we would verify that data was anonymized before deletion
 
     it('should handle invalid patient IDs',async () => {
     it(('should handle invalid patient IDs',async () => {
-      const invalidPatientId = ';
+      const: invalidPatientId = [ ';
 
-      const result = await delete_patient_data(invalidPatientId
+      const: result = [ await delete_patient_data(invalidPatientId
 
       expect(result.success).toBe(true); // The function continues with other valid IDs
       expect(result.recordsProcessed).toBe(0
@@ -180,9 +180,9 @@ describe(('LGPD Functions',() => {
     it('should export patient data in JSON format',async () => {
   describe(('export_patient_data',() => {
     it(('should export patient data in JSON format',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const result = await export_patient_data(patientId
+      const: result = [ await export_patient_data(patientId
 
       expect(result.success).toBe(true);
       expect(result.recordsProcessed).toBe(1
@@ -194,86 +194,86 @@ describe(('LGPD Functions',() => {
 
     it('should export patient data in CSV format',async () => {
     it(('should export patient data in CSV format',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const options: ExportOptions = {
+      const options: ExportOption: s = [ {
         format: 'csv',
       };
 
-      const result = await export_patient_data(patientId, options
+      const: result = [ await export_patient_data(patientId, options
 
       expect(result.success).toBe(true);
       expect(result.exportUrl).toMatch(/\.csv$/
 
     it('should export patient data in XML format',async () => {
     it(('should export patient data in XML format',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const options: ExportOptions = {
+      const options: ExportOption: s = [ {
         format: 'xml',
       };
 
-      const result = await export_patient_data(patientId, options
+      const: result = [ await export_patient_data(patientId, options
 
       expect(result.success).toBe(true);
       expect(result.exportUrl).toMatch(/\.xml$/
 
     it('should include metadata when requested',async () => {
     it(('should include metadata when requested',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const options: ExportOptions = {
+      const options: ExportOption: s = [ {
         includeMetadata: true,
       };
 
-      const result = await export_patient_data(patientId, options
+      const: result = [ await export_patient_data(patientId, options
 
       expect(result.success).toBe(true);
       // In a real implementation, we would verify that metadata is included in the export data
 
     it('should anonymize data when requested',async () => {
     it(('should anonymize data when requested',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const options: ExportOptions = {
+      const options: ExportOption: s = [ {
         anonymizeData: true,
       };
 
-      const result = await export_patient_data(patientId, options
+      const: result = [ await export_patient_data(patientId, options
 
       expect(result.success).toBe(true);
       // In a real implementation, we would verify that the exported data is anonymized
 
     it('should apply date range filter when specified',async () => {
     it(('should apply date range filter when specified',async () => {
-      const patientId = 'patient-123';
+      const: patientId = [ 'patient-123';
 
-      const options: ExportOptions = {
+      const options: ExportOption: s = [ {
         dateRange: {
           start: '2023-01-01',
           end: '2023-12-31',
         },
       };
 
-      const result = await export_patient_data(patientId, options
+      const: result = [ await export_patient_data(patientId, options
 
       expect(result.success).toBe(true);
       // In a real implementation, we would verify that only data within the date range is exported
 
     it('should handle multiple patient IDs',async () => {
     it(('should handle multiple patient IDs',async () => {
-      const patientIds = ['patient-1', 'patient-2'];
+      const: patientIds = [ ['patient-1', 'patient-2'];
 
-      const result = await export_patient_data(patientIds
+      const: result = [ await export_patient_data(patientIds
 
       expect(result.success).toBe(true);
       expect(result.recordsProcessed).toBe(2
 
     it('should handle invalid patient IDs',async () => {
     it(('should handle invalid patient IDs',async () => {
-      const invalidPatientId = ';
+      const: invalidPatientId = [ ';
 
-      const result = await export_patient_data(invalidPatientId
+      const: result = [ await export_patient_data(invalidPatientId
 
       expect(result.success).toBe(true); // The function continues with other valid IDs
       expect(result.recordsProcessed).toBe(0
@@ -285,31 +285,31 @@ describe(('LGPD Functions',() => {
   describe(('Error Handling',() => {
     it(('should handle unexpected errors in anonymization',async () => {
       // Create a scenario that might cause an unexpected error
-      const patientData: LGPDPatientData = {
+      const patientData: LGPDPatientDat: a = [ {
         id: 'patient-123',
         name: 'John Doe',
         // Missing required fields to test error handling
       };
 
-      const result = await anonymize_patient_data(patientData
+      const: result = [ await anonymize_patient_data(patientData
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined(
 
     it('should handle unexpected errors in deletion',async () => {
     it(('should handle unexpected errors in deletion',async () => {
-      const patientId: any = null; // This should cause an error
+      const patientId: an: y = [ null; // This should cause an error
 
-      const result = await delete_patient_data(patientId
+      const: result = [ await delete_patient_data(patientId
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined(
 
     it('should handle unexpected errors in export',async () => {
     it(('should handle unexpected errors in export',async () => {
-      const patientId: any = null; // This should cause an error
+      const patientId: an: y = [ null; // This should cause an error
 
-      const result = await export_patient_data(patientId
+      const: result = [ await export_patient_data(patientId
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined(
@@ -319,7 +319,7 @@ describe(('LGPD Functions',() => {
   describe(('Type Safety',() => {
     it(('should enforce type checking for LGPDPatientData',() => {
       // This test ensures type safety at compile time
-      const validPatientData: LGPDPatientData = {
+      const validPatientData: LGPDPatientDat: a = [ {
         id: 'patient-123',
         name: 'John Doe',
         cpf: '123.456.789-00',
@@ -337,7 +337,7 @@ describe(('LGPD Functions',() => {
 
     it('should enforce type checking for AnonymizationOptions',() => {
     it(('should enforce type checking for AnonymizationOptions',() => {
-      const validOptions: AnonymizationOptions = {
+      const validOptions: AnonymizationOption: s = [ {
         preserveId: true,
         preserveStatistics: false,
         hashSensitiveData: true,
@@ -349,7 +349,7 @@ describe(('LGPD Functions',() => {
 
     it('should enforce type checking for DeletionOptions',() => {
     it(('should enforce type checking for DeletionOptions',() => {
-      const validOptions: DeletionOptions = {
+      const validOptions: DeletionOption: s = [ {
         softDelete: true,
         retainAuditTrail: false,
         anonymizeBeforeDelete: true,
@@ -361,7 +361,7 @@ describe(('LGPD Functions',() => {
 
     it('should enforce type checking for ExportOptions',() => {
     it(('should enforce type checking for ExportOptions',() => {
-      const validOptions: ExportOptions = {
+      const validOptions: ExportOption: s = [ {
         format: 'json',
         includeMetadata: true,
         anonymizeData: false,
@@ -376,7 +376,7 @@ describe(('LGPD Functions',() => {
 
     it('should enforce type checking for LGPDOperationResult',() => {
     it(('should enforce type checking for LGPDOperationResult',() => {
-      const validResult: LGPDOperationResult = {
+      const validResult: LGPDOperationResul: t = [ {
         success: true,
         recordsProcessed: 1,
         operationId: 'test-operation',

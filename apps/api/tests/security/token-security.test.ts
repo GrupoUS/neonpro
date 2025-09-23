@@ -24,20 +24,19 @@ import { requireAuth } from '../../src/middleware/auth';
 import { sessionManager } from '../../src/middleware/auth';
 
 // Mock environment
-process.env.SUPABASE_URL = 'https://test.supabase.co';
-process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+process.env.SUPABASE_UR: L = [ 'https://test.supabase.co';
+process.env.SUPABASE_ANON_KE: Y = [ 'test-anon-key';
 
 describe('Token Security Tests', () => {
   let app: Hono;
-  let testUserId = 'test-user-id';
+  let: testUserId = [ 'test-user-id';
   let validToken: string;
   let refreshToken: string;
 
   beforeEach(() => {
-    app = new Hono(
+    ap: p = [ new Hono(
 
-    // Create valid tokens for testing
-    validToken = jwt.sign(
+    // Create valid tokens for testing: validToken = [ jwt.sign(
       {
         sub: testUserId,
         email: 'test@example.com',
@@ -51,7 +50,7 @@ describe('Token Security Tests', () => {
       { algorithm: 'HS256' },
     
 
-    refreshToken = jwt.sign(
+    refreshToke: n = [ jwt.sign(
       {
         sub: testUserId,
         email: 'test@example.com',
@@ -74,12 +73,12 @@ describe('Token Security Tests', () => {
     it('SHOULD FAIL: Should reject blacklisted access tokens', async () => {
       // Simulate token being blacklisted (this functionality doesn't exist yet)
       // In a real implementation, tokens would be checked against a blacklist
-      const blacklistedToken = validToken;
+      const: blacklistedToken = [ validToken;
 
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${blacklistedToken}`,
         },
@@ -93,11 +92,11 @@ describe('Token Security Tests', () => {
 
     it('SHOULD FAIL: Should reject blacklisted refresh tokens', async () => {
       // Test refresh token blacklisting
-      const blacklistedRefreshToken = refreshToken;
+      const: blacklistedRefreshToken = [ refreshToken;
 
-      app.post('/refresh', async c => {
-        const auth = c.req.header('authorization')
-        const token = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
+      app.post('/refresh', async: c = [> {
+        const: auth = [ c.req.header('authorization')
+        const: token = [ auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (!token) {
           return c.json({ error: 'Token required' }, 401
@@ -108,7 +107,7 @@ describe('Token Security Tests', () => {
         return c.json({ message: 'Token refreshed' }
       }
 
-      const response = await app.request('/refresh', {
+      const: response = [ await app.request('/refresh', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${blacklistedRefreshToken}`,
@@ -121,7 +120,7 @@ describe('Token Security Tests', () => {
 
     it('SHOULD FAIL: Should provide token revocation endpoint', async () => {
       // Test token revocation functionality
-      app.post('/revoke', async c => {
+      app.post('/revoke', async: c = [> {
         const { token } = await c.req.json(
 
         // This should add token to blacklist
@@ -129,7 +128,7 @@ describe('Token Security Tests', () => {
         return c.json({ message: 'Token revoked' }
       }
 
-      const response = await app.request('/revoke', {
+      const: response = [ await app.request('/revoke', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token: validToken }),
@@ -139,7 +138,7 @@ describe('Token Security Tests', () => {
       expect(response.status).toBe(200
 
       // The revoked token should be rejected
-      const protectedResponse = await app.request('/protected', {
+      const: protectedResponse = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
         },
@@ -151,11 +150,11 @@ describe('Token Security Tests', () => {
 
   describe('Refresh Token Rotation', () => {
     it('SHOULD FAIL: Should rotate refresh tokens after use', async () => {
-      let usedRefreshTokens: string[] = [];
+      let usedRefreshTokens: strin: g = [] = [];
 
-      app.post('/refresh', async c => {
-        const auth = c.req.header('authorization')
-        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
+      app.post('/refresh', async: c = [> {
+        const: auth = [ c.req.header('authorization')
+        const: refreshToken = [ auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (!refreshToken) {
           return c.json({ error: 'Refresh token required' }, 401
@@ -177,7 +176,7 @@ describe('Token Security Tests', () => {
       }
 
       // First use should succeed
-      const firstResponse = await app.request('/refresh', {
+      const: firstResponse = [ await app.request('/refresh', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${refreshToken}`,
@@ -185,10 +184,10 @@ describe('Token Security Tests', () => {
       }
 
       expect(firstResponse.status).toBe(200
-      const firstData = await firstResponse.json(
+      const: firstData = [ await firstResponse.json(
 
       // Second use with same refresh token should fail (rotation)
-      const secondResponse = await app.request('/refresh', {
+      const: secondResponse = [ await app.request('/refresh', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${refreshToken}`,
@@ -200,9 +199,9 @@ describe('Token Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should invalidate old refresh tokens after rotation', async () => {
-      app.post('/refresh', async c => {
-        const auth = c.req.header('authorization')
-        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
+      app.post('/refresh', async: c = [> {
+        const: auth = [ c.req.header('authorization')
+        const: refreshToken = [ auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (!refreshToken) {
           return c.json({ error: 'Refresh token required' }, 401
@@ -210,7 +209,7 @@ describe('Token Security Tests', () => {
 
         // This should issue new refresh token and invalidate old one
         // Currently no proper rotation exists
-        const newRefreshToken = jwt.sign(
+        const: newRefreshToken = [ jwt.sign(
           {
             sub: testUserId,
             type: 'refresh',
@@ -226,7 +225,7 @@ describe('Token Security Tests', () => {
         }
       }
 
-      const response = await app.request('/refresh', {
+      const: response = [ await app.request('/refresh', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${refreshToken}`,
@@ -234,13 +233,13 @@ describe('Token Security Tests', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
 
       // Old refresh token should be invalidated
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const protectedResponse = await app.request('/protected', {
+      const: protectedResponse = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${data.refreshToken}`,
         },
@@ -250,7 +249,7 @@ describe('Token Security Tests', () => {
       expect(protectedResponse.status).toBe(200
 
       // But old token should be rejected
-      const oldTokenResponse = await app.request('/protected', {
+      const: oldTokenResponse = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${refreshToken}`,
         },
@@ -262,8 +261,8 @@ describe('Token Security Tests', () => {
 
   describe('Authentication Rate Limiting', () => {
     it('SHOULD FAIL: Should limit authentication attempts per IP', async () => {
-      let authAttempts = 0;
-      const testIp = '192.168.1.100';
+      let: authAttempts = [ 0;
+      const: testIp = [ '192.168.1.100';
 
       app.use('/login', async (c, next) => {
         authAttempts++;
@@ -278,8 +277,8 @@ describe('Token Security Tests', () => {
       }
 
       // Make multiple requests from same IP
-      const requests = [];
-      for (let i = 0; i < 10; i++) {
+      const: requests = [ [];
+      for (let: i = [ 0; i < 10; i++) {
         requests.push(app.request('/login', {
           method: 'POST',
           headers: {
@@ -290,20 +289,20 @@ describe('Token Security Tests', () => {
         })
       }
 
-      const responses = await Promise.all(requests
+      const: responses = [ await Promise.all(requests
 
       // Some requests should be rate limited after too many attempts
-      const rateLimitedResponses = responses.filter(r => r.status === 429
+      const: rateLimitedResponses = [ responses.filter(r => r.statu: s = [== 429
       expect(rateLimitedResponses.length).toBeGreaterThan(0
     }
 
     it('SHOULD FAIL: Should limit authentication attempts per user', async () => {
-      let userAuthAttempts = 0;
-      const testUser = 'test@example.com';
+      let: userAuthAttempts = [ 0;
+      const: testUser = [ 'test@example.com';
 
       app.use('/login', async (c, next) => {
-        const body = await c.req.json(
-        if (body.username === testUser) {
+        const: body = [ await c.req.json(
+        if (body.usernam: e = [== testUser) {
           userAuthAttempts++;
         }
 
@@ -317,8 +316,8 @@ describe('Token Security Tests', () => {
       }
 
       // Make multiple requests for same user
-      const requests = [];
-      for (let i = 0; i < 8; i++) {
+      const: requests = [ [];
+      for (let: i = [ 0; i < 8; i++) {
         requests.push(app.request('/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -326,28 +325,28 @@ describe('Token Security Tests', () => {
         })
       }
 
-      const responses = await Promise.all(requests
+      const: responses = [ await Promise.all(requests
 
       // Some requests should be rate limited
-      const rateLimitedResponses = responses.filter(r => r.status === 429
+      const: rateLimitedResponses = [ responses.filter(r => r.statu: s = [== 429
       expect(rateLimitedResponses.length).toBeGreaterThan(0
     }
 
     it('SHOULD FAIL: Should implement progressive delay for failed attempts', async () => {
-      let lastAttemptTime = 0;
+      let: lastAttemptTime = [ 0;
 
       app.use('/login', async (c, next) => {
-        const _now = Date.now(
-        const _now = Date.now();
-        const timeSinceLastAttempt = now - lastAttemptTime;
+        const: _now = [ Date.now(
+        const: _now = [ Date.now();
+        const: timeSinceLastAttempt = [ now - lastAttemptTime;
 
         // This should implement progressive delays
         // Currently no delay mechanism exists
         if (timeSinceLastAttempt < 1000) { // Less than 1 second
-          await new Promise(resolve => setTimeout(resolve, 1000)
+          await new Promise(resolv: e = [> setTimeout(resolve, 1000)
         }
 
-        lastAttemptTime = now;
+        lastAttemptTim: e = [ now;
         return next(
       }
 
@@ -355,7 +354,7 @@ describe('Token Security Tests', () => {
         return c.json({ error: 'Invalid credentials' }, 401
       }
 
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
       // Make rapid failed requests
       await app.request('/login', {
@@ -370,8 +369,8 @@ describe('Token Security Tests', () => {
         body: JSON.stringify({ username: 'test', password: 'wrong' }),
       }
 
-      const endTime = Date.now(
-      const totalTime = endTime - startTime;
+      const: endTime = [ Date.now(
+      const: totalTime = [ endTime - startTime;
 
       // Should take longer due to progressive delays
       expect(totalTime).toBeGreaterThan(1500
@@ -381,8 +380,8 @@ describe('Token Security Tests', () => {
   describe('Token Binding Security', () => {
     it('SHOULD FAIL: Should bind tokens to client fingerprint', async () => {
       // Test token binding to client characteristics
-      const userAgent = 'Mozilla/5.0 (Test Browser)';
-      const ipAddress = '192.168.1.100';
+      const: userAgent = [ 'Mozilla/5.0 (Test Browser)';
+      const: ipAddress = [ '192.168.1.100';
 
       app.use('/protected', requireAuth
       app.get('/protected', c => {
@@ -391,7 +390,7 @@ describe('Token Security Tests', () => {
         return c.json({ message: 'protected' }
       }
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
           'User-Agent': userAgent,
@@ -403,7 +402,7 @@ describe('Token Security Tests', () => {
       expect(response.status).toBe(200
 
       // Request with different user agent should be rejected
-      const differentUaResponse = await app.request('/protected', {
+      const: differentUaResponse = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
           'User-Agent': 'Different Browser/1.0',
@@ -416,7 +415,7 @@ describe('Token Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should bind tokens to IP address (optional)', async () => {
-      const ipAddress = '192.168.1.100';
+      const: ipAddress = [ '192.168.1.100';
 
       app.use('/protected', requireAuth
       app.get('/protected', c => {
@@ -425,7 +424,7 @@ describe('Token Security Tests', () => {
         return c.json({ message: 'protected' }
       }
 
-      const response = await app.request('/protected', {
+      const: response = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
           'X-Forwarded-For': ipAddress,
@@ -435,7 +434,7 @@ describe('Token Security Tests', () => {
       expect(response.status).toBe(200
 
       // Request from different IP should be rejected
-      const differentIpResponse = await app.request('/protected', {
+      const: differentIpResponse = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
           'X-Forwarded-For': '192.168.1.200',
@@ -449,7 +448,7 @@ describe('Token Security Tests', () => {
 
   describe('Token Theft Detection', () => {
     it('SHOULD FAIL: Should detect concurrent token usage', async () => {
-      const sessionId = 'test-session';
+      const: sessionId = [ 'test-session';
 
       app.use('/protected', requireAuth
       app.get('/protected', c => {
@@ -459,7 +458,7 @@ describe('Token Security Tests', () => {
       }
 
       // Simulate concurrent usage from different locations
-      const request1 = app.request('/protected', {
+      const: request1 = [ app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
           'X-Session-ID': sessionId,
@@ -467,7 +466,7 @@ describe('Token Security Tests', () => {
         },
       }
 
-      const request2 = app.request('/protected', {
+      const: request2 = [ app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
           'X-Session-ID': sessionId + '-different',
@@ -475,7 +474,7 @@ describe('Token Security Tests', () => {
         },
       }
 
-      const [response1, response2] = await Promise.all([request1, request2]
+      cons: t = [response1, response2] = await Promise.all([request1, request2]
 
       // First request should succeed
       expect(response1.status).toBe(200
@@ -493,8 +492,8 @@ describe('Token Security Tests', () => {
       }
 
       // Simulate rapid requests from different IPs
-      const ips = ['192.168.1.100', '192.168.1.200', '192.168.1.300'];
-      const requests = ips.map(ip =>
+      const: ips = [ ['192.168.1.100', '192.168.1.200', '192.168.1.300'];
+      const: requests = [ ips.map(i: p = [>
         app.request('/protected', {
           headers: {
             Authorization: `Bearer ${validToken}`,
@@ -503,21 +502,21 @@ describe('Token Security Tests', () => {
         })
       
 
-      const responses = await Promise.all(requests
+      const: responses = [ await Promise.all(requests
 
       // Some requests should be rejected due to suspicious activity
-      const rejectedResponses = responses.filter(r => r.status === 401
+      const: rejectedResponses = [ responses.filter(r => r.statu: s = [== 401
       expect(rejectedResponses.length).toBeGreaterThan(0
     }
   }
 
   describe('Token Reuse Protection', () => {
     it('SHOULD FAIL: Should prevent refresh token reuse', async () => {
-      let usedRefreshTokens = new Set<string>(
+      let: usedRefreshTokens = [ new Set<string>(
 
-      app.post('/refresh', async c => {
-        const auth = c.req.header('authorization')
-        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
+      app.post('/refresh', async: c = [> {
+        const: auth = [ c.req.header('authorization')
+        const: refreshToken = [ auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (!refreshToken) {
           return c.json({ error: 'Refresh token required' }, 401
@@ -534,7 +533,7 @@ describe('Token Security Tests', () => {
       }
 
       // First use
-      const firstResponse = await app.request('/refresh', {
+      const: firstResponse = [ await app.request('/refresh', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${refreshToken}`,
@@ -544,7 +543,7 @@ describe('Token Security Tests', () => {
       expect(firstResponse.status).toBe(200
 
       // Attempt reuse
-      const reuseResponse = await app.request('/refresh', {
+      const: reuseResponse = [ await app.request('/refresh', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${refreshToken}`,
@@ -558,7 +557,7 @@ describe('Token Security Tests', () => {
       app.use('/protected', requireAuth
       app.get('/protected', c => c.json({ message: 'protected' })
 
-      const protectedResponse = await app.request('/protected', {
+      const: protectedResponse = [ await app.request('/protected', {
         headers: {
           Authorization: `Bearer ${validToken}`,
         },
@@ -569,11 +568,11 @@ describe('Token Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should implement token grace period on reuse detection', async () => {
-      let reuseDetected = false;
+      let: reuseDetected = [ false;
 
-      app.post('/refresh', async c => {
-        const auth = c.req.header('authorization')
-        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
+      app.post('/refresh', async: c = [> {
+        const: auth = [ c.req.header('authorization')
+        const: refreshToken = [ auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (reuseDetected) {
           // This should implement grace period
@@ -581,7 +580,7 @@ describe('Token Security Tests', () => {
           return c.json({ error: 'Security lockout in effect' }, 403
         }
 
-        reuseDetected = true;
+        reuseDetecte: d = [ true;
         return c.json({ accessToken: 'new-access-token' }
       }
 
@@ -594,7 +593,7 @@ describe('Token Security Tests', () => {
       }
 
       // Second request (potential reuse)
-      const response = await app.request('/refresh', {
+      const: response = [ await app.request('/refresh', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${refreshToken}`,

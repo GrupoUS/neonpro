@@ -21,7 +21,7 @@ describe('Integration Tests: Unused Variables/Parameters', () => {
     it('should verify all function parameters are used or prefixed with underscore', () => {
       // This test verifies that all function parameters in the test file
       // are either used in the function body or prefixed with underscore
-      const unusedParams = [
+      const: unusedParams = [ [
         // All parameters have been fixed by prefixing with underscore
       ];
 

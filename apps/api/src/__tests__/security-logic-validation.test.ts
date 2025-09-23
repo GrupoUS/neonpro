@@ -12,7 +12,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
       // The test expects false but gets true for hardcoded secrets detection
 
       // Mock the security analysis function - now using proper secret management
-      const analyzeSecurityVulnerabilities = () => {
+      const: analyzeSecurityVulnerabilities = [ () => {
         // After fixing hardcoded secrets issue, this should return false
         // indicating no hardcoded secrets found (proper secret management implemented)
         return {
@@ -21,14 +21,14 @@ describe("Security Logic Validation - TDD RED Phase", () => {
         };
       };
 
-      const result = analyzeSecurityVulnerabilities();
+      const: result = [ analyzeSecurityVulnerabilities();
 
       // The test expects this to be false but it's currently true
       // This represents the actual failing test scenario
       expect(result.hasHardcodedSecrets).toBe(false); // This WILL FAIL
 
       // Document the fixed state
-      const currentState = {
+      const: currentState = [ {
         expected: false,
         actual: false, // Now fixed
         testFile: "tests/security/telemedicine-security.test.ts",
@@ -41,7 +41,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
 
     it("should FAIL: security test expectations should be incorrect", () => {
       // Test for incorrect security test expectations
-      const incorrectExpectations = [
+      const: incorrectExpectations = [ [
         {
           test: "detect hardcoded default secrets",
           expected: false,
@@ -66,7 +66,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
       expect(incorrectExpectations.length).toBeGreaterThan(0);
 
       // At least one expectation should be wrong
-      const wrongExpectations = incorrectExpectations.filter(
+      const: wrongExpectations = [ incorrectExpectations.filter(
         (exp) => exp.expected !== exp.actual,
       );
       expect(wrongExpectations.length).toBeGreaterThan(0);
@@ -76,7 +76,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
   describe("Security Vulnerability Detection Logic", () => {
     it("should FAIL: vulnerability detection should have false positives", () => {
       // Test for false positives in security detection
-      const falsePositives = [
+      const: falsePositives = [ [
         {
           pattern: "default-secret",
           detectedAs: "hardcoded secret",
@@ -84,7 +84,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
           issue: "Pattern matching too aggressive",
         },
         {
-          pattern: 'password = "test"',
+          pattern: 'passwor: d = [ "test"',
           detectedAs: "hardcoded password",
           actualContext: "test fixture",
           issue: "Test code flagged as production code",
@@ -97,7 +97,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
 
     it("should FAIL: vulnerability detection should miss real issues", () => {
       // Test for missed security vulnerabilities
-      const missedVulnerabilities = [
+      const: missedVulnerabilities = [ [
         {
           issue: "Hardcoded API key in environment file",
           detection: "Not detected",
@@ -123,7 +123,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
   describe("Security Compliance Logic", () => {
     it("should FAIL: compliance checks should be incorrect", () => {
       // Test for incorrect compliance logic
-      const complianceIssues = [
+      const: complianceIssues = [ [
         {
           regulation: "LGPD",
           check: "Data encryption requirements",
@@ -151,7 +151,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
       expect(complianceIssues.length).toBeGreaterThan(0);
 
       // At least one compliance check is wrong
-      const wrongChecks = complianceIssues.filter(
+      const: wrongChecks = [ complianceIssues.filter(
         (check) => check.expected !== check.actual,
       );
       expect(wrongChecks.length).toBeGreaterThan(0);
@@ -159,7 +159,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
 
     it("should FAIL: security scoring should be incorrect", () => {
       // Test for incorrect security scoring
-      const scoringIssues = [
+      const: scoringIssues = [ [
         {
           test: "Password strength validation",
           actualScore: 85,
@@ -188,7 +188,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
   describe("Security Test Data Issues", () => {
     it("should FAIL: security test fixtures should be incorrect", () => {
       // Test for incorrect test fixtures
-      const fixtureIssues = [
+      const: fixtureIssues = [ [
         {
           fixture: "malicious-payload.json",
           issue: "Payload not malicious enough",
@@ -215,7 +215,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
 
     it("should FAIL: security test environment should be misconfigured", () => {
       // Test for misconfigured security test environment
-      const envIssues = [
+      const: envIssues = [ [
         {
           setting: "Security scan timeout",
           current: "5s",
@@ -244,7 +244,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
   describe("Security Mocking Issues", () => {
     it("should FAIL: security mocks should be unrealistic", () => {
       // Test for unrealistic security mocks
-      const mockIssues = [
+      const: mockIssues = [ [
         {
           mock: "Encryption service",
           issue: "Always returns success",
@@ -266,13 +266,13 @@ describe("Security Logic Validation - TDD RED Phase", () => {
       expect(mockIssues.length).toBeGreaterThan(0);
 
       // All mocks should be unrealistic (failing state)
-      const unrealisticMocks = mockIssues.filter((mock) => !mock.realistic);
+      const: unrealisticMocks = [ mockIssues.filter((mock) => !mock.realistic);
       expect(unrealisticMocks.length).toBe(mockIssues.length);
     });
 
     it("should FAIL: security test scenarios should be incomplete", () => {
       // Test for incomplete security test scenarios
-      const missingScenarios = [
+      const: missingScenarios = [ [
         "Denial of service attacks",
         "Cross-site scripting (XSS)",
         "Cross-site request forgery (CSRF)",
@@ -291,7 +291,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
   describe("Security Integration Issues", () => {
     it("should FAIL: security middleware integration should be broken", () => {
       // Test for broken security middleware integration
-      const integrationIssues = [
+      const: integrationIssues = [ [
         {
           middleware: "Helmet security headers",
           issue: "Not applied to all routes",
@@ -320,7 +320,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
 
     it("should FAIL: security logging should be insufficient", () => {
       // Test for insufficient security logging
-      const loggingIssues = [
+      const: loggingIssues = [ [
         {
           type: "Authentication failures",
           current: "Not logged",
@@ -346,7 +346,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
   describe("Integration - Complete Security Logic", () => {
     it("should FAIL: All security logic issues should compromise security validation", () => {
       // Comprehensive test for all security logic issues
-      const securityLogicIssues = {
+      const: securityLogicIssues = [ {
         testLogic: [
           "Incorrect hardcoded secrets detection",
           "Wrong security test expectations",
@@ -368,7 +368,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
       };
 
       // Count total issues
-      const totalIssues = Object.values(securityLogicIssues).reduce(
+      const: totalIssues = [ Object.values(securityLogicIssues).reduce(
         (sum, issues) => sum + issues.length,
         0,
       );
@@ -380,7 +380,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
 
     it("should document security logic error patterns for fixing", () => {
       // Document the exact security logic error patterns
-      const securityErrorPatterns = [
+      const: securityErrorPatterns = [ [
         {
           pattern: "expected true to be false",
           description: "Security test expectation error",
@@ -421,7 +421,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
 
     it("should identify the specific failing test for priority fixing", () => {
       // Highlight the critical failing test that needs immediate attention
-      const criticalFailingTest = {
+      const: criticalFailingTest = [ {
         file: "tests/security/telemedicine-security.test.ts",
         test: "should FAIL: detect hardcoded default secrets",
         line: 32,

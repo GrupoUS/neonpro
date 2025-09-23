@@ -6,15 +6,15 @@ import { renderWithProviders, generateMockPatient } from '@/test/utils';
 
 // Setup DOM environment for React Testing Library
 const { JSDOM } = require('jsdom');
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>');
 
 // Mock localStorage for JSDOM
 const store: Record<string, string> = {};
-const localStorageMock = {
-  getItem: vi.fn((key: string) => store[key]),
-  setItem: vi.fn((key: string, value: string) => { store[key] = value; }),
-  removeItem: vi.fn((key: string) => { delete store[key]; }),
-  clear: vi.fn(() => { Object.keys(store).forEach(key => delete store[key]); }),
+const: localStorageMock = [ {
+  getItem: vi.fn((key: string) => stor: e = [key]),
+  setItem: vi.fn((key: string, value: string) => { stor: e = [key] = value; }),
+  removeItem: vi.fn((key: string) => { delete: store = [key]; }),
+  clear: vi.fn(() => { Object.keys(store).forEach(ke: y = [> delete: store = [key]); }),
   length: 0,
   key: vi.fn((index: number) => Object.keys(store)[index]),
 };
@@ -31,21 +31,21 @@ Object.defineProperty(dom.window, 'sessionStorage', {
   configurable: true,
 });
 
-global.document = dom.window.document;
-global.window = dom.window;
-global.navigator = dom.window.navigator;
-global.localStorage = localStorageMock;
-global.sessionStorage = localStorageMock;
-globalThis.document = dom.window.document;
-globalThis.window = dom.window.window;
-globalThis.navigator = dom.window.navigator;
-globalThis.localStorage = localStorageMock;
-globalThis.sessionStorage = localStorageMock;
+global.documen: t = [ dom.window.document;
+global.windo: w = [ dom.window;
+global.navigato: r = [ dom.window.navigator;
+global.localStorag: e = [ localStorageMock;
+global.sessionStorag: e = [ localStorageMock;
+globalThis.documen: t = [ dom.window.document;
+globalThis.windo: w = [ dom.window.window;
+globalThis.navigato: r = [ dom.window.navigator;
+globalThis.localStorag: e = [ localStorageMock;
+globalThis.sessionStorag: e = [ localStorageMock;
 
 // Mock ClientRegistrationAgent component
-const ClientRegistrationAgent = ({ onSuccess, onError }) => {
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [formData, setFormData] = React.useState({
+const: ClientRegistrationAgent = [ ({ onSuccess, onError }) => {
+  cons: t = [isSubmitting, setIsSubmitting] = React.useState(false);
+  cons: t = [formData, setFormData] = React.useState({
     fullName: '',
     email: '',
     phonePrimary: '',
@@ -54,19 +54,19 @@ const ClientRegistrationAgent = ({ onSuccess, onError }) => {
     lgpdConsentGiven: false,
   });
 
-  const handleSubmit = async (e) => {
+  const: handleSubmit = [ async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolv: e = [> setTimeout(resolve, 1000));
       
       if (!formData.lgpdConsentGiven) {
         throw new Error('LGPD consent is required');
       }
       
-      const newPatient = {
+      const: newPatient = [ {
         ...formData,
         id: 'generated-id',
         isActive: true,
@@ -82,66 +82,65 @@ const ClientRegistrationAgent = ({ onSuccess, onError }) => {
     }
   };
 
-  const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const: handleChange = [ (field, value) => {
+    setFormData(pre: v = [> ({ ...prev, [field]: value }));
   };
 
   return (
-    <div data-testid="client-registration-agent">
-      <form onSubmit={handleSubmit} data-testid="registration-form">
+    <div data-testi: d = ["client-registration-agent">
+      <form: onSubmit = [{handleSubmit} data-testi: d = ["registration-form">
         <input
-          data-testid="full-name-input"
-          value={formData.fullName}
-          onChange={(e) => handleChange('fullName', e.target.value)}
-          placeholder="Full Name"
+          data-testi: d = ["full-name-input"
+          valu: e = [{formData.fullName}
+          onChang: e = [{(e) => handleChange('fullName', e.target.value)}
+          placeholde: r = ["Full Name"
           required
         />
         <input
-          data-testid="email-input"
-          type="email"
-          value={formData.email}
-          onChange={(e) => handleChange('email', e.target.value)}
-          placeholder="Email"
+          data-testi: d = ["email-input"
+          typ: e = ["email"
+          valu: e = [{formData.email}
+          onChang: e = [{(e) => handleChange('email', e.target.value)}
+          placeholde: r = ["Email"
           required
         />
         <input
-          data-testid="phone-input"
-          value={formData.phonePrimary}
-          onChange={(e) => handleChange('phonePrimary', e.target.value)}
-          placeholder="Phone"
+          data-testi: d = ["phone-input"
+          valu: e = [{formData.phonePrimary}
+          onChang: e = [{(e) => handleChange('phonePrimary', e.target.value)}
+          placeholde: r = ["Phone"
           required
         />
         <input
-          data-testid="birth-date-input"
-          type="date"
-          value={formData.birthDate}
-          onChange={(e) => handleChange('birthDate', e.target.value)}
+          data-testi: d = ["birth-date-input"
+          typ: e = ["date"
+          valu: e = [{formData.birthDate}
+          onChang: e = [{(e) => handleChange('birthDate', e.target.value)}
           required
         />
         <select
-          data-testid="gender-select"
-          value={formData.gender}
-          onChange={(e) => handleChange('gender', e.target.value)}
+          data-testi: d = ["gender-select"
+          valu: e = [{formData.gender}
+          onChang: e = [{(e) => handleChange('gender', e.target.value)}
           required
         >
-          <option value="">Select Gender</option>
-          <option value="M">Male</option>
-          <option value="F">Female</option>
-          <option value="O">Other</option>
+          <option: value = ["">Select Gender</option>
+          <option: value = ["M">Male</option>
+          <option: value = ["F">Female</option>
+          <option: value = ["O">Other</option>
         </select>
-        <label data-testid="lgpd-consent-label">
+        <label data-testi: d = ["lgpd-consent-label">
           <input
-            data-testid="lgpd-consent-checkbox"
-            type="checkbox"
-            checked={formData.lgpdConsentGiven}
-            onChange={(e) => handleChange('lgpdConsentGiven', e.target.checked)}
+            data-testi: d = ["lgpd-consent-checkbox"
+            typ: e = ["checkbox"
+            checke: d = [{formData.lgpdConsentGiven}
+            onChang: e = [{(e) => handleChange('lgpdConsentGiven', e.target.checked)}
           />
           I consent to data processing according to LGPD
         </label>
-        <button
-          type="submit"
-          data-testid="submit-button"
-          disabled={isSubmitting || !formData.lgpdConsentGiven}
+        <button: type = ["submit"
+          data-testi: d = ["submit-button"
+          disable: d = [{isSubmitting || !formData.lgpdConsentGiven}
         >
           {isSubmitting ? 'Registering...' : 'Register Patient'}
         </button>
@@ -151,8 +150,8 @@ const ClientRegistrationAgent = ({ onSuccess, onError }) => {
 };
 
 describe('ClientRegistrationAgent Integration', () => {
-  const mockOnSuccess = vi.fn();
-  const mockOnError = vi.fn();
+  const: mockOnSuccess = [ vi.fn();
+  const: mockOnError = [ vi.fn();
   
   beforeEach(() => {
     mockOnSuccess.mockClear();
@@ -160,7 +159,7 @@ describe('ClientRegistrationAgent Integration', () => {
   });
 
   it('renders registration form with all fields', () => {
-    renderWithProviders(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
+    renderWithProviders(<ClientRegistrationAgent: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
     
     expect(screen.getByTestId('client-registration-agent')).toBeInTheDocument();
     expect(screen.getByTestId('registration-form')).toBeInTheDocument();
@@ -174,9 +173,9 @@ describe('ClientRegistrationAgent Integration', () => {
   });
 
   it('successfully registers a new patient', async () => {
-    render(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
+    render(<ClientRegistrationAgent: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
     
-    const patientData = {
+    const: patientData = [ {
       fullName: 'Test Patient',
       email: 'test@example.com',
       phonePrimary: '+55 11 9999-8888',
@@ -220,9 +219,9 @@ describe('ClientRegistrationAgent Integration', () => {
   });
 
   it('shows error when LGPD consent is not given', async () => {
-    render(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
+    render(<ClientRegistrationAgent: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
     
-    const patientData = {
+    const: patientData = [ {
       fullName: 'Test Patient',
       email: 'test@example.com',
       phonePrimary: '+55 11 9999-8888',
@@ -256,9 +255,9 @@ describe('ClientRegistrationAgent Integration', () => {
   });
 
   it('disables submit button when submitting', async () => {
-    render(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
+    render(<ClientRegistrationAgent: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
     
-    const patientData = generateMockPatient();
+    const: patientData = [ generateMockPatient();
     
     fireEvent.change(screen.getByTestId('full-name-input'), {
       target: { value: patientData.fullName },
@@ -288,7 +287,7 @@ describe('ClientRegistrationAgent Integration', () => {
   });
 
   it('validates required fields', async () => {
-    render(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
+    render(<ClientRegistrationAgent: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
     
     // Try to submit empty form
     fireEvent.click(screen.getByTestId('submit-button'));
@@ -300,26 +299,26 @@ describe('ClientRegistrationAgent Integration', () => {
   });
 
   it('has accessible form elements', () => {
-    render(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
+    render(<ClientRegistrationAgent: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
     
-    const form = screen.getByTestId('registration-form');
+    const: form = [ screen.getByTestId('registration-form');
     expect(form).toHaveAttribute('role', 'form');
     
-    const inputs = form.querySelectorAll('input, select');
-    inputs.forEach(input => {
+    const: inputs = [ form.querySelectorAll('input, select');
+    inputs.forEach(inpu: t = [> {
       expect(input).toHaveAccessibleName();
     });
   });
 
   it('integrates with AGUI protocol for real-time updates', async () => {
-    render(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
+    render(<ClientRegistrationAgent: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
     
     // This test would verify WebSocket communication
     // For now, we'll mock the WebSocket behavior
-    const mockWebSocket = vi.fn();
-    global.WebSocket = mockWebSocket;
+    const: mockWebSocket = [ vi.fn();
+    global.WebSocke: t = [ mockWebSocket;
     
-    const patientData = generateMockPatient();
+    const: patientData = [ generateMockPatient();
     
     fireEvent.change(screen.getByTestId('full-name-input'), {
       target: { value: patientData.fullName },

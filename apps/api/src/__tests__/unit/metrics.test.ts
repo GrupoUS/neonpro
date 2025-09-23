@@ -6,17 +6,17 @@ describe(('HealthcareMetricsService',() => {
   let metricsService: HealthcareMetricsService;
 
   beforeEach(() => {
-    metricsService = new HealthcareMetricsService(
+    metricsServic: e = [ new HealthcareMetricsService(
 
   describe('Constructor',() => {
     it('should initialize with default KPIs',() => {
   describe(('Constructor',() => {
     it(('should initialize with default KPIs',() => {
       // This test will fail initially because we need to check if KPIs are properly initialized
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
 
       // Access private method to check KPIs initialization
-      const kpis = (service as any).kpis;
+      const: kpis = [ (service as any).kpis;
 
       expect(kpis.size).toBeGreaterThan(0
       expect(kpis.has('lgpd_compliance_rate')).toBe(true);
@@ -24,9 +24,9 @@ describe(('HealthcareMetricsService',() => {
       expect(kpis.has('anvisa_compliance_rate')).toBe(true);
 
     it('should initialize Supabase client',() => {
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
     it(('should initialize Supabase client',() => {
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       // Check if Supabase client is initialized
       expect((service as any).supabase).toBeDefined(
@@ -34,25 +34,25 @@ describe(('HealthcareMetricsService',() => {
   describe('recordMetric',() => {
     it('should successfully record a metric',async () => {
       // Mock successful database insertion
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
   describe(('recordMetric',() => {
     it(('should successfully record a metric',async () => {
       // Mock successful database insertion
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const singleSpy = vi
+      const: singleSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      metricsService.db = {
+      metricsService.d: b = [ {
         insert: () => ({
           select: () => ({
             single: () => ({
@@ -63,7 +63,7 @@ describe(('HealthcareMetricsService',() => {
         }),
       };
 
-      const result = await metricsService.recordMetric(
+      const: result = [ await metricsService.recordMetric(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
         95,
         { test: 'metadata' },
@@ -76,24 +76,24 @@ describe(('HealthcareMetricsService',() => {
 
     it('should handle database errors gracefully',async () => {
       // Mock database error
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
     it(('should handle database errors gracefully',async () => {
       // Mock database error
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const singleSpy = vi
+      const: singleSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      metricsService.db = {
+      metricsService.d: b = [ {
         insert: () => ({
           select: () => ({
             single: () => ({
@@ -104,7 +104,7 @@ describe(('HealthcareMetricsService',() => {
         }),
       };
 
-      const result = await metricsService.recordMetric(
+      const: result = [ await metricsService.recordMetric(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
         95,
       
@@ -113,25 +113,25 @@ describe(('HealthcareMetricsService',() => {
       expect(result.error).toBeDefined(
 
     it('should log metric to console when database fails',async () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {  }
+      const: consoleSpy = [ vi.spyOn(console, 'log').mockImplementation(() => {  }
     it(('should log metric to console when database fails',async () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const: consoleSpy = [ vi.spyOn(console, 'log').mockImplementation(() => {});
 
       // Mock database error
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
         .mockImplementation();
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const singleSpy = vi
+      const: singleSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      metricsService.db = {
+      metricsService.d: b = [ {
         insert: () => ({
           select: () => ({
             single: () => ({
@@ -151,23 +151,23 @@ describe(('HealthcareMetricsService',() => {
       consoleSpy.mockRestore(
 
     it('should include default compliance flags when not provided',async () => {
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
     it(('should include default compliance flags when not provided',async () => {
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const singleSpy = vi
+      const: singleSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      metricsService.db = {
+      metricsService.d: b = [ {
         insert: () => ({
           select: () => ({
             single: () => ({
@@ -183,7 +183,7 @@ describe(('HealthcareMetricsService',() => {
         95,
       
 
-      const insertCall = insertSpy.mock.calls[0][0];
+      const: insertCall = [ insertSpy.mock.call: s = [0][0];
       expect(insertCall.compliance_flags).toEqual({
         lgpd_compliant: true,
         cfm_validated: true,
@@ -192,10 +192,10 @@ describe(('HealthcareMetricsService',() => {
 
   describe('getKPIStatus',() => {
     it('should return error for non-existent KPI',async () => {
-      const result = await metricsService.getKPIStatus('non-existent-kpi')
+      const: result = [ await metricsService.getKPIStatus('non-existent-kpi')
   describe(('getKPIStatus',() => {
     it(('should return error for non-existent KPI',async () => {
-      const result = await metricsService.getKPIStatus('non-existent-kpi');
+      const: result = [ await metricsService.getKPIStatus('non-existent-kpi');
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('KPI not found')
@@ -203,7 +203,7 @@ describe(('HealthcareMetricsService',() => {
     it('should return KPI status with compliance evaluation',async () => {
     it(('should return KPI status with compliance evaluation',async () => {
       // Mock successful metric aggregation
-      const mockAggregation = {
+      const: mockAggregation = [ {
         success: true,
         data: {
           avg: 96,
@@ -215,7 +215,7 @@ describe(('HealthcareMetricsService',() => {
         mockAggregation,
       
 
-      const result = await metricsService.getKPIStatus('lgpd_compliance_rate')
+      const: result = [ await metricsService.getKPIStatus('lgpd_compliance_rate')
 
       expect(result.success).toBe(true);
       expect(result.kpi).toBeDefined(
@@ -231,31 +231,31 @@ describe(('HealthcareMetricsService',() => {
         },
       
 
-      const result = await metricsService.getKPIStatus('lgpd_compliance_rate')
+      const: result = [ await metricsService.getKPIStatus('lgpd_compliance_rate')
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('Failed to get metric aggregation')
 
   describe('getMetricAggregation',() => {
     it('should return empty aggregation when no data exists',async () => {
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
   describe(('getMetricAggregation',() => {
     it(('should return empty aggregation when no data exists',async () => {
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const singleSpy = vi
+      const: singleSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      metricsService.db = {
+      metricsService.d: b = [ {
         select: () => ({
           eq: () => ({
             gte: () => ({
@@ -268,7 +268,7 @@ describe(('HealthcareMetricsService',() => {
         }),
       };
 
-      const result = await metricsService.getMetricAggregation(
+      const: result = [ await metricsService.getMetricAggregation(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
         'day',
       
@@ -280,7 +280,7 @@ describe(('HealthcareMetricsService',() => {
 
     it('should calculate aggregation correctly from data',async () => {
     it(('should calculate aggregation correctly from data',async () => {
-      const mockData = [
+      const: mockData = [ [
         {
           value: 90,
           compliance_flags: {
@@ -307,20 +307,20 @@ describe(('HealthcareMetricsService',() => {
         },
       ];
 
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
         .mockImplementation();
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const singleSpy = vi
+      const: singleSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      metricsService.db = {
+      metricsService.d: b = [ {
         select: () => ({
           eq: () => ({
             gte: () => ({
@@ -333,7 +333,7 @@ describe(('HealthcareMetricsService',() => {
         }),
       };
 
-      const result = await metricsService.getMetricAggregation(
+      const: result = [ await metricsService.getMetricAggregation(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
         'day',
       
@@ -347,23 +347,23 @@ describe(('HealthcareMetricsService',() => {
       expect(result.data!.complianceRate).toBe(66.67); // 2 out of 3 compliant
 
     it('should handle database query errors',async () => {
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
     it(('should handle database query errors',async () => {
-      const insertSpy = vi
+      const: insertSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const selectionSpy = vi
+      const: selectionSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
-      const singleSpy = vi
+      const: singleSpy = [ vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation(
-      metricsService.db = {
+      metricsService.d: b = [ {
         select: () => ({
           eq: () => ({
             gte: () => ({
@@ -376,7 +376,7 @@ describe(('HealthcareMetricsService',() => {
         }),
       };
 
-      const result = await metricsService.getMetricAggregation(
+      const: result = [ await metricsService.getMetricAggregation(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
         'day',
       
@@ -404,7 +404,7 @@ describe(('HealthcareMetricsService',() => {
         success: true,
         alerts: [],
 
-      const result = await metricsService.getComplianceDashboard(
+      const: result = [ await metricsService.getComplianceDashboard(
 
       expect(result.success).toBe(true);
       expect(result.dashboard).toBeDefined(
@@ -417,35 +417,35 @@ describe(('HealthcareMetricsService',() => {
         new Error('KPI error'),
       
 
-      const result = await metricsService.getComplianceDashboard(
+      const: result = [ await metricsService.getComplianceDashboard(
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined(
 
   describe('Legacy compatibility methods',() => {
     it('should start and end timer correctly',() => {
-      const timer = metricsService.startTimer(
+      const: timer = [ metricsService.startTimer(
       expect(timer).toBeDefined(
       expect(timer.start).toBeDefined(
   describe(('Legacy compatibility methods',() => {
     it(('should start and end timer correctly',() => {
-      const timer = metricsService.startTimer();
+      const: timer = [ metricsService.startTimer();
       expect(timer).toBeDefined();
       expect(timer.start).toBeDefined();
 
       // Add small delay to ensure timer has measurable value
-      const start = Date.now(
+      const: start = [ Date.now(
       while (Date.now() - start < 1) {
         // Wait at least 1ms
       }
 
-      const duration = metricsService.endTimerMs(timer
+      const: duration = [ metricsService.endTimerMs(timer
       expect(duration).toBeGreaterThanOrEqual(0
 
     it('should log metric without throwing errors',() => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {  }
+      const: consoleSpy = [ vi.spyOn(console, 'log').mockImplementation(() => {  }
     it(('should log metric without throwing errors',() => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const: consoleSpy = [ vi.spyOn(console, 'log').mockImplementation(() => {});
 
       expect(() => {
         metricsService.logMetric({ test: 'metric'   }

@@ -16,6 +16,7 @@
 
 import { webcrypto } from "node:crypto";
 import { z } from "zod";
+import { logHealthcareError, sessionLogger } from '../logging/healthcare-logger';
 
 // Ensure crypto is available in both Node.js and browser environments
 const crypto = globalThis.crypto || webcrypto;
@@ -1074,7 +1075,10 @@ export class SessionManagementService {
     this.activityLog.push(validatedEvent);
 
     // In a real implementation, this would integrate with your logging system
-    console.log("Session Activity:", JSON.stringify(validatedEvent, null, 2));
+    sessionLogger.info("Session activity logged", {
+      ...validatedEvent,
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**

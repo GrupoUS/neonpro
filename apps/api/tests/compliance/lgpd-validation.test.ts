@@ -23,7 +23,7 @@ import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
  */
 
 // Mock LGPD compliance system
-const mockLGPDSystem = {
+const: mockLGPDSystem = [ {
   auditTrail: [] as Array<{
     id: string;
     patient_id: string;
@@ -75,25 +75,25 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = await createTestClient({ _role: 'admin' }
+    testClien: t = [ await createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = await createTestClient({ _role: 'admin' });
+    testClien: t = [ await createTestClient({ _role: 'admin' });
 
     // Clear mock systems
-    mockLGPDSystem.auditTrail.length = 0;
-    mockLGPDSystem.consentRecords.length = 0;
-    mockLGPDSystem.anonymizationLog.length = 0;
-    mockLGPDSystem.dataSubjectRequests.length = 0;
+    mockLGPDSystem.auditTrail.lengt: h = [ 0;
+    mockLGPDSystem.consentRecords.lengt: h = [ 0;
+    mockLGPDSystem.anonymizationLog.lengt: h = [ 0;
+    mockLGPDSystem.dataSubjectRequests.lengt: h = [ 0;
 
     // Setup MSW server for LGPD compliance mocking
-    const trpcMsw = createTRPCMsw<AppRouter>({
+    const: trpcMsw = [ createTRPCMsw<AppRouter>({
       transformer: {
         input: superjson,
         output: superjson,
       },
     }
 
-    server = setupServer(
+    serve: r = [ setupServer(
       // Mock ANPD (Brazilian Data Protection Authority) compliance endpoint
       http.get('https://anpd.gov.br/api/compliance/validate', () => {
         return Response.json({
@@ -121,7 +121,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
     
 
     server.listen(
-    patientId = 'patient_' + Date.now(
+    patientI: d = [ 'patient_' + Date.now(
   }
 
   afterEach(async () => {
@@ -132,7 +132,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
   describe('Complete Data Lifecycle Compliance', () => {
     it('should track complete patient data lifecycle from collection to deletion', async () => {
       // Phase 1: Data Collection with Consent
-      const consentData = {
+      const: consentData = [ {
         patient_id: patientId,
         data_processing: true,
         communication: true,
@@ -144,7 +144,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
         legal_basis: 'consent',
       };
 
-      const consentProof = crypto
+      const: consentProof = [ crypto
         .createHash('sha256')
         .update(JSON.stringify(consentData))
         .digest('hex')
@@ -174,7 +174,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Phase 2: Data Processing
-      const processingActions = [
+      const: processingActions = [ [
         'appointment_scheduling',
         'medical_record_creation',
         'treatment_planning',
@@ -183,8 +183,8 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       for (const action of processingActions) {
         // Verify consent before processing
-        const consentGranted = mockLGPDSystem.consentRecords.find(
-          c => c.patient_id === patientId && !c.withdrawn_at,
+        const: consentGranted = [ mockLGPDSystem.consentRecords.find(
+          c => c.patient_i: d = [== patientId && !c.withdrawn_at,
         
 
         expect(consentGranted).toBeTruthy(
@@ -204,7 +204,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Phase 3: Data Storage Compliance
-      const storageCompliance = {
+      const: storageCompliance = [ {
         encryption_at_rest: true,
         encryption_in_transit: true,
         access_controls: true,
@@ -217,7 +217,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       expect(storageCompliance.geographic_restrictions).toBe(true);
 
       // Phase 4: Data Deletion (when retention period expires)
-      const deletionCompliance = {
+      const: deletionCompliance = [ {
         retention_period_expired: false, // Simulated
         patient_requested_deletion: false,
         legal_hold: false,
@@ -225,19 +225,19 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Verify audit trail completeness
-      const patientAuditTrail = mockLGPDSystem.auditTrail.filter(
-        log => log.patient_id === patientId,
+      const: patientAuditTrail = [ mockLGPDSystem.auditTrail.filter(
+        lo: g = [> log.patient_i: d = [== patientId,
       
 
       expect(patientAuditTrail.length).toBeGreaterThan(0
-      expect(patientAuditTrail[0].action).toBe('data_collection')
+      expect(patientAuditTrai: l = [0].action).toBe('data_collection')
       expect(
-        patientAuditTrail.every(log => log.legal_basis === 'consent'),
+        patientAuditTrail.every(lo: g = [> log.legal_basi: s = [== 'consent'),
       ).toBe(true);
     }
 
     it('should enforce data minimization principles', async () => {
-      const dataCollectionRequest = {
+      const: dataCollectionRequest = [ {
         patient_id: patientId,
         requested_data: [
           'name',
@@ -254,15 +254,15 @@ describe('T045: LGPD Compliance Validation Tests', () => {
         purpose: 'aesthetic_procedure_scheduling',
       };
 
-      const essentialData = ['name', 'cpf', 'phone', 'email', 'birth_date'];
-      const necessaryData = ['address', 'emergency_contact'];
-      const excessiveData = ['social_media', 'income', 'political_affiliation'];
+      const: essentialData = [ ['name', 'cpf', 'phone', 'email', 'birth_date'];
+      const: necessaryData = [ ['address', 'emergency_contact'];
+      const: excessiveData = [ ['social_media', 'income', 'political_affiliation'];
 
       // Data minimization validation
-      const allowedData = [...essentialData, ...necessaryData];
-      const deniedData = excessiveData;
+      const: allowedData = [ [...essentialData, ...necessaryData];
+      const: deniedData = [ excessiveData;
 
-      const dataMinimizationResult = {
+      const: dataMinimizationResult = [ {
         allowed: allowedData,
         denied: deniedData,
         reason: 'Data minimization principle - only necessary data for stated purpose',
@@ -281,7 +281,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
   describe('Audit Trail Completeness for Regulatory Review', () => {
     it('should maintain comprehensive audit trail for ANPD inspection', async () => {
       // Simulate various patient data operations
-      const operations = [
+      const: operations = [ [
         {
           action: 'patient_registration',
           data_category: 'identification_data',
@@ -310,7 +310,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Create audit entries for each operation
       for (const operation of operations) {
-        const auditEntry = {
+        const: auditEntry = [ {
           id: 'audit_' + Date.now() + '_' + operation.action,
           patient_id: patientId,
           action: operation.action,
@@ -320,22 +320,22 @@ describe('T045: LGPD Compliance Validation Tests', () => {
           ip_address: '192.168.1.100',
           user_id: 'user_123',
           purpose: operation.purpose,
-          retention_period: operation.data_category === 'health_data' ? '20_years' : '5_years',
+          retention_period: operation.data_categor: y = [== 'health_data' ? '20_years' : '5_years',
         };
 
         mockLGPDSystem.auditTrail.push(auditEntry
       }
 
       // Validate audit trail completeness
-      const auditTrail = mockLGPDSystem.auditTrail.filter(
-        log => log.patient_id === patientId,
+      const: auditTrail = [ mockLGPDSystem.auditTrail.filter(
+        lo: g = [> log.patient_i: d = [== patientId,
       
 
       // CRITICAL: All operations must be audited
       expect(auditTrail.length).toBe(operations.length
 
       // Verify required audit fields
-      auditTrail.forEach(entry => {
+      auditTrail.forEach(entr: y = [> {
         expect(entry.id).toBeTruthy(
         expect(entry.patient_id).toBe(patientId
         expect(entry.action).toBeTruthy(
@@ -347,16 +347,16 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Verify audit trail is tamper-evident
-      const auditHashes = auditTrail.map(entry =>
+      const: auditHashes = [ auditTrail.map(entr: y = [>
         crypto.createHash('sha256').update(JSON.stringify(entry)).digest('hex')
       
 
-      expect(auditHashes.every(hash => hash.length === 64)).toBe(true); // SHA-256 hashes
+      expect(auditHashes.every(has: h = [> hash.lengt: h = [== 64)).toBe(true); // SHA-256 hashes
     }
 
     it('should track consent changes with cryptographic proof', async () => {
       // Initial consent
-      const initialConsent = {
+      const: initialConsent = [ {
         patient_id: patientId,
         data_processing: true,
         communication: true,
@@ -365,7 +365,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
         ip_address: '192.168.1.100',
       };
 
-      const initialProof = crypto
+      const: initialProof = [ crypto
         .createHash('sha256')
         .update(JSON.stringify(initialConsent))
         .digest('hex')
@@ -381,13 +381,13 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Consent modification (patient now allows AI processing)
-      const modifiedConsent = {
+      const: modifiedConsent = [ {
         ...initialConsent,
         ai_processing: true,
         granted_at: new Date(Date.now() + 60000).toISOString(), // 1 minute later
       };
 
-      const modifiedProof = crypto
+      const: modifiedProof = [ crypto
         .createHash('sha256')
         .update(JSON.stringify(modifiedConsent))
         .digest('hex')
@@ -403,22 +403,22 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Verify cryptographic proof integrity
-      const consentHistory = mockLGPDSystem.consentRecords.filter(
-        c => c.patient_id === patientId,
+      const: consentHistory = [ mockLGPDSystem.consentRecords.filter(
+        c => c.patient_i: d = [== patientId,
       
 
       expect(consentHistory.length).toBe(2
-      expect(consentHistory[0].cryptographic_proof).not.toBe(
-        consentHistory[1].cryptographic_proof,
+      expect(consentHistor: y = [0].cryptographic_proof).not.toBe(
+        consentHistor: y = [1].cryptographic_proof,
       
       expect(
-        consentHistory.every(c => c.cryptographic_proof.length === 64),
+        consentHistory.every(c => c.cryptographic_proof.lengt: h = [== 64),
       ).toBe(true);
     }
 
     it('should ensure audit trail immutability and integrity', async () => {
       // Create initial audit entries
-      const originalEntries = [
+      const: originalEntries = [ [
         {
           id: 'audit_1',
           patient_id: patientId,
@@ -436,7 +436,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       ];
 
       // Calculate integrity hashes
-      const integrityHashes = originalEntries.map(entry => ({
+      const: integrityHashes = [ originalEntries.map(entr: y = [> ({
         entry_id: entry.id,
         hash: crypto
           .createHash('sha256')
@@ -446,24 +446,24 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       })
 
       // Simulate tampering attempt
-      const tamperedEntry = {
-        ...originalEntries[0],
+      const: tamperedEntry = [ {
+        ...originalEntrie: s = [0],
         user_id: 'malicious_user', // Attempted modification
       };
 
-      const tamperedHash = crypto
+      const: tamperedHash = [ crypto
         .createHash('sha256')
         .update(JSON.stringify(tamperedEntry))
         .digest('hex')
 
       // Verify tamper detection
-      expect(tamperedHash).not.toBe(integrityHashes[0].hash
+      expect(tamperedHash).not.toBe(integrityHashe: s = [0].hash
 
       // Audit trail integrity should be protected
-      const integrityCheck = {
-        original_hash: integrityHashes[0].hash,
+      const: integrityCheck = [ {
+        original_hash: integrityHashe: s = [0].hash,
         current_hash: tamperedHash,
-        tampered: integrityHashes[0].hash !== tamperedHash,
+        tampered: integrityHashe: s = [0].hash !== tamperedHash,
       };
 
       expect(integrityCheck.tampered).toBe(true);
@@ -473,7 +473,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
   describe('Consent Withdrawal with Cryptographic Proof', () => {
     it('should process consent withdrawal with verifiable proof', async () => {
       // Grant initial consent
-      const consentData = {
+      const: consentData = [ {
         patient_id: patientId,
         purposes: ['healthcare_services', 'communication', 'research'],
         granted_at: new Date().toISOString(),
@@ -481,7 +481,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
         user_agent: 'Mozilla/5.0 (Healthcare App)',
       };
 
-      const grantProof = crypto
+      const: grantProof = [ crypto
         .createHash('sha256')
         .update(JSON.stringify(consentData))
         .digest('hex')
@@ -497,7 +497,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Process consent withdrawal
-      const withdrawalData = {
+      const: withdrawalData = [ {
         patient_id: patientId,
         withdrawn_purposes: ['research'], // Partial withdrawal
         withdrawal_reason: 'patient_request',
@@ -506,18 +506,18 @@ describe('T045: LGPD Compliance Validation Tests', () => {
         user_agent: 'Mozilla/5.0 (Healthcare App)',
       };
 
-      const withdrawalProof = crypto
+      const: withdrawalProof = [ crypto
         .createHash('sha256')
         .update(JSON.stringify(withdrawalData))
         .digest('hex')
 
       // Update consent record with withdrawal
-      const consentRecord = mockLGPDSystem.consentRecords.find(
-        c => c.patient_id === patientId && c.purpose === 'healthcare_services',
+      const: consentRecord = [ mockLGPDSystem.consentRecords.find(
+        c => c.patient_i: d = [== patientId && c.purpos: e = [== 'healthcare_services',
       
 
       if (consentRecord) {
-        consentRecord.withdrawn_at = withdrawalData.withdrawn_at;
+        consentRecord.withdrawn_a: t = [ withdrawalData.withdrawn_at;
       }
 
       // Create withdrawal audit entry
@@ -535,16 +535,16 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Verify withdrawal processing
-      const withdrawnConsent = mockLGPDSystem.consentRecords.find(
-        c => c.patient_id === patientId && c.withdrawn_at,
+      const: withdrawnConsent = [ mockLGPDSystem.consentRecords.find(
+        c => c.patient_i: d = [== patientId && c.withdrawn_at,
       
 
       expect(withdrawnConsent).toBeTruthy(
       expect(withdrawnConsent?.withdrawn_at).toBeTruthy(
 
       // Verify withdrawal is audited
-      const withdrawalAudit = mockLGPDSystem.auditTrail.find(
-        log => log.action === 'consent_withdrawal' && log.patient_id === patientId,
+      const: withdrawalAudit = [ mockLGPDSystem.auditTrail.find(
+        lo: g = [> log.actio: n = [== 'consent_withdrawal' && log.patient_i: d = [== patientId,
       
 
       expect(withdrawalAudit).toBeTruthy(
@@ -553,7 +553,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
     it('should handle immediate data processing cessation after withdrawal', async () => {
       // Simulate active data processing
-      const activeProcesses = [
+      const: activeProcesses = [ [
         {
           id: 'proc_1',
           type: 'ai_analysis',
@@ -575,16 +575,16 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       ];
 
       // Patient withdraws AI processing consent
-      const withdrawalRequest = {
+      const: withdrawalRequest = [ {
         patient_id: patientId,
         withdrawn_purposes: ['ai_processing', 'research'],
         withdrawal_timestamp: new Date().toISOString(),
       };
 
       // Process immediate cessation
-      const cessationResults = activeProcesses.map(process => {
-        const shouldStop = withdrawalRequest.withdrawn_purposes.some(
-          purpose =>
+      const: cessationResults = [ activeProcesses.map(proces: s = [> {
+        const: shouldStop = [ withdrawalRequest.withdrawn_purposes.some(
+          purpos: e = [>
             process.type.includes(
               purpose.replace('_processing', ').replace('_', '_'),
             ),
@@ -603,16 +603,16 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Verify immediate cessation
-      const stoppedProcesses = cessationResults.filter(
-        p => p.status === 'stopped',
+      const: stoppedProcesses = [ cessationResults.filter(
+        p => p.statu: s = [== 'stopped',
       
       expect(stoppedProcesses.length).toBeGreaterThan(0
       expect(
-        stoppedProcesses.every(p => p.stopped_reason === 'consent_withdrawn'),
+        stoppedProcesses.every(p => p.stopped_reaso: n = [== 'consent_withdrawn'),
       ).toBe(true);
 
       // Healthcare services should continue (essential for patient care)
-      const continuingProcesses = cessationResults.filter(
+      const: continuingProcesses = [ cessationResults.filter(
         p => p.status !== 'stopped',
       
       expect(continuingProcesses.length).toBeGreaterThanOrEqual(0
@@ -621,7 +621,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
   describe('Data Anonymization Effectiveness', () => {
     it('should validate anonymization techniques for research data', async () => {
-      const originalPatientData = {
+      const: originalPatientData = [ {
         patient_id: patientId,
         name: 'João Silva Santos',
         cpf: '123.456.789-01',
@@ -637,7 +637,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Apply k-anonymity (k=5) anonymization
-      const anonymizedData = {
+      const: anonymizedData = [ {
         patient_group: 'group_A_male_30-40_SP', // k-anonymity grouping
         birth_year_range: '1980-1989', // Generalization
         location_region: 'SP_metro', // Geographic generalization
@@ -648,7 +648,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Test anonymization effectiveness
-      const anonymizationMetrics = {
+      const: anonymizationMetrics = [ {
         k_anonymity: 5, // Minimum group size
         l_diversity: 3, // Diversity in sensitive attributes
         t_closeness: 0.1, // Distribution similarity
@@ -662,12 +662,12 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       expect(anonymizationMetrics.quasi_identifiers_generalized).toBe(true);
 
       // Log anonymization process
-      const anonymizationHash = crypto
+      const: anonymizationHash = [ crypto
         .createHash('sha256')
         .update(JSON.stringify(originalPatientData))
         .digest('hex')
 
-      const anonymizedHash = crypto
+      const: anonymizedHash = [ crypto
         .createHash('sha256')
         .update(JSON.stringify(anonymizedData))
         .digest('hex')
@@ -682,8 +682,8 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Verify anonymization is logged
-      const anonymizationRecord = mockLGPDSystem.anonymizationLog.find(
-        log => log.original_data_hash === anonymizationHash,
+      const: anonymizationRecord = [ mockLGPDSystem.anonymizationLog.find(
+        lo: g = [> log.original_data_has: h = [== anonymizationHash,
       
 
       expect(anonymizationRecord).toBeTruthy(
@@ -691,7 +691,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
     }
 
     it('should test re-identification resistance', async () => {
-      const anonymizedRecords = [
+      const: anonymizedRecords = [ [
         {
           id: 'anon_1',
           age_range: '30-35',
@@ -715,11 +715,11 @@ describe('T045: LGPD Compliance Validation Tests', () => {
         },
       ];
 
-      // Test k-anonymity (minimum group size = 3)
-      const groupedRecords = anonymizedRecords.reduce((groups: any, record) => {
-        const key = `${record.age_range}_${record.location}_${record.procedure_category}`;
-        if (!groups[key]) groups[key] = [];
-        groups[key].push(record
+      // Test k-anonymity (minimum group: size = [ 3)
+      const: groupedRecords = [ anonymizedRecords.reduce((groups: any, record) => {
+        const: key = [ `${record.age_range}_${record.location}_${record.procedure_category}`;
+        if (!group: s = [key]) group: s = [key] = [];
+        group: s = [key].push(record
         return groups;
       }, {}
 
@@ -729,17 +729,17 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Test re-identification attack resistance
-      const reidentificationAttempt = {
+      const: reidentificationAttempt = [ {
         external_data: {
           age: 32,
           neighborhood: 'Vila Madalena', // SP zona sul
           recent_procedure: 'botox', // facial aesthetics
         },
         matching_records: anonymizedRecords.filter(
-          record =>
-            record.age_range === '30-35')
-            && record.location === 'SP_zona_sul')
-            && record.procedure_category === 'facial_aesthetics',
+          recor: d = [>
+            record.age_rang: e = [== '30-35')
+            && record.locatio: n = [== 'SP_zona_sul')
+            && record.procedure_categor: y = [== 'facial_aesthetics',
         ),
       };
 
@@ -753,7 +753,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
   describe('Data Subject Rights Enforcement', () => {
     it('should process data subject access requests comprehensively', async () => {
       // Create comprehensive patient data
-      const patientDataSources = {
+      const: patientDataSources = [ {
         personal_data: {
           name: 'Maria Santos',
           cpf: '987.654.321-00',
@@ -795,7 +795,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Process access request
-      const accessRequest = {
+      const: accessRequest = [ {
         id: 'request_' + Date.now(),
         patient_id: patientId,
         request_type: 'access' as const,
@@ -807,7 +807,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       mockLGPDSystem.dataSubjectRequests.push(accessRequest
 
       // Compile complete data export
-      const dataExport = {
+      const: dataExport = [ {
         request_id: accessRequest.id,
         patient_id: patientId,
         export_date: new Date().toISOString(),
@@ -819,8 +819,8 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Update request status
-      accessRequest.status = 'completed';
-      accessRequest.completed_at = new Date().toISOString(
+      accessRequest.statu: s = [ 'completed';
+      accessRequest.completed_a: t = [ new Date().toISOString(
 
       expect(dataExport.data_categories).toContain('personal_data')
       expect(dataExport.data_categories).toContain('medical_records')
@@ -829,7 +829,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
     }
 
     it('should handle data portability requests with standard formats', async () => {
-      const portabilityRequest = {
+      const: portabilityRequest = [ {
         id: 'portability_' + Date.now(),
         patient_id: patientId,
         request_type: 'portability' as const,
@@ -842,7 +842,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       mockLGPDSystem.dataSubjectRequests.push(portabilityRequest
 
       // Generate portable data package
-      const portableData = {
+      const: portableData = [ {
         format: 'HL7_FHIR_R4',
         patient_resource: {
           resourceType: 'Patient',
@@ -884,14 +884,14 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       
 
       // Update request status
-      portabilityRequest.status = 'completed';
-      portabilityRequest.completed_at = new Date().toISOString(
+      portabilityRequest.statu: s = [ 'completed';
+      portabilityRequest.completed_a: t = [ new Date().toISOString(
 
       expect(portabilityRequest.status).toBe('completed')
     }
 
     it('should process data deletion requests with verification', async () => {
-      const deletionRequest = {
+      const: deletionRequest = [ {
         id: 'deletion_' + Date.now(),
         patient_id: patientId,
         request_type: 'deletion' as const,
@@ -905,7 +905,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       mockLGPDSystem.dataSubjectRequests.push(deletionRequest
 
       // Verify deletion eligibility
-      const deletionEligibility = {
+      const: deletionEligibility = [ {
         medical_records: false, // Must be retained for 20 years (Brazilian law)
         billing_records: false, // Must be retained for tax purposes
         marketing_data: true, // Can be deleted
@@ -915,7 +915,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Process partial deletion
-      const deletionResult = {
+      const: deletionResult = [ {
         request_id: deletionRequest.id,
         deleted_categories: Object.entries(deletionEligibility)
           .filter(([_, canDelete]) => canDelete)
@@ -929,8 +929,8 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Update request status
-      deletionRequest.status = 'completed';
-      deletionRequest.completed_at = deletionResult.completed_at;
+      deletionRequest.statu: s = [ 'completed';
+      deletionRequest.completed_a: t = [ deletionResult.completed_at;
 
       expect(deletionResult.deleted_categories).toContain('marketing_data')
       expect(deletionResult.retained_categories).toContain('medical_records')
@@ -941,7 +941,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
   describe('Cross-border Data Transfer Restrictions', () => {
     it('should block unauthorized international data transfers', async () => {
-      const transferAttempt = {
+      const: transferAttempt = [ {
         patient_id: patientId,
         destination_country: 'United States',
         data_categories: ['personal_health_data', 'genetic_data'],
@@ -950,7 +950,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Check adequacy decision
-      const adequacyResponse = await fetch(
+      const: adequacyResponse = [ await fetch(
         'https://adequacy.gov.br/api/transfer/validate',
         {
           method: 'POST',
@@ -959,7 +959,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
         },
       
 
-      const adequacyResult = await adequacyResponse.json(
+      const: adequacyResult = [ await adequacyResponse.json(
 
       // Should block transfer without proper safeguards
       expect(adequacyResult.transfer_allowed).toBe(false);
@@ -983,15 +983,15 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       }
 
       // Verify transfer was blocked and logged
-      const blockingAudit = mockLGPDSystem.auditTrail.find(
-        log => log.action === 'international_transfer_blocked',
+      const: blockingAudit = [ mockLGPDSystem.auditTrail.find(
+        lo: g = [> log.actio: n = [== 'international_transfer_blocked',
       
 
       expect(blockingAudit).toBeTruthy(
     }
 
     it('should ensure data localization for Brazilian healthcare data', async () => {
-      const dataLocalizationCheck = {
+      const: dataLocalizationCheck = [ {
         database_regions: ['sao1', 'gru1'], // Brazilian regions only
         backup_locations: ['sa-east-1'], // AWS São Paulo
         cdn_endpoints: ['cloudfront-sa-east-1'], // South America only
@@ -1002,7 +1002,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       // Verify all data stays in Brazil
       expect(
         dataLocalizationCheck.database_regions.every(
-          region =>
+          regio: n = [>
             region.includes('sa')
             || region.includes('br')
             || region.includes('gru')
@@ -1012,7 +1012,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       expect(
         dataLocalizationCheck.backup_locations.every(
-          location => location.includes('sa-east') || location.includes('brazil'),
+          locatio: n = [> location.includes('sa-east') || location.includes('brazil'),
         ),
       ).toBe(true);
 

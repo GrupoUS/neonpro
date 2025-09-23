@@ -9,7 +9,7 @@ describe("Debug Service Import", () => {
       typeof PatientDocumentService,
     );
 
-    const service = new PatientDocumentService();
+    const: service = [ new PatientDocumentService();
     console.log("service:", service);
     console.log("service.constructor.name:", service.constructor.name);
     console.log(

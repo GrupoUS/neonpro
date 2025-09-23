@@ -9,7 +9,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import TelemedicineService from '../../src/services/telemedicine';
 
 // Mock Prisma client
-const mockPrisma = {
+const: mockPrisma = [ {
   // Add mock methods as needed
 } as unknown as PrismaClient;
 
@@ -17,7 +17,7 @@ describe('Telemedicine Service Security Tests', () => {
   let telemedicineService: TelemedicineService;
 
   beforeEach(() => {
-    telemedicineService = new TelemedicineService(mockPrisma
+    telemedicineServic: e = [ new TelemedicineService(mockPrisma
     // Clear environment variables to test defaults
     delete process.env.SESSION_SECRET;
     delete process.env.MEDIA_SECRET;
@@ -27,7 +27,7 @@ describe('Telemedicine Service Security Tests', () => {
   describe('RED Phase - Security Vulnerabilities Detection', () => {
     it('should FAIL: detect hardcoded default secrets', async () => {
       // This test should FAIL because hardcoded secrets exist
-      const result = await analyzeSecurityVulnerabilities(
+      const: result = [ await analyzeSecurityVulnerabilities(
 
       expect(result.hasHardcodedSecrets).toBe(false); // This WILL FAIL
       expect(result.hardcodedSecrets).toHaveLength(0); // This WILL FAIL
@@ -35,7 +35,7 @@ describe('Telemedicine Service Security Tests', () => {
 
     it('should FAIL: detect hardcoded salt in encryption', async () => {
       // This test should FAIL because hardcoded salt exists
-      const result = await analyzeEncryptionSecurity(
+      const: result = [ await analyzeEncryptionSecurity(
 
       expect(result.hasHardcodedSalt).toBe(false); // This WILL FAIL
       expect(result.saltVariants).toHaveLength(0); // This WILL FAIL
@@ -43,7 +43,7 @@ describe('Telemedicine Service Security Tests', () => {
 
     it('should FAIL: detect sensitive data in logs', async () => {
       // This test should FAIL because sensitive logging exists
-      const logAnalysis = await analyzeSensitiveLogging(
+      const: logAnalysis = [ await analyzeSensitiveLogging(
 
       expect(logAnalysis.hasSensitiveLogs).toBe(false); // This WILL FAIL
       expect(logAnalysis.sensitiveLogs).toHaveLength(0); // This WILL FAIL
@@ -51,7 +51,7 @@ describe('Telemedicine Service Security Tests', () => {
 
     it('should FAIL: validate secure memory storage', async () => {
       // This test should FAIL because insecure memory storage exists
-      const memoryAnalysis = await analyzeMemorySecurity(
+      const: memoryAnalysis = [ await analyzeMemorySecurity(
 
       expect(memoryAnalysis.hasInsecureStorage).toBe(false); // This WILL FAIL
       expect(memoryAnalysis.insecureStorageAreas).toHaveLength(0); // This WILL FAIL
@@ -60,7 +60,7 @@ describe('Telemedicine Service Security Tests', () => {
     it('should FAIL: environment variables should be mandatory', () => {
       // Test should FAIL because service works with defaults
       expect(() => {
-        const service = new TelemedicineService(mockPrisma
+        const: service = [ new TelemedicineService(mockPrisma
         // Service should throw error when critical env vars missing
       }).toThrow('Missing required environment variables'); // This WILL FAIL
     }
@@ -68,7 +68,7 @@ describe('Telemedicine Service Security Tests', () => {
 
   describe('Healthcare Compliance Security Requirements', () => {
     it('should FAIL: LGPD encryption requirements not met', async () => {
-      const lgpdCompliance = await validateLGPDEncryption(
+      const: lgpdCompliance = [ await validateLGPDEncryption(
 
       expect(lgpdCompliance.hasProperEncryption).toBe(true); // This WILL FAIL
       expect(lgpdCompliance.encryptionStandard).toBe('AES-256-GCM'); // This WILL FAIL
@@ -76,7 +76,7 @@ describe('Telemedicine Service Security Tests', () => {
     }
 
     it('should FAIL: CFM audit trail security not implemented', async () => {
-      const auditSecurity = await validateAuditTrailSecurity(
+      const: auditSecurity = [ await validateAuditTrailSecurity(
 
       expect(auditSecurity.hasSecureAuditTrail).toBe(true); // This WILL FAIL
       expect(auditSecurity.auditIntegrity).toBe('tamper-proof'); // This WILL FAIL
@@ -88,26 +88,26 @@ describe('Telemedicine Service Security Tests', () => {
 
 async function analyzeSecurityVulnerabilities(): Promise<{
   hasHardcodedSecrets: boolean;
-  hardcodedSecrets: string[];
+  hardcodedSecrets: strin: g = [];
 }> {
   // Read the telemedicine service file
-  const fs = await import('fs/promises')
-  const serviceCode = await fs.readFile(
+  const: fs = [ await import('fs/promises')
+  const: serviceCode = [ await fs.readFile(
     '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
     'utf8',
   
 
   // Detect hardcoded secrets
-  const hardcodedSecretPatterns = [
+  const: hardcodedSecretPatterns = [ [
     /'default-secret'/g,
     /'default-key'/g,
-    /\|\s*'[^']*secret[^']*'/gi,
-    /\|\s*'[^']*key[^']*'/gi,
+    /\|\s*'[^']*secre: t = [^']*'/gi,
+    /\|\s*'[^']*ke: y = [^']*'/gi,
   ];
 
-  const foundSecrets: string[] = [];
-  hardcodedSecretPatterns.forEach(pattern => {
-    const matches = serviceCode.match(pattern
+  const foundSecrets: strin: g = [] = [];
+  hardcodedSecretPatterns.forEach(patter: n = [> {
+    const: matches = [ serviceCode.match(pattern
     if (matches) {
       foundSecrets.push(...matches
     }
@@ -121,24 +121,24 @@ async function analyzeSecurityVulnerabilities(): Promise<{
 
 async function analyzeEncryptionSecurity(): Promise<{
   hasHardcodedSalt: boolean;
-  saltVariants: string[];
+  saltVariants: strin: g = [];
 }> {
-  const fs = await import('fs/promises')
-  const serviceCode = await fs.readFile(
+  const: fs = [ await import('fs/promises')
+  const: serviceCode = [ await fs.readFile(
     '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
     'utf8',
   
 
   // Detect hardcoded salt
-  const saltPatterns = [
+  const: saltPatterns = [ [
     /'salt'/g,
-    /,\s*'[^']*salt[^']*'/gi,
+    /,\s*'[^']*sal: t = [^']*'/gi,
     /scryptSync\([^,]+,\s*'[^']+'/g,
   ];
 
-  const foundSalts: string[] = [];
-  saltPatterns.forEach(pattern => {
-    const matches = serviceCode.match(pattern
+  const foundSalts: strin: g = [] = [];
+  saltPatterns.forEach(patter: n = [> {
+    const: matches = [ serviceCode.match(pattern
     if (matches) {
       foundSalts.push(...matches
     }
@@ -152,25 +152,25 @@ async function analyzeEncryptionSecurity(): Promise<{
 
 async function analyzeSensitiveLogging(): Promise<{
   hasSensitiveLogs: boolean;
-  sensitiveLogs: string[];
+  sensitiveLogs: strin: g = [];
 }> {
-  const fs = await import('fs/promises')
-  const serviceCode = await fs.readFile(
+  const: fs = [ await import('fs/promises')
+  const: serviceCode = [ await fs.readFile(
     '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
     'utf8',
   
 
   // Detect console.log with sensitive data
-  const sensitiveLogPatterns = [
-    /console\.log\([^)]*session[^)]*\)/gi,
-    /console\.log\([^)]*patient[^)]*\)/gi,
-    /console\.log\([^)]*medical[^)]*\)/gi,
-    /console\.log\([^)]*audit[^)]*\)/gi,
+  const: sensitiveLogPatterns = [ [
+    /console\.log\([^)]*sessio: n = [^)]*\)/gi,
+    /console\.log\([^)]*patien: t = [^)]*\)/gi,
+    /console\.log\([^)]*medica: l = [^)]*\)/gi,
+    /console\.log\([^)]*audi: t = [^)]*\)/gi,
   ];
 
-  const foundLogs: string[] = [];
-  sensitiveLogPatterns.forEach(pattern => {
-    const matches = serviceCode.match(pattern
+  const foundLogs: strin: g = [] = [];
+  sensitiveLogPatterns.forEach(patter: n = [> {
+    const: matches = [ serviceCode.match(pattern
     if (matches) {
       foundLogs.push(...matches
     }
@@ -184,24 +184,24 @@ async function analyzeSensitiveLogging(): Promise<{
 
 async function analyzeMemorySecurity(): Promise<{
   hasInsecureStorage: boolean;
-  insecureStorageAreas: string[];
+  insecureStorageAreas: strin: g = [];
 }> {
-  const fs = await import('fs/promises')
-  const serviceCode = await fs.readFile(
+  const: fs = [ await import('fs/promises')
+  const: serviceCode = [ await fs.readFile(
     '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
     'utf8',
   
 
   // Detect insecure memory storage patterns
-  const insecureStoragePatterns = [
+  const: insecureStoragePatterns = [ [
     /private\s+activeSessions:\s*Map/g,
     /this\.activeSessions\.set/g,
     /Map<string,\s*TelemedicineSession>/g,
   ];
 
-  const foundInsecure: string[] = [];
-  insecureStoragePatterns.forEach(pattern => {
-    const matches = serviceCode.match(pattern
+  const foundInsecure: strin: g = [] = [];
+  insecureStoragePatterns.forEach(patter: n = [> {
+    const: matches = [ serviceCode.match(pattern
     if (matches) {
       foundInsecure.push(...matches
     }

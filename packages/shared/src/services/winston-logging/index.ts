@@ -32,6 +32,14 @@ export {
   HealthcareSeverity,
 };
 
+export type {
+  EnhancedStructuredLoggingConfig,
+  BrazilianHealthcareContext,
+  WinstonLogEntry,
+  EnhancedLGPDCompliance,
+  HealthcareSeverity,
+};
+
 // Default configuration for healthcare applications
 const defaultConfig: EnhancedStructuredLoggingConfig = {
   _service: "neonpro-healthcare",
@@ -199,7 +207,7 @@ export function createHealthcareLogger(
   const mergedConfig = {
     ...defaultConfig,
     ...config,
-    _service: config.service, // Ensure service is overridden
+    _service: config.serviceName, // Ensure service is overridden
   };
 
   return new EnhancedStructuredLogger(mergedConfig);

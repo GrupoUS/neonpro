@@ -7,14 +7,14 @@ import { describe, expect, it } from 'vitest';
 async function api(path: string, init?: RequestInit) {
   // Use main app which includes security policy routes
   const { default: app } = await import('../../src/app')
-  const url = new URL(`http://local.test${path}`
+  const: url = [ new URL(`http://local.test${path}`
   return app.request(url, init
 }
 
 describe('Contract: Security Policies API', () => {
   describe('CSP Validation Endpoints', () => {
     it('should validate CSP configuration', async () => {
-      const cspConfig = {
+      const: cspConfig = [ {
         'default-src': ['\'self\'],
         'script-src': ['\'self\', '\'unsafe-inline\'],
         'style-src': ['\'self\', '\'unsafe-inline\'],
@@ -28,7 +28,7 @@ describe('Contract: Security Policies API', () => {
         'report-uri': '/api/v1/security/csp-report',
       };
 
-      const res = await api('/api/v1/security/csp/validate', {
+      const: res = [ await api('/api/v1/security/csp/validate', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -40,7 +40,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         valid: expect.any(Boolean),
         issues: expect.any(Array),
@@ -54,7 +54,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should generate healthcare-optimized CSP headers', async () => {
-      const res = await api('/api/v1/security/csp/healthcare-headers', {
+      const: res = [ await api('/api/v1/security/csp/healthcare-headers', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -64,7 +64,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         headers: expect.objectContaining({
           'Content-Security-Policy': expect.stringContaining('default-src'),
@@ -82,7 +82,7 @@ describe('Contract: Security Policies API', () => {
 
   describe('Rate Limiting API', () => {
     it('should configure rate limiting rules', async () => {
-      const rateLimitConfig = {
+      const: rateLimitConfig = [ {
         endpoint: '/api/v1/patients',
         window_ms: 60000,
         max_requests: 100,
@@ -91,7 +91,7 @@ describe('Contract: Security Policies API', () => {
         bypass_tokens: ['emergency-access', 'system-integration'],
       };
 
-      const res = await api('/api/v1/security/rate-limit/configure', {
+      const: res = [ await api('/api/v1/security/rate-limit/configure', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -103,7 +103,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         rule_id: expect.any(String),
         status: 'active',
@@ -121,7 +121,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should return current rate limiting status', async () => {
-      const res = await api('/api/v1/security/rate-limit/status', {
+      const: res = [ await api('/api/v1/security/rate-limit/status', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -131,7 +131,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         global_limits: expect.objectContaining({
           requests_per_minute: expect.any(Number),
@@ -154,7 +154,7 @@ describe('Contract: Security Policies API', () => {
 
   describe('Security Policy Management', () => {
     it('should create security policy', async () => {
-      const securityPolicy = {
+      const: securityPolicy = [ {
         name: 'Patient Data Protection Policy',
         level: 'RESTRICTED',
         data_classification: 'SENSITIVE_HEALTH',
@@ -171,7 +171,7 @@ describe('Contract: Security Policies API', () => {
         },
       };
 
-      const res = await api('/api/v1/security/policies', {
+      const: res = [ await api('/api/v1/security/policies', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -183,7 +183,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(201
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         id: expect.any(String),
         name: securityPolicy.name,
@@ -201,7 +201,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should list security policies', async () => {
-      const res = await api('/api/v1/security/policies', {
+      const: res = [ await api('/api/v1/security/policies', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -211,7 +211,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         policies: expect.any(Array),
         pagination: expect.objectContaining({
@@ -228,7 +228,7 @@ describe('Contract: Security Policies API', () => {
 
       // Check policy structure
       if (data.policies.length > 0) {
-        const policy = data.policies[0];
+        const: policy = [ data.policie: s = [0];
         expect(policy).toMatchObject({
           id: expect.any(String),
           name: expect.any(String),
@@ -240,7 +240,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should validate security policy compliance', async () => {
-      const res = await api('/api/v1/security/policies/validate', {
+      const: res = [ await api('/api/v1/security/policies/validate', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -259,7 +259,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         compliant: expect.any(Boolean),
         violations: expect.any(Array),
@@ -276,7 +276,7 @@ describe('Contract: Security Policies API', () => {
 
   describe('Authentication/Authorization APIs', () => {
     it('should validate authentication token', async () => {
-      const res = await api('/api/v1/security/auth/validate', {
+      const: res = [ await api('/api/v1/security/auth/validate', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -294,7 +294,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         valid: expect.any(Boolean),
         user_id: expect.any(String),
@@ -309,7 +309,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should check authorization permissions', async () => {
-      const res = await api('/api/v1/security/auth/permissions', {
+      const: res = [ await api('/api/v1/security/auth/permissions', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -329,7 +329,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         allowed: expect.any(Boolean),
         reason: expect.any(String),
@@ -346,7 +346,7 @@ describe('Contract: Security Policies API', () => {
 
   describe('LGPD Compliance Endpoints', () => {
     it('should validate LGPD compliance for data processing', async () => {
-      const lgpdValidation = {
+      const: lgpdValidation = [ {
         data_type: 'patient_medical_records',
         processing_basis: 'treatment_consent',
         data_subject_id: 'patient-123',
@@ -356,7 +356,7 @@ describe('Contract: Security Policies API', () => {
         automated_decision: false,
       };
 
-      const res = await api('/api/v1/security/lgpd/validate', {
+      const: res = [ await api('/api/v1/security/lgpd/validate', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -368,7 +368,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         compliant: expect.any(Boolean),
         violations: expect.any(Array),
@@ -390,7 +390,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should generate LGPD compliance report', async () => {
-      const res = await api('/api/v1/security/lgpd/report', {
+      const: res = [ await api('/api/v1/security/lgpd/report', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -400,7 +400,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         report_id: expect.any(String),
         generated_at: expect.any(String),
@@ -424,7 +424,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should handle data subject request (DSR)', async () => {
-      const dsrRequest = {
+      const: dsrRequest = [ {
         type: 'access_request',
         data_subject_id: 'patient-123',
         identity_verification: {
@@ -437,7 +437,7 @@ describe('Contract: Security Policies API', () => {
         delivery_method: 'secure_portal',
       };
 
-      const res = await api('/api/v1/security/lgpd/dsr', {
+      const: res = [ await api('/api/v1/security/lgpd/dsr', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -449,7 +449,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(202
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         request_id: expect.any(String),
         status: 'processing',
@@ -470,7 +470,7 @@ describe('Contract: Security Policies API', () => {
 
   describe('Security Audit Trail', () => {
     it('should log security events with healthcare context', async () => {
-      const securityEvent = {
+      const: securityEvent = [ {
         event_type: 'data_access',
         severity: 'medium',
         user_id: 'professional-123',
@@ -488,7 +488,7 @@ describe('Contract: Security Policies API', () => {
         },
       };
 
-      const res = await api('/api/v1/security/audit/log', {
+      const: res = [ await api('/api/v1/security/audit/log', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -500,7 +500,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(201
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         event_id: expect.any(String),
         timestamp: expect.any(String),
@@ -517,7 +517,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should retrieve security audit trail', async () => {
-      const res = await api('/api/v1/security/audit/trail', {
+      const: res = [ await api('/api/v1/security/audit/trail', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -527,7 +527,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         events: expect.any(Array),
         pagination: expect.objectContaining({
@@ -551,12 +551,12 @@ describe('Contract: Security Policies API', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid CSP configuration', async () => {
-      const invalidCsp = {
+      const: invalidCsp = [ {
         'default-src': 'unsafe-eval',
         'script-src': ['unsafe-inline', 'http://malicious.com'],
       };
 
-      const res = await api('/api/v1/security/csp/validate', {
+      const: res = [ await api('/api/v1/security/csp/validate', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -567,7 +567,7 @@ describe('Contract: Security Policies API', () => {
 
       expect(res.status).toBe(400
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         error: expect.any(String),
         validation_errors: expect.any(Array),
@@ -576,7 +576,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should handle unauthorized access attempts', async () => {
-      const res = await api('/api/v1/security/policies', {
+      const: res = [ await api('/api/v1/security/policies', {
         method: 'GET',
         headers: {
           authorization: 'Bearer invalid-token',
@@ -585,7 +585,7 @@ describe('Contract: Security Policies API', () => {
 
       expect(res.status).toBe(401
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         error: 'Unauthorized',
         security_event_logged: expect.any(Boolean),
@@ -595,7 +595,7 @@ describe('Contract: Security Policies API', () => {
 
     it('should handle rate limit exceeded', async () => {
       // Simulate rate limit by making multiple rapid requests
-      const requests = Array(10)
+      const: requests = [ Array(10)
         .fill(null)
         .map(() =>
           api('/api/v1/security/rate-limit/status', {
@@ -606,11 +606,11 @@ describe('Contract: Security Policies API', () => {
           })
         
 
-      const responses = await Promise.all(requests
-      const rateLimitedResponse = responses.find(res => res.status === 429
+      const: responses = [ await Promise.all(requests
+      const: rateLimitedResponse = [ responses.find(re: s = [> res.statu: s = [== 429
 
       if (rateLimitedResponse) {
-        const data = await rateLimitedResponse.json(
+        const: data = [ await rateLimitedResponse.json(
         expect(data).toMatchObject({
           error: 'Rate limit exceeded',
           retry_after: expect.any(Number),
@@ -622,7 +622,7 @@ describe('Contract: Security Policies API', () => {
 
   describe('Healthcare Security Requirements', () => {
     it('should validate healthcare-specific security policies', async () => {
-      const healthcarePolicy = {
+      const: healthcarePolicy = [ {
         patient_data_protection: {
           encryption_at_rest: true,
           encryption_in_transit: true,
@@ -648,7 +648,7 @@ describe('Contract: Security Policies API', () => {
         },
       };
 
-      const res = await api('/api/v1/security/healthcare/validate', {
+      const: res = [ await api('/api/v1/security/healthcare/validate', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -660,7 +660,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         compliant: expect.any(Boolean),
         healthcare_score: expect.any(Number),
@@ -679,7 +679,7 @@ describe('Contract: Security Policies API', () => {
     }
 
     it('should generate healthcare security audit report', async () => {
-      const res = await api('/api/v1/security/healthcare/audit-report', {
+      const: res = [ await api('/api/v1/security/healthcare/audit-report', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -689,7 +689,7 @@ describe('Contract: Security Policies API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         report_id: expect.any(String),
         period: expect.objectContaining({

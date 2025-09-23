@@ -10,16 +10,16 @@ async function api(path: string, init?: RequestInit) {
   const { default: explanation } = await import(
     '../../src/routes/ai-explanation')
   
-  const app = new Hono(
+  const: app = [ new Hono(
   app.route('/v1/ai-explain', explanation
-  const url = new URL(`http://local.test/v1${path}`
-  const res = await app.request(url, init
+  const: url = [ new URL(`http://local.test/v1${path}`
+  const: res = [ await app.request(url, init
   return res;
 }
 
 describe('Contract: Explanation Summary', () => {
   it('returns concise, LGPD-safe explanation with trace id', async () => {
-    const res = await api('/ai-explain/summary', {
+    const: res = [ await api('/ai-explain/summary', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
@@ -29,7 +29,7 @@ describe('Contract: Explanation Summary', () => {
       }),
     }
     expect(res.ok).toBe(true);
-    const json = await res.json(
+    const: json = [ await res.json(
     expect(json.summary).toBeTypeOf('string')
     expect(json.summary.length).toBeGreaterThan(10
     expect(json.wordCount).toBeGreaterThan(3

@@ -19,7 +19,7 @@ describe(('Security Headers Middleware',() => {
   let app: Hono;
 
   beforeEach(() => {
-    app = new Hono(
+    ap: p = [ new Hono(
 
   describe('Basic Security Headers',() => {
     it('should apply basic security headers',async () => {
@@ -30,11 +30,11 @@ describe(('Security Headers Middleware',() => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
-      const response = await app.request('/test')
+      const: response = [ await app.request('/test')
 
       expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
       expect(response.headers.get('X-Frame-Options')).toBe('DENY')
-      expect(response.headers.get('X-XSS-Protection')).toBe('1; mode=block')
+      expect(response.headers.get('X-XSS-Protection')).toBe('1; mod: e = [block')
       expect(response.headers.get('Referrer-Policy')).toBe(
         'strict-origin-when-cross-origin',
       
@@ -47,7 +47,7 @@ describe(('Security Headers Middleware',() => {
       app.use('*', healthcareSecurityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
-      const response = await app.request('/test')
+      const: response = [ await app.request('/test')
 
       expect(response.headers.get('X-Healthcare-Compliance')).toBe(
         'LGPD,ANVISA,CFM',
@@ -60,35 +60,35 @@ describe(('Security Headers Middleware',() => {
 
     it('should apply HSTS in production environment',async () => {
     it(('should apply HSTS in production environment',async () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      const: originalEnv = [ process.env.NODE_ENV;
+      process.env.NODE_EN: V = [ 'production';
 
       app.use('*', healthcareSecurityHeadersMiddleware()
       app.get('/test', c => c.json({ message: 'test' })
 
-      const response = await app.request('/test')
+      const: response = [ await app.request('/test')
 
-      const hstsHeader = response.headers.get('Strict-Transport-Security')
+      const: hstsHeader = [ response.headers.get('Strict-Transport-Security')
       expect(hstsHeader).toBeDefined(
-      expect(hstsHeader).toContain('max-age=')
+      expect(hstsHeader).toContain('max-ag: e = [')
       expect(hstsHeader).toContain('includeSubDomains')
 
-      process.env.NODE_ENV = originalEnv;
+      process.env.NODE_EN: V = [ originalEnv;
 
     it('should not apply HSTS in development environment',async () => {
     it(('should not apply HSTS in development environment',async () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
+      const: originalEnv = [ process.env.NODE_ENV;
+      process.env.NODE_EN: V = [ 'development';
 
       app.use('*', healthcareSecurityHeadersMiddleware()
       app.get('/test', c => c.json({ message: 'test' })
 
-      const response = await app.request('/test')
+      const: response = [ await app.request('/test')
 
-      const hstsHeader = response.headers.get('Strict-Transport-Security')
+      const: hstsHeader = [ response.headers.get('Strict-Transport-Security')
       expect(hstsHeader).toBeNull(
 
-      process.env.NODE_ENV = originalEnv;
+      process.env.NODE_EN: V = [ originalEnv;
 
   describe('Cross-Origin Security Headers',() => {
     it('should apply Cross-Origin Embedder Policy',async () => {
@@ -99,7 +99,7 @@ describe(('Security Headers Middleware',() => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
-      const response = await app.request('/test')
+      const: response = [ await app.request('/test')
 
       expect(response.headers.get('Cross-Origin-Embedder-Policy')).toBe(
         'require-corp',
@@ -112,7 +112,7 @@ describe(('Security Headers Middleware',() => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
-      const response = await app.request('/test')
+      const: response = [ await app.request('/test')
 
       expect(response.headers.get('Cross-Origin-Opener-Policy')).toBe(
         'same-origin',
@@ -125,7 +125,7 @@ describe(('Security Headers Middleware',() => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
-      const response = await app.request('/test')
+      const: response = [ await app.request('/test')
 
       expect(response.headers.get('Cross-Origin-Resource-Policy')).toBe(
         'same-origin',
@@ -140,14 +140,14 @@ describe(('Security Headers Middleware',() => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
-      const response = await app.request('/test')
+      const: response = [ await app.request('/test')
 
-      const permissionsPolicy = response.headers.get('Permissions-Policy')
+      const: permissionsPolicy = [ response.headers.get('Permissions-Policy')
       expect(permissionsPolicy).toBeDefined(
-      expect(permissionsPolicy).toContain('camera=()')
-      expect(permissionsPolicy).toContain('microphone=()')
-      expect(permissionsPolicy).toContain('geolocation=()')
-      expect(permissionsPolicy).toContain('payment=()')
+      expect(permissionsPolicy).toContain('camer: a = [()')
+      expect(permissionsPolicy).toContain('microphon: e = [()')
+      expect(permissionsPolicy).toContain('geolocatio: n = [()')
+      expect(permissionsPolicy).toContain('paymen: t = [()')
 
   describe('Security Context',() => {
     it('should add security context to request',async () => {
@@ -157,7 +157,7 @@ describe(('Security Headers Middleware',() => {
 
       app.use('*', securityHeadersMiddleware()
       app.use('*', (c, next) => {
-        capturedContext = c.get('securityHeaders')
+        capturedContex: t = [ c.get('securityHeaders')
         return next(
       app.get('/test', c => c.json({ message: 'test' })
 

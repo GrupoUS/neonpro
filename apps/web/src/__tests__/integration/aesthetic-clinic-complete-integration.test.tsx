@@ -11,7 +11,7 @@ import { render, screen, fireEvent, waitFor, act } from '@/test/utils';
 import { server } from '@/test/mocks/server';
 import { rest } from 'msw';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TrpcProvider } from '@/lib/trpc/client';
+import { TRPCProvider } from '@/components/providers/TRPCProvider';
 
 // Test Data Management
 const testData = {
@@ -422,9 +422,9 @@ const createTestWrapper = () => {
 
   return ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
-      <TrpcProvider>
+      <TRPCProvider>
         {children}
-      </TrpcProvider>
+      </TRPCProvider>
     </QueryClientProvider>
   );
 };

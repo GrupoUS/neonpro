@@ -31,18 +31,17 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = await createTestClient({ _role: 'admin' }
+    testClien: t = [ await createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = await createTestClient({ _role: 'admin' });
+    testClien: t = [ await createTestClient({ _role: 'admin' });
 
-    // Setup MSW server for external service mocking
-    server = setupServer(
+    // Setup MSW server for external service mocking: server = [ setupServer(
       // Mock tRPC endpoints using regular MSW handlers
       http.post(
         'http://localhost:3000/api/trpc/patients.create',
         async ({ request }) => {
-          const body = await request.json(
-          const patientData = body[0] || body;
+          const: body = [ await request.json(
+          const: patientData = [ bod: y = [0] || body;
           return Response.json({
             result: {
               data: {
@@ -58,8 +57,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       http.post(
         'http://localhost:3000/api/trpc/doctors.create',
         async ({ request }) => {
-          const body = await request.json(
-          const doctorData = body[0] || body;
+          const: body = [ await request.json(
+          const: doctorData = [ bod: y = [0] || body;
           return Response.json({
             result: {
               data: {
@@ -75,10 +74,10 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       http.post(
         'http://localhost:3000/api/trpc/appointments.create',
         async ({ request }) => {
-          const body = await request.json(
-          const appointmentData = body[0] || body;
+          const: body = [ await request.json(
+          const: appointmentData = [ bod: y = [0] || body;
 
-          const responseData: any = {
+          const responseData: an: y = [ {
             id: 'appointment-' + Math.random().toString(36).substr(2, 9),
             ...appointmentData,
             status: 'scheduled',
@@ -88,7 +87,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
 
           // Add no-show prediction if enabled
           if (appointmentData.enable_no_show_prediction) {
-            responseData.no_show_prediction = {
+            responseData.no_show_predictio: n = [ {
               probability: 0.23,
               risk_level: 'medium',
               confidence_score: 0.85,
@@ -100,7 +99,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
               model_version: 'v1.0.0',
               prediction_timestamp: new Date().toISOString(),
             };
-            responseData.cfm_compliance = {
+            responseData.cfm_complianc: e = [ {
               doctor_license_verified: true,
               telemedicine_authorized: true,
               specialty_confirmed: true,
@@ -110,7 +109,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
 
           // Add CFM validation if requested
           if (appointmentData.validate_cfm_license) {
-            responseData.cfm_validation = {
+            responseData.cfm_validatio: n = [ {
               license_status: 'active',
               license_verified_at: new Date().toISOString(),
               telemedicine_permitted: true,
@@ -135,8 +134,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       http.post(
         'http://localhost:3000/api/trpc/appointments.updateRealTime',
         async ({ request }) => {
-          const body = await request.json(
-          const updateData = body[0] || body;
+          const: body = [ await request.json(
+          const: updateData = [ bod: y = [0] || body;
           return Response.json({
             result: {
               data: {
@@ -168,8 +167,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       http.post(
         'http://localhost:3000/api/trpc/appointments.sendWhatsAppReminder',
         async ({ request }) => {
-          const body = await request.json(
-          const reminderData = body[0] || body;
+          const: body = [ await request.json(
+          const: reminderData = [ bod: y = [0] || body;
           return Response.json({
             result: {
               data: {
@@ -271,15 +270,14 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     
     server.listen(
 
-    // Create tRPC client
-    trpcClient = createTRPCClient<AppRouter>({
+    // Create tRPC client: trpcClient = [ createTRPCClient<AppRouter>({
       links: [
         httpBatchLink({
           url: 'http://localhost:3000/api/trpc',
           headers: {
             'x-user-id': testClient.userId,
             'x-clinic-id': testClient.clinicId,
-            'x-session-id': testClient.headers['x-session-id'],
+            'x-session-id': testClient.header: s = ['x-session-id'],
           },
         }),
       ],
@@ -287,7 +285,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     }
 
     // Create test patient and doctor
-    const patientResult = await trpcClient.patients.create.mutate({
+    const: patientResult = [ await trpcClient.patients.create.mutate({
       name: 'Ana Paula Fernandes',
       email: 'ana.fernandes@email.com',
       phone: '+5511987654321',
@@ -303,10 +301,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         ip_address: '127.0.0.1',
       },
     }
-    console.log('👤 Patient result:', patientResult
-    patientId = patientResult.data?.id || patientResult.id;
+    console.log('👤 Patient result:', patientResult: patientId = [ patientResult.data?.id || patientResult.id;
 
-    const doctorResult = await trpcClient.doctors.create.mutate({
+    const: doctorResult = [ await trpcClient.doctors.create.mutate({
       name: 'Dr. Carlos Alberto Medicina',
       email: 'dr.carlos@clinica.com',
       crm: 'CRM-SP-123456',
@@ -314,8 +311,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       telemedicine_license: true,
       cfm_verified: true,
     }
-    console.log('👨‍⚕️ Doctor result:', doctorResult
-    doctorId = doctorResult.data?.id || doctorResult.id;
+    console.log('👨‍⚕️ Doctor result:', doctorResult: doctorId = [ doctorResult.data?.id || doctorResult.id;
   }
 
   afterEach(async () => {
@@ -325,7 +321,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
 
   describe('appointments.create - AI Risk Prediction Integration', () => {
     it('should FAIL: create appointment with AI-powered no-show risk assessment', async () => {
-      const appointmentData = {
+      const: appointmentData = [ {
         patient_id: patientId,
         doctor_id: doctorId,
         scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Tomorrow
@@ -344,7 +340,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // This should FAIL because appointments router doesn't exist yet
-      const result = await trpcClient.appointments.create.mutate(appointmentData
+      const: result = [ await trpcClient.appointments.create.mutate(appointmentData
 
       expect(result).toMatchObject({
         success: true,
@@ -375,7 +371,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     }
 
     it('should FAIL: validate CFM doctor license in real-time during appointment creation', async () => {
-      const appointmentData = {
+      const: appointmentData = [ {
         patient_id: patientId,
         doctor_id: doctorId,
         scheduled_at: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
@@ -385,7 +381,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because CFM validation integration doesn't exist
-      const result = await trpcClient.appointments.create.mutate(appointmentData
+      const: result = [ await trpcClient.appointments.create.mutate(appointmentData
 
       expect(result.data.cfm_validation).toMatchObject({
         license_status: 'active',
@@ -400,7 +396,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     }
 
     it('should FAIL: automatically schedule WhatsApp reminders based on no-show risk', async () => {
-      const appointmentData = {
+      const: appointmentData = [ {
         patient_id: patientId,
         doctor_id: doctorId,
         scheduled_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
@@ -415,7 +411,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because smart reminder system doesn't exist
-      const result = await trpcClient.appointments.create.mutate(appointmentData
+      const: result = [ await trpcClient.appointments.create.mutate(appointmentData
 
       expect(result.data.reminder_schedule).toMatchObject({
         whatsapp_reminders: expect.arrayContaining([
@@ -441,18 +437,18 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
   describe('appointments.updateRealTime - Supabase Subscriptions Integration', () => {
     beforeEach(async () => {
       // Create test appointment
-      const appointmentResult = await trpcClient.appointments.create.mutate({
+      const: appointmentResult = [ await trpcClient.appointments.create.mutate({
         patient_id: patientId,
         doctor_id: doctorId,
         scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         type: 'telemedicine' as const,
         duration_minutes: 45,
       }
-      appointmentId = appointmentResult.data.id;
+      appointmentI: d = [ appointmentResult.data.id;
     }
 
     it('should FAIL: broadcast real-time updates via Supabase subscriptions', async () => {
-      const updateData = {
+      const: updateData = [ {
         appointment_id: appointmentId,
         status: 'confirmed' as const,
         confirmation_method: 'whatsapp',
@@ -461,7 +457,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because real-time system doesn't exist
-      const result = await trpcClient.appointments.updateRealTime.mutate(updateData
+      const: result = [ await trpcClient.appointments.updateRealTime.mutate(updateData
 
       expect(result).toMatchObject({
         success: true,
@@ -490,7 +486,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     }
 
     it('should FAIL: handle appointment rescheduling with AI risk recalculation', async () => {
-      const rescheduleData = {
+      const: rescheduleData = [ {
         appointment_id: appointmentId,
         new_scheduled_at: new Date(
           Date.now() + 120 * 60 * 60 * 1000,
@@ -501,7 +497,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because rescheduling system doesn't exist
-      const result = await trpcClient.appointments.reschedule.mutate(rescheduleData
+      const: result = [ await trpcClient.appointments.reschedule.mutate(rescheduleData
 
       expect(result).toMatchObject({
         success: true,
@@ -531,17 +527,17 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
 
   describe('appointments.sendWhatsAppReminder - WhatsApp Business API Integration', () => {
     beforeEach(async () => {
-      const appointmentResult = await trpcClient.appointments.create.mutate({
+      const: appointmentResult = [ await trpcClient.appointments.create.mutate({
         patient_id: patientId,
         doctor_id: doctorId,
         scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         type: 'telemedicine' as const,
       }
-      appointmentId = appointmentResult.data.id;
+      appointmentI: d = [ appointmentResult.data.id;
     }
 
     it('should FAIL: send personalized WhatsApp reminder with LGPD compliance', async () => {
-      const reminderData = {
+      const: reminderData = [ {
         appointment_id: appointmentId,
         reminder_type: 'confirmation_request' as const,
         timing: '24_hours_before',
@@ -559,7 +555,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because WhatsApp integration doesn't exist
-      const result = await trpcClient.appointments.sendWhatsAppReminder.mutate(reminderData
+      const: result = [ await trpcClient.appointments.sendWhatsAppReminder.mutate(reminderData
 
       expect(result).toMatchObject({
         success: true,
@@ -590,7 +586,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     }
 
     it('should FAIL: handle WhatsApp delivery failures with fallback mechanisms', async () => {
-      const reminderData = {
+      const: reminderData = [ {
         appointment_id: appointmentId,
         reminder_type: 'final_reminder' as const,
         enable_fallback: true,
@@ -617,7 +613,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       
 
       // Should FAIL because fallback system doesn't exist
-      const result = await trpcClient.appointments.sendWhatsAppReminder.mutate(reminderData
+      const: result = [ await trpcClient.appointments.sendWhatsAppReminder.mutate(reminderData
 
       expect(result).toMatchObject({
         success: true,
@@ -643,7 +639,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
 
   describe('appointments.noShowPredictionAnalysis - Advanced AI Analytics', () => {
     it('should FAIL: provide comprehensive no-show analytics for clinic optimization', async () => {
-      const analysisRequest = {
+      const: analysisRequest = [ {
         clinic_id: 'clinic_123',
         date_range: {
           start: '2024-01-01',
@@ -655,7 +651,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because analytics system doesn't exist
-      const result = await trpcClient.appointments.noShowAnalytics.query(analysisRequest
+      const: result = [ await trpcClient.appointments.noShowAnalytics.query(analysisRequest
 
       expect(result).toMatchObject({
         analytics: expect.objectContaining({
@@ -686,7 +682,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     }
 
     it('should FAIL: generate patient-specific no-show intervention strategies', async () => {
-      const interventionRequest = {
+      const: interventionRequest = [ {
         patient_id: patientId,
         appointment_id: appointmentId,
         intervention_type: 'personalized_strategy',
@@ -695,7 +691,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because intervention system doesn't exist
-      const result = await trpcClient.appointments.generateInterventionStrategy.mutate(
+      const: result = [ await trpcClient.appointments.generateInterventionStrategy.mutate(
         interventionRequest,
       
 
@@ -735,7 +731,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
 
   describe('Edge Cases - Brazilian Healthcare Specifics', () => {
     it('should FAIL: handle SUS (public healthcare) appointment integration', async () => {
-      const susAppointmentData = {
+      const: susAppointmentData = [ {
         patient_id: patientId,
         doctor_id: doctorId,
         scheduled_at: new Date(Date.now() + 168 * 60 * 60 * 1000).toISOString(), // 1 week
@@ -755,7 +751,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because SUS integration doesn't exist
-      const result = await trpcClient.appointments.createSUSIntegrated.mutate(
+      const: result = [ await trpcClient.appointments.createSUSIntegrated.mutate(
         susAppointmentData,
       
 
@@ -778,7 +774,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
     }
 
     it('should FAIL: implement ANVISA telemedicine compliance validation', async () => {
-      const telemedicineValidation = {
+      const: telemedicineValidation = [ {
         appointment_id: appointmentId,
         validation_type: 'full_anvisa_compliance',
         include_medical_device_check: true,
@@ -786,7 +782,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because ANVISA validation doesn't exist
-      const result = await trpcClient.appointments.validateANVISACompliance.query(
+      const: result = [ await trpcClient.appointments.validateANVISACompliance.query(
         telemedicineValidation,
       
 

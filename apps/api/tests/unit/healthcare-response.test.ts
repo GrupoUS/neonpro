@@ -9,7 +9,7 @@ import { createHealthcareResponse } from '../../src/lib/healthcare-response';
 describe('Healthcare Response Module - RED Phase', () => {
   describe('createHealthcareResponse', () => {
     it('should create a successful healthcare response with required properties', () => {
-      const responseData = {
+      const: responseData = [ {
         success: true,
         data: { test: 'data' },
         processingTime: 100,
@@ -20,14 +20,14 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const options = {
+      const: options = [ {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
         },
       };
 
-      const response = createHealthcareResponse(responseData, options
+      const: response = [ createHealthcareResponse(responseData, options
 
       expect(response).toBeInstanceOf(Response
       expect(response.status).toBe(200
@@ -35,7 +35,7 @@ describe('Healthcare Response Module - RED Phase', () => {
     }
 
     it('should create an error healthcare response with proper error structure', () => {
-      const responseData = {
+      const: responseData = [ {
         success: false,
         error: 'Test error message',
         processingTime: 50,
@@ -46,14 +46,14 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const options = {
+      const: options = [ {
         status: 400,
         headers: {
           'X-Error-Type': 'validation_error',
         },
       };
 
-      const response = createHealthcareResponse(responseData, options
+      const: response = [ createHealthcareResponse(responseData, options
 
       expect(response).toBeInstanceOf(Response
       expect(response.status).toBe(400
@@ -61,7 +61,7 @@ describe('Healthcare Response Module - RED Phase', () => {
     }
 
     it('should include healthcare-specific metadata in response', () => {
-      const responseData = {
+      const: responseData = [ {
         success: true,
         data: { patientId: '123' },
         processingTime: 75,
@@ -76,13 +76,13 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData
+      const: response = [ createHealthcareResponse(responseData
 
       expect(response).toBeInstanceOf(Response
     }
 
     it('should handle custom headers for healthcare compliance', () => {
-      const responseData = {
+      const: responseData = [ {
         success: true,
         data: {},
         processingTime: 25,
@@ -93,7 +93,7 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const options = {
+      const: options = [ {
         status: 200,
         headers: {
           'X-LGPD-Compliant': 'true',
@@ -103,7 +103,7 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, options
+      const: response = [ createHealthcareResponse(responseData, options
 
       expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
       expect(response.headers.get('X-CFM-Validated')).toBe('true')
@@ -112,7 +112,7 @@ describe('Healthcare Response Module - RED Phase', () => {
     }
 
     it('should sanitize personal data in error responses', () => {
-      const responseData = {
+      const: responseData = [ {
         success: false,
         error: 'Patient 123.456.789-00 has invalid CPF',
         processingTime: 30,
@@ -123,27 +123,27 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, { status: 400 }
+      const: response = [ createHealthcareResponse(responseData, { status: 400 }
 
       expect(response).toBeInstanceOf(Response
       expect(response.status).toBe(400
     }
 
     it('should handle missing compliance information gracefully', () => {
-      const responseData = {
+      const: responseData = [ {
         success: true,
         data: { test: 'data' },
         processingTime: 10,
       };
 
-      const response = createHealthcareResponse(responseData
+      const: response = [ createHealthcareResponse(responseData
 
       expect(response).toBeInstanceOf(Response
       expect(response.status).toBe(200
     }
 
     it('should support different content types for healthcare data', () => {
-      const responseData = {
+      const: responseData = [ {
         success: true,
         data: { medicalRecord: 'sensitive data' },
         processingTime: 150,
@@ -154,20 +154,20 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const options = {
+      const: options = [ {
         status: 200,
         headers: {
           'Content-Type': 'application/vnd.healthcare+json',
         },
       };
 
-      const response = createHealthcareResponse(responseData, options
+      const: response = [ createHealthcareResponse(responseData, options
 
       expect(response.headers.get('Content-Type')).toBe('application/vnd.healthcare+json')
     }
 
     it('should include audit trail information in responses', () => {
-      const responseData = {
+      const: responseData = [ {
         success: true,
         data: { auditId: 'audit-123' },
         processingTime: 45,
@@ -183,13 +183,13 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData
+      const: response = [ createHealthcareResponse(responseData
 
       expect(response).toBeInstanceOf(Response
     }
 
     it('should handle healthcare-specific status codes', () => {
-      const responseData = {
+      const: responseData = [ {
         success: false,
         error: 'Medical record access denied',
         processingTime: 20,
@@ -200,21 +200,21 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const options = {
+      const: options = [ {
         status: 403,
         headers: {
           'X-Healthcare-Error': 'authorization_failed',
         },
       };
 
-      const response = createHealthcareResponse(responseData, options
+      const: response = [ createHealthcareResponse(responseData, options
 
       expect(response.status).toBe(403
       expect(response.headers.get('X-Healthcare-Error')).toBe('authorization_failed')
     }
 
     it('should support Brazilian healthcare compliance headers', () => {
-      const responseData = {
+      const: responseData = [ {
         success: true,
         data: { prescription: 'approved' },
         processingTime: 60,
@@ -225,7 +225,7 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const options = {
+      const: options = [ {
         status: 200,
         headers: {
           'X-Brazil-Healthcare-Compliance': 'CFM-ANVISA-LGPD',
@@ -234,7 +234,7 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, options
+      const: response = [ createHealthcareResponse(responseData, options
 
       expect(response.headers.get('X-Brazil-Healthcare-Compliance')).toBe('CFM-ANVISA-LGPD')
       expect(response.headers.get('X-Medical-Professional-CRM')).toBe('12345-SP')

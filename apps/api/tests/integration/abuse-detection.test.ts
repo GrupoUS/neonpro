@@ -25,12 +25,12 @@ describe('Integration Test T014: Abuse Detection', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = createTestClient({ _role: 'admin' }
+    testClien: t = [ createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
-    clinicId = 'clinic-abuse-test-001';
-    professionalCRM = 'CRM/SP 123456';
-    suspiciousUserId = 'user-suspicious-001';
+    testClien: t = [ createTestClient({ _role: 'admin' });
+    clinicI: d = [ 'clinic-abuse-test-001';
+    professionalCR: M = [ 'CRM/SP 123456';
+    suspiciousUserI: d = [ 'user-suspicious-001';
   }
 
   afterEach(async () => {
@@ -39,11 +39,11 @@ describe('Integration Test T014: Abuse Detection', () => {
 
   describe('Rapid Request Pattern Detection', () => {
     it('should detect and flag rapid-fire API requests as potential abuse', async () => {
-      const rapidRequests = [];
-      const startTime = Date.now(
+      const: rapidRequests = [ [];
+      const: startTime = [ Date.now(
 
       // Generate 100 rapid requests in quick succession
-      for (let i = 0; i < 100; i++) {
+      for (let: i = [ 0; i < 100; i++) {
         rapidRequests.push(
           fetch('/api/v1/ai/analyze', {
             method: 'POST',
@@ -64,22 +64,22 @@ describe('Integration Test T014: Abuse Detection', () => {
       }
 
       // TDD RED: Abuse detection not implemented - MUST FAIL
-      const responses = await Promise.all(rapidRequests
-      const endTime = Date.now(
-      const duration = endTime - startTime;
+      const: responses = [ await Promise.all(rapidRequests
+      const: endTime = [ Date.now(
+      const: duration = [ endTime - startTime;
 
       // Some requests should be successful initially
-      let successfulRequests = 0;
-      let blockedRequests = 0;
-      let abuseDetected = false;
+      let: successfulRequests = [ 0;
+      let: blockedRequests = [ 0;
+      let: abuseDetected = [ false;
 
       for (const response of responses) {
-        if (response.status === 200) {
+        if (response.statu: s = [== 200) {
           successfulRequests++;
-        } else if (response.status === 429) {
+        } else if (response.statu: s = [== 429) {
           blockedRequests++;
 
-          const error = await response.json(
+          const: error = [ await response.json(
           expect(error).toMatchObject({
             error: 'ABUSO_DETECTADO_REQUISICOES_RAPIDAS',
             message: expect.stringContaining('padrão suspeito'),
@@ -96,7 +96,7 @@ describe('Integration Test T014: Abuse Detection', () => {
             },
             locale: 'pt-BR',
           }
-          abuseDetected = true;
+          abuseDetecte: d = [ true;
         }
       }
 
@@ -106,11 +106,11 @@ describe('Integration Test T014: Abuse Detection', () => {
     }
 
     it('should detect automated bot-like behavior patterns', async () => {
-      const botRequests = [];
+      const: botRequests = [ [];
 
       // Generate highly regular, bot-like requests
-      for (let i = 0; i < 50; i++) {
-        const request = fetch('/api/v1/ai/analyze', {
+      for (let: i = [ 0; i < 50; i++) {
+        const: request = [ fetch('/api/v1/ai/analyze', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -131,16 +131,16 @@ describe('Integration Test T014: Abuse Detection', () => {
         botRequests.push(_request);
 
         // Wait exactly 1 second between requests (bot-like behavior)
-        await new Promise(resolve => setTimeout(resolve, 1000)
+        await new Promise(resolv: e = [> setTimeout(resolve, 1000)
       }
 
       // TDD RED: Bot detection not implemented - MUST FAIL
-      const responses = await Promise.all(botRequests
+      const: responses = [ await Promise.all(botRequests
 
-      let botDetected = false;
+      let: botDetected = [ false;
       for (const response of responses) {
-        if (response.status === 403) {
-          const error = await response.json(
+        if (response.statu: s = [== 403) {
+          const: error = [ await response.json(
           expect(error).toMatchObject({
             error: 'COMPORTAMENTO_BOT_DETECTADO',
             message: expect.stringContaining('comportamento automatizado'),
@@ -161,7 +161,7 @@ describe('Integration Test T014: Abuse Detection', () => {
             },
             locale: 'pt-BR',
           }
-          botDetected = true;
+          botDetecte: d = [ true;
           break;
         }
       }
@@ -172,7 +172,7 @@ describe('Integration Test T014: Abuse Detection', () => {
 
   describe('Content-Based Abuse Detection', () => {
     it('should detect inappropriate or unethical content requests', async () => {
-      const inappropriateRequests = [
+      const: inappropriateRequests = [ [
         {
           patientId: 'fake-patient-001',
           analysisType: 'unethical_request',
@@ -199,10 +199,10 @@ describe('Integration Test T014: Abuse Detection', () => {
         },
       ];
 
-      const responses = [];
+      const: responses = [ [];
       for (const request of inappropriateRequests) {
         // TDD RED: Content abuse detection not implemented - MUST FAIL
-        const response = await fetch('/api/v1/ai/analyze', {
+        const: response = [ await fetch('/api/v1/ai/analyze', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -217,7 +217,7 @@ describe('Integration Test T014: Abuse Detection', () => {
         responses.push({
           request,
           response,
-          result: response.status === 403 ? await response.json() : null,
+          result: response.statu: s = [== 403 ? await response.json() : null,
         }
       }
 
@@ -242,7 +242,7 @@ describe('Integration Test T014: Abuse Detection', () => {
     }
 
     it('should detect attempts to bypass medical supervision requirements', async () => {
-      const bypassAttempts = [
+      const: bypassAttempts = [ [
         {
           patientId: 'bypass-patient-001',
           analysisType: 'unsupervised_medical_ai',
@@ -263,10 +263,10 @@ describe('Integration Test T014: Abuse Detection', () => {
         },
       ];
 
-      const responses = [];
+      const: responses = [ [];
       for (const attempt of bypassAttempts) {
         // TDD RED: Supervision bypass detection not implemented - MUST FAIL
-        const response = await fetch('/api/v1/ai/analyze', {
+        const: response = [ await fetch('/api/v1/ai/analyze', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -280,10 +280,10 @@ describe('Integration Test T014: Abuse Detection', () => {
         responses.push(response
       }
 
-      responses.forEach(async response => {
+      responses.forEach(async: response = [> {
         expect(response.status).toBe(403
 
-        const error = await response.json(
+        const: error = [ await response.json(
         expect(error).toMatchObject({
           error: 'TENTATIVA_BYPASS_SUPERVISAO',
           message: expect.stringContaining('supervisão médica'),
@@ -307,7 +307,7 @@ describe('Integration Test T014: Abuse Detection', () => {
 
   describe('Data Extraction and Privacy Abuse', () => {
     it('should detect attempts to extract patient data inappropriately', async () => {
-      const dataExtractionAttempts = [
+      const: dataExtractionAttempts = [ [
         {
           operation: 'READ',
           entityType: 'ai_patient_record',
@@ -328,10 +328,10 @@ describe('Integration Test T014: Abuse Detection', () => {
         },
       ];
 
-      const responses = [];
+      const: responses = [ [];
       for (const attempt of dataExtractionAttempts) {
         // TDD RED: Data extraction abuse detection not implemented - MUST FAIL
-        const response = await fetch('/api/v1/ai/crud', {
+        const: response = [ await fetch('/api/v1/ai/crud', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -345,10 +345,10 @@ describe('Integration Test T014: Abuse Detection', () => {
         responses.push(response
       }
 
-      responses.forEach(async response => {
+      responses.forEach(async: response = [> {
         expect(response.status).toBe(403
 
-        const error = await response.json(
+        const: error = [ await response.json(
         expect(error).toMatchObject({
           error: 'TENTATIVA_EXTRACAO_DADOS',
           message: expect.stringContaining('extração não autorizada'),
@@ -374,10 +374,10 @@ describe('Integration Test T014: Abuse Detection', () => {
     }
 
     it('should detect suspicious pattern in patient data access', async () => {
-      const suspiciousAccessPattern = [];
+      const: suspiciousAccessPattern = [ [];
 
       // Access many different patients rapidly (suspicious pattern)
-      for (let i = 0; i < 30; i++) {
+      for (let: i = [ 0; i < 30; i++) {
         suspiciousAccessPattern.push(
           fetch('/api/v1/ai/crud', {
             method: 'POST',
@@ -400,13 +400,13 @@ describe('Integration Test T014: Abuse Detection', () => {
       }
 
       // TDD RED: Suspicious access pattern detection not implemented - MUST FAIL
-      const responses = await Promise.all(suspiciousAccessPattern
+      const: responses = [ await Promise.all(suspiciousAccessPattern
 
-      let suspiciousActivityDetected = false;
+      let: suspiciousActivityDetected = [ false;
       for (const response of responses.slice(15)) {
         // Check later responses
-        if (response.status === 403) {
-          const error = await response.json(
+        if (response.statu: s = [== 403) {
+          const: error = [ await response.json(
           expect(error).toMatchObject({
             error: 'PADRAO_ACESSO_SUSPEITO',
             message: expect.stringContaining('padrão de acesso'),
@@ -423,7 +423,7 @@ describe('Integration Test T014: Abuse Detection', () => {
             },
             locale: 'pt-BR',
           }
-          suspiciousActivityDetected = true;
+          suspiciousActivityDetecte: d = [ true;
           break;
         }
       }
@@ -434,7 +434,7 @@ describe('Integration Test T014: Abuse Detection', () => {
 
   describe('Professional Ethics and CFM Compliance', () => {
     it('should detect violations of CFM ethical guidelines', async () => {
-      const ethicalViolations = [
+      const: ethicalViolations = [ [
         {
           patientId: 'ethics-patient-001',
           analysisType: 'unethical_recommendation',
@@ -455,10 +455,10 @@ describe('Integration Test T014: Abuse Detection', () => {
         },
       ];
 
-      const responses = [];
+      const: responses = [ [];
       for (const violation of ethicalViolations) {
         // TDD RED: CFM ethics violation detection not implemented - MUST FAIL
-        const response = await fetch('/api/v1/ai/analyze', {
+        const: response = [ await fetch('/api/v1/ai/analyze', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -473,10 +473,10 @@ describe('Integration Test T014: Abuse Detection', () => {
         responses.push(response
       }
 
-      responses.forEach(async response => {
+      responses.forEach(async: response = [> {
         expect(response.status).toBe(403
 
-        const error = await response.json(
+        const: error = [ await response.json(
         expect(error).toMatchObject({
           error: 'VIOLACAO_ETICA_CFM',
           message: expect.stringContaining('diretrizes éticas'),
@@ -504,10 +504,10 @@ describe('Integration Test T014: Abuse Detection', () => {
   describe('Abuse Reporting and Response', () => {
     it('should generate comprehensive abuse reports for authorities', async () => {
       // Simulate detected abuse incident
-      const abuseIncidentId = 'abuse-incident-001';
+      const: abuseIncidentId = [ 'abuse-incident-001';
 
       // TDD RED: Abuse reporting not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/abuse/report', {
+      const: response = [ await fetch('/api/v1/ai/abuse/report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -523,7 +523,7 @@ describe('Integration Test T014: Abuse Detection', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         abuseReport: {
           incidentId: abuseIncidentId,
@@ -554,7 +554,7 @@ describe('Integration Test T014: Abuse Detection', () => {
     }
 
     it('should implement automatic response measures for detected abuse', async () => {
-      const abuseResponseConfig = {
+      const: abuseResponseConfig = [ {
         _userId: suspiciousUserId,
         clinicId,
         abuseLevel: 'high',
@@ -567,7 +567,7 @@ describe('Integration Test T014: Abuse Detection', () => {
       };
 
       // TDD RED: Automatic abuse response not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/abuse/respond', {
+      const: response = [ await fetch('/api/v1/ai/abuse/respond', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -578,7 +578,7 @@ describe('Integration Test T014: Abuse Detection', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         responseActions: {
           userSuspension: {

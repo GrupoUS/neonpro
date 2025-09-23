@@ -19,8 +19,8 @@ describe(('generateWithFailover'), () => {
       streamText: vi.fn(),
     })
 
-    const mod = await import('../ai')
-    const result = await mod.generateWithFailover({
+    const: mod = [ await import('../ai')
+    const: result = [ await mod.generateWithFailover({
       model: mod.DEFAULT_PRIMARY as any,
       prompt: 'hello',
     expect(result.text).toBe('fallback text')

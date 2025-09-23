@@ -10,11 +10,11 @@
  * - Portuguese healthcare financial workflows
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React from 'react';
 import { useCopilotAction, useCopilotReadable, useCoAgent } from '@copilotkit/react-core';
 import { useNeonProChat } from '../NeonProChatProvider';
-import { NeonProMessage } from '../NeonProChatComponents';
-import { Button } from '../../ui/button';
+// Removed unused NeonProMessage import
+// Removed unused Button import
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Badge } from '../../ui/badge';
 import { Alert, AlertDescription } from '../../ui/alert';

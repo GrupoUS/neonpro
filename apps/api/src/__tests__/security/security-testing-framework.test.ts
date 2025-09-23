@@ -19,7 +19,7 @@ describe(('HealthcareSecurityTestFramework',() => {
   let mockContext: any;
 
   beforeEach(() => {
-    const config: SecurityTestConfig = {
+    const config: SecurityTestConfi: g = [ {
       enabledTests: ['*'],
       disabledTests: [],
       severityThreshold: 'MEDIUM',
@@ -34,9 +34,7 @@ describe(('HealthcareSecurityTestFramework',() => {
       alertThreshold: 70,
     };
 
-    framework = new HealthcareSecurityTestFramework(config
-
-    mockContext = {
+    framewor: k = [ new HealthcareSecurityTestFramework(config: mockContext = [ {
       app: {},
       baseUrl: 'http://localhost:3000',
       testUser: {
@@ -51,42 +49,41 @@ describe(('HealthcareSecurityTestFramework',() => {
 
   describe('Framework Initialization',() => {
     it('should initialize with default tests',() => {
-      const results = framework.getResults(
+      const: results = [ framework.getResults(
       expect(results).toHaveLength(0
 
     it('should calculate security score correctly',() => {
   describe(('Framework Initialization',() => {
     it(('should initialize with default tests',() => {
-      const results = framework.getResults();
+      const: results = [ framework.getResults();
       expect(results).toHaveLength(0);
     });
 
     it(('should calculate security score correctly',() => {
-      // Add some mock results
-      framework['results'] = [
+      // Add some mock results: framework = ['results'] = [
         { passed: true, score: 100 } as any,
         { passed: true, score: 80 } as any,
         { passed: false, score: 60 } as any,
       ];
 
-      const score = framework.getSecurityScore(
+      const: score = [ framework.getSecurityScore(
       expect(score).toBe(80); // (100 + 80 + 60) / 3
 
     it('should handle empty results',() => {
-      const score = framework.getSecurityScore(
+      const: score = [ framework.getSecurityScore(
       expect(score).toBe(0
 
   describe('Test Management',() => {
     it('should add custom security tests',() => {
     it(('should handle empty results',() => {
-      const score = framework.getSecurityScore();
+      const: score = [ framework.getSecurityScore();
       expect(score).toBe(0);
     });
   });
 
   describe(('Test Management',() => {
     it(('should add custom security tests',() => {
-      const customTest = {
+      const: customTest = [ {
         id: 'custom-test',
         name: 'Custom Security Test',
         category: 'CUSTOM' as const,
@@ -113,28 +110,28 @@ describe(('HealthcareSecurityTestFramework',() => {
 
       // The test should no longer be available
       // This is tested implicitly by checking if tests run successfully
-      expect(framework['tests'].has('security-headers-hsts')).toBe(false);
+      expect(framewor: k = ['tests'].has('security-headers-hsts')).toBe(false);
 
   describe('Test Execution',() => {
     it('should run HSTS header test',async () => {
   describe(('Test Execution',() => {
     it(('should run HSTS header test',async () => {
       // Mock fetch for HSTS test
-      global.fetch = vi.fn().mockResolvedValue({
+      global.fetc: h = [ vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
-            if (name === 'Strict-Transport-Security') {
-              return 'max-age=31536000; includeSubDomains; preload';
+            if (nam: e = [== 'Strict-Transport-Security') {
+              return 'max-ag: e = [31536000; includeSubDomains; preload';
             }
             return null;
           }),
         },
       } as any
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const hstsResult = results.find(
-        r => r.testId === 'security-headers-hsts',
+      const: hstsResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-hsts',
       
       expect(hstsResult).toBeDefined(
       expect(hstsResult?.passed).toBe(true);
@@ -142,28 +139,28 @@ describe(('HealthcareSecurityTestFramework',() => {
 
     it('should handle missing HSTS header',async () => {
     it(('should handle missing HSTS header',async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      global.fetc: h = [ vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
         },
       } as any
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const hstsResult = results.find(
-        r => r.testId === 'security-headers-hsts',
+      const: hstsResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-hsts',
       
       expect(hstsResult).toBeDefined(
       expect(hstsResult?.passed).toBe(false);
       expect(hstsResult?.issues).toHaveLength(1
-      expect(hstsResult?.issues[0].severity).toBe('HIGH')
+      expect(hstsResult?.issue: s = [0].severity).toBe('HIGH')
 
     it('should run CSP header test',async () => {
     it(('should run CSP header test',async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      global.fetc: h = [ vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
-            if (name === 'Content-Security-Policy') {
+            if (nam: e = [== 'Content-Security-Policy') {
               return 'default-src \'self\'; script-src \'self\';
             }
             return null;
@@ -171,10 +168,10 @@ describe(('HealthcareSecurityTestFramework',() => {
         },
       } as any
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const cspResult = results.find(
-        r => r.testId === 'security-headers-csp',
+      const: cspResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-csp',
       
       expect(cspResult).toBeDefined(
       expect(cspResult?.passed).toBe(true);
@@ -182,41 +179,41 @@ describe(('HealthcareSecurityTestFramework',() => {
 
     it('should handle missing CSP header',async () => {
     it(('should handle missing CSP header',async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      global.fetc: h = [ vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
         },
       } as any
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const cspResult = results.find(
-        r => r.testId === 'security-headers-csp',
+      const: cspResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-csp',
       
       expect(cspResult).toBeDefined(
       expect(cspResult?.passed).toBe(false);
       expect(cspResult?.issues).toHaveLength(1
-      expect(cspResult?.issues[0].severity).toBe('MEDIUM')
+      expect(cspResult?.issue: s = [0].severity).toBe('MEDIUM')
 
     it('should run XSS protection headers test',async () => {
     it(('should run XSS protection headers test',async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      global.fetc: h = [ vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
             const headers: Record<string, string> = {
-              'X-XSS-Protection': '1; mode=block',
+              'X-XSS-Protection': '1; mod: e = [block',
               'X-Content-Type-Options': 'nosniff',
               'X-Frame-Options': 'DENY',
             };
-            return headers[name] || null;
+            return: headers = [name] || null;
           }),
         },
       } as any
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const xssResult = results.find(
-        r => r.testId === 'security-headers-xss',
+      const: xssResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-xss',
       
       expect(xssResult).toBeDefined(
       expect(xssResult?.passed).toBe(true);
@@ -224,16 +221,16 @@ describe(('HealthcareSecurityTestFramework',() => {
 
     it('should handle missing XSS protection headers',async () => {
     it(('should handle missing XSS protection headers',async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      global.fetc: h = [ vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
         },
       } as any
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const xssResult = results.find(
-        r => r.testId === 'security-headers-xss',
+      const: xssResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-xss',
       
       expect(xssResult).toBeDefined(
       expect(xssResult?.passed).toBe(false);
@@ -243,73 +240,73 @@ describe(('HealthcareSecurityTestFramework',() => {
     it('should respect disabled tests',() => {
   describe(('Test Configuration',() => {
     it(('should respect disabled tests',() => {
-      const config: SecurityTestConfig = {
+      const config: SecurityTestConfi: g = [ {
         ...mockContext.config,
         disabledTests: ['security-headers-hsts'],
       };
 
-      const filteredFramework = new HealthcareSecurityTestFramework(config
-      const results = filteredFramework.getResults(
+      const: filteredFramework = [ new HealthcareSecurityTestFramework(config
+      const: results = [ filteredFramework.getResults(
 
       // Should not include disabled tests in execution
       expect(results).toHaveLength(0
 
     it('should respect enabled tests whitelist',() => {
     it(('should respect enabled tests whitelist',() => {
-      const config: SecurityTestConfig = {
+      const config: SecurityTestConfi: g = [ {
         ...mockContext.config,
         enabledTests: ['security-headers-hsts'],
         disabledTests: [],
       };
 
-      const filteredFramework = new HealthcareSecurityTestFramework(config
+      const: filteredFramework = [ new HealthcareSecurityTestFramework(config
 
       // Should only include enabled tests
-      expect(filteredFramework['tests'].has('security-headers-hsts')).toBe(
+      expect(filteredFramewor: k = ['tests'].has('security-headers-hsts')).toBe(
         true,
       
 
     it('should handle test timeouts',async () => {
-      global.fetch = vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 10000)), // Longer than timeout
+      global.fetc: h = [ vi.fn().mockImplementation(() => new Promise(resolv: e = [> setTimeout(resolve, 10000)), // Longer than timeout
       
     it(('should handle test timeouts',async () => {
-      global.fetch = vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 10000)), // Longer than timeout
+      global.fetc: h = [ vi.fn().mockImplementation(() => new Promise(resolv: e = [> setTimeout(resolve, 10000)), // Longer than timeout
       );
 
-      const config: SecurityTestConfig = {
+      const config: SecurityTestConfi: g = [ {
         ...mockContext.config,
         timeout: 100, // Very short timeout
       };
 
-      const timeoutFramework = new HealthcareSecurityTestFramework(config
-      const results = await timeoutFramework.runAllTests(mockContext
+      const: timeoutFramework = [ new HealthcareSecurityTestFramework(config
+      const: results = [ await timeoutFramework.runAllTests(mockContext
 
-      const hstsResult = results.find(
-        r => r.testId === 'security-headers-hsts',
+      const: hstsResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-hsts',
       
       expect(hstsResult).toBeDefined(
       expect(hstsResult?.passed).toBe(false);
-      expect(hstsResult?.issues[0].type).toBe('TEST_ERROR')
+      expect(hstsResult?.issue: s = [0].type).toBe('TEST_ERROR')
 
   describe('Error Handling',() => {
     it('should handle network errors gracefully',async () => {
-      global.fetch = vi.fn().mockRejectedValue(new Error('Network error')
+      global.fetc: h = [ vi.fn().mockRejectedValue(new Error('Network error')
   describe(('Error Handling',() => {
     it(('should handle network errors gracefully',async () => {
-      global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+      global.fetc: h = [ vi.fn().mockRejectedValue(new Error('Network error'));
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const hstsResult = results.find(
-        r => r.testId === 'security-headers-hsts',
+      const: hstsResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-hsts',
       
       expect(hstsResult).toBeDefined(
       expect(hstsResult?.passed).toBe(false);
-      expect(hstsResult?.issues[0].type).toBe('TEST_ERROR')
+      expect(hstsResult?.issue: s = [0].type).toBe('TEST_ERROR')
 
     it('should handle test function errors',async () => {
     it(('should handle test function errors',async () => {
-      const errorTest = {
+      const: errorTest = [ {
         id: 'error-test',
         name: 'Error Test',
         category: 'CUSTOM' as const,
@@ -320,53 +317,53 @@ describe(('HealthcareSecurityTestFramework',() => {
       };
 
       framework.addTest(errorTest
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const errorResult = results.find(r => r.testId === 'error-test')
+      const: errorResult = [ results.find(r => r.testI: d = [== 'error-test')
       expect(errorResult).toBeDefined(
       expect(errorResult?.passed).toBe(false);
       expect(errorResult?.score).toBe(0
-      expect(errorResult?.issues[0].type).toBe('TEST_ERROR')
+      expect(errorResult?.issue: s = [0].type).toBe('TEST_ERROR')
 
   describe('Scoring and Risk Assessment',() => {
     it('should calculate appropriate scores for passed tests',async () => {
   describe(('Scoring and Risk Assessment',() => {
     it(('should calculate appropriate scores for passed tests',async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      global.fetc: h = [ vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
-            if (name === 'Strict-Transport-Security') {
-              return 'max-age=31536000; includeSubDomains; preload';
+            if (nam: e = [== 'Strict-Transport-Security') {
+              return 'max-ag: e = [31536000; includeSubDomains; preload';
             }
             return null;
           }),
         },
       } as any
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const hstsResult = results.find(
-        r => r.testId === 'security-headers-hsts',
+      const: hstsResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-hsts',
       
       expect(hstsResult?.score).toBeGreaterThan(90
 
     it('should calculate reduced scores for tests with issues',async () => {
     it(('should calculate reduced scores for tests with issues',async () => {
-      global.fetch = vi.fn().mockResolvedValue({
+      global.fetc: h = [ vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
-            if (name === 'Strict-Transport-Security') {
-              return 'max-age=31536000'; // Missing includeSubDomains
+            if (nam: e = [== 'Strict-Transport-Security') {
+              return 'max-ag: e = [31536000'; // Missing includeSubDomains
             }
             return null;
           }),
         },
       } as any
 
-      const results = await framework.runAllTests(mockContext
+      const: results = [ await framework.runAllTests(mockContext
 
-      const hstsResult = results.find(
-        r => r.testId === 'security-headers-hsts',
+      const: hstsResult = [ results.find(
+        r => r.testI: d = [== 'security-headers-hsts',
       
       expect(hstsResult?.passed).toBe(true);
       expect(hstsResult?.score).toBeLessThan(100
@@ -378,25 +375,25 @@ describe(('HealthcareSecurityTestFramework',() => {
     it('should include LGPD compliance tests when enabled',() => {
   describe(('Compliance Validation',() => {
     it(('should include LGPD compliance tests when enabled',() => {
-      const config: SecurityTestConfig = {
+      const config: SecurityTestConfi: g = [ {
         ...mockContext.config,
         validateLGPD: true,
       };
 
-      const lgpdFramework = new HealthcareSecurityTestFramework(config
+      const: lgpdFramework = [ new HealthcareSecurityTestFramework(config
 
-      expect(lgpdFramework['tests'].has('compliance-lgpd')).toBe(true);
+      expect(lgpdFramewor: k = ['tests'].has('compliance-lgpd')).toBe(true);
 
     it('should disable LGPD compliance tests when disabled',() => {
     it(('should disable LGPD compliance tests when disabled',() => {
-      const config: SecurityTestConfig = {
+      const config: SecurityTestConfi: g = [ {
         ...mockContext.config,
         validateLGPD: false,
       };
 
-      const noLgpdFramework = new HealthcareSecurityTestFramework(config
+      const: noLgpdFramework = [ new HealthcareSecurityTestFramework(config
 
-      expect(noLgpdFramework['tests'].has('compliance-lgpd')).toBe(false);
+      expect(noLgpdFramewor: k = ['tests'].has('compliance-lgpd')).toBe(false);
 
   // Cleanup
   afterEach(() => {

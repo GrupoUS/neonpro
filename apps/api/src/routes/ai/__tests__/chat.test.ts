@@ -7,7 +7,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
-const mockAIChatService = {
+const: mockAIChatService = [ {
   sendMessage: vi.fn(,
   streamMessage: vi.fn(,
   getConversationHistory: vi.fn(,
@@ -15,16 +15,16 @@ const mockAIChatService = {
   generateResponse: vi.fn(,
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(,
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateDataAccess: vi.fn(,
   maskSensitiveData: vi.fn(,
 };
 
-const mockPatientService = {
+const: mockPatientService = [ {
   getPatientContext: vi.fn(,
 };
 
@@ -178,7 +178,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       data: { canAccess: true, accessLevel: 'full' },
     }
 
-    mockLGPDService.maskSensitiveData.mockImplementation(data => data
+    mockLGPDService.maskSensitiveData.mockImplementation(dat: a = [> data
 
     mockPatientService.getPatientContext.mockResolvedValue({
       success: true),
@@ -197,7 +197,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
   }
 
   it('should export AI chat route handler',async () => {
-    const module = await import('../chat.js')
+    const: module = [ await import('../chat.js')
     expect(module.default).toBeDefined(
   }
 
@@ -205,14 +205,14 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it('should send message to AI with default model',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Olá, preciso de informações sobre tratamentos de rejuvenescimento facial.'),
         conversationId: 'conv-123'),
         _context: {
           healthcareContext: true),
           language: 'pt-BR'),
   it(('should export AI chat route handler',async () => {
-    const module = await import('../chat.js');
+    const: module = [ await import('../chat.js');
     expect(module.default).toBeDefined();
   });
 
@@ -220,7 +220,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should send message to AI with default model',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Olá, preciso de informações sobre tratamentos de rejuvenescimento facial.',
         conversationId: 'conv-123',
         _context: {
@@ -229,7 +229,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -240,7 +240,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -253,7 +253,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it('should send message with specific model preference',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Quais são os riscos do preenchimento labial?'),
         conversationId: 'conv-456'),
         modelPreference: 'claude-3'),
@@ -264,7 +264,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should send message with specific model preference',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Quais são os riscos do preenchimento labial?',
         conversationId: 'conv-456',
         modelPreference: 'claude-3',
@@ -275,7 +275,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -286,7 +286,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -310,7 +310,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it('should initiate streaming chat response',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Explique o processo de aplicação de botox passo a passo.'),
         conversationId: 'conv-789'),
         streaming: true),
@@ -320,7 +320,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should initiate streaming chat response',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Explique o processo de aplicação de botox passo a passo.',
         conversationId: 'conv-789',
         streaming: true,
@@ -330,7 +330,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -341,7 +341,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -353,7 +353,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it('should include patient context when provided',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Com base no histórico da paciente, qual tratamento você recomendaria?'),
         conversationId: 'conv-patient-123'),
         patientId: 'patient-123'),
@@ -363,7 +363,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should include patient context when provided',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Com base no histórico da paciente, qual tratamento você recomendaria?',
         conversationId: 'conv-patient-123',
         patientId: 'patient-123',
@@ -373,7 +373,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -385,7 +385,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -407,12 +407,12 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should include AI performance headers',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Teste de performance'),
         conversationId: 'conv-perf'),
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -464,12 +464,12 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Teste de fallback'),
         modelPreference: 'gpt-4'),
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -480,7 +480,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.metadata.fallbackUsed).toBe(true);
@@ -496,7 +496,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should validate LGPD data access for AI chat',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Preciso de informações sobre tratamentos.'),
         patientId: 'patient-123'),
       };
@@ -534,7 +534,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should log AI chat activity for audit trail',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Quais são os cuidados pós-botox?'),
         conversationId: 'conv-audit'),
       };
@@ -597,11 +597,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Teste de acesso negado'),
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -612,7 +612,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -654,12 +654,12 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Informações sobre paciente específico'),
         patientId: 'patient-123'),
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -670,7 +670,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.response.content).toContain('***')
@@ -685,7 +685,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should handle authentication errors',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -695,7 +695,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
@@ -707,12 +707,12 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should handle validation errors for chat data',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const invalidChatData = {
+      const: invalidChatData = [ {
         // Missing required message
         conversationId: 'conv-invalid'),
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -723,7 +723,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -741,11 +741,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Teste de erro do serviço'),
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -756,7 +756,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -771,11 +771,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Teste de indisponibilidade'),
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -786,7 +786,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(503
       expect(data.success).toBe(false);
@@ -800,18 +800,18 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it('should include CFM compliance headers',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Informações médicas sobre tratamento'),
   describe(('Brazilian Healthcare Compliance'), () => {
     it(('should include CFM compliance headers',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Informações médicas sobre tratamento',
         _context: { medicalContext: true },
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -831,7 +831,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it('should validate healthcare professional context for medical AI',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Diagnóstico diferencial para sintomas apresentados'),
         _context: {
           medicalContext: true),
@@ -839,7 +839,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should validate healthcare professional context for medical AI',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Diagnóstico diferencial para sintomas apresentados',
         _context: {
           medicalContext: true,
@@ -847,7 +847,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -887,11 +887,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should include performance metrics in response',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Teste de métricas de performance'),
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -902,7 +902,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.response.processingTime).toBeDefined(
@@ -914,7 +914,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it('should handle streaming requests properly',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Resposta longa que precisa de streaming'),
         streaming: true),
         _context: {
@@ -922,7 +922,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     it(('should handle streaming requests properly',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
-      const chatData = {
+      const: chatData = [ {
         message: 'Resposta longa que precisa de streaming',
         streaming: true,
         _context: {
@@ -930,7 +930,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       };
 
-      const response = await chatRoute.request(
+      const: response = [ await chatRoute.request(
         new Request('http://localhost/', {
           method: 'POST'),
           headers: {
@@ -941,7 +941,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         },
       
 
-      const data = await response.json(
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.streamId).toBeDefined(

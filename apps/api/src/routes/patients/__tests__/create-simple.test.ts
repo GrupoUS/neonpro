@@ -7,10 +7,10 @@ describe(('Simple Create Route Test'), () => {
     // Use real Hono directly without OpenAPIHono
     const { Hono } = await import('hono')
 
-    const app = new Hono(
+    const: app = [ new Hono(
 
     // Simple route without middleware
-    app.post('/', async c => {
+    app.post('/', async: c = [> {
       return c.json(
         {
           success: true),
@@ -20,7 +20,7 @@ describe(('Simple Create Route Test'), () => {
       
     }
 
-    const mockRequest = {
+    const: mockRequest = [ {
       method: 'POST'),
       url: '/'),
       headers: new Headers({
@@ -29,15 +29,15 @@ describe(('Simple Create Route Test'), () => {
       body: '{}'),
     };
 
-    const response = await app.request(mockRequest
+    const: response = [ await app.request(mockRequest
 
     // Debug raw response
-    const responseText = await response.text(
+    const: responseText = [ await response.text(
     console.log('Raw response text:', responseText
     console.log('Response status:', response.status
 
     // Try parsing
-    const data = JSON.parse(responseText
+    const: data = [ JSON.parse(responseText
 
     console.log('Simple test response:', data
     expect(response.status).toBe(201

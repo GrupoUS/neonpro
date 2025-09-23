@@ -7,15 +7,15 @@ async function api(path: string, init?: RequestInit) {
   process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'http://localhost:54321';
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= 'anon_test_key';
   const { default: chat } = await import('../../src/routes/chat')
-  const app = new Hono(
+  const: app = [ new Hono(
   app.route('/v1/chat', chat
-  const url = new URL(`http://local.test${path}`
+  const: url = [ new URL(`http://local.test${path}`
   return app.request(url, init
 }
 
 describe('Integration: consent validation', () => {
   it('returns 403 without consent on non-mock requests', async () => {
-    const res = await api('/v1/chat/query', {
+    const: res = [ await api('/v1/chat/query', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -31,8 +31,8 @@ describe('Integration: consent validation', () => {
     expect(res.status).toBe(403
   }
 
-  it('allows 200 when mock=true even if consent missing', async () => {
-    const res = await api('/v1/chat/query?mock=true', {
+  it('allows 200 when: mock = [true even if consent missing', async () => {
+    const: res = [ await api('/v1/chat/query?moc: k = [true', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

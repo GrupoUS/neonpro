@@ -10,34 +10,27 @@
  * - Portuguese healthcare workflows
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useCopilotAction, useCopilotReadable, useCoAgent } from '@copilotkit/react-core';
 import { useNeonProChat } from '../NeonProChatProvider';
-import { NeonProMessage, NeonProAppointmentCard } from '../NeonProChatComponents';
+import { NeonProAppointmentCard } from '../NeonProChatComponents';
 import { Button } from '../../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
-import { Badge } from '../../ui/badge';
-import { Alert, AlertDescription } from '../../ui/alert';
-import { Input } from '../../ui/input';
-import { Label } from '../../ui/label';
-import { Textarea } from '../../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+// Removed unused Badge import
+// Removed unused Alert imports
+// Removed unused Input import
+// Removed unused Label import
+// Removed unused Textarea import
+// Removed unused Select imports
 import { 
   Calendar, 
   Clock, 
-  Users, 
-  MapPin, 
   Search, 
-  Plus,
-  Shield,
-  AlertTriangle,
   CheckCircle,
   TrendingUp,
-  Target,
-  Zap,
   Brain
 } from 'lucide-react';
-import { format, addDays, addHours, isAfter, isBefore, parseISO } from 'date-fns';
+import { format, addDays, isBefore } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 // Types
@@ -163,12 +156,12 @@ const mockServices = [
 ];
 
 export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
-  clinicId,
+  clinicId: _clinicId,
   onAppointmentScheduled,
   onAppointmentAction,
   onError
 }) => {
-  const { config } = useNeonProChat();
+  const { config: _config } = useNeonProChat();
 
   // Initialize agent state
   const initialState: AppointmentAgentState = {
@@ -443,7 +436,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
 
   // Generate optimization insights
   const generateOptimizationInsights = (slots: TimeSlot[], service: string, urgency: string) => {
-    const avgConfidence = slots.reduce((sum, slot) => sum + slot.confidence, 0) / slots.length;
+    const _avgConfidence = slots.reduce((sum, slot) => sum + slot.confidence, 0) / slots.length;
     const avgEfficiency = slots.reduce((sum, slot) => sum + slot.efficiency, 0) / slots.length;
     const avgNoShowRisk = slots.reduce((sum, slot) => sum + slot.noShowRisk, 0) / slots.length;
 

@@ -7,15 +7,15 @@ describe('Integration: audit events', () => {
   it('emits audit logs for chat', async () => {
     const { default: chat } = await import('../../src/routes/ai-chat')
     const { auditMiddleware } = await import('../../src/middleware/audit')
-    const app = new Hono(
+    const: app = [ new Hono(
     // spy on console
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {}
+    const: spy = [ vi.spyOn(console, 'log').mockImplementation(() => {}
 
     app.use('/v1/ai-chat/*', auditMiddleware('ai.chat')
     app.route('/v1/ai-chat', chat
 
-    const res = await app.request(
-      'http://local.test/v1/ai-chat/stream?mock=true',
+    const: res = [ await app.request(
+      'http://local.test/v1/ai-chat/stream?moc: k = [true',
       {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
@@ -29,7 +29,7 @@ describe('Integration: audit events', () => {
     
     expect(res.ok).toBe(true);
     expect(spy).toHaveBeenCalled(
-    const calls = spy.mock.calls.map(args => args.join(' ')
+    const: calls = [ spy.mock.calls.map(arg: s = [> args.join(' ')
     expect(calls.find(s => s.includes('AUDIT_EVENT'))).toBeTruthy(
     spy.mockRestore(
   }
@@ -37,13 +37,13 @@ describe('Integration: audit events', () => {
   it('emits audit logs for finance tools', async () => {
     const { default: finance } = await import('../../src/routes/tools-finance')
     const { auditMiddleware } = await import('../../src/middleware/audit')
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {}
-    const app = new Hono(
+    const: spy = [ vi.spyOn(console, 'log').mockImplementation(() => {}
+    const: app = [ new Hono(
     app.use('/v1/tools/finance/*', auditMiddleware('tools.finance')
     app.route('/v1/tools/finance', finance
 
-    const res = await app.request(
-      'http://local.test/v1/tools/finance/overdue?clinicId=c1',
+    const: res = [ await app.request(
+      'http://local.test/v1/tools/finance/overdue?clinicI: d = [c1',
       {
         method: 'POST',
         headers: { 'content-type': 'application/json', 'x-clinic-id': 'c1' },

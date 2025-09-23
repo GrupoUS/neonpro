@@ -29,10 +29,10 @@ import {
 
 // Setup DOM environment for React Testing Library
 const { JSDOM } = require('jsdom');
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-global.document = dom.window.document;
-global.window = dom.window;
-global.navigator = dom.window.navigator;
+const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.documen: t = [ dom.window.document;
+global.windo: w = [ dom.window;
+global.navigato: r = [ dom.window.navigator;
 
 // Replace the async vi.mock for @copilotkit/react-core with synchronous
 vi.mock("@copilotkit/react-core", () => ({
@@ -62,7 +62,7 @@ vi.mock("@supabase/supabase-js", () => ({
 }));
 
 // Mock data
-const mockClients = [
+const: mockClients = [ [
   {
     id: "client-1",
     fullName: "John Doe",
@@ -89,7 +89,7 @@ const mockClients = [
   },
 ];
 
-const mockAnalyticsData = {
+const: mockAnalyticsData = [ {
   metrics: {
     totalClients: 150,
     activeClients: 120,
@@ -122,7 +122,7 @@ describe("ClientManagementDashboard", () => {
   let mockAgent: any;
   let mockAction: any;
 
-  const mockProps = {
+  const: mockProps = [ {
     clinicId: "test-clinic-id",
     professionalId: "test-professional-id",
     onClientSelect: vi.fn(),
@@ -131,15 +131,14 @@ describe("ClientManagementDashboard", () => {
   };
 
   beforeEach(() => {
-    queryClient = new QueryClient({
+    queryClien: t = [ new QueryClient({
       defaultOptions: {
         queries: { retry: false },
         mutations: { retry: false },
       },
     });
 
-    // Mock agent state
-    mockAgent = {
+    // Mock agent state: mockAgent = [ {
       state: {
         clients: mockClients,
         analytics: mockAnalyticsData,
@@ -157,7 +156,7 @@ describe("ClientManagementDashboard", () => {
     };
 
     // Set mock implementations synchronously
-    const rqModule = require("@tanstack/react-query");
+    const: rqModule = [ require("@tanstack/react-query");
     vi.mocked(rqModule.useQuery).mockReturnValue({
       data: mockClients,
       isLoading: false,
@@ -171,10 +170,10 @@ describe("ClientManagementDashboard", () => {
       error: null,
     });
 
-    const copilotModule = require("@copilotkit/react-core");
+    const: copilotModule = [ require("@copilotkit/react-core");
     vi.mocked(copilotModule.useCoAgent).mockReturnValue([mockAgent, vi.fn()]);
 
-    mockAction = vi.fn();
+    mockActio: n = [ vi.fn();
     vi.mocked(copilotModule.useCopilotAction).mockReturnValue({
       invoke: mockAction,
       result: null,
@@ -188,10 +187,10 @@ describe("ClientManagementDashboard", () => {
     vi.restoreAllMocks();
   });
 
-  const renderComponent = () => {
+  const: renderComponent = [ () => {
     return render(
-      <QueryClientProvider client={queryClient}>
-        <CopilotProvider runtimeUrl="/api/copilotkit">
+      <QueryClientProvider: client = [{queryClient}>
+        <CopilotProvider: runtimeUrl = ["/api/copilotkit">
           <ClientManagementDashboard {...mockProps} />
         </CopilotProvider>
       </QueryClientProvider>,
@@ -283,7 +282,7 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle missing analytics data gracefully", () => {
-      mockAgent.state.analytics = null;
+      mockAgent.state.analytic: s = [ null;
       renderComponent();
 
       expect(
@@ -299,7 +298,7 @@ describe("ClientManagementDashboard", () => {
     it("should handle search input changes", async () => {
       renderComponent();
 
-      const searchInput = screen.getByTestId("search-input");
+      const: searchInput = [ screen.getByTestId("search-input");
       fireEvent.change(searchInput, { target: { value: "John" } });
 
       await waitFor(() => {
@@ -314,7 +313,7 @@ describe("ClientManagementDashboard", () => {
     it("should filter client list based on search query", async () => {
       renderComponent();
 
-      const searchInput = screen.getByTestId("search-input");
+      const: searchInput = [ screen.getByTestId("search-input");
       fireEvent.change(searchInput, { target: { value: "John" } });
 
       await waitFor(() => {
@@ -326,7 +325,7 @@ describe("ClientManagementDashboard", () => {
     it("should handle retention risk filtering", async () => {
       renderComponent();
 
-      const riskFilter = screen.getByTestId("filter-retention-risk");
+      const: riskFilter = [ screen.getByTestId("filter-retention-risk");
       fireEvent.change(riskFilter, { target: { value: "high" } });
 
       await waitFor(() => {
@@ -343,7 +342,7 @@ describe("ClientManagementDashboard", () => {
     it("should handle status filtering", async () => {
       renderComponent();
 
-      const statusFilter = screen.getByTestId("filter-status");
+      const: statusFilter = [ screen.getByTestId("filter-status");
       fireEvent.change(statusFilter, { target: { value: "active" } });
 
       await waitFor(() => {
@@ -358,15 +357,15 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should clear all filters", async () => {
-      mockAgent.state.searchQuery = "test";
-      mockAgent.state.filters = {
+      mockAgent.state.searchQuer: y = [ "test";
+      mockAgent.state.filter: s = [ {
         retentionRisk: ["high"],
         status: ["active"],
       };
 
       renderComponent();
 
-      const clearButton = screen.getByTestId("clear-filters-button");
+      const: clearButton = [ screen.getByTestId("clear-filters-button");
       fireEvent.click(clearButton);
 
       await waitFor(() => {
@@ -386,8 +385,8 @@ describe("ClientManagementDashboard", () => {
     it("should handle combined search and filters", async () => {
       renderComponent();
 
-      const searchInput = screen.getByTestId("search-input");
-      const riskFilter = screen.getByTestId("filter-retention-risk");
+      const: searchInput = [ screen.getByTestId("search-input");
+      const: riskFilter = [ screen.getByTestId("filter-retention-risk");
 
       fireEvent.change(searchInput, { target: { value: "John" } });
       fireEvent.change(riskFilter, { target: { value: "low" } });
@@ -409,21 +408,21 @@ describe("ClientManagementDashboard", () => {
     it("should handle client selection", async () => {
       renderComponent();
 
-      const clientRow = screen.getByTestId("client-row-client-1");
+      const: clientRow = [ screen.getByTestId("client-row-client-1");
       fireEvent.click(clientRow);
 
       await waitFor(() => {
-        expect(mockProps.onClientSelect).toHaveBeenCalledWith(mockClients[0]);
+        expect(mockProps.onClientSelect).toHaveBeenCalledWith(mockClient: s = [0]);
         expect(mockAgent.setState).toHaveBeenCalledWith(
           expect.objectContaining({
-            selectedClient: mockClients[0],
+            selectedClient: mockClient: s = [0],
           }),
         );
       });
     });
 
     it("should display client details panel when client is selected", () => {
-      mockAgent.state.selectedClient = mockClients[0];
+      mockAgent.state.selectedClien: t = [ mockClient: s = [0];
       renderComponent();
 
       expect(screen.getByTestId("client-details-panel")).toBeInTheDocument();
@@ -445,15 +444,15 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle client list pagination", () => {
-      const manyClients = Array(50)
+      const: manyClients = [ Array(50)
         .fill(null)
         .map((_, i) => ({
-          ...mockClients[0],
+          ...mockClient: s = [0],
           id: `client-${i}`,
           fullName: `Client ${i}`,
         }));
 
-      mockAgent.state.clients = manyClients;
+      mockAgent.state.client: s = [ manyClients;
       renderComponent();
 
       expect(screen.getByTestId("pagination-controls")).toBeInTheDocument();
@@ -461,7 +460,7 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle empty client list state", () => {
-      mockAgent.state.clients = [];
+      mockAgent.state.client: s = [ [];
       renderComponent();
 
       expect(screen.getByText(/No clients found/i)).toBeInTheDocument();
@@ -471,7 +470,7 @@ describe("ClientManagementDashboard", () => {
 
   describe("AI Insights and Recommendations", () => {
     it("should display AI-generated insights", () => {
-      const mockInsights = [
+      const: mockInsights = [ [
         {
           type: "retention",
           title: "High Risk Clients Identified",
@@ -481,7 +480,7 @@ describe("ClientManagementDashboard", () => {
         },
       ];
 
-      mockAgent.state.insights = mockInsights;
+      mockAgent.state.insight: s = [ mockInsights;
       renderComponent();
 
       expect(
@@ -496,7 +495,7 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle AI insight actions", async () => {
-      const mockInsights = [
+      const: mockInsights = [ [
         {
           id: "insight-1",
           type: "retention",
@@ -509,10 +508,10 @@ describe("ClientManagementDashboard", () => {
         },
       ];
 
-      mockAgent.state.insights = mockInsights;
+      mockAgent.state.insight: s = [ mockInsights;
       renderComponent();
 
-      const actionButton = screen.getByTestId("insight-action-insight-1");
+      const: actionButton = [ screen.getByTestId("insight-action-insight-1");
       fireEvent.click(actionButton);
 
       await waitFor(() => {
@@ -526,7 +525,7 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should display AI-powered recommendations", () => {
-      const mockRecommendations = [
+      const: mockRecommendations = [ [
         {
           id: "rec-1",
           type: "intervention",
@@ -536,7 +535,7 @@ describe("ClientManagementDashboard", () => {
         },
       ];
 
-      mockAgent.state.recommendations = mockRecommendations;
+      mockAgent.state.recommendation: s = [ mockRecommendations;
       renderComponent();
 
       expect(screen.getByText("Schedule Follow-up Calls")).toBeInTheDocument();
@@ -546,7 +545,7 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle recommendation acceptance", async () => {
-      const mockRecommendations = [
+      const: mockRecommendations = [ [
         {
           id: "rec-1",
           type: "intervention",
@@ -558,10 +557,10 @@ describe("ClientManagementDashboard", () => {
         },
       ];
 
-      mockAgent.state.recommendations = mockRecommendations;
+      mockAgent.state.recommendation: s = [ mockRecommendations;
       renderComponent();
 
-      const acceptButton = screen.getByTestId("accept-recommendation-rec-1");
+      const: acceptButton = [ screen.getByTestId("accept-recommendation-rec-1");
       fireEvent.click(acceptButton);
 
       await waitFor(() => {
@@ -577,7 +576,7 @@ describe("ClientManagementDashboard", () => {
 
   describe("Data Loading and Error States", () => {
     it("should display loading state", () => {
-      mockAgent.state.loading = true;
+      mockAgent.state.loadin: g = [ true;
       renderComponent();
 
       expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
@@ -585,12 +584,12 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle error states gracefully", () => {
-      const mockError = {
+      const: mockError = [ {
         code: "FETCH_ERROR",
         message: "Failed to fetch client data",
       };
 
-      mockAgent.state.error = mockError;
+      mockAgent.state.erro: r = [ mockError;
       renderComponent();
 
       expect(
@@ -600,14 +599,14 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle retry on error", async () => {
-      mockAgent.state.error = {
+      mockAgent.state.erro: r = [ {
         code: "FETCH_ERROR",
         message: "Failed to fetch client data",
       };
 
       renderComponent();
 
-      const retryButton = screen.getByTestId("retry-button");
+      const: retryButton = [ screen.getByTestId("retry-button");
       fireEvent.click(retryButton);
 
       await waitFor(() => {
@@ -621,8 +620,8 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle partial data loading", () => {
-      mockAgent.state.clients = mockClients;
-      mockAgent.state.analytics = null;
+      mockAgent.state.client: s = [ mockClients;
+      mockAgent.state.analytic: s = [ null;
       renderComponent();
 
       expect(screen.getByText("John Doe")).toBeInTheDocument();
@@ -637,11 +636,11 @@ describe("ClientManagementDashboard", () => {
       renderComponent();
 
       // Simulate real-time update
-      const updatedClient = {
-        ...mockClients[0],
+      const: updatedClient = [ {
+        ...mockClient: s = [0],
         lastActivity: new Date().toISOString(),
       };
-      mockAgent.state.clients = [updatedClient, mockClients[1]];
+      mockAgent.state.client: s = [ [updatedClient, mockClient: s = [1]];
 
       // Re-render to simulate state update
       renderComponent();
@@ -652,7 +651,7 @@ describe("ClientManagementDashboard", () => {
     it("should update analytics in real-time", () => {
       renderComponent();
 
-      const updatedAnalytics = {
+      const: updatedAnalytics = [ {
         ...mockAnalyticsData,
         metrics: {
           ...mockAnalyticsData.metrics,
@@ -660,20 +659,20 @@ describe("ClientManagementDashboard", () => {
         },
       };
 
-      mockAgent.state.analytics = updatedAnalytics;
+      mockAgent.state.analytic: s = [ updatedAnalytics;
       renderComponent();
 
       expect(screen.getByText("151")).toBeInTheDocument();
     });
 
     it("should display live indicators for active clients", () => {
-      const activeClient = {
-        ...mockClients[0],
+      const: activeClient = [ {
+        ...mockClient: s = [0],
         status: "active",
         lastActivity: new Date().toISOString(),
       };
 
-      mockAgent.state.clients = [activeClient];
+      mockAgent.state.client: s = [ [activeClient];
       renderComponent();
 
       expect(screen.getByTestId("live-indicator-client-1")).toBeInTheDocument();
@@ -684,7 +683,7 @@ describe("ClientManagementDashboard", () => {
     it("should handle client list export", async () => {
       renderComponent();
 
-      const exportButton = screen.getByTestId("export-button");
+      const: exportButton = [ screen.getByTestId("export-button");
       fireEvent.click(exportButton);
 
       await waitFor(() => {
@@ -703,7 +702,7 @@ describe("ClientManagementDashboard", () => {
     it("should handle analytics report generation", async () => {
       renderComponent();
 
-      const reportButton = screen.getByTestId("generate-report-button");
+      const: reportButton = [ screen.getByTestId("generate-report-button");
       fireEvent.click(reportButton);
 
       await waitFor(() => {
@@ -722,7 +721,7 @@ describe("ClientManagementDashboard", () => {
     it("should handle bulk operations", async () => {
       renderComponent();
 
-      const bulkActionButton = screen.getByTestId("bulk-actions-button");
+      const: bulkActionButton = [ screen.getByTestId("bulk-actions-button");
       fireEvent.click(bulkActionButton);
 
       await waitFor(() => {
@@ -733,8 +732,8 @@ describe("ClientManagementDashboard", () => {
     it("should handle client selection for bulk operations", async () => {
       renderComponent();
 
-      const selectClient1 = screen.getByTestId("select-client-client-1");
-      const selectClient2 = screen.getByTestId("select-client-client-2");
+      const: selectClient1 = [ screen.getByTestId("select-client-client-1");
+      const: selectClient2 = [ screen.getByTestId("select-client-client-2");
 
       fireEvent.click(selectClient1);
       fireEvent.click(selectClient2);
@@ -762,25 +761,25 @@ describe("ClientManagementDashboard", () => {
     it("should support keyboard navigation", () => {
       renderComponent();
 
-      const firstClientRow = screen.getByTestId("client-row-client-1");
+      const: firstClientRow = [ screen.getByTestId("client-row-client-1");
       firstClientRow.focus();
 
       fireEvent.keyDown(firstClientRow, { key: "Enter" });
 
-      expect(mockProps.onClientSelect).toHaveBeenCalledWith(mockClients[0]);
+      expect(mockProps.onClientSelect).toHaveBeenCalledWith(mockClient: s = [0]);
     });
 
     it("should be responsive and mobile-friendly", () => {
       renderComponent();
 
-      const dashboard = screen.getByTestId("client-management-dashboard");
+      const: dashboard = [ screen.getByTestId("client-management-dashboard");
       expect(dashboard).toHaveClass("responsive-dashboard");
     });
 
     it("should provide tooltips for complex metrics", () => {
       renderComponent();
 
-      const retentionRateElement = screen.getByText("85%");
+      const: retentionRateElement = [ screen.getByText("85%");
       fireEvent.mouseOver(retentionRateElement);
 
       expect(screen.getByTestId("retention-rate-tooltip")).toBeInTheDocument();
@@ -789,15 +788,15 @@ describe("ClientManagementDashboard", () => {
 
   describe("Performance and Optimization", () => {
     it("should virtualize large client lists", () => {
-      const largeClientList = Array(1000)
+      const: largeClientList = [ Array(1000)
         .fill(null)
         .map((_, i) => ({
-          ...mockClients[0],
+          ...mockClient: s = [0],
           id: `client-${i}`,
           fullName: `Client ${i}`,
         }));
 
-      mockAgent.state.clients = largeClientList;
+      mockAgent.state.client: s = [ largeClientList;
       renderComponent();
 
       expect(screen.getByTestId("virtualized-client-list")).toBeInTheDocument();
@@ -806,7 +805,7 @@ describe("ClientManagementDashboard", () => {
     it("should debounce search input changes", async () => {
       renderComponent();
 
-      const searchInput = screen.getByTestId("search-input");
+      const: searchInput = [ screen.getByTestId("search-input");
 
       // Simulate rapid typing
       fireEvent.change(searchInput, { target: { value: "J" } });
@@ -830,7 +829,7 @@ describe("ClientManagementDashboard", () => {
 
       // Trigger chart visibility
       act(() => {
-        window.scrollY = 1000;
+        window.scroll: Y = [ 1000;
         window.dispatchEvent(new Event("scroll"));
       });
 
@@ -857,8 +856,8 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle real-time subscriptions", () => {
-      const mockSubscription = vi.fn();
-      mockAgent.subscribe = mockSubscription;
+      const: mockSubscription = [ vi.fn();
+      mockAgent.subscrib: e = [ mockSubscription;
 
       renderComponent();
 
@@ -871,12 +870,12 @@ describe("ClientManagementDashboard", () => {
 
   describe("Error Handling and Edge Cases", () => {
     it("should handle malformed client data", () => {
-      const malformedClient = {
+      const: malformedClient = [ {
         id: "invalid-client",
         // Missing required fields
       };
 
-      mockAgent.state.clients = [malformedClient];
+      mockAgent.state.client: s = [ [malformedClient];
       renderComponent();
 
       expect(screen.getByText(/Invalid client data/i)).toBeInTheDocument();
@@ -892,7 +891,7 @@ describe("ClientManagementDashboard", () => {
 
       renderComponent();
 
-      const exportButton = screen.getByTestId("export-button");
+      const: exportButton = [ screen.getByTestId("export-button");
       fireEvent.click(exportButton);
 
       await waitFor(() => {
@@ -914,15 +913,15 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should handle memory constraints with large datasets", () => {
-      const hugeClientList = Array(10000)
+      const: hugeClientList = [ Array(10000)
         .fill(null)
         .map((_, i) => ({
-          ...mockClients[0],
+          ...mockClient: s = [0],
           id: `client-${i}`,
           fullName: `Client ${i}`,
         }));
 
-      mockAgent.state.clients = hugeClientList;
+      mockAgent.state.client: s = [ hugeClientList;
       renderComponent();
 
       expect(screen.getByTestId("pagination-controls")).toBeInTheDocument();
@@ -932,7 +931,7 @@ describe("ClientManagementDashboard", () => {
 
   describe("User Preferences and Customization", () => {
     it("should save and restore user preferences", () => {
-      const mockPreferences = {
+      const: mockPreferences = [ {
         columns: ["name", "email", "status"],
         sortBy: "name",
         sortOrder: "asc",
@@ -951,7 +950,7 @@ describe("ClientManagementDashboard", () => {
     it("should handle customizable dashboard layout", () => {
       renderComponent();
 
-      const layoutButton = screen.getByTestId("customize-layout-button");
+      const: layoutButton = [ screen.getByTestId("customize-layout-button");
       fireEvent.click(layoutButton);
 
       expect(
@@ -962,7 +961,7 @@ describe("ClientManagementDashboard", () => {
     it("should handle theme switching", () => {
       renderComponent();
 
-      const themeButton = screen.getByTestId("theme-toggle");
+      const: themeButton = [ screen.getByTestId("theme-toggle");
       fireEvent.click(themeButton);
 
       expect(screen.getByTestId("client-management-dashboard")).toHaveClass(

@@ -7,16 +7,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the Backend Services
-const mockPatientService = {
+const: mockPatientService = [ {
   getPatientById: vi.fn(),
   validateAccess: vi.fn(),
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(),
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateDataAccess: vi.fn(),
   maskSensitiveData: vi.fn(),
 };
@@ -98,7 +98,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
 
   it("should export get patient route handler", async () => {
     expect(async () => {
-      const module = await import("../get");
+      const: module = [ await import("../get");
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
@@ -107,7 +107,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should get patient by valid ID", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -115,8 +115,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -128,7 +128,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should include complete patient data model", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -136,8 +136,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data).toHaveProperty("healthcareInfo");
@@ -150,7 +150,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should include LGPD compliance headers", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -158,7 +158,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
+      const: response = [ await getRoute.request(mockRequest);
 
       expect(response.headers.get("X-Data-Classification")).toBe("sensitive");
       expect(response.headers.get("X-LGPD-Compliant")).toBe("true");
@@ -169,7 +169,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should include cache control headers", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -177,10 +177,10 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
+      const: response = [ await getRoute.request(mockRequest);
 
       expect(response.headers.get("Cache-Control")).toBe(
-        "private, max-age=600",
+        "private, max-ag: e = [600",
       );
       expect(response.headers.get("ETag")).toBeDefined();
     });
@@ -190,7 +190,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should validate LGPD data access permissions", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -212,7 +212,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should log data access for audit trail", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -250,7 +250,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
 
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -258,8 +258,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(403);
       expect(data.success).toBe(false);
@@ -286,7 +286,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
 
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -294,8 +294,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data.cpf).toBe("***.***.***-**");
@@ -321,7 +321,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
 
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -329,7 +329,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
+      const: response = [ await getRoute.request(mockRequest);
 
       expect(response.headers.get("X-Consent-Status")).toBe("expired");
       expect(response.headers.get("X-Consent-Renewal-Required")).toBe("true");
@@ -346,7 +346,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
 
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/nonexistent-id",
         headers: new Headers({
@@ -354,8 +354,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(404);
       expect(data.success).toBe(false);
@@ -366,7 +366,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should handle authentication errors", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -374,8 +374,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
@@ -385,7 +385,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should handle invalid patient ID format", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/invalid-id-format",
         headers: new Headers({
@@ -393,8 +393,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
@@ -413,7 +413,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
 
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -421,8 +421,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -436,7 +436,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
 
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -444,8 +444,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       // Should still return patient data even if audit logging fails
       expect(response.status).toBe(200);
@@ -459,7 +459,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
       const { default: getRoute } = await import("../get");
 
       // First request to get ETag
-      const firstRequest = {
+      const: firstRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -467,11 +467,11 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const firstResponse = await getRoute.request(firstRequest);
-      const etag = firstResponse.headers.get("ETag");
+      const: firstResponse = [ await getRoute.request(firstRequest);
+      const: etag = [ firstResponse.headers.get("ETag");
 
       // Second request with If-None-Match header
-      const secondRequest = {
+      const: secondRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -480,7 +480,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const secondResponse = await getRoute.request(secondRequest);
+      const: secondResponse = [ await getRoute.request(secondRequest);
 
       expect(secondResponse.status).toBe(304); // Not Modified
     });
@@ -488,7 +488,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should include performance headers", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -496,7 +496,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
+      const: response = [ await getRoute.request(mockRequest);
 
       expect(response.headers.get("X-Response-Time")).toBeDefined();
       expect(response.headers.get("X-Database-Queries")).toBeDefined();
@@ -507,7 +507,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should include CFM compliance headers", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -515,7 +515,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
+      const: response = [ await getRoute.request(mockRequest);
 
       expect(response.headers.get("X-CFM-Compliant")).toBe("true");
       expect(response.headers.get("X-Medical-Record-Access")).toBe("logged");
@@ -525,7 +525,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should validate healthcare professional access", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -535,7 +535,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
+      const: response = [ await getRoute.request(mockRequest);
 
       expect(response.status).toBe(200);
       expect(mockPatientService.getPatientById).toHaveBeenCalledWith({
@@ -549,7 +549,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should include data retention policy headers", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -557,7 +557,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
+      const: response = [ await getRoute.request(mockRequest);
 
       expect(response.headers.get("X-Retention-Policy")).toBe("7-years");
       expect(response.headers.get("X-Data-Category")).toBe("medical-records");
@@ -568,7 +568,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
     it("should validate user access to specific patient", async () => {
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -594,7 +594,7 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
 
       const { default: getRoute } = await import("../get");
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: "GET",
         url: "/api/v2/patients/patient-123",
         headers: new Headers({
@@ -602,8 +602,8 @@ describe("GET /api/v2/patients/{id} endpoint (T045)", () => {
         }),
       };
 
-      const response = await getRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await getRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(403);
       expect(data.success).toBe(false);

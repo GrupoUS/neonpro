@@ -20,6 +20,7 @@ import {
   apiRateLimitingService,
   type RateLimitContext,
 } from "./api-rate-limiting.js";
+import { logHealthcareError, notificationLogger } from '../logging/healthcare-logger';
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -632,11 +633,12 @@ export class NotificationService {
       this.loadDefaultTemplates();
       this.isInitialized = true;
 
-      console.log(
-        "📢 [NotificationService] Healthcare notification service initialized securely",
+      notificationLogger.info(
+        "Healthcare notification service initialized securely",
+        { component: 'notification-service', timestamp: new Date().toISOString() },
       );
     } catch (error) {
-      console.error("Failed to initialize notification _service:", error);
+      logHealthcareError('notification-service', error, { method: 'initialize' });
     }
   }
 
@@ -675,8 +677,9 @@ export class NotificationService {
    */
   private loadDefaultTemplates(): void {
     // TODO: Load templates from database or configuration
-    console.log(
-      "📄 [NotificationService] Loading default notification templates securely",
+    notificationLogger.info(
+      "Loading default notification templates securely",
+      { component: 'notification-service', timestamp: new Date().toISOString() },
     );
   }
 
@@ -742,13 +745,14 @@ export class NotificationService {
       // Use secure logging for LGPD compliance
       const { maskSensitiveData } = await import("@neonpro/security");
       const maskedId = maskSensitiveData(id);
-      console.log(
-        `📢 [NotificationService] Created ${params.priority} notification: ${maskedId}`,
+      notificationLogger.info(
+        "Notification created securely",
+        { priority: params.priority, notificationId: maskedId, component: 'notification-service' },
       );
 
       return validatedNotification;
     } catch (error) {
-      console.error("Failed to create notification:", error);
+      logHealthcareError('notification-service', error, { method: 'createNotification' });
       throw error;
     }
   }
@@ -918,9 +922,13 @@ export class NotificationService {
 
     // Check queue size limits
     if (queue.length > this.config.maxQueueSize) {
-      console.warn(
-        `Queue size limit exceeded for priority: ${notification.priority}`,
-      );
+      notificationLogger.warn("Queue size limit exceeded", {
+        priority: notification.priority,
+        currentSize: queue.length,
+        maxSize: this.config.maxQueueSize,
+        component: 'notification-service',
+        timestamp: new Date().toISOString()
+      });
       // Remove oldest non-emergency notifications
       if (notification.priority !== "emergency") {
         queue.shift();
@@ -955,7 +963,7 @@ export class NotificationService {
         await this.processBatch(batch);
       }
     } catch (error) {
-      console.error("Error processing notification queue:", error);
+      logHealthcareError('notification-service', error, { method: 'processQueue' });
     }
   }
 
@@ -1035,10 +1043,7 @@ export class NotificationService {
         await this.deliverToChannel(notification, channel);
       }
     } catch (error) {
-      console.error(
-        `Failed to process notification ${notification.id}:`,
-        error,
-      );
+      logHealthcareError('notification-service', error, { method: 'processNotification', notificationId: notification.id });
       await this.updateNotificationStatus(notification.id, "failed");
     }
   }
@@ -1133,10 +1138,7 @@ export class NotificationService {
       // Update status to delivered
       await this.updateNotificationStatus(notification.id, "delivered");
     } catch (error) {
-      console.error(
-        `Failed to deliver notification ${notification.id} via ${channel}:`,
-        error,
-      );
+      logHealthcareError('notification-service', error, { method: 'deliverToChannel', notificationId: notification.id, channel });
 
       // Schedule retry if within retry limits
       if (notification.retryCount < this.config.retrySettings.maxRetries) {
@@ -1162,9 +1164,11 @@ export class NotificationService {
     const { maskSensitiveData } = await import("@neonpro/security");
     const maskedNotificationId = maskSensitiveData(notification.id);
 
-    console.log(
-      `📧 [NotificationService] Delivering email notification: ${maskedNotificationId}`,
-    );
+    notificationLogger.info("Delivering email notification", {
+      notificationId: maskedNotificationId,
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
 
     // Update attempt status to sent
     attempt.status = "sent";
@@ -1183,9 +1187,11 @@ export class NotificationService {
     // Use secure logging for LGPD compliance
     const { maskSensitiveData } = await import("@neonpro/security");
     const maskedId = maskSensitiveData(notification.id);
-    console.log(
-      `📱 [NotificationService] Delivering SMS notification: ${maskedId}`,
-    );
+    notificationLogger.info("Delivering SMS notification", {
+      notificationId: maskedId,
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
 
     // Update attempt status to sent
     attempt.status = "sent";
@@ -1204,9 +1210,11 @@ export class NotificationService {
     // Use secure logging for LGPD compliance
     const { maskSensitiveData } = await import("@neonpro/security");
     const maskedId = maskSensitiveData(notification.id);
-    console.log(
-      `🔔 [NotificationService] Delivering push notification: ${maskedId}`,
-    );
+    notificationLogger.info("Delivering push notification", {
+      notificationId: maskedId,
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
 
     // Update attempt status to sent
     attempt.status = "sent";
@@ -1225,9 +1233,11 @@ export class NotificationService {
     // Use secure logging for LGPD compliance
     const { maskSensitiveData } = await import("@neonpro/security");
     const maskedId = maskSensitiveData(notification.id);
-    console.log(
-      `💬 [NotificationService] Delivering in-app notification: ${maskedId}`,
-    );
+    notificationLogger.info("Delivering in-app notification", {
+      notificationId: maskedId,
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
 
     // Update attempt status to sent
     attempt.status = "sent";
@@ -1246,9 +1256,11 @@ export class NotificationService {
     // Use secure logging for LGPD compliance
     const { maskSensitiveData } = await import("@neonpro/security");
     const maskedId = maskSensitiveData(notification.id);
-    console.log(
-      `📞 [NotificationService] Delivering voice notification: ${maskedId}`,
-    );
+    notificationLogger.info("Delivering voice notification", {
+      notificationId: maskedId,
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
 
     // For emergency and critical notifications, voice delivery is essential
     if (
@@ -1258,9 +1270,11 @@ export class NotificationService {
       // Use secure logging for LGPD compliance
       const { maskSensitiveData } = await import("@neonpro/security");
       const maskedId = maskSensitiveData(notification.id);
-      console.log(
-        `🚨 [NotificationService] High priority voice delivery for ${maskedId}`,
-      );
+      notificationLogger.info("High priority voice delivery", {
+        notificationId: maskedId,
+        component: 'notification-service',
+        timestamp: new Date().toISOString()
+      });
 
       // TODO: Implement actual voice call delivery
       // - Use healthcare-approved voice service provider
@@ -1272,9 +1286,11 @@ export class NotificationService {
       attempt.status = "sent";
       attempt.timestamp = new Date().toISOString();
     } else {
-      console.log(
-        `ℹ️ [NotificationService] Voice delivery not implemented for priority: ${notification.priority}`,
-      );
+      notificationLogger.info("Voice delivery not implemented", {
+        priority: notification.priority,
+        component: 'notification-service',
+        timestamp: new Date().toISOString()
+      });
       attempt.status = "failed";
       attempt.errorCode = "VOICE_NOT_IMPLEMENTED";
       attempt.errorMessage =
@@ -1398,7 +1414,7 @@ export class NotificationService {
         retryAfter: result.retryAfter,
       };
     } catch (error) {
-      console.error("Rate limit check failed:", error);
+      logHealthcareError('notification-service', error, { method: 'checkRateLimit' });
       // Fail open for healthcare notifications to ensure delivery
       return { allowed: true };
     }
@@ -1417,9 +1433,11 @@ export class NotificationService {
       // Use secure logging for LGPD compliance
       const { maskSensitiveData } = await import("@neonpro/security");
       const maskedId = maskSensitiveData(notification.id);
-      console.log(
-        `🚨 [NotificationService] Emergency notification - bypassing consent check: ${maskedId}`,
-      );
+      notificationLogger.info("Emergency notification - bypassing consent check", {
+        notificationId: maskedId,
+        component: 'notification-service',
+        timestamp: new Date().toISOString()
+      });
       return true;
     }
 
@@ -1428,9 +1446,11 @@ export class NotificationService {
       notification.healthcareContext?.patientContext?.consentStatus;
 
     if (!consentStatus) {
-      console.warn(
-        `⚠️ [NotificationService] No consent data available for notification: ${notification.id}`,
-      );
+      notificationLogger.warn("No consent data available", {
+        notificationId: notification.id,
+        component: 'notification-service',
+        timestamp: new Date().toISOString()
+      });
       return false;
     }
 
@@ -1466,9 +1486,12 @@ export class NotificationService {
     // Use secure logging for LGPD compliance
     const { maskSensitiveData } = await import("@neonpro/security");
     const maskedId = maskSensitiveData(notification.id);
-    console.log(
-      `🔒 [NotificationService] Consent validation for ${maskedId}: ${hasConsent ? "Granted" : "Denied"}`,
-    );
+    notificationLogger.info("Consent validation performed", {
+      notificationId: maskedId,
+      consentGranted: hasConsent,
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
     return hasConsent;
   }
 
@@ -1484,9 +1507,13 @@ export class NotificationService {
     const { maskSensitiveData } = await import("@neonpro/security");
     const maskedId = maskSensitiveData(notificationId);
     const maskedError = errorMessage ? maskSensitiveData(errorMessage) : "";
-    console.log(
-      `Updating notification ${maskedId} status to ${status}${maskedError ? ` with error: ${maskedError}` : ""}`,
-    );
+    notificationLogger.info("Notification status updated", {
+      notificationId: maskedId,
+      status,
+      hasError: !!maskedError,
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
     // TODO: Implement actual status update persistence
   }
 
@@ -1515,9 +1542,14 @@ export class NotificationService {
     // Use secure logging for LGPD compliance
     const { maskSensitiveData } = await import("@neonpro/security");
     const maskedId = maskSensitiveData(notification.id);
-    console.log(
-      `Scheduled retry ${retryCount} for notification ${maskedId} via ${channel} at ${nextRetryAt.toISOString()}`,
-    );
+    notificationLogger.info("Notification retry scheduled", {
+      notificationId: maskedId,
+      retryCount,
+      channel,
+      scheduledAt: nextRetryAt.toISOString(),
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
@@ -1574,9 +1606,10 @@ export class NotificationService {
 
     this.isInitialized = false;
 
-    console.log(
-      "🔄 [NotificationService] Notification service destroyed and resources cleaned up",
-    );
+    notificationLogger.info("Notification service destroyed", {
+      component: 'notification-service',
+      timestamp: new Date().toISOString()
+    });
   }
 }
 

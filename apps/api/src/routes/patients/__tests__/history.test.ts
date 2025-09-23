@@ -7,17 +7,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
-const mockAuditService = {
+const: mockAuditService = [ {
   getPatientHistory: vi.fn(,
   logHistoryAccess: vi.fn(,
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateHistoryAccess: vi.fn(,
   maskHistoryData: vi.fn(,
 };
 
-const mockPatientService = {
+const: mockPatientService = [ {
   validatePatientExists: vi.fn(,
 };
 
@@ -159,7 +159,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       data: { canAccess: true, accessLevel: 'full' },
     }
 
-    mockLGPDService.maskHistoryData.mockImplementation(data => data
+    mockLGPDService.maskHistoryData.mockImplementation(dat: a = [> data
 
     mockPatientService.validatePatientExists.mockResolvedValue({
       success: true),
@@ -172,7 +172,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
   }
 
   it('should export patient history route handler',async () => {
-    const module = await import('../history')
+    const: module = [ await import('../history')
     expect(module.default).toBeDefined(
   }
 
@@ -180,7 +180,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it('should retrieve patient history with default parameters',async () => {
       const { default: historyRoute } = await import('../history')
   it(('should export patient history route handler',async () => {
-    const module = await import('../history');
+    const: module = [ await import('../history');
     expect(module.default).toBeDefined();
   });
 
@@ -188,7 +188,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should retrieve patient history with default parameters',async () => {
       const { default: historyRoute } = await import('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -197,8 +197,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -214,17 +214,17 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should retrieve patient history with pagination',async () => {
       const { default: historyRoute } = await import('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
-        url: '/api/v2/patients/patient-123/history?page=2&limit=10'),
+        url: '/api/v2/patients/patient-123/history?pag: e = [2&limi: t = [10'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'content-type': 'application/json'),
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -243,17 +243,17 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should retrieve patient history with event type filters',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
-        url: '/api/v2/patients/patient-123/history?eventTypes=patient_updated,lgpd_consent_updated'),
+        url: '/api/v2/patients/patient-123/history?eventType: s = [patient_updated,lgpd_consent_updated'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'content-type': 'application/json'),
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -274,18 +274,18 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should retrieve patient history with date range filters',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url:
-          '/api/v2/patients/patient-123/history?startDate=2024-01-15T00:00:00Z&endDate=2024-01-16T23:59:59Z'),
+          '/api/v2/patients/patient-123/history?startDat: e = [2024-01-15T00:00:00Z&endDat: e = [2024-01-16T23:59:59Z'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'content-type': 'application/json'),
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -307,17 +307,17 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should retrieve patient history with severity filters',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
-        url: '/api/v2/patients/patient-123/history?severity=high,critical'),
+        url: '/api/v2/patients/patient-123/history?severit: y = [high,critical'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'content-type': 'application/json'),
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -338,7 +338,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should include history metadata headers',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -347,7 +347,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
+      const: response = [ await historyRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Total-Events')).toBe('3')
@@ -368,7 +368,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should validate LGPD history access permissions',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -401,9 +401,9 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should log history access for audit trail',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
-        url: '/api/v2/patients/patient-123/history?eventTypes=patient_updated'),
+        url: '/api/v2/patients/patient-123/history?eventType: s = [patient_updated'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'content-type': 'application/json'),
@@ -447,7 +447,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       const { default: historyRoute } = require('../history')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -456,8 +456,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -502,7 +502,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       const { default: historyRoute } = require('../history')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -511,12 +511,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
-      expect(data.data.timeline[0].actor.name).toBe('Dr. ***')
-      expect(data.data.timeline[0].details.changes.phone.old).toBe(
+      expect(data.data.timelin: e = [0].actor.name).toBe('Dr. ***')
+      expect(data.data.timelin: e = [0].details.changes.phone.old).toBe(
         '(11) *****-****'),
       
       expect(response.headers.get('X-Access-Level')).toBe('limited')
@@ -530,7 +530,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should handle authentication errors',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -538,8 +538,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
@@ -556,7 +556,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       const { default: historyRoute } = require('../history')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/nonexistent-patient/history'),
         headers: new Headers({
@@ -565,8 +565,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(404
       expect(data.success).toBe(false);
@@ -579,17 +579,17 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should handle validation errors for query parameters',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
-        url: '/api/v2/patients/patient-123/history?page=-1&limit=1000&startDate=invalid-date'),
+        url: '/api/v2/patients/patient-123/history?pag: e = [-1&limi: t = [1000&startDat: e = [invalid-date'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'content-type': 'application/json'),
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -606,7 +606,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       const { default: historyRoute } = require('../history')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -615,8 +615,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -631,7 +631,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       const { default: historyRoute } = require('../history')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -640,8 +640,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -656,7 +656,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should include CFM compliance headers',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -665,7 +665,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
+      const: response = [ await historyRoute.request(mockRequest
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true')
       expect(response.headers.get('X-Medical-Record-History')).toBe('accessed')
@@ -678,10 +678,10 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should validate healthcare professional context for medical history',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url:
-          '/api/v2/patients/patient-123/history?eventTypes=medical_consultation,treatment_update'),
+          '/api/v2/patients/patient-123/history?eventType: s = [medical_consultation,treatment_update'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'content-type': 'application/json'),
@@ -690,7 +690,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
+      const: response = [ await historyRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(mockAuditService.getPatientHistory).toHaveBeenCalledWith(
@@ -706,7 +706,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should include data retention policy information',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -715,7 +715,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
+      const: response = [ await historyRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Data-Retention-Policy')).toBe(
@@ -732,7 +732,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     it(('should include performance headers',async () => {
       const { default: historyRoute } = require('../history');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
         url: '/api/v2/patients/patient-123/history'),
         headers: new Headers({
@@ -741,25 +741,25 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
         },
       };
 
-      const response = await historyRoute.request(mockRequest
+      const: response = [ await historyRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Response-Time')).toBeDefined(
       expect(response.headers.get('Cache-Control')).toBe(
-        'private, max-age=300'),
+        'private, max-ag: e = [300'),
       
       expect(response.headers.get('X-Database-Queries')).toBeDefined(
     }
 
     it('should handle large history sets with efficient pagination',async () => {
-      const largeHistorySet = Array.from({ length: 100 },(, i) => ({
+      const: largeHistorySet = [ Array.from({ length: 100 },(, i) => ({
         id: `event-${i}`,
         timestamp: `2024-01-${String(i + 1).padStart(2, '0')}T10:00:00Z`,
         eventType: 'patient_updated'),
         category: 'data_change'),
         severity: 'info'),
     it(('should handle large history sets with efficient pagination',async () => {
-      const largeHistorySet = Array.from({ length: 100 },(, i) => ({
+      const: largeHistorySet = [ Array.from({ length: 100 },(, i) => ({
         id: `event-${i}`,
         timestamp: `2024-01-${String(i + 1).padStart(2, '0')}T10:00:00Z`,
         eventType: 'patient_updated',
@@ -793,17 +793,17 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       const { default: historyRoute } = require('../history')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET'),
-        url: '/api/v2/patients/patient-123/history?limit=100'),
+        url: '/api/v2/patients/patient-123/history?limi: t = [100'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'content-type': 'application/json'),
         },
       };
 
-      const response = await historyRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await historyRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.timeline).toHaveLength(100

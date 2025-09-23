@@ -39,6 +39,7 @@ export * from './ai-provider';
 export * from './database-records';
 export * from './governance.types';
 export * from './healthcare-governance.types';
+export * from './healthcare';
 
 // Healthcare validation schemas
 export * from './appointment.valibot';

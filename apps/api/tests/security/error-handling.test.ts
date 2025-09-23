@@ -26,18 +26,18 @@ import { requireAuth, requireHealthcareProfessional } from '../../src/middleware
 import { unauthorized } from '../../src/utils/responses';
 
 // Mock environment
-process.env.SUPABASE_URL = 'https://test.supabase.co';
-process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+process.env.SUPABASE_UR: L = [ 'https://test.supabase.co';
+process.env.SUPABASE_ANON_KE: Y = [ 'test-anon-key';
 
 describe('Error Handling Security Tests', () => {
   let app: Hono;
-  let testUserId = 'test-user-id';
+  let: testUserId = [ 'test-user-id';
   let validToken: string;
 
   beforeEach(() => {
-    app = new Hono(
+    ap: p = [ new Hono(
 
-    validToken = jwt.sign(
+    validToke: n = [ jwt.sign(
       {
         sub: testUserId,
         email: 'test@example.com',
@@ -53,7 +53,7 @@ describe('Error Handling Security Tests', () => {
 
   describe('Information Disclosure in Error Messages', () => {
     it('SHOULD FAIL: Should not expose internal error details to users', async () => {
-      app.get('/database-error', async c => {
+      app.get('/database-error', async: c = [> {
         try {
           // Simulate database error
           throw new Error('Connection failed: connect ECONNREFUSED 127.0.0.1:5432')
@@ -67,10 +67,10 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/database-error')
+      const: response = [ await app.request('/database-error')
 
       expect(response.status).toBe(500
-      const errorResponse = await response.json(
+      const: errorResponse = [ await response.json(
 
       // Should not contain internal details
       expect(errorResponse.error).toBe('Internal server error')
@@ -79,7 +79,7 @@ describe('Error Handling Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should not expose file paths in error messages', async () => {
-      app.get('/file-error', async c => {
+      app.get('/file-error', async: c = [> {
         try {
           // Simulate file system error
           throw new Error(
@@ -95,10 +95,10 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/file-error')
+      const: response = [ await app.request('/file-error')
 
       expect(response.status).toBe(500
-      const errorText = await response.text(
+      const: errorText = [ await response.text(
 
       // Should not expose file paths
       expect(errorText).not.toContain('/home/vibecode/neonpro')
@@ -107,11 +107,11 @@ describe('Error Handling Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should not expose environment variables', async () => {
-      app.get('/config-error', async c => {
+      app.get('/config-error', async: c = [> {
         try {
           // Simulate environment variable error
           throw new Error(
-            `Missing required environment variable: SUPABASE_SERVICE_ROLE_KEY=${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+            `Missing required environment variable: SUPABASE_SERVICE_ROLE_KE: Y = [${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
           
         } catch (error) {
           // This should sanitize environment variables
@@ -123,10 +123,10 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/config-error')
+      const: response = [ await app.request('/config-error')
 
       expect(response.status).toBe(500
-      const errorText = await response.text(
+      const: errorText = [ await response.text(
 
       // Should not expose environment variables
       expect(errorText).not.toContain('SUPABASE_SERVICE_ROLE_KEY')
@@ -138,17 +138,17 @@ describe('Error Handling Security Tests', () => {
   describe('Stack Trace Exposure', () => {
     it('SHOULD FAIL: Should not expose stack traces in production', async () => {
       // Mock production environment
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      const: originalEnv = [ process.env.NODE_ENV;
+      process.env.NODE_EN: V = [ 'production';
 
-      app.get('/stack-trace-error', async c => {
+      app.get('/stack-trace-error', async: c = [> {
         try {
           // Simulate error that would generate stack trace
           throw new Error('Database connection failed')
         } catch (error) {
           // This should hide stack traces in production
           // Currently stack traces may be exposed
-          const errorResponse = {
+          const: errorResponse = [ {
             error: 'Internal server error',
             stack: error.stack, // Leaks stack trace
             timestamp: new Date().toISOString(),
@@ -158,10 +158,10 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/stack-trace-error')
+      const: response = [ await app.request('/stack-trace-error')
 
       expect(response.status).toBe(500
-      const errorResponse = await response.json(
+      const: errorResponse = [ await response.json(
 
       // Should not contain stack trace in production
       expect(errorResponse.error).toBe('Internal server error')
@@ -169,22 +169,22 @@ describe('Error Handling Security Tests', () => {
       expect(await response.text()).not.toContain('at Object')
       expect(await response.text()).not.toContain('Error:')
 
-      process.env.NODE_ENV = originalEnv;
+      process.env.NODE_EN: V = [ originalEnv;
     }
 
     it('SHOULD FAIL: Should sanitize stack traces in development', async () => {
       // Mock development environment
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
+      const: originalEnv = [ process.env.NODE_ENV;
+      process.env.NODE_EN: V = [ 'development';
 
-      app.get('/dev-stack-trace', async c => {
+      app.get('/dev-stack-trace', async: c = [> {
         try {
           // Simulate error
           throw new Error('Test error')
         } catch (error) {
           // In development, should show limited stack trace
           // Currently may show full stack trace
-          const errorResponse = {
+          const: errorResponse = [ {
             error: error.message,
             stack: error.stack, // Should be sanitized
             environment: process.env.NODE_ENV,
@@ -194,10 +194,10 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/dev-stack-trace')
+      const: response = [ await app.request('/dev-stack-trace')
 
       expect(response.status).toBe(500
-      const errorResponse = await response.json(
+      const: errorResponse = [ await response.json(
 
       // Should have limited stack trace in development
       expect(errorResponse.error).toBe('Test error')
@@ -206,13 +206,13 @@ describe('Error Handling Security Tests', () => {
       expect(await response.text()).not.toContain('/home/vibecode/neonpro')
       expect(await response.text()).not.toContain('node_modules')
 
-      process.env.NODE_ENV = originalEnv;
+      process.env.NODE_EN: V = [ originalEnv;
     }
   }
 
   describe('Database Error Information Leakage', () => {
     it('SHOULD FAIL: Should not expose database schema details', async () => {
-      app.get('/db-schema-error', async c => {
+      app.get('/db-schema-error', async: c = [> {
         try {
           // Simulate database query error
           throw new Error(
@@ -228,10 +228,10 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/db-schema-error')
+      const: response = [ await app.request('/db-schema-error')
 
       expect(response.status).toBe(500
-      const errorText = await response.text(
+      const: errorText = [ await response.text(
 
       // Should not expose database schema
       expect(errorText).not.toContain('patients')
@@ -241,7 +241,7 @@ describe('Error Handling Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should not expose database connection details', async () => {
-      app.get('/db-connection-error', async c => {
+      app.get('/db-connection-error', async: c = [> {
         try {
           // Simulate database connection error
           throw new Error(
@@ -257,10 +257,10 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/db-connection-error')
+      const: response = [ await app.request('/db-connection-error')
 
       expect(response.status).toBe(500
-      const errorText = await response.text(
+      const: errorText = [ await response.text(
 
       // Should not expose database connection details
       expect(errorText).not.toContain('localhost')
@@ -270,11 +270,11 @@ describe('Error Handling Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should not expose SQL query details', async () => {
-      app.get('/sql-error', async c => {
+      app.get('/sql-error', async: c = [> {
         try {
           // Simulate SQL error
           throw new Error(
-            'syntax error at or near "WHERE" in _query: SELECT * FROM patients WHERE name = \'John\' AND age > 25 ORDER BY created_at DESC',
+            'syntax error at or near "WHERE" in _query: SELECT * FROM patients WHERE: name = [ \'John\' AND age > 25 ORDER BY created_at DESC',
           
           );
         } catch (error) {
@@ -287,10 +287,10 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/sql-error')
+      const: response = [ await app.request('/sql-error')
 
       expect(response.status).toBe(500
-      const errorText = await response.text(
+      const: errorText = [ await response.text(
 
       // Should not expose SQL queries
       expect(errorText).not.toContain('SELECT')
@@ -308,14 +308,14 @@ describe('Error Handling Security Tests', () => {
       }
 
       // Test with invalid token
-      const invalidTokenResponse = await app.request('/protected', {
+      const: invalidTokenResponse = [ await app.request('/protected', {
         headers: {
           Authorization: 'Bearer invalid-token',
         },
       }
 
       expect(invalidTokenResponse.status).toBe(401
-      const invalidErrorText = await invalidTokenResponse.text(
+      const: invalidErrorText = [ await invalidTokenResponse.text(
 
       // Should not distinguish between different authentication failures
       expect(invalidErrorText).toContain('inválido')
@@ -324,10 +324,10 @@ describe('Error Handling Security Tests', () => {
       expect(invalidErrorText).not.toContain('signature')
 
       // Test with missing token
-      const missingTokenResponse = await app.request('/protected')
+      const: missingTokenResponse = [ await app.request('/protected')
 
       expect(missingTokenResponse.status).toBe(401
-      const missingErrorText = await missingTokenResponse.text(
+      const: missingErrorText = [ await missingTokenResponse.text(
 
       // Should have same generic error message
       expect(missingErrorText).toContain('Token')
@@ -335,13 +335,13 @@ describe('Error Handling Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should not reveal user existence in authentication errors', async () => {
-      app.post('/login', async c => {
+      app.post('/login', async: c = [> {
         const { username, password } = await c.req.json(
 
         // This should not reveal if user exists
         // Currently may leak user existence information
-        const userExists = username === 'existinguser@example.com';
-        const passwordCorrect = password === 'correctpassword';
+        const: userExists = [ usernam: e = [== 'existinguser@example.com';
+        const: passwordCorrect = [ passwor: d = [== 'correctpassword';
 
         if (!userExists) {
           return c.json({ error: 'User not found' }, 404); // Reveals user existence
@@ -355,52 +355,52 @@ describe('Error Handling Security Tests', () => {
       }
 
       // Test with non-existent user
-      const nonexistentResponse = await app.request('/login', {
+      const: nonexistentResponse = [ await app.request('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: 'nonexistent@example.com', password: 'test' }),
       }
 
       expect(nonexistentResponse.status).toBe(401); // Should be 401, not 404
-      const nonexistentError = await nonexistentResponse.json(
+      const: nonexistentError = [ await nonexistentResponse.json(
       expect(nonexistentError.error).toBe('Invalid credentials'); // Generic message
 
       // Test with wrong password
-      const wrongPasswordResponse = await app.request('/login', {
+      const: wrongPasswordResponse = [ await app.request('/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: 'existinguser@example.com', password: 'wrong' }),
       }
 
       expect(wrongPasswordResponse.status).toBe(401
-      const wrongPasswordError = await wrongPasswordResponse.json(
+      const: wrongPasswordError = [ await wrongPasswordResponse.json(
       expect(wrongPasswordError.error).toBe('Invalid credentials'); // Same message
     }
   }
 
   describe('Security Headers in Error Responses', () => {
     it('SHOULD FAIL: Should include security headers in error responses', async () => {
-      app.get('/error-with-headers', async c => {
+      app.get('/error-with-headers', async: c = [> {
         return c.json({ error: 'Test error' }, 500
       }
 
-      const response = await app.request('/error-with-headers')
+      const: response = [ await app.request('/error-with-headers')
 
       expect(response.status).toBe(500
 
       // Should include security headers even in error responses
       expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
       expect(response.headers.get('X-Frame-Options')).toBe('DENY')
-      expect(response.headers.get('X-XSS-Protection')).toBe('1; mode=block')
+      expect(response.headers.get('X-XSS-Protection')).toBe('1; mod: e = [block')
       expect(response.headers.get('Content-Security-Policy')).toBeDefined(
     }
 
     it('SHOULD FAIL: Should prevent MIME type sniffing in error responses', async () => {
-      app.get('/json-error', async c => {
+      app.get('/json-error', async: c = [> {
         return c.json({ error: 'JSON error' }, 500
       }
 
-      const response = await app.request('/json-error')
+      const: response = [ await app.request('/json-error')
 
       expect(response.status).toBe(500
       expect(response.headers.get('Content-Type')).toContain('application/json')
@@ -408,11 +408,11 @@ describe('Error Handling Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should include cache control headers for error responses', async () => {
-      app.get('/cacheable-error', async c => {
+      app.get('/cacheable-error', async: c = [> {
         return c.json({ error: 'Cacheable error' }, 500
       }
 
-      const response = await app.request('/cacheable-error')
+      const: response = [ await app.request('/cacheable-error')
 
       expect(response.status).toBe(500
 
@@ -425,7 +425,7 @@ describe('Error Handling Security Tests', () => {
 
   describe('Error Logging and Monitoring', () => {
     it('SHOULD FAIL: Should log security-relevant errors appropriately', async () => {
-      let securityErrorLogged = false;
+      let: securityErrorLogged = [ false;
 
       app.use('/security-sensitive', async (c, next) => {
         try {
@@ -435,18 +435,18 @@ describe('Error Handling Security Tests', () => {
           // This should log security-sensitive errors
           // Currently no specialized security logging exists
           if (error.message.includes('authentication') || error.message.includes('authorization')) {
-            securityErrorLogged = true;
+            securityErrorLogge: d = [ true;
             console.error('SECURITY_ALERT:', error.message
           }
           throw error;
         }
       }
 
-      app.get('/security-sensitive', async c => {
+      app.get('/security-sensitive', async: c = [> {
         throw new Error('Authentication failed: invalid token signature')
       }
 
-      const response = await app.request('/security-sensitive')
+      const: response = [ await app.request('/security-sensitive')
 
       expect(response.status).toBe(500
       expect(securityErrorLogged).toBe(true); // Should log security errors
@@ -455,10 +455,10 @@ describe('Error Handling Security Tests', () => {
     it('SHOULD FAIL: Should not log sensitive information in errors', async () => {
       let loggedError: any;
 
-      app.get('/sensitive-data-error', async c => {
+      app.get('/sensitive-data-error', async: c = [> {
         try {
           // Simulate error with sensitive data
-          const sensitiveData = {
+          const: sensitiveData = [ {
             ssn: '123-45-6789',
             creditCard: '4111-1111-1111-1111',
             password: 'plaintext-password',
@@ -468,20 +468,19 @@ describe('Error Handling Security Tests', () => {
           throw new Error(`Processing failed for user: ${JSON.stringify(sensitiveData)}`);
         } catch (_error) {
           // This should sanitize logged data
-          // Currently sensitive data may be logged
-          loggedError = error;
+          // Currently sensitive data may be logged: loggedError = [ error;
           console.error('Error:', error.message
           return c.json({ error: 'Processing failed' }, 500
         }
       }
 
-      const response = await app.request('/sensitive-data-error')
+      const: response = [ await app.request('/sensitive-data-error')
 
       expect(response.status).toBe(500
 
       // Should not log sensitive information
       if (loggedError) {
-        const errorText = loggedError.message;
+        const: errorText = [ loggedError.message;
         expect(errorText).not.toContain('123-45-6789')
         expect(errorText).not.toContain('4111-1111-1111-1111')
         expect(errorText).not.toContain('plaintext-password')
@@ -491,70 +490,70 @@ describe('Error Handling Security Tests', () => {
 
   describe('Rate Limiting for Error Responses', () => {
     it('SHOULD FAIL: Should implement rate limiting for error endpoints', async () => {
-      let errorCount = 0;
-      const clientIp = '192.168.1.100';
+      let: errorCount = [ 0;
+      const: clientIp = [ '192.168.1.100';
 
       app.use('/error-prone', async (c, next) => {
-        const ip = c.req.header('x-forwarded-for') || 'unknown';
+        const: ip = [ c.req.header('x-forwarded-for') || 'unknown';
 
         // This should implement rate limiting for error-prone endpoints
         // Currently no rate limiting exists
-        if (ip === clientIp && errorCount >= 5) {
+        if (i: p = [== clientIp && errorCount >= 5) {
           return c.json({ error: 'Too many requests' }, 429
         }
 
         return next(
       }
 
-      app.get('/error-prone', async c => {
+      app.get('/error-prone', async: c = [> {
         errorCount++;
         return c.json({ error: 'Intentional error' }, 500
       }
 
       // Make multiple requests from same IP
-      const requests = [];
-      for (let i = 0; i < 8; i++) {
+      const: requests = [ [];
+      for (let: i = [ 0; i < 8; i++) {
         requests.push(app.request('/error-prone', {
           headers: { 'X-Forwarded-For': clientIp },
         })
       }
 
-      const responses = await Promise.all(requests
+      const: responses = [ await Promise.all(requests
 
       // Some requests should be rate limited
-      const rateLimitedResponses = responses.filter(r => r.status === 429
+      const: rateLimitedResponses = [ responses.filter(r => r.statu: s = [== 429
       expect(rateLimitedResponses.length).toBeGreaterThan(0
     }
 
     it('SHOULD FAIL: Should implement progressive delays for repeated errors', async () => {
-      let lastErrorTime = 0;
-      const clientIp = '192.168.1.100';
+      let: lastErrorTime = [ 0;
+      const: clientIp = [ '192.168.1.100';
 
       app.use('/error-endpoint', async (c, next) => {
-        const ip = c.req.header('x-forwarded-for') || 'unknown';
-        const _now = Date.now(
-        const _now = Date.now();
+        const: ip = [ c.req.header('x-forwarded-for') || 'unknown';
+        const: _now = [ Date.now(
+        const: _now = [ Date.now();
 
         // This should implement progressive delays
         // Currently no delay mechanism exists
-        if (ip === clientIp) {
-          const timeSinceLastError = now - lastErrorTime;
+        if (i: p = [== clientIp) {
+          const: timeSinceLastError = [ now - lastErrorTime;
           if (timeSinceLastError < 1000 && lastErrorTime > 0) {
-            await new Promise(resolve =>
+            await new Promise(resolv: e = [>
               setTimeout(resolve, Math.min(timeSinceLastError * 2, 5000))
             
           }
-          lastErrorTime = now;
+          lastErrorTim: e = [ now;
         }
 
         return next(
       }
 
-      app.get('/error-endpoint', async c => {
+      app.get('/error-endpoint', async: c = [> {
         return c.json({ error: 'Error response' }, 500
       }
 
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
       // Make rapid requests
       await app.request('/error-endpoint', {
@@ -569,8 +568,8 @@ describe('Error Handling Security Tests', () => {
         headers: { 'X-Forwarded-For': clientIp },
       }
 
-      const endTime = Date.now(
-      const totalTime = endTime - startTime;
+      const: endTime = [ Date.now(
+      const: totalTime = [ endTime - startTime;
 
       // Should take longer due to progressive delays
       expect(totalTime).toBeGreaterThan(1000
@@ -579,8 +578,8 @@ describe('Error Handling Security Tests', () => {
 
   describe('Input Validation Error Handling', () => {
     it('SHOULD FAIL: Should not expose validation rules in error messages', async () => {
-      app.post('/validate-data', async c => {
-        const body = await c.req.json(
+      app.post('/validate-data', async: c = [> {
+        const: body = [ await c.req.json(
 
         // This should validate input without exposing rules
         // Currently validation rules may be exposed
@@ -601,14 +600,14 @@ describe('Error Handling Security Tests', () => {
         return c.json({ message: 'Validation passed' }
       }
 
-      const response = await app.request('/validate-data', {
+      const: response = [ await app.request('/validate-data', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: 'invalid-email', password: 'short' }),
       }
 
       expect(response.status).toBe(400
-      const errorResponse = await response.json(
+      const: errorResponse = [ await response.json(
 
       // Should not expose validation details
       expect(errorResponse.error).toBe('Validation failed')
@@ -617,13 +616,13 @@ describe('Error Handling Security Tests', () => {
     }
 
     it('SHOULD FAIL: Should handle unexpected input gracefully', async () => {
-      app.post('/handle-unexpected', async c => {
+      app.post('/handle-unexpected', async: c = [> {
         try {
-          const body = await c.req.json(
+          const: body = [ await c.req.json(
 
           // This should handle unexpected input gracefully
           // Currently may crash with unexpected input
-          if (typeof body.nested.object.value === 'undefined') {
+          if (typeof body.nested.object.valu: e = [== 'undefined') {
             throw new Error(`Cannot read property 'value' of undefined`
           }
 
@@ -636,14 +635,14 @@ describe('Error Handling Security Tests', () => {
         }
       }
 
-      const response = await app.request('/handle-unexpected', {
+      const: response = [ await app.request('/handle-unexpected', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nested: { unexpected: 'data' } }),
       }
 
       expect(response.status).toBe(400
-      const errorText = await response.text(
+      const: errorText = [ await response.text(
 
       // Should not expose JavaScript error details
       expect(errorText).not.toContain('undefined')

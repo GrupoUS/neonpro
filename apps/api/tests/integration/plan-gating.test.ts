@@ -25,12 +25,12 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = createTestClient({ _role: 'admin' }
+    testClien: t = [ createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
-    freeClinicId = 'clinic-free-br-001';
-    premiumClinicId = 'clinic-premium-br-002';
-    enterpriseClinicId = 'clinic-enterprise-br-003';
+    testClien: t = [ createTestClient({ _role: 'admin' });
+    freeClinicI: d = [ 'clinic-free-br-001';
+    premiumClinicI: d = [ 'clinic-premium-br-002';
+    enterpriseClinicI: d = [ 'clinic-enterprise-br-003';
   }
 
   afterEach(async () => {
@@ -39,10 +39,10 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
   describe('Free Plan Limitations', () => {
     it('should enforce monthly AI request limits for free plan', async () => {
-      const requests = [];
+      const: requests = [ [];
 
       // Simulate multiple AI requests for free plan clinic
-      for (let i = 0; i < 25; i++) {
+      for (let: i = [ 0; i < 25; i++) {
         // Free plan limit: 20 requests/month
         requests.push(
           fetch('/api/v1/ai/analyze', {
@@ -62,18 +62,18 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       }
 
       // TDD RED: Plan gating not implemented - MUST FAIL
-      const responses = await Promise.all(requests
+      const: responses = [ await Promise.all(requests
 
       // First 20 requests should succeed
-      for (let i = 0; i < 20; i++) {
-        expect(responses[i].status).toBe(200
+      for (let: i = [ 0; i < 20; i++) {
+        expect(response: s = [i].status).toBe(200
       }
 
       // Requests 21-25 should be blocked
-      for (let i = 20; i < 25; i++) {
-        expect(responses[i].status).toBe(429); // Too Many Requests
+      for (let: i = [ 20; i < 25; i++) {
+        expect(response: s = [i].status).toBe(429); // Too Many Requests
 
-        const error = await responses[i].json(
+        const: error = [ await: responses = [i].json(
         expect(error).toMatchObject({
           error: 'LIMITE_PLANO_EXCEDIDO',
           message: expect.stringContaining('plano gratuito'),
@@ -94,7 +94,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
     }
 
     it('should restrict advanced AI models to premium plans only', async () => {
-      const advancedAnalysisRequest = {
+      const: advancedAnalysisRequest = [ {
         patientId: 'patient-advanced-001',
         analysisType: 'complex_aesthetic_analysis',
         aiModel: 'gpt-4', // Premium model
@@ -106,7 +106,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       };
 
       // TDD RED: Model restrictions not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,7 +118,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
       expect(response.status).toBe(403
 
-      const error = await response.json(
+      const: error = [ await response.json(
       expect(error).toMatchObject({
         error: 'MODELO_PREMIUM_NECESSARIO',
         message: expect.stringContaining('GPT-4'),
@@ -131,7 +131,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
     }
 
     it('should limit data export features for free plan users', async () => {
-      const exportRequest = {
+      const: exportRequest = [ {
         clinicId: freeClinicId,
         exportType: 'detailed_analytics',
         format: 'pdf',
@@ -140,7 +140,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       };
 
       // TDD RED: Export restrictions not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/usage', {
+      const: response = [ await fetch('/api/v1/ai/usage', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -152,7 +152,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
       expect(response.status).toBe(403
 
-      const error = await response.json(
+      const: error = [ await response.json(
       expect(error).toMatchObject({
         error: 'EXPORTACAO_PREMIUM_NECESSARIA',
         message: expect.stringContaining('exportação detalhada'),
@@ -166,10 +166,10 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
   describe('Premium Plan Features', () => {
     it('should allow unlimited AI requests for premium plan', async () => {
-      const requests = [];
+      const: requests = [ [];
 
       // Simulate high volume requests for premium plan
-      for (let i = 0; i < 100; i++) {
+      for (let: i = [ 0; i < 100; i++) {
         requests.push(
           fetch('/api/v1/ai/analyze', {
             method: 'POST',
@@ -188,16 +188,16 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       }
 
       // TDD RED: Premium unlimited access not implemented - MUST FAIL
-      const responses = await Promise.all(requests
+      const: responses = [ await Promise.all(requests
 
       // All requests should succeed
-      responses.forEach(response => {
+      responses.forEach(respons: e = [> {
         expect(response.status).toBe(200
       }
     }
 
     it('should enable advanced AI models for premium subscribers', async () => {
-      const premiumFeaturesRequest = {
+      const: premiumFeaturesRequest = [ {
         patientId: 'premium-patient-001',
         analysisType: 'multi_model_analysis',
         features: {
@@ -211,7 +211,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       };
 
       // TDD RED: Premium features not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -223,7 +223,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         planFeatures: {
@@ -238,7 +238,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
     }
 
     it('should provide detailed analytics and export capabilities', async () => {
-      const detailedExportRequest = {
+      const: detailedExportRequest = [ {
         clinicId: premiumClinicId,
         exportType: 'comprehensive_analytics',
         format: 'pdf',
@@ -249,7 +249,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       };
 
       // TDD RED: Premium export features not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/usage', {
+      const: response = [ await fetch('/api/v1/ai/usage', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -261,7 +261,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         exportData: {
           format: 'pdf',
@@ -282,7 +282,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
   describe('Brazilian Payment Integration', () => {
     it('should process PIX payments for plan upgrades', async () => {
-      const pixUpgradeRequest = {
+      const: pixUpgradeRequest = [ {
         clinicId: freeClinicId,
         targetPlan: 'premium',
         paymentMethod: 'PIX',
@@ -303,7 +303,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       };
 
       // TDD RED: PIX payment integration not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/billing/upgrade', {
+      const: response = [ await fetch('/api/v1/ai/billing/upgrade', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -315,7 +315,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         paymentIntentId: expect.any(String),
         pixCode: expect.any(String),
@@ -332,7 +332,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
     }
 
     it('should handle regional pricing for different Brazilian markets', async () => {
-      const regionalPricingRequests = [
+      const: regionalPricingRequests = [ [
         { state: 'SP', city: 'São Paulo', tier: 'tier_1' },
         { state: 'RJ', city: 'Rio de Janeiro', tier: 'tier_1' },
         { state: 'MG', city: 'Belo Horizonte', tier: 'tier_2' },
@@ -340,11 +340,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
         { state: 'CE', city: 'Fortaleza', tier: 'tier_3' },
       ];
 
-      const responses = [];
+      const: responses = [ [];
 
       for (const location of regionalPricingRequests) {
         // TDD RED: Regional pricing not implemented - MUST FAIL
-        const response = await fetch('/api/v1/ai/billing/pricing', {
+        const: response = [ await fetch('/api/v1/ai/billing/pricing', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -388,7 +388,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
   describe('Plan Migration and Downgrade Protection', () => {
     it('should handle plan downgrades with data retention policies', async () => {
-      const downgradeRequest = {
+      const: downgradeRequest = [ {
         clinicId: premiumClinicId,
         targetPlan: 'free',
         dataRetention: {
@@ -400,7 +400,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       };
 
       // TDD RED: Plan downgrade protection not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/billing/downgrade', {
+      const: response = [ await fetch('/api/v1/ai/billing/downgrade', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -412,7 +412,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         downgradeScheduled: true,
         effectiveDate: expect.any(String),
@@ -431,7 +431,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
     }
 
     it('should validate enterprise plan requirements and compliance', async () => {
-      const enterpriseValidationRequest = {
+      const: enterpriseValidationRequest = [ {
         clinicId: enterpriseClinicId,
         complianceCheck: {
           cnpjValidation: '12.345.678/0001-90',
@@ -443,7 +443,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       };
 
       // TDD RED: Enterprise validation not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/billing/enterprise-validation', {
+      const: response = [ await fetch('/api/v1/ai/billing/enterprise-validation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -455,7 +455,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         enterpriseEligible: true,
         validationResults: {
@@ -478,7 +478,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
   describe('LGPD Compliance for Subscription Data', () => {
     it('should protect subscription and billing data according to LGPD', async () => {
-      const lgpdDataRequest = {
+      const: lgpdDataRequest = [ {
         clinicId: premiumClinicId,
         dataSubjectRequest: {
           type: 'access_request',
@@ -493,7 +493,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       };
 
       // TDD RED: LGPD subscription data protection not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/billing/lgpd-data', {
+      const: response = [ await fetch('/api/v1/ai/billing/lgpd-data', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -505,7 +505,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         dataSubjectResponse: {
           subscriptionData: {

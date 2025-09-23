@@ -14,13 +14,13 @@ import type {
 export type { DatabaseType as SupabaseDatabase, JsonType as SupabaseJson };
 
 // Type aliases for commonly used tables
-export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T];
-export type TableRow<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row'];
-export type TableInsert<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Insert'];
-export type TableUpdate<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Update'];
+export type Tables<T extends keyof DatabaseType['public']['Tables']> = DatabaseType['public']['Tables'][T];
+export type TableRow<T extends keyof DatabaseType['public']['Tables']> =
+  DatabaseType['public']['Tables'][T]['Row'];
+export type TableInsert<T extends keyof DatabaseType['public']['Tables']> =
+  DatabaseType['public']['Tables'][T]['Insert'];
+export type TableUpdate<T extends keyof DatabaseType['public']['Tables']> =
+  DatabaseType['public']['Tables'][T]['Update'];
 
 // Specific table type exports for common use cases
 export type Patient = TableRow<'patients'>;

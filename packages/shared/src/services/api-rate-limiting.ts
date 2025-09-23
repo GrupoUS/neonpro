@@ -16,6 +16,7 @@
 
 import { z } from "zod";
 // import { nanoid } from "nanoid";
+import { logHealthcareError, rateLimitLogger } from '../logging/healthcare-logger';
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -561,11 +562,12 @@ export class APIRateLimitingService {
       this.setupMetricsCollection();
       this.isInitialized = true;
 
-      console.log(
-        "🚦 [APIRateLimitingService] Healthcare API rate limiting service initialized",
+      rateLimitLogger.info(
+        "Healthcare API rate limiting service initialized",
+        { component: 'api-rate-limiting', timestamp: new Date().toISOString() },
       );
     } catch (error) {
-      console.error("Failed to initialize API rate limiting _service:", error);
+      logHealthcareError('api-rate-limiting', error, { method: 'initialize' });
     }
   }
 
@@ -748,7 +750,7 @@ export class APIRateLimitingService {
 
       return result;
     } catch (error) {
-      console.error("Error checking rate limit:", error);
+      logHealthcareError('api-rate-limiting', error, { method: 'checkRateLimit' });
 
       // Default to allow in case of service failure (fail-open for healthcare)
       return {
@@ -945,7 +947,10 @@ export class APIRateLimitingService {
     };
 
     // TODO: Integrate with structured logging service
-    console.log("🚦 [APIRateLimitingService] Rate limit decision:", logData);
+    rateLimitLogger.info("Rate limit decision made", {
+      ...logData,
+      component: 'api-rate-limiting'
+    });
   }
 
   /**
@@ -955,7 +960,7 @@ export class APIRateLimitingService {
     _context: RateLimitContext,
     result: RateLimitResult,
   ): void {
-    const metricKey = `${result.tier}:${context.category}`;
+    const metricKey = `${result.tier}:${_context.category}`;
 
     if (!this.metrics.has(metricKey)) {
       this.metrics.set(metricKey, {
@@ -993,7 +998,7 @@ export class APIRateLimitingService {
     const usageRatio = result.currentUsage / result.limitValue;
 
     if (usageRatio >= this.config.monitoring.alertThreshold) {
-      await this.sendRateLimitAlert(context, result, usageRatio);
+      await this.sendRateLimitAlert(_context, result, usageRatio);
     }
   }
 
@@ -1008,16 +1013,19 @@ export class APIRateLimitingService {
     const alertData = {
       type: "rate_limit_threshold_exceeded",
       tier: result.tier,
-      category: context.category,
+      category: _context.category,
       usageRatio: usageRatio,
       currentUsage: result.currentUsage,
       limitValue: result.limitValue,
-      facilityId: context.healthcareContext?.facilityId,
-      endpoint: context.endpoint,
+      facilityId: _context.healthcareContext?.facilityId,
+      endpoint: _context.endpoint,
       timestamp: new Date().toISOString(),
     };
 
-    console.log("🚨 [APIRateLimitingService] Rate limit alert:", alertData);
+    rateLimitLogger.warn("Rate limit alert triggered", {
+      ...alertData,
+      component: 'api-rate-limiting'
+    });
     // TODO: Integrate with notification service
   }
 
@@ -1029,13 +1037,11 @@ export class APIRateLimitingService {
     void _now;
     const metricsSnapshot = new Map(this.metrics);
 
-    console.log("📊 [APIRateLimitingService] Metrics collected:", {
+    rateLimitLogger.info("Metrics collected", {
       timestamp: new Date().toISOString(),
       metricsCount: metricsSnapshot.size,
-      totalMetrics: Array.from(metricsSnapshot.values()).reduce(
-        (sum, _m) => sum + m.totalRequests,
-        0,
-      ),
+      totalMetrics: Array.from(metricsSnapshot.values()).reduce((sum, m) => sum + (m.totalRequests || 0), 0),
+      component: 'api-rate-limiting'
     });
 
     // TODO: Send metrics to observability platform
@@ -1059,9 +1065,12 @@ export class APIRateLimitingService {
       }
     }
 
-    console.log(
-      `🔄 [APIRateLimitingService] Reset rate limit for client: ${clientId}, tiers: ${tiersToReset.join(", ")}`,
-    );
+    rateLimitLogger.info("Rate limit reset for client", {
+      clientId,
+      tiersReset: tiersToReset,
+      component: 'api-rate-limiting',
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
@@ -1104,9 +1113,10 @@ export class APIRateLimitingService {
     this.metrics.clear();
     this.isInitialized = false;
 
-    console.log(
-      "🔄 [APIRateLimitingService] API rate limiting service destroyed and resources cleaned up",
-    );
+    rateLimitLogger.info("API rate limiting service destroyed", {
+      component: 'api-rate-limiting',
+      timestamp: new Date().toISOString()
+    });
   }
 }
 

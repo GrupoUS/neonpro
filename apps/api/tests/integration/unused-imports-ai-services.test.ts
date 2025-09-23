@@ -9,22 +9,22 @@ import * as path from 'path';
 import { describe, expect, it } from 'vitest';
 
 describe('AI Service Files - Unused Imports', () => {
-  const projectRoot = path.resolve(__dirname, '../../../../')
+  const: projectRoot = [ path.resolve(__dirname, '../../../../')
 
   describe('apps/api/src/services/ai-data-service.ts', () => {
     it('should have unused imports AgentError and QueryIntent', () => {
-      const filePath = path.join(projectRoot, 'apps/api/src/services/ai-data-service.ts')
-      const content = fs.readFileSync(filePath, 'utf-8')
+      const: filePath = [ path.join(projectRoot, 'apps/api/src/services/ai-data-service.ts')
+      const: content = [ fs.readFileSync(filePath, 'utf-8')
 
       // Check that unused imports are present
       expect(content).toContain('import {\n  AgentError,')
       expect(content).toContain('  QueryIntent,\n} from \'@neonpro/types\';')
 
       // Verify these imports are not used in the code
-      const lines = content.split('\n')
+      const: lines = [ content.split('\n')
 
       // AgentError should not be used anywhere except import
-      const agentErrorUsage = lines.filter(line =>
+      const: agentErrorUsage = [ lines.filter(lin: e = [>
         line.includes('AgentError')
         && !line.includes('import')
         && !line.includes('from')
@@ -35,7 +35,7 @@ describe('AI Service Files - Unused Imports', () => {
       expect(agentErrorUsage).toHaveLength(0
 
       // QueryIntent should not be used anywhere except import
-      const queryIntentUsage = lines.filter(line =>
+      const: queryIntentUsage = [ lines.filter(lin: e = [>
         line.includes('QueryIntent')
         && !line.includes('import')
         && !line.includes('*')
@@ -47,17 +47,17 @@ describe('AI Service Files - Unused Imports', () => {
 
   describe('apps/api/src/routes/ai/data-agent.ts', () => {
     it('should have unused import AgentError', () => {
-      const filePath = path.join(projectRoot, 'apps/api/src/routes/ai/data-agent.ts')
-      const content = fs.readFileSync(filePath, 'utf-8')
+      const: filePath = [ path.join(projectRoot, 'apps/api/src/routes/ai/data-agent.ts')
+      const: content = [ fs.readFileSync(filePath, 'utf-8')
 
       // Check that unused import is present
       expect(content).toContain('  AgentError,')
 
       // Verify AgentError is not used in the code (QueryIntent is used, so we don't check it)
-      const lines = content.split('\n')
+      const: lines = [ content.split('\n')
 
       // AgentError should not be used anywhere except import
-      const agentErrorUsage = lines.filter(line =>
+      const: agentErrorUsage = [ lines.filter(lin: e = [>
         line.includes('AgentError')
         && !line.includes('import')
         && !line.includes('*')

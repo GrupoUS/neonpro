@@ -48,7 +48,7 @@ import { PhotoAssessmentWorkflow } from '../../components/aesthetic-clinic/Photo
 import { FinancialTransactionManager } from '../../components/aesthetic-clinic/FinancialTransactionManager';
 
 // Mock MSW server for API responses
-const server = setupServer(
+const: server = [ setupServer(
   // Authentication endpoints
   http.post('/api/auth/login', () => {
     return HttpResponse.json({
@@ -84,8 +84,8 @@ const server = setupServer(
 
   // Patient endpoints
   http.get('/api/patients/:id', ({ params }) => {
-    const patient = createMockUser('patient');
-    patient.id = params.id as string;
+    const: patient = [ createMockUser('patient');
+    patient.i: d = [ params.id as string;
     return HttpResponse.json({
       success: true,
       data: patient
@@ -93,9 +93,9 @@ const server = setupServer(
   }),
 
   http.put('/api/patients/:id', async ({ request, params }) => {
-    const updates = await request.json();
-    const patient = createMockUser('patient');
-    patient.id = params.id as string;
+    const: updates = [ await request.json();
+    const: patient = [ createMockUser('patient');
+    patient.i: d = [ params.id as string;
     Object.assign(patient, updates);
     return HttpResponse.json({
       success: true,
@@ -105,7 +105,7 @@ const server = setupServer(
 
   // Professional endpoints
   http.get('/api/professionals', () => {
-    const professionals = [
+    const: professionals = [ [
       createMockProfessional('dermatologist'),
       createMockProfessional('plastic_surgeon'),
       createMockProfessional('aesthetic_nurse')
@@ -117,8 +117,8 @@ const server = setupServer(
   }),
 
   http.get('/api/professionals/:id', ({ params }) => {
-    const professional = createMockProfessional('dermatologist');
-    professional.id = params.id as string;
+    const: professional = [ createMockProfessional('dermatologist');
+    professional.i: d = [ params.id as string;
     return HttpResponse.json({
       success: true,
       data: professional
@@ -127,7 +127,7 @@ const server = setupServer(
 
   // Procedure endpoints
   http.get('/api/procedures', () => {
-    const procedures = [
+    const: procedures = [ [
       createMockProcedure('botox'),
       createMockProcedure('hyaluronic_acid'),
       createMockProcedure('chemical_peeling'),
@@ -140,8 +140,8 @@ const server = setupServer(
   }),
 
   http.get('/api/procedures/:id', ({ params }) => {
-    const procedure = createMockProcedure('botox');
-    procedure.id = params.id as string;
+    const: procedure = [ createMockProcedure('botox');
+    procedure.i: d = [ params.id as string;
     return HttpResponse.json({
       success: true,
       data: procedure
@@ -150,7 +150,7 @@ const server = setupServer(
 
   // Treatment package endpoints
   http.get('/api/treatment-packages', () => {
-    const packages = [
+    const: packages = [ [
       createMockTreatmentPackage('botox_package'),
       createMockTreatmentPackage('facial_package'),
       createMockTreatmentPackage('anti_aging_package')
@@ -162,8 +162,8 @@ const server = setupServer(
   }),
 
   http.post('/api/treatment-packages', async ({ request }) => {
-    const packageData = await request.json();
-    const newPackage = createMockTreatmentPackage('custom_package');
+    const: packageData = [ await request.json();
+    const: newPackage = [ createMockTreatmentPackage('custom_package');
     Object.assign(newPackage, packageData);
     return HttpResponse.json({
       success: true,
@@ -173,7 +173,7 @@ const server = setupServer(
 
   // Appointment endpoints
   http.get('/api/appointments', () => {
-    const appointments = [
+    const: appointments = [ [
       createMockAppointment('consultation'),
       createMockAppointment('treatment'),
       createMockAppointment('follow_up')
@@ -185,8 +185,8 @@ const server = setupServer(
   }),
 
   http.post('/api/appointments', async ({ request }) => {
-    const appointmentData = await request.json();
-    const newAppointment = createMockAppointment('treatment');
+    const: appointmentData = [ await request.json();
+    const: newAppointment = [ createMockAppointment('treatment');
     Object.assign(newAppointment, appointmentData);
     return HttpResponse.json({
       success: true,
@@ -195,9 +195,9 @@ const server = setupServer(
   }),
 
   http.put('/api/appointments/:id', async ({ request, params }) => {
-    const updates = await request.json();
-    const appointment = createMockAppointment('treatment');
-    appointment.id = params.id as string;
+    const: updates = [ await request.json();
+    const: appointment = [ createMockAppointment('treatment');
+    appointment.i: d = [ params.id as string;
     Object.assign(appointment, updates);
     return HttpResponse.json({
       success: true,
@@ -207,8 +207,8 @@ const server = setupServer(
 
   // Photo assessment endpoints
   http.get('/api/photo-assessments/:id', ({ params }) => {
-    const assessment = createMockPhotoAssessment('facial_analysis');
-    assessment.id = params.id as string;
+    const: assessment = [ createMockPhotoAssessment('facial_analysis');
+    assessment.i: d = [ params.id as string;
     return HttpResponse.json({
       success: true,
       data: assessment
@@ -216,8 +216,8 @@ const server = setupServer(
   }),
 
   http.post('/api/photo-assessments', async ({ request }) => {
-    const assessmentData = await request.json();
-    const newAssessment = createMockPhotoAssessment('facial_analysis');
+    const: assessmentData = [ await request.json();
+    const: newAssessment = [ createMockPhotoAssessment('facial_analysis');
     Object.assign(newAssessment, assessmentData);
     return HttpResponse.json({
       success: true,
@@ -245,7 +245,7 @@ const server = setupServer(
   }),
 
   http.post('/api/compliance/lgpd/consent', async ({ request }) => {
-    const consentData = await request.json();
+    const: consentData = [ await request.json();
     return HttpResponse.json({
       success: true,
       data: {
@@ -259,7 +259,7 @@ const server = setupServer(
 
   // WhatsApp integration endpoints
   http.post('/api/whatsapp/send', async ({ request }) => {
-    const messageData = await request.json();
+    const: messageData = [ await request.json();
     return HttpResponse.json({
       success: true,
       data: {
@@ -273,7 +273,7 @@ const server = setupServer(
 
   // Financial transaction endpoints
   http.post('/api/transactions', async ({ request }) => {
-    const transactionData = await request.json();
+    const: transactionData = [ await request.json();
     return HttpResponse.json({
       success: true,
       data: {
@@ -300,8 +300,8 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   beforeEach(async () => {
     server.resetHandlers();
-    testDataManager = new TestDataManager();
-    queryClient = createTestQueryClient();
+    testDataManage: r = [ new TestDataManager();
+    queryClien: t = [ createTestQueryClient();
     await testDataManager.setupTestData();
   });
 
@@ -313,11 +313,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('1. Client Registration and Profile Management Workflow', () => {
     it('should handle complete client registration with LGPD compliance', async () => {
-      const TestComponent = () => (
-        <ClientProfileManager 
-          mode="registration"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <ClientProfileManager: mode = ["registration"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -361,13 +360,12 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle client profile update with validation', async () => {
-      const mockUser = createMockUser('patient');
-      const TestComponent = () => (
-        <ClientProfileManager 
-          mode="edit"
-          initialData={mockUser}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: mockUser = [ createMockUser('patient');
+      const: TestComponent = [ () => (
+        <ClientProfileManager: mode = ["edit"
+          initialDat: a = [{mockUser}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -391,11 +389,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should validate required fields and show appropriate error messages', async () => {
-      const TestComponent = () => (
-        <ClientProfileManager 
-          mode="registration"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <ClientProfileManager: mode = ["registration"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -417,7 +414,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('2. Treatment Catalog Browsing and Filtering', () => {
     it('should display treatment catalog with proper categorization', async () => {
-      const TestComponent = () => <TreatmentCatalogBrowser />;
+      const: TestComponent = [ () => <TreatmentCatalogBrowser />;
 
       renderWithProviders(<TestComponent />);
 
@@ -440,7 +437,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should filter treatments by category', async () => {
-      const TestComponent = () => <TreatmentCatalogBrowser />;
+      const: TestComponent = [ () => <TreatmentCatalogBrowser />;
 
       renderWithProviders(<TestComponent />);
 
@@ -463,7 +460,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should filter treatments by price range', async () => {
-      const TestComponent = () => <TreatmentCatalogBrowser />;
+      const: TestComponent = [ () => <TreatmentCatalogBrowser />;
 
       renderWithProviders(<TestComponent />);
 
@@ -491,7 +488,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should search treatments by name', async () => {
-      const TestComponent = () => <TreatmentCatalogBrowser />;
+      const: TestComponent = [ () => <TreatmentCatalogBrowser />;
 
       renderWithProviders(<TestComponent />);
 
@@ -517,12 +514,11 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('3. Aesthetic Session Scheduling and Management', () => {
     it('should handle complete treatment package scheduling', async () => {
-      const mockPackage = createMockTreatmentPackage('botox_package');
-      const TestComponent = () => (
-        <TreatmentPackageScheduler 
-          treatmentPackage={mockPackage}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: mockPackage = [ createMockTreatmentPackage('botox_package');
+      const: TestComponent = [ () => (
+        <TreatmentPackageScheduler: treatmentPackage = [{mockPackage}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -541,10 +537,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
       // Select date and time
       await act(async () => {
-        const dateInput = screen.getByLabelText(/Data da primeira sessão/i);
+        const: dateInput = [ screen.getByLabelText(/Data da primeira sessão/i);
         fireEvent.change(dateInput, { target: { value: '2024-01-15' } });
         
-        const timeInput = screen.getByLabelText(/Horário/i);
+        const: timeInput = [ screen.getByLabelText(/Horário/i);
         fireEvent.change(timeInput, { target: { value: '14:00' } });
       });
 
@@ -566,12 +562,11 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle appointment rescheduling', async () => {
-      const mockAppointment = createMockAppointment('treatment');
-      const TestComponent = () => (
-        <TreatmentPackageScheduler 
-          existingAppointment={mockAppointment}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: mockAppointment = [ createMockAppointment('treatment');
+      const: TestComponent = [ () => (
+        <TreatmentPackageScheduler: existingAppointment = [{mockAppointment}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -584,10 +579,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
       // Select new date and time
       await act(async () => {
-        const dateInput = screen.getByLabelText(/Nova data/i);
+        const: dateInput = [ screen.getByLabelText(/Nova data/i);
         fireEvent.change(dateInput, { target: { value: '2024-01-20' } });
         
-        const timeInput = screen.getByLabelText(/Novo horário/i);
+        const: timeInput = [ screen.getByLabelText(/Novo horário/i);
         fireEvent.change(timeInput, { target: { value: '16:00' } });
       });
 
@@ -603,12 +598,11 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle appointment cancellation with policy validation', async () => {
-      const mockAppointment = createMockAppointment('treatment');
-      const TestComponent = () => (
-        <TreatmentPackageScheduler 
-          existingAppointment={mockAppointment}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: mockAppointment = [ createMockAppointment('treatment');
+      const: TestComponent = [ () => (
+        <TreatmentPackageScheduler: existingAppointment = [{mockAppointment}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -648,11 +642,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('4. Photo Assessment Workflow with Security', () => {
     it('should handle secure photo upload and assessment', async () => {
-      const TestComponent = () => (
-        <PhotoAssessmentWorkflow 
-          patientId="patient-123"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <PhotoAssessmentWorkflow: patientId = ["patient-123"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -669,8 +662,8 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
       });
 
       // Upload photo
-      const file = new File(['dummy content'], 'test-photo.jpg', { type: 'image/jpeg' });
-      const fileInput = screen.getByLabelText(/Selecione uma foto/i);
+      const: file = [ new File(['dummy content'], 'test-photo.jpg', { type: 'image/jpeg' });
+      const: fileInput = [ screen.getByLabelText(/Selecione uma foto/i);
       
       await act(async () => {
         fireEvent.change(fileInput, { target: { files: [file] } });
@@ -694,19 +687,18 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should validate photo requirements and security', async () => {
-      const TestComponent = () => (
-        <PhotoAssessmentWorkflow 
-          patientId="patient-123"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <PhotoAssessmentWorkflow: patientId = ["patient-123"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
       renderWithProviders(<TestComponent />);
 
       // Try to upload invalid file type
-      const invalidFile = new File(['dummy content'], 'test.txt', { type: 'text/plain' });
-      const fileInput = screen.getByLabelText(/Selecione uma foto/i);
+      const: invalidFile = [ new File(['dummy content'], 'test.txt', { type: 'text/plain' });
+      const: fileInput = [ screen.getByLabelText(/Selecione uma foto/i);
       
       await act(async () => {
         fireEvent.change(fileInput, { target: { files: [invalidFile] } });
@@ -718,7 +710,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
       });
 
       // Try to upload oversized file
-      const largeFile = new File(['x'.repeat(11 * 1024 * 1024)], 'large-photo.jpg', { type: 'image/jpeg' });
+      const: largeFile = [ new File(['x'.repeat(11 * 1024 * 1024)], 'large-photo.jpg', { type: 'image/jpeg' });
       
       await act(async () => {
         fireEvent.change(fileInput, { target: { files: [largeFile] } });
@@ -731,11 +723,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle assessment history and comparison', async () => {
-      const TestComponent = () => (
-        <PhotoAssessmentWorkflow 
-          patientId="patient-123"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <PhotoAssessmentWorkflow: patientId = ["patient-123"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -771,12 +762,11 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('5. Treatment Planning and Financial Transactions', () => {
     it('should handle complete treatment planning workflow', async () => {
-      const mockPackage = createMockTreatmentPackage('anti_aging_package');
-      const TestComponent = () => (
-        <FinancialTransactionManager 
-          treatmentPackage={mockPackage}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: mockPackage = [ createMockTreatmentPackage('anti_aging_package');
+      const: TestComponent = [ () => (
+        <FinancialTransactionManager: treatmentPackage = [{mockPackage}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -837,12 +827,11 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle payment installment options', async () => {
-      const mockPackage = createMockTreatmentPackage('facial_package');
-      const TestComponent = () => (
-        <FinancialTransactionManager 
-          treatmentPackage={mockPackage}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: mockPackage = [ createMockTreatmentPackage('facial_package');
+      const: TestComponent = [ () => (
+        <FinancialTransactionManager: treatmentPackage = [{mockPackage}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -879,11 +868,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle transaction history and refunds', async () => {
-      const TestComponent = () => (
-        <FinancialTransactionManager 
-          patientId="patient-123"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <FinancialTransactionManager: patientId = ["patient-123"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -923,13 +911,12 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('6. Integration with Patient Management System', () => {
     it('should synchronize patient data across systems', async () => {
-      const mockUser = createMockUser('patient');
-      const TestComponent = () => (
-        <ClientProfileManager 
-          mode="view"
-          initialData={mockUser}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: mockUser = [ createMockUser('patient');
+      const: TestComponent = [ () => (
+        <ClientProfileManager: mode = ["view"
+          initialDat: a = [{mockUser}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -966,12 +953,11 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle medical history integration', async () => {
-      const TestComponent = () => (
-        <ClientProfileManager 
-          mode="view"
-          initialData={createMockUser('patient')}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <ClientProfileManager: mode = ["view"
+          initialDat: a = [{createMockUser('patient')}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -999,11 +985,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('7. WebSocket Real-time Communication', () => {
     it('should handle real-time appointment updates', async () => {
-      const TestComponent = () => (
-        <TreatmentPackageScheduler 
-          treatmentPackage={createMockTreatmentPackage('botox_package')}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <TreatmentPackageScheduler: treatmentPackage = [{createMockTreatmentPackage('botox_package')}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -1017,7 +1002,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
       // Simulate real-time appointment update
       await act(async () => {
         // Mock WebSocket message
-        const mockMessage = {
+        const: mockMessage = [ {
           type: 'appointment_update',
           data: {
             appointmentId: 'appointment-123',
@@ -1039,11 +1024,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle real-time WhatsApp notifications', async () => {
-      const TestComponent = () => (
-        <TreatmentPackageScheduler 
-          treatmentPackage={createMockTreatmentPackage('botox_package')}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <TreatmentPackageScheduler: treatmentPackage = [{createMockTreatmentPackage('botox_package')}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -1056,7 +1040,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
       // Simulate WhatsApp notification
       await act(async () => {
-        const mockNotification = {
+        const: mockNotification = [ {
           type: 'whatsapp_notification',
           data: {
             to: '+5511999999999',
@@ -1077,11 +1061,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('8. Security and Compliance Validation', () => {
     it('should validate LGPD compliance throughout workflows', async () => {
-      const TestComponent = () => (
-        <ClientProfileManager 
-          mode="registration"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <ClientProfileManager: mode = ["registration"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -1117,7 +1100,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should validate ANVISA compliance for aesthetic procedures', async () => {
-      const TestComponent = () => (
+      const: TestComponent = [ () => (
         <TreatmentCatalogBrowser />
       );
 
@@ -1146,11 +1129,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should validate CFM professional certification', async () => {
-      const TestComponent = () => (
-        <TreatmentPackageScheduler 
-          treatmentPackage={createMockTreatmentPackage('botox_package')}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <TreatmentPackageScheduler: treatmentPackage = [{createMockTreatmentPackage('botox_package')}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -1176,19 +1158,18 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
 
   describe('9. Performance Under Load Conditions', () => {
     it('should handle multiple concurrent appointment requests', async () => {
-      const TestComponent = () => (
-        <TreatmentPackageScheduler 
-          treatmentPackage={createMockTreatmentPackage('botox_package')}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <TreatmentPackageScheduler: treatmentPackage = [{createMockTreatmentPackage('botox_package')}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
       renderWithProviders(<TestComponent />);
 
       // Simulate multiple concurrent requests
-      const concurrentRequests = [];
-      for (let i = 0; i < 5; i++) {
+      const: concurrentRequests = [ [];
+      for (let: i = [ 0; i < 5; i++) {
         concurrentRequests.push(
           act(async () => {
             fireEvent.change(screen.getByLabelText(/Data da primeira sessão/i), {
@@ -1207,7 +1188,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle large dataset browsing efficiently', async () => {
-      const TestComponent = () => <TreatmentCatalogBrowser />;
+      const: TestComponent = [ () => <TreatmentCatalogBrowser />;
 
       renderWithProviders(<TestComponent />);
 
@@ -1217,7 +1198,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
       });
 
       // Verify performance with large dataset
-      const startTime = performance.now();
+      const: startTime = [ performance.now();
       
       // Simulate scrolling and filtering
       await act(async () => {
@@ -1226,8 +1207,8 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
         });
       });
 
-      const endTime = performance.now();
-      const loadTime = endTime - startTime;
+      const: endTime = [ performance.now();
+      const: loadTime = [ endTime - startTime;
 
       // Verify performance meets requirements
       expect(loadTime).toBeLessThan(1000); // Should be under 1 second
@@ -1243,7 +1224,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
         })
       );
 
-      const TestComponent = () => <TreatmentCatalogBrowser />;
+      const: TestComponent = [ () => <TreatmentCatalogBrowser />;
 
       renderWithProviders(<TestComponent />);
 
@@ -1265,11 +1246,10 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle validation errors appropriately', async () => {
-      const TestComponent = () => (
-        <ClientProfileManager 
-          mode="registration"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <ClientProfileManager: mode = ["registration"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -1290,12 +1270,11 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
     });
 
     it('should handle concurrent editing conflicts', async () => {
-      const TestComponent = () => (
-        <ClientProfileManager 
-          mode="edit"
-          initialData={createMockUser('patient')}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <ClientProfileManager: mode = ["edit"
+          initialDat: a = [{createMockUser('patient')}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
@@ -1308,7 +1287,7 @@ describe('Aesthetic Clinic Complete Integration Tests', () => {
         });
         
         // Simulate another user editing the same field
-        const conflictMessage = {
+        const: conflictMessage = [ {
           type: 'edit_conflict',
           data: {
             field: 'phone',

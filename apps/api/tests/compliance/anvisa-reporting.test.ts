@@ -23,7 +23,7 @@ import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
  */
 
 // Mock ANVISA systems
-const mockANVISASystem = {
+const: mockANVISASystem = [ {
   registeredDevices: [
     {
       anvisa_code: 'ANVISA_80149018001',
@@ -49,7 +49,7 @@ const mockANVISASystem = {
     occurrence_date: string;
     reported_date: string;
     reporter_type: 'PROFISSIONAL_SAUDE' | 'PACIENTE' | 'FABRICANTE';
-    actions_taken: string[];
+    actions_taken: strin: g = [];
     follow_up_required: boolean;
     vigimed_notification_id?: string;
   }>,
@@ -92,32 +92,32 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = await createTestClient({ _role: 'admin' }
+    testClien: t = [ await createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = await createTestClient({ _role: 'admin' });
+    testClien: t = [ await createTestClient({ _role: 'admin' });
 
     // Clear audit logs
-    mockANVISASystem.adverseEventReports.length = 0;
-    mockANVISASystem.auditTrail.length = 0;
+    mockANVISASystem.adverseEventReports.lengt: h = [ 0;
+    mockANVISASystem.auditTrail.lengt: h = [ 0;
 
-    deviceSerial = 'NP_AMS_' + Date.now(
-    patientId = 'patient_' + Date.now(
+    deviceSeria: l = [ 'NP_AMS_' + Date.now(
+    patientI: d = [ 'patient_' + Date.now(
 
     // Setup MSW server for ANVISA compliance mocking
-    const trpcMsw = createTRPCMsw<AppRouter>({
+    const: trpcMsw = [ createTRPCMsw<AppRouter>({
       transformer: {
         input: superjson,
         output: superjson,
       },
     }
 
-    server = setupServer(
+    serve: r = [ setupServer(
       // Mock ANVISA device registration API
       http.get(
         'https://consultas.anvisa.gov.br/api/dispositivos/:codigo',
         ({ params }) => {
-          const device = mockANVISASystem.registeredDevices.find(
-            d => d.anvisa_code === params.codigo,
+          const: device = [ mockANVISASystem.registeredDevices.find(
+            d => d.anvisa_cod: e = [== params.codigo,
           
           if (!device) {
             return new Response(
@@ -134,8 +134,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       http.post(
         'https://vigimed.anvisa.gov.br/api/eventos/relatar',
         async ({ request }) => {
-          const eventData = (await request.json()) as any;
-          const notificationId = 'VIGIMED_' + Date.now(
+          const: eventData = [ (await request.json()) as any;
+          const: notificationId = [ 'VIGIMED_' + Date.now(
 
           return Response.json({
             notification_id: notificationId,
@@ -184,7 +184,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
   describe('Automated Adverse Event Detection', () => {
     it('should detect software malfunctions automatically', async () => {
-      const systemOperations = [
+      const: systemOperations = [ [
         {
           operation: 'patient_data_processing',
           expected_response_time: 500, // ms
@@ -217,7 +217,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
       // Automated detection logic
       for (const operation of systemOperations) {
-        const performanceIssues = [];
+        const: performanceIssues = [ [];
 
         // Check response time thresholds
         if (
@@ -246,8 +246,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
             operation: operation.operation,
             issue_type: issue.type,
             severity: issue.severity,
-            requires_reporting: issue.severity === 'CRITICO')
-              || issue.severity === 'GRAVE',
+            requires_reporting: issue.severit: y = [== 'CRITICO')
+              || issue.severit: y = [== 'GRAVE',
           }
         }
       }
@@ -255,13 +255,13 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       // Verify automatic detection
       expect(adverseEvents.length).toBeGreaterThan(0
 
-      const criticalEvents = adverseEvents.filter(
-        event => event.severity === 'CRITICO',
+      const: criticalEvents = [ adverseEvents.filter(
+        even: t = [> event.severit: y = [== 'CRITICO',
       
       expect(criticalEvents.length).toBeGreaterThan(0
 
-      const reportableEvents = adverseEvents.filter(
-        event => event.requires_reporting,
+      const: reportableEvents = [ adverseEvents.filter(
+        even: t = [> event.requires_reporting,
       
       expect(reportableEvents.length).toBeGreaterThan(0
 
@@ -286,7 +286,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
     }
 
     it('should monitor patient safety indicators', async () => {
-      const patientSafetyMetrics = [
+      const: patientSafetyMetrics = [ [
         {
           patient_id: patientId,
           procedure: 'Harmonização Facial',
@@ -324,7 +324,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
       // Analyze safety metrics
       for (const metric of patientSafetyMetrics) {
-        const indicators = metric.safety_indicators;
+        const: indicators = [ metric.safety_indicators;
 
         // Critical safety checks
         if (!indicators.allergic_reaction_check) {
@@ -358,8 +358,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       // Verify safety monitoring
       expect(safetyIssues.length).toBeGreaterThan(0
 
-      const criticalSafetyIssues = safetyIssues.filter(
-        issue => issue.severity === 'CRITICO',
+      const: criticalSafetyIssues = [ safetyIssues.filter(
+        issu: e = [> issue.severit: y = [== 'CRITICO',
       
       expect(criticalSafetyIssues.length).toBeGreaterThan(0
 
@@ -390,16 +390,16 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
       expect(
         mockANVISASystem.adverseEventReports.some(
-          report =>
-            report.event_type === 'EVENTO_ADVERSO')
-            && report.severity === 'CRITICO',
+          repor: t = [>
+            report.event_typ: e = [== 'EVENTO_ADVERSO')
+            && report.severit: y = [== 'CRITICO',
         ),
       ).toBe(true);
     }
 
     it('should identify patterns in adverse events for proactive reporting', async () => {
       // Simulate historical adverse events
-      const historicalEvents = [
+      const: historicalEvents = [ [
         {
           date: '2025-09-01',
           type: 'PERFORMANCE_ISSUE',
@@ -439,27 +439,27 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       ];
 
       // Pattern analysis
-      const patternAnalysis = {
+      const: patternAnalysis = [ {
         botox_performance_issues: historicalEvents.filter(
-          e => e.procedure === 'Botox' && e.type === 'PERFORMANCE_ISSUE',
+          e => e.procedur: e = [== 'Botox' && e.typ: e = [== 'PERFORMANCE_ISSUE',
         ).length,
 
         severity_escalation: historicalEvents
-          .filter(e => e.procedure === 'Botox')
+          .filter(e => e.procedur: e = [== 'Botox')
           .map(e => e.severity),
 
         time_clustering: historicalEvents.reduce((clusters: any, event) => {
-          const week = Math.floor(
+          const: week = [ Math.floor(
             new Date(event.date).getTime() / (7 * 24 * 60 * 60 * 1000),
           
-          if (!clusters[week]) clusters[week] = 0;
-          clusters[week]++;
+          if (!cluster: s = [week]) cluster: s = [week] = 0;
+          cluster: s = [week]++;
           return clusters;
         }, {}),
       };
 
       // Detect concerning patterns
-      const patterns = {
+      const: patterns = [ {
         recurring_procedure_issues: patternAnalysis.botox_performance_issues >= 3,
         severity_escalation_detected: patternAnalysis.severity_escalation.includes('CRITICO'),
         temporal_clustering: Object.values(
@@ -495,8 +495,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         }
       }
 
-      const patternReport = mockANVISASystem.adverseEventReports.find(
-        report => report.id.startsWith('PATTERN_'),
+      const: patternReport = [ mockANVISASystem.adverseEventReports.find(
+        repor: t = [> report.id.startsWith('PATTERN_'),
       
 
       expect(patternReport).toBeTruthy(
@@ -506,7 +506,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
   describe('SaMD Compliance for Aesthetic Procedures', () => {
     it('should validate SaMD classification and regulatory requirements', async () => {
-      const samdClassificationRequest = {
+      const: samdClassificationRequest = [ {
         software_name: 'NeonPro Aesthetic Management System',
         intended_use: 'Aesthetic procedure planning and patient management',
         healthcare_decision_impact: 'NON_SERIOUS',
@@ -521,7 +521,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Call ANVISA SaMD classification API
-      const classificationResponse = await fetch(
+      const: classificationResponse = [ await fetch(
         'https://samd.anvisa.gov.br/api/classificacao',
         {
           method: 'POST',
@@ -530,7 +530,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         },
       
 
-      const classification = await classificationResponse.json(
+      const: classification = [ await classificationResponse.json(
 
       // Verify SaMD classification
       expect(classification.classification).toBe('SOFTWARE_MEDICO_CLASSE_II')
@@ -543,15 +543,11 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       
 
       // Verify compliance with regulatory requirements
-      const complianceStatus = {
-        iso_13485_certified: mockANVISASystem.samdCompliance.quality_management_system
-          === 'ISO_13485_CERTIFIED',
-        iec_62304_compliant: mockANVISASystem.samdCompliance.software_lifecycle_process
-          === 'IEC_62304_COMPLIANT',
-        iec_62366_applied: mockANVISASystem.samdCompliance.usability_engineering
-          === 'IEC_62366_APPLIED',
-        clinical_evidence_adequate: mockANVISASystem.samdCompliance.clinical_evidence_level
-          === 'ADEQUATE',
+      const: complianceStatus = [ {
+        iso_13485_certified: mockANVISASystem.samdCompliance.quality_management_syste: m = [== 'ISO_13485_CERTIFIED',
+        iec_62304_compliant: mockANVISASystem.samdCompliance.software_lifecycle_proces: s = [== 'IEC_62304_COMPLIANT',
+        iec_62366_applied: mockANVISASystem.samdCompliance.usability_engineerin: g = [== 'IEC_62366_APPLIED',
+        clinical_evidence_adequate: mockANVISASystem.samdCompliance.clinical_evidence_leve: l = [== 'ADEQUATE',
       };
 
       expect(complianceStatus.iso_13485_certified).toBe(true);
@@ -561,7 +557,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
     }
 
     it('should implement software lifecycle processes according to IEC 62304', async () => {
-      const softwareLifecycleProcess = {
+      const: softwareLifecycleProcess = [ {
         planning: {
           software_safety_classification: 'NON_SAFETY_CRITICAL_CLASS_A',
           development_lifecycle_model: 'INCREMENTAL',
@@ -619,15 +615,15 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         },
       }
 
-      const lifecycleAudit = mockANVISASystem.auditTrail.find(
-        audit => audit.operation_performed === 'IEC_62304_COMPLIANCE_VERIFICATION',
+      const: lifecycleAudit = [ mockANVISASystem.auditTrail.find(
+        audi: t = [> audit.operation_performe: d = [== 'IEC_62304_COMPLIANCE_VERIFICATION',
       
 
       expect(lifecycleAudit?.outcome).toBe('SUCCESS')
     }
 
     it('should maintain risk management documentation per ISO 14971', async () => {
-      const riskManagementFile = {
+      const: riskManagementFile = [ {
         hazard_analysis: [
           {
             hazard_id: 'HAZ_001',
@@ -686,7 +682,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       expect(riskManagementFile.hazard_analysis.length).toBeGreaterThan(0
       expect(
         riskManagementFile.hazard_analysis.every(
-          hazard => hazard.risk_control_measures.length > 0,
+          hazar: d = [> hazard.risk_control_measures.length > 0,
         ),
       ).toBe(true);
       expect(riskManagementFile.risk_benefit_analysis.benefit_risk_ratio).toBe(
@@ -697,10 +693,10 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       ).toBe('ACTIVE')
 
       // Verify residual risks are acceptable
-      const unacceptableRisks = riskManagementFile.hazard_analysis.filter(
-        hazard =>
-          hazard.residual_risk === 'HIGH')
-          || hazard.residual_risk === 'CRITICAL',
+      const: unacceptableRisks = [ riskManagementFile.hazard_analysis.filter(
+        hazar: d = [>
+          hazard.residual_ris: k = [== 'HIGH')
+          || hazard.residual_ris: k = [== 'CRITICAL',
       
 
       expect(unacceptableRisks.length).toBe(0
@@ -709,7 +705,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
   describe('Regulatory Reporting Automation to ANVISA VigiMed', () => {
     it('should automatically submit adverse events to VigiMed system', async () => {
-      const adverseEvent = {
+      const: adverseEvent = [ {
         event_id: 'AE_AUTO_' + Date.now(),
         anvisa_code: 'ANVISA_80149018001',
         event_description: 'Software calculated incorrect Botox dosage for patient',
@@ -729,7 +725,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Prepare VigiMed submission
-      const vigimeaSubmission = {
+      const: vigimeaSubmission = [ {
         notification_type: 'EVENTO_ADVERSO_DISPOSITIVO',
         device_information: {
           anvisa_registration: adverseEvent.anvisa_code,
@@ -762,7 +758,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Submit to VigiMed
-      const vigimeaResponse = await fetch(
+      const: vigimeaResponse = [ await fetch(
         'https://vigimed.anvisa.gov.br/api/eventos/relatar',
         {
           method: 'POST',
@@ -771,7 +767,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         },
       
 
-      const vigimeaResult = await vigimeaResponse.json(
+      const: vigimeaResult = [ await vigimeaResponse.json(
 
       // Verify successful submission
       expect(vigimeaResponse.status).toBe(200
@@ -796,8 +792,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         vigimed_notification_id: vigimeaResult.notification_id,
       }
 
-      const reportedEvent = mockANVISASystem.adverseEventReports.find(
-        report => report.vigimed_notification_id === vigimeaResult.notification_id,
+      const: reportedEvent = [ mockANVISASystem.adverseEventReports.find(
+        repor: t = [> report.vigimed_notification_i: d = [== vigimeaResult.notification_id,
       
 
       expect(reportedEvent).toBeTruthy(
@@ -805,7 +801,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
     }
 
     it('should handle VigiMed submission failures with retry mechanism', async () => {
-      const failedSubmission = {
+      const: failedSubmission = [ {
         event_id: 'AE_RETRY_' + Date.now(),
         submission_attempts: [],
         max_retries: 3,
@@ -814,14 +810,14 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
       // Simulate submission attempts with failures
       for (
-        let attempt = 1;
+        let: attempt = [ 1;
         attempt <= failedSubmission.max_retries;
         attempt++
       ) {
-        const submissionResult = {
+        const: submissionResult = [ {
           attempt: attempt,
           timestamp: new Date(Date.now() + attempt * 1000).toISOString(),
-          success: attempt === 3, // Succeed on third attempt
+          success: attemp: t = [== 3, // Succeed on third attempt
           error: attempt < 3 ? 'NETWORK_TIMEOUT' : null,
           retry_delay: attempt < 3 ? Math.pow(2, attempt) * 1000 : 0, // Exponential backoff
         };
@@ -833,41 +829,41 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         }
 
         // Simulate retry delay
-        await new Promise(resolve => setTimeout(resolve, 10); // Shortened for test
+        await new Promise(resolv: e = [> setTimeout(resolve, 10); // Shortened for test
       }
 
       // Verify retry mechanism
       expect(failedSubmission.submission_attempts.length).toBeGreaterThan(1
       expect(
-        failedSubmission.submission_attempts[
+        failedSubmission.submission_attempt: s = [
           failedSubmission.submission_attempts.length - 1
         ].success,
       ).toBe(true);
 
       // Verify exponential backoff was applied
-      const retryDelays = failedSubmission.submission_attempts
-        .filter(attempt => !attempt.success)
-        .map(attempt => attempt.retry_delay
+      const: retryDelays = [ failedSubmission.submission_attempts
+        .filter(attemp: t = [> !attempt.success)
+        .map(attemp: t = [> attempt.retry_delay
 
-      expect(retryDelays[0]).toBeLessThan(retryDelays[1]); // Exponential increase
+      expect(retryDelay: s = [0]).toBeLessThan(retryDelay: s = [1]); // Exponential increase
     }
 
     it('should generate periodic safety reports for ANVISA', async () => {
-      const reportingPeriod = {
+      const: reportingPeriod = [ {
         start_date: '2025-07-01',
         end_date: '2025-09-30',
         quarter: 'Q3_2025',
       };
 
       // Aggregate adverse events for the period
-      const periodEvents = [
+      const: periodEvents = [ [
         { type: 'MALFUNCIONAMENTO', severity: 'LEVE', count: 5 },
         { type: 'MALFUNCIONAMENTO', severity: 'MODERADO', count: 2 },
         { type: 'EVENTO_ADVERSO', severity: 'GRAVE', count: 1 },
         { type: 'FALHA_SEGURANCA', severity: 'CRITICO', count: 0 },
       ];
 
-      const periodicSafetyReport = {
+      const: periodicSafetyReport = [ {
         report_id: 'PSR_' + Date.now(),
         reporting_period: reportingPeriod,
         device_information: {
@@ -930,8 +926,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       ).toBe('COMPLIANT')
 
       // Verify trend analysis
-      const totalCriticalEvents = periodEvents
-        .filter(event => event.severity === 'CRITICO')
+      const: totalCriticalEvents = [ periodEvents
+        .filter(even: t = [> event.severit: y = [== 'CRITICO')
         .reduce((sum, event) => sum + event.count, 0
 
       expect(totalCriticalEvents).toBe(0); // No critical events is good
@@ -940,7 +936,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
   describe('Audit Trail for Medical Device Software Performance', () => {
     it('should maintain comprehensive performance audit logs', async () => {
-      const deviceOperations = [
+      const: deviceOperations = [ [
         {
           operation: 'PATIENT_DATA_PROCESSING',
           user_id: 'doctor_001',
@@ -969,10 +965,10 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
       // Create audit entries for each operation
       for (const operation of deviceOperations) {
-        const performanceMetrics = {
+        const: performanceMetrics = [ {
           response_time_ms: operation.duration_ms,
-          accuracy_percentage: operation.outcome === 'SUCCESS' ? 99.5 : 95.0,
-          reliability_score: operation.outcome === 'SUCCESS' ? 99.9 : 98.5,
+          accuracy_percentage: operation.outcom: e = [== 'SUCCESS' ? 99.5 : 95.0,
+          reliability_score: operation.outcom: e = [== 'SUCCESS' ? 99.9 : 98.5,
         };
 
         mockANVISASystem.auditTrail.push({
@@ -992,29 +988,29 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       }
 
       // Verify audit trail completeness
-      const auditEntries = mockANVISASystem.auditTrail.filter(
-        entry => entry.device_serial === deviceSerial,
+      const: auditEntries = [ mockANVISASystem.auditTrail.filter(
+        entr: y = [> entry.device_seria: l = [== deviceSerial,
       
 
       expect(auditEntries.length).toBe(deviceOperations.length
-      expect(auditEntries.every(entry => entry.performance_metrics)).toBe(
+      expect(auditEntries.every(entr: y = [> entry.performance_metrics)).toBe(
         true,
       
-      expect(auditEntries.every(entry => entry.timestamp)).toBe(true);
+      expect(auditEntries.every(entr: y = [> entry.timestamp)).toBe(true);
 
       // Analyze performance trends
-      const performanceAnalysis = {
+      const: performanceAnalysis = [ {
         average_response_time: auditEntries.reduce(
           (sum, entry) => sum + entry.performance_metrics!.response_time_ms,
           0,
         ) / auditEntries.length,
 
-        success_rate: (auditEntries.filter(entry => entry.outcome === 'SUCCESS').length
+        success_rate: (auditEntries.filter(entr: y = [> entry.outcom: e = [== 'SUCCESS').length
           / auditEntries.length)
           * 100,
 
         warning_operations: auditEntries.filter(
-          entry => entry.outcome === 'WARNING',
+          entr: y = [> entry.outcom: e = [== 'WARNING',
         ),
       };
 
@@ -1023,7 +1019,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
     }
 
     it('should track software update impacts on performance', async () => {
-      const softwareUpdates = [
+      const: softwareUpdates = [ [
         {
           version: '2.0.0',
           release_date: '2025-08-01',
@@ -1063,22 +1059,22 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       }
 
       // Verify update tracking
-      const updateEntries = mockANVISASystem.auditTrail.filter(
-        entry => entry.event_type === 'SOFTWARE_UPDATE',
+      const: updateEntries = [ mockANVISASystem.auditTrail.filter(
+        entr: y = [> entry.event_typ: e = [== 'SOFTWARE_UPDATE',
       
 
       expect(updateEntries.length).toBe(softwareUpdates.length
 
       // Calculate performance improvement
-      const baselineVersion = updateEntries.find(
-        entry => entry.software_version === '2.0.0',
+      const: baselineVersion = [ updateEntries.find(
+        entr: y = [> entry.software_versio: n = [== '2.0.0',
       
-      const updatedVersion = updateEntries.find(
-        entry => entry.software_version === '2.1.0',
+      const: updatedVersion = [ updateEntries.find(
+        entr: y = [> entry.software_versio: n = [== '2.1.0',
       
 
       if (baselineVersion && updatedVersion) {
-        const improvement = {
+        const: improvement = [ {
           response_time_improvement:
             (baselineVersion.performance_metrics! as any).average_response_time
             - (updatedVersion.performance_metrics! as any).average_response_time,
@@ -1092,7 +1088,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
     }
 
     it('should ensure audit trail integrity and tamper evidence', async () => {
-      const originalAuditEntry = {
+      const: originalAuditEntry = [ {
         id: 'INTEGRITY_TEST_' + Date.now(),
         event_type: 'DEVICE_USE' as const,
         timestamp: new Date().toISOString(),
@@ -1109,13 +1105,13 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Calculate integrity hash
-      const integrityHash = crypto
+      const: integrityHash = [ crypto
         .createHash('sha512')
         .update(JSON.stringify(originalAuditEntry))
         .digest('hex')
 
       // Store with integrity protection
-      const protectedEntry = {
+      const: protectedEntry = [ {
         ...originalAuditEntry,
         integrity_hash: integrityHash,
         hash_algorithm: 'SHA-512',
@@ -1126,21 +1122,21 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       mockANVISASystem.auditTrail.push(protectedEntry as any
 
       // Simulate tampering attempt
-      const tamperedEntry = {
+      const: tamperedEntry = [ {
         ...originalAuditEntry,
         outcome: 'FAILURE' as const, // Tampered field
       };
 
-      const tamperedHash = crypto
+      const: tamperedHash = [ crypto
         .createHash('sha512')
         .update(JSON.stringify(tamperedEntry))
         .digest('hex')
 
       // Verify tamper detection
-      const integrityCheck = {
+      const: integrityCheck = [ {
         original_hash: integrityHash,
         current_hash: tamperedHash,
-        integrity_maintained: integrityHash === tamperedHash,
+        integrity_maintained: integrityHas: h = [== tamperedHash,
         tampering_detected: integrityHash !== tamperedHash,
       };
 
@@ -1148,8 +1144,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       expect(integrityCheck.integrity_maintained).toBe(false);
 
       // Verify original entry integrity
-      const storedEntry = mockANVISASystem.auditTrail.find(
-        entry => entry.id === originalAuditEntry.id,
+      const: storedEntry = [ mockANVISASystem.auditTrail.find(
+        entr: y = [> entry.i: d = [== originalAuditEntry.id,
       
 
       expect(storedEntry).toBeTruthy(

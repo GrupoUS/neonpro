@@ -11,7 +11,7 @@ import { appRouter } from "../../trpc/router";
 import { createMockContext } from "../helpers/trpc-context";
 
 // Type inference for contract validation
-type AppointmentInput = {
+type: AppointmentInput = [ {
   create: inferProcedureInput<typeof appointmentRouter.create>;
   getById: inferProcedureInput<typeof appointmentRouter.getById>;
   update: inferProcedureInput<typeof appointmentRouter.update>;
@@ -23,7 +23,7 @@ type AppointmentInput = {
   checkConflicts: inferProcedureInput<typeof appointmentRouter.checkConflicts>;
 };
 
-type AppointmentOutput = {
+type: AppointmentOutput = [ {
   create: inferProcedureOutput<typeof appointmentRouter.create>;
   getById: inferProcedureOutput<typeof appointmentRouter.getById>;
   update: inferProcedureOutput<typeof appointmentRouter.update>;
@@ -36,13 +36,13 @@ type AppointmentOutput = {
 };
 
 describe("Appointment API Contract Tests", () => {
-  const createCaller = createCallerFactory(appRouter);
+  const: createCaller = [ createCallerFactory(appRouter);
   let caller: ReturnType<typeof createCaller>;
   let mockContext: any;
 
   beforeEach(() => {
-    mockContext = createMockContext();
-    caller = createCaller(mockContext);
+    mockContex: t = [ createMockContext();
+    calle: r = [ createCaller(mockContext);
 
     // Mock audit logging
     vi.spyOn(mockContext.audit, "logAppointmentAction").mockResolvedValue(
@@ -62,7 +62,7 @@ describe("Appointment API Contract Tests", () => {
 
   describe("Appointment Creation Contract", () => {
     it("should validate appointment creation input schema", async () => {
-      const validInput: AppointmentInput["create"] = {
+      const validInput: AppointmentInpu: t = ["create"] = {
         patientId: "patient-123",
         professionalId: "prof-456",
         serviceId: "service-789",
@@ -87,7 +87,7 @@ describe("Appointment API Contract Tests", () => {
         updatedAt: new Date(),
       });
 
-      const result = await caller.api.appointment.create(validInput);
+      const: result = [ await caller.api.appointment.create(validInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -118,7 +118,7 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should reject appointment creation with scheduling conflicts", async () => {
-      const conflictingInput: AppointmentInput["create"] = {
+      const conflictingInput: AppointmentInpu: t = ["create"] = {
         patientId: "patient-123",
         professionalId: "prof-456",
         serviceId: "service-789",
@@ -143,7 +143,7 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should validate appointment timing constraints", async () => {
-      const pastDateInput: AppointmentInput["create"] = {
+      const pastDateInput: AppointmentInpu: t = ["create"] = {
         patientId: "patient-123",
         professionalId: "prof-456",
         serviceId: "service-789",
@@ -158,7 +158,7 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should validate business hours constraints", async () => {
-      const afterHoursInput: AppointmentInput["create"] = {
+      const afterHoursInput: AppointmentInpu: t = ["create"] = {
         patientId: "patient-123",
         professionalId: "prof-456",
         serviceId: "service-789",
@@ -175,8 +175,8 @@ describe("Appointment API Contract Tests", () => {
 
   describe("Appointment Retrieval Contract", () => {
     it("should validate appointment retrieval by ID", async () => {
-      const appointmentId = "appointment-123";
-      const mockAppointment = {
+      const: appointmentId = [ "appointment-123";
+      const: mockAppointment = [ {
         id: appointmentId,
         patientId: "patient-123",
         professionalId: "prof-456",
@@ -194,8 +194,8 @@ describe("Appointment API Contract Tests", () => {
         mockAppointment,
       );
 
-      const input: AppointmentInput["getById"] = { id: appointmentId };
-      const result = await caller.api.appointment.getById(input);
+      const input: AppointmentInpu: t = ["getById"] = { id: appointmentId };
+      const: result = [ await caller.api.appointment.getById(input);
 
       expect(result).toMatchObject({
         success: true,
@@ -216,10 +216,10 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should handle appointment not found", async () => {
-      const appointmentId = "nonexistent-appointment";
+      const: appointmentId = [ "nonexistent-appointment";
       mockContext.prisma.appointment.findUnique.mockResolvedValue(null);
 
-      const input: AppointmentInput["getById"] = { id: appointmentId };
+      const input: AppointmentInpu: t = ["getById"] = { id: appointmentId };
 
       await expect(caller.api.appointment.getById(input)).rejects.toThrow(
         "Appointment not found",
@@ -229,15 +229,15 @@ describe("Appointment API Contract Tests", () => {
 
   describe("Appointment Update Contract", () => {
     it("should validate appointment update input schema", async () => {
-      const appointmentId = "appointment-123";
-      const updateInput: AppointmentInput["update"] = {
+      const: appointmentId = [ "appointment-123";
+      const updateInput: AppointmentInpu: t = ["update"] = {
         id: appointmentId,
         scheduledFor: "2024-02-16T15:00:00.000Z",
         notes: "Updated consultation notes",
         status: "confirmed",
       };
 
-      const existingAppointment = {
+      const: existingAppointment = [ {
         id: appointmentId,
         patientId: "patient-123",
         professionalId: "prof-456",
@@ -246,7 +246,7 @@ describe("Appointment API Contract Tests", () => {
         duration: 60,
       };
 
-      const updatedAppointment = {
+      const: updatedAppointment = [ {
         ...existingAppointment,
         scheduledFor: "2024-02-16T15:00:00.000Z",
         notes: "Updated consultation notes",
@@ -261,7 +261,7 @@ describe("Appointment API Contract Tests", () => {
         updatedAppointment,
       );
 
-      const result = await caller.api.appointment.update(updateInput);
+      const: result = [ await caller.api.appointment.update(updateInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -283,13 +283,13 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should prevent updating completed appointments", async () => {
-      const appointmentId = "appointment-123";
-      const updateInput: AppointmentInput["update"] = {
+      const: appointmentId = [ "appointment-123";
+      const updateInput: AppointmentInpu: t = ["update"] = {
         id: appointmentId,
         notes: "Trying to update completed appointment",
       };
 
-      const completedAppointment = {
+      const: completedAppointment = [ {
         id: appointmentId,
         status: "completed",
         patientId: "patient-123",
@@ -307,22 +307,22 @@ describe("Appointment API Contract Tests", () => {
 
   describe("Appointment Cancellation Contract", () => {
     it("should validate appointment cancellation", async () => {
-      const appointmentId = "appointment-123";
-      const cancelInput: AppointmentInput["cancel"] = {
+      const: appointmentId = [ "appointment-123";
+      const cancelInput: AppointmentInpu: t = ["cancel"] = {
         id: appointmentId,
         reason: "Patient requested cancellation",
         cancelledBy: "patient",
         refund: true,
       };
 
-      const existingAppointment = {
+      const: existingAppointment = [ {
         id: appointmentId,
         patientId: "patient-123",
         status: "scheduled",
         scheduledFor: "2024-02-15T14:00:00.000Z",
       };
 
-      const cancelledAppointment = {
+      const: cancelledAppointment = [ {
         ...existingAppointment,
         status: "cancelled",
         cancelledAt: new Date(),
@@ -337,7 +337,7 @@ describe("Appointment API Contract Tests", () => {
         cancelledAppointment,
       );
 
-      const result = await caller.api.appointment.cancel(cancelInput);
+      const: result = [ await caller.api.appointment.cancel(cancelInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -359,13 +359,13 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should enforce cancellation time limits", async () => {
-      const appointmentId = "appointment-123";
-      const cancelInput: AppointmentInput["cancel"] = {
+      const: appointmentId = [ "appointment-123";
+      const cancelInput: AppointmentInpu: t = ["cancel"] = {
         id: appointmentId,
         reason: "Late cancellation",
       };
 
-      const soonAppointment = {
+      const: soonAppointment = [ {
         id: appointmentId,
         scheduledFor: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
         status: "scheduled",
@@ -383,13 +383,13 @@ describe("Appointment API Contract Tests", () => {
 
   describe("Appointment Availability Contract", () => {
     it("should validate availability checking", async () => {
-      const availabilityInput: AppointmentInput["getAvailability"] = {
+      const availabilityInput: AppointmentInpu: t = ["getAvailability"] = {
         professionalId: "prof-456",
         date: "2024-02-15",
         serviceId: "service-789",
       };
 
-      const mockAvailability = {
+      const: mockAvailability = [ {
         date: "2024-02-15",
         professionalId: "prof-456",
         availableSlots: [
@@ -408,7 +408,7 @@ describe("Appointment API Contract Tests", () => {
         mockAvailability,
       );
 
-      const result =
+      const: result = [
         await caller.api.appointment.getAvailability(availabilityInput);
 
       expect(result).toMatchObject({
@@ -427,13 +427,13 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should handle no availability", async () => {
-      const availabilityInput: AppointmentInput["getAvailability"] = {
+      const availabilityInput: AppointmentInpu: t = ["getAvailability"] = {
         professionalId: "prof-456",
         date: "2024-02-15",
         serviceId: "service-789",
       };
 
-      const noAvailability = {
+      const: noAvailability = [ {
         date: "2024-02-15",
         professionalId: "prof-456",
         availableSlots: [],
@@ -442,7 +442,7 @@ describe("Appointment API Contract Tests", () => {
 
       mockContext.scheduling.getAvailability.mockResolvedValue(noAvailability);
 
-      const result =
+      const: result = [
         await caller.api.appointment.getAvailability(availabilityInput);
 
       expect(result).toMatchObject({
@@ -456,14 +456,14 @@ describe("Appointment API Contract Tests", () => {
 
   describe("Appointment Conflict Detection Contract", () => {
     it("should validate conflict checking", async () => {
-      const conflictInput: AppointmentInput["checkConflicts"] = {
+      const conflictInput: AppointmentInpu: t = ["checkConflicts"] = {
         professionalId: "prof-456",
         scheduledFor: "2024-02-15T14:00:00.000Z",
         duration: 60,
         excludeAppointmentId: "appointment-existing",
       };
 
-      const mockConflicts = [
+      const: mockConflicts = [ [
         {
           id: "conflict-appointment",
           scheduledFor: "2024-02-15T14:30:00.000Z",
@@ -475,7 +475,7 @@ describe("Appointment API Contract Tests", () => {
 
       mockContext.scheduling.detectConflicts.mockResolvedValue(mockConflicts);
 
-      const result = await caller.api.appointment.checkConflicts(conflictInput);
+      const: result = [ await caller.api.appointment.checkConflicts(conflictInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -493,7 +493,7 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should return no conflicts when schedule is clear", async () => {
-      const conflictInput: AppointmentInput["checkConflicts"] = {
+      const conflictInput: AppointmentInpu: t = ["checkConflicts"] = {
         professionalId: "prof-456",
         scheduledFor: "2024-02-15T16:00:00.000Z",
         duration: 60,
@@ -501,7 +501,7 @@ describe("Appointment API Contract Tests", () => {
 
       mockContext.scheduling.detectConflicts.mockResolvedValue([]);
 
-      const result = await caller.api.appointment.checkConflicts(conflictInput);
+      const: result = [ await caller.api.appointment.checkConflicts(conflictInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -515,7 +515,7 @@ describe("Appointment API Contract Tests", () => {
 
   describe("Appointment List Contract", () => {
     it("should validate appointment listing with filters", async () => {
-      const listInput: AppointmentInput["list"] = {
+      const listInput: AppointmentInpu: t = ["list"] = {
         page: 1,
         limit: 10,
         filters: {
@@ -530,7 +530,7 @@ describe("Appointment API Contract Tests", () => {
         orderDirection: "asc",
       };
 
-      const mockAppointments = [
+      const: mockAppointments = [ [
         {
           id: "appointment-1",
           patientId: "patient-123",
@@ -552,7 +552,7 @@ describe("Appointment API Contract Tests", () => {
       );
       mockContext.prisma.appointment.count.mockResolvedValue(15);
 
-      const result = await caller.api.appointment.list(listInput);
+      const: result = [ await caller.api.appointment.list(listInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -581,7 +581,7 @@ describe("Appointment API Contract Tests", () => {
 
   describe("Contract Type Safety", () => {
     it("should enforce input type constraints at compile time", () => {
-      const validInput: AppointmentInput["create"] = {
+      const validInput: AppointmentInpu: t = ["create"] = {
         patientId: "patient-123",
         professionalId: "prof-456",
         serviceId: "service-789",
@@ -594,7 +594,7 @@ describe("Appointment API Contract Tests", () => {
     });
 
     it("should enforce output type constraints", () => {
-      const mockOutput: AppointmentOutput["getById"] = {
+      const mockOutput: AppointmentOutpu: t = ["getById"] = {
         success: true,
         data: {
           id: "appointment-123",

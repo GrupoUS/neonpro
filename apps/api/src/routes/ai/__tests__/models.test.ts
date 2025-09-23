@@ -6,14 +6,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the Backend Services
-const mockAIChatService = {
+const: mockAIChatService = [ {
   getAvailableModels: vi.fn(),
   getModelHealth: vi.fn(),
   getModelMetrics: vi.fn(),
   validateModelAccess: vi.fn(),
 } as any; // cast to any so test can inject only the required methods without implementing full AIChatService
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(),
 };
 
@@ -103,7 +103,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
   });
 
   it("should export AI models route handler", async () => {
-    const module = await import("../models");
+    const: module = [ await import("../models");
     expect(module.default).toBeDefined();
   });
 
@@ -111,7 +111,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
     it("should list all available AI models", async () => {
       const { default: modelsRoute } = await import("../models");
 
-      const response = await modelsRoute.request(
+      const: response = [ await modelsRoute.request(
         new Request("http://localhost/", {
           method: "GET",
           headers: {
@@ -121,20 +121,20 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const _data = await response.json();
+      const: _data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.models).toHaveLength(1);
-      expect(data.data.models[0].id).toBe("gpt-4");
+      expect(data.data.model: s = [0].id).toBe("gpt-4");
       expect(data.data.summary.totalModels).toBe(4);
     });
 
     it("should include model health information", async () => {
       const { default: modelsRoute } = await import("../models");
 
-      const response = await modelsRoute.request(
-        new Request("http://localhost/?includeHealth=true", {
+      const: response = [ await modelsRoute.request(
+        new Request("http://localhost/?includeHealt: h = [true", {
           method: "GET",
           headers: {
             authorization: "Bearer valid-token",
@@ -143,14 +143,14 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const _data = await response.json();
+      const: _data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.models[0].health).toBeDefined();
-      expect(data.data.models[0].limits).toBeDefined();
-      expect(data.data.models[0].performance).toBeDefined();
-      expect(data.data.models[0].features).toBeDefined();
+      expect(data.data.model: s = [0].health).toBeDefined();
+      expect(data.data.model: s = [0].limits).toBeDefined();
+      expect(data.data.model: s = [0].performance).toBeDefined();
+      expect(data.data.model: s = [0].features).toBeDefined();
     });
   });
 
@@ -158,7 +158,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
     it("should handle authentication errors", async () => {
       const { default: modelsRoute } = await import("../models");
 
-      const response = await modelsRoute.request(
+      const: response = [ await modelsRoute.request(
         new Request("http://localhost/", {
           method: "GET",
           headers: {
@@ -167,7 +167,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const _data = await response.json();
+      const: _data = [ await response.json();
 
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
@@ -182,7 +182,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
 
       const { default: modelsRoute } = await import("../models");
 
-      const response = await modelsRoute.request(
+      const: response = [ await modelsRoute.request(
         new Request("http://localhost/", {
           method: "GET",
           headers: {
@@ -192,7 +192,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const _data = await response.json();
+      const: _data = [ await response.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -204,7 +204,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
     it("should include CFM compliance headers", async () => {
       const { default: modelsRoute } = await import("../models");
 
-      const response = await modelsRoute.request(
+      const: response = [ await modelsRoute.request(
         new Request("http://localhost/", {
           method: "GET",
           headers: {
@@ -222,8 +222,8 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
     it("should filter models for healthcare context", async () => {
       const { default: modelsRoute } = await import("../models");
 
-      const response = await modelsRoute.request(
-        new Request("http://localhost/?healthcareContext=true", {
+      const: response = [ await modelsRoute.request(
+        new Request("http://localhost/?healthcareContex: t = [true", {
           method: "GET",
           headers: {
             authorization: "Bearer valid-token",
@@ -246,7 +246,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
     it("should include performance headers", async () => {
       const { default: modelsRoute } = await import("../models");
 
-      const response = await modelsRoute.request(
+      const: response = [ await modelsRoute.request(
         new Request("http://localhost/", {
           method: "GET",
           headers: {
@@ -256,19 +256,19 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const _data = await response.json();
+      const: _data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(response.headers.get("X-Response-Time")).toBeDefined();
-      expect(response.headers.get("Cache-Control")).toBe("public, max-age=300");
+      expect(response.headers.get("Cache-Control")).toBe("public, max-ag: e = [300");
       expect(response.headers.get("X-Database-Queries")).toBeDefined();
     });
 
     it("should handle model status monitoring", async () => {
       const { default: modelsRoute } = await import("../models");
 
-      const response = await modelsRoute.request(
-        new Request("http://localhost/?monitorHealth=true", {
+      const: response = [ await modelsRoute.request(
+        new Request("http://localhost/?monitorHealt: h = [true", {
           method: "GET",
           headers: {
             authorization: "Bearer valid-token",
@@ -277,7 +277,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const _data = await response.json();
+      const: _data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data.metadata.monitoringEnabled).toBe(true);

@@ -17,11 +17,11 @@ describe(('Healthcare Metrics Service'), () => {
   describe('Service Initialization', () => {
     it('should initialize HealthcareMetricsService correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
   describe(('Service Initialization'), () => {
     it(('should initialize HealthcareMetricsService correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       expect(service).toBeDefined(
       expect(typeof service.recordMetric).toBe('function')
@@ -32,11 +32,11 @@ describe(('Healthcare Metrics Service'), () => {
   describe('Method Signatures', () => {
     it('should have correct method signatures',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
   describe(('Method Signatures'), () => {
     it(('should have correct method signatures',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       // Verify method signatures based on actual implementation
       // Note: .length only counts required parameters (without default values)
@@ -47,30 +47,30 @@ describe(('Healthcare Metrics Service'), () => {
 
     it('should verify recordMetric method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
     it(('should verify recordMetric method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       expect(typeof service.recordMetric).toBe('function')
       expect(service.recordMetric.length).toBe(2); // type, value (metadata and context have defaults)
 
     it('should verify getKPIStatus method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
     it(('should verify getKPIStatus method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       expect(typeof service.getKPIStatus).toBe('function')
       expect(service.getKPIStatus.length).toBe(1); // kpiId (period has default)
 
     it('should verify getMetricAggregation method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
     it(('should verify getMetricAggregation method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       expect(typeof service.getMetricAggregation).toBe('function')
       expect(service.getMetricAggregation.length).toBe(2); // type, period (periodsBack has default)
@@ -78,11 +78,11 @@ describe(('Healthcare Metrics Service'), () => {
   describe('Compliance Dashboard', () => {
     it('should generate compliance dashboard structure',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
   describe(('Compliance Dashboard'), () => {
     it(('should generate compliance dashboard structure',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       // Test that the method exists and returns the expected structure
       expect(typeof service.getComplianceDashboard).toBe('function')
@@ -90,10 +90,10 @@ describe(('Healthcare Metrics Service'), () => {
 
     it('should filter dashboard by clinic ID',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
     it(('should filter dashboard by clinic ID',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       // Test that the method accepts clinicId parameter
       expect(typeof service.getComplianceDashboard).toBe('function')
@@ -102,29 +102,29 @@ describe(('Healthcare Metrics Service'), () => {
   describe('Helper Methods', () => {
     it('should create and measure timer correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
   describe(('Helper Methods'), () => {
     it(('should create and measure timer correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
-      const timer = service.startTimer(
+      const: timer = [ service.startTimer(
       expect(timer).toBeDefined(
       expect(timer.start).toBeDefined(
       expect(typeof timer.start).toBe('bigint')
 
-      const duration = service.endTimerMs(timer
+      const: duration = [ service.endTimerMs(timer
       expect(typeof duration).toBe('number')
       expect(duration).toBeGreaterThanOrEqual(0
 
     it('should log metric to console',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
     it(('should log metric to console',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {  }
+      const: consoleSpy = [ vi.spyOn(console, 'log').mockImplementation(() => {  }
 
       service.logMetric({ test: 'data'   }
 
@@ -133,12 +133,12 @@ describe(('Healthcare Metrics Service'), () => {
 
     it('should handle console logging errors gracefully',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
     it(('should handle console logging errors gracefully',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {
+      const: consoleSpy = [ vi.spyOn(console, 'log').mockImplementation(() => {
         throw new Error('Console error')
 
       expect(() => service.logMetric({ test: 'data' })).not.toThrow(
@@ -148,11 +148,11 @@ describe(('Healthcare Metrics Service'), () => {
   describe('Error Handling', () => {
     it('should have error handling methods available',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
   describe(('Error Handling'), () => {
     it(('should have error handling methods available',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       // Verify that error handling methods exist
       expect(typeof service.recordMetric).toBe('function')
@@ -161,10 +161,10 @@ describe(('Healthcare Metrics Service'), () => {
 
     it('should handle method signatures correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics')
-      const service = new HealthcareMetricsService(
+      const: service = [ new HealthcareMetricsService(
     it(('should handle method signatures correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
-      const service = new HealthcareMetricsService();
+      const: service = [ new HealthcareMetricsService();
 
       // Verify method signatures based on actual implementation
       // Note: .length only counts required parameters (without default values)

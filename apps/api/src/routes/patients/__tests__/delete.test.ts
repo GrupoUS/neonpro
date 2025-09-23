@@ -7,23 +7,23 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
-const mockPatientService = {
+const: mockPatientService = [ {
   deletePatient: vi.fn(,
   getPatientById: vi.fn(,
   validateAccess: vi.fn(,
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   processDataDeletion: vi.fn(,
   validateDeletionRequest: vi.fn(,
   anonymizePatientData: vi.fn(,
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(,
 };
 
-const mockNotificationService = {
+const: mockNotificationService = [ {
   sendNotification: vi.fn(,
 };
 
@@ -95,7 +95,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
   it('should export delete patient route handler',async () => {
   it(('should export delete patient route handler',async () => {
     expect(async () => {
-      const module = await import('../delete')
+      const: module = [ await import('../delete')
       expect(module.default).toBeDefined(
     }).not.toThrow(
   }
@@ -105,7 +105,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it('should perform soft delete by default (LGPD compliance)', async () => {
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -114,8 +114,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         }),
       };
 
-      const response = await deleteRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await deleteRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -134,8 +134,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -156,17 +156,17 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
-        url: '/api/v2/patients/patient-123?deletion_type=data_subject_request'),
+        url: '/api/v2/patients/patient-123?deletion_typ: e = [data_subject_request'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
           'X-LGPD-Request': 'data_subject_deletion'),
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.deletionType).toBe('anonymization')
@@ -183,7 +183,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should send deletion confirmation notification',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -213,7 +213,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should include deletion confirmation headers',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -221,7 +221,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
+      const: response = [ await deleteRoute.request(mockRequest
 
       expect(response.headers.get('X-Deletion-Type')).toBe('soft_delete')
       expect(response.headers.get('X-Retention-Period')).toBe('7 years')
@@ -237,7 +237,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should validate LGPD deletion request',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -278,16 +278,16 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
-        url: '/api/v2/patients/patient-123?reason=consent_expired'),
+        url: '/api/v2/patients/patient-123?reaso: n = [consent_expired'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.deletionType).toBe('anonymization')
@@ -313,7 +313,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -322,8 +322,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.retentionPeriod).toBe('20 years')
@@ -345,7 +345,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -353,8 +353,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -370,7 +370,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should log patient deletion activity',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -417,9 +417,9 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
-        url: '/api/v2/patients/patient-123?deletion_type=anonymization'),
+        url: '/api/v2/patients/patient-123?deletion_typ: e = [anonymization'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
         },
@@ -444,7 +444,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should create deletion audit trail',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -478,7 +478,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/nonexistent-id'),
         headers: new Headers({
@@ -486,8 +486,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(404
       expect(data.success).toBe(false);
@@ -500,7 +500,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should handle authentication errors',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -508,8 +508,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
@@ -526,7 +526,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -534,8 +534,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -548,7 +548,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should handle invalid patient ID format',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/invalid-id-format'),
         headers: new Headers({
@@ -556,8 +556,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -577,7 +577,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -585,8 +585,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -601,7 +601,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should include CFM compliance headers',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -609,7 +609,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
+      const: response = [ await deleteRoute.request(mockRequest
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true')
       expect(response.headers.get('X-Medical-Record-Retention')).toBe(
@@ -623,7 +623,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should validate healthcare professional context for deletion',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -633,7 +633,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
+      const: response = [ await deleteRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(mockPatientService.deletePatient).toHaveBeenCalledWith(
@@ -649,7 +649,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it(('should handle ANVISA compliance for medical device data',async () => {
       const { default: deleteRoute } = await import('../delete');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE',
         url: '/api/v2/patients/patient-123',
         headers: new Headers({
@@ -658,7 +658,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         }),
       };
 
-      const response = await deleteRoute.request(mockRequest);
+      const: response = [ await deleteRoute.request(mockRequest);
 
       expect(response.status).toBe(200);
       expect(response.headers.get('X-ANVISA-Retention')).toBe('required');
@@ -682,7 +682,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     it('should handle ANVISA compliance for medical device data',async () => {
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -693,8 +693,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         }),
       };
 
-      const response = await deleteRoute.request(mockRequest);
-      const data = await response.json();
+      const: response = [ await deleteRoute.request(mockRequest);
+      const: data = [ await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data.deletionType).toBe('hard_delete');
@@ -713,7 +713,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
+      const: response = [ await deleteRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-ANVISA-Retention')).toBe('required')
@@ -735,17 +735,17 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
-        url: '/api/v2/patients/patient-123?deletion_type=hard_delete&reason=test_data'),
+        url: '/api/v2/patients/patient-123?deletion_typ: e = [hard_delete&reaso: n = [test_data'),
         headers: new Headers({
           authorization: 'Bearer admin-token'),
           'X-Admin-Override': 'true'),
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.deletionType).toBe('hard_delete')
@@ -766,16 +766,16 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       const { default: deleteRoute } = await import('../delete')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'DELETE'),
-        url: '/api/v2/patients/patient-123?schedule_anonymization=true'),
+        url: '/api/v2/patients/patient-123?schedule_anonymizatio: n = [true'),
         headers: new Headers({
           authorization: 'Bearer valid-token'),
         },
       };
 
-      const response = await deleteRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await deleteRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.deletionType).toBe('scheduled_anonymization')

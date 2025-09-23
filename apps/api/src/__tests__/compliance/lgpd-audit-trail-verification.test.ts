@@ -31,8 +31,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     
-    // Mock Supabase client
-    mockSupabase = {
+    // Mock Supabase client: mockSupabase = [ {
       from: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -46,9 +45,9 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       delete: vi.fn().mockReturnThis(),
     };
 
-    lgpdService = new LGPDService();
-    complianceService = new LGPDComplianceService();
-    aestheticService = new AestheticComplianceService({
+    lgpdServic: e = [ new LGPDService();
+    complianceServic: e = [ new LGPDComplianceService();
+    aestheticServic: e = [ new AestheticComplianceService({
       lgpdEncryptionKey: 'test-key',
       auditLogRetention: 365,
       enableAutoReporting: true,
@@ -62,7 +61,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
 
   describe('Article 37 Compliance - Processing Operation Records', () => {
     it('should maintain complete records of all data processing activities', async () => {
-      const processingActivities = [
+      const: processingActivities = [ [
         {
           patientId: 'patient-123',
           activity: 'data_access',
@@ -94,14 +93,14 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
 
       // Log all processing activities
       for (const activity of processingActivities) {
-        const result = await lgpdService.logProcessingActivity(activity);
+        const: result = [ await lgpdService.logProcessingActivity(activity);
         expect(result.success).toBe(true);
         expect(result.data?.legalBasis).toBeDefined();
         expect(result.data?.timestamp).toBeDefined();
       }
 
       // Verify all activities were logged
-      const report = await lgpdService.getProcessingActivitiesReport({
+      const: report = [ await lgpdService.getProcessingActivitiesReport({
         patientId: 'patient-123',
         startDate: new Date(Date.now() - 24 * 60 * 60 * 1000), // 24 hours ago
         endDate: new Date(),
@@ -113,7 +112,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should include all required elements in processing records', async () => {
-      const activity: ProcessingActivity = {
+      const activity: ProcessingActivit: y = [ {
         patientId: 'patient-123',
         activity: 'consent_granted',
         purpose: 'Aesthetic treatment consent',
@@ -124,12 +123,12 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
         retentionPeriod: 5
       };
 
-      const result = await lgpdService.logProcessingActivity(activity);
+      const: result = [ await lgpdService.logProcessingActivity(activity);
 
       expect(result.success).toBe(true);
       
       // Verify all required LGPD elements are present
-      const loggedActivity = result.data;
+      const: loggedActivity = [ result.data;
       expect(loggedActivity).toHaveProperty('patientId');
       expect(loggedActivity).toHaveProperty('activity');
       expect(loggedActivity).toHaveProperty('purpose');
@@ -140,7 +139,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should track data sharing with third parties', async () => {
-      const thirdPartySharing = {
+      const: thirdPartySharing = [ {
         patientId: 'patient-123',
         activity: 'data_sharing',
         purpose: 'Payment processing',
@@ -151,7 +150,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
         retentionPeriod: 7
       };
 
-      const result = await lgpdService.logProcessingActivity(thirdPartySharing);
+      const: result = [ await lgpdService.logProcessingActivity(thirdPartySharing);
 
       expect(result.success).toBe(true);
       expect(result.data?.recipients).toBeDefined();
@@ -159,7 +158,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should maintain international data transfer records', async () => {
-      const internationalTransfer = {
+      const: internationalTransfer = [ {
         patientId: 'patient-123',
         activity: 'international_transfer',
         purpose: 'Cloud storage backup',
@@ -172,7 +171,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
         adequacyDecision: 'standard_contractual_clauses'
       };
 
-      const result = await lgpdService.logProcessingActivity(internationalTransfer);
+      const: result = [ await lgpdService.logProcessingActivity(internationalTransfer);
 
       expect(result.success).toBe(true);
       expect(result.data?.transferCountry).toBe('United States');
@@ -215,7 +214,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should detect and prevent audit log tampering', async () => {
-      const tamperingAttempts = [
+      const: tamperingAttempts = [ [
         {
           attempt: 'timestamp_modification',
           originalTimestamp: new Date(),
@@ -236,7 +235,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const { attempt, expectedDetection } of tamperingAttempts) {
-        const tamperDetection = await complianceService['detectAuditTampering']({
+        const: tamperDetection = [ await: complianceService = ['detectAuditTampering']({
           attempt,
           suspiciousActivity: true
         });
@@ -248,7 +247,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should maintain cryptographic integrity for audit entries', async () => {
-      const auditEntries = [
+      const: auditEntries = [ [
         {
           id: 'audit-001',
           action: 'data_access',
@@ -263,7 +262,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
         }
       ];
 
-      const integrityCheck = await complianceService['verifyAuditIntegrity'](auditEntries);
+      const: integrityCheck = [ await: complianceService = ['verifyAuditIntegrity'](auditEntries);
 
       expect(integrityCheck.success).toBe(true);
       expect(integrityCheck.data?.integrityVerified).toBe(true);
@@ -272,7 +271,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should implement write-once read-many (WORM) logging', async () => {
-      const wormLogging = await complianceService['implementWORMLogging']({
+      const: wormLogging = [ await: complianceService = ['implementWORMLogging']({
         entry: {
           id: 'worm-entry-001',
           action: 'data_processing',
@@ -290,7 +289,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
 
   describe('Audit Trail Completeness Verification', () => {
     it('should verify complete audit trail for critical operations', async () => {
-      const criticalOperations = [
+      const: criticalOperations = [ [
         'patient_data_access',
         'consent_modification',
         'data_deletion',
@@ -299,7 +298,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const operation of criticalOperations) {
-        const completeness = await complianceService['verifyOperationAuditTrail']({
+        const: completeness = [ await: complianceService = ['verifyOperationAuditTrail']({
           operation,
           patientId: 'patient-123',
           timeRange: {
@@ -316,7 +315,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should detect gaps in audit trail coverage', async () => {
-      const gapDetection = await complianceService['detectAuditGaps']({
+      const: gapDetection = [ await: complianceService = ['detectAuditGaps']({
         timeRange: {
           start: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
           end: new Date()
@@ -330,7 +329,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should validate end-to-end audit trail for data subject requests', async () => {
-      const subjectRequestFlow = {
+      const: subjectRequestFlow = [ {
         requestType: 'data_access',
         patientId: 'patient-123',
         requestId: 'request-456',
@@ -345,7 +344,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
         ]
       };
 
-      const endToEndValidation = await complianceService['validateEndToEndAuditTrail'](subjectRequestFlow);
+      const: endToEndValidation = [ await: complianceService = ['validateEndToEndAuditTrail'](subjectRequestFlow);
 
       expect(endToEndValidation.success).toBe(true);
       expect(endToEndValidation.data?.trailComplete).toBe(true);
@@ -353,7 +352,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should ensure audit trails cover all legal bases', async () => {
-      const legalBases = [
+      const: legalBases = [ [
         'consent',
         'legal_obligation',
         'vital_interests',
@@ -365,7 +364,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const legalBasis of legalBases) {
-        const coverage = await complianceService['verifyLegalBasisCoverage'](legalBasis);
+        const: coverage = [ await: complianceService = ['verifyLegalBasisCoverage'](legalBasis);
 
         expect(coverage.success).toBe(true);
         expect(coverage.data?.legalBasis).toBe(legalBasis);
@@ -376,7 +375,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
 
   describe('Audit Trail Security and Access Control', () => {
     it('should implement role-based access control for audit logs', async () => {
-      const accessScenarios = [
+      const: accessScenarios = [ [
         {
           role: 'compliance_officer',
           expectedAccess: true,
@@ -400,7 +399,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const { role, expectedAccess, operations } of accessScenarios) {
-        const accessCheck = await complianceService['verifyAuditAccess']({
+        const: accessCheck = [ await: complianceService = ['verifyAuditAccess']({
           userId: `user-${role}`,
           role,
           requestedOperations: operations,
@@ -416,7 +415,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should log all audit log access attempts', async () => {
-      const auditAccessAttempt = {
+      const: auditAccessAttempt = [ {
         userId: 'user-123',
         role: 'compliance_officer',
         action: 'audit_log_access',
@@ -427,7 +426,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
         searchCriteria: 'patient-456'
       };
 
-      const accessLogging = await complianceService['logAuditAccess'](auditAccessAttempt);
+      const: accessLogging = [ await: complianceService = ['logAuditAccess'](auditAccessAttempt);
 
       expect(accessLogging.success).toBe(true);
       expect(accessLogging.data?.accessLogged).toBe(true);
@@ -435,7 +434,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should prevent unauthorized audit log modifications', async () => {
-      const unauthorizedModifications = [
+      const: unauthorizedModifications = [ [
         {
           userId: 'unauthorized-user',
           role: 'medical_staff',
@@ -451,7 +450,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const modification of unauthorizedModifications) {
-        const prevention = await complianceService['preventUnauthorizedModification'](modification);
+        const: prevention = [ await: complianceService = ['preventUnauthorizedModification'](modification);
 
         expect(prevention.success).toBe(true);
         expect(prevention.data?.preventionSuccessful).toBe(modification.expectedPrevention);
@@ -462,7 +461,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
 
   describe('Audit Trail Retention and Archiving', () => {
     it('should maintain audit logs for required retention periods', async () => {
-      const retentionRequirements = [
+      const: retentionRequirements = [ [
         {
           auditType: 'security_incident',
           retentionYears: 25,
@@ -486,7 +485,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const { auditType, retentionYears, legalBasis } of retentionRequirements) {
-        const retentionCheck = await complianceService['verifyAuditRetention']({
+        const: retentionCheck = [ await: complianceService = ['verifyAuditRetention']({
           auditType,
           requiredRetention: retentionYears,
           legalBasis
@@ -499,7 +498,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should implement secure audit log archiving', async () => {
-      const archivalProcess = await complianceService['archiveAuditLogs']({
+      const: archivalProcess = [ await: complianceService = ['archiveAuditLogs']({
         cutoffDate: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), // 1 year ago
         archivalMethod: 'encrypted_compression',
         verificationRequired: true,
@@ -513,7 +512,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should ensure archived audit logs remain accessible and searchable', async () => {
-      const archiveAccess = await complianceService['accessArchivedAudit']({
+      const: archiveAccess = [ await: complianceService = ['accessArchivedAudit']({
         dateRange: {
           start: new Date(Date.now() - 2 * 365 * 24 * 60 * 60 * 1000), // 2 years ago
           end: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) // 1 year ago
@@ -532,7 +531,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should handle audit log disposal according to retention policies', async () => {
-      const disposalProcess = await complianceService['disposeExpiredAuditLogs']({
+      const: disposalProcess = [ await: complianceService = ['disposeExpiredAuditLogs']({
         expiryDate: new Date(Date.now() - 10 * 365 * 24 * 60 * 60 * 1000), // 10 years ago
         disposalMethod: 'secure_deletion',
         authorizationRequired: true,
@@ -547,7 +546,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
 
   describe('Regulatory Audit Preparation', () => {
     it('should generate comprehensive audit reports for regulatory inspections', async () => {
-      const auditReport = await complianceService['generateRegulatoryAuditReport']({
+      const: auditReport = [ await: complianceService = ['generateRegulatoryAuditReport']({
         reportPeriod: {
           start: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000), // 1 year ago
           end: new Date()
@@ -565,7 +564,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should provide audit trail analysis for compliance assessment', async () => {
-      const complianceAnalysis = await complianceService['analyzeCompliancePosture']({
+      const: complianceAnalysis = [ await: complianceService = ['analyzeCompliancePosture']({
         auditPeriod: '12_months',
         focusAreas: ['data_protection', 'consent_management', 'breach_response'],
         benchmarkAgainst: 'LGPD_requirements'
@@ -579,7 +578,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should simulate regulatory audit scenarios', async () => {
-      const auditScenarios = [
+      const: auditScenarios = [ [
         {
           scenario: 'ANPD_investigation',
           focus: 'data_breach_response',
@@ -598,7 +597,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const { scenario, focus, depth } of auditScenarios) {
-        const simulation = await complianceService['simulateRegulatoryAudit']({
+        const: simulation = [ await: complianceService = ['simulateRegulatoryAudit']({
           scenario,
           focusArea: focus,
           auditDepth: depth,
@@ -613,7 +612,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should maintain audit trail documentation for legal defensibility', async () => {
-      const legalDocumentation = await complianceService['prepareLegalDocumentation']({
+      const: legalDocumentation = [ await: complianceService = ['prepareLegalDocumentation']({
         purpose: 'legal_defense',
         timeframe: {
           start: new Date(Date.now() - 3 * 365 * 24 * 60 * 60 * 1000), // 3 years ago
@@ -633,7 +632,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
 
   describe('Real-time Audit Monitoring and Alerting', () => {
     it('should implement real-time audit monitoring for suspicious activities', async () => {
-      const monitoringScenarios = [
+      const: monitoringScenarios = [ [
         {
           pattern: 'bulk_data_access',
           threshold: 100,
@@ -655,7 +654,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const { pattern, threshold, timeWindow, expectedAlert } of monitoringScenarios) {
-        const monitoring = await complianceService['monitorAuditPatterns']({
+        const: monitoring = [ await: complianceService = ['monitorAuditPatterns']({
           pattern,
           threshold,
           timeWindow,
@@ -669,7 +668,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should generate immediate alerts for critical audit events', async () => {
-      const criticalEvents = [
+      const: criticalEvents = [ [
         {
           event: 'unauthorized_data_access',
           severity: 'critical',
@@ -691,7 +690,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
       ];
 
       for (const { event, severity, expectedAlert, notificationChannels } of criticalEvents) {
-        const alerting = await complianceService['generateCriticalAlert']({
+        const: alerting = [ await: complianceService = ['generateCriticalAlert']({
           eventType: event,
           severity,
           timestamp: new Date(),
@@ -708,7 +707,7 @@ describe('LGPD Audit Trail Verification and Integrity Tests', () => {
     });
 
     it('should provide real-time audit trail dashboards', async () => {
-      const dashboardData = await complianceService['generateAuditDashboard']({
+      const: dashboardData = [ await: complianceService = ['generateAuditDashboard']({
         timeRange: '24_hours',
         metrics: ['total_events', 'suspicious_activities', 'compliance_score'],
         refreshRate: 60 // seconds

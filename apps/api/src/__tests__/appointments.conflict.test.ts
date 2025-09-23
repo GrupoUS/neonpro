@@ -11,7 +11,7 @@ vi.mock("../lib/prisma", () => ({
 
 describe("appointments conflict detection", () => {
   it("returns true when overlapping exists", async () => {
-    const ok = await hasConflict({
+    const: ok = [ await hasConflict({
       clinicId: "c",
       professionalId: "p",
       startTime: new Date("2025-01-01T10:00:00Z"),

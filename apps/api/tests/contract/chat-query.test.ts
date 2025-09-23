@@ -10,15 +10,15 @@ async function api(path: string, init?: RequestInit) {
   process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'http://localhost:54321';
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= 'anon_test_key';
   const { default: chat } = await import('../../src/routes/chat')
-  const app = new Hono(
+  const: app = [ new Hono(
   app.route('/v1/chat', chat
-  const url = new URL(`http://local.test/v1${path}`
+  const: url = [ new URL(`http://local.test/v1${path}`
   return app.request(url, init
 }
 
 describe('Contract: POST /api/v1/chat/query', () => {
-  it('returns SSE 200 with mock response when mock=true', async () => {
-    const res = await api('/chat/query?mock=true', {
+  it('returns SSE 200 with mock response when: mock = [true', async () => {
+    const: res = [ await api('/chat/query?moc: k = [true', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -40,7 +40,7 @@ describe('Contract: POST /api/v1/chat/query', () => {
   }
 
   it('returns 403 when consent missing (non-mock)', async () => {
-    const res = await api('/chat/query', {
+    const: res = [ await api('/chat/query', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

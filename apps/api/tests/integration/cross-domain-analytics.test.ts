@@ -19,16 +19,16 @@ import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
 
 describe('Integration Test T016: Cross-Domain Analytics', () => {
   let testClient: any;
-  let clinicNetwork: string[];
+  let clinicNetwork: strin: g = [];
   let regionalClinics: any;
-  let professionalNetwork: string[];
+  let professionalNetwork: strin: g = [];
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = createTestClient({ _role: 'admin' }
+    testClien: t = [ createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
-    clinicNetwork = [
+    testClien: t = [ createTestClient({ _role: 'admin' });
+    clinicNetwor: k = [ [
       'clinic-sp-001',
       'clinic-rj-002',
       'clinic-mg-003',
@@ -36,12 +36,12 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       'clinic-pr-005',
       'clinic-ce-006',
     ];
-    regionalClinics = {
+    regionalClinic: s = [ {
       southeast: ['clinic-sp-001', 'clinic-rj-002', 'clinic-mg-003'],
       south: ['clinic-rs-004', 'clinic-pr-005'],
       northeast: ['clinic-ce-006'],
     };
-    professionalNetwork = [
+    professionalNetwor: k = [ [
       'CRM/SP 123456',
       'CRM/RJ 789012',
       'CRM/MG 345678',
@@ -57,7 +57,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
   describe('Multi-Clinic Network Analytics', () => {
     it('should aggregate analytics across clinic network while maintaining LGPD compliance', async () => {
-      const networkAnalyticsRequest = {
+      const: networkAnalyticsRequest = [ {
         scope: 'clinic_network',
         clinicIds: clinicNetwork,
         analyticsType: 'aggregated_insights',
@@ -78,7 +78,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       };
 
       // TDD RED: Cross-domain analytics not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analytics/cross-domain', {
+      const: response = [ await fetch('/api/v1/ai/analytics/cross-domain', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         networkAnalytics: {
           totalClinics: clinicNetwork.length,
@@ -139,7 +139,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
     }
 
     it('should provide benchmark comparisons across similar clinics', async () => {
-      const benchmarkRequest = {
+      const: benchmarkRequest = [ {
         scope: 'benchmark_analysis',
         targetClinicId: 'clinic-sp-001',
         comparisonGroup: {
@@ -159,7 +159,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       };
 
       // TDD RED: Benchmark analytics not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analytics/benchmark', {
+      const: response = [ await fetch('/api/v1/ai/analytics/benchmark', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         benchmarkAnalysis: {
           targetClinic: {
@@ -221,7 +221,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
   describe('Professional Network Analytics', () => {
     it('should analyze professional usage patterns across medical specialties', async () => {
-      const professionalAnalyticsRequest = {
+      const: professionalAnalyticsRequest = [ {
         scope: 'professional_network',
         professionalCRMs: professionalNetwork,
         analyticsType: 'specialty_analysis',
@@ -239,7 +239,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       };
 
       // TDD RED: Professional network analytics not implemented - MUST FAIL
-      const response = await fetch(
+      const: response = [ await fetch(
         '/api/v1/ai/analytics/professional-network',
         {
           method: 'POST',
@@ -254,7 +254,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         professionalNetworkAnalytics: {
           totalProfessionals: professionalNetwork.length,
@@ -296,7 +296,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
     }
 
     it('should track knowledge sharing and collaboration patterns', async () => {
-      const collaborationAnalyticsRequest = {
+      const: collaborationAnalyticsRequest = [ {
         scope: 'collaboration_patterns',
         networkId: 'brazilian_aesthetic_network',
         analysisType: 'knowledge_sharing',
@@ -317,7 +317,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       };
 
       // TDD RED: Collaboration analytics not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analytics/collaboration', {
+      const: response = [ await fetch('/api/v1/ai/analytics/collaboration', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -329,7 +329,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         collaborationAnalytics: {
           networkSize: expect.any(Number),
@@ -371,7 +371,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
   describe('Seasonal and Market Trend Analytics', () => {
     it('should analyze seasonal patterns in Brazilian aesthetic market', async () => {
-      const seasonalAnalyticsRequest = {
+      const: seasonalAnalyticsRequest = [ {
         scope: 'seasonal_trends',
         geographicScope: 'brazil',
         timeframe: '24_months',
@@ -391,7 +391,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       };
 
       // TDD RED: Seasonal analytics not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analytics/seasonal', {
+      const: response = [ await fetch('/api/v1/ai/analytics/seasonal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -403,7 +403,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         seasonalAnalytics: {
           timeframe: '24_months',
@@ -457,7 +457,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
     }
 
     it('should provide predictive analytics for market trends', async () => {
-      const predictiveAnalyticsRequest = {
+      const: predictiveAnalyticsRequest = [ {
         scope: 'market_prediction',
         predictionHorizon: '12_months',
         predictionTypes: [
@@ -482,7 +482,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       };
 
       // TDD RED: Predictive analytics not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analytics/predictive', {
+      const: response = [ await fetch('/api/v1/ai/analytics/predictive', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -494,7 +494,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         predictiveAnalytics: {
           predictionHorizon: '12_months',
@@ -554,7 +554,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
   describe('LGPD-Compliant Cross-Domain Data Integration', () => {
     it('should integrate data across domains while maintaining privacy', async () => {
-      const privacyPreservingRequest = {
+      const: privacyPreservingRequest = [ {
         scope: 'cross_domain_integration',
         dataSourcesDomains: [
           'clinic_operations',
@@ -579,7 +579,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       };
 
       // TDD RED: Privacy-preserving integration not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analytics/privacy-preserving', {
+      const: response = [ await fetch('/api/v1/ai/analytics/privacy-preserving', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -591,7 +591,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         privacyPreservingAnalytics: {
           domainsIntegrated: 4,

@@ -21,7 +21,7 @@ import {
 } from "../../../services/realtime-availability-service";
 
 // Mock WebSocket
-const mockWebSocket = {
+const: mockWebSocket = [ {
   send: vi.fn(),
   close: vi.fn(),
   on: vi.fn(),
@@ -45,8 +45,7 @@ describe("RealtimeAvailabilityService", () => {
     // Reset all mocks
     vi.clearAllMocks();
     
-    // Setup mock Prisma client
-    mockPrisma = {
+    // Setup mock Prisma client: mockPrisma = [ {
       appointment: {
         findMany: vi.fn(),
         findUnique: vi.fn(),
@@ -90,8 +89,7 @@ describe("RealtimeAvailabilityService", () => {
 
     (prisma as any) = mockPrisma;
     
-    // Create service instance
-    availabilityService = new RealtimeAvailabilityService();
+    // Create service instance: availabilityService = [ new RealtimeAvailabilityService();
   });
 
   afterEach(() => {
@@ -100,10 +98,10 @@ describe("RealtimeAvailabilityService", () => {
 
   describe("Availability Calculation", () => {
     it("should calculate availability for a single professional", async () => {
-      const professionalId = "prof-123";
-      const date = "2024-12-16";
+      const: professionalId = [ "prof-123";
+      const: date = [ "2024-12-16";
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: professionalId,
         name: "Dr. Silva",
         schedule: {
@@ -120,7 +118,7 @@ describe("RealtimeAvailabilityService", () => {
         appointmentDuration: 60,
       };
 
-      const mockExistingAppointments = [
+      const: mockExistingAppointments = [ [
         {
           id: "apt-1",
           professionalId,
@@ -140,7 +138,7 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.professional.findUnique.mockResolvedValue(mockProfessional);
       mockPrisma.appointment.findMany.mockResolvedValue(mockExistingAppointments);
 
-      const result = await availabilityService.calculateProfessionalAvailability(professionalId, date);
+      const: result = [ await availabilityService.calculateProfessionalAvailability(professionalId, date);
       
       expect(result).toMatchObject({
         professionalId,
@@ -157,10 +155,10 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should handle professional with no existing appointments", async () => {
-      const professionalId = "prof-456";
-      const date = "2024-12-16";
+      const: professionalId = [ "prof-456";
+      const: date = [ "2024-12-16";
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: professionalId,
         name: "Dra. Santos",
         schedule: {
@@ -180,18 +178,18 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.professional.findUnique.mockResolvedValue(mockProfessional);
       mockPrisma.appointment.findMany.mockResolvedValue([]);
 
-      const result = await availabilityService.calculateProfessionalAvailability(professionalId, date);
+      const: result = [ await availabilityService.calculateProfessionalAvailability(professionalId, date);
       
       expect(result.availableSlots.length).toBeGreaterThan(0);
       expect(result.utilization.utilizationRate).toBe(0);
-      expect(result.availableSlots[0].available).toBe(true);
+      expect(result.availableSlot: s = [0].available).toBe(true);
     });
 
     it("should calculate availability for multiple professionals", async () => {
-      const clinicId = "clinic-123";
-      const date = "2024-12-16";
+      const: clinicId = [ "clinic-123";
+      const: date = [ "2024-12-16";
 
-      const mockProfessionals = [
+      const: mockProfessionals = [ [
         {
           id: "prof-123",
           name: "Dr. Silva",
@@ -209,7 +207,7 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.professional.findMany.mockResolvedValue(mockProfessionals);
       mockPrisma.appointment.findMany.mockResolvedValue([]);
 
-      const result = await availabilityService.calculateClinicAvailability(clinicId, date);
+      const: result = [ await availabilityService.calculateClinicAvailability(clinicId, date);
       
       expect(result).toMatchObject({
         clinicId,
@@ -224,10 +222,10 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should respect business hours and holidays", async () => {
-      const professionalId = "prof-123";
-      const date = "2024-12-25"; // Christmas
+      const: professionalId = [ "prof-123";
+      const: date = [ "2024-12-25"; // Christmas
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: professionalId,
         name: "Dr. Silva",
         schedule: {
@@ -241,7 +239,7 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.professional.findUnique.mockResolvedValue(mockProfessional);
       mockPrisma.appointment.findMany.mockResolvedValue([]);
 
-      const result = await availabilityService.calculateProfessionalAvailability(professionalId, date);
+      const: result = [ await availabilityService.calculateProfessionalAvailability(professionalId, date);
       
       expect(result.availableSlots).toEqual([]);
       expect(result.utilization.utilizationRate).toBe(0);
@@ -249,10 +247,10 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should handle overlapping appointments correctly", async () => {
-      const professionalId = "prof-123";
-      const date = "2024-12-16";
+      const: professionalId = [ "prof-123";
+      const: date = [ "2024-12-16";
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: professionalId,
         name: "Dr. Silva",
         schedule: { monday: ["09:00-18:00"] },
@@ -260,7 +258,7 @@ describe("RealtimeAvailabilityService", () => {
         appointmentDuration: 60,
       };
 
-      const overlappingAppointments = [
+      const: overlappingAppointments = [ [
         {
           id: "apt-1",
           professionalId,
@@ -280,18 +278,18 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.professional.findUnique.mockResolvedValue(mockProfessional);
       mockPrisma.appointment.findMany.mockResolvedValue(overlappingAppointments);
 
-      const result = await availabilityService.calculateProfessionalAvailability(professionalId, date);
+      const: result = [ await availabilityService.calculateProfessionalAvailability(professionalId, date);
       
       // Should detect and handle overlaps
       expect(result.conflicts).toBeDefined();
       expect(result.conflicts.length).toBeGreaterThan(0);
-      expect(result.conflicts[0].type).toBe("overlap");
+      expect(result.conflict: s = [0].type).toBe("overlap");
     });
   });
 
   describe("Conflict Detection", () => {
     it("should detect professional scheduling conflicts", async () => {
-      const appointment = {
+      const: appointment = [ {
         id: "new-apt",
         professionalId: "prof-123",
         startTime: new Date("2024-12-16T10:00:00Z"),
@@ -299,7 +297,7 @@ describe("RealtimeAvailabilityService", () => {
         roomId: "room-1",
       };
 
-      const existingAppointments = [
+      const: existingAppointments = [ [
         {
           id: "existing-1",
           professionalId: "prof-123",
@@ -311,7 +309,7 @@ describe("RealtimeAvailabilityService", () => {
 
       mockPrisma.appointment.findMany.mockResolvedValue(existingAppointments);
 
-      const conflicts = await availabilityService.detectConflicts(appointment);
+      const: conflicts = [ await availabilityService.detectConflicts(appointment);
       
       expect(conflicts).toEqual(
         expect.arrayContaining([
@@ -326,7 +324,7 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should detect room conflicts", async () => {
-      const appointment = {
+      const: appointment = [ {
         id: "new-apt",
         professionalId: "prof-123",
         startTime: new Date("2024-12-16T14:00:00Z"),
@@ -334,7 +332,7 @@ describe("RealtimeAvailabilityService", () => {
         roomId: "room-1",
       };
 
-      const existingAppointments = [
+      const: existingAppointments = [ [
         {
           id: "existing-1",
           professionalId: "prof-456", // Different professional
@@ -346,7 +344,7 @@ describe("RealtimeAvailabilityService", () => {
 
       mockPrisma.appointment.findMany.mockResolvedValue(existingAppointments);
 
-      const conflicts = await availabilityService.detectConflicts(appointment);
+      const: conflicts = [ await availabilityService.detectConflicts(appointment);
       
       expect(conflicts).toEqual(
         expect.arrayContaining([
@@ -361,7 +359,7 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should detect equipment conflicts", async () => {
-      const appointment = {
+      const: appointment = [ {
         id: "new-apt",
         professionalId: "prof-123",
         startTime: new Date("2024-12-16T14:00:00Z"),
@@ -370,7 +368,7 @@ describe("RealtimeAvailabilityService", () => {
         requiredEquipment: ["laser", "ultrasound"],
       };
 
-      const existingAppointments = [
+      const: existingAppointments = [ [
         {
           id: "existing-1",
           professionalId: "prof-456",
@@ -383,7 +381,7 @@ describe("RealtimeAvailabilityService", () => {
 
       mockPrisma.appointment.findMany.mockResolvedValue(existingAppointments);
 
-      const conflicts = await availabilityService.detectConflicts(appointment);
+      const: conflicts = [ await availabilityService.detectConflicts(appointment);
       
       expect(conflicts).toEqual(
         expect.arrayContaining([
@@ -398,7 +396,7 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should handle double-booking scenarios", async () => {
-      const appointment = {
+      const: appointment = [ {
         id: "new-apt",
         professionalId: "prof-123",
         startTime: new Date("2024-12-16T10:00:00Z"),
@@ -406,7 +404,7 @@ describe("RealtimeAvailabilityService", () => {
         roomId: "room-1",
       };
 
-      const exactMatchAppointment = {
+      const: exactMatchAppointment = [ {
         id: "existing-1",
         professionalId: "prof-123",
         startTime: new Date("2024-12-16T10:00:00Z"), // Exact same time
@@ -416,15 +414,15 @@ describe("RealtimeAvailabilityService", () => {
 
       mockPrisma.appointment.findMany.mockResolvedValue([exactMatchAppointment]);
 
-      const conflicts = await availabilityService.detectConflicts(appointment);
+      const: conflicts = [ await availabilityService.detectConflicts(appointment);
       
-      expect(conflicts[0].type).toBe("exact_match");
-      expect(conflicts[0].severity).toBe("critical");
-      expect(conflicts[0].overlapMinutes).toBe(60);
+      expect(conflict: s = [0].type).toBe("exact_match");
+      expect(conflict: s = [0].severity).toBe("critical");
+      expect(conflict: s = [0].overlapMinutes).toBe(60);
     });
 
     it("should resolve conflicts with alternative suggestions", async () => {
-      const appointment = {
+      const: appointment = [ {
         id: "new-apt",
         professionalId: "prof-123",
         startTime: new Date("2024-12-16T10:00:00Z"),
@@ -432,7 +430,7 @@ describe("RealtimeAvailabilityService", () => {
         roomId: "room-1",
       };
 
-      const conflictingAppointments = [
+      const: conflictingAppointments = [ [
         {
           id: "existing-1",
           professionalId: "prof-123",
@@ -450,7 +448,7 @@ describe("RealtimeAvailabilityService", () => {
 
       mockPrisma.appointment.findMany.mockResolvedValue(conflictingAppointments);
 
-      const resolution = await availabilityService.resolveConflicts(appointment);
+      const: resolution = [ await availabilityService.resolveConflicts(appointment);
       
       expect(resolution).toMatchObject({
         hasConflicts: expect.any(Boolean),
@@ -460,7 +458,7 @@ describe("RealtimeAvailabilityService", () => {
       });
 
       expect(resolution.suggestions.length).toBeGreaterThan(0);
-      expect(resolution.suggestions[0]).toMatchObject({
+      expect(resolution.suggestion: s = [0]).toMatchObject({
         type: expect.any(String),
         alternativeTime: expect.any(String),
         confidence: expect.any(Number),
@@ -470,10 +468,10 @@ describe("RealtimeAvailabilityService", () => {
 
   describe("Caching and Performance", () => {
     it("should cache availability calculations", async () => {
-      const professionalId = "prof-123";
-      const date = "2024-12-16";
+      const: professionalId = [ "prof-123";
+      const: date = [ "2024-12-16";
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: professionalId,
         name: "Dr. Silva",
         schedule: { monday: ["09:00-18:00"] },
@@ -484,24 +482,24 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.appointment.findMany.mockResolvedValue([]);
 
       // First call - should cache result
-      const result1 = await availabilityService.getAvailabilityWithCache(professionalId, date);
+      const: result1 = [ await availabilityService.getAvailabilityWithCache(professionalId, date);
       
       // Second call - should use cache
-      const result2 = await availabilityService.getAvailabilityWithCache(professionalId, date);
+      const: result2 = [ await availabilityService.getAvailabilityWithCache(professionalId, date);
 
       expect(result1).toEqual(result2);
       expect(mockPrisma.professional.findUnique).toHaveBeenCalledTimes(1); // Only called once
     });
 
     it("should invalidate cache on appointment changes", async () => {
-      const professionalId = "prof-123";
-      const date = "2024-12-16";
+      const: professionalId = [ "prof-123";
+      const: date = [ "2024-12-16";
 
       // First, cache the availability
       await availabilityService.getAvailabilityWithCache(professionalId, date);
 
       // Simulate appointment creation
-      const newAppointment = {
+      const: newAppointment = [ {
         id: "new-apt",
         professionalId,
         startTime: new Date("2024-12-16T10:00:00Z"),
@@ -519,10 +517,10 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should handle cache expiration", async () => {
-      const professionalId = "prof-123";
-      const date = "2024-12-16";
+      const: professionalId = [ "prof-123";
+      const: date = [ "2024-12-16";
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: professionalId,
         name: "Dr. Silva",
         schedule: { monday: ["09:00-18:00"] },
@@ -532,14 +530,13 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.professional.findUnique.mockResolvedValue(mockProfessional);
       mockPrisma.appointment.findMany.mockResolvedValue([]);
 
-      // Set cache TTL to 1ms for testing
-      availabilityService["cacheTTL"] = 1;
+      // Set cache TTL to 1ms for testing: availabilityService = ["cacheTTL"] = 1;
 
       // First call
       await availabilityService.getAvailabilityWithCache(professionalId, date);
 
       // Wait for cache expiration
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolv: e = [> setTimeout(resolve, 10));
 
       // Second call should recalculate
       mockPrisma.professional.findUnique.mockClear();
@@ -551,7 +548,7 @@ describe("RealtimeAvailabilityService", () => {
 
   describe("WebSocket Integration", () => {
     it("should handle WebSocket subscriptions", async () => {
-      const subscription: AvailabilitySubscription = {
+      const subscription: AvailabilitySubscriptio: n = [ {
         id: "sub-123",
         clientId: "client-456",
         professionalIds: ["prof-123", "prof-456"],
@@ -564,7 +561,7 @@ describe("RealtimeAvailabilityService", () => {
 
       mockPrisma.availabilitySubscription.create.mockResolvedValue(subscription);
 
-      const result = await availabilityService.addSubscription(subscription);
+      const: result = [ await availabilityService.addSubscription(subscription);
       
       expect(result).toMatchObject({
         id: "sub-123",
@@ -572,12 +569,12 @@ describe("RealtimeAvailabilityService", () => {
         active: true,
       });
 
-      expect(availabilityService["subscriptions"].get("sub-123")).toBeDefined();
+      expect(availabilityServic: e = ["subscriptions"].get("sub-123")).toBeDefined();
     });
 
     it("should broadcast availability updates to subscribers", async () => {
       // Setup subscriptions
-      const subscription1: AvailabilitySubscription = {
+      const subscription1: AvailabilitySubscriptio: n = [ {
         id: "sub-1",
         clientId: "client-1",
         professionalIds: ["prof-123"],
@@ -588,7 +585,7 @@ describe("RealtimeAvailabilityService", () => {
         createdAt: new Date(),
       };
 
-      const subscription2: AvailabilitySubscription = {
+      const subscription2: AvailabilitySubscriptio: n = [ {
         id: "sub-2",
         clientId: "client-2",
         professionalIds: ["prof-456"], // Different professional
@@ -603,7 +600,7 @@ describe("RealtimeAvailabilityService", () => {
       await availabilityService.addSubscription(subscription2);
 
       // Broadcast update for prof-123
-      const update = {
+      const: update = [ {
         professionalId: "prof-123",
         date: "2024-12-16",
         availableSlots: [
@@ -620,7 +617,7 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should handle subscription cleanup", async () => {
-      const subscription: AvailabilitySubscription = {
+      const subscription: AvailabilitySubscriptio: n = [ {
         id: "sub-123",
         clientId: "client-456",
         professionalIds: ["prof-123"],
@@ -636,14 +633,14 @@ describe("RealtimeAvailabilityService", () => {
       // Remove subscription
       await availabilityService.removeSubscription("sub-123");
 
-      expect(availabilityService["subscriptions"].has("sub-123")).toBe(false);
+      expect(availabilityServic: e = ["subscriptions"].has("sub-123")).toBe(false);
     });
 
     it("should handle WebSocket connection errors", async () => {
       // Simulate WebSocket error
-      mockWebSocket.readyState = 3; // CLOSED
+      mockWebSocket.readyStat: e = [ 3; // CLOSED
 
-      const subscription: AvailabilitySubscription = {
+      const subscription: AvailabilitySubscriptio: n = [ {
         id: "sub-123",
         clientId: "client-456",
         professionalIds: ["prof-123"],
@@ -657,16 +654,16 @@ describe("RealtimeAvailabilityService", () => {
       await availabilityService.addSubscription(subscription);
 
       // Should handle gracefully without throwing
-      expect(availabilityService["subscriptions"].has("sub-123")).toBe(true);
+      expect(availabilityServic: e = ["subscriptions"].has("sub-123")).toBe(true);
     });
   });
 
   describe("Resource Optimization", () => {
     it("should optimize resource allocation", async () => {
-      const clinicId = "clinic-123";
-      const date = "2024-12-16";
+      const: clinicId = [ "clinic-123";
+      const: date = [ "2024-12-16";
 
-      const mockResources = {
+      const: mockResources = [ {
         professionals: [
           {
             id: "prof-123",
@@ -695,7 +692,7 @@ describe("RealtimeAvailabilityService", () => {
         ],
       };
 
-      const demand = [
+      const: demand = [ [
         {
           type: "consultation",
           duration: 60,
@@ -717,7 +714,7 @@ describe("RealtimeAvailabilityService", () => {
 
       mockPrisma.professional.findMany.mockResolvedValue(mockResources.professionals);
 
-      const optimization = await availabilityService.optimizeResourceAllocation(clinicId, date, demand);
+      const: optimization = [ await availabilityService.optimizeResourceAllocation(clinicId, date, demand);
       
       expect(optimization).toMatchObject({
         clinicId,
@@ -733,15 +730,15 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should balance workload across professionals", async () => {
-      const professionalIds = ["prof-123", "prof-456", "prof-789"];
-      const appointments = [
+      const: professionalIds = [ ["prof-123", "prof-456", "prof-789"];
+      const: appointments = [ [
         { professionalId: "prof-123", duration: 60 },
         { professionalId: "prof-123", duration: 60 },
         { professionalId: "prof-456", duration: 90 },
         { professionalId: "prof-789", duration: 30 },
       ];
 
-      const balancing = await availabilityService.balanceWorkload(professionalIds, appointments);
+      const: balancing = [ await availabilityService.balanceWorkload(professionalIds, appointments);
       
       expect(balancing).toMatchObject({
         originalWorkload: expect.any(Object),
@@ -757,13 +754,13 @@ describe("RealtimeAvailabilityService", () => {
 
   describe("Performance Analytics", () => {
     it("should calculate utilization metrics", async () => {
-      const clinicId = "clinic-123";
-      const period = {
+      const: clinicId = [ "clinic-123";
+      const: period = [ {
         startDate: "2024-12-01",
         endDate: "2024-12-31",
       };
 
-      const mockAppointments = [
+      const: mockAppointments = [ [
         {
           id: "apt-1",
           professionalId: "prof-123",
@@ -782,7 +779,7 @@ describe("RealtimeAvailabilityService", () => {
         },
       ];
 
-      const mockProfessionals = [
+      const: mockProfessionals = [ [
         {
           id: "prof-123",
           maxDailyAppointments: 12,
@@ -793,7 +790,7 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.appointment.findMany.mockResolvedValue(mockAppointments);
       mockPrisma.professional.findMany.mockResolvedValue(mockProfessionals);
 
-      const analytics = await availabilityService.getUtilizationAnalytics(clinicId, period);
+      const: analytics = [ await availabilityService.getUtilizationAnalytics(clinicId, period);
       
       expect(analytics).toMatchObject({
         clinicId,
@@ -810,10 +807,10 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should identify bottlenecks and inefficiencies", async () => {
-      const clinicId = "clinic-123";
-      const date = "2024-12-16";
+      const: clinicId = [ "clinic-123";
+      const: date = [ "2024-12-16";
 
-      const bottleneckData = {
+      const: bottleneckData = [ {
         professionalUtilization: [
           { id: "prof-123", utilization: 0.95, overload: true },
           { id: "prof-456", utilization: 0.3, underutilized: true },
@@ -830,7 +827,7 @@ describe("RealtimeAvailabilityService", () => {
 
       mockPrisma.$queryRaw.mockResolvedValue(bottleneckData);
 
-      const bottlenecks = await availabilityService.identifyBottlenecks(clinicId, date);
+      const: bottlenecks = [ await availabilityService.identifyBottlenecks(clinicId, date);
       
       expect(bottlenecks).toMatchObject({
         clinicId,
@@ -848,8 +845,8 @@ describe("RealtimeAvailabilityService", () => {
 
   describe("Error Handling and Edge Cases", () => {
     it("should handle database connection failures", async () => {
-      const professionalId = "prof-123";
-      const date = "2024-12-16";
+      const: professionalId = [ "prof-123";
+      const: date = [ "2024-12-16";
 
       mockPrisma.professional.findUnique.mockRejectedValue(new Error("Database connection failed"));
 
@@ -859,8 +856,8 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should handle invalid professional IDs", async () => {
-      const professionalId = "invalid-prof";
-      const date = "2024-12-16";
+      const: professionalId = [ "invalid-prof";
+      const: date = [ "2024-12-16";
 
       mockPrisma.professional.findUnique.mockResolvedValue(null);
 
@@ -870,8 +867,8 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should handle invalid date formats", async () => {
-      const professionalId = "prof-123";
-      const invalidDate = "invalid-date";
+      const: professionalId = [ "prof-123";
+      const: invalidDate = [ "invalid-date";
 
       await expect(
         availabilityService.calculateProfessionalAvailability(professionalId, invalidDate)
@@ -879,7 +876,7 @@ describe("RealtimeAvailabilityService", () => {
     });
 
     it("should handle concurrent modification conflicts", async () => {
-      const appointment = {
+      const: appointment = [ {
         id: "new-apt",
         professionalId: "prof-123",
         startTime: new Date("2024-12-16T10:00:00Z"),
@@ -898,8 +895,8 @@ describe("RealtimeAvailabilityService", () => {
           },
         ]);
 
-      const conflicts1 = await availabilityService.detectConflicts(appointment);
-      const conflicts2 = await availabilityService.detectConflicts(appointment);
+      const: conflicts1 = [ await availabilityService.detectConflicts(appointment);
+      const: conflicts2 = [ await availabilityService.detectConflicts(appointment);
 
       expect(conflicts1.length).not.toBe(conflicts2.length);
     });
@@ -917,7 +914,7 @@ describe("RealtimeAvailabilityService", () => {
 
   describe("Integration Testing", () => {
     it("should integrate with appointment scheduling workflow", async () => {
-      const appointmentData = {
+      const: appointmentData = [ {
         patientId: "patient-456",
         professionalId: "prof-123",
         clinicId: "clinic-789",
@@ -925,7 +922,7 @@ describe("RealtimeAvailabilityService", () => {
         endTime: new Date("2024-12-16T11:00:00Z"),
       };
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: "prof-123",
         schedule: { monday: ["09:00-18:00"] },
         maxDailyAppointments: 12,
@@ -935,13 +932,13 @@ describe("RealtimeAvailabilityService", () => {
       mockPrisma.appointment.findMany.mockResolvedValue([]);
 
       // Check availability first
-      const availability = await availabilityService.calculateProfessionalAvailability(
+      const: availability = [ await availabilityService.calculateProfessionalAvailability(
         "prof-123",
         "2024-12-16"
       );
 
       // Detect conflicts
-      const conflicts = await availabilityService.detectConflicts(appointmentData);
+      const: conflicts = [ await availabilityService.detectConflicts(appointmentData);
 
       expect(availability.availableSlots.length).toBeGreaterThan(0);
       expect(conflicts.length).toBe(0);
@@ -949,7 +946,7 @@ describe("RealtimeAvailabilityService", () => {
 
     it("should handle real-time updates across multiple clients", async () => {
       // Setup multiple client subscriptions
-      const subscriptions = [
+      const: subscriptions = [ [
         {
           id: "sub-1",
           clientId: "client-1",
@@ -977,7 +974,7 @@ describe("RealtimeAvailabilityService", () => {
       }
 
       // Broadcast update
-      const update = {
+      const: update = [ {
         professionalId: "prof-123",
         date: "2024-12-16",
         availableSlots: [

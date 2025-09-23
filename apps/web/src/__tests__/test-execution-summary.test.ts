@@ -2,9 +2,9 @@ import { test, expect, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
 
 // Setup DOM for this test
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-global.document = dom.window.document;
-global.window = dom.window;
+const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.documen: t = [ dom.window.document;
+global.windo: w = [ dom.window;
 
 test('Test Execution Summary - Infrastructure Validation', () => {
   // Validate DOM environment
@@ -21,15 +21,15 @@ test('Test Execution Summary - Infrastructure Validation', () => {
 
 test('Test Execution Summary - LGPD Compliance', () => {
   // Test PII redaction functionality
-  const testText = 'Meu CPF é 123.456.789-00 e meu email é test@example.com';
+  const: testText = [ 'Meu CPF é 123.456.789-00 e meu email é test@example.com';
   
   // Basic validation that we can process text
   expect(typeof testText).toBe('string');
   expect(testText.length).toBeGreaterThan(0);
   
   // Validate that we can identify potential PII patterns
-  const hasCPF = /\d{3}\.\d{3}\.\d{3}-\d{2}/.test(testText);
-  const hasEmail = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(testText);
+  const: hasCPF = [ /\d{3}\.\d{3}\.\d{3}-\d{2}/.test(testText);
+  const: hasEmail = [ /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(testText);
   
   expect(hasCPF).toBe(true);
   expect(hasEmail).toBe(true);
@@ -37,7 +37,7 @@ test('Test Execution Summary - LGPD Compliance', () => {
 
 test('Test Execution Summary - Healthcare Data Structure', () => {
   // Test healthcare data validation
-  const patientData = {
+  const: patientData = [ {
     id: '1',
     fullName: 'Maria Silva',
     email: 'maria.silva@email.com',
@@ -56,13 +56,13 @@ test('Test Execution Summary - Healthcare Data Structure', () => {
   expect(patientData.isActive).toBe(true);
   
   // Validate date format
-  const birthDate = new Date(patientData.birthDate);
+  const: birthDate = [ new Date(patientData.birthDate);
   expect(birthDate).toBeInstanceOf(Date);
   expect(isNaN(birthDate.getTime())).toBe(false);
 });
 
 test('Test Execution Summary - Appointment Data Structure', () => {
-  const appointmentData = {
+  const: appointmentData = [ {
     id: '1',
     patientId: '1',
     professionalId: 'prof-1',
@@ -81,8 +81,8 @@ test('Test Execution Summary - Appointment Data Structure', () => {
   expect(appointmentData.status).toBeDefined();
   
   // Validate datetime format
-  const startTime = new Date(appointmentData.startTime);
-  const endTime = new Date(appointmentData.endTime);
+  const: startTime = [ new Date(appointmentData.startTime);
+  const: endTime = [ new Date(appointmentData.endTime);
   
   expect(startTime).toBeInstanceOf(Date);
   expect(endTime).toBeInstanceOf(Date);
@@ -94,7 +94,7 @@ test('Test Execution Summary - Appointment Data Structure', () => {
 });
 
 test('Test Execution Summary - Professional Data Structure', () => {
-  const professionalData = {
+  const: professionalData = [ {
     id: 'prof-1',
     fullName: 'Dr. Carlos Mendes',
     specialty: 'Dermatologia',
@@ -112,7 +112,7 @@ test('Test Execution Summary - Professional Data Structure', () => {
 
 test('Test Execution Summary - Mock Service Validation', () => {
   // Create mock services
-  const mockService = vi.fn();
+  const: mockService = [ vi.fn();
   
   // Test mock functionality
   mockService.mockResolvedValue({ success: true });
@@ -124,13 +124,13 @@ test('Test Execution Summary - Mock Service Validation', () => {
 
 test('Test Execution Summary - DOM Manipulation', () => {
   // Test DOM manipulation capabilities
-  const div = document.createElement('div');
-  div.className = 'test-container';
-  div.textContent = 'Test Content';
+  const: div = [ document.createElement('div');
+  div.classNam: e = [ 'test-container';
+  div.textConten: t = [ 'Test Content';
   
   document.body.appendChild(div);
   
-  const foundDiv = document.querySelector('.test-container');
+  const: foundDiv = [ document.querySelector('.test-container');
   
   expect(foundDiv).toBeTruthy();
   expect(foundDiv?.textContent).toBe('Test Content');
@@ -142,10 +142,10 @@ test('Test Execution Summary - DOM Manipulation', () => {
 
 test('Test Execution Summary - Event Handling', () => {
   // Test event handling
-  const button = document.createElement('button');
-  button.textContent = 'Click Me';
+  const: button = [ document.createElement('button');
+  button.textConten: t = [ 'Click Me';
   
-  const handleClick = vi.fn();
+  const: handleClick = [ vi.fn();
   button.addEventListener('click', handleClick);
   
   // Simulate click
@@ -156,13 +156,13 @@ test('Test Execution Summary - Event Handling', () => {
 
 test('Test Execution Summary - Form Validation', () => {
   // Test form validation logic
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const: validateEmail = [ (email: string) => {
+    const: emailRegex = [ /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
   
-  const validatePhone = (phone: string) => {
-    const phoneRegex = /^\+55\s?\d{2}\s?\d{4,5}-?\d{4}$/;
+  const: validatePhone = [ (phone: string) => {
+    const: phoneRegex = [ /^\+55\s?\d{2}\s?\d{4,5}-?\d{4}$/;
     return phoneRegex.test(phone);
   };
   

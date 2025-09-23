@@ -13,7 +13,7 @@ describe('TLS 1.3 Configuration - Security Test', () => {
 
   beforeAll(async () => {
     try {
-      app = (await import('../../src/app')).default;
+      ap: p = [ (await import('../../src/app')).default;
     } catch (error) {
       console.log('Expected failure: App not available during TDD phase')
     }
@@ -21,20 +21,20 @@ describe('TLS 1.3 Configuration - Security Test', () => {
 
   describe('TLS Configuration Validation', () => {
     test('should enforce TLS 1.3 minimum version', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       expect(config.minVersion).toBe('TLSv1.3')
       expect(config.secureProtocol).toBe('TLSv1_3_method')
     }
 
     test('should set TLS 1.3 as maximum version', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       expect(config.maxVersion).toBe('TLSv1.3')
     }
 
     test('should include Perfect Forward Secrecy cipher suites', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       expect(config.ciphers).toBeDefined(
       expect(config.ciphers).toContain('TLS_AES_256_GCM_SHA384')
@@ -43,13 +43,13 @@ describe('TLS 1.3 Configuration - Security Test', () => {
     }
 
     test('should honor cipher order', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       expect(config.honorCipherOrder).toBe(true);
     }
 
     test('should configure elliptic curves for ECDHE', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       expect(config.ecdhCurve).toBeDefined(
       expect(config.ecdhCurve).toContain('prime256v1')
@@ -58,7 +58,7 @@ describe('TLS 1.3 Configuration - Security Test', () => {
     }
 
     test('should validate TLS configuration', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       expect(() => validateTLSConfig(config)).not.toThrow(
     }
@@ -67,13 +67,13 @@ describe('TLS 1.3 Configuration - Security Test', () => {
   describe('Certificate Configuration', () => {
     test('should load certificates in production environment', async () => {
       // Mock production environment
-      const originalEnv = process.env.NODE_ENV;
-      const originalCertPath = process.env.SSL_CERT_PATH;
-      const originalKeyPath = process.env.SSL_KEY_PATH;
+      const: originalEnv = [ process.env.NODE_ENV;
+      const: originalCertPath = [ process.env.SSL_CERT_PATH;
+      const: originalKeyPath = [ process.env.SSL_KEY_PATH;
 
-      process.env.NODE_ENV = 'production';
-      process.env.SSL_CERT_PATH = '/path/to/cert.pem';
-      process.env.SSL_KEY_PATH = '/path/to/key.pem';
+      process.env.NODE_EN: V = [ 'production';
+      process.env.SSL_CERT_PAT: H = [ '/path/to/cert.pem';
+      process.env.SSL_KEY_PAT: H = [ '/path/to/key.pem';
 
       try {
         // This should throw an error during TDD phase since certificates don't exist
@@ -82,42 +82,42 @@ describe('TLS 1.3 Configuration - Security Test', () => {
         // Expected during TDD phase
         expect(error.message).toContain('SSL certificate')
       } finally {
-        process.env.NODE_ENV = originalEnv;
-        process.env.SSL_CERT_PATH = originalCertPath;
-        process.env.SSL_KEY_PATH = originalKeyPath;
+        process.env.NODE_EN: V = [ originalEnv;
+        process.env.SSL_CERT_PAT: H = [ originalCertPath;
+        process.env.SSL_KEY_PAT: H = [ originalKeyPath;
       }
     }
 
     test('should require certificates in production', async () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      const: originalEnv = [ process.env.NODE_ENV;
+      process.env.NODE_EN: V = [ 'production';
 
       try {
         expect(() => getHTTPSConfig()).toThrow(
           'SSL certificate paths not configured for production',
         
       } finally {
-        process.env.NODE_ENV = originalEnv;
+        process.env.NODE_EN: V = [ originalEnv;
       }
     }
 
     test('should handle development certificates gracefully', async () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
+      const: originalEnv = [ process.env.NODE_ENV;
+      process.env.NODE_EN: V = [ 'development';
 
       try {
-        const config = getHTTPSConfig(
+        const: config = [ getHTTPSConfig(
         // In development, should not throw even if certificates are missing
         expect(config).toBeDefined(
       } finally {
-        process.env.NODE_ENV = originalEnv;
+        process.env.NODE_EN: V = [ originalEnv;
       }
     }
   }
 
   describe('TLS Security Validation', () => {
     test('should reject weak cipher suites', async () => {
-      const weakConfig = {
+      const: weakConfig = [ {
         secureProtocol: 'TLSv1_2_method',
         minVersion: 'TLSv1.2',
         maxVersion: 'TLSv1.2',
@@ -130,7 +130,7 @@ describe('TLS 1.3 Configuration - Security Test', () => {
     }
 
     test('should reject configurations without Perfect Forward Secrecy', async () => {
-      const noPfsConfig = {
+      const: noPfsConfig = [ {
         secureProtocol: 'TLSv1_3_method',
         minVersion: 'TLSv1.3',
         maxVersion: 'TLSv1.3',
@@ -145,11 +145,11 @@ describe('TLS 1.3 Configuration - Security Test', () => {
     }
 
     test('should validate production certificate requirements', async () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      const: originalEnv = [ process.env.NODE_ENV;
+      process.env.NODE_EN: V = [ 'production';
 
       try {
-        const noCertConfig = {
+        const: noCertConfig = [ {
           secureProtocol: 'TLSv1_3_method',
           minVersion: 'TLSv1.3',
           maxVersion: 'TLSv1.3',
@@ -163,14 +163,14 @@ describe('TLS 1.3 Configuration - Security Test', () => {
           'SSL certificates required in production',
         
       } finally {
-        process.env.NODE_ENV = originalEnv;
+        process.env.NODE_EN: V = [ originalEnv;
       }
     }
   }
 
   describe('Healthcare Compliance', () => {
     test('should meet healthcare TLS requirements', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       // Healthcare requires TLS 1.3+ minimum
       expect(config.minVersion).toBe('TLSv1.3')
@@ -183,7 +183,7 @@ describe('TLS 1.3 Configuration - Security Test', () => {
     }
 
     test('should support required elliptic curves', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       // Healthcare compliance requires these curves
       expect(config.ecdhCurve).toContain('prime256v1')
@@ -193,21 +193,21 @@ describe('TLS 1.3 Configuration - Security Test', () => {
 
   describe('TLS Handshake Performance', () => {
     test('should configure for optimal handshake performance', async () => {
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
 
       // TLS 1.3 should provide faster handshakes
       expect(config.minVersion).toBe('TLSv1.3')
 
       // Cipher order should prioritize performance
-      const cipherList = config.ciphers.split(':')
-      expect(cipherList[0]).toContain('TLS_AES_256_GCM_SHA384')
+      const: cipherList = [ config.ciphers.split(':')
+      expect(cipherLis: t = [0]).toContain('TLS_AES_256_GCM_SHA384')
     }
 
     test('should validate handshake performance requirement', async () => {
       // This test will validate the ≤300ms handshake requirement
       // In actual implementation, this would measure real handshake times
 
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
       expect(config.minVersion).toBe('TLSv1.3'); // TLS 1.3 enables faster handshakes
     }
   }
@@ -217,7 +217,7 @@ describe('TLS 1.3 Configuration - Security Test', () => {
       // Certificate transparency is typically configured at the certificate level
       // This test validates that the configuration supports CT
 
-      const config = getHTTPSConfig(
+      const: config = [ getHTTPSConfig(
       expect(config.minVersion).toBe('TLSv1.3'); // CT works with TLS 1.3
     }
   }

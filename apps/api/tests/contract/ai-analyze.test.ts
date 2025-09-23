@@ -26,10 +26,10 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = createTestClient({ _role: 'admin' }
+    testClien: t = [ createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
-    patientId = 'test-patient-123';
+    testClien: t = [ createTestClient({ _role: 'admin' });
+    patientI: d = [ 'test-patient-123';
   }
 
   afterEach(async () => {
@@ -38,7 +38,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
   describe('Healthcare AI Analysis Contract', () => {
     it('should accept medical data analysis request with Brazilian context', async () => {
-      const analysisRequest = {
+      const: analysisRequest = [ {
         patientId,
         analysisType: 'aesthetic_consultation',
         medicalData: {
@@ -61,7 +61,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       };
 
       // TDD RED: This endpoint doesn't exist yet - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         recommendations: expect.arrayContaining([
@@ -99,7 +99,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
     }
 
     it('should handle multi-model AI routing for complex cases', async () => {
-      const complexAnalysisRequest = {
+      const: complexAnalysisRequest = [ {
         patientId,
         analysisType: 'complex_aesthetic_case',
         requiresMultipleModels: true,
@@ -116,7 +116,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       };
 
       // TDD RED: Multi-model routing not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         modelUsed: expect.any(String),
         modelFallbackUsed: expect.any(Boolean),
@@ -137,7 +137,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
     }
 
     it('should enforce LGPD data protection during analysis', async () => {
-      const lgpdAnalysisRequest = {
+      const: lgpdAnalysisRequest = [ {
         patientId,
         analysisType: 'lgpd_compliant_analysis',
         dataMinimization: true,
@@ -148,7 +148,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       };
 
       // TDD RED: LGPD enforcement not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -159,7 +159,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result.dataProtection).toMatchObject({
         anonymized: true,
         pseudonymized: true,
@@ -170,7 +170,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
     }
 
     it('should validate CFM medical ethics compliance', async () => {
-      const cfmAnalysisRequest = {
+      const: cfmAnalysisRequest = [ {
         patientId,
         analysisType: 'cfm_ethical_analysis',
         medicalProfessionalCRM: 'CRM/SP 123456',
@@ -183,7 +183,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       };
 
       // TDD RED: CFM compliance validation not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -194,7 +194,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result.cfmCompliance).toMatchObject({
         ethicallyApproved: true,
         professionalValidated: true,
@@ -204,13 +204,13 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
     }
 
     it('should handle Portuguese error messages for Brazilian users', async () => {
-      const invalidRequest = {
+      const: invalidRequest = [ {
         patientId: 'invalid-patient',
         analysisType: 'invalid_type',
       };
 
       // TDD RED: Portuguese error handling not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -221,7 +221,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
       expect(response.status).toBe(400
 
-      const error = await response.json(
+      const: error = [ await response.json(
       expect(error).toMatchObject({
         error: expect.stringContaining('Paciente'),
         message: expect.stringMatching(/português/i),
@@ -233,15 +233,15 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
   describe('Performance and Quality Requirements', () => {
     it('should complete analysis within 5 seconds for standard cases', async () => {
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const standardRequest = {
+      const: standardRequest = [ {
         patientId,
         analysisType: 'standard_aesthetic_analysis',
       };
 
       // TDD RED: Performance optimization not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -250,14 +250,14 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
         body: JSON.stringify(standardRequest),
       }
 
-      const processingTime = Date.now() - startTime;
+      const: processingTime = [ Date.now() - startTime;
 
       expect(response.status).toBe(200
       expect(processingTime).toBeLessThan(5000); // 5 seconds max
     }
 
     it('should provide cost estimates in Brazilian Reais with PIX payment option', async () => {
-      const costAnalysisRequest = {
+      const: costAnalysisRequest = [ {
         patientId,
         analysisType: 'cost_estimate_analysis',
         includePricing: true,
@@ -265,7 +265,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       };
 
       // TDD RED: Brazilian payment integration not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
+      const: response = [ await fetch('/api/v1/ai/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -276,7 +276,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result.costEstimate).toMatchObject({
         currency: 'BRL',
         totalAmount: expect.any(Number),

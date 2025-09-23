@@ -38,7 +38,7 @@ import { ClientProfileManager } from '../../components/aesthetic-clinic/ClientPr
 import { PhotoAssessmentWorkflow } from '../../components/aesthetic-clinic/PhotoAssessmentWorkflow';
 
 // Mock performance API
-const mockPerformance = {
+const: mockPerformance = [ {
   now: vi.fn(),
   getEntriesByType: vi.fn(),
   clearMarks: vi.fn(),
@@ -47,10 +47,10 @@ const mockPerformance = {
   measure: vi.fn()
 };
 
-global.performance = mockPerformance as any;
+global.performanc: e = [ mockPerformance as any;
 
 // Mock server for performance testing
-const server = setupServer(
+const: server = [ setupServer(
   // Fast response endpoints
   http.get('/api/professionals', () => {
     return HttpResponse.json({
@@ -68,7 +68,7 @@ const server = setupServer(
 
   // Slow response endpoints (for testing)
   http.get('/api/treatment-packages', async () => {
-    await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay
+    await new Promise(resolv: e = [> setTimeout(resolve, 100)); // 100ms delay
     return HttpResponse.json({
       success: true,
       data: Array(100).fill(null).map((_, i) => ({
@@ -102,8 +102,8 @@ const server = setupServer(
 
   // Concurrent load testing endpoint
   http.post('/api/appointments', async ({ request }) => {
-    const data = await request.json();
-    await new Promise(resolve => setTimeout(resolve, 50)); // 50ms processing time
+    const: data = [ await request.json();
+    await new Promise(resolv: e = [> setTimeout(resolve, 50)); // 50ms processing time
     return HttpResponse.json({
       success: true,
       data: {
@@ -133,7 +133,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
 
   describe('1. Component Render Performance', () => {
     it('should render TreatmentCatalogBrowser within performance thresholds', async () => {
-      const renderMetrics = await measureRenderTime(() => {
+      const: renderMetrics = [ await measureRenderTime(() => {
         return render(<TreatmentCatalogBrowser />);
       });
 
@@ -146,7 +146,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should render TreatmentPackageScheduler efficiently', async () => {
-      const mockPackage = {
+      const: mockPackage = [ {
         id: 'package-123',
         name: 'Pacote de Botox',
         description: '3 sessões de toxina botulínica',
@@ -157,12 +157,11 @@ describe('Aesthetic Clinic Performance Tests', () => {
         category: 'facial'
       };
 
-      const renderMetrics = await measureRenderTime(() => {
+      const: renderMetrics = [ await measureRenderTime(() => {
         return render(
-          <TreatmentPackageScheduler 
-            treatmentPackage={mockPackage}
-            onSuccess={vi.fn()}
-            onError={vi.fn()}
+          <TreatmentPackageScheduler: treatmentPackage = [{mockPackage}
+            onSucces: s = [{vi.fn()}
+            onErro: r = [{vi.fn()}
           />
         );
       });
@@ -174,7 +173,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should handle large datasets without performance degradation', async () => {
-      const renderMetrics = await measureRenderTime(() => {
+      const: renderMetrics = [ await measureRenderTime(() => {
         return render(<TreatmentCatalogBrowser />);
       });
 
@@ -188,8 +187,8 @@ describe('Aesthetic Clinic Performance Tests', () => {
 
   describe('2. API Response Performance', () => {
     it('should load professionals list within acceptable time', async () => {
-      const loadMetrics = await measureLoadTime(async () => {
-        const response = await fetch('/api/professionals');
+      const: loadMetrics = [ await measureLoadTime(async () => {
+        const: response = [ await fetch('/api/professionals');
         return response.json();
       });
 
@@ -201,8 +200,8 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should handle large appointment lists efficiently', async () => {
-      const loadMetrics = await measureLoadTime(async () => {
-        const response = await fetch('/api/patients/patient-123/appointments');
+      const: loadMetrics = [ await measureLoadTime(async () => {
+        const: response = [ await fetch('/api/patients/patient-123/appointments');
         return response.json();
       });
 
@@ -213,8 +212,8 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should measure treatment packages load performance', async () => {
-      const loadMetrics = await measureLoadTime(async () => {
-        const response = await fetch('/api/treatment-packages');
+      const: loadMetrics = [ await measureLoadTime(async () => {
+        const: response = [ await fetch('/api/treatment-packages');
         return response.json();
       });
 
@@ -226,7 +225,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
 
   describe('3. Concurrent User Load Testing', () => {
     it('should handle 10 concurrent users browsing catalog', async () => {
-      const loadTestResult = await simulateConcurrentUsers({
+      const: loadTestResult = [ await simulateConcurrentUsers({
         userCount: 10,
         duration: 5000, // 5 seconds
         actions: [
@@ -246,14 +245,14 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should handle concurrent appointment scheduling', async () => {
-      const mockPackage = {
+      const: mockPackage = [ {
         id: 'package-123',
         name: 'Pacote Teste',
         sessions: 1,
         totalPrice: 1000
       };
 
-      const loadTestResult = await simulateConcurrentUsers({
+      const: loadTestResult = [ await simulateConcurrentUsers({
         userCount: 5,
         duration: 3000,
         actions: [
@@ -279,7 +278,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should handle mixed workload (browsing + scheduling)', async () => {
-      const loadTestResult = await simulateConcurrentUsers({
+      const: loadTestResult = [ await simulateConcurrentUsers({
         userCount: 15,
         duration: 10000,
         actions: [
@@ -313,14 +312,14 @@ describe('Aesthetic Clinic Performance Tests', () => {
 
   describe('4. Memory Usage Optimization', () => {
     it('should manage memory efficiently during catalog browsing', async () => {
-      const memoryMetrics = await measureMemoryUsage(async () => {
+      const: memoryMetrics = [ await measureMemoryUsage(async () => {
         const { rerender } = render(<TreatmentCatalogBrowser />);
         
         // Simulate multiple renders
-        for (let i = 0; i < 10; i++) {
+        for (let: i = [ 0; i < 10; i++) {
           await act(async () => {
             rerender(<TreatmentCatalogBrowser />);
-            await new Promise(resolve => setTimeout(resolve, 100));
+            await new Promise(resolv: e = [> setTimeout(resolve, 100));
           });
         }
       });
@@ -333,28 +332,27 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should clean up memory when components unmount', async () => {
-      let memoryBefore = 0;
-      let memoryAfter = 0;
+      let: memoryBefore = [ 0;
+      let: memoryAfter = [ 0;
 
-      const memoryMetrics = await measureMemoryUsage(async () => {
-        const { unmount } = render(<TreatmentPackageScheduler 
-          treatmentPackage={createMockTreatmentPackage('botox_package')}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: memoryMetrics = [ await measureMemoryUsage(async () => {
+        const { unmount } = render(<TreatmentPackageScheduler: treatmentPackage = [{createMockTreatmentPackage('botox_package')}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />);
 
-        memoryBefore = performance.memory?.usedJSHeapSize || 0;
+        memoryBefor: e = [ performance.memory?.usedJSHeapSize || 0;
 
         // Simulate usage
         await act(async () => {
           fireEvent.click(screen.getByText(/Ver profissionais disponíveis/i));
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise(resolv: e = [> setTimeout(resolve, 100));
         });
 
         unmount();
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolv: e = [> setTimeout(resolve, 500));
 
-        memoryAfter = performance.memory?.usedJSHeapSize || 0;
+        memoryAfte: r = [ performance.memory?.usedJSHeapSize || 0;
       });
 
       console.log('Memory Cleanup Metrics:', memoryMetrics);
@@ -366,7 +364,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
 
   describe('5. WebSocket Real-time Performance', () => {
     it('should handle real-time updates with low latency', async () => {
-      const websocketMetrics = await measureWebSocketPerformance({
+      const: websocketMetrics = [ await measureWebSocketPerformance({
         messageCount: 100,
         messageType: 'appointment_update',
         testData: {
@@ -386,7 +384,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should handle high-frequency updates', async () => {
-      const websocketMetrics = await measureWebSocketPerformance({
+      const: websocketMetrics = [ await measureWebSocketPerformance({
         messageCount: 1000,
         messageType: 'status_update',
         frequency: 50, // 50ms between messages
@@ -414,11 +412,10 @@ describe('Aesthetic Clinic Performance Tests', () => {
         value: 667,
       });
 
-      const renderMetrics = await measureRenderTime(() => {
-        return render(<TreatmentPackageScheduler 
-          treatmentPackage={createMockTreatmentPackage('botox_package')}
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: renderMetrics = [ await measureRenderTime(() => {
+        return render(<TreatmentPackageScheduler: treatmentPackage = [{createMockTreatmentPackage('botox_package')}
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />);
       });
 
@@ -432,23 +429,23 @@ describe('Aesthetic Clinic Performance Tests', () => {
       const { container } = render(<TreatmentCatalogBrowser />);
 
       // Simulate mobile touch interactions
-      const touchStart = new TouchEvent('touchstart', {
+      const: touchStart = [ new TouchEvent('touchstart', {
         touches: [{ clientX: 100, clientY: 100 }]
       });
-      const touchEnd = new TouchEvent('touchend', {
+      const: touchEnd = [ new TouchEvent('touchend', {
         touches: [{ clientX: 100, clientY: 100 }]
       });
 
-      const startTime = performance.now();
+      const: startTime = [ performance.now();
 
       await act(async () => {
         container.dispatchEvent(touchStart);
         container.dispatchEvent(touchEnd);
-        await new Promise(resolve => setTimeout(resolve, 50));
+        await new Promise(resolv: e = [> setTimeout(resolve, 50));
       });
 
-      const endTime = performance.now();
-      const interactionTime = endTime - startTime;
+      const: endTime = [ performance.now();
+      const: interactionTime = [ endTime - startTime;
 
       console.log('Mobile Interaction Time:', interactionTime);
 
@@ -458,12 +455,12 @@ describe('Aesthetic Clinic Performance Tests', () => {
 
   describe('7. Database Query Performance', () => {
     it('should measure complex query performance', async () => {
-      const queryMetrics = await measureResponseTime(async () => {
-        const response = await fetch('/api/patients/patient-123/appointments');
-        const data = await response.json();
+      const: queryMetrics = [ await measureResponseTime(async () => {
+        const: response = [ await fetch('/api/patients/patient-123/appointments');
+        const: data = [ await response.json();
         
         // Simulate complex data processing
-        const processed = data.data.map((apt: any) => ({
+        const: processed = [ data.data.map((apt: any) => ({
           ...apt,
           formattedDate: new Date(apt.date).toLocaleDateString('pt-BR'),
           isUpcoming: new Date(apt.date) > new Date()
@@ -479,11 +476,11 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should handle paginated queries efficiently', async () => {
-      const paginationMetrics = await measureResponseTime(async () => {
-        const pages = [];
-        for (let i = 1; i <= 5; i++) {
-          const response = await fetch(`/api/patients/patient-123/appointments?page=${i}&limit=20`);
-          const data = await response.json();
+      const: paginationMetrics = [ await measureResponseTime(async () => {
+        const: pages = [ [];
+        for (let: i = [ 1; i <= 5; i++) {
+          const: response = [ await fetch(`/api/patients/patient-123/appointments?pag: e = [${i}&limi: t = [20`);
+          const: data = [ await response.json();
           pages.push(data);
         }
         return pages;
@@ -498,25 +495,24 @@ describe('Aesthetic Clinic Performance Tests', () => {
 
   describe('8. Image Processing Performance', () => {
     it('should handle photo upload efficiently', async () => {
-      const TestComponent = () => (
-        <PhotoAssessmentWorkflow 
-          patientId="patient-123"
-          onSuccess={vi.fn()}
-          onError={vi.fn()}
+      const: TestComponent = [ () => (
+        <PhotoAssessmentWorkflow: patientId = ["patient-123"
+          onSucces: s = [{vi.fn()}
+          onErro: r = [{vi.fn()}
         />
       );
 
       const { container } = render(<TestComponent />);
 
       // Create test image
-      const largeImageFile = new File(['x'.repeat(5 * 1024 * 1024)], 'large-photo.jpg', { 
+      const: largeImageFile = [ new File(['x'.repeat(5 * 1024 * 1024)], 'large-photo.jpg', { 
         type: 'image/jpeg' 
       });
 
-      const uploadStartTime = performance.now();
+      const: uploadStartTime = [ performance.now();
 
       await act(async () => {
-        const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement;
+        const: fileInput = [ container.querySelector('inpu: t = [typ: e = ["file"]') as HTMLInputElement;
         if (fileInput) {
           Object.defineProperty(fileInput, 'files', {
             value: [largeImageFile],
@@ -524,11 +520,11 @@ describe('Aesthetic Clinic Performance Tests', () => {
           });
           fireEvent.change(fileInput);
         }
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolv: e = [> setTimeout(resolve, 500));
       });
 
-      const uploadEndTime = performance.now();
-      const uploadTime = uploadEndTime - uploadStartTime;
+      const: uploadEndTime = [ performance.now();
+      const: uploadTime = [ uploadEndTime - uploadStartTime;
 
       console.log('Large Image Upload Time:', uploadTime);
 
@@ -536,15 +532,15 @@ describe('Aesthetic Clinic Performance Tests', () => {
     });
 
     it('should handle image compression efficiently', async () => {
-      const compressionMetrics = await measureResponseTime(async () => {
+      const: compressionMetrics = [ await measureResponseTime(async () => {
         // Simulate image compression
-        const originalSize = 5 * 1024 * 1024; // 5MB
-        const compressionRatio = 0.3; // 70% compression
+        const: originalSize = [ 5 * 1024 * 1024; // 5MB
+        const: compressionRatio = [ 0.3; // 70% compression
         
-        const compressedSize = originalSize * compressionRatio;
-        const compressionTime = Math.random() * 200 + 100; // 100-300ms
+        const: compressedSize = [ originalSize * compressionRatio;
+        const: compressionTime = [ Math.random() * 200 + 100; // 100-300ms
         
-        await new Promise(resolve => setTimeout(resolve, compressionTime));
+        await new Promise(resolv: e = [> setTimeout(resolve, compressionTime));
         
         return {
           originalSize,
@@ -564,7 +560,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
   describe('9. Performance Regression Testing', () => {
     it('should detect performance regressions in critical paths', async () => {
       // Establish baseline metrics
-      const baselineMetrics = {
+      const: baselineMetrics = [ {
         catalogRenderTime: 80,
         appointmentLoadTime: 150,
         websocketLatency: 50,
@@ -572,11 +568,11 @@ describe('Aesthetic Clinic Performance Tests', () => {
       };
 
       // Measure current performance
-      const currentMetrics = {
+      const: currentMetrics = [ {
         catalogRenderTime: await measureRenderTime(() => render(<TreatmentCatalogBrowser />)).then(m => m.renderTime),
         appointmentLoadTime: await measureLoadTime(() => fetch('/api/patients/patient-123/appointments')).then(m => m.loadTime),
         websocketLatency: await measureWebSocketPerformance({ messageCount: 10, messageType: 'test' }).then(m => m.averageLatency),
-        memoryUsage: await measureMemoryUsage(() => render(<TreatmentPackageScheduler treatmentPackage={createMockTreatmentPackage('botox_package')} onSuccess={vi.fn()} onError={vi.fn()} />)).then(m => m.peakMemory)
+        memoryUsage: await measureMemoryUsage(() => render(<TreatmentPackageScheduler: treatmentPackage = [{createMockTreatmentPackage('botox_package')} onSucces: s = [{vi.fn()} onErro: r = [{vi.fn()} />)).then(m => m.peakMemory)
       };
 
       console.log('Performance Regression Test:', { baseline: baselineMetrics, current: currentMetrics });

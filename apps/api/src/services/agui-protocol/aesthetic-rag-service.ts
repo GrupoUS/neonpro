@@ -429,7 +429,7 @@ export class AestheticRAGService {
   async assessSkinType(assessment: SkinAssessmentData): Promise<SkinAssessmentResult> {
     // Mock skin assessment - in real implementation, this would use AI image analysis
     const skinType = this.determineSkinType(assessment.answers, assessment.concerns);
-    const skinProfile = this.knowledgeBase.get('skin_types')?.find(st => st.type === skinType);
+    const _skinProfile = this.knowledgeBase.get('skin_types')?.find(st => st.type === skinType);
     
     const concerns = assessment.concerns.map(concern => ({
       concern,
@@ -591,7 +591,7 @@ export class AestheticRAGService {
     return Math.min(score, 100);
   }
 
-  private generateMockSlots(startDate: string, endDate: string, location: string): any[] {
+  private generateMockSlots(startDate: string, endDate: string, _location: string): any[] {
     // Mock slot generation - returns available time slots
     const slots = [];
     const start = new Date(startDate);
@@ -613,12 +613,12 @@ export class AestheticRAGService {
     return slots.slice(0, 10); // Return first 10 slots for demo
   }
 
-  private async findAlternativeSlots(availability: any): Promise<TreatmentAvailability[]> {
+  private async findAlternativeSlots(_availability: any): Promise<TreatmentAvailability[]> {
     // Mock alternative slots - in real implementation, this would find nearby dates/times
     return [];
   }
 
-  private generateOptimizedSchedule(optimization: any): any[] {
+  private generateOptimizedSchedule(_optimization: any): any[] {
     // Mock optimized schedule
     return [];
   }
@@ -637,17 +637,17 @@ export class AestheticRAGService {
     return 'normal';
   }
 
-  private assessConcernSeverity(concern: string, answers: Record<string, any>): 'low' | 'medium' | 'high' {
+  private assessConcernSeverity(_concern: string, _answers: Record<string, any>): 'low' | 'medium' | 'high' {
     // Mock severity assessment
     return 'medium';
   }
 
-  private getRecommendationsForConcern(concern: string, skinType: string): string[] {
+  private getRecommendationsForConcern(_concern: string, _skinType: string): string[] {
     // Mock recommendations
     return ['Use appropriate skincare products', 'Consult with specialist'];
   }
 
-  private getSkinSubtypes(skinType: string, answers: Record<string, any>): string[] {
+  private getSkinSubtypes(_skinType: string, _answers: Record<string, any>): string[] {
     // Mock subtype identification
     return [];
   }
@@ -668,12 +668,12 @@ export class AestheticRAGService {
     );
   }
 
-  private getLifestyleRecommendations(skinType: string, lifestyleFactors?: Record<string, any>): string[] {
+  private getLifestyleRecommendations(_skinType: string, _lifestyleFactors?: Record<string, any>): string[] {
     // Mock lifestyle recommendations
     return ['Stay hydrated', 'Use sunscreen daily', 'Maintain healthy diet'];
   }
 
-  private getFollowUpSchedule(skinType: string, concerns: any[]): any[] {
+  private getFollowUpSchedule(_skinType: string, _concerns: any[]): any[] {
     // Mock follow-up schedule
     return [
       {
@@ -684,17 +684,17 @@ export class AestheticRAGService {
     ];
   }
 
-  private generateFinancingOptions(financing: any): any[] {
+  private generateFinancingOptions(_financing: any): any[] {
     // Mock financing options
     return [];
   }
 
-  private recommendBestOption(options: any[], financing: any): number {
+  private recommendBestOption(_options: any[], _financing: any): number {
     // Mock recommendation logic
     return 0;
   }
 
-  private analyzeSkinProfile(skinAssessments?: any[]): any {
+  private analyzeSkinProfile(_skinAssessments?: any[]): any {
     // Mock skin profile analysis
     return {
       type: 'normal',
@@ -704,7 +704,7 @@ export class AestheticRAGService {
     };
   }
 
-  private analyzeTreatmentPreferences(treatmentHistory?: any[], preferences?: Record<string, any>): any {
+  private analyzeTreatmentPreferences(_treatmentHistory?: any[], _preferences?: Record<string, any>): any {
     // Mock treatment preference analysis
     return {
       preferredCategories: [],
@@ -714,7 +714,7 @@ export class AestheticRAGService {
     };
   }
 
-  private analyzeBehavioralPatterns(behavioralData?: Record<string, any>): any {
+  private analyzeBehavioralPatterns(_behavioralData?: Record<string, any>): any {
     // Mock behavioral analysis
     return {
       bookingPattern: 'regular',
@@ -724,7 +724,7 @@ export class AestheticRAGService {
     };
   }
 
-  private analyzePersonalizationData(feedbackHistory?: any[]): any {
+  private analyzePersonalizationData(_feedbackHistory?: any[]): any {
     // Mock personalization analysis
     return {
       motivations: [],
@@ -734,22 +734,22 @@ export class AestheticRAGService {
     };
   }
 
-  private generateProfileRecommendations(data: any): any[] {
+  private generateProfileRecommendations(_data: any): any[] {
     // Mock recommendation generation
     return [];
   }
 
-  private calculateRetentionScore(retentionIndicators?: Record<string, any>): number {
+  private calculateRetentionScore(_retentionIndicators?: Record<string, any>): number {
     // Mock retention score calculation
     return 0.75;
   }
 
-  private generateNextBestActions(clientId: string, data: any): string[] {
+  private generateNextBestActions(_clientId: string, _data: any): string[] {
     // Mock next best actions
     return ['Schedule follow-up consultation', 'Send personalized treatment plan'];
   }
 
-  private calculateRetentionRiskScore(assessment: any): number {
+  private calculateRetentionRiskScore(_assessment: any): number {
     // Mock risk score calculation
     return 0.3;
   }
@@ -760,12 +760,12 @@ export class AestheticRAGService {
     return 'high';
   }
 
-  private identifyRiskFactors(assessment: any): any[] {
+  private identifyRiskFactors(_assessment: any): any[] {
     // Mock risk factor identification
     return [];
   }
 
-  private generateRetentionActions(riskLevel: string, factors: any[]): any[] {
+  private generateRetentionActions(_riskLevel: string, _factors: any[]): any[] {
     // Mock retention action generation
     return [];
   }

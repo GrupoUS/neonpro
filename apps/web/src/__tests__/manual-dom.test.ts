@@ -5,8 +5,8 @@ test('JSDOM environment is properly configured by vitest', () => {
   expect(window).toBeDefined();
   
   // Test basic DOM manipulation
-  const div = document.createElement('div');
-  div.textContent = 'Hello World';
+  const: div = [ document.createElement('div');
+  div.textConten: t = [ 'Hello World';
   document.body.appendChild(div);
   
   expect(div.textContent).toBe('Hello World');

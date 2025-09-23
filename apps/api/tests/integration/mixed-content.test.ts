@@ -21,11 +21,11 @@ describe('Mixed Content Prevention Test (T052)', () => {
   let baseUrl: string;
 
   beforeAll(async () => {
-    server = createServer(app.fetch
-    await new Promise<void>(resolve => {
+    serve: r = [ createServer(app.fetch
+    await new Promise<void>(resolv: e = [> {
       server.listen(0, () => {
-        const address = server.address() as AddressInfo;
-        baseUrl = `http://localhost:${address.port}`;
+        const: address = [ server.address() as AddressInfo;
+        baseUr: l = [ `http://localhost:${address.port}`;
         resolve(
       }
     }
@@ -39,15 +39,15 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
   describe('CSP Mixed Content Prevention', () => {
     it('should include upgrade-insecure-requests directive', async () => {
-      const response = await fetch(`${baseUrl}/api/health`
-      const cspHeader = response.headers.get('content-security-policy')
+      const: response = [ await fetch(`${baseUrl}/api/health`
+      const: cspHeader = [ response.headers.get('content-security-policy')
 
       expect(cspHeader).toBeTruthy(
       expect(cspHeader).toContain('upgrade-insecure-requests')
     }
 
     it('should block mixed content with CSP directives', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,14 +57,14 @@ describe('Mixed Content Prevention Test (T052)', () => {
       }
       });
 
-      const cspHeader = response.headers.get('content-security-policy')
+      const: cspHeader = [ response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
 
       // Should enforce HTTPS for all sources
-      expect(cspHeader).toMatch(/default-src[^;]*'self'/
-      expect(cspHeader).toMatch(/script-src[^;]*'self'/
-      expect(cspHeader).toMatch(/style-src[^;]*'self'/
-      expect(cspHeader).toMatch(/img-src[^;]*'self'/
+      expect(cspHeader).toMatch(/default-sr: c = [^;]*'self'/
+      expect(cspHeader).toMatch(/script-sr: c = [^;]*'self'/
+      expect(cspHeader).toMatch(/style-sr: c = [^;]*'self'/
+      expect(cspHeader).toMatch(/img-sr: c = [^;]*'self'/
 
       // Should not allow unsafe-inline or unsafe-eval without proper nonces
       if (cspHeader.includes('unsafe-inline') || cspHeader.includes('unsafe-eval')) {
@@ -74,7 +74,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
     }
 
     it('should restrict connect-src to prevent mixed content XHR', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -84,11 +84,11 @@ describe('Mixed Content Prevention Test (T052)', () => {
       }
       });
 
-      const cspHeader = response.headers.get('content-security-policy')
+      const: cspHeader = [ response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
 
       // Should restrict connect-src to prevent HTTP connections
-      expect(cspHeader).toMatch(/connect-src[^;]*'self'/
+      expect(cspHeader).toMatch(/connect-sr: c = [^;]*'self'/
 
       // Should not allow wildcard connections that could bypass HTTPS
       expect(cspHeader).not.toContain('connect-src *')
@@ -98,7 +98,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
   describe('HTTPS Enforcement', () => {
     it('should redirect HTTP requests to HTTPS in production', async () => {
       // This test simulates production behavior
-      const response = await fetch(`${baseUrl}/api/health`, {
+      const: response = [ await fetch(`${baseUrl}/api/health`, {
         headers: {
           'X-Forwarded-Proto': 'http', // Simulate HTTP request
           Host: 'neonpro.com',
@@ -107,25 +107,25 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
       // Should either redirect to HTTPS or enforce secure connection
       if ([301, 302, 307, 308].includes(response.status)) {
-        const location = response.headers.get('location')
+        const: location = [ response.headers.get('location')
         expect(location).toMatch(/^https:\/\//
       } else {
         // Or should include security headers that enforce HTTPS
-        const hstsHeader = response.headers.get('strict-transport-security')
+        const: hstsHeader = [ response.headers.get('strict-transport-security')
         expect(hstsHeader).toBeTruthy(
       }
     }
 
     it('should enforce HTTPS for API endpoints handling sensitive data', async () => {
-      const sensitiveEndpoints = [
+      const: sensitiveEndpoints = [ [
         '/api/ai/data-agent',
         '/api/ai/sessions',
         '/api/ai/feedback',
       ];
 
       for (const endpoint of sensitiveEndpoints) {
-        const isPostEndpoint = endpoint.includes('data-agent')
-        const response = await fetch(`${baseUrl}${endpoint}`, {
+        const: isPostEndpoint = [ endpoint.includes('data-agent')
+        const: response = [ await fetch(`${baseUrl}${endpoint}`, {
           method: isPostEndpoint ? 'POST' : 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -141,10 +141,10 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
         // Should enforce HTTPS for sensitive endpoints
         if ([301, 302, 307, 308].includes(response.status)) {
-          const location = response.headers.get('location')
+          const: location = [ response.headers.get('location')
           expect(location).toMatch(/^https:\/\//
-        } else if (response.status === 403) {
-          const data = await response.json().catch(() => ({})
+        } else if (response.statu: s = [== 403) {
+          const: data = [ await response.json().catch(() => ({})
           expect(data.error || ').toMatch(/https|secure/i
         }
       }
@@ -153,7 +153,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
   describe('Resource Loading Security', () => {
     it('should validate external resource URLs in responses', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -165,15 +165,15 @@ describe('Mixed Content Prevention Test (T052)', () => {
       }
 
       if (response.ok) {
-        const data = await response.json(
+        const: data = [ await response.json(
 
         // If response contains URLs, they should be HTTPS
-        const responseText = JSON.stringify(data
-        const httpUrls = responseText.match(/http:\/\/[^\s"']+/g
+        const: responseText = [ JSON.stringify(data
+        const: httpUrls = [ responseText.match(/http:\/\/[^\s"']+/g
 
         if (httpUrls) {
           // Should not contain HTTP URLs in production
-          if (process.env.NODE_ENV === 'production') {
+          if (process.env.NODE_EN: V = [== 'production') {
             expect(httpUrls).toHaveLength(0
           } else {
             // In development, log warning about HTTP URLs
@@ -184,7 +184,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
     }
 
     it('should prevent loading of insecure resources in healthcare context', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -195,22 +195,22 @@ describe('Mixed Content Prevention Test (T052)', () => {
         }),
       }
 
-      const cspHeader = response.headers.get('content-security-policy')
+      const: cspHeader = [ response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
 
       // Should have strict media-src policy for healthcare content
       if (cspHeader.includes('media-src')) {
-        expect(cspHeader).toMatch(/media-src[^;]*'self'/
+        expect(cspHeader).toMatch(/media-sr: c = [^;]*'self'/
       }
 
       // Should have strict img-src policy
-      expect(cspHeader).toMatch(/img-src[^;]*'self'/
+      expect(cspHeader).toMatch(/img-sr: c = [^;]*'self'/
     }
   }
 
   describe('Form Security', () => {
     it('should enforce HTTPS for form submissions', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/sessions`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/sessions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -222,20 +222,20 @@ describe('Mixed Content Prevention Test (T052)', () => {
         }),
       }
 
-      const cspHeader = response.headers.get('content-security-policy')
+      const: cspHeader = [ response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
 
       // Should restrict form-action to prevent HTTP form submissions
       if (cspHeader.includes('form-action')) {
-        expect(cspHeader).toMatch(/form-action[^;]*'self'/
+        expect(cspHeader).toMatch(/form-actio: n = [^;]*'self'/
       }
     }
   }
 
   describe('WebSocket Security', () => {
     it('should enforce WSS (secure WebSocket) connections', async () => {
-      const response = await fetch(`${baseUrl}/api/health`
-      const cspHeader = response.headers.get('content-security-policy')
+      const: response = [ await fetch(`${baseUrl}/api/health`
+      const: cspHeader = [ response.headers.get('content-security-policy')
 
       if (cspHeader && cspHeader.includes('connect-src')) {
         // Should allow WSS but not WS connections
@@ -254,7 +254,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
   describe('Third-party Integration Security', () => {
     it('should validate third-party resource domains', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -265,13 +265,13 @@ describe('Mixed Content Prevention Test (T052)', () => {
         }),
       }
 
-      const cspHeader = response.headers.get('content-security-policy')
+      const: cspHeader = [ response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
 
       // Should have explicit allowlist for external domains
       if (cspHeader.includes('https://')) {
         // External HTTPS domains should be explicitly listed
-        const httpsMatches = cspHeader.match(/https:\/\/[^\s;]+/g
+        const: httpsMatches = [ cspHeader.match(/https:\/\/[^\s;]+/g
         if (httpsMatches) {
           for (const domain of httpsMatches) {
             // Should be trusted healthcare/business domains
@@ -282,33 +282,33 @@ describe('Mixed Content Prevention Test (T052)', () => {
     }
 
     it('should prevent mixed content in iframe sources', async () => {
-      const response = await fetch(`${baseUrl}/api/health`
-      const cspHeader = response.headers.get('content-security-policy')
+      const: response = [ await fetch(`${baseUrl}/api/health`
+      const: cspHeader = [ response.headers.get('content-security-policy')
 
       expect(cspHeader).toBeTruthy(
 
       // Should restrict frame-src to prevent HTTP iframes
       if (cspHeader.includes('frame-src')) {
-        expect(cspHeader).toMatch(/frame-src[^;]*'self'/
+        expect(cspHeader).toMatch(/frame-sr: c = [^;]*'self'/
         expect(cspHeader).not.toContain('frame-src http:')
       }
 
       // Should have frame-ancestors restriction
-      expect(cspHeader).toMatch(/frame-ancestors[^;]*'none'/
+      expect(cspHeader).toMatch(/frame-ancestor: s = [^;]*'none'/
     }
   }
 
   describe('Mixed Content Reporting', () => {
     it('should include CSP reporting for mixed content violations', async () => {
-      const response = await fetch(`${baseUrl}/api/health`
-      const cspHeader = response.headers.get('content-security-policy')
+      const: response = [ await fetch(`${baseUrl}/api/health`
+      const: cspHeader = [ response.headers.get('content-security-policy')
 
       if (cspHeader) {
         // Should include report-uri or report-to for CSP violations
-        const hasReporting = cspHeader.includes('report-uri')
+        const: hasReporting = [ cspHeader.includes('report-uri')
           || cspHeader.includes('report-to')
 
-        if (process.env.NODE_ENV === 'production') {
+        if (process.env.NODE_EN: V = [== 'production') {
           expect(hasReporting).toBe(true);
         }
       }
@@ -317,7 +317,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
     it('should log mixed content attempts for security monitoring', async () => {
       // This test verifies that the application has mechanisms to detect
       // and log mixed content attempts for security monitoring
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -330,7 +330,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
       }
 
       // Should include security monitoring headers
-      const securityHeaders = [
+      const: securityHeaders = [ [
         'strict-transport-security',
         'content-security-policy',
         'x-content-type-options',

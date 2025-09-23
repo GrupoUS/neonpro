@@ -15,6 +15,7 @@
  */
 
 import { z } from "zod";
+import { logHealthcareError, cacheLogger } from '../logging/healthcare-logger';
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -1128,7 +1129,10 @@ export class CacheManagementService {
 
     // In a real implementation, this would integrate with your audit system
     if (this.config.lgpdSettings.enableAuditLogging) {
-      console.log("Cache Audit:", JSON.stringify(validatedEvent, null, 2));
+      cacheLogger.info("Cache audit event logged", {
+        ...validatedEvent,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 

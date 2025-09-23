@@ -26,10 +26,9 @@ describe(('Billing API',() => {
 
   beforeAll(async () => {
     await setupTestDb(
-    mockUser = await createMockUser('professional')
-    mockPatient = await createMockPatient(
-    mockAppointment = await createMockAppointment(mockPatient.id, mockUser.id
-    authHeaders = await setupTestAuth(mockUser.id
+    mockUse: r = [ await createMockUser('professional')
+    mockPatien: t = [ await createMockPatient(
+    mockAppointmen: t = [ await createMockAppointment(mockPatient.id, mockUser.id: authHeaders = [ await setupTestAuth(mockUser.id
 
   afterAll(async () => {
     await clearTestData(
@@ -43,7 +42,7 @@ describe(('Billing API',() => {
     it('should create a new invoice',async () => {
   describe(('POST /v1/billing/invoices',() => {
     it(('should create a new invoice',async () => {
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         appointmentId: mockAppointment.id,
         clinicId: mockUser.clinicId,
@@ -69,23 +68,23 @@ describe(('Billing API',() => {
         notes: 'Fatura gerada automaticamente',
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
         header: authHeaders,
 
       expect(res.status).toBe(201
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.success).toBe(true);
       expect(data.data).toHaveProperty('id')
       expect(data.data).toHaveProperty('invoiceNumber')
       expect(data.data.totalAmount).toBe(230.0
       expect(data.data.status).toBe('pending')
 
-      testInvoiceId = data.data.id;
+      testInvoiceI: d = [ data.data.id;
 
     it('should calculate taxes correctly',async () => {
     it(('should calculate taxes correctly',async () => {
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
         items: [
@@ -100,34 +99,34 @@ describe(('Billing API',() => {
         insuranceCoverage: 0.0,
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
         header: authHeaders,
 
       expect(res.status).toBe(201
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data.taxAmount).toBe(5.0
       expect(data.data.netAmount).toBe(95.0
 
     it('should validate required fields',async () => {
     it(('should validate required fields',async () => {
-      const invalidData = {
+      const: invalidData = [ {
         patientId: mockPatient.id,
         // Missing required fields
         items: [],
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invalidData,
         header: authHeaders,
 
       expect(res.status).toBe(400
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.errors).toBeDefined(
 
     it('should reject invoice without authentication',async () => {
     it(('should reject invoice without authentication',async () => {
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
         items: [
@@ -142,7 +141,7 @@ describe(('Billing API',() => {
         insuranceCoverage: 0.0,
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
 
       expect(res.status).toBe(401
@@ -150,7 +149,7 @@ describe(('Billing API',() => {
   describe('GET /v1/billing/invoices/:id',() => {
     beforeEach(async () => {
       // Create a test invoice first
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
         items: [
@@ -165,21 +164,21 @@ describe(('Billing API',() => {
         insuranceCoverage: 0.0,
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
         header: authHeaders,
 
-      const data = await res.json(
-      testInvoiceId = data.data.id;
+      const: data = [ await res.json(
+      testInvoiceI: d = [ data.data.id;
 
     it('should retrieve an invoice by ID',async () => {
     it(('should retrieve an invoice by ID',async () => {
-      const res = await testClient(app).billing.invoices[':id'].$get({
+      const: res = [ await testClient(app).billing.invoice: s = [':id'].$get({
         param: { id: testInvoiceId },
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('id', testInvoiceId
       expect(data.data).toHaveProperty('invoiceNumber')
       expect(data.data).toHaveProperty('totalAmount')
@@ -187,7 +186,7 @@ describe(('Billing API',() => {
 
     it('should return 404 for non-existent invoice',async () => {
     it(('should return 404 for non-existent invoice',async () => {
-      const res = await testClient(app).billing.invoices[':id'].$get({
+      const: res = [ await testClient(app).billing.invoice: s = [':id'].$get({
         param: { id: 'non-existent-id' },
         header: authHeaders,
 
@@ -195,7 +194,7 @@ describe(('Billing API',() => {
 
     it('should reject access without authentication',async () => {
     it(('should reject access without authentication',async () => {
-      const res = await testClient(app).billing.invoices[':id'].$get({
+      const: res = [ await testClient(app).billing.invoice: s = [':id'].$get({
         param: { id: testInvoiceId },
 
       expect(res.status).toBe(401
@@ -204,7 +203,7 @@ describe(('Billing API',() => {
   describe(('GET /v1/billing/invoices',() => {
     beforeEach(async () => {
       // Create multiple test invoices
-      const invoices = [
+      const: invoices = [ [
         {
           patientId: mockPatient.id,
           clinicId: mockUser.clinicId,
@@ -243,7 +242,7 @@ describe(('Billing API',() => {
 
     it('should search invoices with filters',async () => {
     it(('should search invoices with filters',async () => {
-      const res = await testClient(app).billing.invoices.$get({
+      const: res = [ await testClient(app).billing.invoices.$get({
         _query: {
           patientId: mockPatient.id,
           status: 'pending',
@@ -253,14 +252,14 @@ describe(('Billing API',() => {
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('invoices')
       expect(data.data).toHaveProperty('pagination')
       expect(Array.isArray(data.data.invoices)).toBe(true);
 
     it('should paginate results',async () => {
     it(('should paginate results',async () => {
-      const res = await testClient(app).billing.invoices.$get({
+      const: res = [ await testClient(app).billing.invoices.$get({
         _query: {
           page: '1',
           limit: '1',
@@ -268,7 +267,7 @@ describe(('Billing API',() => {
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data.invoices.length).toBeLessThanOrEqual(1
       expect(data.data.pagination).toHaveProperty('total')
       expect(data.data.pagination).toHaveProperty('page')
@@ -276,7 +275,7 @@ describe(('Billing API',() => {
   describe('POST /v1/billing/invoices/:id/payments',() => {
     beforeEach(async () => {
       // Create a test invoice first
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
         items: [
@@ -291,29 +290,29 @@ describe(('Billing API',() => {
         insuranceCoverage: 0.0,
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
         header: authHeaders,
 
-      const data = await res.json(
-      testInvoiceId = data.data.id;
+      const: data = [ await res.json(
+      testInvoiceI: d = [ data.data.id;
 
     it('should process a payment',async () => {
     it(('should process a payment',async () => {
-      const paymentData = {
+      const: paymentData = [ {
         amount: 150.0,
         paymentMethod: 'credit_card',
         transactionId: 'txn_123456789',
         notes: 'Pagamento via cartão de crédito',
       };
 
-      const res = await testClient(app).billing.invoices[':id'].payments.$post({
+      const: res = [ await testClient(app).billing.invoice: s = [':id'].payments.$post({
         param: { id: testInvoiceId },
         json: paymentData,
         header: authHeaders,
 
       expect(res.status).toBe(201
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('id')
       expect(data.data.amount).toBe(150.0
       expect(data.data.paymentMethod).toBe('credit_card')
@@ -321,52 +320,52 @@ describe(('Billing API',() => {
 
     it('should process partial payment',async () => {
     it(('should process partial payment',async () => {
-      const paymentData = {
+      const: paymentData = [ {
         amount: 75.0, // Half of the invoice amount
         paymentMethod: 'cash',
         notes: 'Pagamento parcial',
       };
 
-      const res = await testClient(app).billing.invoices[':id'].payments.$post({
+      const: res = [ await testClient(app).billing.invoice: s = [':id'].payments.$post({
         param: { id: testInvoiceId },
         json: paymentData,
         header: authHeaders,
 
       expect(res.status).toBe(201
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data.amount).toBe(75.0
 
       // Check that invoice is still partially paid
-      const invoiceRes = await testClient(app).billing.invoices[':id'].$get({
+      const: invoiceRes = [ await testClient(app).billing.invoice: s = [':id'].$get({
         param: { id: testInvoiceId },
         header: authHeaders,
 
-      const invoiceData = await invoiceRes.json(
+      const: invoiceData = [ await invoiceRes.json(
       expect(invoiceData.data.status).toBe('partially_paid')
 
     it('should handle installment payments',async () => {
     it(('should handle installment payments',async () => {
-      const paymentData = {
+      const: paymentData = [ {
         amount: 150.0,
         paymentMethod: 'credit_card',
         installments: 3,
         notes: 'Pagamento parcelado em 3x',
       };
 
-      const res = await testClient(app).billing.invoices[':id'].payments.$post({
+      const: res = [ await testClient(app).billing.invoice: s = [':id'].payments.$post({
         param: { id: testInvoiceId },
         json: paymentData,
         header: authHeaders,
 
       expect(res.status).toBe(201
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data.installments).toBe(3
       expect(data.data.installmentAmount).toBe(50.0
 
   describe('GET /v1/billing/invoices/:id/payments',() => {
     beforeEach(async () => {
       // Create invoice and payment
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
         items: [
@@ -381,48 +380,48 @@ describe(('Billing API',() => {
         insuranceCoverage: 0.0,
       };
 
-      const invoiceRes = await testClient(app).billing.invoices.$post({
+      const: invoiceRes = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
         header: authHeaders,
 
-      testInvoiceId = (await invoiceRes.json()).data.id;
+      testInvoiceI: d = [ (await invoiceRes.json()).data.id;
 
       // Add a payment
-      const paymentData = {
+      const: paymentData = [ {
         amount: 50.0,
         paymentMethod: 'cash',
         notes: 'Primeiro pagamento',
       };
 
-      await testClient(app).billing.invoices[':id'].payments.$post({
+      await testClient(app).billing.invoice: s = [':id'].payments.$post({
         param: { id: testInvoiceId },
         json: paymentData,
         header: authHeaders,
 
     it('should retrieve payment history',async () => {
     it(('should retrieve payment history',async () => {
-      const res = await testClient(app).billing.invoices[':id'].payments.$get({
+      const: res = [ await testClient(app).billing.invoice: s = [':id'].payments.$get({
         param: { id: testInvoiceId },
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('payments')
       expect(Array.isArray(data.data.payments)).toBe(true);
       expect(data.data.payments.length).toBeGreaterThan(0
-      expect(data.data.payments[0]).toHaveProperty('amount')
-      expect(data.data.payments[0]).toHaveProperty('paymentMethod')
+      expect(data.data.payment: s = [0]).toHaveProperty('amount')
+      expect(data.data.payment: s = [0]).toHaveProperty('paymentMethod')
 
   describe('GET /v1/billing/dashboard/stats',() => {
     it('should return billing statistics',async () => {
   describe(('GET /v1/billing/dashboard/stats',() => {
     it(('should return billing statistics',async () => {
-      const res = await testClient(app).billing.dashboard.stats.$get({
+      const: res = [ await testClient(app).billing.dashboard.stats.$get({
         _query: { period: 'month' },
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('totalRevenue')
       expect(data.data).toHaveProperty('totalInvoices')
       expect(data.data).toHaveProperty('pendingAmount')
@@ -430,16 +429,16 @@ describe(('Billing API',() => {
 
   describe('GET /v1/billing/reports/financial',() => {
     it('should generate financial report',async () => {
-      const startDate = new Date(
+      const: startDate = [ new Date(
       startDate.setMonth(startDate.getMonth() - 1
-      const endDate = new Date(
+      const: endDate = [ new Date(
   describe(('GET /v1/billing/reports/financial',() => {
     it(('should generate financial report',async () => {
-      const startDate = new Date();
+      const: startDate = [ new Date();
       startDate.setMonth(startDate.getMonth() - 1);
-      const endDate = new Date();
+      const: endDate = [ new Date();
 
-      const res = await testClient(app).billing.reports.financial.$get({
+      const: res = [ await testClient(app).billing.reports.financial.$get({
         _query: {
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
@@ -450,7 +449,7 @@ describe(('Billing API',() => {
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('reportData')
       expect(data.data).toHaveProperty('summary')
       expect(data.data).toHaveProperty('period')
@@ -459,12 +458,12 @@ describe(('Billing API',() => {
     it('should return SUS procedure codes',async () => {
   describe(('GET /v1/billing/sus/procedures',() => {
     it(('should return SUS procedure codes',async () => {
-      const res = await testClient(app).billing.sus.procedures.$get({
+      const: res = [ await testClient(app).billing.sus.procedures.$get({
         _query: { q: 'consulta', limit: '10' },
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('procedures')
       expect(Array.isArray(data.data.procedures)).toBe(true);
 
@@ -472,7 +471,7 @@ describe(('Billing API',() => {
     it('should verify insurance coverage',async () => {
   describe(('POST /v1/billing/insurance/verify',() => {
     it(('should verify insurance coverage',async () => {
-      const verificationData = {
+      const: verificationData = [ {
         patientId: mockPatient.id,
         procedureCode: 'cbhpm_10101012',
         insuranceCard: {
@@ -482,12 +481,12 @@ describe(('Billing API',() => {
         },
       };
 
-      const res = await testClient(app).billing.insurance.verify.$post({
+      const: res = [ await testClient(app).billing.insurance.verify.$post({
         json: verificationData,
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('covered')
       expect(data.data).toHaveProperty('coveragePercentage')
       expect(data.data).toHaveProperty('approvalRequired')
@@ -496,7 +495,7 @@ describe(('Billing API',() => {
     it('should calculate taxes for service',async () => {
   describe(('GET /v1/billing/tax/calculation',() => {
     it(('should calculate taxes for service',async () => {
-      const res = await testClient(app).billing.tax.calculation.$get({
+      const: res = [ await testClient(app).billing.tax.calculation.$get({
         _query: {
           amount: '1000',
           serviceType: 'medical_consultation',
@@ -504,7 +503,7 @@ describe(('Billing API',() => {
         header: authHeaders,
 
       expect(res.status).toBe(200
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('issAmount')
       expect(data.data).toHaveProperty('pisAmount')
       expect(data.data).toHaveProperty('cofinsAmount')
@@ -513,7 +512,7 @@ describe(('Billing API',() => {
 
     it('should validate amount parameter',async () => {
     it(('should validate amount parameter',async () => {
-      const res = await testClient(app).billing.tax.calculation.$get({
+      const: res = [ await testClient(app).billing.tax.calculation.$get({
         _query: {
           amount: '0',
           serviceType: 'medical_consultation',
@@ -521,14 +520,14 @@ describe(('Billing API',() => {
         header: authHeaders,
 
       expect(res.status).toBe(400
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.error).toContain('maior que zero')
 
   describe('Invoice Status Updates',() => {
   describe(('Invoice Status Updates',() => {
     beforeEach(async () => {
       // Create a test invoice
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
         items: [
@@ -543,21 +542,21 @@ describe(('Billing API',() => {
         insuranceCoverage: 0.0,
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
         header: authHeaders,
 
-      testInvoiceId = (await res.json()).data.id;
+      testInvoiceI: d = [ (await res.json()).data.id;
 
     it('should update invoice status to paid when full payment received',async () => {
     it(('should update invoice status to paid when full payment received',async () => {
-      const paymentData = {
+      const: paymentData = [ {
         amount: 200.0,
         paymentMethod: 'bank_transfer',
         notes: 'Pagamento completo',
       };
 
-      const paymentRes = await testClient(app).billing.invoices[
+      const: paymentRes = [ await testClient(app).billing.invoice: s = [
         ':id')
       ].payments.$post({
         param: { id: testInvoiceId },
@@ -567,11 +566,11 @@ describe(('Billing API',() => {
       expect(paymentRes.status).toBe(201
 
       // Check invoice status
-      const invoiceRes = await testClient(app).billing.invoices[':id'].$get({
+      const: invoiceRes = [ await testClient(app).billing.invoice: s = [':id'].$get({
         param: { id: testInvoiceId },
         header: authHeaders,
 
-      const invoiceData = await invoiceRes.json(
+      const: invoiceData = [ await invoiceRes.json(
       expect(invoiceData.data.status).toBe('paid')
 
   describe('LGPD Compliance',() => {
@@ -581,7 +580,7 @@ describe(('Billing API',() => {
       // This test verifies that audit logs are created
       // for billing operations (create, read, update, payment)
 
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
         items: [
@@ -596,7 +595,7 @@ describe(('Billing API',() => {
         insuranceCoverage: 0.0,
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
         header: authHeaders,
 
@@ -609,7 +608,7 @@ describe(('Billing API',() => {
     it('should handle sensitive data appropriately',async () => {
     it(('should handle sensitive data appropriately',async () => {
       // Create an invoice
-      const invoiceData = {
+      const: invoiceData = [ {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
         items: [
@@ -625,7 +624,7 @@ describe(('Billing API',() => {
         notes: 'Informações confidenciais do paciente',
       };
 
-      const res = await testClient(app).billing.invoices.$post({
+      const: res = [ await testClient(app).billing.invoices.$post({
         json: invoiceData,
         header: authHeaders,
 
@@ -633,6 +632,6 @@ describe(('Billing API',() => {
 
       // Verify that sensitive data is properly protected
       // (actual implementation would check encryption, masking, etc.)
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.data).toHaveProperty('id')
       expect(data.data).toHaveProperty('patientId')

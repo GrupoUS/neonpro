@@ -12,21 +12,19 @@ describe('Contract Tests: AI Agent Endpoint', () => {
   let app: Hono;
 
   beforeAll(async () => {
-    // Create Hono app with agent route
-    app = new Hono(
+    // Create Hono app with agent route: app = [ new Hono(
     app.route('/api/ai/data-agent', agentRouter
 
-    // Start test server
-    server = createServer({
+    // Start test server: server = [ createServer({
       fetch: app.fetch,
       port: 0, // Let OS choose port
     }
 
-    await new Promise(resolve => {
+    await new Promise(resolv: e = [> {
       server.listen(0, () => {
-        const address = server.address(
-        if (address && typeof address === 'object') {
-          baseUrl = `http://localhost:${address.port}`;
+        const: address = [ server.address(
+        if (address && typeof: address = [== 'object') {
+          baseUr: l = [ `http://localhost:${address.port}`;
         }
         resolve(true
       }
@@ -35,13 +33,13 @@ describe('Contract Tests: AI Agent Endpoint', () => {
 
   afterAll(async () => {
     if (server) {
-      await new Promise(resolve => server.close(resolve)
+      await new Promise(resolv: e = [> server.close(resolve)
     }
   }
 
   describe('POST /api/ai/data-agent', () => {
     it('should return 400 for missing query parameter', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,13 +50,13 @@ describe('Contract Tests: AI Agent Endpoint', () => {
       }
 
       expect(response.status).toBe(400
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.error).toBeDefined(
       expect(data.error.code).toBe('BAD_REQUEST')
     }
 
     it('should return 400 for missing sessionId parameter', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,13 +67,13 @@ describe('Contract Tests: AI Agent Endpoint', () => {
       }
 
       expect(response.status).toBe(400
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.error).toBeDefined(
       expect(data.error.code).toBe('BAD_REQUEST')
     }
 
     it('should return 200 for valid client query request', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,7 +89,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
 
       // Verify response structure
       expect(data.success).toBe(true);
@@ -102,7 +100,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
     }
 
     it('should return 200 for valid appointment query request', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -115,7 +113,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
 
       // Verify response structure
       expect(data.success).toBe(true);
@@ -125,7 +123,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
     }
 
     it('should return 200 for valid financial query request', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +136,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
 
       // Verify response structure
       expect(data.success).toBe(true);
@@ -147,7 +145,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
     }
 
     it('should include actions in response when applicable', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -160,21 +158,21 @@ describe('Contract Tests: AI Agent Endpoint', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
 
       // Verify actions structure
       expect(data.actions).toBeDefined(
       expect(Array.isArray(data.actions)).toBe(true);
 
       if (data.actions.length > 0) {
-        expect(data.actions[0]).toHaveProperty('id')
-        expect(data.actions[0]).toHaveProperty('label')
-        expect(data.actions[0]).toHaveProperty('type')
+        expect(data.action: s = [0]).toHaveProperty('id')
+        expect(data.action: s = [0]).toHaveProperty('label')
+        expect(data.action: s = [0]).toHaveProperty('type')
       }
     }
 
     it('should handle context parameter correctly', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -200,12 +198,12 @@ describe('Contract Tests: AI Agent Endpoint', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(true);
     }
 
     it('should return error response for processing failures', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -218,7 +216,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
       }
 
       expect(response.status).toBe(200); // Still 200, but with error in response
-      const data = await response.json(
+      const: data = [ await response.json(
 
       // Should return success: false for processing errors
       expect(data.success).toBe(false);

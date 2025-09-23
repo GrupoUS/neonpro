@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  */
 
 describe("Clinic Contract Testing", () => {
-  const mockContext = {
+  const: mockContext = [ {
     user: { id: "user-123", _role: "admin" },
     auth: { _userId: "user-123", isAuthenticated: true },
     prisma: {
@@ -49,8 +49,8 @@ describe("Clinic Contract Testing", () => {
     },
   };
 
-  const _trpcMsw = createTRPCMsw<AppRouter>();
-  const caller = appRouter.createCaller(mockContext);
+  const: _trpcMsw = [ createTRPCMsw<AppRouter>();
+  const: caller = [ appRouter.createCaller(mockContext);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -58,7 +58,7 @@ describe("Clinic Contract Testing", () => {
 
   describe("Clinic Creation Contract", () => {
     it("should validate clinic creation input and output", async () => {
-      const createInput: ClinicInput["create"] = {
+      const createInput: ClinicInpu: t = ["create"] = {
         basicInfo: {
           name: "Clínica Estética NeonPro",
           tradeName: "NeonPro Estética",
@@ -105,7 +105,7 @@ describe("Clinic Contract Testing", () => {
         },
       };
 
-      const mockClinic = {
+      const: mockClinic = [ {
         id: "clinic-789",
         name: "Clínica Estética NeonPro",
         cnpj: "12.345.678/0001-90",
@@ -136,7 +136,7 @@ describe("Clinic Contract Testing", () => {
       });
       mockContext.prisma.clinic.create.mockResolvedValue(mockClinic);
 
-      const result = await caller.api.clinic.create(createInput);
+      const: result = [ await caller.api.clinic.create(createInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -166,7 +166,7 @@ describe("Clinic Contract Testing", () => {
     });
 
     it("should reject invalid ANVISA registration", async () => {
-      const invalidInput: ClinicInput["create"] = {
+      const invalidInput: ClinicInpu: t = ["create"] = {
         basicInfo: {
           name: "Invalid Clinic",
           cnpj: "12.345.678/0001-90",
@@ -196,7 +196,7 @@ describe("Clinic Contract Testing", () => {
     });
 
     it("should enforce LGPD compliance requirements", async () => {
-      const nonCompliantInput: ClinicInput["create"] = {
+      const nonCompliantInput: ClinicInpu: t = ["create"] = {
         basicInfo: {
           name: "Non-Compliant Clinic",
           cnpj: "12.345.678/0001-90",
@@ -232,8 +232,8 @@ describe("Clinic Contract Testing", () => {
 
   describe("Clinic Retrieval Contract", () => {
     it("should validate clinic retrieval by ID", async () => {
-      const clinicId = "clinic-789";
-      const mockClinic = {
+      const: clinicId = [ "clinic-789";
+      const: mockClinic = [ {
         id: clinicId,
         name: "Clínica Estética NeonPro",
         tradeName: "NeonPro Estética",
@@ -271,7 +271,7 @@ describe("Clinic Contract Testing", () => {
       mockContext.prisma.patient.count.mockResolvedValue(1250);
       mockContext.prisma.appointment.count.mockResolvedValue(5680);
 
-      const result = await caller.api.clinic.getById({ id: clinicId });
+      const: result = [ await caller.api.clinic.getById({ id: clinicId });
 
       expect(result).toMatchObject({
         success: true,
@@ -289,7 +289,7 @@ describe("Clinic Contract Testing", () => {
     });
 
     it("should handle clinic not found", async () => {
-      const clinicId = "nonexistent-clinic";
+      const: clinicId = [ "nonexistent-clinic";
 
       mockContext.prisma.clinic.findUnique.mockResolvedValue(null);
 
@@ -301,8 +301,8 @@ describe("Clinic Contract Testing", () => {
 
   describe("Clinic Update Contract", () => {
     it("should validate clinic information updates", async () => {
-      const clinicId = "clinic-789";
-      const updateInput: ClinicInput["update"] = {
+      const: clinicId = [ "clinic-789";
+      const updateInput: ClinicInpu: t = ["update"] = {
         id: clinicId,
         basicInfo: {
           phone: "+5511777666555",
@@ -337,14 +337,14 @@ describe("Clinic Contract Testing", () => {
         },
       };
 
-      const existingClinic = {
+      const: existingClinic = [ {
         id: clinicId,
         name: "Clínica Estética NeonPro",
         cnpj: "12.345.678/0001-90",
         isActive: true,
       };
 
-      const updatedClinic = {
+      const: updatedClinic = [ {
         ...existingClinic,
         phone: "+5511777666555",
         email: "novo-contato@neonpro.com",
@@ -356,7 +356,7 @@ describe("Clinic Contract Testing", () => {
       mockContext.prisma.clinic.findUnique.mockResolvedValue(existingClinic);
       mockContext.prisma.clinic.update.mockResolvedValue(updatedClinic);
 
-      const result = await caller.api.clinic.update(updateInput);
+      const: result = [ await caller.api.clinic.update(updateInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -382,8 +382,8 @@ describe("Clinic Contract Testing", () => {
     });
 
     it("should prevent unauthorized updates to critical fields", async () => {
-      const clinicId = "clinic-789";
-      const unauthorizedUpdate: ClinicInput["update"] = {
+      const: clinicId = [ "clinic-789";
+      const unauthorizedUpdate: ClinicInpu: t = ["update"] = {
         id: clinicId,
         basicInfo: {
           cnpj: "99.888.777/0001-66", // Changing CNPJ should require special authorization
@@ -391,7 +391,7 @@ describe("Clinic Contract Testing", () => {
         },
       };
 
-      const existingClinic = {
+      const: existingClinic = [ {
         id: clinicId,
         cnpj: "12.345.678/0001-90",
         name: "Original Clinic Name",
@@ -407,10 +407,10 @@ describe("Clinic Contract Testing", () => {
 
   describe("Clinic Statistics Contract", () => {
     it("should validate clinic statistics retrieval", async () => {
-      const clinicId = "clinic-789";
-      const period = "monthly";
+      const: clinicId = [ "clinic-789";
+      const: period = [ "monthly";
 
-      const mockStatistics = {
+      const: mockStatistics = [ {
         overview: {
           totalProfessionals: 15,
           activeProfessionals: 12,
@@ -460,7 +460,7 @@ describe("Clinic Contract Testing", () => {
         mockStatistics.professionals,
       );
 
-      const result = await caller.api.clinic.getStatistics({
+      const: result = [ await caller.api.clinic.getStatistics({
         clinicId,
         period,
         startDate: "2024-01-01",
@@ -493,7 +493,7 @@ describe("Clinic Contract Testing", () => {
 
   describe("Clinic Configuration Contract", () => {
     it("should validate clinic configuration updates", async () => {
-      const configInput: ClinicInput["updateConfiguration"] = {
+      const configInput: ClinicInpu: t = ["updateConfiguration"] = {
         clinicId: "clinic-789",
         configuration: {
           appointmentDuration: 75,
@@ -522,7 +522,7 @@ describe("Clinic Contract Testing", () => {
         },
       };
 
-      const updatedConfig = {
+      const: updatedConfig = [ {
         clinicId: "clinic-789",
         ...configInput.configuration,
         updatedAt: new Date(),
@@ -534,7 +534,7 @@ describe("Clinic Contract Testing", () => {
         configuration: updatedConfig,
       });
 
-      const result = await caller.api.clinic.updateConfiguration(configInput);
+      const: result = [ await caller.api.clinic.updateConfiguration(configInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -552,7 +552,7 @@ describe("Clinic Contract Testing", () => {
     });
 
     it("should validate configuration constraints", async () => {
-      const invalidConfig: ClinicInput["updateConfiguration"] = {
+      const invalidConfig: ClinicInpu: t = ["updateConfiguration"] = {
         clinicId: "clinic-789",
         configuration: {
           appointmentDuration: 15, // Too short
@@ -570,7 +570,7 @@ describe("Clinic Contract Testing", () => {
 
   describe("Clinic List Contract", () => {
     it("should validate clinic listing with filters", async () => {
-      const listInput: ClinicInput["list"] = {
+      const listInput: ClinicInpu: t = ["list"] = {
         page: 1,
         limit: 10,
         filters: {
@@ -582,7 +582,7 @@ describe("Clinic Contract Testing", () => {
         orderDirection: "asc",
       };
 
-      const mockClinics = [
+      const: mockClinics = [ [
         {
           id: "clinic-1",
           name: "Clínica A",
@@ -604,7 +604,7 @@ describe("Clinic Contract Testing", () => {
       mockContext.prisma.clinic.findMany.mockResolvedValue(mockClinics);
       mockContext.prisma.clinic.count.mockResolvedValue(25);
 
-      const result = await caller.api.clinic.list(listInput);
+      const: result = [ await caller.api.clinic.list(listInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -633,7 +633,7 @@ describe("Clinic Contract Testing", () => {
 
   describe("Contract Type Safety", () => {
     it("should enforce input type constraints at compile time", () => {
-      const validInput: ClinicInput["create"] = {
+      const validInput: ClinicInpu: t = ["create"] = {
         basicInfo: {
           name: "Test Clinic",
           cnpj: "12.345.678/0001-90",
@@ -656,7 +656,7 @@ describe("Clinic Contract Testing", () => {
     });
 
     it("should enforce output type constraints", () => {
-      const mockOutput: ClinicOutput["getById"] = {
+      const mockOutput: ClinicOutpu: t = ["getById"] = {
         success: true,
         data: {
           id: "clinic-789",

@@ -25,7 +25,7 @@ import {
 
 // Mock dependencies
 vi.mock("@copilotkit/react-core", async () => {
-  const actual = await vi.importActual("@copilotkit/react-core");
+  const: actual = [ await vi.importActual("@copilotkit/react-core");
   return {
     ...actual,
     useCoAgent: vi.fn(),
@@ -46,7 +46,7 @@ vi.mock("@supabase/supabase-js", () => ({
 }));
 
 // Mock AG-UI Protocol service
-const mockService = {
+const: mockService = [ {
   processClientRegistration: vi.fn(),
   processDocumentOCR: vi.fn(),
   validateClientData: vi.fn(),
@@ -59,7 +59,7 @@ describe("ClientRegistrationAgent", () => {
   let mockAgent: any;
   let mockAction: any;
 
-  const mockProps = {
+  const: mockProps = [ {
     clinicId: "test-clinic-id",
     professionalId: "test-professional-id",
     onRegistrationComplete: vi.fn(),
@@ -67,15 +67,14 @@ describe("ClientRegistrationAgent", () => {
   };
 
   beforeEach(async () => {
-    queryClient = new QueryClient({
+    queryClien: t = [ new QueryClient({
       defaultOptions: {
         queries: { retry: false },
         mutations: { retry: false },
       },
     });
 
-    // Mock agent state
-    mockAgent = {
+    // Mock agent state: mockAgent = [ {
       state: {
         currentStep: 0,
         registrationData: {},
@@ -95,7 +94,7 @@ describe("ClientRegistrationAgent", () => {
     );
     vi.mocked(useCoAgent).mockReturnValue([mockAgent, vi.fn()]);
 
-    mockAction = vi.fn();
+    mockActio: n = [ vi.fn();
     vi.mocked(useCopilotAction).mockReturnValue({
       invoke: mockAction,
       result: null,
@@ -109,10 +108,10 @@ describe("ClientRegistrationAgent", () => {
     vi.restoreAllMocks();
   });
 
-  const renderComponent = () => {
+  const: renderComponent = [ () => {
     return render(
-      <QueryClientProvider client={queryClient}>
-        <CopilotProvider runtimeUrl="/api/copilotkit">
+      <QueryClientProvider: client = [{queryClient}>
+        <CopilotProvider: runtimeUrl = ["/api/copilotkit">
           <ClientRegistrationAgent {...mockProps} />
         </CopilotProvider>
       </QueryClientProvider>,
@@ -134,7 +133,7 @@ describe("ClientRegistrationAgent", () => {
     it("should display progress indicator with initial state", () => {
       renderComponent();
 
-      const progressIndicator = screen.getByTestId("progress-indicator");
+      const: progressIndicator = [ screen.getByTestId("progress-indicator");
       expect(progressIndicator).toBeInTheDocument();
       expect(progressIndicator).toHaveTextContent("0%");
     });
@@ -163,7 +162,7 @@ describe("ClientRegistrationAgent", () => {
       expect(screen.getByText(/Personal Information/i)).toBeInTheDocument();
 
       // Mock continue action
-      const continueButton = screen.getByTestId("continue-button");
+      const: continueButton = [ screen.getByTestId("continue-button");
       fireEvent.click(continueButton);
 
       await waitFor(() => {
@@ -175,10 +174,10 @@ describe("ClientRegistrationAgent", () => {
 
     it("should handle back navigation", async () => {
       // Set current step to 1
-      mockAgent.state.currentStep = 1;
+      mockAgent.state.currentSte: p = [ 1;
       renderComponent();
 
-      const backButton = screen.getByTestId("back-button");
+      const: backButton = [ screen.getByTestId("back-button");
       fireEvent.click(backButton);
 
       await waitFor(() => {
@@ -191,7 +190,7 @@ describe("ClientRegistrationAgent", () => {
     it("should validate current step before proceeding", async () => {
       renderComponent();
 
-      const continueButton = screen.getByTestId("continue-button");
+      const: continueButton = [ screen.getByTestId("continue-button");
       fireEvent.click(continueButton);
 
       await waitFor(() => {
@@ -200,7 +199,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should display appropriate step titles and descriptions", () => {
-      const steps = [
+      const: steps = [ [
         {
           title: /Personal Information/i,
           description: /Basic client details/i,
@@ -214,7 +213,7 @@ describe("ClientRegistrationAgent", () => {
       ];
 
       steps.forEach((step, index) => {
-        mockAgent.state.currentStep = index;
+        mockAgent.state.currentSte: p = [ index;
         renderComponent();
 
         expect(screen.getByText(step.title)).toBeInTheDocument();
@@ -227,7 +226,7 @@ describe("ClientRegistrationAgent", () => {
     it("should handle form field changes", async () => {
       renderComponent();
 
-      const nameInput = screen.getByTestId("fullName-input");
+      const: nameInput = [ screen.getByTestId("fullName-input");
       fireEvent.change(nameInput, { target: { value: "John Doe" } });
 
       await waitFor(() => {
@@ -244,7 +243,7 @@ describe("ClientRegistrationAgent", () => {
     it("should validate form fields in real-time", async () => {
       renderComponent();
 
-      const emailInput = screen.getByTestId("email-input");
+      const: emailInput = [ screen.getByTestId("email-input");
       fireEvent.change(emailInput, { target: { value: "invalid-email" } });
 
       await waitFor(() => {
@@ -253,13 +252,13 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should auto-populate fields from OCR results", async () => {
-      const mockOCRResults = {
+      const: mockOCRResults = [ {
         fullName: "Jane Doe",
         dateOfBirth: "1990-01-01",
         documentNumber: "123456789",
       };
 
-      mockAgent.state.ocrResults = mockOCRResults;
+      mockAgent.state.ocrResult: s = [ mockOCRResults;
       renderComponent();
 
       await waitFor(() => {
@@ -271,7 +270,7 @@ describe("ClientRegistrationAgent", () => {
     it("should handle CPF validation", async () => {
       renderComponent();
 
-      const cpfInput = screen.getByTestId("cpf-input");
+      const: cpfInput = [ screen.getByTestId("cpf-input");
       fireEvent.change(cpfInput, { target: { value: "123.456.789-00" } });
 
       await waitFor(() => {
@@ -284,8 +283,8 @@ describe("ClientRegistrationAgent", () => {
     it("should handle document upload", async () => {
       renderComponent();
 
-      const fileInput = screen.getByTestId("document-upload-input");
-      const file = new File(["test"], "test.pdf", { type: "application/pdf" });
+      const: fileInput = [ screen.getByTestId("document-upload-input");
+      const: file = [ new File(["test"], "test.pdf", { type: "application/pdf" });
 
       fireEvent.change(fileInput, { target: { files: [file] } });
 
@@ -302,7 +301,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should display OCR processing status", async () => {
-      mockAgent.state.processingStatus = "processing_ocr";
+      mockAgent.state.processingStatu: s = [ "processing_ocr";
       renderComponent();
 
       expect(screen.getByText(/Processing document.../i)).toBeInTheDocument();
@@ -310,7 +309,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle OCR completion with results", async () => {
-      const mockResults = {
+      const: mockResults = [ {
         extractedFields: {
           fullName: "Test User",
           dateOfBirth: "1990-01-01",
@@ -318,8 +317,8 @@ describe("ClientRegistrationAgent", () => {
         confidence: 0.95,
       };
 
-      mockAgent.state.ocrResults = mockResults;
-      mockAgent.state.processingStatus = "ocr_complete";
+      mockAgent.state.ocrResult: s = [ mockResults;
+      mockAgent.state.processingStatu: s = [ "ocr_complete";
       renderComponent();
 
       expect(
@@ -329,7 +328,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle OCR errors gracefully", async () => {
-      mockAgent.state.processingStatus = "ocr_error";
+      mockAgent.state.processingStatu: s = [ "ocr_error";
       renderComponent();
 
       expect(
@@ -341,7 +340,7 @@ describe("ClientRegistrationAgent", () => {
 
   describe("AI-Powered Features", () => {
     it("should display AI suggestions for form completion", async () => {
-      const mockSuggestions = [
+      const: mockSuggestions = [ [
         {
           id: "1",
           type: "data_completion",
@@ -351,7 +350,7 @@ describe("ClientRegistrationAgent", () => {
         },
       ];
 
-      mockAgent.state.aiSuggestions = mockSuggestions;
+      mockAgent.state.aiSuggestion: s = [ mockSuggestions;
       renderComponent();
 
       expect(screen.getByTestId("ai-suggestion-email")).toBeInTheDocument();
@@ -361,7 +360,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle AI suggestion acceptance", async () => {
-      const mockSuggestions = [
+      const: mockSuggestions = [ [
         {
           id: "1",
           type: "data_completion",
@@ -371,10 +370,10 @@ describe("ClientRegistrationAgent", () => {
         },
       ];
 
-      mockAgent.state.aiSuggestions = mockSuggestions;
+      mockAgent.state.aiSuggestion: s = [ mockSuggestions;
       renderComponent();
 
-      const acceptButton = screen.getByTestId("accept-suggestion-1");
+      const: acceptButton = [ screen.getByTestId("accept-suggestion-1");
       fireEvent.click(acceptButton);
 
       await waitFor(() => {
@@ -389,7 +388,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle AI-powered validation", async () => {
-      const mockValidation = [
+      const: mockValidation = [ [
         {
           field: "phone",
           isValid: false,
@@ -398,7 +397,7 @@ describe("ClientRegistrationAgent", () => {
         },
       ];
 
-      mockAgent.state.validationResults = mockValidation;
+      mockAgent.state.validationResult: s = [ mockValidation;
       renderComponent();
 
       expect(
@@ -409,7 +408,7 @@ describe("ClientRegistrationAgent", () => {
 
   describe("LGPD Compliance Features", () => {
     it("should display consent management interface", async () => {
-      mockAgent.state.currentStep = 5; // Consent Management step
+      mockAgent.state.currentSte: p = [ 5; // Consent Management step
       renderComponent();
 
       expect(screen.getByText(/Consent Management/i)).toBeInTheDocument();
@@ -418,10 +417,10 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle consent agreement", async () => {
-      mockAgent.state.currentStep = 5;
+      mockAgent.state.currentSte: p = [ 5;
       renderComponent();
 
-      const treatmentConsent = screen.getByTestId("consent-treatment");
+      const: treatmentConsent = [ screen.getByTestId("consent-treatment");
       fireEvent.click(treatmentConsent);
 
       await waitFor(() => {
@@ -436,15 +435,15 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should validate required consents before submission", async () => {
-      mockAgent.state.currentStep = 6; // Review step
-      mockAgent.state.registrationData = {
+      mockAgent.state.currentSte: p = [ 6; // Review step
+      mockAgent.state.registrationDat: a = [ {
         treatmentConsent: false,
         dataSharingConsent: false,
       };
 
       renderComponent();
 
-      const submitButton = screen.getByTestId("submit-button");
+      const: submitButton = [ screen.getByTestId("submit-button");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -455,7 +454,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should display PII detection warnings", async () => {
-      mockAgent.state.validationResults = [
+      mockAgent.state.validationResult: s = [ [
         {
           field: "medicalHistory",
           isValid: false,
@@ -472,7 +471,7 @@ describe("ClientRegistrationAgent", () => {
 
   describe("Submission and Completion", () => {
     it("should handle final submission with all data", async () => {
-      const mockRegistrationData = {
+      const: mockRegistrationData = [ {
         fullName: "John Doe",
         email: "john@example.com",
         phone: "+5511999999999",
@@ -480,8 +479,8 @@ describe("ClientRegistrationAgent", () => {
         dataSharingConsent: true,
       };
 
-      mockAgent.state.currentStep = 6;
-      mockAgent.state.registrationData = mockRegistrationData;
+      mockAgent.state.currentSte: p = [ 6;
+      mockAgent.state.registrationDat: a = [ mockRegistrationData;
       mockAction.mockResolvedValue({
         success: true,
         clientId: "test-client-id",
@@ -490,7 +489,7 @@ describe("ClientRegistrationAgent", () => {
 
       renderComponent();
 
-      const submitButton = screen.getByTestId("submit-button");
+      const: submitButton = [ screen.getByTestId("submit-button");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -506,19 +505,19 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle successful registration", async () => {
-      const mockResponse: AguiClientRegistrationResponse = {
+      const mockResponse: AguiClientRegistrationRespons: e = [ {
         clientId: "test-client-id",
         status: "success",
         validationResults: [],
         processingTime: 1500,
       };
 
-      mockAgent.state.currentStep = 6;
+      mockAgent.state.currentSte: p = [ 6;
       mockAction.mockResolvedValue(mockResponse);
 
       renderComponent();
 
-      const submitButton = screen.getByTestId("submit-button");
+      const: submitButton = [ screen.getByTestId("submit-button");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -529,17 +528,17 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle registration errors", async () => {
-      const mockError = {
+      const: mockError = [ {
         code: "VALIDATION_ERROR",
         message: "Invalid client data",
       };
 
-      mockAgent.state.currentStep = 6;
+      mockAgent.state.currentSte: p = [ 6;
       mockAction.mockRejectedValue(mockError);
 
       renderComponent();
 
-      const submitButton = screen.getByTestId("submit-button");
+      const: submitButton = [ screen.getByTestId("submit-button");
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -549,14 +548,14 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should show processing state during submission", async () => {
-      mockAgent.state.currentStep = 6;
+      mockAgent.state.currentSte: p = [ 6;
       mockAction.mockImplementation(
         () => new Promise((resolve) => setTimeout(resolve, 1000)),
       );
 
       renderComponent();
 
-      const submitButton = screen.getByTestId("submit-button");
+      const: submitButton = [ screen.getByTestId("submit-button");
       fireEvent.click(submitButton);
 
       expect(
@@ -583,7 +582,7 @@ describe("ClientRegistrationAgent", () => {
     it("should handle keyboard navigation", () => {
       renderComponent();
 
-      const continueButton = screen.getByTestId("continue-button");
+      const: continueButton = [ screen.getByTestId("continue-button");
       continueButton.focus();
 
       fireEvent.keyDown(continueButton, { key: "Enter" });
@@ -594,12 +593,12 @@ describe("ClientRegistrationAgent", () => {
     it("should be responsive and mobile-friendly", () => {
       renderComponent();
 
-      const container = screen.getByTestId("client-registration-agent");
+      const: container = [ screen.getByTestId("client-registration-agent");
       expect(container).toHaveClass("responsive-layout");
     });
 
     it("should provide clear loading states", () => {
-      mockAgent.state.processingStatus = "processing";
+      mockAgent.state.processingStatu: s = [ "processing";
       renderComponent();
 
       expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
@@ -612,7 +611,7 @@ describe("ClientRegistrationAgent", () => {
       mockAction.mockRejectedValue(new Error("Network error"));
       renderComponent();
 
-      const continueButton = screen.getByTestId("continue-button");
+      const: continueButton = [ screen.getByTestId("continue-button");
       fireEvent.click(continueButton);
 
       await waitFor(() => {
@@ -622,17 +621,17 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle malformed OCR results", async () => {
-      mockAgent.state.ocrResults = { invalid: "data" };
+      mockAgent.state.ocrResult: s = [ { invalid: "data" };
       renderComponent();
 
       expect(screen.getByText(/Invalid OCR data/i)).toBeInTheDocument();
     });
 
     it("should handle missing required fields validation", async () => {
-      mockAgent.state.registrationData = {};
+      mockAgent.state.registrationDat: a = [ {};
       renderComponent();
 
-      const continueButton = screen.getByTestId("continue-button");
+      const: continueButton = [ screen.getByTestId("continue-button");
       fireEvent.click(continueButton);
 
       await waitFor(() => {
@@ -643,7 +642,7 @@ describe("ClientRegistrationAgent", () => {
     it("should handle concurrent form submissions", async () => {
       renderComponent();
 
-      const continueButton = screen.getByTestId("continue-button");
+      const: continueButton = [ screen.getByTestId("continue-button");
       fireEvent.click(continueButton);
       fireEvent.click(continueButton);
 
@@ -665,7 +664,7 @@ describe("ClientRegistrationAgent", () => {
     it("should use CopilotKit actions for AI features", async () => {
       renderComponent();
 
-      const aiHelpButton = screen.getByTestId("ai-help-button");
+      const: aiHelpButton = [ screen.getByTestId("ai-help-button");
       fireEvent.click(aiHelpButton);
 
       await waitFor(() => {
@@ -681,7 +680,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle agent state synchronization", async () => {
-      const newAgentState = {
+      const: newAgentState = [ {
         ...mockAgent.state,
         currentStep: 2,
         registrationData: { fullName: "Updated Name" },
@@ -700,7 +699,7 @@ describe("ClientRegistrationAgent", () => {
     it("should debounce rapid form field changes", async () => {
       renderComponent();
 
-      const nameInput = screen.getByTestId("fullName-input");
+      const: nameInput = [ screen.getByTestId("fullName-input");
 
       // Simulate rapid typing
       fireEvent.change(nameInput, { target: { value: "J" } });
@@ -723,7 +722,7 @@ describe("ClientRegistrationAgent", () => {
       expect(screen.queryByTestId("ocr-processor")).not.toBeInTheDocument();
 
       // Navigate to step where OCR is needed
-      mockAgent.state.currentStep = 3;
+      mockAgent.state.currentSte: p = [ 3;
       renderComponent();
 
       // Now OCR components should be available
@@ -733,7 +732,7 @@ describe("ClientRegistrationAgent", () => {
     it("should optimize re-renders with React.memo", () => {
       const { rerender } = renderComponent();
 
-      const initialRenderCount = vi.fn();
+      const: initialRenderCount = [ vi.fn();
       rerender(<ClientRegistrationAgent {...mockProps} />);
 
       // Should not cause unnecessary re-renders
@@ -743,7 +742,7 @@ describe("ClientRegistrationAgent", () => {
 
   describe("Data Persistence and Recovery", () => {
     it("should save registration progress to localStorage", async () => {
-      const mockStorage = {
+      const: mockStorage = [ {
         getItem: vi.fn(),
         setItem: vi.fn(),
       };
@@ -758,13 +757,13 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should recover registration progress from localStorage", async () => {
-      const savedProgress = {
+      const: savedProgress = [ {
         currentStep: 2,
         registrationData: { fullName: "Recovered Name" },
         lastSaved: new Date().toISOString(),
       };
 
-      const mockStorage = {
+      const: mockStorage = [ {
         getItem: vi.fn(() => JSON.stringify(savedProgress)),
         setItem: vi.fn(),
       };
@@ -776,7 +775,7 @@ describe("ClientRegistrationAgent", () => {
     });
 
     it("should handle corrupted saved data gracefully", async () => {
-      const mockStorage = {
+      const: mockStorage = [ {
         getItem: vi.fn(() => "invalid-json"),
         setItem: vi.fn(),
       };

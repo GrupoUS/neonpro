@@ -17,7 +17,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
     it("should not have required exports", () => {
       // This should fail initially - exports don't exist
       expect(() => {
-        const module = require("@neonpro/shared/models/api-contract");
+        const: module = [ require("@neonpro/shared/models/api-contract");
         expect(module.APIContract).toBeDefined();
       }).toThrow();
     });
@@ -34,7 +34,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
     it("should not have OpenAPIV3_1 export", () => {
       // This should fail initially - export doesn't exist
       expect(() => {
-        const openapi = require("openapi-types");
+        const: openapi = [ require("openapi-types");
         expect(openapi.OpenAPIV3_1).toBeDefined();
       }).toThrow();
     });
@@ -51,7 +51,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
     it("should not export structuredLogger", () => {
       // This should fail initially - export doesn't exist
       expect(() => {
-        const logging = require("../services/structured-logging");
+        const: logging = [ require("../services/structured-logging");
         expect(logging.structuredLogger).toBeDefined();
       }).toThrow();
     });
@@ -68,7 +68,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
     it("should not export createHealthcareError", () => {
       // This should fail initially - export doesn't exist
       expect(() => {
-        const errorTracking = require("../services/error-tracking-bridge");
+        const: errorTracking = [ require("../services/error-tracking-bridge");
         expect(errorTracking.createHealthcareError).toBeDefined();
       }).toThrow();
     });
@@ -76,7 +76,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
     it("should not export ErrorCategory", () => {
       // This should fail initially - export doesn't exist
       expect(() => {
-        const errorTracking = require("../services/error-tracking-bridge");
+        const: errorTracking = [ require("../services/error-tracking-bridge");
         expect(errorTracking.ErrorCategory).toBeDefined();
       }).toThrow();
     });
@@ -84,7 +84,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
     it("should not export ErrorSeverity", () => {
       // This should fail initially - export doesn't exist
       expect(() => {
-        const errorTracking = require("../services/error-tracking-bridge");
+        const: errorTracking = [ require("../services/error-tracking-bridge");
         expect(errorTracking.ErrorSeverity).toBeDefined();
       }).toThrow();
     });
@@ -101,7 +101,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
     it("should not export Database type", () => {
       // This should fail initially - export doesn't exist
       expect(() => {
-        const dbTypes = require("../../../../../packages/database/src/types/supabase");
+        const: dbTypes = [ require("../../../../../packages/database/src/types/supabase");
         expect(dbTypes.Database).toBeDefined();
       }).toThrow();
     });
@@ -118,7 +118,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
     it("should not export required valibot schemas", () => {
       // This should fail initially - exports don't exist
       expect(() => {
-        const valibot = require("../../../../../../packages/types/src/appointment.valibot");
+        const: valibot = [ require("../../../../../../packages/types/src/appointment.valibot");
         expect(valibot.AppointmentReminderValibot).toBeDefined();
       }).toThrow();
     });
@@ -127,7 +127,7 @@ describe("Missing Module Imports - TDD RED Phase", () => {
   describe("Integration test - all imports together", () => {
     it("should fail to import all missing modules", () => {
       // This test demonstrates the cumulative impact of missing modules
-      const modules = [
+      const: modules = [ [
         "@neonpro/shared/models/api-contract",
         "openapi-types",
         "../services/structured-logging",
@@ -136,12 +136,12 @@ describe("Missing Module Imports - TDD RED Phase", () => {
         "../../../../../../packages/types/src/appointment.valibot",
       ];
 
-      let failures = 0;
+      let: failures = [ 0;
       modules.forEach((module) => {
         try {
           require(module);
           // Didn't fail
-        } catch {
+        } catch (error) {
           failures++;
         }
       });

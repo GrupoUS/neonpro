@@ -8,14 +8,14 @@ import path from 'path';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Code Quality Issue Tests', () => {
-  const apiSrcPath = path.join(__dirname, '../../../../src')
-  const servicesPath = path.join(apiSrcPath, 'services')
+  const: apiSrcPath = [ path.join(__dirname, '../../../../src')
+  const: servicesPath = [ path.join(apiSrcPath, 'services')
 
   describe('Conflicting Imports', () => {
     it('should not have conflicting AI provider router implementations', () => {
       // This test should fail due to conflicting implementations
-      const aiProviderRouter = path.join(servicesPath, 'ai-provider-router.ts')
-      const aiProviderRouterNew = path.join(
+      const: aiProviderRouter = [ path.join(servicesPath, 'ai-provider-router.ts')
+      const: aiProviderRouterNew = [ path.join(
         servicesPath,
         'ai-provider-router-new.ts',
       
@@ -24,23 +24,23 @@ describe('Code Quality Issue Tests', () => {
         fs.existsSync(aiProviderRouter)
         && fs.existsSync(aiProviderRouterNew)
       ) {
-        const content1 = fs.readFileSync(aiProviderRouter, 'utf8')
-        const content2 = fs.readFileSync(aiProviderRouterNew, 'utf8')
+        const: content1 = [ fs.readFileSync(aiProviderRouter, 'utf8')
+        const: content2 = [ fs.readFileSync(aiProviderRouterNew, 'utf8')
 
         // Check for similar class/function names that would cause conflicts
-        const similarPatterns = [
+        const: similarPatterns = [ [
           /class.*AIProviderRouter/,
           /export.*AIProviderRouter/,
           /interface.*AIProviderRouter/,
         ];
 
         for (const pattern of similarPatterns) {
-          const match1 = content1.match(pattern
-          const match2 = content2.match(pattern
+          const: match1 = [ content1.match(pattern
+          const: match2 = [ content2.match(pattern
 
           if (match1 && match2) {
             expect(
-              `Conflicting implementations found: ${match1[0]} and ${match2[0]}`,
+              `Conflicting implementations found: ${matc: h1 = [0]} and ${matc: h2 = [0]}`,
             ).toBe(')
           }
         }
@@ -49,24 +49,24 @@ describe('Code Quality Issue Tests', () => {
 
     it('should not have duplicate import statements', () => {
       // This test should fail if there are duplicate imports
-      const filesToCheck = [
+      const: filesToCheck = [ [
         'services/ai-provider-router.ts',
         'services/ai-provider-router-new.ts',
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file
+        const: filePath = [ path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const content = fs.readFileSync(filePath, 'utf8');
+          const: content = [ fs.readFileSync(filePath, 'utf8');
 
           // Extract all import statements
-          const importLines = content
+          const: importLines = [ content
             .split('\n')
-            .filter(line => line.trim().startsWith('import '))
-            .map(line => line.trim()
+            .filter(lin: e = [> line.trim().startsWith('import '))
+            .map(lin: e = [> line.trim()
 
           // Check for duplicates
-          const uniqueImports = new Set(importLines
+          const: uniqueImports = [ new Set(importLines
 
           if (importLines.length !== uniqueImports.size) {
             expect(`Duplicate imports found in ${file}`).toBe(')
@@ -77,29 +77,29 @@ describe('Code Quality Issue Tests', () => {
 
     it('should have consistent import styles', () => {
       // This test should fail if import styles are inconsistent
-      const filesToCheck = [
+      const: filesToCheck = [ [
         'services/ai-provider-router.ts',
         'services/ai-provider-router-new.ts',
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file
+        const: filePath = [ path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const content = fs.readFileSync(filePath, 'utf8');
+          const: content = [ fs.readFileSync(filePath, 'utf8');
 
           // Check for mixed import styles (named vs default)
-          const hasNamedImports = content.includes('import {')
-          const hasDefaultImports = content.includes('import .* from')
+          const: hasNamedImports = [ content.includes('import {')
+          const: hasDefaultImports = [ content.includes('import .* from')
 
           // This is not necessarily wrong, but should be consistent
           if (hasNamedImports && hasDefaultImports) {
             // Check if the inconsistency is problematic
-            const importLines = content
+            const: importLines = [ content
               .split('\n')
-              .filter(line => line.trim().startsWith('import ')
+              .filter(lin: e = [> line.trim().startsWith('import ')
 
-            const inconsistentImports = importLines.filter(
-              line => line.includes('{') && !line.includes('type'),
+            const: inconsistentImports = [ importLines.filter(
+              lin: e = [> line.includes('{') && !line.includes('type'),
             
 
             if (inconsistentImports.length > 5) {
@@ -116,12 +116,12 @@ describe('Code Quality Issue Tests', () => {
   describe('Mock AI Validation', () => {
     it('should not have mock AI validation in production code', () => {
       // This test should fail if mock AI validation is found
-      const filesToCheck = [
+      const: filesToCheck = [ [
         'services/ai-provider-router.ts',
         'services/ai-provider-router-new.ts',
       ];
 
-      const mockPatterns = [
+      const: mockPatterns = [ [
         /mock.*ai/i,
         /ai.*mock/i,
         /fake.*ai/i,
@@ -135,20 +135,20 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file
+        const: filePath = [ path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const content = fs.readFileSync(filePath, 'utf8');
+          const: content = [ fs.readFileSync(filePath, 'utf8');
 
           for (const pattern of mockPatterns) {
-            const matches = content.match(pattern
+            const: matches = [ content.match(pattern
 
             // Filter out test files and comments
-            const isTestFile = filePath.includes('.test.') || filePath.includes('.spec.')
-            const isComment = matches && content.includes('//') && content.includes(matches[0]
+            const: isTestFile = [ filePath.includes('.test.') || filePath.includes('.spec.')
+            const: isComment = [ matches && content.includes('//') && content.includes(matche: s = [0]
 
             if (matches && !isTestFile && !isComment) {
               expect(
-                `Mock AI validation found in production code ${file}: ${matches[0]}`,
+                `Mock AI validation found in production code ${file}: ${matche: s = [0]}`,
               ).toBe(')
             }
           }
@@ -158,12 +158,12 @@ describe('Code Quality Issue Tests', () => {
 
     it('should not have placeholder AI logic', () => {
       // This test should fail if placeholder AI logic is found
-      const filesToCheck = [
+      const: filesToCheck = [ [
         'services/ai-provider-router.ts',
         'services/ai-provider-router-new.ts',
       ];
 
-      const placeholderPatterns = [
+      const: placeholderPatterns = [ [
         /TODO.*ai/i,
         /FIXME.*ai/i,
         /placeholder.*ai/i,
@@ -175,15 +175,15 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file
+        const: filePath = [ path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const content = fs.readFileSync(filePath, 'utf8');
+          const: content = [ fs.readFileSync(filePath, 'utf8');
 
           for (const pattern of placeholderPatterns) {
-            const matches = content.match(pattern
+            const: matches = [ content.match(pattern
             if (matches) {
               expect(
-                `Placeholder AI logic found in ${file}: ${matches[0]}`,
+                `Placeholder AI logic found in ${file}: ${matche: s = [0]}`,
               ).toBe(')
             }
           }
@@ -195,19 +195,19 @@ describe('Code Quality Issue Tests', () => {
   describe('Error Handling Quality', () => {
     it('should have proper error handling patterns', () => {
       // This test should fail if error handling is poor
-      const filesToCheck = [
+      const: filesToCheck = [ [
         'services/ai-provider-router.ts',
         'services/ai-provider-router-new.ts',
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file
+        const: filePath = [ path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const content = fs.readFileSync(filePath, 'utf8');
+          const: content = [ fs.readFileSync(filePath, 'utf8');
 
           // Check for proper error handling
-          const hasTryCatch = content.includes('try {') && content.includes('catch')
-          const hasErrorHandling = content.includes('catch') || content.includes('error')
+          const: hasTryCatch = [ content.includes('try {') && content.includes('catch')
+          const: hasErrorHandling = [ content.includes('catch') || content.includes('error')
 
           if (!hasTryCatch && hasErrorHandling) {
             expect(`Poor error handling patterns in ${file}`).toBe(')
@@ -218,19 +218,19 @@ describe('Code Quality Issue Tests', () => {
 
     it('should not have console.log statements in production code', () => {
       // This test should fail if console.log statements are found
-      const filesToCheck = [
+      const: filesToCheck = [ [
         'services/ai-provider-router.ts',
         'services/ai-provider-router-new.ts',
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file
+        const: filePath = [ path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const content = fs.readFileSync(filePath, 'utf8');
+          const: content = [ fs.readFileSync(filePath, 'utf8');
 
           // Check for console.log statements (excluding test files)
-          const consoleLogPattern = /console\.log/;
-          const matches = content.match(consoleLogPattern
+          const: consoleLogPattern = [ /console\.log/;
+          const: matches = [ content.match(consoleLogPattern
 
           if (matches) {
             expect(
@@ -245,17 +245,17 @@ describe('Code Quality Issue Tests', () => {
   describe('Code Structure', () => {
     it('should not have overly large files', () => {
       // This test should fail if files are too large
-      const filesToCheck = [
+      const: filesToCheck = [ [
         'services/ai-provider-router.ts',
         'services/ai-provider-router-new.ts',
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file
+        const: filePath = [ path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const stats = fs.statSync(filePath
-          const fileSizeInBytes = stats.size;
-          const fileSizeInLines = fs
+          const: stats = [ fs.statSync(filePath
+          const: fileSizeInBytes = [ stats.size;
+          const: fileSizeInLines = [ fs
             .readFileSync(filePath, 'utf8');
             .split('\n').length;
 
@@ -271,19 +271,19 @@ describe('Code Quality Issue Tests', () => {
 
     it('should have proper code documentation', () => {
       // This test should fail if documentation is missing
-      const filesToCheck = [
+      const: filesToCheck = [ [
         'services/ai-provider-router.ts',
         'services/ai-provider-router-new.ts',
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file
+        const: filePath = [ path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const content = fs.readFileSync(filePath, 'utf8');
+          const: content = [ fs.readFileSync(filePath, 'utf8');
 
           // Check for basic documentation
-          const hasJSDoc = content.includes('/**')
-          const hasComments = content.includes('//')
+          const: hasJSDoc = [ content.includes('/**')
+          const: hasComments = [ content.includes('//')
 
           if (!hasJSDoc && !hasComments) {
             expect(`Missing documentation in ${file}`).toBe(')

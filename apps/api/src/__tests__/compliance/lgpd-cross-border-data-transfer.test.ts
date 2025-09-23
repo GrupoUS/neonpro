@@ -35,7 +35,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
   let crossBorderService: CrossBorderDataService;
   let anpdService: ANPDNotificationService;
 
-  const mockPatientData = {
+  const: mockPatientData = [ {
     id: 'patient-123',
     name: 'João Silva',
     cpf: '123.456.789-00',
@@ -49,7 +49,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     }
   };
 
-  const mockSensitiveData = {
+  const: mockSensitiveData = [ {
     patientId: 'patient-123',
     photos: ['face-treatment-before.jpg', 'face-treatment-after.jpg'],
     medicalHistory: {
@@ -63,7 +63,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     }
   };
 
-  const _mockTransferRequest = {
+  const: _mockTransferRequest = [ {
     dataType: 'patient_records',
     destination: 'United States',
     purpose: 'cloud_backup',
@@ -74,7 +74,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     consentObtained: false
   };
 
-  const mockInternationalOrganization = {
+  const: mockInternationalOrganization = [ {
     name: 'World Health Organization',
     purpose: 'public_health_research',
     dataType: 'anonymized_treatment_outcomes',
@@ -84,8 +84,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
   };
 
   beforeEach(() => {
-    // Mock implementations
-    lgpdService = {
+    // Mock implementations: lgpdService = [ {
       validateCrossBorderTransfer: vi.fn(),
       checkCountryAdequacy: vi.fn(),
       verifyTransferSafeguards: vi.fn(),
@@ -94,7 +93,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
       validateEmergencyTransfer: vi.fn()
     } as any;
 
-    enhancedService = {
+    enhancedServic: e = [ {
       performCrossBorderAssessment: vi.fn(),
       monitorInternationalDataFlows: vi.fn(),
       assessTransferRisks: vi.fn(),
@@ -102,14 +101,14 @@ describe('LGPD Cross-Border Data Transfer', () => {
       validateDataLocalization: vi.fn()
     } as any;
 
-    dataMaskingService = {
+    dataMaskingServic: e = [ {
       anonymizeForInternationalTransfer: vi.fn(),
       applyTransferDataMinimization: vi.fn(),
       validateCrossBorderAnonymization: vi.fn(),
       createInternationalDataPseudonyms: vi.fn()
     } as any;
 
-    securityAudit = {
+    securityAudi: t = [ {
       auditInternationalDataAccess: vi.fn(),
       verifyEncryptionForTransfer: vi.fn(),
       validateProcessorSecurity: vi.fn(),
@@ -117,7 +116,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
       generateInternationalAuditReport: vi.fn()
     } as any;
 
-    crossBorderService = {
+    crossBorderServic: e = [ {
       initiateInternationalTransfer: vi.fn(),
       validateTransferDocumentation: vi.fn(),
       manageTransferConsent: vi.fn(),
@@ -125,7 +124,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
       trackDataLocation: vi.fn()
     } as any;
 
-    anpdService = {
+    anpdServic: e = [ {
       notifyCrossBorderTransfer: vi.fn(),
       submitAnnualTransferReport: vi.fn(),
       reportTransferIncident: vi.fn(),
@@ -140,7 +139,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
 
   describe('Article 33 Compliance - Transfer to Foreign Countries', () => {
     it('should validate transfer to countries with adequate protection', async () => {
-      const adequateCountry = {
+      const: adequateCountry = [ {
         country: 'Argentina',
         adequacyDecision: 'ANPD_Decision_001_2023',
         protectionLevel: 'adequate',
@@ -162,7 +161,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateCrossBorderTransfer({
+      const: result = [ await lgpdService.validateCrossBorderTransfer({
         destination: 'Argentina',
         data: mockPatientData,
         purpose: 'treatment_continuity'
@@ -191,7 +190,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateCrossBorderTransfer({
+      const: result = [ await lgpdService.validateCrossBorderTransfer({
         destination: 'Non-Compliant Country',
         data: mockPatientData,
         purpose: 'data_processing'
@@ -217,7 +216,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateCrossBorderTransfer({
+      const: result = [ await lgpdService.validateCrossBorderTransfer({
         destination: 'United States',
         data: mockPatientData,
         legalBasis: 'legitimate_interest', // Insufficient for international transfer
@@ -232,7 +231,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
 
   describe('Article 34 Compliance - Transfer Requirements', () => {
     it('should validate standard contractual clauses implementation', async () => {
-      const contractualClauses = {
+      const: contractualClauses = [ {
         document: 'SCC_Brazil_EU_Standard_2023',
         version: '2.0',
         processor: 'CloudStorage Corp',
@@ -257,7 +256,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await lgpdService.verifyTransferSafeguards({
+      const: result = [ await lgpdService.verifyTransferSafeguards({
         destination: 'United States',
         safeguards: 'standard_contractual_clauses',
         documentation: contractualClauses
@@ -269,7 +268,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     });
 
     it('should validate binding corporate rules for intra-group transfers', async () => {
-      const bcrDocumentation = {
+      const: bcrDocumentation = [ {
         document: 'BCR_NeonPro_Group_2023',
         approvedBy: 'ANPD',
         approvalDate: '2023-08-15',
@@ -287,7 +286,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await lgpdService.verifyTransferSafeguards({
+      const: result = [ await lgpdService.verifyTransferSafeguards({
         destination: 'United States',
         transferType: 'intra_group',
         safeguards: 'binding_corporate_rules',
@@ -300,7 +299,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     });
 
     it('should require specific consent for international health data transfers', async () => {
-      const internationalConsent = {
+      const: internationalConsent = [ {
         patientId: 'patient-123',
         dataType: 'health_records',
         destination: 'United States',
@@ -319,7 +318,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await crossBorderService.manageTransferConsent({
+      const: result = [ await crossBorderService.manageTransferConsent({
         patientId: 'patient-123',
         internationalTransfer: true,
         dataType: 'sensitive_health'
@@ -341,7 +340,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: false
       });
 
-      const result = await crossBorderService.validateTransferDocumentation({
+      const: result = [ await crossBorderService.validateTransferDocumentation({
         destination: 'United States',
         dataType: 'patient_data',
         safeguards: 'none_provided'
@@ -363,7 +362,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateCrossBorderTransfer({
+      const: result = [ await lgpdService.validateCrossBorderTransfer({
         destination: 'World Health Organization',
         data: { anonymizedTreatmentData: 'aggregate_statistics' },
         purpose: 'public_health_research',
@@ -384,7 +383,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await dataMaskingService.anonymizeForInternationalTransfer({
+      const: result = [ await dataMaskingService.anonymizeForInternationalTransfer({
         data: mockPatientData,
         destination: 'WHO',
         purpose: 'research',
@@ -412,7 +411,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateCrossBorderTransfer({
+      const: result = [ await lgpdService.validateCrossBorderTransfer({
         destination: 'International Organization',
         data: mockPatientData,
         purpose: 'commercial_research' // Beyond authorized scope
@@ -438,7 +437,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: false
       });
 
-      const result = await lgpdService.validateCrossBorderTransfer({
+      const: result = [ await lgpdService.validateCrossBorderTransfer({
         destination: 'United States',
         data: mockSensitiveData,
         purpose: 'data_processing',
@@ -452,7 +451,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     });
 
     it('should allow sensitive data transfer with comprehensive safeguards', async () => {
-      const comprehensiveSafeguards = {
+      const: comprehensiveSafeguards = [ {
         encryption: 'AES-256',
         accessControl: 'multi_factor',
         auditLogging: 'real_time',
@@ -471,7 +470,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateCrossBorderTransfer({
+      const: result = [ await lgpdService.validateCrossBorderTransfer({
         destination: 'European Union',
         data: mockSensitiveData,
         purpose: 'medical_treatment_continuity',
@@ -501,7 +500,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await securityAudit.verifyEncryptionForTransfer({
+      const: result = [ await securityAudit.verifyEncryptionForTransfer({
         dataType: 'sensitive_health',
         destination: 'international',
         data: mockSensitiveData
@@ -523,7 +522,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await enhancedService.validateDataLocalization({
+      const: result = [ await enhancedService.validateDataLocalization({
         dataType: 'health_records',
         currentStorage: 'São Paulo data center',
         provider: 'Brazilian_cloud_provider'
@@ -550,7 +549,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: false
       });
 
-      const result = await enhancedService.validateDataLocalization({
+      const: result = [ await enhancedService.validateDataLocalization({
         dataType: 'sensitive_health',
         currentStorage: 'US_East_Virginia',
         noAuthorization: true
@@ -572,7 +571,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateEmergencyTransfer({
+      const: result = [ await lgpdService.validateEmergencyTransfer({
         patientId: 'patient-123',
         dataType: 'emergency_medical_data',
         destination: 'United States',
@@ -589,7 +588,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
 
   describe('ANPD Notification and Reporting', () => {
     it('should notify ANPD of international data transfers', async () => {
-      const transferNotification = {
+      const: transferNotification = [ {
         transferId: 'international-transfer-123',
         destination: 'United States',
         dataType: 'patient_records',
@@ -606,7 +605,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await anpdService.notifyCrossBorderTransfer(transferNotification);
+      const: result = [ await anpdService.notifyCrossBorderTransfer(transferNotification);
 
       expect(result.notified).toBe(true);
       expect(result.notificationId).toContain('ANPD-NOTIF');
@@ -614,7 +613,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     });
 
     it('should submit annual international transfer reports', async () => {
-      const annualReport = {
+      const: annualReport = [ {
         year: '2023',
         totalTransfers: 45,
         countries: ['United States', 'Germany', 'Argentina'],
@@ -631,7 +630,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await anpdService.submitAnnualTransferReport(annualReport);
+      const: result = [ await anpdService.submitAnnualTransferReport(annualReport);
 
       expect(result.submitted).toBe(true);
       expect(result.reportId).toContain('ANPD-ANNUAL');
@@ -639,7 +638,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     });
 
     it('should report cross-border data incidents to ANPD', async () => {
-      const transferIncident = {
+      const: transferIncident = [ {
         incidentId: 'cross-border-incident-123',
         transferId: 'international-transfer-456',
         incidentType: 'unauthorized_access',
@@ -661,7 +660,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await anpdService.reportTransferIncident(transferIncident);
+      const: result = [ await anpdService.reportTransferIncident(transferIncident);
 
       expect(result.reported).toBe(true);
       expect(result.reportedWithinDeadline).toBe(true);
@@ -687,7 +686,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await enhancedService.assessTransferRisks({
+      const: result = [ await enhancedService.assessTransferRisks({
         destination: 'United States',
         dataType: 'health_records',
         transferVolume: 'large'
@@ -717,7 +716,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: false // Until safeguards implemented
       });
 
-      const result = await enhancedService.assessTransferRisks({
+      const: result = [ await enhancedService.assessTransferRisks({
         destination: 'High Risk Country',
         dataType: 'sensitive_health',
         scale: 'large',
@@ -745,7 +744,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await crossBorderService.initiateInternationalTransfer({
+      const: result = [ await crossBorderService.initiateInternationalTransfer({
         destination: 'European Union',
         dataType: 'patient_data',
         rightsGuarantees: 'gdpr_equivalent'
@@ -757,7 +756,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     });
 
     it('should validate international data portability requests', async () => {
-      const portabilityRequest = {
+      const: portabilityRequest = [ {
         patientId: 'patient-123',
         internationalTransfer: true,
         destination: 'new_provider_abroad',
@@ -772,14 +771,14 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await dataMaskingService.createInternationalDataPseudonyms(portabilityRequest);
+      const: result = [ await dataMaskingService.createInternationalDataPseudonyms(portabilityRequest);
 
       expect(result.pseudonymsCreated).toBe(true);
       expect(result.reidentificationProtected).toBe(true);
     });
 
     it('should handle international deletion requests', async () => {
-      const _internationalDeletion = {
+      const: _internationalDeletion = [ {
         patientId: 'patient-123',
         dataType: 'all_data',
         internationalLocations: ['US', 'EU', 'UK'],
@@ -794,7 +793,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await crossBorderService.initiateInternationalTransfer({
+      const: result = [ await crossBorderService.initiateInternationalTransfer({
         action: 'global_deletion',
         patientId: 'patient-123',
         internationalScope: true
@@ -823,7 +822,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         lastCheck: new Date().toISOString()
       });
 
-      const result = await enhancedService.monitorInternationalDataFlows();
+      const: result = [ await enhancedService.monitorInternationalDataFlows();
 
       expect(result.monitoringActive).toBe(true);
       expect(result.currentTransfers).toHaveLength(1);
@@ -854,7 +853,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         complianceStatus: 'breach_detected'
       });
 
-      const result = await enhancedService.monitorInternationalDataFlows();
+      const: result = [ await enhancedService.monitorInternationalDataFlows();
 
       expect(result.unauthorizedTransfer).toBeDefined();
       expect(result.unauthorizedTransfer.riskLevel).toBe('critical');
@@ -882,7 +881,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await securityAudit.generateInternationalAuditReport({
+      const: result = [ await securityAudit.generateInternationalAuditReport({
         period: 'Q4_2023',
         includeSensitiveData: true
       });
@@ -895,7 +894,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
 
   describe('Contract Compliance and Third-Party Management', () => {
     it('should validate third-party processor international compliance', async () => {
-      const processorValidation = {
+      const: processorValidation = [ {
         processor: 'CloudStorage International',
         jurisdictions: ['US', 'EU', 'Brazil'],
         certifications: ['ISO_27001', 'SOC_2_Type_II', 'GDPR_Compliant'],
@@ -912,7 +911,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await securityAudit.validateProcessorSecurity({
+      const: result = [ await securityAudit.validateProcessorSecurity({
         processor: 'CloudStorage International',
         internationalOperations: true
       });
@@ -940,7 +939,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: false
       });
 
-      const result = await securityAudit.validateProcessorSecurity({
+      const: result = [ await securityAudit.validateProcessorSecurity({
         processor: 'Non-Compliant Provider',
         jurisdictions: ['High Risk Country']
       });
@@ -953,7 +952,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
 
   describe('Emergency and Exception Handling', () => {
     it('should handle emergency international medical data access', async () => {
-      const emergencyAccess = {
+      const: emergencyAccess = [ {
         patientId: 'patient-123',
         emergencyType: 'medical_emergency_abroad',
         accessingCountry: 'United States',
@@ -974,7 +973,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await lgpdService.validateEmergencyTransfer(emergencyAccess);
+      const: result = [ await lgpdService.validateEmergencyTransfer(emergencyAccess);
 
       expect(result.authorized).toBe(true);
       expect(result.emergencyJustified).toBe(true);
@@ -991,7 +990,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await lgpdService.logInternationalTransfer({
+      const: result = [ await lgpdService.logInternationalTransfer({
         transferType: 'emergency_medical',
         patientId: 'patient-123',
         destination: 'United States',
@@ -1021,7 +1020,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await dataMaskingService.applyTransferDataMinimization({
+      const: result = [ await dataMaskingService.applyTransferDataMinimization({
         data: mockPatientData,
         destination: 'international',
         purpose: 'treatment_continuity'
@@ -1046,7 +1045,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
         compliance: true
       });
 
-      const result = await dataMaskingService.validateCrossBorderAnonymization({
+      const: result = [ await dataMaskingService.validateCrossBorderAnonymization({
         anonymizedDataset: 'international_research_data',
         targetRiskLevel: 'very_low'
       });

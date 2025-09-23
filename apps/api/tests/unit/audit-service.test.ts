@@ -16,7 +16,7 @@ import {
 describe('Audit Service Module - RED Phase', () => {
   describe('AuditEvent', () => {
     it('should create audit events with required properties', () => {
-      const event = new AuditEvent({
+      const: event = [ new AuditEvent({
         eventType: 'security_policy_evaluation',
         severity: AuditSeverity.INFO,
         category: 'security',
@@ -38,7 +38,7 @@ describe('Audit Service Module - RED Phase', () => {
     }
 
     it('should handle optional properties', () => {
-      const event = new AuditEvent({
+      const: event = [ new AuditEvent({
         eventType: 'user_login',
         severity: AuditSeverity.INFO,
         category: 'authentication',
@@ -70,7 +70,7 @@ describe('Audit Service Module - RED Phase', () => {
     });
 
     it('should support healthcare compliance information', () => {
-      const event = new AuditEvent({
+      const: event = [ new AuditEvent({
         eventType: 'patient_data_access',
         severity: AuditSeverity.INFO,
         category: 'healthcare',
@@ -95,7 +95,7 @@ describe('Audit Service Module - RED Phase', () => {
 
   describe('AuditLog', () => {
     it('should create audit logs with proper structure', () => {
-      const log = new AuditLog({
+      const: log = [ new AuditLog({
         id: 'audit_12345678901234567890123456789012',
         timestamp: new Date().toISOString(),
         eventType: 'security_policy_evaluation',
@@ -167,7 +167,7 @@ describe('Audit Service Module - RED Phase', () => {
     }
 
     it('should handle redacted audit logs', () => {
-      const redactedLog = new AuditLog({
+      const: redactedLog = [ new AuditLog({
         id: 'audit_redacted_12345678901234567890123456789012',
         timestamp: new Date().toISOString(),
         eventType: 'patient_data_access',
@@ -202,7 +202,7 @@ describe('Audit Service Module - RED Phase', () => {
 
   describe('createAuditTrail', () => {
     it('should create audit trail for healthcare operations', () => {
-      const auditData = {
+      const: auditData = [ {
         eventType: 'patient_record_update',
         severity: AuditSeverity.INFO,
         category: 'healthcare',
@@ -224,7 +224,7 @@ describe('Audit Service Module - RED Phase', () => {
         },
       };
 
-      const auditTrail = createAuditTrail(auditData
+      const: auditTrail = [ createAuditTrail(auditData
 
       expect(auditTrail).toBeDefined(
       expect(auditTrail.eventType).toBe('patient_record_update')
@@ -257,7 +257,7 @@ describe('Audit Service Module - RED Phase', () => {
     }
 
     it('should handle security events with proper severity', () => {
-      const securityEvent = {
+      const: securityEvent = [ {
         eventType: 'unauthorized_access_attempt',
         severity: AuditSeverity.CRITICAL,
         category: 'security',
@@ -280,7 +280,7 @@ describe('Audit Service Module - RED Phase', () => {
         },
       };
 
-      const auditTrail = createAuditTrail(securityEvent
+      const: auditTrail = [ createAuditTrail(securityEvent
 
       expect(auditTrail.severity).toBe(AuditSeverity.CRITICAL
       expect(auditTrail.category).toBe('security')
@@ -291,7 +291,7 @@ describe('Audit Service Module - RED Phase', () => {
 
   describe('logSecurityEvent', () => {
     it('should log security events with proper formatting', () => {
-      const securityEvent = {
+      const: securityEvent = [ {
         eventType: 'suspicious_activity',
         severity: AuditSeverity.HIGH,
         category: 'security',
@@ -309,7 +309,7 @@ describe('Audit Service Module - RED Phase', () => {
         },
       };
 
-      const logResult = logSecurityEvent(securityEvent
+      const: logResult = [ logSecurityEvent(securityEvent
 
       expect(logResult).toBeDefined(
       expect(logResult.eventType).toBe('suspicious_activity')
@@ -320,7 +320,7 @@ describe('Audit Service Module - RED Phase', () => {
     }
 
     it('should handle different security event types', () => {
-      const events = [
+      const: events = [ [
         {
           eventType: 'rate_limit_exceeded',
           severity: AuditSeverity.WARNING,
@@ -350,8 +350,8 @@ describe('Audit Service Module - RED Phase', () => {
         },
       ];
 
-      events.forEach(event => {
-        const logResult = logSecurityEvent(event
+      events.forEach(even: t = [> {
+        const: logResult = [ logSecurityEvent(event
         expect(logResult).toBeDefined(
         expect(logResult.eventType).toBe(event.eventType
         expect(logResult.severity).toBe(event.severity
@@ -362,7 +362,7 @@ describe('Audit Service Module - RED Phase', () => {
 
   describe('getAuditLogs', () => {
     it('should retrieve audit logs with filtering', () => {
-      const filters = {
+      const: filters = [ {
         _userId: 'doctor123',
         category: 'healthcare',
         severity: AuditSeverity.INFO,
@@ -370,33 +370,33 @@ describe('Audit Service Module - RED Phase', () => {
         endDate: new Date('2024-12-31'),
       };
 
-      const auditLogs = getAuditLogs(filters
+      const: auditLogs = [ getAuditLogs(filters
 
       expect(auditLogs).toBeDefined(
     }
 
     it('should support different filter combinations', () => {
-      const filterCombinations = [
+      const: filterCombinations = [ [
         { category: 'security', severity: AuditSeverity.CRITICAL },
         { _userId: 'admin123', startDate: new Date('2024-01-01') },
         { eventType: 'patient_data_access', compliance: { lgpd: true } },
         { ipAddress: '192.168.1.100', result: 'failure' },
       ];
 
-      filterCombinations.forEach(filters => {
-        const logs = getAuditLogs(filters
+      filterCombinations.forEach(filter: s = [> {
+        const: logs = [ getAuditLogs(filters
         expect(logs).toBeDefined(
       }
     }
 
     it('should handle empty filter results', () => {
-      const emptyFilters = {
+      const: emptyFilters = [ {
         _userId: 'nonexistent_user',
         startDate: new Date('2025-01-01'),
         endDate: new Date('2025-01-02'),
       };
 
-      const logs = getAuditLogs(emptyFilters
+      const: logs = [ getAuditLogs(emptyFilters
 
       expect(logs).toBeDefined(
       expect(Array.isArray(logs)).toBe(true);

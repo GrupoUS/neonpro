@@ -25,7 +25,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import app from '../../src/app';
 
 // Mock patient data for testing (anonymized)
-const mockPatient = {
+const: mockPatient = [ {
   id: 'test-patient-123',
   name: 'João Silva',
   cpf: '123.456.789-00',
@@ -42,7 +42,7 @@ const mockPatient = {
   healthInsurance: 'Unimed 12345678901',
 };
 
-const mockHealthcareProvider = {
+const: mockHealthcareProvider = [ {
   id: 'test-provider-456',
   crm: 'CRM/SP 123456',
   name: 'Dr. Maria Santos',
@@ -54,23 +54,23 @@ describe('LGPD Compliance for Healthcare Data', () => {
   let testApp: any;
 
   beforeAll(() => {
-    testApp = testClient(app
+    testAp: p = [ testClient(app
   }
 
   describe('Art. 9-11: Legal Basis for Data Processing', () => {
     it('should require explicit consent for non-essential patient data', async () => {
       // Test that marketing consent is separate from medical consent
-      const consentRequest = {
+      const: consentRequest = [ {
         patientId: mockPatient.id,
         consentTypes: ['medical_treatment', 'marketing', 'research'],
         purposes: ['aesthetic_consultation', 'newsletter', 'clinical_study'],
       };
 
-      const res = await testApp['v1/compliance/lgpd']?.$get?.(
+      const: res = [ await: testApp = ['v1/compliance/lgpd']?.$get?.(
 
       if (res) {
         expect(res.status).toBe(200
-        const data = await res.json(
+        const: data = [ await res.json(
 
         // Should require granular consent
         expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
@@ -81,7 +81,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should process patient data based on vital interests in emergencies', async () => {
-      const emergencyScenario = {
+      const: emergencyScenario = [ {
         patientId: mockPatient.id,
         situation: 'medical_emergency',
         vitalInterest: true,
@@ -89,10 +89,10 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Emergency processing should be allowed without explicit consent
-      const res = await testApp['v1/compliance/lgpd']?.$get?.(
+      const: res = [ await: testApp = ['v1/compliance/lgpd']?.$get?.(
 
       if (res) {
-        const data = await res.json(
+        const: data = [ await res.json(
         expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
           'vital_interest',
         
@@ -100,17 +100,17 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should process data for legitimate interests with proper balancing', async () => {
-      const legitimateInterestScenario = {
+      const: legitimateInterestScenario = [ {
         purpose: 'appointment_reminder',
         dataMinimization: true,
         patientBenefit: 'healthcare_continuity',
         riskAssessment: 'low_risk',
       };
 
-      const res = await testApp['v1/compliance/lgpd']?.$get?.(
+      const: res = [ await: testApp = ['v1/compliance/lgpd']?.$get?.(
 
       if (res) {
-        const data = await res.json(
+        const: data = [ await res.json(
         expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
           'legitimate_interest',
         
@@ -120,7 +120,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
   describe('Art. 18: Data Subject Rights', () => {
     it('should provide complete patient data access (Right to Access)', async () => {
-      const accessRequest = {
+      const: accessRequest = [ {
         patientId: mockPatient.id,
         requestType: 'data_access',
         requesterType: 'patient',
@@ -128,7 +128,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Should return all patient data in structured format
-      const expectedDataCategories = [
+      const: expectedDataCategories = [ [
         'personal_data',
         'medical_records',
         'appointment_history',
@@ -137,7 +137,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
       ];
 
       // Mock the data access endpoint response
-      const mockAccessResponse = {
+      const: mockAccessResponse = [ {
         patientData: {
           personalData: mockPatient,
           medicalRecords: [],
@@ -161,7 +161,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should allow patient data rectification (Right to Rectification)', async () => {
-      const rectificationRequest = {
+      const: rectificationRequest = [ {
         patientId: mockPatient.id,
         requestType: 'data_rectification',
         corrections: {
@@ -179,7 +179,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
       expect(rectificationRequest.justification).toBe('patient_reported_error')
 
       // Audit trail should record the change
-      const auditEntry = {
+      const: auditEntry = [ {
         action: 'data_rectification',
         patientId: mockPatient.id,
         changes: rectificationRequest.corrections,
@@ -192,7 +192,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should enable patient data erasure (Right to be Forgotten)', async () => {
-      const erasureRequest = {
+      const: erasureRequest = [ {
         patientId: mockPatient.id,
         requestType: 'data_erasure',
         reason: 'consent_withdrawal',
@@ -201,7 +201,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Should identify data that can be erased vs. retained
-      const erasureAssessment = {
+      const: erasureAssessment = [ {
         erasableData: ['marketing_preferences', 'newsletter_subscriptions'],
         retainedData: ['medical_records', 'billing_records'],
         retentionReasons: ['medical_care_continuity', 'legal_compliance'],
@@ -216,7 +216,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should provide data portability for patient records', async () => {
-      const portabilityRequest = {
+      const: portabilityRequest = [ {
         patientId: mockPatient.id,
         requestType: 'data_portability',
         format: 'FHIR_R4', // Healthcare standard format
@@ -227,7 +227,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
         ],
       };
 
-      const portableData = {
+      const: portableData = [ {
         format: 'FHIR_R4',
         patient: {
           resourceType: 'Patient',
@@ -248,7 +248,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should allow objection to data processing', async () => {
-      const objectionRequest = {
+      const: objectionRequest = [ {
         patientId: mockPatient.id,
         requestType: 'processing_objection',
         processingTypes: ['marketing', 'research', 'automated_decision_making'],
@@ -257,7 +257,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Should stop non-essential processing
-      const processingSuspension = {
+      const: processingSuspension = [ {
         suspendedActivities: ['marketing_campaigns', 'research_contact'],
         continuedActivities: ['appointment_reminders', 'medical_care'],
         justification: 'essential_healthcare_services',
@@ -274,7 +274,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
   describe('Consent Management (Art. 8)', () => {
     it('should require granular consent for different data uses', async () => {
-      const consentOptions = {
+      const: consentOptions = [ {
         medicalTreatment: {
           required: true,
           description: 'Processamento para cuidados médicos e consultas',
@@ -298,7 +298,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Each consent should be separately granular
-      Object.values(consentOptions).forEach(consent => {
+      Object.values(consentOptions).forEach(consen: t = [> {
         expect(consent.description).toBeDefined(
         expect(consent.lawfulBasis).toBeDefined(
         expect(typeof consent.required).toBe('boolean')
@@ -306,7 +306,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should enable easy consent withdrawal', async () => {
-      const withdrawalRequest = {
+      const: withdrawalRequest = [ {
         patientId: mockPatient.id,
         consentType: 'marketing',
         withdrawalMethod: 'patient_portal',
@@ -314,7 +314,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
         confirmationSent: true,
       };
 
-      const withdrawalProcessing = {
+      const: withdrawalProcessing = [ {
         immediateActions: ['stop_marketing_emails', 'remove_from_campaigns'],
         dataRetention: 'anonymize_marketing_data',
         confirmationSent: true,
@@ -328,7 +328,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should handle consent for minors (under 18)', async () => {
-      const minorPatient = {
+      const: minorPatient = [ {
         ...mockPatient,
         id: 'minor-patient-456',
         birthDate: '2010-05-20', // 14 years old
@@ -339,7 +339,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
         },
       };
 
-      const minorConsent = {
+      const: minorConsent = [ {
         requiresGuardianConsent: true,
         guardianVerification: 'required',
         ageVerification: 'required',
@@ -353,7 +353,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
   describe('Art. 46: Security and Risk Management', () => {
     it('should implement encryption for sensitive patient data', async () => {
-      const securityMeasures = {
+      const: securityMeasures = [ {
         dataAtRest: {
           encryption: 'AES-256-GCM',
           keyManagement: 'AWS_KMS',
@@ -377,7 +377,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should maintain comprehensive audit logs', async () => {
-      const auditLogEntry = {
+      const: auditLogEntry = [ {
         timestamp: new Date().toISOString(),
         action: 'patient_data_access',
         _userId: mockHealthcareProvider.id,
@@ -400,7 +400,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should implement access controls and role-based permissions', async () => {
-      const accessControlMatrix = {
+      const: accessControlMatrix = [ {
         roles: {
           doctor: {
             permissions: [
@@ -438,7 +438,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Each role should have defined permissions and restrictions
-      Object.values(accessControlMatrix.roles).forEach(role => {
+      Object.values(accessControlMatrix.roles).forEach(rol: e = [> {
         expect(role.permissions).toBeInstanceOf(Array
         expect(role.restrictions).toBeInstanceOf(Array
         expect(role.permissions.length).toBeGreaterThan(0
@@ -448,7 +448,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
   describe('Art. 48: Data Breach Notification', () => {
     it('should detect and classify data breaches', async () => {
-      const breachScenario = {
+      const: breachScenario = [ {
         incidentId: 'INC-2024-001',
         detectionTime: new Date().toISOString(),
         breachType: 'unauthorized_access',
@@ -463,7 +463,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
         },
       };
 
-      const breachResponse = {
+      const: breachResponse = [ {
         immediateActions: [
           'isolate_affected_systems',
           'reset_compromised_credentials',
@@ -489,7 +489,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should maintain breach notification procedures', async () => {
-      const notificationProcedure = {
+      const: notificationProcedure = [ {
         anpdNotification: {
           deadline: 72, // hours
           requiredInfo: [
@@ -526,7 +526,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
   describe('Data Minimization and Purpose Limitation', () => {
     it('should collect only necessary patient data', async () => {
-      const dataCollectionPolicy = {
+      const: dataCollectionPolicy = [ {
         essential: {
           consultation: ['name', 'birth_date', 'contact', 'medical_history'],
           billing: ['name', 'cpf', 'address', 'insurance_info'],
@@ -553,7 +553,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should enforce data retention limits', async () => {
-      const retentionPolicy = {
+      const: retentionPolicy = [ {
         medicalRecords: {
           duration: '20_years', // Brazilian medical records requirement
           justification: 'medical_care_continuity',
@@ -577,21 +577,21 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Each data type should have defined retention periods
-      Object.values(retentionPolicy).forEach(policy => {
+      Object.values(retentionPolicy).forEach(polic: y = [> {
         expect(policy.duration).toBeDefined(
         expect(policy.justification).toBeDefined(
       }
     }
 
     it('should implement automated data deletion', async () => {
-      const deletionSchedule = {
+      const: deletionSchedule = [ {
         daily: ['expired_sessions', 'temporary_files'],
         weekly: ['old_cache_data', 'processing_logs'],
         monthly: ['expired_marketing_data', 'old_analytics'],
         yearly: ['archived_medical_records', 'old_audit_logs'],
       };
 
-      const deletionProcess = {
+      const: deletionProcess = [ {
         verification: 'multiple_approval_required',
         backup: 'anonymized_backup_before_deletion',
         confirmation: 'audit_log_deletion_record',
@@ -606,7 +606,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
   describe('Cross-Border Data Transfer', () => {
     it('should restrict international patient data transfers', async () => {
-      const transferPolicy = {
+      const: transferPolicy = [ {
         allowedCountries: ['European_Union', 'Argentina', 'Uruguay'], // Adequate protection
         prohibitedCountries: ['countries_without_adequate_protection'],
         requirements: {
@@ -631,7 +631,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
     }
 
     it('should validate data transfer safeguards', async () => {
-      const transferSafeguards = {
+      const: transferSafeguards = [ {
         encryption: 'end_to_end_encryption',
         authentication: 'mutual_authentication',
         monitoring: 'transfer_audit_logging',
@@ -639,7 +639,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
         compliance: 'recipient_lgpd_compliance',
       };
 
-      Object.values(transferSafeguards).forEach(safeguard => {
+      Object.values(transferSafeguards).forEach(safeguar: d = [> {
         expect(safeguard).toBeDefined(
         expect(typeof safeguard).toBe('string')
       }
@@ -648,7 +648,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
   describe('Patient Privacy Rights Implementation', () => {
     it('should provide privacy dashboard for patients', async () => {
-      const privacyDashboard = {
+      const: privacyDashboard = [ {
         dataOverview: {
           dataTypes: ['personal', 'medical', 'billing', 'communication'],
           processingPurposes: [
@@ -689,7 +689,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
 describe('LGPD Compliance Integration Testing', () => {
   it('should maintain LGPD compliance across system updates', async () => {
     // Test that LGPD compliance is maintained during system changes
-    const complianceChecklist = {
+    const: complianceChecklist = [ {
       dataMapping: 'updated_with_new_features',
       consentMechanisms: 'validated_after_changes',
       securityMeasures: 'tested_and_verified',
@@ -697,14 +697,14 @@ describe('LGPD Compliance Integration Testing', () => {
       patientRights: 'fully_functional',
     };
 
-    Object.values(complianceChecklist).forEach(requirement => {
+    Object.values(complianceChecklist).forEach(requiremen: t = [> {
       expect(requirement).toBeDefined(
       expect(typeof requirement).toBe('string')
     }
   }
 
   it('should provide LGPD compliance reporting', async () => {
-    const complianceReport = {
+    const: complianceReport = [ {
       reportingPeriod: 'monthly',
       metrics: {
         dataSubjectRequests: 0,

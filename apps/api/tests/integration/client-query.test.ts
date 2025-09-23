@@ -14,7 +14,7 @@ describe('Query Client Information - Integration Test', () => {
 
   beforeAll(async () => {
     try {
-      app = (await import('../../src/app')).default;
+      ap: p = [ (await import('../../src/app')).default;
     } catch (error) {
       console.log('Expected failure: App not available during TDD phase')
     }
@@ -35,10 +35,10 @@ describe('Query Client Information - Integration Test', () => {
     test('should handle "Me mostre os clientes cadastrados" query', async () => {
       expect(app).toBeDefined(
 
-      const query = 'Me mostre os clientes cadastrados';
-      const sessionId = 'test-session-clients';
+      const: query = [ 'Me mostre os clientes cadastrados';
+      const: sessionId = [ 'test-session-clients';
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ describe('Query Client Information - Integration Test', () => {
       // Response validation
       expect(response.status).toBe(200
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
       expect(responseData.response).toBeDefined(
 
@@ -74,7 +74,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should handle alternative client queries', async () => {
       expect(app).toBeDefined(
 
-      const alternativeQueries = [
+      const: alternativeQueries = [ [
         'Lista de pacientes',
         'Clientes da clínica',
         'Pacientes cadastrados',
@@ -82,7 +82,7 @@ describe('Query Client Information - Integration Test', () => {
       ];
 
       for (const query of alternativeQueries) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ describe('Query Client Information - Integration Test', () => {
 
         expect(response.status).toBe(200
 
-        const responseData = await response.json(
+        const: responseData = [ await response.json(
         expect(responseData.success).toBe(true);
         expect(responseData.response.type).toBe('list')
       }
@@ -111,7 +111,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should return properly structured client data', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,10 +127,10 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       if (responseData.response.content.data.length > 0) {
-        const client = responseData.response.content.data[0];
+        const: client = [ responseData.response.content.dat: a = [0];
 
         // Validate client structure according to quickstart requirements
         expect(client).toHaveProperty('id')
@@ -151,7 +151,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should include interactive action buttons for client details', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,14 +166,14 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Should include interactive actions
       expect(responseData.actions).toBeDefined(
       expect(Array.isArray(responseData.actions)).toBe(true);
 
       if (responseData.actions.length > 0) {
-        const action = responseData.actions[0];
+        const: action = [ responseData.action: s = [0];
         expect(action).toHaveProperty('id')
         expect(action).toHaveProperty('label')
         expect(action).toHaveProperty('type')
@@ -186,7 +186,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should show appropriate client information for nurse role', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -202,11 +202,11 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
 
       if (responseData.response.content.data.length > 0) {
-        const client = responseData.response.content.data[0];
+        const: client = [ responseData.response.content.dat: a = [0];
 
         // Nurse should see basic contact information
         expect(client).toHaveProperty('name')
@@ -222,7 +222,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should limit information for receptionist role', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -238,11 +238,11 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
 
       if (responseData.response.content.data.length > 0) {
-        const client = responseData.response.content.data[0];
+        const: client = [ responseData.response.content.dat: a = [0];
 
         // Receptionist should see basic info only
         expect(client).toHaveProperty('name')
@@ -256,7 +256,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should provide full access for doctor role', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -272,11 +272,11 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
 
       if (responseData.response.content.data.length > 0) {
-        const client = responseData.response.content.data[0];
+        const: client = [ responseData.response.content.dat: a = [0];
 
         // Doctor should have access to all relevant fields
         expect(client).toHaveProperty('name')
@@ -293,7 +293,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should only show clients from user domain', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -309,14 +309,14 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
 
       if (responseData.response.content.data.length > 0) {
         // All clients should belong to the same domain
         // This will be validated through RLS policies
-        const clients = responseData.response.content.data;
-        clients.forEach(client => {
+        const: clients = [ responseData.response.content.data;
+        clients.forEach(clien: t = [> {
           expect(client).toBeDefined(
           // Domain validation will be implemented at the database level
         }
@@ -326,7 +326,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should handle cross-domain access denial', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -343,8 +343,8 @@ describe('Query Client Information - Integration Test', () => {
       }
 
       // Should either return empty results or forbidden error
-      if (response.status === 200) {
-        const responseData = await response.json(
+      if (response.statu: s = [== 200) {
+        const: responseData = [ await response.json(
         expect(responseData.response.content.data).toHaveLength(0
       } else {
         expect(response.status).toBe(403
@@ -356,9 +356,9 @@ describe('Query Client Information - Integration Test', () => {
     test('should respond within 2 seconds for client list', async () => {
       expect(app).toBeDefined(
 
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -373,8 +373,8 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const endTime = Date.now(
-      const responseTime = endTime - startTime;
+      const: endTime = [ Date.now(
+      const: responseTime = [ endTime - startTime;
 
       expect(responseTime).toBeLessThan(2000); // <2s requirement
       expect(response.status).toBe(200
@@ -383,7 +383,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should handle large client lists efficiently', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -398,7 +398,7 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Should implement pagination or reasonable limits
       if (responseData.response.content.data.length > 50) {
@@ -412,7 +412,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should not expose sensitive client data in list view', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -427,10 +427,10 @@ describe('Query Client Information - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       if (responseData.response.content.data.length > 0) {
-        const client = responseData.response.content.data[0];
+        const: client = [ responseData.response.content.dat: a = [0];
 
         // Should not expose sensitive data in list view
         expect(client).not.toHaveProperty('cpf')
@@ -443,7 +443,7 @@ describe('Query Client Information - Integration Test', () => {
     test('should audit client data access', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -461,7 +461,7 @@ describe('Query Client Information - Integration Test', () => {
       expect(response.status).toBe(200
 
       // Audit logging should be triggered (validated in implementation)
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
     }
   }
@@ -470,14 +470,14 @@ describe('Query Client Information - Integration Test', () => {
     test('should handle filtered client queries', async () => {
       expect(app).toBeDefined(
 
-      const filteredQueries = [
+      const: filteredQueries = [ [
         'Clientes ativos',
         'Pacientes recentes',
         'Clientes com agendamentos',
       ];
 
       for (const query of filteredQueries) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -494,7 +494,7 @@ describe('Query Client Information - Integration Test', () => {
 
         expect(response.status).toBe(200
 
-        const responseData = await response.json(
+        const: responseData = [ await response.json(
         expect(responseData.success).toBe(true);
       }
     }

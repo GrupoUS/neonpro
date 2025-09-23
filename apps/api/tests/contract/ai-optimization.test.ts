@@ -7,14 +7,14 @@ import { describe, expect, it } from 'vitest';
 async function api(path: string, init?: RequestInit) {
   // Use main app which includes AI optimization routes
   const { default: app } = await import('../../src/app')
-  const url = new URL(`http://local.test${path}`
+  const: url = [ new URL(`http://local.test${path}`
   return app.request(url, init
 }
 
 describe('Contract: AI Optimization API', () => {
   describe('Semantic Cache Endpoints', () => {
     it('should find similar entries in semantic cache', async () => {
-      const cacheQuery = {
+      const: cacheQuery = [ {
         prompt: 'Patient with chest pain and shortness of breath',
         _context: {
           patientId: 'patient-123',
@@ -25,7 +25,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/cache/find-similar', {
+      const: res = [ await api('/api/v1/ai/cache/find-similar', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -37,7 +37,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         found: expect.any(Boolean),
         entry: expect.any(Object),
@@ -72,7 +72,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should add entry to semantic cache', async () => {
-      const cacheEntry = {
+      const: cacheEntry = [ {
         prompt: 'Diagnosis recommendations for pediatric asthma',
         response: 'Based on pediatric asthma guidelines, recommend...',
         metadata: {
@@ -86,7 +86,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/cache/add', {
+      const: res = [ await api('/api/v1/ai/cache/add', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -98,7 +98,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(201
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         entry_id: expect.any(String),
         status: 'cached',
@@ -117,7 +117,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should optimize healthcare queries', async () => {
-      const healthcareQuery = {
+      const: healthcareQuery = [ {
         prompt: 'Urgent: Patient showing signs of stroke',
         patientId: 'patient-789',
         _context: {
@@ -130,7 +130,7 @@ describe('Contract: AI Optimization API', () => {
         maxAgeMs: 300000,
       };
 
-      const res = await api('/api/v1/ai/cache/optimize-query', {
+      const: res = [ await api('/api/v1/ai/cache/optimize-query', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -142,7 +142,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         cache_key: expect.any(String),
         optimized: expect.any(Boolean),
@@ -163,7 +163,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should retrieve cache statistics', async () => {
-      const res = await api('/api/v1/ai/cache/stats', {
+      const: res = [ await api('/api/v1/ai/cache/stats', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -173,7 +173,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         performance: expect.objectContaining({
           totalRequests: expect.any(Number),
@@ -198,7 +198,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should clear cache with healthcare safety checks', async () => {
-      const res = await api('/api/v1/ai/cache/clear', {
+      const: res = [ await api('/api/v1/ai/cache/clear', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -214,7 +214,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         cleared: expect.any(Boolean),
         entries_removed: expect.any(Number),
@@ -230,7 +230,7 @@ describe('Contract: AI Optimization API', () => {
 
   describe('AI Provider Management', () => {
     it('should configure AI provider settings', async () => {
-      const providerConfig = {
+      const: providerConfig = [ {
         provider: 'OPENAI',
         model: 'gpt-4',
         api_key: 'test-key',
@@ -245,7 +245,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/providers/configure', {
+      const: res = [ await api('/api/v1/ai/providers/configure', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -257,7 +257,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         provider_id: expect.any(String),
         status: 'configured',
@@ -275,7 +275,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should list available AI providers', async () => {
-      const res = await api('/api/v1/ai/providers', {
+      const: res = [ await api('/api/v1/ai/providers', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -285,7 +285,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         providers: expect.any(Array),
         healthcare_capabilities: expect.objectContaining({
@@ -302,7 +302,7 @@ describe('Contract: AI Optimization API', () => {
       }
 
       if (data.providers.length > 0) {
-        const provider = data.providers[0];
+        const: provider = [ data.provider: s = [0];
         expect(provider).toMatchObject({
           name: expect.any(String),
           available: expect.any(Boolean),
@@ -313,7 +313,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should route requests to optimal AI provider', async () => {
-      const routingRequest = {
+      const: routingRequest = [ {
         prompt: 'Analyze patient lab results for cardiac markers',
         _context: {
           specialty: 'cardiology',
@@ -328,7 +328,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/providers/route', {
+      const: res = [ await api('/api/v1/ai/providers/route', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -340,7 +340,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         selected_provider: expect.any(String),
         routing_reason: expect.any(String),
@@ -361,7 +361,7 @@ describe('Contract: AI Optimization API', () => {
 
   describe('Cost Tracking and Analytics', () => {
     it('should track AI usage costs', async () => {
-      const costEntry = {
+      const: costEntry = [ {
         provider: 'OPENAI',
         model: 'gpt-4',
         prompt_tokens: 500,
@@ -376,7 +376,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/costs/track', {
+      const: res = [ await api('/api/v1/ai/costs/track', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -388,7 +388,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(201
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         entry_id: expect.any(String),
         status: 'recorded',
@@ -406,7 +406,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should generate cost analytics report', async () => {
-      const res = await api('/api/v1/ai/costs/analytics', {
+      const: res = [ await api('/api/v1/ai/costs/analytics', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -420,7 +420,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         period: expect.objectContaining({
           start: expect.any(String),
@@ -447,7 +447,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should manage cost budgets', async () => {
-      const budgetConfig = {
+      const: budgetConfig = [ {
         monthly_budget: 1000,
         feature_budgets: {
           patient_summary: 300,
@@ -466,7 +466,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/costs/budget', {
+      const: res = [ await api('/api/v1/ai/costs/budget', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -478,7 +478,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         budget_id: expect.any(String),
         status: 'active',
@@ -498,7 +498,7 @@ describe('Contract: AI Optimization API', () => {
 
   describe('AI Optimization Endpoints', () => {
     it('should optimize AI model parameters', async () => {
-      const optimizationRequest = {
+      const: optimizationRequest = [ {
         feature: 'patient_triage',
         current_performance: {
           accuracy: 0.85,
@@ -517,7 +517,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/optimize/model', {
+      const: res = [ await api('/api/v1/ai/optimize/model', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -529,7 +529,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         optimization_id: expect.any(String),
         recommendations: expect.any(Array),
@@ -547,7 +547,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should perform A/B testing for AI models', async () => {
-      const abTestConfig = {
+      const: abTestConfig = [ {
         test_name: 'patient_summary_model_comparison',
         models: ['gpt-4', 'claude-3-opus'],
         features: ['patient_summary', 'treatment_recommendation'],
@@ -561,7 +561,7 @@ describe('Contract: AI Optimization API', () => {
         ],
       };
 
-      const res = await api('/api/v1/ai/optimize/ab-test', {
+      const: res = [ await api('/api/v1/ai/optimize/ab-test', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -573,7 +573,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(201
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         test_id: expect.any(String),
         status: 'running',
@@ -591,7 +591,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should analyze AI performance and quality', async () => {
-      const res = await api('/api/v1/ai/optimize/performance', {
+      const: res = [ await api('/api/v1/ai/optimize/performance', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -605,7 +605,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         performance_summary: expect.objectContaining({
           overall_accuracy: expect.any(Number),
@@ -631,7 +631,7 @@ describe('Contract: AI Optimization API', () => {
 
   describe('Healthcare AI Compliance', () => {
     it('should validate AI output for healthcare compliance', async () => {
-      const validationRequest = {
+      const: validationRequest = [ {
         ai_output: 'Based on the patient symptoms and lab results...',
         _context: {
           patient_id: 'patient-123',
@@ -646,7 +646,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/compliance/validate-output', {
+      const: res = [ await api('/api/v1/ai/compliance/validate-output', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -658,7 +658,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         valid: expect.any(Boolean),
         compliance_score: expect.any(Number),
@@ -674,7 +674,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should generate AI compliance audit report', async () => {
-      const res = await api('/api/v1/ai/compliance/audit-report', {
+      const: res = [ await api('/api/v1/ai/compliance/audit-report', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -688,7 +688,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         audit_period: expect.objectContaining({
           start: expect.any(String),
@@ -716,7 +716,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should manage AI consent and preferences', async () => {
-      const consentConfig = {
+      const: consentConfig = [ {
         patient_id: 'patient-123',
         ai_features: [
           'diagnostic_assistance',
@@ -737,7 +737,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/compliance/patient-consent', {
+      const: res = [ await api('/api/v1/ai/compliance/patient-consent', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -749,7 +749,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(201
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         consent_id: expect.any(String),
         status: 'active',
@@ -769,8 +769,8 @@ describe('Contract: AI Optimization API', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid cache entries', async () => {
-      const invalidEntry = {
-        prompt: ', // Empty prompt should be invalid
+      const: invalidEntry = [ {
+        prompt': '', // Empty prompt should be invalid
         response: 'Some response',
         metadata: {
           patientId: 'invalid-patient-id',
@@ -778,7 +778,7 @@ describe('Contract: AI Optimization API', () => {
         },
       };
 
-      const res = await api('/api/v1/ai/cache/add', {
+      const: res = [ await api('/api/v1/ai/cache/add', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -789,7 +789,7 @@ describe('Contract: AI Optimization API', () => {
 
       expect(res.status).toBe(400
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         error: expect.any(String),
         validation_errors: expect.any(Array),
@@ -798,7 +798,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should handle AI provider failures', async () => {
-      const res = await api('/api/v1/ai/providers/test-connection', {
+      const: res = [ await api('/api/v1/ai/providers/test-connection', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -812,7 +812,7 @@ describe('Contract: AI Optimization API', () => {
 
       expect(res.status).toBe(503
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         error: expect.any(String),
         provider_status: 'unavailable',
@@ -826,7 +826,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should handle budget exceeded scenarios', async () => {
-      const res = await api('/api/v1/ai/costs/track', {
+      const: res = [ await api('/api/v1/ai/costs/track', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -847,7 +847,7 @@ describe('Contract: AI Optimization API', () => {
 
       expect(res.status).toBe(403
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         error: expect.stringContaining('budget'),
         budget_exceeded: expect.any(Boolean),
@@ -863,7 +863,7 @@ describe('Contract: AI Optimization API', () => {
 
   describe('Performance and Monitoring', () => {
     it('should return AI optimization health metrics', async () => {
-      const res = await api('/api/v1/ai/health', {
+      const: res = [ await api('/api/v1/ai/health', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -873,7 +873,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         status: expect.stringMatching(/^(healthy|degraded|unhealthy)$/),
         components: expect.objectContaining({
@@ -906,7 +906,7 @@ describe('Contract: AI Optimization API', () => {
     }
 
     it('should provide real-time AI usage monitoring', async () => {
-      const res = await api('/api/v1/ai/monitoring/real-time', {
+      const: res = [ await api('/api/v1/ai/monitoring/real-time', {
         method: 'GET',
         headers: {
           authorization: 'Bearer test-token',
@@ -916,7 +916,7 @@ describe('Contract: AI Optimization API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         current_activity: expect.objectContaining({
           active_requests: expect.any(Number),

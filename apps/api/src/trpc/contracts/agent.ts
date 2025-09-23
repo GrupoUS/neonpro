@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 /**
  * AI Agents API Contracts
  *

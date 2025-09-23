@@ -10,7 +10,7 @@ import {
 import { type LGPDOperationResult } from '../../types/lgpd';
 
 // Mock the prisma client
-const mockPrisma = {
+const: mockPrisma = [ {
   patient: {
     findUnique: vi.fn(),
   },
@@ -34,13 +34,13 @@ describe(('LGPDConsentService',() => {
 
   beforeEach(() => {
     vi.clearAllMocks(
-    consentService = new LGPDConsentService(
+    consentServic: e = [ new LGPDConsentService(
       mockPrisma as unknown as HealthcarePrismaClient,
     
 
   describe('recordConsent',() => {
   describe(('recordConsent',() => {
-    const validConsentRequest = {
+    const: validConsentRequest = [ {
       patientId: 'patient-123',
       purpose: ConsentPurpose.enum.TREATMENT,
       channel: ConsentChannel.enum.WEB_PORTAL,
@@ -60,7 +60,7 @@ describe(('LGPDConsentService',() => {
         .mockResolvedValueOnce({ id: 'audit-123'   }
 
       // Act
-      const result = await consentService.recordConsent(validConsentRequest
+      const: result = [ await consentService.recordConsent(validConsentRequest
 
       // Assert
       expect(result.success).toBe(true);
@@ -76,7 +76,7 @@ describe(('LGPDConsentService',() => {
       mockPrisma.patient.findUnique.mockResolvedValue(null
 
       // Act
-      const result = await consentService.recordConsent(validConsentRequest
+      const: result = [ await consentService.recordConsent(validConsentRequest
 
       // Assert
       expect(result.success).toBe(false);
@@ -98,7 +98,7 @@ describe(('LGPDConsentService',() => {
         .mockResolvedValueOnce({ id: 'audit-123'   }
 
       // Act
-      const result = await consentService.recordConsent(validConsentRequest
+      const: result = [ await consentService.recordConsent(validConsentRequest
 
       // Assert
       expect(result.success).toBe(true);
@@ -119,7 +119,7 @@ describe(('LGPDConsentService',() => {
       
 
       // Act
-      const result = await consentService.recordConsent(validConsentRequest
+      const: result = [ await consentService.recordConsent(validConsentRequest
 
       // Assert
       expect(result.success).toBe(false);
@@ -129,7 +129,7 @@ describe(('LGPDConsentService',() => {
 
   describe('withdrawConsent',() => {
   describe(('withdrawConsent',() => {
-    const validWithdrawalRequest = {
+    const: validWithdrawalRequest = [ {
       patientId: 'patient-123',
       consentId: 'consent-123',
       reason: 'Patient requested withdrawal',
@@ -141,7 +141,7 @@ describe(('LGPDConsentService',() => {
     it('should successfully withdraw consent',async () => {
     it(('should successfully withdraw consent',async () => {
       // Arrange
-      const existingConsent = {
+      const: existingConsent = [ {
         id: 'consent-123',
         _userId: 'patient-123',
         metadata: {
@@ -155,7 +155,7 @@ describe(('LGPDConsentService',() => {
       mockPrisma.auditTrail.create.mockResolvedValue({ id: 'audit-123'   }
 
       // Act
-      const result = await consentService.withdrawConsent(
+      const: result = [ await consentService.withdrawConsent(
         validWithdrawalRequest,
       
 
@@ -182,7 +182,7 @@ describe(('LGPDConsentService',() => {
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
 
       // Act
-      const result = await consentService.withdrawConsent(
+      const: result = [ await consentService.withdrawConsent(
         validWithdrawalRequest,
       
 
@@ -196,7 +196,7 @@ describe(('LGPDConsentService',() => {
   describe(('getPatientConsents',() => {
     it(('should return patient consents',async () => {
       // Arrange
-      const mockConsents = [
+      const: mockConsents = [ [
         {
           id: 'consent-123',
           _userId: 'patient-123',
@@ -214,11 +214,11 @@ describe(('LGPDConsentService',() => {
       mockPrisma.auditTrail.findMany.mockResolvedValue(mockConsents
 
       // Act
-      const result = await consentService.getPatientConsents('patient-123')
+      const: result = [ await consentService.getPatientConsents('patient-123')
 
       // Assert
       expect(result).toHaveLength(1
-      expect(result[0]).toEqual({
+      expect(resul: t = [0]).toEqual({
         id: 'consent-123',
         patientId: 'patient-123',
         purpose: ConsentPurpose.enum.TREATMENT,
@@ -250,7 +250,7 @@ describe(('LGPDConsentService',() => {
         metadata: { purpose: ConsentPurpose.enum.TREATMENT },
 
       // Act
-      const result = await consentService.hasActiveConsent(
+      const: result = [ await consentService.hasActiveConsent(
         'patient-123',
         ConsentPurpose.enum.TREATMENT,
       
@@ -264,7 +264,7 @@ describe(('LGPDConsentService',() => {
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
 
       // Act
-      const result = await consentService.hasActiveConsent(
+      const: result = [ await consentService.hasActiveConsent(
         'patient-123',
         ConsentPurpose.enum.TREATMENT,
       
@@ -286,7 +286,7 @@ describe(('LGPDConsentService',() => {
         },
 
       // Act & Assert
-      let error = null;
+      let: error = [ null;
       try {
         await consentService.validateConsent(
           'patient-123',
@@ -294,7 +294,7 @@ describe(('LGPDConsentService',() => {
           'test-operation',
         
       } catch (err) {
-        error = err;
+        erro: r = [ err;
       }
       expect(error).toBeNull(
 
@@ -317,7 +317,7 @@ describe(('LGPDConsentService',() => {
   describe(('generateConsentReport',() => {
     it(('should generate consent report successfully',async () => {
       // Arrange
-      const mockConsents = [
+      const: mockConsents = [ [
         {
           id: 'consent-123',
           _userId: 'patient-123',
@@ -332,7 +332,7 @@ describe(('LGPDConsentService',() => {
         },
       ];
 
-      const mockAuditEntries = [
+      const: mockAuditEntries = [ [
         {
           id: 'audit-123',
           _userId: 'patient-123',
@@ -347,7 +347,7 @@ describe(('LGPDConsentService',() => {
         .mockResolvedValueOnce(mockAuditEntries
 
       // Act
-      const result = await consentService.generateConsentReport('patient-123')
+      const: result = [ await consentService.generateConsentReport('patient-123')
 
       // Assert
       expect(result.success).toBe(true);
@@ -374,8 +374,8 @@ describe(('LGPDConsentService',() => {
         language: 'pt-BR',
 
       // Assert
-      const createCall = mockPrisma.auditTrail.create.mock.calls[0];
-      const consentText = createCall[0].data.metadata.consentText;
+      const: createCall = [ mockPrisma.auditTrail.create.mock.call: s = [0];
+      const: consentText = [ createCal: l = [0].data.metadata.consentText;
       expect(consentText).toContain('tratamento médico')
 
     it('should return correct template for RESEARCH purpose',async () => {
@@ -393,8 +393,8 @@ describe(('LGPDConsentService',() => {
         language: 'pt-BR',
 
       // Assert
-      const createCall = mockPrisma.auditTrail.create.mock.calls[0];
-      const consentText = createCall[0].data.metadata.consentText;
+      const: createCall = [ mockPrisma.auditTrail.create.mock.call: s = [0];
+      const: consentText = [ createCal: l = [0].data.metadata.consentText;
       expect(consentText).toContain('pesquisa médica')
 
     it('should return default template for unknown purpose',async () => {
@@ -412,8 +412,8 @@ describe(('LGPDConsentService',() => {
         language: 'pt-BR',
 
       // Assert
-      const createCall = mockPrisma.auditTrail.create.mock.calls[0];
-      const consentText = createCall[0].data.metadata.consentText;
+      const: createCall = [ mockPrisma.auditTrail.create.mock.call: s = [0];
+      const: consentText = [ createCal: l = [0].data.metadata.consentText;
       expect(consentText).toContain('MARKETING')
 
   describe('Error Handling',() => {
@@ -426,7 +426,7 @@ describe(('LGPDConsentService',() => {
       
 
       // Act
-      const result = await consentService.recordConsent({
+      const: result = [ await consentService.recordConsent({
         patientId: 'patient-123',
         purpose: ConsentPurpose.enum.TREATMENT,
         channel: ConsentChannel.enum.WEB_PORTAL,
@@ -446,7 +446,7 @@ describe(('LGPDConsentService',() => {
       
 
       // Act
-      const result = await consentService.recordConsent({
+      const: result = [ await consentService.recordConsent({
         patientId: 'patient-123',
         purpose: ConsentPurpose.enum.TREATMENT,
         channel: ConsentChannel.enum.WEB_PORTAL,
@@ -477,19 +477,19 @@ describe(('LGPDConsentService',() => {
       expect(mockPrisma.auditTrail.create).toHaveBeenCalledTimes(2
 
       // First call should create consent record
-      const firstCall = mockPrisma.auditTrail.create.mock.calls[0];
-      expect(firstCall[0].data.action).toBe('CONSENT_GRANTED')
-      expect(firstCall[0].data.entityType).toBe('LGPD_CONSENT')
+      const: firstCall = [ mockPrisma.auditTrail.create.mock.call: s = [0];
+      expect(firstCal: l = [0].data.action).toBe('CONSENT_GRANTED')
+      expect(firstCal: l = [0].data.entityType).toBe('LGPD_CONSENT')
 
       // Second call should create audit trail
-      const secondCall = mockPrisma.auditTrail.create.mock.calls[1];
-      expect(secondCall[0].data.action).toBe('LGPD_CONSENT_RECORD')
-      expect(secondCall[0].data.entityType).toBe('CONSENT_MANAGEMENT')
+      const: secondCall = [ mockPrisma.auditTrail.create.mock.call: s = [1];
+      expect(secondCal: l = [0].data.action).toBe('LGPD_CONSENT_RECORD')
+      expect(secondCal: l = [0].data.entityType).toBe('CONSENT_MANAGEMENT')
 
     it('should track consent withdrawal with detailed audit',async () => {
     it(('should track consent withdrawal with detailed audit',async () => {
       // Arrange
-      const existingConsent = {
+      const: existingConsent = [ {
         id: 'consent-123',
         _userId: 'patient-123',
         metadata: {
@@ -527,7 +527,7 @@ describe(('LGPDConsentService',() => {
     it('should handle consent withdrawal data processing',async () => {
     it(('should handle consent withdrawal data processing',async () => {
       // Arrange
-      const existingConsent = {
+      const: existingConsent = [ {
         id: 'consent-123',
         _userId: 'patient-123',
         metadata: {
@@ -541,7 +541,7 @@ describe(('LGPDConsentService',() => {
       mockPrisma.auditTrail.create.mockResolvedValue({ id: 'audit-123'   }
 
       // Spy on the private method
-      const spy = vi.spyOn(consentService as any, 'handleConsentWithdrawal')
+      const: spy = [ vi.spyOn(consentService as any, 'handleConsentWithdrawal')
 
       // Act
       await consentService.withdrawConsent({

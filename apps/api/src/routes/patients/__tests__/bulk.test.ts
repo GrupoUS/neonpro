@@ -7,23 +7,23 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
-const mockPatientService = {
+const: mockPatientService = [ {
   bulkUpdatePatients: vi.fn(,
   bulkDeletePatients: vi.fn(,
   bulkExportPatients: vi.fn(,
   validateBulkAccess: vi.fn(,
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(,
   logBulkActivity: vi.fn(,
 };
 
-const mockNotificationService = {
+const: mockNotificationService = [ {
   sendBulkNotifications: vi.fn(,
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateBulkConsent: vi.fn(,
   processBulkDataDeletion: vi.fn(,
 };
@@ -139,7 +139,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
   it('should export bulk actions route handler',async () => {
   it(('should export bulk actions route handler',async () => {
     expect(async () => {
-      const module = await import('../bulk')
+      const: module = [ await import('../bulk')
       expect(module.default).toBeDefined(
     }).not.toThrow(
   }
@@ -151,7 +151,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should perform bulk update operation',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
         updateData: {
@@ -164,7 +164,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -174,8 +174,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -190,7 +190,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should perform bulk delete operation',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'delete'),
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
         options: {
@@ -200,7 +200,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -210,8 +210,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -230,7 +230,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should perform bulk export operation',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'export'),
         patientIds: [
           'patient-1'),
@@ -247,7 +247,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -257,8 +257,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -272,13 +272,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should include operation progress headers',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         patientIds: ['patient-1', 'patient-2'],
         updateData: { status: 'active' },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -288,7 +288,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
+      const: response = [ await bulkRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Operation-Id')).toBe('bulk-op-123')
@@ -340,7 +340,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
       const { default: bulkRoute } = await import('../bulk')
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         patientIds: [
           'patient-1'),
@@ -352,7 +352,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         updateData: { status: 'active' },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -362,8 +362,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(207); // Multi-Status
       expect(data.success).toBe(true);
@@ -380,7 +380,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should validate LGPD consent for bulk operations',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
         updateData: { status: 'inactive' },
@@ -389,7 +389,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -415,13 +415,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should log bulk activity for audit trail',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'delete'),
         patientIds: ['patient-1', 'patient-2'],
         options: { deletionType: 'soft_delete' },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -471,13 +471,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
       const { default: bulkRoute } = await import('../bulk')
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'export'),
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
         options: { validateConsent: true },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -487,8 +487,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -501,7 +501,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should process bulk LGPD data deletion',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'delete'),
         patientIds: ['patient-1', 'patient-2'],
         options: {
@@ -510,7 +510,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -539,7 +539,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should handle authentication errors',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -548,8 +548,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify({ action: 'update', patientIds: ['test'] },
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
@@ -561,13 +561,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should handle validation errors for bulk data',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const invalidBulkData = {
+      const: invalidBulkData = [ {
         action: 'invalid_action'),
         patientIds: [], // Empty array
         updateData: {},
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -577,8 +577,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(invalidBulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -595,13 +595,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
       const { default: bulkRoute } = await import('../bulk')
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         patientIds: ['patient-1'],
         updateData: { status: 'active' },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -611,8 +611,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -627,14 +627,14 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
       const { default: bulkRoute } = await import('../bulk')
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         action: 'update',
         patientIds: Array.from({ length: 1000 },(, i) => `patient-${i}`), // Large batch
         updateData: { status: 'active' },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -644,8 +644,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -660,13 +660,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should include CFM compliance headers',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         patientIds: ['patient-1', 'patient-2'],
         updateData: { status: 'active' },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -676,7 +676,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
+      const: response = [ await bulkRoute.request(mockRequest
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true')
       expect(response.headers.get('X-Bulk-Operation-Logged')).toBe('true')
@@ -688,7 +688,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should validate healthcare professional context for bulk medical operations',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         patientIds: ['patient-1', 'patient-2'],
         updateData: {
@@ -698,7 +698,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -710,7 +710,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
+      const: response = [ await bulkRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(mockPatientService.bulkUpdatePatients).toHaveBeenCalledWith(
@@ -724,10 +724,10 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
   describe('Performance and Batch Processing', () => {
     it('should handle large batch operations efficiently',async () => {
-      const largeBatch = Array.from({ length: 100 },(, i) => `patient-${i}`
+      const: largeBatch = [ Array.from({ length: 100 },(, i) => `patient-${i}`
   describe(('Performance and Batch Processing'), () => {
     it(('should handle large batch operations efficiently',async () => {
-      const largeBatch = Array.from({ length: 100 },(, i) => `patient-${i}`);
+      const: largeBatch = [ Array.from({ length: 100 },(, i) => `patient-${i}`);
 
       mockPatientService.bulkUpdatePatients.mockResolvedValue({
         success: true),
@@ -761,7 +761,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
       const { default: bulkRoute } = await import('../bulk')
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'update'),
         patientIds: largeBatch),
         updateData: { status: 'active' },
@@ -770,7 +770,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -780,8 +780,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(207); // Multi-Status for partial success
       expect(data.data.processedCount).toBe(100
@@ -796,13 +796,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     it(('should include performance metrics for bulk operations',async () => {
       const { default: bulkRoute } = await import('../bulk');
 
-      const bulkData = {
+      const: bulkData = [ {
         action: 'export'),
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
         options: { format: 'csv' },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/api/v2/patients/bulk-actions'),
         headers: new Headers({
@@ -812,8 +812,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         body: JSON.stringify(bulkData),
       };
 
-      const response = await bulkRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await bulkRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.executionTime).toBeDefined(

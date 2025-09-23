@@ -31,11 +31,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = createTestClient({ _role: 'admin' }
+    testClien: t = [ createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
-    patientId = 'test-patient-lgpd-123';
-    recordId = 'test-record-456';
+    testClien: t = [ createTestClient({ _role: 'admin' });
+    patientI: d = [ 'test-patient-lgpd-123';
+    recordI: d = [ 'test-record-456';
   }
 
   afterEach(async () => {
@@ -44,7 +44,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
   describe('CREATE Operations with LGPD Compliance', () => {
     it('should create patient AI record with data minimization', async () => {
-      const createRequest = {
+      const: createRequest = [ {
         operation: 'CREATE',
         entityType: 'ai_patient_record',
         data: {
@@ -75,7 +75,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: CRUD endpoint doesn't exist yet - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(201
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         recordId: expect.any(String),
         operation: 'CREATE',
@@ -105,7 +105,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
     }
 
     it('should enforce consent requirements during creation', async () => {
-      const createWithoutConsentRequest = {
+      const: createWithoutConsentRequest = [ {
         operation: 'CREATE',
         entityType: 'ai_patient_record',
         data: {
@@ -122,7 +122,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Consent validation not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +133,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(400
 
-      const error = await response.json(
+      const: error = [ await response.json(
       expect(error).toMatchObject({
         error: 'LGPD_CONSENT_REQUIRED',
         message: expect.stringContaining('consentimento'),
@@ -145,7 +145,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
   describe('READ Operations with Access Control', () => {
     it('should read patient data with audit logging', async () => {
-      const readRequest = {
+      const: readRequest = [ {
         operation: 'READ',
         entityType: 'ai_patient_record',
         filters: {
@@ -161,7 +161,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: READ with audit logging not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -172,7 +172,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         data: expect.any(Object),
         accessLog: {
@@ -190,7 +190,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
     }
 
     it('should return pseudonymized data when requested', async () => {
-      const pseudonymizedReadRequest = {
+      const: pseudonymizedReadRequest = [ {
         operation: 'READ',
         entityType: 'ai_patient_record',
         filters: {
@@ -205,7 +205,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Pseudonymization not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -216,7 +216,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         data: {
           pseudonymId: expect.any(String),
@@ -236,7 +236,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
   describe('UPDATE Operations with Versioning', () => {
     it('should update record with version control and consent validation', async () => {
-      const updateRequest = {
+      const: updateRequest = [ {
         operation: 'UPDATE',
         entityType: 'ai_patient_record',
         filters: {
@@ -258,7 +258,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Versioned updates not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -269,7 +269,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         recordId,
         operation: 'UPDATE',
@@ -290,7 +290,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
     }
 
     it('should reject updates without valid consent', async () => {
-      const invalidUpdateRequest = {
+      const: invalidUpdateRequest = [ {
         operation: 'UPDATE',
         entityType: 'ai_patient_record',
         filters: {
@@ -304,7 +304,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Consent validation for updates not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -315,7 +315,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(403
 
-      const error = await response.json(
+      const: error = [ await response.json(
       expect(error).toMatchObject({
         error: 'LGPD_CONSENT_INVALID',
         message: expect.stringContaining('consentimento'),
@@ -327,7 +327,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
   describe('DELETE Operations with Right to Erasure', () => {
     it('should implement LGPD right to erasure (Art. 18, V)', async () => {
-      const deleteRequest = {
+      const: deleteRequest = [ {
         operation: 'DELETE',
         entityType: 'ai_patient_record',
         filters: {
@@ -347,7 +347,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Right to erasure not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -358,7 +358,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         recordId,
         operation: 'DELETE',
@@ -378,7 +378,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
     }
 
     it('should handle selective deletion with data preservation requirements', async () => {
-      const selectiveDeleteRequest = {
+      const: selectiveDeleteRequest = [ {
         operation: 'DELETE',
         entityType: 'ai_patient_record',
         filters: {
@@ -397,7 +397,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Selective deletion not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -408,7 +408,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         recordId,
         operation: 'SELECTIVE_DELETE',
@@ -425,7 +425,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
   describe('Cross-operation LGPD Compliance', () => {
     it('should maintain complete audit trail across all operations', async () => {
-      const auditRequest = {
+      const: auditRequest = [ {
         operation: 'AUDIT_TRAIL',
         entityType: 'ai_patient_record',
         filters: {
@@ -438,7 +438,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Comprehensive audit trail not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
+      const: response = [ await fetch('/api/v1/ai/crud', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -449,7 +449,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         recordId,
         auditTrail: expect.arrayContaining([

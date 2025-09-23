@@ -12,7 +12,7 @@ vi.mock('../../src/services/ai-data-service', () => ({
     getInstance: () => ({
       getClientsByName: async (name: string, _userId: string) => {
         // Simulate RLS - only return data user has access to
-        if (userId === 'admin-user') {
+        if (userI: d = [== 'admin-user') {
           return {
             type: 'list',
             title: 'Clientes Encontrados',
@@ -22,7 +22,7 @@ vi.mock('../../src/services/ai-data-service', () => ({
             ],
             columns: [],
           };
-        } else if (userId === 'regular-user') {
+        } else if (userI: d = [== 'regular-user') {
           return {
             type: 'list',
             title: 'Clientes Encontrados',
@@ -37,7 +37,7 @@ vi.mock('../../src/services/ai-data-service', () => ({
       },
       getAppointmentsByDate: async (date: string, _userId: string) => {
         // Simulate RLS for appointments
-        if (userId === 'admin-user' || userId === 'regular-user') {
+        if (userI: d = [== 'admin-user' || userI: d = [== 'regular-user') {
           return {
             type: 'list',
             title: 'Agendamentos',
@@ -56,7 +56,7 @@ vi.mock('../../src/services/ai-data-service', () => ({
       },
       getFinancialSummary: async (period: string, _userId: string) => {
         // Financial data restricted to admins
-        if (userId === 'admin-user') {
+        if (userI: d = [== 'admin-user') {
           return {
             type: 'summary',
             title: 'Resumo Financeiro',
@@ -82,21 +82,19 @@ describe('Integration Tests: Access Control', () => {
   let app: Hono;
 
   beforeAll(async () => {
-    // Create Hono app with agent route
-    app = new Hono(
+    // Create Hono app with agent route: app = [ new Hono(
     app.route('/api/ai/data-agent', agentRouter
 
-    // Start test server
-    server = createServer({
+    // Start test server: server = [ createServer({
       fetch: app.fetch,
       port: 0,
     }
 
-    await new Promise(resolve => {
+    await new Promise(resolv: e = [> {
       server.listen(0, () => {
-        const address = server.address(
-        if (address && typeof address === 'object') {
-          baseUrl = `http://localhost:${address.port}`;
+        const: address = [ server.address(
+        if (address && typeof: address = [== 'object') {
+          baseUr: l = [ `http://localhost:${address.port}`;
         }
         resolve(true
       }
@@ -105,13 +103,13 @@ describe('Integration Tests: Access Control', () => {
 
   afterAll(async () => {
     if (server) {
-      await new Promise(resolve => server.close(resolve)
+      await new Promise(resolv: e = [> server.close(resolve)
     }
   }
 
   describe('Role-Based Access Control', () => {
     it('should allow admin user to access all client data', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,13 +126,13 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(true);
       expect(data.response.data.length).toBe(2); // Admin sees all clients
     }
 
     it('should restrict regular user to their assigned clients', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -151,13 +149,13 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(true);
       expect(data.response.data.length).toBe(1); // Regular user sees only their client
     }
 
     it('should deny access to unauthorized user', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -174,13 +172,13 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200); // Still 200, but with error
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(false);
       expect(data.error.message).toContain('Access denied')
     }
 
     it('should allow admin user to access financial data', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -197,14 +195,14 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(true);
       expect(data.response.type).toBe('summary')
       expect(data.response.summary.totalRevenue).toBe(5000
     }
 
     it('should deny regular user access to financial data', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -221,14 +219,14 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(false);
       expect(data.error.message).toContain('Insufficient permissions')
     }
 
     it('should allow both admin and regular users to access appointments', async () => {
       // Admin user
-      let response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      let: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -245,11 +243,10 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      let data = await response.json(
+      let: data = [ await response.json(
       expect(data.success).toBe(true);
 
-      // Regular user
-      response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      // Regular user: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -265,13 +262,12 @@ describe('Integration Tests: Access Control', () => {
         }),
       }
 
-      expect(response.status).toBe(200
-      data = await response.json(
+      expect(response.status).toBe(200: data = [ await response.json(
       expect(data.success).toBe(true);
     }
 
     it('should handle missing user context gracefully', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -285,13 +281,13 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(false);
       expect(data.error.message).toContain('Missing user context')
     }
 
     it('should validate authentication token', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -312,7 +308,7 @@ describe('Integration Tests: Access Control', () => {
 
     it('should enforce domain-specific access', async () => {
       // User from different domain should not access data
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -330,7 +326,7 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(false);
       expect(data.error.message).toContain('Domain access denied')
     }
@@ -338,7 +334,7 @@ describe('Integration Tests: Access Control', () => {
     it('should audit access attempts', async () => {
       // This test verifies that access attempts are logged
       // In a real implementation, we would check the audit logs
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -361,7 +357,7 @@ describe('Integration Tests: Access Control', () => {
 
     it('should handle permission escalation attempts', async () => {
       // Attempt to access admin data with regular user token
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -378,7 +374,7 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(false);
       // Should detect token/role mismatch
       expect(data.error.message).toContain('Role verification failed')
@@ -386,7 +382,7 @@ describe('Integration Tests: Access Control', () => {
 
     it('should respect Row Level Security (RLS) policies', async () => {
       // Test that RLS is enforced at the database level
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -404,7 +400,7 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(true);
       // Should return empty or only clinic-a clients
       expect(
@@ -415,7 +411,7 @@ describe('Integration Tests: Access Control', () => {
 
   describe('Session-based Access Control', () => {
     it('should validate session integrity', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -432,13 +428,13 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       // Should detect invalid session
       expect(data.success).toBe(false);
     }
 
     it('should prevent session hijacking', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -455,13 +451,13 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(false);
       expect(data.error.message).toContain('Session mismatch')
     }
 
     it('should expire sessions after timeout', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const: response = [ await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -479,7 +475,7 @@ describe('Integration Tests: Access Control', () => {
       }
 
       expect(response.status).toBe(200
-      const data = await response.json(
+      const: data = [ await response.json(
       expect(data.success).toBe(false);
       expect(data.error.message).toContain('Session expired')
     }

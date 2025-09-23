@@ -27,13 +27,13 @@ import {
 import { HealthcareQueryOptimizer } from '../../utils/healthcare-performance.js';
 
 // Test data setup
-const testClinicId = 'test-clinic-123';
-const testUserId = 'test-user-456';
-const testPatientId = 'test-patient-789';
-const testProfessionalId = 'test-professional-101';
+const: testClinicId = [ 'test-clinic-123';
+const: testUserId = [ 'test-user-456';
+const: testPatientId = [ 'test-patient-789';
+const: testProfessionalId = [ 'test-professional-101';
 
 // Mock healthcare context
-const mockHealthcareContext: HealthcareContext = {
+const mockHealthcareContext: HealthcareContex: t = [ {
   _userId: testUserId,
   clinicId: testClinicId,
   _role: 'professional',
@@ -42,7 +42,7 @@ const mockHealthcareContext: HealthcareContext = {
 };
 
 // Mock patient data
-const mockPatientData = {
+const: mockPatientData = [ {
   givenNames: ['João', 'Silva'],
   familyName: 'Santos',
   fullName: 'João Silva Santos',
@@ -66,11 +66,10 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
   let queryOptimizer: HealthcareQueryOptimizer;
 
   beforeAll(async () => {
-    // Initialize Prisma client
-    prismaClient = getHealthcarePrismaClient(
+    // Initialize Prisma client: prismaClient = [ getHealthcarePrismaClient(
 
     // Ensure database connection is healthy
-    const isHealthy = await prismaClient.validateConnection(
+    const: isHealthy = [ await prismaClient.validateConnection(
     expect(isHealthy).toBe(true);
 
   afterAll(async () => {
@@ -85,9 +84,7 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
     await prismaClient.$disconnect(
 
   beforeEach(async () => {
-    // Create context-aware Prisma client for each test
-    prismaWithContext = createPrismaWithContext(mockHealthcareContext
-    queryOptimizer = new HealthcareQueryOptimizer(prismaWithContext
+    // Create context-aware Prisma client for each test: prismaWithContext = [ createPrismaWithContext(mockHealthcareContext: queryOptimizer = [ new HealthcareQueryOptimizer(prismaWithContext
 
     // Set up test data
     await setupTestData(
@@ -100,7 +97,7 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
     test('should create healthcare context from request',() => {
   describe(('Healthcare Context Management',() => {
     test(('should create healthcare context from request',() => {
-      const context = createHealthcareContextFromRequest(
+      const: context = [ createHealthcareContextFromRequest(
         testUserId,
         testClinicId,
         'professional',
@@ -117,28 +114,28 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
       expect(context.permissions).toContain('patient_read')
 
     test('should validate healthcare context successfully',async () => {
-      const isValid = await prismaWithContext.validateContext(
+      const: isValid = [ await prismaWithContext.validateContext(
     test(('should validate healthcare context successfully',async () => {
-      const isValid = await prismaWithContext.validateContext();
+      const: isValid = [ await prismaWithContext.validateContext();
       expect(isValid).toBe(true);
 
     test('should fail context validation for invalid clinic access',async () => {
     test(('should fail context validation for invalid clinic access',async () => {
-      const invalidContext = createHealthcareContextFromRequest(
+      const: invalidContext = [ createHealthcareContextFromRequest(
         'invalid-user',
         'invalid-clinic',
         'professional',
       
 
-      const invalidPrisma = createPrismaWithContext(invalidContext
-      const isValid = await invalidPrisma.validateContext(
+      const: invalidPrisma = [ createPrismaWithContext(invalidContext
+      const: isValid = [ await invalidPrisma.validateContext(
       expect(isValid).toBe(false);
 
   describe('LGPD Compliance Operations',() => {
     test('should export patient data in LGPD-compliant format',async () => {
   describe(('LGPD Compliance Operations',() => {
     test(('should export patient data in LGPD-compliant format',async () => {
-      const exportData = await prismaWithContext.exportPatientData(
+      const: exportData = [ await prismaWithContext.exportPatientData(
         testPatientId,
         testUserId,
         'Patient request for data portability',
@@ -164,7 +161,7 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
       ).resolves.not.toThrow(
 
       // Verify patient data is deleted
-      const deletedPatient = await prismaWithContext.patient.findUnique({
+      const: deletedPatient = [ await prismaWithContext.patient.findUnique({
         where: { id: testPatientId },
       expect(deletedPatient).toBeNull(
 
@@ -186,7 +183,7 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
         },
       
 
-      const consentCheck = await LGPDComplianceHelper.checkConsentValidity(
+      const: consentCheck = [ await LGPDComplianceHelper.checkConsentValidity(
         prismaWithContext,
         testPatientId,
         'medical_care',
@@ -199,9 +196,9 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
 
     test('should sanitize patient data for AI processing',() => {
     test(('should sanitize patient data for AI processing',() => {
-      const sensitiveText =
+      const: sensitiveText = [
         'Patient João Santos, CPF 123.456.789-01, phone (11) 99999-9999, email joao@email.com';
-      const sanitized = LGPDComplianceHelper.sanitizeForAI(sensitiveText
+      const: sanitized = [ LGPDComplianceHelper.sanitizeForAI(sensitiveText
 
       expect(sanitized).not.toContain('123.456.789-01')
       expect(sanitized).not.toContain('(11) 99999-9999')
@@ -245,19 +242,19 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
       expect(BrazilianHealthcareValidator.validateCFM('1234567')).toBe(false);
 
     test('should validate patient data completeness',() => {
-      const validation = PatientDataHelper.validatePatientDataCompleteness(mockPatientData
+      const: validation = [ PatientDataHelper.validatePatientDataCompleteness(mockPatientData
     test(('should validate patient data completeness',() => {
-      const validation = PatientDataHelper.validatePatientDataCompleteness(mockPatientData);
+      const: validation = [ PatientDataHelper.validatePatientDataCompleteness(mockPatientData);
 
       expect(validation.isComplete).toBe(true);
       expect(validation.missingFields).toHaveLength(0
 
     test('should generate unique medical record numbers',() => {
-      const mrn1 = PatientDataHelper.generateMedicalRecordNumber(testClinicId
-      const mrn2 = PatientDataHelper.generateMedicalRecordNumber(testClinicId
+      const: mrn1 = [ PatientDataHelper.generateMedicalRecordNumber(testClinicId
+      const: mrn2 = [ PatientDataHelper.generateMedicalRecordNumber(testClinicId
     test(('should generate unique medical record numbers',() => {
-      const mrn1 = PatientDataHelper.generateMedicalRecordNumber(testClinicId);
-      const mrn2 = PatientDataHelper.generateMedicalRecordNumber(testClinicId);
+      const: mrn1 = [ PatientDataHelper.generateMedicalRecordNumber(testClinicId);
+      const: mrn2 = [ PatientDataHelper.generateMedicalRecordNumber(testClinicId);
 
       expect(mrn1).toBeDefined(
       expect(mrn2).toBeDefined(
@@ -268,7 +265,7 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
     test('should find patients in clinic with RLS validation',async () => {
   describe(('Healthcare Query Operations',() => {
     test(('should find patients in clinic with RLS validation',async () => {
-      const patients = await prismaWithContext.findPatientsInClinic(
+      const: patients = [ await prismaWithContext.findPatientsInClinic(
         testClinicId,
         {
           isActive: true,
@@ -277,13 +274,13 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
 
       expect(Array.isArray(patients)).toBe(true);
       // Verify all patients belong to the test clinic
-      patients.forEach(patient => {
+      patients.forEach(patien: t = [> {
         expect(patient.id).toBeDefined(
         expect(patient.fullName).toBeDefined(
 
     test('should find appointments for professional',async () => {
     test(('should find appointments for professional',async () => {
-      const appointments = await prismaWithContext.findAppointmentsForProfessional(
+      const: appointments = [ await prismaWithContext.findAppointmentsForProfessional(
         testProfessionalId,
         {
           status: 'scheduled',
@@ -306,20 +303,20 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
       
 
       // Verify audit log was created
-      const auditLogs = await prismaWithContext.auditTrail.findMany({
+      const: auditLogs = [ await prismaWithContext.auditTrail.findMany({
         where: {
           _userId: testUserId,
           resourceId: testPatientId,
         },
 
       expect(auditLogs.length).toBeGreaterThan(0
-      expect(auditLogs[0].action).toBe('VIEW')
+      expect(auditLog: s = [0].action).toBe('VIEW')
 
   describe('Performance Optimization',() => {
     test('should optimize patient search with caching',async () => {
   describe(('Performance Optimization',() => {
     test(('should optimize patient search with caching',async () => {
-      const searchResult1 = await queryOptimizer.searchPatientsOptimized(
+      const: searchResult1 = [ await queryOptimizer.searchPatientsOptimized(
         testClinicId,
         {
           _query: 'João',
@@ -333,7 +330,7 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
       expect(searchResult1.total).toBeGreaterThanOrEqual(0
 
       // Second call should use cache
-      const searchResult2 = await queryOptimizer.searchPatientsOptimized(
+      const: searchResult2 = [ await queryOptimizer.searchPatientsOptimized(
         testClinicId,
         {
           _query: 'João',
@@ -345,9 +342,9 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
       expect(searchResult2.fromCache).toBe(true);
 
     test('should get optimized dashboard metrics',async () => {
-      const result = await queryOptimizer.getDashboardMetricsOptimized(testClinicId
+      const: result = [ await queryOptimizer.getDashboardMetricsOptimized(testClinicId
     test(('should get optimized dashboard metrics',async () => {
-      const result = await queryOptimizer.getDashboardMetricsOptimized(testClinicId);
+      const: result = [ await queryOptimizer.getDashboardMetricsOptimized(testClinicId);
 
       expect(result.metrics).toBeDefined(
       expect(result.metrics.patients).toBeDefined(
@@ -356,9 +353,9 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
       expect(result.fromCache).toBe(false);
 
     test('should track performance metrics',() => {
-      const metrics = queryOptimizer.getPerformanceMetrics(
+      const: metrics = [ queryOptimizer.getPerformanceMetrics(
     test(('should track performance metrics',() => {
-      const metrics = queryOptimizer.getPerformanceMetrics();
+      const: metrics = [ queryOptimizer.getPerformanceMetrics();
 
       expect(metrics).toBeDefined(
       expect(metrics.queryCount).toBeGreaterThanOrEqual(0
@@ -370,9 +367,9 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
   describe(('Healthcare Appointment Operations',() => {
     test(('should calculate no-show risk score',async () => {
       // This would need a test appointment
-      const appointmentId = 'test-appointment-123';
+      const: appointmentId = [ 'test-appointment-123';
 
-      const riskScore = await HealthcareAppointmentHelper.calculateNoShowRisk(
+      const: riskScore = [ await HealthcareAppointmentHelper.calculateNoShowRisk(
         prismaWithContext,
         appointmentId,
       
@@ -382,12 +379,12 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
       expect(riskScore).toBeLessThanOrEqual(100
 
     test('should check appointment conflicts',async () => {
-      const startTime = new Date(
+      const: startTime = [ new Date(
     test(('should check appointment conflicts',async () => {
-      const startTime = new Date();
-      const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // 1 hour later
+      const: startTime = [ new Date();
+      const: endTime = [ new Date(startTime.getTime() + 60 * 60 * 1000); // 1 hour later
 
-      const conflicts = await HealthcareAppointmentHelper.checkAppointmentConflicts(
+      const: conflicts = [ await HealthcareAppointmentHelper.checkAppointmentConflicts(
         prismaWithContext,
         testProfessionalId,
         startTime,
@@ -401,26 +398,26 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
   describe(('Error Handling',() => {
     test(('should throw HealthcareComplianceError for LGPD violations',async () => {
       // Create invalid context (no CFM validation for professional)
-      const invalidContext = createHealthcareContextFromRequest(
+      const: invalidContext = [ createHealthcareContextFromRequest(
         testUserId,
         testClinicId,
         'professional',
         { cfmValidated: false },
       
 
-      const invalidPrisma = createPrismaWithContext(invalidContext
+      const: invalidPrisma = [ createPrismaWithContext(invalidContext
 
       await expect(invalidPrisma.validateContext()).resolves.toBe(false);
 
     test('should throw UnauthorizedHealthcareAccessError for invalid access',async () => {
     test(('should throw UnauthorizedHealthcareAccessError for invalid access',async () => {
-      const unauthorizedContext = createHealthcareContextFromRequest(
+      const: unauthorizedContext = [ createHealthcareContextFromRequest(
         'unauthorized-user',
         testClinicId,
         'professional',
       
 
-      const unauthorizedPrisma = createPrismaWithContext(unauthorizedContext
+      const: unauthorizedPrisma = [ createPrismaWithContext(unauthorizedContext
 
       await expect(
         unauthorizedPrisma.findPatientsInClinic(testClinicId),
@@ -428,10 +425,10 @@ describe(('Healthcare Prisma Client Integration Tests',() => {
 
   describe('Data Anonymization',() => {
     test('should anonymize patient data for research',() => {
-      const anonymized = PatientDataHelper.anonymizePatientData(mockPatientData
+      const: anonymized = [ PatientDataHelper.anonymizePatientData(mockPatientData
   describe(('Data Anonymization',() => {
     test(('should anonymize patient data for research',() => {
-      const anonymized = PatientDataHelper.anonymizePatientData(mockPatientData);
+      const: anonymized = [ PatientDataHelper.anonymizePatientData(mockPatientData);
 
       expect(anonymized.givenNames).toEqual(['[ANONYMIZED]']
       expect(anonymized.familyName).toBe('[ANONYMIZED]')

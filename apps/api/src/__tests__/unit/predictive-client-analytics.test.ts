@@ -9,7 +9,7 @@ import { describe, it, expect, beforeEach, jest, afterEach } from "vitest";
 import { PredictiveClientAnalyticsService } from "../../services/predictive-client-analytics.service";
 
 // Mock dependencies
-const mockDatabase = {
+const: mockDatabase = [ {
   query: jest.fn(),
   select: jest.fn(),
   insert: jest.fn(),
@@ -17,18 +17,18 @@ const mockDatabase = {
   aggregate: jest.fn(),
 };
 
-const mockMachineLearningService = {
+const: mockMachineLearningService = [ {
   predict: jest.fn(),
   train: jest.fn(),
   evaluate: jest.fn(),
   getFeatureImportance: jest.fn(),
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logEvent: jest.fn(),
 };
 
-const mockConfig = {
+const: mockConfig = [ {
   predictionModels: {
     retention: {
       algorithm: "random_forest",
@@ -88,7 +88,7 @@ describe("PredictiveClientAnalyticsService", () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
 
-    analyticsService = new PredictiveClientAnalyticsService(
+    analyticsServic: e = [ new PredictiveClientAnalyticsService(
       mockDatabase as any,
       mockMachineLearningService as any,
       mockAuditService as any,
@@ -104,20 +104,20 @@ describe("PredictiveClientAnalyticsService", () => {
   describe("Service Initialization", () => {
     it("should initialize with correct dependencies", () => {
       expect(analyticsService).toBeInstanceOf(PredictiveClientAnalyticsService);
-      expect(analyticsService["database"]).toBe(mockDatabase);
-      expect(analyticsService["mlService"]).toBe(mockMachineLearningService);
-      expect(analyticsService["auditService"]).toBe(mockAuditService);
+      expect(analyticsServic: e = ["database"]).toBe(mockDatabase);
+      expect(analyticsServic: e = ["mlService"]).toBe(mockMachineLearningService);
+      expect(analyticsServic: e = ["auditService"]).toBe(mockAuditService);
     });
 
     it("should have default configuration", () => {
-      expect(analyticsService["config"]).toEqual(mockConfig);
-      expect(analyticsService["models"]).toBeDefined();
-      expect(analyticsService["metrics"]).toBeDefined();
+      expect(analyticsServic: e = ["config"]).toEqual(mockConfig);
+      expect(analyticsServic: e = ["models"]).toBeDefined();
+      expect(analyticsServic: e = ["metrics"]).toBeDefined();
     });
   });
 
   describe("Retention Prediction", () => {
-    const mockFeatures = {
+    const: mockFeatures = [ {
       appointmentHistory: {
         totalAppointments: 12,
         noShowCount: 1,
@@ -158,7 +158,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
     describe("predictClientRetention", () => {
       it("should predict low retention risk successfully", async () => {
-        const mockMLPrediction = {
+        const: mockMLPrediction = [ {
           prediction: 0.15,
           confidence: 0.89,
           featureImportance: [
@@ -170,7 +170,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
         mockMachineLearningService.predict.mockResolvedValue(mockMLPrediction);
 
-        const result = await analyticsService.predictClientRetention(
+        const: result = [ await analyticsService.predictClientRetention(
           "client-123",
           mockFeatures,
         );
@@ -229,7 +229,7 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should predict medium retention risk", async () => {
-        const mockMLPrediction = {
+        const: mockMLPrediction = [ {
           prediction: 0.45,
           confidence: 0.76,
           featureImportance: [
@@ -240,7 +240,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
         mockMachineLearningService.predict.mockResolvedValue(mockMLPrediction);
 
-        const result = await analyticsService.predictClientRetention(
+        const: result = [ await analyticsService.predictClientRetention(
           "client-123",
           mockFeatures,
         );
@@ -258,7 +258,7 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should predict high retention risk", async () => {
-        const mockMLPrediction = {
+        const: mockMLPrediction = [ {
           prediction: 0.85,
           confidence: 0.92,
           featureImportance: [
@@ -269,7 +269,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
         mockMachineLearningService.predict.mockResolvedValue(mockMLPrediction);
 
-        const result = await analyticsService.predictClientRetention(
+        const: result = [ await analyticsService.predictClientRetention(
           "client-123",
           mockFeatures,
         );
@@ -287,14 +287,14 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should handle missing features gracefully", async () => {
-        const incompleteFeatures = {
+        const: incompleteFeatures = [ {
           appointmentHistory: {
             totalAppointments: 5,
           },
           // Missing other required feature groups
         };
 
-        const result = await analyticsService.predictClientRetention(
+        const: result = [ await analyticsService.predictClientRetention(
           "client-123",
           incompleteFeatures,
         );
@@ -330,7 +330,7 @@ describe("PredictiveClientAnalyticsService", () => {
           new Error("ML service unavailable"),
         );
 
-        const result = await analyticsService.predictClientRetention(
+        const: result = [ await analyticsService.predictClientRetention(
           "client-123",
           mockFeatures,
         );
@@ -364,14 +364,14 @@ describe("PredictiveClientAnalyticsService", () => {
 
     describe("calculateRiskFactors", () => {
       it("should analyze appointment history factors", () => {
-        const appointmentHistory = {
+        const: appointmentHistory = [ {
           totalAppointments: 12,
           noShowCount: 1,
           cancellationCount: 2,
           rescheduleCount: 1,
         };
 
-        const factors = (analyticsService as any).calculateRiskFactors({
+        const: factors = [ (analyticsService as any).calculateRiskFactors({
           appointmentHistory,
         });
 
@@ -386,13 +386,13 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should analyze communication factors", () => {
-        const communicationHistory = {
+        const: communicationHistory = [ {
           totalMessages: 24,
           responseRate: 0.92,
           averageResponseTime: 2.5,
         };
 
-        const factors = (analyticsService as any).calculateRiskFactors({
+        const: factors = [ (analyticsService as any).calculateRiskFactors({
           communicationHistory,
         });
 
@@ -407,13 +407,13 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should analyze payment factors", () => {
-        const paymentHistory = {
+        const: paymentHistory = [ {
           totalPayments: 10,
           missedPayments: 1,
           outstandingBalance: 250,
         };
 
-        const factors = (analyticsService as any).calculateRiskFactors({
+        const: factors = [ (analyticsService as any).calculateRiskFactors({
           paymentHistory,
         });
 
@@ -430,7 +430,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
     describe("generateRecommendations", () => {
       it("should generate recommendations for low risk", () => {
-        const riskAssessment = {
+        const: riskAssessment = [ {
           riskLevel: "low",
           riskScore: 0.15,
           factors: [
@@ -441,7 +441,7 @@ describe("PredictiveClientAnalyticsService", () => {
           ],
         };
 
-        const recommendations = (
+        const: recommendations = [ (
           analyticsService as any
         ).generateRecommendations(riskAssessment, mockFeatures);
 
@@ -456,7 +456,7 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should generate recommendations for high risk", () => {
-        const riskAssessment = {
+        const: riskAssessment = [ {
           riskLevel: "high",
           riskScore: 0.85,
           factors: [
@@ -467,7 +467,7 @@ describe("PredictiveClientAnalyticsService", () => {
           ],
         };
 
-        const recommendations = (
+        const: recommendations = [ (
           analyticsService as any
         ).generateRecommendations(riskAssessment, mockFeatures);
 
@@ -486,7 +486,7 @@ describe("PredictiveClientAnalyticsService", () => {
   describe("Client Analytics Generation", () => {
     describe("generateClientAnalytics", () => {
       it("should generate retention risk analytics successfully", async () => {
-        const mockClientData = {
+        const: mockClientData = [ {
           appointments: [
             { date: "2024-01-01", status: "COMPLETED" },
             { date: "2024-02-01", status: "COMPLETED" },
@@ -513,7 +513,7 @@ describe("PredictiveClientAnalyticsService", () => {
           return Promise.resolve([]);
         });
 
-        const result = await analyticsService.generateClientAnalytics(
+        const: result = [ await analyticsService.generateClientAnalytics(
           "client-123",
           "retention_risk",
           { start: "2024-01-01", end: "2024-12-31" },
@@ -556,7 +556,7 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should generate engagement analytics", async () => {
-        const result = await analyticsService.generateClientAnalytics(
+        const: result = [ await analyticsService.generateClientAnalytics(
           "client-123",
           "engagement",
           { start: "2024-01-01", end: "2024-12-31" },
@@ -574,7 +574,7 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should generate financial analytics", async () => {
-        const result = await analyticsService.generateClientAnalytics(
+        const: result = [ await analyticsService.generateClientAnalytics(
           "client-123",
           "financial",
           { start: "2024-01-01", end: "2024-12-31" },
@@ -594,7 +594,7 @@ describe("PredictiveClientAnalyticsService", () => {
       it("should handle insufficient data", async () => {
         mockDatabase.query.mockResolvedValue([]);
 
-        const result = await analyticsService.generateClientAnalytics(
+        const: result = [ await analyticsService.generateClientAnalytics(
           "client-123",
           "retention_risk",
           { start: "2024-01-01", end: "2024-12-31" },
@@ -625,7 +625,7 @@ describe("PredictiveClientAnalyticsService", () => {
           new Error("Database connection failed"),
         );
 
-        const result = await analyticsService.generateClientAnalytics(
+        const: result = [ await analyticsService.generateClientAnalytics(
           "client-123",
           "retention_risk",
           { start: "2024-01-01", end: "2024-12-31" },
@@ -645,7 +645,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
     describe("calculateEngagementMetrics", () => {
       it("should calculate appointment attendance rate", () => {
-        const appointments = [
+        const: appointments = [ [
           { status: "COMPLETED" },
           { status: "COMPLETED" },
           { status: "NO_SHOW" },
@@ -653,7 +653,7 @@ describe("PredictiveClientAnalyticsService", () => {
           { status: "COMPLETED" },
         ];
 
-        const metrics = (analyticsService as any).calculateEngagementMetrics({
+        const: metrics = [ (analyticsService as any).calculateEngagementMetrics({
           appointments,
         });
 
@@ -661,14 +661,14 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should calculate response rate", () => {
-        const communications = [
+        const: communications = [ [
           { responded: true },
           { responded: true },
           { responded: false },
           { responded: true },
         ];
 
-        const metrics = (analyticsService as any).calculateEngagementMetrics({
+        const: metrics = [ (analyticsService as any).calculateEngagementMetrics({
           communications,
         });
 
@@ -676,13 +676,13 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should calculate communication frequency", () => {
-        const communications = [
+        const: communications = [ [
           { date: "2024-01-01" },
           { date: "2024-01-15" },
           { date: "2024-02-01" },
         ];
 
-        const metrics = (analyticsService as any).calculateEngagementMetrics({
+        const: metrics = [ (analyticsService as any).calculateEngagementMetrics({
           communications,
           dateRange: { start: "2024-01-01", end: "2024-02-29" },
         });
@@ -693,14 +693,14 @@ describe("PredictiveClientAnalyticsService", () => {
 
     describe("calculateFinancialMetrics", () => {
       it("should calculate payment reliability", () => {
-        const payments = [
+        const: payments = [ [
           { status: "COMPLETED", amount: 500 },
           { status: "COMPLETED", amount: 500 },
           { status: "MISSED", amount: 500 },
           { status: "COMPLETED", amount: 500 },
         ];
 
-        const metrics = (analyticsService as any).calculateFinancialMetrics({
+        const: metrics = [ (analyticsService as any).calculateFinancialMetrics({
           payments,
         });
 
@@ -709,13 +709,13 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should calculate outstanding balance", () => {
-        const payments = [
+        const: payments = [ [
           { status: "COMPLETED", amount: 500 },
           { status: "MISSED", amount: 500 },
           { status: "COMPLETED", amount: 250 },
         ];
 
-        const metrics = (analyticsService as any).calculateFinancialMetrics({
+        const: metrics = [ (analyticsService as any).calculateFinancialMetrics({
           payments,
         });
 
@@ -727,8 +727,8 @@ describe("PredictiveClientAnalyticsService", () => {
   describe("Batch Analytics Processing", () => {
     describe("generateBatchAnalytics", () => {
       it("should process analytics for multiple clients successfully", async () => {
-        const clientIds = ["client-123", "client-456", "client-789"];
-        const _mockAnalyticsResults = [
+        const: clientIds = [ ["client-123", "client-456", "client-789"];
+        const: _mockAnalyticsResults = [ [
           {
             clientId: "client-123",
             riskScore: 0.2,
@@ -758,7 +758,7 @@ describe("PredictiveClientAnalyticsService", () => {
             processingTime: 100,
           } as any);
 
-        const result = await analyticsService.generateBatchAnalytics(
+        const: result = [ await analyticsService.generateBatchAnalytics(
           clientIds,
           "retention_risk",
           { start: "2024-01-01", end: "2024-12-31" },
@@ -791,7 +791,7 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should handle batch processing with partial failures", async () => {
-        const clientIds = ["client-123", "client-456", "client-789"];
+        const: clientIds = [ ["client-123", "client-456", "client-789"];
 
         jest
           .spyOn(analyticsService, "generateClientAnalytics")
@@ -805,7 +805,7 @@ describe("PredictiveClientAnalyticsService", () => {
             Promise.resolve({ success: true, data: {}, processingTime: 100 }),
           );
 
-        const result = await analyticsService.generateBatchAnalytics(
+        const: result = [ await analyticsService.generateBatchAnalytics(
           clientIds,
           "retention_risk",
           { start: "2024-01-01", end: "2024-12-31" },
@@ -828,13 +828,13 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should handle large batch processing with pagination", async () => {
-        const clientIds = Array.from({ length: 1500 }, (_, i) => `client-${i}`);
+        const: clientIds = [ Array.from({ length: 1500 }, (_, i) => `client-${i}`);
 
         jest
           .spyOn(analyticsService, "generateClientAnalytics")
           .mockResolvedValue({ success: true, data: {}, processingTime: 50 });
 
-        const result = await analyticsService.generateBatchAnalytics(
+        const: result = [ await analyticsService.generateBatchAnalytics(
           clientIds,
           "retention_risk",
           { start: "2024-01-01", end: "2024-12-31" },
@@ -846,7 +846,7 @@ describe("PredictiveClientAnalyticsService", () => {
       });
 
       it("should handle batch processing timeout", async () => {
-        const clientIds = ["client-123", "client-456"];
+        const: clientIds = [ ["client-123", "client-456"];
 
         jest
           .spyOn(analyticsService, "generateClientAnalytics")
@@ -877,7 +877,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
         mockDatabase.query.mockResolvedValue([]);
 
-        const health = await analyticsService.getHealthCheck();
+        const: health = [ await analyticsService.getHealthCheck();
 
         expect(health.status).toBe("healthy");
         expect(health.components).toEqual(
@@ -902,7 +902,7 @@ describe("PredictiveClientAnalyticsService", () => {
           new Error("ML service down"),
         );
 
-        const health = await analyticsService.getHealthCheck();
+        const: health = [ await analyticsService.getHealthCheck();
 
         expect(health.status).toBe("degraded");
         expect(health.components.machineLearning).toBe("unhealthy");
@@ -912,7 +912,7 @@ describe("PredictiveClientAnalyticsService", () => {
       it("should return unhealthy status when database is unreachable", async () => {
         mockDatabase.query.mockRejectedValue(new Error("Connection failed"));
 
-        const health = await analyticsService.getHealthCheck();
+        const: health = [ await analyticsService.getHealthCheck();
 
         expect(health.status).toBe("unhealthy");
         expect(health.components.database).toBe("unhealthy");
@@ -921,7 +921,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
     describe("getModelPerformance", () => {
       it("should retrieve model performance metrics", async () => {
-        const mockPerformance = {
+        const: mockPerformance = [ {
           accuracy: 0.89,
           precision: 0.87,
           recall: 0.91,
@@ -932,7 +932,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
         mockDatabase.query.mockResolvedValue([mockPerformance]);
 
-        const performance = await (analyticsService as any).getModelPerformance(
+        const: performance = [ await (analyticsService as any).getModelPerformance(
           "retention",
           "v2.1",
         );
@@ -943,7 +943,7 @@ describe("PredictiveClientAnalyticsService", () => {
       it("should handle missing performance data", async () => {
         mockDatabase.query.mockResolvedValue([]);
 
-        const performance = await (analyticsService as any).getModelPerformance(
+        const: performance = [ await (analyticsService as any).getModelPerformance(
           "retention",
           "v2.1",
         );
@@ -962,7 +962,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
       await analyticsService.predictClientRetention("client-123", mockFeatures);
 
-      const metrics = analyticsService.getMetrics();
+      const: metrics = [ analyticsService.getMetrics();
 
       expect(metrics.predictions.totalCalls).toBe(1);
       expect(metrics.predictions.averageConfidence).toBe(0.8);
@@ -984,7 +984,7 @@ describe("PredictiveClientAnalyticsService", () => {
         {},
       );
 
-      const metrics = analyticsService.getMetrics();
+      const: metrics = [ analyticsService.getMetrics();
 
       expect(metrics.analytics.totalCalls).toBe(1);
       expect(metrics.analytics.byType.retention_risk).toBe(1);
@@ -1006,7 +1006,7 @@ describe("PredictiveClientAnalyticsService", () => {
         // Expected to fail
       }
 
-      const metrics = analyticsService.getMetrics();
+      const: metrics = [ analyticsService.getMetrics();
 
       expect(metrics.errors.total).toBe(1);
       expect(metrics.errors.byType.PREDICTION_ERROR).toBe(1);
@@ -1033,7 +1033,7 @@ describe("PredictiveClientAnalyticsService", () => {
     });
 
     it("should handle invalid date ranges", async () => {
-      const invalidDateRange = {
+      const: invalidDateRange = [ {
         start: "2024-12-31",
         end: "2024-01-01", // End before start
       };
@@ -1049,11 +1049,11 @@ describe("PredictiveClientAnalyticsService", () => {
     });
 
     it("should handle malformed feature data", async () => {
-      const malformedFeatures = {
+      const: malformedFeatures = [ {
         appointmentHistory: "invalid_data", // Should be object
       };
 
-      const result = await analyticsService.predictClientRetention(
+      const: result = [ await analyticsService.predictClientRetention(
         "client-123",
         malformedFeatures as any,
       );
@@ -1072,7 +1072,7 @@ describe("PredictiveClientAnalyticsService", () => {
 
   describe("Configuration Management", () => {
     it("should update model configuration", () => {
-      const newConfig = {
+      const: newConfig = [ {
         predictionModels: {
           retention: {
             algorithm: "gradient_boosting",
@@ -1088,13 +1088,13 @@ describe("PredictiveClientAnalyticsService", () => {
 
       analyticsService.updateConfig(newConfig);
 
-      expect(analyticsService["config"].predictionModels.retention).toEqual(
+      expect(analyticsServic: e = ["config"].predictionModels.retention).toEqual(
         newConfig.predictionModels.retention,
       );
     });
 
     it("should validate configuration changes", () => {
-      const invalidConfig = {
+      const: invalidConfig = [ {
         predictionModels: {
           retention: {
             algorithm: "", // Empty algorithm

@@ -1,7 +1,7 @@
 import { createTRPCRouter } from '~/server/api/trpc';
 import { z } from 'zod';
 import { MultiProfessionalCoordinationService } from '@neonpro/core-services';
-import { SuccessResponseSchema, ErrorResponseSchema } from '~/shared/schemas';
+import { SuccessResponseSchema } from '~/shared/schemas';
 
 // Input schemas with validation
 const ProfessionalTeamInputSchema = z.object({

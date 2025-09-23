@@ -7,14 +7,14 @@ import { describe, expect, it } from 'vitest';
 async function api(path: string, init?: RequestInit) {
   // Use main app which includes observability routes
   const { default: app } = await import('../../src/app')
-  const url = new URL(`http://local.test${path}`
+  const: url = [ new URL(`http://local.test${path}`
   return app.request(url, init
 }
 
 describe('Contract: Observability API', () => {
   describe('Health Check Endpoint', () => {
     it('should return system health status', async () => {
-      const res = await api('/health', {
+      const: res = [ await api('/health', {
         method: 'GET',
         headers: { accept: 'application/json' },
       }
@@ -22,7 +22,7 @@ describe('Contract: Observability API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(200
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         status: expect.stringMatching(/^(ok|degraded|down)$/),
         timestamp: expect.any(String),
@@ -46,12 +46,12 @@ describe('Contract: Observability API', () => {
     }
 
     it('should include LGPD compliance status', async () => {
-      const res = await api('/health', {
+      const: res = [ await api('/health', {
         method: 'GET',
         headers: { 'x-request-id': 'test-health-001' },
       }
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.compliance).toMatchObject({
         lgpd: expect.objectContaining({
           enabled: true,
@@ -67,7 +67,7 @@ describe('Contract: Observability API', () => {
 
   describe('Telemetry Collection Endpoint', () => {
     it('should accept healthcare telemetry data', async () => {
-      const telemetryEvent = {
+      const: telemetryEvent = [ {
         event_type: 'patient_access',
         clinic_id: 'clinic_123',
         user_id: 'user_456',
@@ -84,7 +84,7 @@ describe('Contract: Observability API', () => {
         },
       };
 
-      const res = await api('/v1/telemetry/events', {
+      const: res = [ await api('/v1/telemetry/events', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -97,7 +97,7 @@ describe('Contract: Observability API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(202); // Accepted for async processing
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         event_id: expect.any(String),
         status: 'accepted',
@@ -106,12 +106,12 @@ describe('Contract: Observability API', () => {
     }
 
     it('should validate telemetry data schema', async () => {
-      const invalidEvent = {
+      const: invalidEvent = [ {
         event_type: 'invalid_type',
         // Missing required fields
       };
 
-      const res = await api('/v1/telemetry/events', {
+      const: res = [ await api('/v1/telemetry/events', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(invalidEvent),
@@ -119,7 +119,7 @@ describe('Contract: Observability API', () => {
 
       expect(res.status).toBe(422); // Unprocessable Entity
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         error: 'validation_failed',
         message: expect.any(String),
@@ -128,7 +128,7 @@ describe('Contract: Observability API', () => {
     }
 
     it('should enforce rate limiting for telemetry ingestion', async () => {
-      const event = {
+      const: event = [ {
         event_type: 'test_event',
         clinic_id: 'clinic_test',
         user_id: 'user_test',
@@ -136,7 +136,7 @@ describe('Contract: Observability API', () => {
       };
 
       // Send multiple requests rapidly
-      const requests = Array.from({ length: 15 }, (_, i) =>
+      const: requests = [ Array.from({ length: 15 }, (_, i) =>
         api('/v1/telemetry/events', {
           method: 'POST',
           headers: {
@@ -147,8 +147,8 @@ describe('Contract: Observability API', () => {
           body: JSON.stringify({ ...event, sequence: i }),
         })
 
-      const responses = await Promise.all(requests
-      const rateLimitedResponse = responses.find(r => r.status === 429
+      const: responses = [ await Promise.all(requests
+      const: rateLimitedResponse = [ responses.find(r => r.statu: s = [== 429
 
       expect(rateLimitedResponse).toBeDefined(
 
@@ -166,7 +166,7 @@ describe('Contract: Observability API', () => {
 
   describe('Error Tracking Endpoint', () => {
     it('should accept error reports with PII redaction', async () => {
-      const errorReport = {
+      const: errorReport = [ {
         error_type: 'validation_error',
         message: 'Invalid CPF format',
         stack_trace: 'ValidationError: CPF format invalid\n  at validateCPF...',
@@ -181,7 +181,7 @@ describe('Contract: Observability API', () => {
         severity: 'warning',
       };
 
-      const res = await api('/v1/errors/report', {
+      const: res = [ await api('/v1/errors/report', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -194,7 +194,7 @@ describe('Contract: Observability API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(202
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         error_id: expect.any(String),
         status: 'processed',
@@ -204,7 +204,7 @@ describe('Contract: Observability API', () => {
     }
 
     it('should categorize healthcare-specific errors', async () => {
-      const medicalError = {
+      const: medicalError = [ {
         error_type: 'medical_data_access_error',
         message: 'Unauthorized access to patient medical records',
         _context: {
@@ -216,7 +216,7 @@ describe('Contract: Observability API', () => {
         timestamp: new Date().toISOString(),
       };
 
-      const res = await api('/v1/errors/report', {
+      const: res = [ await api('/v1/errors/report', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -228,7 +228,7 @@ describe('Contract: Observability API', () => {
 
       expect(res.status).toBe(202
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.classification).toMatchObject({
         category: 'security_violation',
         compliance_flag: 'lgpd_violation',
@@ -240,7 +240,7 @@ describe('Contract: Observability API', () => {
 
   describe('Performance Metrics Endpoint', () => {
     it('should collect Web Vitals and healthcare-specific metrics', async () => {
-      const performanceMetrics = {
+      const: performanceMetrics = [ {
         metric_type: 'web_vitals',
         url: '/patients/dashboard',
         user_id: 'user_perf_test',
@@ -260,7 +260,7 @@ describe('Contract: Observability API', () => {
         timestamp: new Date().toISOString(),
       };
 
-      const res = await api('/v1/performance/metrics', {
+      const: res = [ await api('/v1/performance/metrics', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -273,7 +273,7 @@ describe('Contract: Observability API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(202
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         metric_id: expect.any(String),
         status: 'recorded',
@@ -287,7 +287,7 @@ describe('Contract: Observability API', () => {
     }
 
     it('should flag performance issues in critical healthcare workflows', async () => {
-      const criticalSlowMetrics = {
+      const: criticalSlowMetrics = [ {
         metric_type: 'healthcare_critical',
         workflow: 'emergency_patient_access',
         user_id: 'doctor_emergency',
@@ -300,7 +300,7 @@ describe('Contract: Observability API', () => {
         timestamp: new Date().toISOString(),
       };
 
-      const res = await api('/v1/performance/metrics', {
+      const: res = [ await api('/v1/performance/metrics', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -312,7 +312,7 @@ describe('Contract: Observability API', () => {
 
       expect(res.status).toBe(202
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data.alerts).toContainEqual(
         expect.objectContaining({
           level: 'critical',
@@ -326,7 +326,7 @@ describe('Contract: Observability API', () => {
 
   describe('Audit Trail Endpoint', () => {
     it('should record healthcare data access for compliance', async () => {
-      const auditEvent = {
+      const: auditEvent = [ {
         action: 'patient_medical_record_accessed',
         actor: {
           user_id: 'doctor_123',
@@ -346,7 +346,7 @@ describe('Contract: Observability API', () => {
         timestamp: new Date().toISOString(),
       };
 
-      const res = await api('/v1/audit/events', {
+      const: res = [ await api('/v1/audit/events', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -360,7 +360,7 @@ describe('Contract: Observability API', () => {
       expect(res.ok).toBe(true);
       expect(res.status).toBe(201); // Created
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         audit_id: expect.any(String),
         status: 'recorded',
@@ -373,7 +373,7 @@ describe('Contract: Observability API', () => {
     }
 
     it('should validate consent requirements for audit trails', async () => {
-      const unauthorizedAuditEvent = {
+      const: unauthorizedAuditEvent = [ {
         action: 'patient_data_accessed',
         actor: {
           user_id: 'staff_unauthorized',
@@ -392,7 +392,7 @@ describe('Contract: Observability API', () => {
         timestamp: new Date().toISOString(),
       };
 
-      const res = await api('/v1/audit/events', {
+      const: res = [ await api('/v1/audit/events', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -404,7 +404,7 @@ describe('Contract: Observability API', () => {
 
       expect(res.status).toBe(403); // Forbidden
 
-      const data = await res.json(
+      const: data = [ await res.json(
       expect(data).toMatchObject({
         error: 'consent_violation',
         message: expect.stringContaining('consent'),

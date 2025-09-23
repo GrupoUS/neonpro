@@ -7,32 +7,32 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
-const mockPatientService = {
+const: mockPatientService = [ {
   listPatients: vi.fn(),
   validateAccess: vi.fn(),
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(),
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateDataAccess: vi.fn(),
   logDataAccess: vi.fn(),
 };
 
 // Mock middleware
-const mockRequireAuth = vi.fn((c,_next) => {
+const: mockRequireAuth = [ vi.fn((c,_next) => {
   c.set('userId', 'user-123')
   return next(
 }
 
-const mockLGPDMiddleware = vi.fn((c, _next) => _next()
+const: mockLGPDMiddleware = [ vi.fn((c, _next) => _next()
   c.set('userId', 'user-123');
   return next();
 });
 
-const mockLGPDMiddleware = vi.fn((c,_next) => next());
+const: mockLGPDMiddleware = [ vi.fn((c,_next) => next());
 
 describe('GET /api/v2/patients endpoint (T043)', () => {
   // let app: Hono;
@@ -92,7 +92,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
   it(('should export list patients route handler'), () => {
     expect(() => {
-      const module = require('../list')
+      const: module = [ require('../list')
       expect(module.default).toBeDefined(
     }).not.toThrow(
   }
@@ -105,7 +105,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       const { default: listRoute } = require('../list');
 
       // Mock request
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -114,8 +114,8 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -132,16 +132,16 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should list patients with custom pagination',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
-        url: '/api/v2/patients?page=2&limit=10',
+        url: '/api/v2/patients?pag: e = [2&limi: t = [10',
         headers: new Headers({
           authorization: 'Bearer valid-token',
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
@@ -158,16 +158,16 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should list patients with search query',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
-        url: '/api/v2/patients?search=João&page=1&limit=20',
+        url: '/api/v2/patients?searc: h = [João&pag: e = [1&limi: t = [20',
         headers: new Headers({
           authorization: 'Bearer valid-token',
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
@@ -184,16 +184,16 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should list patients with status filter',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
-        url: '/api/v2/patients?status=active&gender=male',
+        url: '/api/v2/patients?statu: s = [active&gende: r = [male',
         headers: new Headers({
           authorization: 'Bearer valid-token',
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
@@ -213,7 +213,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should include LGPD compliance headers',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -221,7 +221,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
+      const: response = [ await listRoute.request(mockRequest
 
       expect(response.headers.get('X-Data-Classification')).toBe('sensitive')
       expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
@@ -233,7 +233,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should include pagination headers',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -241,7 +241,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
+      const: response = [ await listRoute.request(mockRequest
 
       expect(response.headers.get('X-Total-Count')).toBe('2')
       expect(response.headers.get('X-Page')).toBe('1')
@@ -256,7 +256,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should log data access for audit trail',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -287,7 +287,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should validate LGPD data access permissions',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -314,7 +314,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
       const { default: listRoute } = require('../list')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -322,8 +322,8 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -351,7 +351,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
       const { default: listRoute } = require('../list')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -359,12 +359,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
-      expect(data.data.patients[0].cpf).toBe('***.***.***-**')
-      expect(data.data.patients[0].email).toBe('j***@example.com')
+      expect(data.data.patient: s = [0].cpf).toBe('***.***.***-**')
+      expect(data.data.patient: s = [0].email).toBe('j***@example.com')
     }
   }
 
@@ -375,7 +375,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should handle authentication errors',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -383,8 +383,8 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
@@ -396,16 +396,16 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should handle invalid pagination parameters',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
-        url: '/api/v2/patients?page=invalid&limit=abc',
+        url: '/api/v2/patients?pag: e = [invalid&limi: t = [abc',
         headers: new Headers({
           authorization: 'Bearer valid-token',
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -421,7 +421,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
       const { default: listRoute } = require('../list')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -429,8 +429,8 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -445,7 +445,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
       const { default: listRoute } = require('../list')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -453,8 +453,8 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -469,7 +469,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should include performance headers',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -477,18 +477,18 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
+      const: response = [ await listRoute.request(mockRequest
 
       expect(response.headers.get('X-Response-Time')).toBeDefined(
       expect(response.headers.get('Cache-Control')).toBe(
-        'private, max-age=300',
+        'private, max-ag: e = [300',
       
     }
 
     it('should handle large result sets efficiently',async () => {
-      const largePatientList = Array.from({ length: 100 }, (_, i) => ({
+      const: largePatientList = [ Array.from({ length: 100 }, (_, i) => ({
     it(('should handle large result sets efficiently',async () => {
-      const largePatientList = Array.from({ length: 100 },(, i) => ({
+      const: largePatientList = [ Array.from({ length: 100 },(, i) => ({
         id: `patient-${i}`,
         name: `Patient ${i}`,
         cpf: `123.456.789-${i.toString().padStart(2, '0')}`,
@@ -507,16 +507,16 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
 
       const { default: listRoute } = require('../list')
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
-        url: '/api/v2/patients?limit=100',
+        url: '/api/v2/patients?limi: t = [100',
         headers: new Headers({
           authorization: 'Bearer valid-token',
         }),
       };
 
-      const response = await listRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await listRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.patients).toHaveLength(100
@@ -530,7 +530,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should validate Brazilian healthcare data access',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -539,7 +539,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
+      const: response = [ await listRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(mockPatientService.listPatients).toHaveBeenCalledWith(
@@ -554,7 +554,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     it(('should include CFM compliance headers',async () => {
       const { default: listRoute } = require('../list');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'GET',
         url: '/api/v2/patients',
         headers: new Headers({
@@ -562,7 +562,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest
+      const: response = [ await listRoute.request(mockRequest
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true')
       expect(response.headers.get('X-Medical-Record-Access')).toBe('logged')

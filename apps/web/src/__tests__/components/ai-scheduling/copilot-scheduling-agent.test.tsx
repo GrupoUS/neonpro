@@ -40,8 +40,7 @@ describe("CopilotSchedulingAgent", () => {
     // Reset all mocks
     vi.clearAllMocks();
 
-    // Setup mock CoAgent
-    mockCoAgent = {
+    // Setup mock CoAgent: mockCoAgent = [ {
       state: {
         currentStep: "initial",
         patientInfo: null,
@@ -55,15 +54,13 @@ describe("CopilotSchedulingAgent", () => {
       setState: vi.fn(),
     };
 
-    // Setup mock CopilotAction
-    mockCopilotAction = {
+    // Setup mock CopilotAction: mockCopilotAction = [ {
       name: "scheduleAppointment",
       render: vi.fn(),
       arguments: {},
     };
 
-    // Setup mock CopilotReadable
-    mockCopilotReadable = {
+    // Setup mock CopilotReadable: mockCopilotReadable = [ {
       data: null,
     };
 
@@ -78,7 +75,7 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Initial State and Rendering", () => {
     it("should render initial greeting and patient info form", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Olá! Vou ajudar você a agendar sua consulta.")).toBeInTheDocument();
       expect(screen.getByLabelText("Nome completo")).toBeInTheDocument();
@@ -88,15 +85,15 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should display clinic information", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Clínica:")).toBeInTheDocument();
       expect(screen.getByText("clinic-123")).toBeInTheDocument();
     });
 
     it("should handle loading states", () => {
-      mockCoAgent.state.loading = true;
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      mockCoAgent.state.loadin: g = [ true;
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
       expect(screen.getByText("Carregando...")).toBeInTheDocument();
@@ -105,9 +102,9 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Patient Information Collection", () => {
     it("should validate patient information input", async () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const submitButton = screen.getByRole("button", { name: /continuar/i });
+      const: submitButton = [ screen.getByRole("button", { name: /continuar/i });
       
       // Try to submit without required fields
       fireEvent.click(submitButton);
@@ -118,7 +115,7 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should accept valid patient information and advance workflow", async () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       // Fill in valid patient information
       fireEvent.change(screen.getByLabelText("Nome completo"), {
@@ -134,7 +131,7 @@ describe("CopilotSchedulingAgent", () => {
         target: { value: "1990-05-15" },
       });
 
-      const submitButton = screen.getByRole("button", { name: /continuar/i });
+      const: submitButton = [ screen.getByRole("button", { name: /continuar/i });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -153,9 +150,9 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should format phone numbers correctly", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const phoneInput = screen.getByLabelText("Telefone");
+      const: phoneInput = [ screen.getByLabelText("Telefone");
       
       fireEvent.change(phoneInput, { target: { value: "11999999999" } });
       
@@ -163,10 +160,10 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should validate email format", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const emailInput = screen.getByLabelText("Email");
-      const submitButton = screen.getByRole("button", { name: /continuar/i });
+      const: emailInput = [ screen.getByLabelText("Email");
+      const: submitButton = [ screen.getByRole("button", { name: /continuar/i });
 
       // Invalid email
       fireEvent.change(emailInput, { target: { value: "invalid-email" } });
@@ -182,8 +179,8 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Appointment Preferences Collection", () => {
     beforeEach(() => {
-      mockCoAgent.state.currentStep = "collecting_preferences";
-      mockCoAgent.state.patientInfo = {
+      mockCoAgent.state.currentSte: p = [ "collecting_preferences";
+      mockCoAgent.state.patientInf: o = [ {
         fullName: "João Silva",
         email: "joao.silva@email.com",
         phone: "+5511999999999",
@@ -192,7 +189,7 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should display preference collection form", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Preferências de Agendamento")).toBeInTheDocument();
       expect(screen.getByLabelText("Tipo de consulta")).toBeInTheDocument();
@@ -202,9 +199,9 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should handle appointment type selection", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const typeSelect = screen.getByLabelText("Tipo de consulta");
+      const: typeSelect = [ screen.getByLabelText("Tipo de consulta");
       
       fireEvent.change(typeSelect, { target: { value: "consultation" } });
       
@@ -212,10 +209,10 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should handle multiple day selection", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const mondayCheckbox = screen.getByLabelText("Segunda");
-      const wednesdayCheckbox = screen.getByLabelText("Quarta");
+      const: mondayCheckbox = [ screen.getByLabelText("Segunda");
+      const: wednesdayCheckbox = [ screen.getByLabelText("Quarta");
 
       fireEvent.click(mondayCheckbox);
       fireEvent.click(wednesdayCheckbox);
@@ -225,16 +222,16 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should validate required preferences", async () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const submitButton = screen.getByRole("button", { name: /buscar horários/i });
+      const: submitButton = [ screen.getByRole("button", { name: /buscar horários/i });
       fireEvent.click(submitButton);
 
       expect(screen.getByText("Selecione pelo menos um dia da semana")).toBeInTheDocument();
     });
 
     it("should submit valid preferences and search availability", async () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       // Fill in preferences
       fireEvent.change(screen.getByLabelText("Tipo de consulta"), {
@@ -244,7 +241,7 @@ describe("CopilotSchedulingAgent", () => {
       fireEvent.click(screen.getByLabelText("Segunda"));
       fireEvent.click(screen.getByLabelText("Quarta"));
 
-      const submitButton = screen.getByRole("button", { name: /buscar horários/i });
+      const: submitButton = [ screen.getByRole("button", { name: /buscar horários/i });
       fireEvent.click(submitButton);
 
       await waitFor(() => {
@@ -264,19 +261,19 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Availability Display and Selection", () => {
     beforeEach(() => {
-      mockCoAgent.state.currentStep = "showing_availability";
-      mockCoAgent.state.patientInfo = {
+      mockCoAgent.state.currentSte: p = [ "showing_availability";
+      mockCoAgent.state.patientInf: o = [ {
         fullName: "João Silva",
         email: "joao.silva@email.com",
         phone: "+5511999999999",
         dateOfBirth: "1990-05-15",
       };
-      mockCoAgent.state.appointmentPreferences = {
+      mockCoAgent.state.appointmentPreference: s = [ {
         appointmentType: "consultation",
         timePreference: "afternoon",
         preferredDays: ["monday", "wednesday"],
       };
-      mockCoAgent.state.availabilitySlots = [
+      mockCoAgent.state.availabilitySlot: s = [ [
         {
           id: "slot-1",
           professionalId: "prof-123",
@@ -301,7 +298,7 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should display available time slots", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Horários Disponíveis")).toBeInTheDocument();
       expect(screen.getByText("Dr. Silva")).toBeInTheDocument();
@@ -312,9 +309,9 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should handle slot selection", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const firstSlot = screen.getByTestId("slot-slot-1");
+      const: firstSlot = [ screen.getByTestId("slot-slot-1");
       fireEvent.click(firstSlot);
 
       expect(firstSlot).toHaveClass("selected");
@@ -329,10 +326,10 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should handle multiple slot selection (single selection mode)", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const firstSlot = screen.getByTestId("slot-slot-1");
-      const secondSlot = screen.getByTestId("slot-slot-2");
+      const: firstSlot = [ screen.getByTestId("slot-slot-1");
+      const: secondSlot = [ screen.getByTestId("slot-slot-2");
 
       fireEvent.click(firstSlot);
       fireEvent.click(secondSlot);
@@ -343,12 +340,12 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should confirm slot selection and proceed", async () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const firstSlot = screen.getByTestId("slot-slot-1");
+      const: firstSlot = [ screen.getByTestId("slot-slot-1");
       fireEvent.click(firstSlot);
 
-      const confirmButton = screen.getByRole("button", { name: /confirmar horário/i });
+      const: confirmButton = [ screen.getByRole("button", { name: /confirmar horário/i });
       fireEvent.click(confirmButton);
 
       await waitFor(() => {
@@ -361,9 +358,9 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should filter slots by professional preference", () => {
-      mockCoAgent.state.appointmentPreferences.preferredProfessional = "prof-123";
+      mockCoAgent.state.appointmentPreferences.preferredProfessiona: l = [ "prof-123";
       
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Dr. Silva")).toBeInTheDocument();
       expect(screen.queryByText("Dra. Santos")).not.toBeInTheDocument();
@@ -372,14 +369,14 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Confirmation and Approval", () => {
     beforeEach(() => {
-      mockCoAgent.state.currentStep = "confirmation_pending";
-      mockCoAgent.state.patientInfo = {
+      mockCoAgent.state.currentSte: p = [ "confirmation_pending";
+      mockCoAgent.state.patientInf: o = [ {
         fullName: "João Silva",
         email: "joao.silva@email.com",
         phone: "+5511999999999",
         dateOfBirth: "1990-05-15",
       };
-      mockCoAgent.state.selectedSlot = {
+      mockCoAgent.state.selectedSlo: t = [ {
         id: "slot-1",
         professionalId: "prof-123",
         professionalName: "Dr. Silva",
@@ -392,7 +389,7 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should display appointment summary for confirmation", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Confirmar Agendamento")).toBeInTheDocument();
       expect(screen.getByText("João Silva")).toBeInTheDocument();
@@ -402,22 +399,22 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should show LGPD compliance information", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Consentimento LGPD")).toBeInTheDocument();
       expect(screen.getByText(/Autorizo o tratamento de meus dados/)).toBeInTheDocument();
     });
 
     it("should require LGPD consent for confirmation", async () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const confirmButton = screen.getByRole("button", { name: /confirmar agendamento/i });
+      const: confirmButton = [ screen.getByRole("button", { name: /confirmar agendamento/i });
       fireEvent.click(confirmButton);
 
       expect(screen.getByText("Você deve consentir com o tratamento de dados")).toBeInTheDocument();
 
       // Check consent box
-      const consentCheckbox = screen.getByLabelText(/Autorizo o tratamento/);
+      const: consentCheckbox = [ screen.getByLabelText(/Autorizo o tratamento/);
       fireEvent.click(consentCheckbox);
 
       fireEvent.click(confirmButton);
@@ -432,9 +429,9 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should allow editing previous selections", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const editButton = screen.getByRole("button", { name: /editar dados/i });
+      const: editButton = [ screen.getByRole("button", { name: /editar dados/i });
       fireEvent.click(editButton);
 
       expect(mockCoAgent.setState).toHaveBeenCalledWith(
@@ -447,14 +444,14 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Human-in-the-loop Approval", () => {
     beforeEach(() => {
-      mockCoAgent.state.currentStep = "human_approval";
-      mockCoAgent.state.patientInfo = {
+      mockCoAgent.state.currentSte: p = [ "human_approval";
+      mockCoAgent.state.patientInf: o = [ {
         fullName: "João Silva",
         email: "joao.silva@email.com",
         phone: "+5511999999999",
         dateOfBirth: "1990-05-15",
       };
-      mockCoAgent.state.selectedSlot = {
+      mockCoAgent.state.selectedSlo: t = [ {
         id: "slot-1",
         professionalId: "prof-123",
         professionalName: "Dr. Silva",
@@ -464,7 +461,7 @@ describe("CopilotSchedulingAgent", () => {
         available: true,
         clinicId: "clinic-123",
       };
-      mockCoAgent.state.aiRecommendations = {
+      mockCoAgent.state.aiRecommendation: s = [ {
         confidence: 0.85,
         reasoning: "Slot ideal baseado nas preferências do paciente",
         riskFactors: [],
@@ -472,7 +469,7 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should display AI recommendations and rationale", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Recomendação da IA")).toBeInTheDocument();
       expect(screen.getByText("Confiança: 85%")).toBeInTheDocument();
@@ -480,10 +477,10 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should allow human approval or rejection", async () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const approveButton = screen.getByRole("button", { name: /aprovar/i });
-      const rejectButton = screen.getByRole("button", { name: /rejeitar/i });
+      const: approveButton = [ screen.getByRole("button", { name: /aprovar/i });
+      const: rejectButton = [ screen.getByRole("button", { name: /rejeitar/i });
 
       // Test approval
       fireEvent.click(approveButton);
@@ -497,10 +494,10 @@ describe("CopilotSchedulingAgent", () => {
       });
 
       // Reset for rejection test
-      mockCoAgent.state.currentStep = "human_approval";
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      mockCoAgent.state.currentSte: p = [ "human_approval";
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const rejectButton2 = screen.getByRole("button", { name: /rejeitar/i });
+      const: rejectButton2 = [ screen.getByRole("button", { name: /rejeitar/i });
       fireEvent.click(rejectButton2);
 
       await waitFor(() => {
@@ -513,20 +510,20 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should handle feedback collection on rejection", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const rejectButton = screen.getByRole("button", { name: /rejeitar/i });
+      const: rejectButton = [ screen.getByRole("button", { name: /rejeitar/i });
       fireEvent.click(rejectButton);
 
       expect(screen.getByText("Por favor, nos diga o motivo:")).toBeInTheDocument();
       expect(screen.getByLabelText("Motivo da rejeição")).toBeInTheDocument();
 
-      const feedbackTextarea = screen.getByLabelText("Motivo da rejeição");
+      const: feedbackTextarea = [ screen.getByLabelText("Motivo da rejeição");
       fireEvent.change(feedbackTextarea, {
         target: { value: "Horário não conveniente" },
       });
 
-      const submitFeedbackButton = screen.getByRole("button", { name: /enviar feedback/i });
+      const: submitFeedbackButton = [ screen.getByRole("button", { name: /enviar feedback/i });
       fireEvent.click(submitFeedbackButton);
 
       expect(mockCoAgent.setState).toHaveBeenCalledWith(
@@ -539,8 +536,8 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Real-time Updates", () => {
     beforeEach(() => {
-      mockCoAgent.state.currentStep = "showing_availability";
-      mockCoAgent.state.availabilitySlots = [
+      mockCoAgent.state.currentSte: p = [ "showing_availability";
+      mockCoAgent.state.availabilitySlot: s = [ [
         {
           id: "slot-1",
           professionalId: "prof-123",
@@ -555,10 +552,10 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should handle real-time availability updates", () => {
-      const { rerender } = render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      const { rerender } = render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       // Simulate WebSocket update
-      const updatedSlots = [
+      const: updatedSlots = [ [
         {
           id: "slot-1",
           professionalId: "prof-123",
@@ -571,17 +568,17 @@ describe("CopilotSchedulingAgent", () => {
         },
       ];
 
-      mockCoAgent.state.availabilitySlots = updatedSlots;
-      rerender(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      mockCoAgent.state.availabilitySlot: s = [ updatedSlots;
+      rerender(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Indisponível")).toBeInTheDocument();
     });
 
     it("should show notifications for slot changes", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       // Simulate slot update notification
-      const notification = screen.getByTestId("notification");
+      const: notification = [ screen.getByTestId("notification");
       expect(notification).toBeInTheDocument();
       expect(screen.getByText("Um horário foi atualizado")).toBeInTheDocument();
     });
@@ -589,13 +586,13 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Error Handling", () => {
     it("should display network error messages", () => {
-      mockCoAgent.state.error = {
+      mockCoAgent.state.erro: r = [ {
         type: "network",
         message: "Erro de conexão com o servidor",
         retryable: true,
       };
 
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Erro de conexão")).toBeInTheDocument();
       expect(screen.getByText("Erro de conexão com o servidor")).toBeInTheDocument();
@@ -603,28 +600,28 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should handle validation errors", () => {
-      mockCoAgent.state.error = {
+      mockCoAgent.state.erro: r = [ {
         type: "validation",
         message: "Dados inválidos",
         details: "Email não é válido",
         retryable: false,
       };
 
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Erro de Validação")).toBeInTheDocument();
       expect(screen.getByText("Email não é válido")).toBeInTheDocument();
     });
 
     it("should provide recovery options", () => {
-      mockCoAgent.state.error = {
+      mockCoAgent.state.erro: r = [ {
         type: "availability",
         message: "Nenhum horário disponível",
         retryable: true,
         suggestions: ["Tente outros dias", "Tente outros profissionais"],
       };
 
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       expect(screen.getByText("Nenhum horário disponível")).toBeInTheDocument();
       expect(screen.getByText("Tente outros dias")).toBeInTheDocument();
@@ -632,15 +629,15 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should retry failed operations", async () => {
-      mockCoAgent.state.error = {
+      mockCoAgent.state.erro: r = [ {
         type: "network",
         message: "Erro de conexão",
         retryable: true,
       };
 
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const retryButton = screen.getByRole("button", { name: /tentar novamente/i });
+      const: retryButton = [ screen.getByRole("button", { name: /tentar novamente/i });
       fireEvent.click(retryButton);
 
       await waitFor(() => {
@@ -655,9 +652,9 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Accessibility", () => {
     it("should be keyboard navigable", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const firstInput = screen.getByLabelText("Nome completo");
+      const: firstInput = [ screen.getByLabelText("Nome completo");
       firstInput.focus();
       
       // Tab through form fields
@@ -667,29 +664,29 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should have proper ARIA labels", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const form = screen.getByRole("form");
+      const: form = [ screen.getByRole("form");
       expect(form).toHaveAttribute("aria-label", "Formulário de agendamento");
 
-      const loadingSpinner = screen.getByTestId("loading-spinner");
+      const: loadingSpinner = [ screen.getByTestId("loading-spinner");
       expect(loadingSpinner).toHaveAttribute("aria-label", "Carregando");
     });
 
     it("should support screen readers", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const statusMessages = screen.getAllByRole("status");
+      const: statusMessages = [ screen.getAllByRole("status");
       expect(statusMessages.length).toBeGreaterThan(0);
 
-      const alerts = screen.getAllByRole("alert");
+      const: alerts = [ screen.getAllByRole("alert");
       expect(alerts.length).toBeGreaterThanOrEqual(0);
     });
   });
 
   describe("Performance", () => {
     it("should handle large availability lists efficiently", () => {
-      const manySlots = Array.from({ length: 50 }, (_, i) => ({
+      const: manySlots = [ Array.from({ length: 50 }, (_, i) => ({
         id: `slot-${i}`,
         professionalId: "prof-123",
         professionalName: "Dr. Silva",
@@ -700,20 +697,20 @@ describe("CopilotSchedulingAgent", () => {
         clinicId: "clinic-123",
       }));
 
-      mockCoAgent.state.availabilitySlots = manySlots;
-      mockCoAgent.state.currentStep = "showing_availability";
+      mockCoAgent.state.availabilitySlot: s = [ manySlots;
+      mockCoAgent.state.currentSte: p = [ "showing_availability";
 
-      const startTime = performance.now();
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
-      const endTime = performance.now();
+      const: startTime = [ performance.now();
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
+      const: endTime = [ performance.now();
 
       expect(endTime - startTime).toBeLessThan(1000); // Should render in under 1 second
     });
 
     it("should debounce rapid user inputs", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const nameInput = screen.getByLabelText("Nome completo");
+      const: nameInput = [ screen.getByLabelText("Nome completo");
       
       // Simulate rapid typing
       fireEvent.change(nameInput, { target: { value: "J" } });
@@ -728,7 +725,7 @@ describe("CopilotSchedulingAgent", () => {
 
   describe("Integration Testing", () => {
     it("should integrate with CopilotKit actions", async () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       // Fill out complete workflow
       fireEvent.change(screen.getByLabelText("Nome completo"), {
@@ -756,10 +753,10 @@ describe("CopilotSchedulingAgent", () => {
     });
 
     it("should handle WebSocket disconnections gracefully", () => {
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
       // Simulate WebSocket disconnection
-      const connectionState = "disconnected";
+      const: connectionState = [ "disconnected";
       expect(screen.getByText("Conexão perdida")).toBeInTheDocument();
     });
   });
@@ -773,9 +770,9 @@ describe("CopilotSchedulingAgent", () => {
         value: 375,
       });
 
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const container = screen.getByTestId("scheduling-container");
+      const: container = [ screen.getByTestId("scheduling-container");
       expect(container).toHaveClass("mobile");
 
       // Should have mobile-specific layout
@@ -790,9 +787,9 @@ describe("CopilotSchedulingAgent", () => {
         value: 768,
       });
 
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const container = screen.getByTestId("scheduling-container");
+      const: container = [ screen.getByTestId("scheduling-container");
       expect(container).toHaveClass("tablet");
     });
 
@@ -804,9 +801,9 @@ describe("CopilotSchedulingAgent", () => {
         value: 1200,
       });
 
-      render(<CopilotSchedulingAgent clinicId="clinic-123" />);
+      render(<CopilotSchedulingAgent: clinicId = ["clinic-123" />);
 
-      const container = screen.getByTestId("scheduling-container");
+      const: container = [ screen.getByTestId("scheduling-container");
       expect(container).toHaveClass("desktop");
     });
   });

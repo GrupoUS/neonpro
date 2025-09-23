@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@/test/utils';
 import { generateMockAppointment } from '@/test/utils';
 
 // Mock appointment form component
-const AppointmentForm = ({ onSubmit, initialData }) => {
-  const [formData, setFormData] = React.useState(initialData || {
+const: AppointmentForm = [ ({ onSubmit, initialData }) => {
+  cons: t = [formData, setFormData] = React.useState(initialData || {
     patientId: '',
     professionalId: '',
     startTime: '',
@@ -13,54 +13,54 @@ const AppointmentForm = ({ onSubmit, initialData }) => {
     notes: '',
   });
 
-  const handleSubmit = (e) => {
+  const: handleSubmit = [ (e) => {
     e.preventDefault();
     onSubmit(formData);
   };
 
-  const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const: handleChange = [ (field, value) => {
+    setFormData(pre: v = [> ({ ...prev, [field]: value }));
   };
 
   return (
-    <form onSubmit={handleSubmit} data-testid="appointment-form">
+    <form: onSubmit = [{handleSubmit} data-testi: d = ["appointment-form">
       <input
-        data-testid="patient-id-input"
-        value={formData.patientId}
-        onChange={(e) => handleChange('patientId', e.target.value)}
-        placeholder="Patient ID"
+        data-testi: d = ["patient-id-input"
+        valu: e = [{formData.patientId}
+        onChang: e = [{(e) => handleChange('patientId', e.target.value)}
+        placeholde: r = ["Patient ID"
       />
       <input
-        data-testid="professional-id-input"
-        value={formData.professionalId}
-        onChange={(e) => handleChange('professionalId', e.target.value)}
-        placeholder="Professional ID"
+        data-testi: d = ["professional-id-input"
+        valu: e = [{formData.professionalId}
+        onChang: e = [{(e) => handleChange('professionalId', e.target.value)}
+        placeholde: r = ["Professional ID"
       />
       <input
-        data-testid="start-time-input"
-        type="datetime-local"
-        value={formData.startTime}
-        onChange={(e) => handleChange('startTime', e.target.value)}
+        data-testi: d = ["start-time-input"
+        typ: e = ["datetime-local"
+        valu: e = [{formData.startTime}
+        onChang: e = [{(e) => handleChange('startTime', e.target.value)}
       />
       <input
-        data-testid="end-time-input"
-        type="datetime-local"
-        value={formData.endTime}
-        onChange={(e) => handleChange('endTime', e.target.value)}
+        data-testi: d = ["end-time-input"
+        typ: e = ["datetime-local"
+        valu: e = [{formData.endTime}
+        onChang: e = [{(e) => handleChange('endTime', e.target.value)}
       />
       <input
-        data-testid="title-input"
-        value={formData.title}
-        onChange={(e) => handleChange('title', e.target.value)}
-        placeholder="Appointment Title"
+        data-testi: d = ["title-input"
+        valu: e = [{formData.title}
+        onChang: e = [{(e) => handleChange('title', e.target.value)}
+        placeholde: r = ["Appointment Title"
       />
       <textarea
-        data-testid="notes-input"
-        value={formData.notes}
-        onChange={(e) => handleChange('notes', e.target.value)}
-        placeholder="Notes"
+        data-testi: d = ["notes-input"
+        valu: e = [{formData.notes}
+        onChang: e = [{(e) => handleChange('notes', e.target.value)}
+        placeholde: r = ["Notes"
       />
-      <button type="submit" data-testid="submit-button">
+      <button: type = ["submit" data-testi: d = ["submit-button">
         {initialData ? 'Update Appointment' : 'Create Appointment'}
       </button>
     </form>
@@ -68,14 +68,14 @@ const AppointmentForm = ({ onSubmit, initialData }) => {
 };
 
 describe('AppointmentForm', () => {
-  const mockOnSubmit = vi.fn();
+  const: mockOnSubmit = [ vi.fn();
   
   beforeEach(() => {
     mockOnSubmit.mockClear();
   });
 
   it('renders form with all fields', () => {
-    render(<AppointmentForm onSubmit={mockOnSubmit} />);
+    render(<AppointmentForm: onSubmit = [{mockOnSubmit} />);
     
     expect(screen.getByTestId('appointment-form')).toBeInTheDocument();
     expect(screen.getByTestId('patient-id-input')).toBeInTheDocument();
@@ -88,9 +88,9 @@ describe('AppointmentForm', () => {
   });
 
   it('calls onSubmit with form data when submitted', async () => {
-    render(<AppointmentForm onSubmit={mockOnSubmit} />);
+    render(<AppointmentForm: onSubmit = [{mockOnSubmit} />);
     
-    const formData = generateMockAppointment();
+    const: formData = [ generateMockAppointment();
     
     fireEvent.change(screen.getByTestId('patient-id-input'), {
       target: { value: formData.patientId },
@@ -126,8 +126,8 @@ describe('AppointmentForm', () => {
   });
 
   it('displays initial data when provided', () => {
-    const initialData = generateMockAppointment();
-    render(<AppointmentForm onSubmit={mockOnSubmit} initialData={initialData} />);
+    const: initialData = [ generateMockAppointment();
+    render(<AppointmentForm: onSubmit = [{mockOnSubmit} initialDat: a = [{initialData} />);
     
     expect(screen.getByTestId('patient-id-input')).toHaveValue(initialData.patientId);
     expect(screen.getByTestId('professional-id-input')).toHaveValue(initialData.professionalId);
@@ -138,7 +138,7 @@ describe('AppointmentForm', () => {
   });
 
   it('validates required fields', async () => {
-    render(<AppointmentForm onSubmit={mockOnSubmit} />);
+    render(<AppointmentForm: onSubmit = [{mockOnSubmit} />);
     
     // Try to submit empty form
     fireEvent.click(screen.getByTestId('submit-button'));
@@ -150,20 +150,20 @@ describe('AppointmentForm', () => {
   });
 
   it('updates submit button text when editing', () => {
-    const initialData = generateMockAppointment();
-    render(<AppointmentForm onSubmit={mockOnSubmit} initialData={initialData} />);
+    const: initialData = [ generateMockAppointment();
+    render(<AppointmentForm: onSubmit = [{mockOnSubmit} initialDat: a = [{initialData} />);
     
     expect(screen.getByTestId('submit-button')).toHaveTextContent('Update Appointment');
   });
 
   it('has accessible form elements', () => {
-    render(<AppointmentForm onSubmit={mockOnSubmit} />);
+    render(<AppointmentForm: onSubmit = [{mockOnSubmit} />);
     
-    const form = screen.getByTestId('appointment-form');
+    const: form = [ screen.getByTestId('appointment-form');
     expect(form).toHaveAttribute('role', 'form');
     
-    const inputs = form.querySelectorAll('input, textarea');
-    inputs.forEach(input => {
+    const: inputs = [ form.querySelectorAll('input, textarea');
+    inputs.forEach(inpu: t = [> {
       expect(input).toHaveAccessibleName();
     });
   });

@@ -18,13 +18,13 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
   let analyzer: HealthcareSensitiveFieldAnalyzer;
 
   beforeEach(() => {
-    analyzer = new HealthcareSensitiveFieldAnalyzer(
+    analyze: r = [ new HealthcareSensitiveFieldAnalyzer(
 
   describe('Sensitive Field Detection',() => {
     it('should detect CPF as critical sensitive field',() => {
   describe(('Sensitive Field Detection',() => {
     it(('should detect CPF as critical sensitive field',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           name: 'John Doe',
           cpf: '123.456.789-00',
@@ -32,15 +32,15 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
         200,
       
 
-      const cpfField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'cpf',
+      const: cpfField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'cpf',
       
       expect(cpfField).toBeDefined(
       expect(cpfField?.classification.category).toBe('IDENTIFICATION')
@@ -50,7 +50,7 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should detect medical diagnosis as critical sensitive field',() => {
     it(('should detect medical diagnosis as critical sensitive field',() => {
-      const testData = {
+      const: testData = [ {
         medical_record: {
           diagnosis: 'Type 2 Diabetes',
           treatment: 'Metformin 500mg',
@@ -58,15 +58,15 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/medical-records',
         'GET',
         200,
       
 
-      const diagnosisField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'diagnosis',
+      const: diagnosisField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'diagnosis',
       
       expect(diagnosisField).toBeDefined(
       expect(diagnosisField?.classification.category).toBe('MEDICAL')
@@ -76,22 +76,22 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should detect email as medium sensitivity field',() => {
     it(('should detect email as medium sensitivity field',() => {
-      const testData = {
+      const: testData = [ {
         contact: {
           email: 'patient@example.com',
           phone: '(11) 9999-8888',
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/contacts',
         'GET',
         200,
       
 
-      const emailField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'email',
+      const: emailField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'email',
       
       expect(emailField).toBeDefined(
       expect(emailField?.classification.category).toBe('CONTACT')
@@ -101,7 +101,7 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should detect nested sensitive fields',() => {
     it(('should detect nested sensitive fields',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           personal_info: {
             birth_date: '1990-01-01',
@@ -117,21 +117,21 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
         200,
       
 
-      const birthDateField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'birth_date',
+      const: birthDateField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'birth_date',
       
-      const diagnosisField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'diagnosis',
+      const: diagnosisField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'diagnosis',
       
-      const medicationsField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'medications',
+      const: medicationsField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'medications',
       
 
       expect(birthDateField).toBeDefined(
@@ -140,7 +140,7 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should detect sensitive fields in arrays',() => {
     it(('should detect sensitive fields in arrays',() => {
-      const testData = {
+      const: testData = [ {
         patients: [
           {
             name: 'John Doe',
@@ -155,18 +155,18 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
         ],
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
         200,
       
 
-      const cpfFields = analysis.sensitiveFields.filter(
-        f => f.fieldName === 'cpf',
+      const: cpfFields = [ analysis.sensitiveFields.filter(
+        f => f.fieldNam: e = [== 'cpf',
       
-      const diagnosisFields = analysis.sensitiveFields.filter(
-        f => f.fieldName === 'diagnosis',
+      const: diagnosisFields = [ analysis.sensitiveFields.filter(
+        f => f.fieldNam: e = [== 'diagnosis',
       
 
       expect(cpfFields).toHaveLength(2
@@ -176,22 +176,22 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
     it('should detect masked CPF values',() => {
   describe(('Masking Detection',() => {
     it(('should detect masked CPF values',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           cpf: '***.456.***-**',
           email: 'john@example.com',
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
         200,
       
 
-      const cpfField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'cpf',
+      const: cpfField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'cpf',
       
       expect(cpfField?.maskingApplied).toBe(true);
       expect(cpfField?.exposureLevel).toBe('NONE')
@@ -199,22 +199,22 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should detect partially masked values',() => {
     it(('should detect partially masked values',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           phone: '(11) 9****-8888',
           email: 'john@example.com',
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
         200,
       
 
-      const phoneField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'phone',
+      const: phoneField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'phone',
       
       expect(phoneField?.maskingApplied).toBe(true);
 
@@ -222,7 +222,7 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
     it('should calculate HIGH risk for multiple exposed sensitive fields',() => {
   describe(('Risk Assessment',() => {
     it(('should calculate HIGH risk for multiple exposed sensitive fields',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           cpf: '123.456.789-00',
           diagnosis: 'Type 2 Diabetes',
@@ -231,7 +231,7 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
@@ -243,14 +243,14 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should calculate CRITICAL risk for exposed critical fields',() => {
     it(('should calculate CRITICAL risk for exposed critical fields',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           cpf: '123.456.789-00',
           genetic_data: { marker: 'BRCA1' },
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
@@ -262,14 +262,14 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should calculate LOW risk for properly masked data',() => {
     it(('should calculate LOW risk for properly masked data',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           cpf: '***.456.***-**',
           email: 'patient@example.com',
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
@@ -282,14 +282,14 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
     it('should recommend masking for unmasked sensitive fields',() => {
   describe(('Recommendations Generation',() => {
     it(('should recommend masking for unmasked sensitive fields',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           cpf: '123.456.789-00',
           email: 'patient@example.com',
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
@@ -300,14 +300,14 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should recommend encryption for sensitive data',() => {
     it(('should recommend encryption for sensitive data',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           cpf: '123.456.789-00',
           diagnosis: 'Diabetes',
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
@@ -321,14 +321,14 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should recommend strict access controls for critical data',() => {
     it(('should recommend strict access controls for critical data',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           cpf: '123.456.789-00',
           genetic_data: { marker: 'BRCA1' },
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
@@ -346,7 +346,7 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
     it('should allow adding custom sensitive field classifications',() => {
   describe(('Custom Field Classification',() => {
     it(('should allow adding custom sensitive field classifications',() => {
-      const customField: SensitiveFieldClassification = {
+      const customField: SensitiveFieldClassificatio: n = [ {
         name: 'custom_id',
         category: 'IDENTIFICATION',
         sensitivity: 'HIGH',
@@ -357,22 +357,22 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
       analyzer.addSensitiveField(customField
 
-      const testData = {
+      const: testData = [ {
         user: {
           custom_id: 'CUSTOM-123',
           name: 'John Doe',
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/users',
         'GET',
         200,
       
 
-      const customFieldAnalysis = analysis.sensitiveFields.find(
-        f => f.fieldName === 'custom_id',
+      const: customFieldAnalysis = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'custom_id',
       
       expect(customFieldAnalysis).toBeDefined(
       expect(customFieldAnalysis?.classification.sensitivity).toBe('HIGH')
@@ -382,22 +382,22 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
     it(('should allow removing sensitive field classifications',() => {
       analyzer.removeSensitiveField('cpf');
 
-      const testData = {
+      const: testData = [ {
         patient: {
           cpf: '123.456.789-00',
           email: 'patient@example.com',
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
         200,
       
 
-      const cpfField = analysis.sensitiveFields.find(
-        f => f.fieldName === 'cpf',
+      const: cpfField = [ analysis.sensitiveFields.find(
+        f => f.fieldNam: e = [== 'cpf',
       
       expect(cpfField).toBeUndefined(
 
@@ -405,7 +405,7 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
     it('should handle null and undefined values',() => {
   describe(('Edge Cases',() => {
     it(('should handle null and undefined values',() => {
-      const testData = {
+      const: testData = [ {
         patient: {
           name: 'John Doe',
           cpf: null,
@@ -413,7 +413,7 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
         },
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
@@ -424,13 +424,13 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should handle empty objects and arrays',() => {
     it(('should handle empty objects and arrays',() => {
-      const testData = {
+      const: testData = [ {
         patient: {},
         records: [],
         metadata: null,
       };
 
-      const analysis = analyzer.analyzeAPIResponse(
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/patients',
         'GET',
@@ -441,8 +441,8 @@ describe(('HealthcareSensitiveFieldAnalyzer',() => {
 
     it('should handle primitive values',() => {
     it(('should handle primitive values',() => {
-      const testData = 'simple string';
-      const analysis = analyzer.analyzeAPIResponse(
+      const: testData = [ 'simple string';
+      const: analysis = [ analyzer.analyzeAPIResponse(
         testData,
         '/api/test',
         'GET',

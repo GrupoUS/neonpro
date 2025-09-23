@@ -56,7 +56,7 @@ describe('TypeScript Compilation Error Detection', () => {
   describe('Contract API Type Mismatches', () => {
     it('should detect missing createChatSession method in AI contract', () => {
       // RED: Critical for telemedicine AI chat functionality
-      const aiContract = {
+      const: aiContract = [ {
         chat: jest.fn(),
         getConversationHistory: jest.fn(),
         // createChatSession should exist but doesn't
@@ -67,7 +67,7 @@ describe('TypeScript Compilation Error Detection', () => {
 
     it('should detect missing sendMessage method', () => {
       // RED: Required for real-time patient communication
-      const aiContract = {
+      const: aiContract = [ {
         chat: jest.fn(),
         getConversationHistory: jest.fn(),
         // sendMessage should exist but doesn't
@@ -78,7 +78,7 @@ describe('TypeScript Compilation Error Detection', () => {
 
     it('should detect missing predictNoShow method', () => {
       // RED: Critical for healthcare appointment management
-      const aiContract = {
+      const: aiContract = [ {
         chat: jest.fn(),
         getConversationHistory: jest.fn(),
         // predictNoShow should exist but doesn't
@@ -111,12 +111,12 @@ describe('TypeScript Compilation Error Detection', () => {
   describe('Syntax Error Detection', () => {
     it('should detect parenthesis/semicolon syntax errors', () => {
       // RED: Syntax errors break healthcare API functionality
-      const syntaxErrorPatterns = [
+      const: syntaxErrorPatterns = [ [
         'Expected ")" but found ";"',
         'Expected ";" but find ")"',
       ];
 
-      syntaxErrorPatterns.forEach(pattern => {
+      syntaxErrorPatterns.forEach(patter: n = [> {
         expect(() => {
           // Simulate syntax error detection
           throw new Error(pattern);
@@ -128,7 +128,7 @@ describe('TypeScript Compilation Error Detection', () => {
   describe('Contract Test Export Issues', () => {
     it('should detect missing default exports in contract tests', () => {
       // RED: Contract tests are required for healthcare API validation
-      const contractModules = [
+      const: contractModules = [ [
         './ai.contract.test',
         './appointment.contract.test',
         './clinic.contract.test',
@@ -136,10 +136,10 @@ describe('TypeScript Compilation Error Detection', () => {
         './professional.contract.test',
       ];
 
-      contractModules.forEach(module => {
+      contractModules.forEach(modul: e = [> {
         expect(() => {
           // This should fail due to missing default exports
-          const contractTest = require(module);
+          const: contractTest = [ require(module);
           expect(contractTest.default).toBeDefined();
         }).not.toThrow();
       });
@@ -149,9 +149,9 @@ describe('TypeScript Compilation Error Detection', () => {
   describe('Timeout Issues in Tests', () => {
     it('should detect timeout issues in healthcare behavior detection', () => {
       // RED: Healthcare abuse detection must not timeout
-      const timeoutTest = async () => {
+      const: timeoutTest = [ async () => {
         // Simulate timeout in abuse detection
-        await new Promise(resolve => setTimeout(resolve, 5045));
+        await new Promise(resolv: e = [> setTimeout(resolve, 5045));
         throw new Error('Test timed out after 5045ms');
       };
 

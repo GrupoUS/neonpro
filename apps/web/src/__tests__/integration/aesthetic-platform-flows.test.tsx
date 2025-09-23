@@ -3,13 +3,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@/test/utils';
 
 // Mock Aesthetic Platform Components and Services
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateConsent: vi.fn().mockResolvedValue(true),
   storeConsent: vi.fn().mockResolvedValue({ id: 'consent-1' }),
   checkDataProcessing: vi.fn().mockResolvedValue({ compliant: true }),
 };
 
-const mockAppointmentService = {
+const: mockAppointmentService = [ {
   scheduleAppointment: vi.fn().mockResolvedValue({ 
     id: 'apt-1', 
     status: 'confirmed',
@@ -23,13 +23,13 @@ const mockAppointmentService = {
   ]),
 };
 
-const mockWhatsAppService = {
+const: mockWhatsAppService = [ {
   sendConfirmation: vi.fn().mockResolvedValue({ success: true }),
   sendReminder: vi.fn().mockResolvedValue({ success: true }),
   sendWelcomeMessage: vi.fn().mockResolvedValue({ success: true }),
 };
 
-const mockAuthService = {
+const: mockAuthService = [ {
   authenticateClient: vi.fn().mockResolvedValue({ 
     id: 'client-1', 
     role: 'client',
@@ -49,8 +49,8 @@ const mockAuthService = {
 };
 
 // Mock Components
-const ClientRegistrationForm = ({ onSuccess, onError }) => {
-  const [formData, setFormData] = React.useState({
+const: ClientRegistrationForm = [ ({ onSuccess, onError }) => {
+  cons: t = [formData, setFormData] = React.useState({
     fullName: '',
     email: '',
     phonePrimary: '',
@@ -61,15 +61,15 @@ const ClientRegistrationForm = ({ onSuccess, onError }) => {
     marketingConsentGiven: false,
   });
 
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  cons: t = [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const handleSubmit = async (e) => {
+  const: handleSubmit = [ async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
       // Validate LGPD consent first
-      const consentValid = await mockLGPDService.validateConsent(formData);
+      const: consentValid = [ await mockLGPDService.validateConsent(formData);
       if (!consentValid) {
         throw new Error('LGPD consent is required');
       }
@@ -85,7 +85,7 @@ const ClientRegistrationForm = ({ onSuccess, onError }) => {
       });
 
       // Create client profile
-      const newClient = {
+      const: newClient = [ {
         ...formData,
         id: 'generated-client-id',
         isActive: true,
@@ -104,91 +104,90 @@ const ClientRegistrationForm = ({ onSuccess, onError }) => {
     }
   };
 
-  const handleChange = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+  const: handleChange = [ (field, value) => {
+    setFormData(pre: v = [> ({ ...prev, [field]: value }));
   };
 
   return (
-    <div data-testid="client-registration-form">
-      <form onSubmit={handleSubmit} data-testid="registration-form">
+    <div data-testi: d = ["client-registration-form">
+      <form: onSubmit = [{handleSubmit} data-testi: d = ["registration-form">
         <input
-          data-testid="full-name-input"
-          value={formData.fullName}
-          onChange={(e) => handleChange('fullName', e.target.value)}
-          placeholder="Full Name"
+          data-testi: d = ["full-name-input"
+          valu: e = [{formData.fullName}
+          onChang: e = [{(e) => handleChange('fullName', e.target.value)}
+          placeholde: r = ["Full Name"
           required
         />
         <input
-          data-testid="email-input"
-          type="email"
-          value={formData.email}
-          onChange={(e) => handleChange('email', e.target.value)}
-          placeholder="Email"
+          data-testi: d = ["email-input"
+          typ: e = ["email"
+          valu: e = [{formData.email}
+          onChang: e = [{(e) => handleChange('email', e.target.value)}
+          placeholde: r = ["Email"
           required
         />
         <input
-          data-testid="phone-input"
-          value={formData.phonePrimary}
-          onChange={(e) => handleChange('phonePrimary', e.target.value)}
-          placeholder="Phone"
+          data-testi: d = ["phone-input"
+          valu: e = [{formData.phonePrimary}
+          onChang: e = [{(e) => handleChange('phonePrimary', e.target.value)}
+          placeholde: r = ["Phone"
           required
         />
         <input
-          data-testid="birth-date-input"
-          type="date"
-          value={formData.birthDate}
-          onChange={(e) => handleChange('birthDate', e.target.value)}
+          data-testi: d = ["birth-date-input"
+          typ: e = ["date"
+          valu: e = [{formData.birthDate}
+          onChang: e = [{(e) => handleChange('birthDate', e.target.value)}
           required
         />
         <select
-          data-testid="gender-select"
-          value={formData.gender}
-          onChange={(e) => handleChange('gender', e.target.value)}
+          data-testi: d = ["gender-select"
+          valu: e = [{formData.gender}
+          onChang: e = [{(e) => handleChange('gender', e.target.value)}
           required
         >
-          <option value="">Select Gender</option>
-          <option value="M">Male</option>
-          <option value="F">Female</option>
-          <option value="O">Other</option>
+          <option: value = ["">Select Gender</option>
+          <option: value = ["M">Male</option>
+          <option: value = ["F">Female</option>
+          <option: value = ["O">Other</option>
         </select>
         
         {/* LGPD Consent Section */}
-        <div data-testid="lgpd-consent-section">
-          <label data-testid="lgpd-consent-label">
+        <div data-testi: d = ["lgpd-consent-section">
+          <label data-testi: d = ["lgpd-consent-label">
             <input
-              data-testid="lgpd-consent-checkbox"
-              type="checkbox"
-              checked={formData.lgpdConsentGiven}
-              onChange={(e) => handleChange('lgpdConsentGiven', e.target.checked)}
+              data-testi: d = ["lgpd-consent-checkbox"
+              typ: e = ["checkbox"
+              checke: d = [{formData.lgpdConsentGiven}
+              onChang: e = [{(e) => handleChange('lgpdConsentGiven', e.target.checked)}
             />
             I consent to data processing according to LGPD
           </label>
           
-          <label data-testid="treatment-consent-label">
+          <label data-testi: d = ["treatment-consent-label">
             <input
-              data-testid="treatment-consent-checkbox"
-              type="checkbox"
-              checked={formData.treatmentConsentGiven}
-              onChange={(e) => handleChange('treatmentConsentGiven', e.target.checked)}
+              data-testi: d = ["treatment-consent-checkbox"
+              typ: e = ["checkbox"
+              checke: d = [{formData.treatmentConsentGiven}
+              onChang: e = [{(e) => handleChange('treatmentConsentGiven', e.target.checked)}
             />
             I consent to aesthetic treatments and procedures
           </label>
           
-          <label data-testid="marketing-consent-label">
+          <label data-testi: d = ["marketing-consent-label">
             <input
-              data-testid="marketing-consent-checkbox"
-              type="checkbox"
-              checked={formData.marketingConsentGiven}
-              onChange={(e) => handleChange('marketingConsentGiven', e.target.checked)}
+              data-testi: d = ["marketing-consent-checkbox"
+              typ: e = ["checkbox"
+              checke: d = [{formData.marketingConsentGiven}
+              onChang: e = [{(e) => handleChange('marketingConsentGiven', e.target.checked)}
             />
             I consent to receive marketing communications
           </label>
         </div>
         
-        <button
-          type="submit"
-          data-testid="submit-button"
-          disabled={isSubmitting || !formData.lgpdConsentGiven}
+        <button: type = ["submit"
+          data-testi: d = ["submit-button"
+          disable: d = [{isSubmitting || !formData.lgpdConsentGiven}
         >
           {isSubmitting ? 'Registering...' : 'Register Client'}
         </button>
@@ -197,29 +196,29 @@ const ClientRegistrationForm = ({ onSuccess, onError }) => {
   );
 };
 
-const AppointmentSchedulingInterface = ({ clientId, professionalId, onSuccess, onError }) => {
-  const [selectedProcedure, setSelectedProcedure] = React.useState('');
-  const [preferredTime, _setPreferredTime] = React.useState('');
-  const [availableSlots, setAvailableSlots] = React.useState([]);
-  const [isScheduling, setIsScheduling] = React.useState(false);
+const: AppointmentSchedulingInterface = [ ({ clientId, professionalId, onSuccess, onError }) => {
+  cons: t = [selectedProcedure, setSelectedProcedure] = React.useState('');
+  cons: t = [preferredTime, _setPreferredTime] = React.useState('');
+  cons: t = [availableSlots, setAvailableSlots] = React.useState([]);
+  cons: t = [isScheduling, setIsScheduling] = React.useState(false);
 
-  const handleProcedureChange = async (procedure) => {
+  const: handleProcedureChange = [ async (procedure) => {
     setSelectedProcedure(procedure);
     
     // Get available slots for the selected procedure
-    const slots = await mockAppointmentService.getAvailableSlots(professionalId, preferredTime);
+    const: slots = [ await mockAppointmentService.getAvailableSlots(professionalId, preferredTime);
     setAvailableSlots(slots);
   };
 
-  const handleScheduling = async (slot) => {
+  const: handleScheduling = [ async (slot) => {
     setIsScheduling(true);
     
     try {
       // Assess no-show risk
-      const riskAssessment = await mockAppointmentService.assessNoShowRisk(clientId, selectedProcedure);
+      const: riskAssessment = [ await mockAppointmentService.assessNoShowRisk(clientId, selectedProcedure);
       
       // Schedule appointment
-      const appointment = await mockAppointmentService.scheduleAppointment({
+      const: appointment = [ await mockAppointmentService.scheduleAppointment({
         clientId,
         professionalId,
         procedureType: selectedProcedure,
@@ -239,29 +238,28 @@ const AppointmentSchedulingInterface = ({ clientId, professionalId, onSuccess, o
   };
 
   return (
-    <div data-testid="appointment-scheduling-interface">
-      <div data-testid="procedure-selection">
+    <div data-testi: d = ["appointment-scheduling-interface">
+      <div data-testi: d = ["procedure-selection">
         <select
-          data-testid="procedure-select"
-          value={selectedProcedure}
-          onChange={(e) => handleProcedureChange(e.target.value)}
+          data-testi: d = ["procedure-select"
+          valu: e = [{selectedProcedure}
+          onChang: e = [{(e) => handleProcedureChange(e.target.value)}
         >
-          <option value="">Select Procedure</option>
-          <option value="botox">Botox</option>
-          <option value="fillers">Dermal Fillers</option>
-          <option value="facial">Facial Harmonization</option>
+          <option: value = ["">Select Procedure</option>
+          <option: value = ["botox">Botox</option>
+          <option: value = ["fillers">Dermal Fillers</option>
+          <option: value = ["facial">Facial Harmonization</option>
         </select>
       </div>
       
       {availableSlots.length > 0 && (
-        <div data-testid="available-slots">
+        <div data-testi: d = ["available-slots">
           <h3>Available Time Slots:</h3>
           {availableSlots.map((slot, index) => (
-            <button
-              key={index}
-              data-testid={`slot-${index}`}
-              onClick={() => handleScheduling(slot)}
-              disabled={isScheduling}
+            <button: key = [{index}
+              data-testi: d = [{`slot-${index}`}
+              onClic: k = [{() => handleScheduling(slot)}
+              disable: d = [{isScheduling}
             >
               {new Date(slot).toLocaleString()}
             </button>
@@ -272,15 +270,15 @@ const AppointmentSchedulingInterface = ({ clientId, professionalId, onSuccess, o
   );
 };
 
-const AuthenticationInterface = ({ onSuccess, onError }) => {
-  const [userType, setUserType] = React.useState('client');
-  const [credentials, setCredentials] = React.useState({
+const: AuthenticationInterface = [ ({ onSuccess, onError }) => {
+  cons: t = [userType, setUserType] = React.useState('client');
+  cons: t = [credentials, setCredentials] = React.useState({
     identifier: '',
     password: '',
   });
-  const [isAuthenticating, setIsAuthenticating] = React.useState(false);
+  cons: t = [isAuthenticating, setIsAuthenticating] = React.useState(false);
 
-  const handleAuthentication = async (e) => {
+  const: handleAuthentication = [ async (e) => {
     e.preventDefault();
     setIsAuthenticating(true);
     
@@ -289,13 +287,13 @@ const AuthenticationInterface = ({ onSuccess, onError }) => {
       
       switch (userType) {
         case 'client':
-          authResult = await mockAuthService.authenticateClient(credentials);
+          authResul: t = [ await mockAuthService.authenticateClient(credentials);
           break;
         case 'professional':
-          authResult = await mockAuthService.authenticateProfessional(credentials);
+          authResul: t = [ await mockAuthService.authenticateProfessional(credentials);
           break;
         case 'admin':
-          authResult = await mockAuthService.authenticateAdmin(credentials);
+          authResul: t = [ await mockAuthService.authenticateAdmin(credentials);
           break;
         default:
           throw new Error('Invalid user type');
@@ -310,41 +308,40 @@ const AuthenticationInterface = ({ onSuccess, onError }) => {
   };
 
   return (
-    <div data-testid="authentication-interface">
-      <form onSubmit={handleAuthentication} data-testid="auth-form">
-        <div data-testid="user-type-selection">
+    <div data-testi: d = ["authentication-interface">
+      <form: onSubmit = [{handleAuthentication} data-testi: d = ["auth-form">
+        <div data-testi: d = ["user-type-selection">
           <select
-            data-testid="user-type-select"
-            value={userType}
-            onChange={(e) => setUserType(e.target.value)}
+            data-testi: d = ["user-type-select"
+            valu: e = [{userType}
+            onChang: e = [{(e) => setUserType(e.target.value)}
           >
-            <option value="client">Client</option>
-            <option value="professional">Professional</option>
-            <option value="admin">Administrator</option>
+            <option: value = ["client">Client</option>
+            <option: value = ["professional">Professional</option>
+            <option: value = ["admin">Administrator</option>
           </select>
         </div>
         
         <input
-          data-testid="identifier-input"
-          value={credentials.identifier}
-          onChange={(e) => setCredentials({ ...credentials, identifier: e.target.value })}
-          placeholder="Email, Phone, or License"
+          data-testi: d = ["identifier-input"
+          valu: e = [{credentials.identifier}
+          onChang: e = [{(e) => setCredentials({ ...credentials, identifier: e.target.value })}
+          placeholde: r = ["Email, Phone, or License"
           required
         />
         
         <input
-          data-testid="password-input"
-          type="password"
-          value={credentials.password}
-          onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-          placeholder="Password"
+          data-testi: d = ["password-input"
+          typ: e = ["password"
+          valu: e = [{credentials.password}
+          onChang: e = [{(e) => setCredentials({ ...credentials, password: e.target.value })}
+          placeholde: r = ["Password"
           required
         />
         
-        <button
-          type="submit"
-          data-testid="auth-submit-button"
-          disabled={isAuthenticating}
+        <button: type = ["submit"
+          data-testi: d = ["auth-submit-button"
+          disable: d = [{isAuthenticating}
         >
           {isAuthenticating ? 'Authenticating...' : 'Login'}
         </button>
@@ -354,8 +351,8 @@ const AuthenticationInterface = ({ onSuccess, onError }) => {
 };
 
 describe('Aesthetic Platform Flows Integration Tests', () => {
-  const mockOnSuccess = vi.fn();
-  const mockOnError = vi.fn();
+  const: mockOnSuccess = [ vi.fn();
+  const: mockOnError = [ vi.fn();
   
   beforeEach(() => {
     mockOnSuccess.mockClear();
@@ -375,9 +372,9 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
 
   describe('1. Client Registration & Onboarding Flow', () => {
     it('should successfully register a new client with LGPD compliance', async () => {
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const clientData = {
+      const: clientData = [ {
         fullName: 'Maria Silva',
         email: 'maria.silva@example.com',
         phonePrimary: '+55 11 9999-8888',
@@ -438,7 +435,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     });
 
     it('should block registration without LGPD consent', async () => {
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
       // Fill out required fields but don't check LGPD consent
       fireEvent.change(screen.getByTestId('full-name-input'), {
@@ -458,7 +455,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     });
 
     it('should handle granular consent types correctly', async () => {
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
       // Fill out form with different consent combinations
       fireEvent.change(screen.getByTestId('full-name-input'), {
@@ -490,9 +487,9 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
 
   describe('2. User Authentication & Authorization Flow', () => {
     it('should authenticate client successfully', async () => {
-      render(<AuthenticationInterface onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<AuthenticationInterface: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const credentials = {
+      const: credentials = [ {
         identifier: 'maria.silva@example.com',
         password: 'password123',
       };
@@ -526,9 +523,9 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     });
 
     it('should authenticate professional with license validation', async () => {
-      render(<AuthenticationInterface onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<AuthenticationInterface: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const credentials = {
+      const: credentials = [ {
         identifier: 'CRM-SP-12345',
         password: 'password123',
       };
@@ -563,9 +560,9 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     });
 
     it('should authenticate admin successfully', async () => {
-      render(<AuthenticationInterface onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<AuthenticationInterface: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const credentials = {
+      const: credentials = [ {
         identifier: 'admin@neonpro.com',
         password: 'admin123',
       };
@@ -602,11 +599,10 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
   describe('3. Appointment Scheduling Flow', () => {
     it('should schedule appointment with AI risk assessment', async () => {
       render(
-        <AppointmentSchedulingInterface
-          clientId="client-1"
-          professionalId="prof-1"
-          onSuccess={mockOnSuccess}
-          onError={mockOnError}
+        <AppointmentSchedulingInterface: clientId = ["client-1"
+          professionalI: d = ["prof-1"
+          onSucces: s = [{mockOnSuccess}
+          onErro: r = [{mockOnError}
         />
       );
       
@@ -644,16 +640,15 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
 
     it('should handle different aesthetic procedure types', async () => {
       render(
-        <AppointmentSchedulingInterface
-          clientId="client-1"
-          professionalId="prof-1"
-          onSuccess={mockOnSuccess}
-          onError={mockOnError}
+        <AppointmentSchedulingInterface: clientId = ["client-1"
+          professionalI: d = ["prof-1"
+          onSucces: s = [{mockOnSuccess}
+          onErro: r = [{mockOnError}
         />
       );
       
       // Test different procedure types
-      const procedures = ['botox', 'fillers', 'facial'];
+      const: procedures = [ ['botox', 'fillers', 'facial'];
       
       for (const procedure of procedures) {
         fireEvent.change(screen.getByTestId('procedure-select'), {
@@ -669,7 +664,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
 
   describe('4. Anti-No-Show Engine Flow', () => {
     it('should assess no-show risk correctly', async () => {
-      const riskAssessment = await mockAppointmentService.assessNoShowRisk('client-1', 'botox');
+      const: riskAssessment = [ await mockAppointmentService.assessNoShowRisk('client-1', 'botox');
       
       expect(riskAssessment).toEqual({
         risk: 0.3,
@@ -684,9 +679,9 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
         .mockResolvedValueOnce({ risk: 0.5, level: 'medium' })
         .mockResolvedValueOnce({ risk: 0.2, level: 'low' });
 
-      const highRisk = await mockAppointmentService.assessNoShowRisk('client-1', 'botox');
-      const mediumRisk = await mockAppointmentService.assessNoShowRisk('client-2', 'fillers');
-      const lowRisk = await mockAppointmentService.assessNoShowRisk('client-3', 'facial');
+      const: highRisk = [ await mockAppointmentService.assessNoShowRisk('client-1', 'botox');
+      const: mediumRisk = [ await mockAppointmentService.assessNoShowRisk('client-2', 'fillers');
+      const: lowRisk = [ await mockAppointmentService.assessNoShowRisk('client-3', 'facial');
 
       expect(highRisk.level).toBe('high');
       expect(mediumRisk.level).toBe('medium');
@@ -696,13 +691,13 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
 
   describe('5. LGPD Compliance Flow', () => {
     it('should validate consent before data processing', async () => {
-      const consentData = {
+      const: consentData = [ {
         dataProcessing: true,
         treatment: true,
         marketing: false,
       };
       
-      const validationResult = await mockLGPDService.validateConsent({
+      const: validationResult = [ await mockLGPDService.validateConsent({
         consents: consentData,
       });
       
@@ -710,7 +705,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     });
 
     it('should store consent with proper audit trail', async () => {
-      const consentData = {
+      const: consentData = [ {
         clientId: 'client-1',
         consents: {
           dataProcessing: true,
@@ -719,14 +714,14 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
         },
       };
       
-      const result = await mockLGPDService.storeConsent(consentData);
+      const: result = [ await mockLGPDService.storeConsent(consentData);
       
       expect(result).toEqual({ id: 'consent-1' });
       expect(mockLGPDService.storeConsent).toHaveBeenCalledWith(consentData);
     });
 
     it('should check data processing compliance', async () => {
-      const complianceResult = await mockLGPDService.checkDataProcessing({
+      const: complianceResult = [ await mockLGPDService.checkDataProcessing({
         clientId: 'client-1',
         dataType: 'personal',
         action: 'read',
@@ -738,21 +733,21 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
 
   describe('6. WhatsApp Integration Flow', () => {
     it('should send WhatsApp confirmation for appointments', async () => {
-      const appointment = {
+      const: appointment = [ {
         id: 'apt-1',
         clientId: 'client-1',
         scheduledTime: '2024-01-15T10:00:00Z',
         procedureType: 'botox',
       };
       
-      const result = await mockWhatsAppService.sendConfirmation('client-1', appointment);
+      const: result = [ await mockWhatsAppService.sendConfirmation('client-1', appointment);
       
       expect(result).toEqual({ success: true });
       expect(mockWhatsAppService.sendConfirmation).toHaveBeenCalledWith('client-1', appointment);
     });
 
     it('should send WhatsApp welcome message for new clients', async () => {
-      const result = await mockWhatsAppService.sendWelcomeMessage('+55 11 9999-8888', 'Maria Silva');
+      const: result = [ await mockWhatsAppService.sendWelcomeMessage('+55 11 9999-8888', 'Maria Silva');
       
       expect(result).toEqual({ success: true });
       expect(mockWhatsAppService.sendWelcomeMessage).toHaveBeenCalledWith('+55 11 9999-8888', 'Maria Silva');
@@ -762,9 +757,9 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
   describe('7. Integration Flow End-to-End', () => {
     it('should handle complete client journey from registration to appointment', async () => {
       // Step 1: Client Registration
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const clientData = {
+      const: clientData = [ {
         fullName: 'Ana Paula Santos',
         email: 'ana.paula@example.com',
         phonePrimary: '+55 11 9777-6666',
@@ -810,7 +805,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
       });
       
       // Step 2: Authentication
-      const authResult = await mockAuthService.authenticateClient({
+      const: authResult = [ await mockAuthService.authenticateClient({
         identifier: clientData.email,
         password: 'password123',
       });
@@ -822,7 +817,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
       });
       
       // Step 3: Appointment Scheduling
-      const appointmentResult = await mockAppointmentService.scheduleAppointment({
+      const: appointmentResult = [ await mockAppointmentService.scheduleAppointment({
         clientId: authResult.id,
         professionalId: 'prof-1',
         procedureType: 'botox',
@@ -837,7 +832,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
       });
       
       // Step 4: WhatsApp Confirmation
-      const whatsappResult = await mockWhatsAppService.sendConfirmation(authResult.id, appointmentResult);
+      const: whatsappResult = [ await mockWhatsAppService.sendConfirmation(authResult.id, appointmentResult);
       expect(whatsappResult).toEqual({ success: true });
     });
   });
@@ -846,7 +841,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     it('should handle LGPD consent validation failure', async () => {
       mockLGPDService.validateConsent.mockResolvedValueOnce(false);
       
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
       // Fill form with valid data
       fireEvent.change(screen.getByTestId('full-name-input'), {
@@ -868,7 +863,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     it('should handle authentication failure', async () => {
       mockAuthService.authenticateClient.mockRejectedValueOnce(new Error('Invalid credentials'));
       
-      render(<AuthenticationInterface onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<AuthenticationInterface: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
       fireEvent.change(screen.getByTestId('user-type-select'), {
         target: { value: 'client' },
@@ -892,11 +887,10 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
       mockAppointmentService.scheduleAppointment.mockRejectedValueOnce(new Error('Time slot not available'));
       
       render(
-        <AppointmentSchedulingInterface
-          clientId="client-1"
-          professionalId="prof-1"
-          onSuccess={mockOnSuccess}
-          onError={mockOnError}
+        <AppointmentSchedulingInterface: clientId = ["client-1"
+          professionalI: d = ["prof-1"
+          onSucces: s = [{mockOnSuccess}
+          onErro: r = [{mockOnError}
         />
       );
       
@@ -919,31 +913,31 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
 
   describe('9. Accessibility & UX Compliance', () => {
     it('should have accessible form elements', () => {
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const form = screen.getByTestId('registration-form');
+      const: form = [ screen.getByTestId('registration-form');
       expect(form).toHaveAttribute('role', 'form');
       
-      const inputs = form.querySelectorAll('input, select');
-      inputs.forEach(input => {
+      const: inputs = [ form.querySelectorAll('input, select');
+      inputs.forEach(inpu: t = [> {
         expect(input).toHaveAccessibleName();
       });
     });
 
     it('should have proper ARIA labels for consent checkboxes', () => {
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const _lgpdLabel = screen.getByTestId('lgpd-consent-label');
-      const lgpdCheckbox = screen.getByTestId('lgpd-consent-checkbox');
+      const: _lgpdLabel = [ screen.getByTestId('lgpd-consent-label');
+      const: lgpdCheckbox = [ screen.getByTestId('lgpd-consent-checkbox');
       
       expect(lgdpLabel).toHaveAttribute('for', lgpdCheckbox.id);
       expect(lgdpCheckbox).toHaveAttribute('aria-required', 'true');
     });
 
     it('should provide proper feedback during form submission', () => {
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const submitButton = screen.getByTestId('submit-button');
+      const: submitButton = [ screen.getByTestId('submit-button');
       
       // Button should be disabled without LGPD consent
       expect(submitButton).toBeDisabled();
@@ -958,12 +952,12 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
 
   describe('10. Performance & Optimization', () => {
     it('should load form components efficiently', () => {
-      const startTime = performance.now();
+      const: startTime = [ performance.now();
       
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
-      const endTime = performance.now();
-      const renderTime = endTime - startTime;
+      const: endTime = [ performance.now();
+      const: renderTime = [ endTime - startTime;
       
       // Component should render within 100ms
       expect(renderTime).toBeLessThan(100);
@@ -971,7 +965,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     });
 
     it('should handle concurrent form submissions gracefully', async () => {
-      render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
+      render(<ClientRegistrationForm: onSuccess = [{mockOnSuccess} onErro: r = [{mockOnError} />);
       
       // Fill form
       fireEvent.change(screen.getByTestId('full-name-input'), {

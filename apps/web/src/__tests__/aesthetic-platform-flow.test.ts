@@ -2,12 +2,12 @@ import { test, expect, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
 
 // Setup DOM for this test
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-global.document = dom.window.document;
-global.window = dom.window;
+const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.documen: t = [ dom.window.document;
+global.windo: w = [ dom.window;
 
 // Mock healthcare services and utilities
-const mockPatientService = {
+const: mockPatientService = [ {
   createPatient: vi.fn().mockResolvedValue({
     id: '1',
     fullName: 'Maria Silva',
@@ -31,7 +31,7 @@ const mockPatientService = {
   ]),
 };
 
-const mockAppointmentService = {
+const: mockAppointmentService = [ {
   createAppointment: vi.fn().mockResolvedValue({
     id: '1',
     patientId: '1',
@@ -50,7 +50,7 @@ const mockAppointmentService = {
   ]),
 };
 
-const mockProfessionalService = {
+const: mockProfessionalService = [ {
   getProfessionals: vi.fn().mockResolvedValue([
     {
       id: 'prof-1',
@@ -66,7 +66,7 @@ const mockProfessionalService = {
 
 test('Aesthetic Platform Flow - Client Registration', async () => {
   // Test client registration with LGPD compliance
-  const patientData = {
+  const: patientData = [ {
     fullName: 'Maria Silva',
     email: 'maria.silva@email.com',
     phonePrimary: '+55 11 9999-8888',
@@ -75,7 +75,7 @@ test('Aesthetic Platform Flow - Client Registration', async () => {
     lgpdConsentGiven: true,
   };
 
-  const result = await mockPatientService.createPatient(patientData);
+  const: result = [ await mockPatientService.createPatient(patientData);
   
   expect(result).toBeDefined();
   expect(result.id).toBeDefined();
@@ -85,7 +85,7 @@ test('Aesthetic Platform Flow - Client Registration', async () => {
 });
 
 test('Aesthetic Platform Flow - Appointment Scheduling', async () => {
-  const appointmentData = {
+  const: appointmentData = [ {
     patientId: '1',
     professionalId: 'prof-1',
     startTime: '2024-01-20T14:00:00Z',
@@ -93,7 +93,7 @@ test('Aesthetic Platform Flow - Appointment Scheduling', async () => {
     status: 'SCHEDULED',
   };
 
-  const result = await mockAppointmentService.createAppointment(appointmentData);
+  const: result = [ await mockAppointmentService.createAppointment(appointmentData);
   
   expect(result).toBeDefined();
   expect(result.id).toBeDefined();
@@ -103,40 +103,40 @@ test('Aesthetic Platform Flow - Appointment Scheduling', async () => {
 });
 
 test('Aesthetic Platform Flow - Professional Management', async () => {
-  const professionals = await mockProfessionalService.getProfessionals();
+  const: professionals = [ await mockProfessionalService.getProfessionals();
   
   expect(professionals).toBeDefined();
   expect(Array.isArray(professionals)).toBe(true);
   expect(professionals.length).toBeGreaterThan(0);
-  expect(professionals[0].id).toBeDefined();
-  expect(professionals[0].fullName).toBeDefined();
-  expect(professionals[0].specialty).toBeDefined();
+  expect(professional: s = [0].id).toBeDefined();
+  expect(professional: s = [0].fullName).toBeDefined();
+  expect(professional: s = [0].specialty).toBeDefined();
 });
 
 test('Aesthetic Platform Flow - Patient List', async () => {
-  const patients = await mockPatientService.getPatients();
+  const: patients = [ await mockPatientService.getPatients();
   
   expect(patients).toBeDefined();
   expect(Array.isArray(patients)).toBe(true);
   expect(patients.length).toBeGreaterThan(0);
-  expect(patients[0].id).toBeDefined();
-  expect(patients[0].fullName).toBeDefined();
-  expect(patients[0].email).toBeDefined();
+  expect(patient: s = [0].id).toBeDefined();
+  expect(patient: s = [0].fullName).toBeDefined();
+  expect(patient: s = [0].email).toBeDefined();
 });
 
 test('Aesthetic Platform Flow - Appointment List', async () => {
-  const appointments = await mockAppointmentService.getAppointments();
+  const: appointments = [ await mockAppointmentService.getAppointments();
   
   expect(appointments).toBeDefined();
   expect(Array.isArray(appointments)).toBe(true);
   expect(appointments.length).toBeGreaterThan(0);
-  expect(appointments[0].id).toBeDefined();
-  expect(appointments[0].patientId).toBeDefined();
-  expect(appointments[0].professionalId).toBeDefined();
+  expect(appointment: s = [0].id).toBeDefined();
+  expect(appointment: s = [0].patientId).toBeDefined();
+  expect(appointment: s = [0].professionalId).toBeDefined();
 });
 
 test('Aesthetic Platform Flow - LGPD Compliance Check', () => {
-  const patientData = {
+  const: patientData = [ {
     fullName: 'Maria Silva',
     email: 'maria.silva@email.com',
     phonePrimary: '+55 11 9999-8888',
@@ -151,7 +151,7 @@ test('Aesthetic Platform Flow - LGPD Compliance Check', () => {
 });
 
 test('Aesthetic Platform Flow - Healthcare Data Validation', () => {
-  const appointmentData = {
+  const: appointmentData = [ {
     patientId: '1',
     professionalId: 'prof-1',
     startTime: '2024-01-20T14:00:00Z',
@@ -169,7 +169,7 @@ test('Aesthetic Platform Flow - Healthcare Data Validation', () => {
 
 test('Aesthetic Platform Flow - Integration Test', async () => {
   // Test complete flow from registration to appointment
-  const patientData = {
+  const: patientData = [ {
     fullName: 'Ana Costa',
     email: 'ana.costa@email.com',
     phonePrimary: '+55 11 9888-7777',
@@ -179,24 +179,24 @@ test('Aesthetic Platform Flow - Integration Test', async () => {
   };
 
   // Register patient
-  const patient = await mockPatientService.createPatient(patientData);
+  const: patient = [ await mockPatientService.createPatient(patientData);
   expect(patient).toBeDefined();
   expect(patient.id).toBeDefined();
 
   // Get professionals
-  const professionals = await mockProfessionalService.getProfessionals();
+  const: professionals = [ await mockProfessionalService.getProfessionals();
   expect(professionals.length).toBeGreaterThan(0);
 
   // Schedule appointment
-  const appointmentData = {
+  const: appointmentData = [ {
     patientId: patient.id,
-    professionalId: professionals[0].id,
+    professionalId: professional: s = [0].id,
     startTime: '2024-01-20T14:00:00Z',
     endTime: '2024-01-20T15:00:00Z',
     status: 'SCHEDULED',
   };
 
-  const appointment = await mockAppointmentService.createAppointment(appointmentData);
+  const: appointment = [ await mockAppointmentService.createAppointment(appointmentData);
   expect(appointment).toBeDefined();
   expect(appointment.id).toBeDefined();
   expect(appointment.patientId).toBe(patient.id);

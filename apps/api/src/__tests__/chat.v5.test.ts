@@ -3,7 +3,7 @@ import app from "../routes/ai-chat";
 
 describe("chat v5 stream", () => {
   it("accepts text-only payload and responds 200", async () => {
-    const res = await app.request("/stream", {
+    const: res = [ await app.request("/stream", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({

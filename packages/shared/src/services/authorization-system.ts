@@ -22,6 +22,7 @@ import type {
   HealthcarePermission,
   AuthSession,
 } from "./authentication-middleware";
+import { logHealthcareError, authorizationLogger } from '../logging/healthcare-logger';
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -592,7 +593,7 @@ export class HealthcareAuthorizationRules {
   static evaluatePatientDataAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, resource, action, environment } = context;
+    const { subject, resource, action, environment } = _context;
     const reasons: string[] = [];
     const obligations: AuthorizationDecision["obligations"] = [];
     const advice: AuthorizationDecision["advice"] = [];
@@ -672,7 +673,7 @@ export class HealthcareAuthorizationRules {
   static evaluateMedicationAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, action } = context;
+    const { subject, action } = _context;
     const reasons: string[] = [];
     const obligations: AuthorizationDecision["obligations"] = [];
     let decision: "permit" | "deny" = "deny";
@@ -718,7 +719,7 @@ export class HealthcareAuthorizationRules {
   static evaluateLabDataAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, action } = context;
+    const { subject, action } = _context;
     const reasons: string[] = [];
     let decision: "permit" | "deny" = "deny";
 
@@ -755,7 +756,7 @@ export class HealthcareAuthorizationRules {
   static evaluateAdminAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, action } = context;
+    const { subject, action } = _context;
     const reasons: string[] = [];
     const obligations: AuthorizationDecision["obligations"] = [];
     let decision: "permit" | "deny" = "deny";
@@ -799,7 +800,7 @@ export class HealthcareAuthorizationRules {
   static evaluateEmergencyAccess(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, environment } = context;
+    const { subject, environment } = _context;
     const reasons: string[] = [];
     const obligations: AuthorizationDecision["obligations"] = [];
     const advice: AuthorizationDecision["advice"] = [];
@@ -841,7 +842,7 @@ export class HealthcareAuthorizationRules {
   static evaluateLGPDCompliance(
     _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
-    const { subject, resource, action, compliance } = context;
+    const { subject, resource, action, compliance } = _context;
     const reasons: string[] = [];
     const obligations: AuthorizationDecision["obligations"] = [];
     const advice: AuthorizationDecision["advice"] = [];
@@ -961,14 +962,12 @@ export class HealthcareAuthorizationEngine {
       this.setupPerformanceMonitoring();
       this.isInitialized = true;
 
-      console.log(
-        "🛡️ [HealthcareAuthorizationEngine] Healthcare authorization engine initialized",
+      authorizationLogger.info(
+        "Healthcare authorization engine initialized",
+        { component: 'authorization-system', timestamp: new Date().toISOString() },
       );
     } catch (error) {
-      console.error(
-        "Failed to initialize healthcare authorization engine:",
-        error,
-      );
+      logHealthcareError('authorization-system', error, { method: 'initialize' });
     }
   }
 
@@ -977,8 +976,9 @@ export class HealthcareAuthorizationEngine {
    */
   private loadDefaultPolicies(): void {
     // Default policies will be loaded here
-    console.log(
-      "📋 [HealthcareAuthorizationEngine] Default authorization policies loaded",
+    authorizationLogger.info(
+      "Default authorization policies loaded",
+      { component: 'authorization-system', timestamp: new Date().toISOString() },
     );
   }
 
@@ -1104,7 +1104,7 @@ export class HealthcareAuthorizationEngine {
 
       return decision;
     } catch (error) {
-      console.error("Authorization evaluation error:", error);
+      logHealthcareError('authorization-system', error, { method: 'evaluateAuthorization' });
 
       return {
         decision: "indeterminate",
@@ -1650,9 +1650,11 @@ export class HealthcareAuthorizationEngine {
     }
 
     if (cleanedCount > 0) {
-      console.log(
-        `🧹 [HealthcareAuthorizationEngine] Cleaned up ${cleanedCount} expired cache entries`,
-      );
+      authorizationLogger.info("Expired cache entries cleaned up", {
+        cleanedCount,
+        component: 'authorization-system',
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
@@ -1666,10 +1668,10 @@ export class HealthcareAuthorizationEngine {
       timestamp: new Date().toISOString(),
     };
 
-    console.log(
-      "📊 [HealthcareAuthorizationEngine] Performance metrics:",
-      metrics,
-    );
+    authorizationLogger.info("Performance metrics collected", {
+      ...metrics,
+      component: 'authorization-system'
+    });
   }
 
   /**
@@ -1699,10 +1701,10 @@ export class HealthcareAuthorizationEngine {
       timestamp: decision.timestamp,
     };
 
-    console.log(
-      "📋 [HealthcareAuthorizationEngine] Authorization decision:",
-      decisionLog,
-    );
+    authorizationLogger.info("Authorization decision logged", {
+      ...decisionLog,
+      component: 'authorization-system'
+    });
   }
 
   /**
@@ -1730,9 +1732,10 @@ export class HealthcareAuthorizationEngine {
     this.policies.clear();
     this.isInitialized = false;
 
-    console.log(
-      "🔄 [HealthcareAuthorizationEngine] Healthcare authorization engine destroyed",
-    );
+    authorizationLogger.info("Healthcare authorization engine destroyed", {
+      component: 'authorization-system',
+      timestamp: new Date().toISOString()
+    });
   }
 }
 

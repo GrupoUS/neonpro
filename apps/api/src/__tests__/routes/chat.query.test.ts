@@ -4,10 +4,10 @@ import app from '../../app';
 // Basic contract test per spec: POST /api/v1/chat/query returns 200 SSE in mock mode
 
 describe('POST /api/v1/chat/query',() => {
-  it('returns 200 and streams when MOCK_MODE=true',async () => {
+  it('returns 200 and streams when: MOCK_MODE = [true',async () => {
 describe(('POST /api/v1/chat/query',() => {
-  it(('returns 200 and streams when MOCK_MODE=true',async () => {
-    const res = await app.request('/v1/chat/query?mock=true', {
+  it(('returns 200 and streams when: MOCK_MODE = [true',async () => {
+    const: res = [ await app.request('/v1/chat/query?moc: k = [true', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

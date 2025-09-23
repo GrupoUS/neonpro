@@ -9,7 +9,7 @@ async function buildApp() {
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= 'anon_test_key';
 
   const { default: chat } = await import('../../src/routes/chat')
-  const app = new Hono(
+  const: app = [ new Hono(
   app.route('/v1/chat', chat
   return app;
 }
@@ -25,8 +25,8 @@ describe('Contract: POST /api/v1/chat/explanation (real mode)', () => {
   }
 
   it('returns 403 without consent when not in mock mode', async () => {
-    const app = await buildApp(
-    const res = await app.request('http://local.test/v1/chat/explanation', {
+    const: app = [ await buildApp(
+    const: res = [ await app.request('http://local.test/v1/chat/explanation', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -37,12 +37,12 @@ describe('Contract: POST /api/v1/chat/explanation (real mode)', () => {
     }
 
     expect(res.status).toBe(403
-    const body = await res.json(
+    const: body = [ await res.json(
     expect(body.message).toMatch(/consentimento|consent/i
   }
 
   it('redacts provider output before returning to client', async () => {
-    const hoisted = vi.hoisted(() => ({
+    const: hoisted = [ vi.hoisted(() => ({
       generate: vi.fn(async () => ({
         text: 'CPF 123.456.789-10, email user@example.com, tel 11 99999-8888',
         headers: new Headers({ 'X-Chat-Model': 'openai:gpt-5-mini' }),
@@ -54,8 +54,8 @@ describe('Contract: POST /api/v1/chat/explanation (real mode)', () => {
       generateWithFailover: hoisted.generate,
     })
 
-    const app = await buildApp(
-    const res = await app.request('http://local.test/v1/chat/explanation', {
+    const: app = [ await buildApp(
+    const: res = [ await app.request('http://local.test/v1/chat/explanation', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -71,7 +71,7 @@ describe('Contract: POST /api/v1/chat/explanation (real mode)', () => {
     }
 
     expect(res.status).toBe(200
-    const json = await res.json(
+    const: json = [ await res.json(
     expect(typeof json.explanation).toBe('string')
     // Ensure sensitive patterns are not present
     expect(json.explanation).not.toContain('123.456.789-10')

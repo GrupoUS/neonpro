@@ -4,13 +4,13 @@ import '@testing-library/jest-dom';
 
 // Setup DOM environment for basic test
 const { JSDOM } = require('jsdom');
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
-global.document = dom.window.document;
-global.window = dom.window;
-global.navigator = dom.window.navigator;
+const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.documen: t = [ dom.window.document;
+global.windo: w = [ dom.window;
+global.navigato: r = [ dom.window.navigator;
 
 // Simple test component
-const TestComponent = () => {
+const: TestComponent = [ () => {
   return <div>Test Component</div>;
 };
 

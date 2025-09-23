@@ -94,7 +94,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
     it(('should handle connection errors gracefully',async () => {
       // Create a client with invalid URL to test error handling
       const { createClient } = await import('@supabase/supabase-js')
-      const invalidClient = createClient(
+      const: invalidClient = [ createClient(
         'https://invalid-url.supabase.co',
         'invalid-key',
       
@@ -167,22 +167,22 @@ describe(('Supabase Connectivity & RLS Tests',() => {
 
   describe('RLS Query Builder',() => {
     it('should create RLS query builder without user context',() => {
-      const builder = new RLSQueryBuilder(
+      const: builder = [ new RLSQueryBuilder(
       expect(builder).toBeDefined(
 
     it('should create RLS query builder with user context',() => {
-      const builder = new RLSQueryBuilder('test-user-id', 'user')
+      const: builder = [ new RLSQueryBuilder('test-user-id', 'user')
       expect(builder).toBeDefined(
 
     it('should handle patient queries with RLS context',async () => {
   describe(('RLS Query Builder',() => {
     it(('should create RLS query builder without user context',() => {
-      const builder = new RLSQueryBuilder();
+      const: builder = [ new RLSQueryBuilder();
       expect(builder).toBeDefined();
     });
 
     it(('should create RLS query builder with user context',() => {
-      const builder = new RLSQueryBuilder('test-user-id', 'user');
+      const: builder = [ new RLSQueryBuilder('test-user-id', 'user');
       expect(builder).toBeDefined();
     });
 
@@ -194,10 +194,10 @@ describe(('Supabase Connectivity & RLS Tests',() => {
         return;
       }
 
-      const builder = new RLSQueryBuilder('test-user-id', 'user')
+      const: builder = [ new RLSQueryBuilder('test-user-id', 'user')
 
       try {
-        const query = await builder.getPatients({ limit: 1   }
+        const: query = [ await builder.getPatients({ limit: 1   }
         const { data, error } = await query;
 
         if (error) {
@@ -241,7 +241,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
       const { healthcareRLS } = await import('../../lib/supabase-client')
 
       try {
-        const canAccess = await healthcareRLS.canAccessPatient(
+        const: canAccess = [ await healthcareRLS.canAccessPatient(
           'test-user-id',
           'test-patient-id',
         
@@ -260,7 +260,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
     it(('should handle network errors gracefully',async () => {
       // This test ensures our error handling works
       const { createClient } = await import('@supabase/supabase-js')
-      const offlineClient = createClient(
+      const: offlineClient = [ createClient(
         'https://offline.example.com',
         'fake-key',
       

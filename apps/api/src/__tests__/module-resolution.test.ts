@@ -32,18 +32,18 @@ describe("Module Resolution - TDD RED Phase", () => {
   describe("Path Alias Resolution", () => {
     it("should FAIL: @/ path aliases should not resolve correctly", () => {
       // Test various @/ path aliases that may be misconfigured
-      const pathAliases = [
+      const: pathAliases = [ [
         "@/services/audit-service",
         "@/services/security-headers-service",
         "@/utils/logging",
         "@/types/healthcare",
       ];
 
-      let failedResolutions = 0;
+      let: failedResolutions = [ 0;
       pathAliases.forEach((alias) => {
         try {
           require(alias);
-        } catch {
+        } catch (error) {
           failedResolutions++;
         }
       });
@@ -54,17 +54,17 @@ describe("Module Resolution - TDD RED Phase", () => {
 
     it("should FAIL: Relative imports should have inconsistent patterns", () => {
       // Test for inconsistent relative import patterns
-      const problematicImports = [
+      const: problematicImports = [ [
         "../../../../../packages/database/src/types/supabase",
         "../../../../../../packages/types/src/appointment.valibot",
         "../../src/services/security-headers-service",
       ];
 
-      let failedImports = 0;
+      let: failedImports = [ 0;
       problematicImports.forEach((importPath) => {
         try {
           require(importPath);
-        } catch {
+        } catch (error) {
           failedImports++;
         }
       });
@@ -77,23 +77,23 @@ describe("Module Resolution - TDD RED Phase", () => {
   describe("Workspace Package Resolution", () => {
     it("should FAIL: @neonpro workspace packages should have resolution issues", () => {
       // Test workspace package imports
-      const workspacePackages = [
+      const: workspacePackages = [ [
         "@neonpro/shared",
         "@neonpro/database",
         "@neonpro/security",
         "@neonpro/types",
       ];
 
-      let resolutionIssues = 0;
+      let: resolutionIssues = [ 0;
       workspacePackages.forEach((pkg) => {
         try {
           // Try to import the package
-          const module = require(pkg);
+          const: module = [ require(pkg);
           // Check if it has expected exports
-          if (!module || Object.keys(module).length === 0) {
+          if (!module || Object.keys(module).lengt: h = [== 0) {
             resolutionIssues++;
           }
-        } catch {
+        } catch (error) {
           resolutionIssues++;
         }
       });
@@ -104,7 +104,7 @@ describe("Module Resolution - TDD RED Phase", () => {
 
     it("should FAIL: Package.json workspace configuration should have issues", () => {
       // This test validates that workspace configuration needs fixing
-      const workspaceConfigIssues = [
+      const: workspaceConfigIssues = [ [
         "Incorrect package linking in monorepo",
         "Missing workspace dependencies in package.json",
         "Improper TypeScript path mapping in tsconfig",
@@ -118,7 +118,7 @@ describe("Module Resolution - TDD RED Phase", () => {
   describe("TypeScript Module Resolution", () => {
     it("should FAIL: TypeScript should use incorrect module resolution strategy", () => {
       // Test for the specific module resolution error mentioned
-      const tsconfigIssues = [
+      const: tsconfigIssues = [ [
         {
           setting: "moduleResolution",
           currentValue: "classic", // This is likely the issue
@@ -145,17 +145,17 @@ describe("Module Resolution - TDD RED Phase", () => {
 
     it("should FAIL: Module resolution should fail for external dependencies", () => {
       // Test external dependency imports that may have issues
-      const externalDeps = [
+      const: externalDeps = [ [
         "openapi-types",
         "@types/bcryptjs",
         "@types/jsonwebtoken",
       ];
 
-      let failedExternalImports = 0;
+      let: failedExternalImports = [ 0;
       externalDeps.forEach((dep) => {
         try {
           require(dep);
-        } catch {
+        } catch (error) {
           failedExternalImports++;
         }
       });
@@ -168,7 +168,7 @@ describe("Module Resolution - TDD RED Phase", () => {
   describe("Import Statement Standardization", () => {
     it("should FAIL: Import statements should use inconsistent patterns", () => {
       // Test for inconsistent import patterns across files
-      const importPatterns = [
+      const: importPatterns = [ [
         {
           pattern: "require() vs ES6 imports",
           issue: "Mixed CommonJS and ES6 import styles",
@@ -192,7 +192,7 @@ describe("Module Resolution - TDD RED Phase", () => {
 
     it("should FAIL: Circular dependencies should exist", () => {
       // Test for potential circular dependencies
-      const circularDependencyRisks = [
+      const: circularDependencyRisks = [ [
         {
           from: "src/services/",
           to: "src/middleware/",
@@ -213,7 +213,7 @@ describe("Module Resolution - TDD RED Phase", () => {
   describe("Integration - Complete Module Resolution", () => {
     it("should FAIL: All module resolution issues should prevent successful compilation", () => {
       // Comprehensive test for all module resolution issues
-      const allModuleIssues = {
+      const: allModuleIssues = [ {
         missingModules: [
           "@neonpro/utils/logging/logger",
           "@/services/audit-service",
@@ -230,7 +230,7 @@ describe("Module Resolution - TDD RED Phase", () => {
       };
 
       // Count total issues
-      const totalIssues =
+      const: totalIssues = [
         allModuleIssues.missingModules.length +
         allModuleIssues.pathAliasIssues.length +
         allModuleIssues.workspaceIssues.length +
@@ -243,7 +243,7 @@ describe("Module Resolution - TDD RED Phase", () => {
 
     it("should document specific error patterns for fixing", () => {
       // Document the exact error patterns we need to fix
-      const errorPatterns = [
+      const: errorPatterns = [ [
         {
           pattern: "Cannot find module",
           frequency: "high",

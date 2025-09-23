@@ -9,6 +9,7 @@ import {
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
+import { logHealthcareError, realtimeLogger } from '../../../shared/src/logging/healthcare-logger';
 
 export interface RealtimeSubscriptionOptions<T = any> {
   onInsert?: (_payload: T) => void;
@@ -75,12 +76,24 @@ export class RealtimeManager {
         },
       )
       .subscribe((status) => {
-        console.log(`Realtime subscription ${channelName} status:`, status);
+        realtimeLogger.info(`Realtime subscription status update`, {
+          channelName,
+          status,
+          timestamp: new Date().toISOString()
+        });
 
         if (status === "SUBSCRIBED") {
-          console.log(`✅ Successfully subscribed to ${tableName} changes`);
+          realtimeLogger.info(`Successfully subscribed to realtime changes`, {
+            tableName,
+            channelName,
+            timestamp: new Date().toISOString()
+          });
         } else if (status === "CHANNEL_ERROR") {
-          console.error(`❌ Error subscribing to ${tableName}`);
+          realtimeLogger.error(`Error subscribing to realtime changes`, {
+            tableName,
+            channelName,
+            timestamp: new Date().toISOString()
+          });
           // Implement retry logic
           setTimeout(() => {
             this.retrySubscription(tableName, filter, options);
@@ -140,7 +153,7 @@ export class RealtimeManager {
         );
       }
     } catch (error) {
-      console.error("Error handling realtime event:", error);
+      logHealthcareError('realtime', error, { method: 'handleRealtimeEvent', tableName });
     }
   }
   private async optimisticInsert<T extends { id: string }>(
@@ -202,13 +215,20 @@ export class RealtimeManager {
     const maxRetries = 3;
 
     if (retryCount >= maxRetries) {
-      console.error(`Max retries reached for ${tableName} subscription`);
+      realtimeLogger.error(`Max retries reached for subscription`, {
+        tableName,
+        retryCount,
+        maxRetries: 3,
+        timestamp: new Date().toISOString()
+      });
       return;
     }
 
-    console.log(
-      `Retrying subscription to ${tableName} (attempt ${retryCount + 1})`,
-    );
+    realtimeLogger.info(`Retrying subscription`, {
+      tableName,
+      retryCount: retryCount + 1,
+      timestamp: new Date().toISOString()
+    });
 
     // Remove failed channel
     const channelName = `${tableName}-${filter || "all"}`;
@@ -242,13 +262,27 @@ export class RealtimeManager {
       .channel(channelName)
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
-        console.log("Presence sync:", state);
+        realtimeLogger.info(`Presence sync`, {
+          state,
+          channelName,
+          timestamp: new Date().toISOString()
+        });
       })
       .on("presence", { event: "join" }, ({ key, newPresences }) => {
-        console.log("User joined:", key, newPresences);
+        realtimeLogger.info(`User joined presence channel`, {
+          key,
+          newPresences,
+          channelName,
+          timestamp: new Date().toISOString()
+        });
       })
       .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-        console.log("User left:", key, leftPresences);
+        realtimeLogger.info(`User left presence channel`, {
+          key,
+          leftPresences,
+          channelName,
+          timestamp: new Date().toISOString()
+        });
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
@@ -269,7 +303,10 @@ export class RealtimeManager {
       this.supabase.removeChannel(channel);
       this.channels.delete(channelName);
       this.rateLimitMap.delete(channelName);
-      console.log(`Unsubscribed from ${channelName}`);
+      realtimeLogger.info(`Unsubscribed from realtime channel`, {
+        channelName,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
@@ -279,7 +316,10 @@ export class RealtimeManager {
   unsubscribeAll() {
     this.channels.forEach((channel, name) => {
       this.supabase.removeChannel(channel);
-      console.log(`Unsubscribed from ${name}`);
+      realtimeLogger.info(`Unsubscribed from all realtime channels`, {
+        channelName: name,
+        timestamp: new Date().toISOString()
+      });
     });
     this.channels.clear();
     this.rateLimitMap.clear();

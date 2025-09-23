@@ -10,7 +10,6 @@ import {
   AguiMessage, 
   AguiMessageType, 
   AguiSession, 
-  AguiSessionMessage,
   AguiErrorCode,
   AguiRateLimitInfo 
 } from './types';
@@ -19,33 +18,10 @@ import {
   AestheticTreatmentMessage,
   AestheticTreatmentResponse,
   AestheticAppointmentMessage,
-  AestheticAppointmentResponse,
   AestheticFinancialMessage,
-  AestheticFinancialResponse,
   AestheticAssessmentMessage,
-  AestheticAssessmentResponse,
   AestheticComplianceMessage,
-  AestheticComplianceResponse,
-  AestheticClientEnhancementMessage,
-  AestheticClientEnhancementResponse,
-  AestheticInventoryMessage,
-  AestheticInventoryResponse,
-  AestheticEmergencyMessage,
-  AestheticEmergencyResponse,
-  AestheticAnalyticsMessage,
-  AestheticAnalyticsResponse,
-  AestheticTrainingMessage,
-  AestheticTrainingResponse,
-  AestheticPhotoConsentMessage,
-  AestheticPhotoConsentResponse,
-  AestheticCatalogMessage,
-  AestheticCatalogResponse,
-  AestheticScheduleOptimizationMessage,
-  AestheticScheduleOptimizationResponse,
-  AestheticRetentionAnalysisMessage,
-  AestheticRetentionAnalysisResponse,
-  AestheticComplianceAuditMessage,
-  AestheticComplianceAuditResponse
+  AestheticClientEnhancementMessage
 } from './aesthetic-types';
 import { AestheticRAGService } from './aesthetic-rag-service';
 import { AestheticCacheService } from './aesthetic-cache-service';
@@ -617,12 +593,12 @@ export class AestheticAguiProtocol extends EventEmitter {
     }
   }
 
-  private async generateTreatmentRecommendations(treatments: any[], payload: AestheticTreatmentMessage): Promise<any[]> {
+  private async generateTreatmentRecommendations(_treatments: any[], _payload: AestheticTreatmentMessage): Promise<any[]> {
     // Implementation for generating personalized treatment recommendations
     return [];
   }
 
-  private async checkTreatmentsAvailability(treatments: any[]): Promise<any> {
+  private async checkTreatmentsAvailability(_treatments: any[]): Promise<any> {
     // Implementation for checking treatment availability
     return {};
   }

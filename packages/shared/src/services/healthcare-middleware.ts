@@ -18,6 +18,7 @@
 import { nanoid } from "nanoid";
 import { z } from "zod";
 import type { Context, Next, MiddlewareHandler } from "hono";
+import { logHealthcareError, middlewareLogger } from '../logging/healthcare-logger';
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -453,15 +454,13 @@ export class HealthcareMiddlewareService {
       this.setupMetricsCollection();
       this.isInitialized = true;
 
-      console.log(
-        "🔄 [HealthcareMiddlewareService] Healthcare middleware service initialized",
+      middlewareLogger.info(
+        "Healthcare middleware service initialized",
+        { component: 'healthcare-middleware', timestamp: new Date().toISOString() },
       );
     } catch (_error) {
       void _error;
-      console.error(
-        "Failed to initialize healthcare middleware _service:",
-        error,
-      );
+      logHealthcareError('healthcare-middleware', error, { method: 'initialize' });
     }
   }
 
@@ -894,16 +893,20 @@ export class HealthcareMiddlewareService {
       this.config.rateLimiting.bypassEmergencyRequests &&
       context.workflowContext?.emergencyFlag
     ) {
-      console.log(
-        `🚨 [HealthcareMiddlewareService] Emergency bypass for _request: ${context.requestId}`,
-      );
+      middlewareLogger.info("Emergency bypass activated", {
+        requestId: context.requestId,
+        component: 'healthcare-middleware',
+        timestamp: new Date().toISOString()
+      });
       return;
     }
 
     // Simulate rate limiting check
-    console.log(
-      `🚦 [HealthcareMiddlewareService] Rate limiting check for _request: ${context.requestId}`,
-    );
+    middlewareLogger.info("Rate limiting check performed", {
+      requestId: context.requestId,
+      component: 'healthcare-middleware',
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
@@ -978,7 +981,10 @@ export class HealthcareMiddlewareService {
     };
 
     // TODO: Integrate with structured logging service
-    console.log("📝 [HealthcareMiddlewareService] Request logged:", logData);
+    middlewareLogger.info("Request logged", {
+      ...logData,
+      component: 'healthcare-middleware'
+    });
   }
 
   /**
@@ -1055,10 +1061,7 @@ export class HealthcareMiddlewareService {
       timestamp: new Date().toISOString(),
     };
 
-    console.error(
-      "❌ [HealthcareMiddlewareService] Middleware error:",
-      errorData,
-    );
+    logHealthcareError('healthcare-middleware', error, { method: 'handleError', context });
 
     // TODO: Integrate with error tracking service
     // TODO: Send patient safety alerts if applicable
@@ -1155,9 +1158,11 @@ export class HealthcareMiddlewareService {
 
       for (const header of securityHeaders) {
         if (!c.req.header(header)) {
-          console.warn(
-            `⚠️ [HealthcareMiddlewareService] Missing security header: ${header}`,
-          );
+          middlewareLogger.warn("Missing security header", {
+            header,
+            component: 'healthcare-middleware',
+            timestamp: new Date().toISOString()
+          });
         }
       }
     }
@@ -1171,9 +1176,11 @@ export class HealthcareMiddlewareService {
     _context: HealthcareRequestContext,
   ): Promise<void> {
     // TODO: Implement PII detection and redaction
-    console.log(
-      `🔐 [HealthcareMiddlewareService] PII detection for _request: ${context.requestId}`,
-    );
+    middlewareLogger.info("PII detection performed", {
+      requestId: context.requestId,
+      component: 'healthcare-middleware',
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
@@ -1195,7 +1202,10 @@ export class HealthcareMiddlewareService {
       throw new Error("CSRF_TOKEN_INVALID: Invalid CSRF token provided");
     }
 
-    console.log("🛡️ [HealthcareMiddlewareService] CSRF token validated");
+    middlewareLogger.info("CSRF token validated", {
+      component: 'healthcare-middleware',
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
@@ -1226,9 +1236,11 @@ export class HealthcareMiddlewareService {
       );
 
       if (unnecessarySensitiveFields.length > 0) {
-        console.warn(
-          `⚠️ [HealthcareMiddlewareService] Data minimization violation - unnecessary fields: ${unnecessarySensitiveFields.join(", ")}`,
-        );
+        middlewareLogger.warn("Data minimization violation detected", {
+          unnecessaryFields: unnecessarySensitiveFields,
+          component: 'healthcare-middleware',
+          timestamp: new Date().toISOString()
+        });
       }
     }
   }
@@ -1274,10 +1286,10 @@ export class HealthcareMiddlewareService {
       timestamp: new Date().toISOString(),
     };
 
-    console.log(
-      "📋 [HealthcareMiddlewareService] Compliance validation:",
-      complianceLog,
-    );
+    middlewareLogger.info("Compliance validation performed", {
+      ...complianceLog,
+      component: 'healthcare-middleware'
+    });
   }
 
   /**
@@ -1318,10 +1330,10 @@ export class HealthcareMiddlewareService {
       timestamp: new Date().toISOString(),
     };
 
-    console.warn(
-      "🐌 [HealthcareMiddlewareService] Slow request detected:",
-      slowRequestData,
-    );
+    middlewareLogger.warn("Slow request detected", {
+      ...slowRequestData,
+      component: 'healthcare-middleware'
+    });
 
     // TODO: Send performance alerts
     // TODO: Integrate with performance monitoring service
@@ -1344,10 +1356,10 @@ export class HealthcareMiddlewareService {
       timestamp: new Date().toISOString(),
     };
 
-    console.log(
-      "📤 [HealthcareMiddlewareService] Response logged:",
-      responseLog,
-    );
+    middlewareLogger.info("Response logged", {
+      ...responseLog,
+      component: 'healthcare-middleware'
+    });
   }
 
   /**
@@ -1422,10 +1434,12 @@ export class HealthcareMiddlewareService {
     }
 
     if (metricsToReport.length > 0) {
-      console.log("📊 [HealthcareMiddlewareService] Metrics collected:", {
+      middlewareLogger.info("Metrics collected", {
         count: metricsToReport.length,
-        averageDuration:
-          metricsToReport.reduce((sum, _m) => sum + (m.duration || 0), 0) /
+        averageDuration: metricsToReport.reduce((sum, _m) => sum + (m.duration || 0), 0) / metricsToReport.length,
+        component: 'healthcare-middleware',
+        timestamp: new Date().toISOString()
+      });
           metricsToReport.length,
         errorRate:
           metricsToReport.filter((m) => m.errorOccurred).length /
@@ -1459,9 +1473,10 @@ export class HealthcareMiddlewareService {
     this.requestMetrics.clear();
     this.isInitialized = false;
 
-    console.log(
-      "🔄 [HealthcareMiddlewareService] Healthcare middleware service destroyed and resources cleaned up",
-    );
+    middlewareLogger.info("Healthcare middleware service destroyed", {
+      component: 'healthcare-middleware',
+      timestamp: new Date().toISOString()
+    });
   }
 }
 

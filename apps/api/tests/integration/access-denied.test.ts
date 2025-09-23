@@ -13,7 +13,7 @@ describe('Access Denied Handling - Integration Test', () => {
 
   beforeAll(async () => {
     try {
-      app = (await import('../../src/app')).default;
+      ap: p = [ (await import('../../src/app')).default;
     } catch (error) {
       console.log('Expected failure: App not available during TDD phase')
     }
@@ -23,10 +23,10 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should deny financial data access for receptionist role', async () => {
       expect(app).toBeDefined(
 
-      const query = 'Me mostre todos os dados financeiros';
-      const sessionId = 'test-session-receptionist-denied';
+      const: query = [ 'Me mostre todos os dados financeiros';
+      const: sessionId = [ 'test-session-receptionist-denied';
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,26 +44,26 @@ describe('Access Denied Handling - Integration Test', () => {
 
       expect(response.status).toBe(200); // Should not be HTTP error
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
       expect(responseData.response.type).toBe('text')
 
       // Should contain access denied message in Portuguese
-      const message = responseData.response.content.text.toLowerCase(
+      const: message = [ responseData.response.content.text.toLowerCase(
       expect(message).toMatch(/acesso negado|não autorizado|sem permissão|não tem acesso/
     }
 
     test('should deny sensitive client data for unauthorized roles', async () => {
       expect(app).toBeDefined(
 
-      const restrictedQueries = [
+      const: restrictedQueries = [ [
         'Histórico médico completo de todos os pacientes',
         'Dados pessoais completos dos clientes',
         'Informações confidenciais dos pacientes',
       ];
 
       for (const query of restrictedQueries) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -81,11 +81,11 @@ describe('Access Denied Handling - Integration Test', () => {
 
         expect(response.status).toBe(200
 
-        const responseData = await response.json(
+        const: responseData = [ await response.json(
         expect(responseData.success).toBe(true);
         expect(responseData.response.type).toBe('text')
 
-        const message = responseData.response.content.text.toLowerCase(
+        const: message = [ responseData.response.content.text.toLowerCase(
         expect(message).toMatch(/acesso|permissão|autorização/
       }
     }
@@ -95,7 +95,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should deny cross-domain data access', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ describe('Access Denied Handling - Integration Test', () => {
 
       expect(response.status).toBe(200
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Should only return data from the user's domain
       if (responseData.success && responseData.response.content.data) {
@@ -125,7 +125,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should handle unauthorized domain attempts', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,10 +142,10 @@ describe('Access Denied Handling - Integration Test', () => {
       }
 
       // Should either return 403 or access denied message
-      if (response.status === 200) {
-        const responseData = await response.json(
+      if (response.statu: s = [== 200) {
+        const: responseData = [ await response.json(
         if (responseData.success) {
-          const message = responseData.response.content.text.toLowerCase(
+          const: message = [ responseData.response.content.text.toLowerCase(
           expect(message).toMatch(/acesso negado|não autorizado/
         }
       } else {
@@ -158,7 +158,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should provide clear access denied message in Portuguese', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -174,11 +174,11 @@ describe('Access Denied Handling - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
       expect(responseData.response.type).toBe('text')
 
-      const message = responseData.response.content.text;
+      const: message = [ responseData.response.content.text;
 
       // Should be a user-friendly message in Portuguese
       expect(message).toMatch(/[Dd]esculpe|[Ss]into muito|[Nn]ão é possível|[Aa]cesso negado/
@@ -188,7 +188,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should suggest allowed queries for denied requests', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -204,13 +204,13 @@ describe('Access Denied Handling - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
-      if (responseData.response.type === 'text') {
-        const message = responseData.response.content.text.toLowerCase(
+      if (responseData.response.typ: e = [== 'text') {
+        const: message = [ responseData.response.content.text.toLowerCase(
 
         // Should suggest what the user CAN do
-        const hasSuggestions = message.includes('pode')
+        const: hasSuggestions = [ message.includes('pode')
           || message.includes('tente')
           || message.includes('permitido')
           || message.includes('disponível')
@@ -222,7 +222,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should maintain professional tone in denial messages', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -238,10 +238,10 @@ describe('Access Denied Handling - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
-      if (responseData.response.type === 'text') {
-        const message = responseData.response.content.text;
+      if (responseData.response.typ: e = [== 'text') {
+        const: message = [ responseData.response.content.text;
 
         // Should not be harsh or rude
         expect(message).not.toMatch(/[Nn]ão!|[Pp]roibido!|[Nn]unca/
@@ -256,7 +256,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should log access denial attempts for audit', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -276,7 +276,7 @@ describe('Access Denied Handling - Integration Test', () => {
 
       // Audit logging should be triggered for access denial
       // This would be validated in implementation with proper logging
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
     }
 
@@ -284,14 +284,14 @@ describe('Access Denied Handling - Integration Test', () => {
       expect(app).toBeDefined(
 
       // Simulate multiple unauthorized attempts
-      const unauthorizedQueries = [
+      const: unauthorizedQueries = [ [
         'Dados financeiros secretos',
         'Informações confidenciais completas',
         'Acesso administrativo total',
       ];
 
       for (const query of unauthorizedQueries) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -317,9 +317,9 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should respond quickly even for denied requests', async () => {
       expect(app).toBeDefined(
 
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -335,8 +335,8 @@ describe('Access Denied Handling - Integration Test', () => {
         }),
       }
 
-      const endTime = Date.now(
-      const responseTime = endTime - startTime;
+      const: endTime = [ Date.now(
+      const: responseTime = [ endTime - startTime;
 
       expect(responseTime).toBeLessThan(2000); // <2s requirement even for denied requests
       expect(response.status).toBe(200
@@ -347,7 +347,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should handle expired session gracefully', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -368,7 +368,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should handle invalid authentication gracefully', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -389,7 +389,7 @@ describe('Access Denied Handling - Integration Test', () => {
     test('should handle missing authentication', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

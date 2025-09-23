@@ -423,9 +423,9 @@ export class EnhancedRealtimeManager {
     filter: string | undefined,
     options: EnhancedRealtimeOptions<T>,
   ): Promise<void> {
-    console.log(
-      `Enhanced realtime subscription ${channelName} status:`,
-      status,
+    realtimeLogger.info(
+      `Enhanced realtime subscription status`,
+      { channelName, status, timestamp: new Date().toISOString() },
     );
 
     switch (status) {
@@ -437,8 +437,9 @@ export class EnhancedRealtimeManager {
         // Clear fallback polling when real-time connection is restored
         this.clearFallbackPolling(channelName);
 
-        console.log(
-          `✅ Successfully subscribed to enhanced ${tableName} changes`,
+        realtimeLogger.info(
+          `Successfully subscribed to enhanced realtime changes`,
+          { tableName, channel: channelName, timestamp: new Date().toISOString() },
         );
         break;
 
@@ -470,7 +471,11 @@ export class EnhancedRealtimeManager {
       case "CLOSED":
         this.connectionHealth.isConnected = false;
         this.connectionHealth.quality = "disconnected";
-        console.log(`📴 Enhanced realtime connection closed for ${tableName}`);
+        realtimeLogger.info(`Enhanced realtime connection closed`, {
+          tableName,
+          reason: 'normal_closure',
+          timestamp: new Date().toISOString()
+        });
         break;
     }
   }
@@ -504,8 +509,9 @@ export class EnhancedRealtimeManager {
     }, intervalMs);
 
     this.fallbackIntervals.set(channelName, interval);
-    console.log(
-      `🔄 Started fallback polling for ${tableName} (${intervalMs}ms)`,
+    realtimeLogger.info(
+      `Started fallback polling`,
+      { tableName, intervalMs, channelName, timestamp: new Date().toISOString() },
     );
   }
 
@@ -548,8 +554,9 @@ export class EnhancedRealtimeManager {
     if (interval) {
       clearInterval(interval);
       this.fallbackIntervals.delete(channelName);
-      console.log(
-        `⏹️ Stopped fallback polling for ${channelName.replace("-fallback", "")}`,
+      realtimeLogger.info(
+        `Stopped fallback polling`,
+        { channelName, timestamp: new Date().toISOString() },
       );
     }
   }
@@ -578,8 +585,9 @@ export class EnhancedRealtimeManager {
     const maxRetries = options.maxRetryAttempts || 5;
 
     if (retryCount >= maxRetries) {
-      console.error(
-        `Max retries reached for enhanced ${tableName} subscription`,
+      realtimeLogger.error(
+        `Max retries reached for enhanced subscription`,
+        { tableName, retryCount, maxRetries, timestamp: new Date().toISOString() },
       );
       return;
     }
@@ -594,8 +602,9 @@ export class EnhancedRealtimeManager {
       ) *
       (0.5 + Math.random() * 0.5); // Add jitter
 
-    console.log(
-      `🔄 Retrying enhanced subscription to ${tableName} (attempt ${retryCount + 1}) in ${backoffMs}ms`,
+    realtimeLogger.info(
+      `Retrying enhanced subscription`,
+      { tableName, retryCount: retryCount + 1, backoffMs, timestamp: new Date().toISOString() },
     );
 
     // Remove failed channel
@@ -777,7 +786,10 @@ export class EnhancedRealtimeManager {
     tableName: string,
     options: EnhancedRealtimeOptions<T>,
   ): Promise<void> {
-    console.warn(`🚨 Attempting emergency recovery for ${tableName}`);
+    realtimeLogger.warn(`Attempting emergency recovery`, {
+      tableName,
+      timestamp: new Date().toISOString()
+    });
 
     // Force immediate cache invalidation
     await this.triggerImmediateSync(tableName, options.queryKeys);
@@ -821,7 +833,10 @@ export class EnhancedRealtimeManager {
       this.channels.delete(channelName);
       this.rateLimitMap.delete(channelName);
       this.clearFallbackPolling(channelName);
-      console.log(`Unsubscribed from enhanced ${channelName}`);
+      realtimeLogger.info(`Unsubscribed from enhanced realtime channel`, {
+        channelName,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
@@ -829,7 +844,10 @@ export class EnhancedRealtimeManager {
     this.channels.forEach((channel, name) => {
       this.supabase.removeChannel(channel);
       this.clearFallbackPolling(name);
-      console.log(`Unsubscribed from enhanced ${name}`);
+      realtimeLogger.info(`Unsubscribed from all enhanced realtime channels`, {
+        channelName: name,
+        timestamp: new Date().toISOString()
+      });
     });
     this.channels.clear();
     this.rateLimitMap.clear();

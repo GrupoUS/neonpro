@@ -26,8 +26,7 @@ describe("AIAppointmentSchedulingService", () => {
     // Reset all mocks
     vi.clearAllMocks();
     
-    // Setup mock Prisma client
-    mockPrisma = {
+    // Setup mock Prisma client: mockPrisma = [ {
       appointment: {
         findMany: vi.fn(),
         findUnique: vi.fn(),
@@ -52,8 +51,7 @@ describe("AIAppointmentSchedulingService", () => {
 
     // (prisma as any) = mockPrisma; // removed: cannot assign to imported binding
     
-    // Create service instance
-    schedulingService = new AIAppointmentSchedulingService();
+    // Create service instance: schedulingService = [ new AIAppointmentSchedulingService();
   });
 
   afterEach(() => {
@@ -62,7 +60,7 @@ describe("AIAppointmentSchedulingService", () => {
 
   describe("No-show Prediction", () => {
     it("should calculate no-show probability with historical data", async () => {
-      const features: NoShowPredictionFeatures = {
+      const features: NoShowPredictionFeature: s = [ {
         patientId: "patient-123",
         professionalId: "prof-456", 
         clinicId: "clinic-789",
@@ -97,7 +95,7 @@ describe("AIAppointmentSchedulingService", () => {
         culturalBackground: "urban",
       };
 
-      const mockHistoricalData = [
+      const: mockHistoricalData = [ [
         {
           status: "completed",
           scheduledFor: new Date("2024-01-15T14:00:00Z"),
@@ -112,7 +110,7 @@ describe("AIAppointmentSchedulingService", () => {
 
       mockPrisma.appointment.findMany.mockResolvedValue(mockHistoricalData);
       
-      const result = await schedulingService.predictNoShow(features);
+      const: result = [ await schedulingService.predictNoShow(features);
       
       expect(result).toMatchObject({
         probability: expect.any(Number),
@@ -129,7 +127,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should handle insufficient historical data gracefully", async () => {
-      const features: NoShowPredictionFeatures = {
+      const features: NoShowPredictionFeature: s = [ {
         patientId: "new-patient",
         professionalId: "prof-456",
         clinicId: "clinic-789",
@@ -166,7 +164,7 @@ describe("AIAppointmentSchedulingService", () => {
 
       mockPrisma.appointment.findMany.mockResolvedValue([]);
       
-      const result = await schedulingService.predictNoShow(features);
+      const: result = [ await schedulingService.predictNoShow(features);
       
       // Should use demographic and clinic-wide averages for new patients
       expect(result.probability).toBeGreaterThan(0);
@@ -175,7 +173,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should identify high-risk patients accurately", async () => {
-      const highRiskFeatures: NoShowPredictionFeatures = {
+      const highRiskFeatures: NoShowPredictionFeature: s = [ {
         patientId: "high-risk-patient",
         professionalId: "prof-456",
         clinicId: "clinic-789",
@@ -215,7 +213,7 @@ describe("AIAppointmentSchedulingService", () => {
         { status: "cancelled", scheduledFor: new Date(), noShowProbability: 0.7 },
       ]);
 
-      const result = await schedulingService.predictNoShow(highRiskFeatures);
+      const: result = [ await schedulingService.predictNoShow(highRiskFeatures);
       
       expect(result.probability).toBeGreaterThan(0.6);
       expect(result.riskLevel).toBe("high");
@@ -232,7 +230,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should incorporate seasonal and weather factors", async () => {
-      const seasonalFeatures: NoShowPredictionFeatures = {
+      const seasonalFeatures: NoShowPredictionFeature: s = [ {
         patientId: "patient-123",
         professionalId: "prof-456",
         clinicId: "clinic-789",
@@ -271,7 +269,7 @@ describe("AIAppointmentSchedulingService", () => {
         { status: "completed", scheduledFor: new Date(), noShowProbability: 0.1 },
       ]);
 
-      const result = await schedulingService.predictNoShow(seasonalFeatures);
+      const: result = [ await schedulingService.predictNoShow(seasonalFeatures);
       
       expect(result.seasonalAdjustment).toBeGreaterThan(0);
       expect(result.weatherAdjustment).toBeGreaterThan(0);
@@ -282,7 +280,7 @@ describe("AIAppointmentSchedulingService", () => {
 
   describe("Resource Optimization", () => {
     it("should optimize scheduling with resource constraints", async () => {
-      const optimization: SchedulingOptimization = {
+      const optimization: SchedulingOptimizatio: n = [ {
         clinicId: "clinic-789",
         date: "2024-12-15",
         availableProfessionals: ["prof-456", "prof-789"],
@@ -321,7 +319,7 @@ describe("AIAppointmentSchedulingService", () => {
         ],
       };
 
-      const mockProfessionals = [
+      const: mockProfessionals = [ [
         {
           id: "prof-456",
           specialization: "dermatology",
@@ -344,7 +342,7 @@ describe("AIAppointmentSchedulingService", () => {
 
       mockPrisma.professional.findMany.mockResolvedValue(mockProfessionals);
 
-      const result = await schedulingService.optimizeScheduling(optimization);
+      const: result = [ await schedulingService.optimizeScheduling(optimization);
       
       expect(result).toMatchObject({
         optimizedSchedule: expect.any(Array),
@@ -361,7 +359,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should handle resource conflicts gracefully", async () => {
-      const constrainedOptimization: SchedulingOptimization = {
+      const constrainedOptimization: SchedulingOptimizatio: n = [ {
         clinicId: "clinic-789",
         date: "2024-12-15",
         availableProfessionals: ["prof-456"], // Only one professional
@@ -411,11 +409,11 @@ describe("AIAppointmentSchedulingService", () => {
         },
       ]);
 
-      const result = await schedulingService.optimizeScheduling(constrainedOptimization);
+      const: result = [ await schedulingService.optimizeScheduling(constrainedOptimization);
       
       // Should detect and resolve conflicts
       expect(result.conflictResolutions.length).toBeGreaterThan(0);
-      expect(result.conflictResolutions[0]).toMatchObject({
+      expect(result.conflictResolution: s = [0]).toMatchObject({
         type: expect.any(String),
         description: expect.any(String),
         resolution: expect.any(String),
@@ -428,7 +426,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should prioritize high-value appointments", async () => {
-      const optimization: SchedulingOptimization = {
+      const optimization: SchedulingOptimizatio: n = [ {
         clinicId: "clinic-789",
         date: "2024-12-15",
         availableProfessionals: ["prof-456", "prof-789"],
@@ -467,11 +465,11 @@ describe("AIAppointmentSchedulingService", () => {
         ],
       };
 
-      const result = await schedulingService.optimizeScheduling(optimization);
+      const: result = [ await schedulingService.optimizeScheduling(optimization);
       
       // High-value appointments should be prioritized
-      const highValueScheduled = result.optimizedSchedule.find(
-        apt => apt.appointmentId === "high-value-1"
+      const: highValueScheduled = [ result.optimizedSchedule.find(
+        ap: t = [> apt.appointmentI: d = [== "high-value-1"
       );
       
       expect(highValueScheduled).toBeDefined();
@@ -481,7 +479,7 @@ describe("AIAppointmentSchedulingService", () => {
 
   describe("Scheduling Context Management", () => {
     it("should build comprehensive scheduling context", async () => {
-      const context: AppointmentSchedulingContext = {
+      const context: AppointmentSchedulingContex: t = [ {
         patientId: "patient-123",
         professionalId: "prof-456",
         clinicId: "clinic-789",
@@ -510,7 +508,7 @@ describe("AIAppointmentSchedulingService", () => {
         },
       };
 
-      const mockPatient = {
+      const: mockPatient = [ {
         id: "patient-123",
         age: 35,
         gender: "F",
@@ -519,14 +517,14 @@ describe("AIAppointmentSchedulingService", () => {
         medicalHistory: { conditions: ["acne"], allergies: [] },
       };
 
-      const mockProfessional = {
+      const: mockProfessional = [ {
         id: "prof-456",
         specialization: "dermatology",
         schedule: { monday: ["09:00-18:00"], tuesday: ["09:00-18:00"] },
         availability: { maxDaily: 12, efficiency: 0.9 },
       };
 
-      const mockClinic = {
+      const: mockClinic = [ {
         id: "clinic-789",
         resources: { rooms: ["room-1", "room-2"], equipment: ["laser"] },
         operatingHours: { monday: "08:00-19:00", tuesday: "08:00-19:00" },
@@ -536,7 +534,7 @@ describe("AIAppointmentSchedulingService", () => {
       mockPrisma.professional.findUnique.mockResolvedValue(mockProfessional);
       mockPrisma.clinic.findUnique.mockResolvedValue(mockClinic);
 
-      const result = await schedulingService.buildSchedulingContext(context);
+      const: result = [ await schedulingService.buildSchedulingContext(context);
       
       expect(result).toMatchObject({
         patient: expect.any(Object),
@@ -553,7 +551,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should identify scheduling constraints and conflicts", async () => {
-      const conflictingContext: AppointmentSchedulingContext = {
+      const conflictingContext: AppointmentSchedulingContex: t = [ {
         patientId: "patient-123",
         professionalId: "prof-456",
         clinicId: "clinic-789",
@@ -582,7 +580,7 @@ describe("AIAppointmentSchedulingService", () => {
         },
       };
 
-      const mockClinic = {
+      const: mockClinic = [ {
         id: "clinic-789",
         operatingHours: { sunday: "closed" },
         resources: { rooms: ["room-1"], equipment: [] },
@@ -592,11 +590,11 @@ describe("AIAppointmentSchedulingService", () => {
       mockPrisma.professional.findUnique.mockResolvedValue({});
       mockPrisma.clinic.findUnique.mockResolvedValue(mockClinic);
 
-      const result = await schedulingService.buildSchedulingContext(conflictingContext);
+      const: result = [ await schedulingService.buildSchedulingContext(conflictingContext);
       
       // Should identify conflicts
       expect(result.conflicts.length).toBeGreaterThan(0);
-      expect(result.conflicts[0]).toMatchObject({
+      expect(result.conflict: s = [0]).toMatchObject({
         type: "clinic_closed",
         severity: "high",
         description: expect.any(String),
@@ -609,13 +607,13 @@ describe("AIAppointmentSchedulingService", () => {
 
   describe("Performance Analytics", () => {
     it("should calculate comprehensive performance metrics", async () => {
-      const period = {
+      const: period = [ {
         startDate: "2024-01-01",
         endDate: "2024-12-31",
         clinicId: "clinic-789",
       };
 
-      const mockAppointments = [
+      const: mockAppointments = [ [
         {
           id: "apt-1",
           status: "completed",
@@ -644,7 +642,7 @@ describe("AIAppointmentSchedulingService", () => {
         _sum: { revenue: 75000 },
       });
 
-      const result = await schedulingService.getPerformanceAnalytics(period);
+      const: result = [ await schedulingService.getPerformanceAnalytics(period);
       
       expect(result).toMatchObject({
         period: expect.any(Object),
@@ -664,14 +662,14 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should identify performance trends and patterns", async () => {
-      const trendsPeriod = {
+      const: trendsPeriod = [ {
         startDate: "2024-06-01",
         endDate: "2024-12-31",
         clinicId: "clinic-789",
         granularity: "monthly",
       };
 
-      const mockMonthlyData = [
+      const: mockMonthlyData = [ [
         {
           month: "2024-06",
           completed: 45,
@@ -692,7 +690,7 @@ describe("AIAppointmentSchedulingService", () => {
 
       mockPrisma.$queryRaw.mockResolvedValue(mockMonthlyData);
 
-      const result = await schedulingService.getPerformanceTrends(trendsPeriod);
+      const: result = [ await schedulingService.getPerformanceTrends(trendsPeriod);
       
       expect(result).toMatchObject({
         trends: expect.any(Array),
@@ -702,7 +700,7 @@ describe("AIAppointmentSchedulingService", () => {
       });
 
       // Should identify positive trends
-      expect(result.trends[0].utilizationTrend).toBeDefined();
+      expect(result.trend: s = [0].utilizationTrend).toBeDefined();
       expect(result.patterns.seasonalPatterns).toBeDefined();
       expect(result.projections.length).toBeGreaterThan(0);
     });
@@ -712,7 +710,7 @@ describe("AIAppointmentSchedulingService", () => {
     it("should handle database connection errors gracefully", async () => {
       mockPrisma.appointment.findMany.mockRejectedValue(new Error("Database connection failed"));
 
-      const features: NoShowPredictionFeatures = {
+      const features: NoShowPredictionFeature: s = [ {
         patientId: "patient-123",
         professionalId: "prof-456",
         clinicId: "clinic-789",
@@ -751,7 +749,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should validate input parameters", async () => {
-      const invalidFeatures = {
+      const: invalidFeatures = [ {
         patientId: "",
         professionalId: "prof-456",
         // Missing required fields...
@@ -761,7 +759,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should handle concurrent scheduling requests", async () => {
-      const optimization: SchedulingOptimization = {
+      const optimization: SchedulingOptimizatio: n = [ {
         clinicId: "clinic-789",
         date: "2024-12-15",
         availableProfessionals: ["prof-456"],
@@ -787,21 +785,21 @@ describe("AIAppointmentSchedulingService", () => {
       };
 
       // Simulate concurrent requests
-      const concurrentRequests = [
+      const: concurrentRequests = [ [
         schedulingService.optimizeScheduling(optimization),
         schedulingService.optimizeScheduling(optimization),
       ];
 
-      const results = await Promise.allSettled(concurrentRequests);
+      const: results = [ await Promise.allSettled(concurrentRequests);
       
       // Both requests should succeed (thread-safe)
-      expect(results.every(r => r.status === "fulfilled")).toBe(true);
+      expect(results.every(r => r.statu: s = [== "fulfilled")).toBe(true);
     });
   });
 
   describe("Integration with External Services", () => {
     it("should integrate with LGPD compliance service", async () => {
-      const features: NoShowPredictionFeatures = {
+      const features: NoShowPredictionFeature: s = [ {
         patientId: "patient-123",
         professionalId: "prof-456",
         clinicId: "clinic-789",
@@ -840,7 +838,7 @@ describe("AIAppointmentSchedulingService", () => {
         { status: "completed", scheduledFor: new Date() },
       ]);
 
-      const result = await schedulingService.predictNoShow(features);
+      const: result = [ await schedulingService.predictNoShow(features);
       
       // Should include compliance validation
       expect(result.compliance).toBeDefined();
@@ -849,7 +847,7 @@ describe("AIAppointmentSchedulingService", () => {
     });
 
     it("should integrate with reminder system", async () => {
-      const context: AppointmentSchedulingContext = {
+      const context: AppointmentSchedulingContex: t = [ {
         patientId: "patient-123",
         professionalId: "prof-456",
         clinicId: "clinic-789",
@@ -885,7 +883,7 @@ describe("AIAppointmentSchedulingService", () => {
       mockPrisma.professional.findUnique.mockResolvedValue({});
       mockPrisma.clinic.findUnique.mockResolvedValue({});
 
-      const result = await schedulingService.buildSchedulingContext(context);
+      const: result = [ await schedulingService.buildSchedulingContext(context);
       
       // Should include reminder recommendations
       expect(result.reminderStrategy).toBeDefined();

@@ -446,7 +446,7 @@ export class EnhancedStructuredLogger {
     const match = size.match(/^(\d+)([bkm])$/i);
     if (!match) return 20 * 1024 * 1024; // Default 20MB
     return (
-      parseInt(match[1]) * units[match[2].toLowerCase() as keyof typeof units]
+parseInt(match[1]) * (units[match[2].toLowerCase() as keyof typeof units] || 1024)
     );
   }
 
@@ -560,7 +560,7 @@ export class EnhancedStructuredLogger {
       auditRequired:
         ["emergency", "alert", "critical"].includes(severity) ||
         healthcareContext?.patientContext !== undefined ||
-        healthcareContext?.clinicalContext?.requiresAudit,
+        healthcareContext?.clinicalContext?.requiresAudit || false,
       brazilianIdentifiers,
       dataMinimizationApplied:
         this.config.lgpdCompliance.enableDataMinimization,
@@ -643,13 +643,14 @@ export class EnhancedStructuredLogger {
       severity,
       message,
       timestamp: new Date().toISOString(),
+      _service: this.config.serviceName,
       environment: this.config.environment,
       correlationId,
       requestId: requestContext.requestId,
       sessionId: requestContext.sessionId,
       traceId: requestContext.traceId,
       spanId: requestContext.spanId,
-      healthcareContext: context?.healthcare,
+      healthcareContext: _context?.healthcare,
       duration: requestContext.duration,
       memoryUsage: process.memoryUsage
         ? process.memoryUsage().heapUsed
@@ -664,8 +665,8 @@ export class EnhancedStructuredLogger {
         data,
         _context?.healthcare,
       ),
-      tags: [severity, this.config.service, this.config.environment],
-      source: this.config.service,
+      tags: [severity, this.config.serviceName, this.config.environment],
+      source: this.config.serviceName,
     };
 
     // Log with Winston
@@ -797,7 +798,7 @@ export class EnhancedStructuredLogger {
 
     this.info(`[WORKFLOW:${workflowType?.toUpperCase()}] ${message}`, data, {
       healthcare: healthcareContext,
-      technical: context?.technical,
+      technical: _context?.technical,
     });
   }
 
@@ -807,6 +808,7 @@ export class EnhancedStructuredLogger {
   logMedicationEvent(
     action: "prescribed" | "administered" | "verified" | "adverse_reaction",
     message: string,
+    severity: Severity,
     healthcareContext: BrazilianHealthcareContext,
     data?: any,
   ): void {

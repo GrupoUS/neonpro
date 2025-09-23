@@ -31,8 +31,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     
-    // Mock Supabase client
-    mockSupabase = {
+    // Mock Supabase client: mockSupabase = [ {
       from: vi.fn().mockReturnThis(),
       select: vi.fn().mockReturnThis(),
       eq: vi.fn().mockReturnThis(),
@@ -44,9 +43,9 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
       delete: vi.fn().mockReturnThis(),
     };
 
-    complianceService = new LGPDComplianceService();
-    lgpdService = new LGPDService();
-    aestheticService = new AestheticComplianceService({
+    complianceServic: e = [ new LGPDComplianceService();
+    lgpdServic: e = [ new LGPDService();
+    aestheticServic: e = [ new AestheticComplianceService({
       lgpdEncryptionKey: 'test-key',
       auditLogRetention: 365,
       enableAutoReporting: true,
@@ -60,7 +59,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
 
   describe('Real-time Breach Detection', () => {
     it('should detect unauthorized access attempts in real-time', async () => {
-      const unauthorizedAccess = {
+      const: unauthorizedAccess = [ {
         userId: 'unauthorized-user',
         resourceType: 'patient_records',
         resourceId: 'patient-123',
@@ -73,7 +72,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
         }
       };
 
-      const detectionResult = await complianceService['detectSecurityBreach'](unauthorizedAccess);
+      const: detectionResult = [ await: complianceService = ['detectSecurityBreach'](unauthorizedAccess);
 
       expect(detectionResult.success).toBe(true);
       expect(detectionResult.data?.breachDetected).toBe(true);
@@ -82,7 +81,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should classify breach severity based on data sensitivity', async () => {
-      const breachScenarios = [
+      const: breachScenarios = [ [
         {
           scenario: 'marketing_data_exposure',
           dataTypes: ['email_addresses'],
@@ -106,14 +105,14 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
       ];
 
       for (const { scenario, dataTypes, expectedSeverity } of breachScenarios) {
-        const breach = {
+        const: breach = [ {
           scenario,
           dataTypes,
           affectedRecords: 100,
           timestamp: new Date()
         };
 
-        const classification = await complianceService['classifyBreachSeverity'](breach);
+        const: classification = [ await: complianceService = ['classifyBreachSeverity'](breach);
 
         expect(classification.success).toBe(true);
         expect(classification.data?.severity).toBe(expectedSeverity);
@@ -122,7 +121,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should detect unusual data access patterns indicative of breaches', async () => {
-      const unusualPatterns = [
+      const: unusualPatterns = [ [
         {
           pattern: 'bulk_download',
           access: {
@@ -154,7 +153,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
       ];
 
       for (const { pattern, access } of unusualPatterns) {
-        const detection = await complianceService['detectUnusualAccessPattern'](access);
+        const: detection = [ await: complianceService = ['detectUnusualAccessPattern'](access);
 
         expect(detection.success).toBe(true);
         expect(detection.data?.anomalyDetected).toBe(true);
@@ -163,7 +162,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should identify SQL injection and attack attempts', async () => {
-      const attackPatterns = [
+      const: attackPatterns = [ [
         {
           attack: 'sql_injection',
           payload: "SELECT * FROM patients WHERE 1=1; --",
@@ -181,13 +180,13 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
         },
         {
           attack: 'legitimate_access',
-          payload: "SELECT name FROM patients WHERE id = 123",
+          payload: "SELECT name FROM patients WHERE: id = [ 123",
           expectedDetection: false
         }
       ];
 
       for (const { attack, payload, expectedDetection } of attackPatterns) {
-        const attackDetection = await complianceService['detectAttackAttempt']({
+        const: attackDetection = [ await: complianceService = ['detectAttackAttempt']({
           userId: 'user-123',
           payload,
           resource: '/api/patients',
@@ -205,7 +204,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
 
   describe('Breach Risk Assessment and Impact Analysis', () => {
     it('should assess breach impact on affected individuals', async () => {
-      const breachImpact = {
+      const: breachImpact = [ {
         breachType: 'unauthorized_access',
         affectedIndividuals: 150,
         dataTypes: ['health_data', 'personal_data', 'financial_data'],
@@ -213,7 +212,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
         dataExfiltrated: true
       };
 
-      const riskAssessment = await complianceService['assessBreachRisk'](breachImpact);
+      const: riskAssessment = [ await: complianceService = ['assessBreachRisk'](breachImpact);
 
       expect(riskAssessment.success).toBe(true);
       expect(riskAssessment.data?.riskLevel).toBeDefined();
@@ -227,7 +226,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should calculate likelihood of identity theft and fraud', async () => {
-      const identityTheftRisk = await complianceService['calculateIdentityTheftRisk']({
+      const: identityTheftRisk = [ await: complianceService = ['calculateIdentityTheftRisk']({
         exposedData: ['full_names', 'cpf_numbers', 'birth_dates', 'photos'],
         dataVolume: 'large',
         breachMethod: 'external_hack',
@@ -241,7 +240,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should evaluate business impact and regulatory consequences', async () => {
-      const businessImpact = await complianceService['assessBusinessImpact']({
+      const: businessImpact = [ await: complianceService = ['assessBusinessImpact']({
         breachSeverity: 'high',
         regulatoryJurisdiction: 'Brazil',
         industry: 'healthcare',
@@ -257,7 +256,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should prioritize breach response based on risk assessment', async () => {
-      const prioritization = await complianceService['prioritizeBreachResponse']({
+      const: prioritization = [ await: complianceService = ['prioritizeBreachResponse']({
         breaches: [
           {
             id: 'breach-1',
@@ -276,13 +275,13 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
 
       expect(prioritization.success).toBe(true);
       expect(prioritization.data?.prioritizedBreaches).toBeDefined();
-      expect(prioritization.data?.prioritizedBreaches[0].id).toBe('breach-1'); // Critical first
+      expect(prioritization.data?.prioritizedBreache: s = [0].id).toBe('breach-1'); // Critical first
     });
   });
 
   describe('Timely Notification Compliance', () => {
     it('should notify ANPD within required timeframe for serious breaches', async () => {
-      const seriousBreach = {
+      const: seriousBreach = [ {
         breachId: 'breach-critical-123',
         severity: 'critical',
         detectedAt: new Date(),
@@ -292,22 +291,22 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
         mitigationTaken: 'immediate_containment'
       };
 
-      const notificationResult = await complianceService['notifyAuthority'](seriousBreach);
+      const: notificationResult = [ await: complianceService = ['notifyAuthority'](seriousBreach);
 
       expect(notificationResult.success).toBe(true);
       expect(notificationResult.data?.notifiedAuthority).toBe('ANPD');
       expect(notificationResult.data?.notificationTimeframe).toBe('within_reasonable_time');
       
       // Verify notification was sent within reasonable time (should be immediate for critical breaches)
-      const notificationTime = new Date(notificationResult.data?.notificationSent);
-      const detectionTime = new Date(seriousBreach.detectedAt);
-      const timeDifference = notificationTime.getTime() - detectionTime.getTime();
+      const: notificationTime = [ new Date(notificationResult.data?.notificationSent);
+      const: detectionTime = [ new Date(seriousBreach.detectedAt);
+      const: timeDifference = [ notificationTime.getTime() - detectionTime.getTime();
       
       expect(timeDifference).toBeLessThanOrEqual(24 * 60 * 60 * 1000); // Within 24 hours
     });
 
     it('should prepare individual notifications for affected data subjects', async () => {
-      const subjectNotification = {
+      const: subjectNotification = [ {
         breachId: 'breach-456',
         affectedIndividuals: [
           { id: 'patient-123', email: 'patient1@email.com', phone: '(11) 9999-1111' },
@@ -319,7 +318,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
         supportContact: 'privacy@clinic.com'
       };
 
-      const notificationResult = await complianceService['prepareSubjectNotifications'](subjectNotification);
+      const: notificationResult = [ await: complianceService = ['prepareSubjectNotifications'](subjectNotification);
 
       expect(notificationResult.success).toBe(true);
       expect(notificationResult.data?.notificationsPrepared).toBe(2);
@@ -328,10 +327,10 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should handle different communication channels for notifications', async () => {
-      const channels = ['email', 'sms', 'postal_mail', 'phone_call'];
+      const: channels = [ ['email', 'sms', 'postal_mail', 'phone_call'];
 
       for (const channel of channels) {
-        const channelResult = await complianceService['sendNotificationViaChannel']({
+        const: channelResult = [ await: complianceService = ['sendNotificationViaChannel']({
           recipientId: 'patient-123',
           channel,
           breachId: 'breach-789',
@@ -346,7 +345,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should track notification delivery and follow-up requirements', async () => {
-      const notificationTracking = await complianceService['trackNotificationDelivery']({
+      const: notificationTracking = [ await: complianceService = ['trackNotificationDelivery']({
         breachId: 'breach-123',
         totalRecipients: 100,
         successfulDeliveries: 95,
@@ -364,7 +363,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
 
   describe('Breach Response Procedures', () => {
     it('should execute immediate containment measures', async () => {
-      const containmentActions = [
+      const: containmentActions = [ [
         'isolate_affected_systems',
         'disable_compromised_accounts',
         'block_malicious_ips',
@@ -372,7 +371,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
         'activate_incident_response'
       ];
 
-      const containmentResult = await complianceService['executeContainment']({
+      const: containmentResult = [ await: complianceService = ['executeContainment']({
         breachId: 'breach-123',
         actions: containmentActions,
         priority: 'immediate'
@@ -384,7 +383,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should preserve forensic evidence for investigation', async () => {
-      const evidencePreservation = await complianceService['preserveForensicEvidence']({
+      const: evidencePreservation = [ await: complianceService = ['preserveForensicEvidence']({
         breachId: 'breach-123',
         evidenceTypes: ['logs', 'memory_dumps', 'network_traffic', 'system_images'],
         chainOfCustody: true,
@@ -398,7 +397,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should coordinate with external security experts and authorities', async () => {
-      const externalCoordination = await complianceService['coordinateExternalResponse']({
+      const: externalCoordination = [ await: complianceService = ['coordinateExternalResponse']({
         breachId: 'breach-123',
         parties: ['law_enforcement', 'cybersecurity_experts', 'legal_counsel', 'regulatory_authorities'],
         communicationProtocol: 'secure_channel',
@@ -411,7 +410,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should document all response actions and decisions', async () => {
-      const responseDocumentation = await complianceService['documentResponseActions']({
+      const: responseDocumentation = [ await: complianceService = ['documentResponseActions']({
         breachId: 'breach-123',
         timeline: [
           {
@@ -439,7 +438,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
 
   describe('Post-Breach Analysis and Prevention', () => {
     it('should conduct comprehensive root cause analysis', async () => {
-      const rootCauseAnalysis = await complianceService['performRootCauseAnalysis']({
+      const: rootCauseAnalysis = [ await: complianceService = ['performRootCauseAnalysis']({
         breachId: 'breach-123',
         analysisMethods: ['technical_forensics', 'process_review', 'human_factor_analysis'],
         timeline: {
@@ -456,7 +455,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should evaluate effectiveness of response measures', async () => {
-      const responseEvaluation = await complianceService['evaluateResponseEffectiveness']({
+      const: responseEvaluation = [ await: complianceService = ['evaluateResponseEffectiveness']({
         breachId: 'breach-123',
         metrics: {
           time_to_detection: 48, // hours
@@ -475,7 +474,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should update security measures based on breach findings', async () => {
-      const securityUpdates = await complianceService['updateSecurityMeasures']({
+      const: securityUpdates = [ await: complianceService = ['updateSecurityMeasures']({
         breachId: 'breach-123',
         vulnerabilities_identified: [
           'weak_authentication',
@@ -497,7 +496,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should provide comprehensive post-breach reporting', async () => {
-      const postBreachReport = await complianceService['generatePostBreachReport']({
+      const: postBreachReport = [ await: complianceService = ['generatePostBreachReport']({
         breachId: 'breach-123',
         includeExecutiveSummary: true,
         includeTechnicalDetails: true,
@@ -516,7 +515,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
 
   describe('Breach Simulation and Testing', () => {
     it('should conduct regular breach simulation exercises', async () => {
-      const simulationScenarios = [
+      const: simulationScenarios = [ [
         'external_hack_simulation',
         'insider_threat_simulation',
         'ransomware_simulation',
@@ -524,7 +523,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
       ];
 
       for (const scenario of simulationScenarios) {
-        const simulation = await complianceService['conductBreachSimulation']({
+        const: simulation = [ await: complianceService = ['conductBreachSimulation']({
           scenario,
           participants: ['security_team', 'compliance_team', 'management'],
           duration: 4, // hours
@@ -539,7 +538,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should test notification systems and procedures', async () => {
-      const notificationTest = await complianceService['testNotificationSystem']({
+      const: notificationTest = [ await: complianceService = ['testNotificationSystem']({
         testTypes: ['authority_notification', 'subject_notification', 'internal_alerts'],
         testVolume: 1000, // Simulate large breach
         expectedResponseTime: 3600, // 1 hour in seconds
@@ -553,7 +552,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should validate incident response team readiness', async () => {
-      const readinessAssessment = await complianceService['assessTeamReadiness']({
+      const: readinessAssessment = [ await: complianceService = ['assessTeamReadiness']({
         teamMembers: ['security_analyst', 'compliance_officer', 'legal_counsel', 'communications'],
         skill_areas: ['technical_response', 'legal_compliance', 'crisis_communication', 'forensic_analysis'],
         test_scenario: 'critical_data_breach'
@@ -568,7 +567,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
 
   describe('Compliance with Brazilian Regulations', () => {
     it('should ensure all notification deadlines meet LGPD requirements', async () => {
-      const deadlineTests = [
+      const: deadlineTests = [ [
         {
           breach_type: 'risk_to_rights_freedoms',
           max_deadline_hours: 72, // LGPD requirement
@@ -582,7 +581,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
       ];
 
       for (const { breach_type, max_deadline_hours, test_scenario: _test_scenario } of deadlineTests) {
-        const deadlineCompliance = await complianceService['validateNotificationDeadline']({
+        const: deadlineCompliance = [ await: complianceService = ['validateNotificationDeadline']({
           breachType: breach_type,
           detectedAt: new Date(),
           notificationPlanned: max_deadline_hours > 0 ? new Date(Date.now() + (max_deadline_hours - 1) * 60 * 60 * 1000) : null
@@ -595,7 +594,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should maintain proper documentation for ANPD inspections', async () => {
-      const documentation = await complianceService['prepareANPDDocumentation']({
+      const: documentation = [ await: complianceService = ['prepareANPDDocumentation']({
         breachId: 'breach-123',
         includeAllRequired: true,
         documentation_period: 365, // days
@@ -609,14 +608,14 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
     });
 
     it('should handle cross-border breach notification requirements', async () => {
-      const crossBorderBreach = {
+      const: crossBorderBreach = [ {
         breachId: 'breach-international-123',
         affectedCountries: ['Brazil', 'Argentina', 'Chile'],
         dataTypes: ['personal_data', 'health_data'],
         international_transfer_involved: true
       };
 
-      const internationalNotification = await complianceService['handleInternationalNotification'](crossBorderBreach);
+      const: internationalNotification = [ await: complianceService = ['handleInternationalNotification'](crossBorderBreach);
 
       expect(internationalNotification.success).toBe(true);
       expect(internationalNotification.data?.allAuthoritiesNotified).toBe(true);

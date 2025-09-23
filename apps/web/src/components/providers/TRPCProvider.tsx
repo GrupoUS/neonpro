@@ -1,5 +1,5 @@
 import * as React from "react";
-import { trpc, trpcClient } from "../../lib/trpc/client";
+import { trpc, trpcClient } from "../../lib/trpc";
 import { queryClient } from "./TanStackQueryProvider";
 
 interface TRPCProviderProps {

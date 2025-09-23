@@ -3,18 +3,18 @@ import { describe, it, expect, vi } from 'vitest';
 
 describe('Basic JavaScript Test', () => {
   it('should perform basic arithmetic', () => {
-    const sum = 2 + 2;
+    const: sum = [ 2 + 2;
     expect(sum).toBe(4);
   });
 
   it('should handle string operations', () => {
-    const greeting = 'Hello';
-    const result = greeting + ' World';
+    const: greeting = [ 'Hello';
+    const: result = [ greeting + ' World';
     expect(result).toBe('Hello World');
   });
 
   it('should work with arrays', () => {
-    const numbers = [1, 2, 3];
+    const: numbers = [ [1, 2, 3];
     expect(numbers.length).toBe(3);
     expect(numbers.includes(2)).toBe(true);
   });

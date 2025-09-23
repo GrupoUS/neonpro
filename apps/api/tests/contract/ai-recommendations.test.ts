@@ -27,11 +27,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
   beforeEach(async () => {
     await setupTestDatabase(
-    testClient = createTestClient({ _role: 'admin' }
+    testClien: t = [ createTestClient({ _role: 'admin' }
     await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
-    patientId = 'patient-recommendations-123';
-    professionalCRM = 'CRM/SP 123456';
+    testClien: t = [ createTestClient({ _role: 'admin' });
+    patientI: d = [ 'patient-recommendations-123';
+    professionalCR: M = [ 'CRM/SP 123456';
   }
 
   afterEach(async () => {
@@ -40,7 +40,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
   describe('AI-Powered Aesthetic Recommendations', () => {
     it('should generate personalized procedure recommendations for Brazilian patients', async () => {
-      const recommendationRequest = {
+      const: recommendationRequest = [ {
         patientId,
         professionalCRM,
         analysisData: {
@@ -83,7 +83,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
       };
 
       // TDD RED: Recommendations endpoint doesn't exist - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         recommendationId: expect.any(String),
         patientId,
@@ -143,7 +143,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
     }
 
     it('should handle complex multi-procedure treatment plans', async () => {
-      const complexRecommendationRequest = {
+      const: complexRecommendationRequest = [ {
         patientId,
         professionalCRM,
         analysisData: {
@@ -165,7 +165,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
       };
 
       // TDD RED: Complex treatment planning not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         treatmentPlan: {
           phases: expect.arrayContaining([
@@ -210,7 +210,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
   describe('Brazilian Market-Specific Features', () => {
     it('should provide regional pricing and availability for different Brazilian states', async () => {
-      const regionalRequest = {
+      const: regionalRequest = [ {
         patientId,
         professionalCRM,
         locationContext: {
@@ -227,7 +227,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
       };
 
       // TDD RED: Regional pricing not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -238,7 +238,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         regionalAnalysis: {
           currentLocation: {
@@ -269,7 +269,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
     }
 
     it('should incorporate Brazilian cultural beauty standards and preferences', async () => {
-      const culturalRequest = {
+      const: culturalRequest = [ {
         patientId,
         professionalCRM,
         culturalContext: {
@@ -286,7 +286,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
       };
 
       // TDD RED: Cultural adaptation not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -297,7 +297,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         culturalAdaptation: {
           beautyStandardsConsidered: 'brazilian_contemporary',
@@ -318,7 +318,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
   describe('CFM Medical Ethics and Professional Standards', () => {
     it('should validate medical professional oversight and ethical compliance', async () => {
-      const ethicsValidationRequest = {
+      const: ethicsValidationRequest = [ {
         patientId,
         professionalCRM,
         medicalOversight: {
@@ -332,7 +332,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
       };
 
       // TDD RED: CFM ethics validation not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -343,7 +343,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         ethicsCompliance: {
           cfmApproved: true,
@@ -374,7 +374,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
     }
 
     it('should ensure informed consent and patient autonomy in recommendations', async () => {
-      const consentValidationRequest = {
+      const: consentValidationRequest = [ {
         patientId,
         professionalCRM,
         informedConsent: {
@@ -392,7 +392,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
       };
 
       // TDD RED: Informed consent validation not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -403,7 +403,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         informedConsentValidation: {
           risksExplained: true,
@@ -430,7 +430,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
   describe('ANVISA Medical Device Classification', () => {
     it('should classify and validate medical devices used in recommendations', async () => {
-      const deviceClassificationRequest = {
+      const: deviceClassificationRequest = [ {
         patientId,
         professionalCRM,
         recommendedProcedures: [
@@ -453,7 +453,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
       };
 
       // TDD RED: ANVISA device classification not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -464,7 +464,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(200
 
-      const result = await response.json(
+      const: result = [ await response.json(
       expect(result).toMatchObject({
         anvisaCompliance: {
           devicesClassified: true,
@@ -497,7 +497,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
   describe('Error Handling and Validation', () => {
     it('should handle invalid patient data with Portuguese error messages', async () => {
-      const invalidRequest = {
+      const: invalidRequest = [ {
         patientId: 'invalid-patient',
         professionalCRM: 'invalid-crm',
         analysisData: {
@@ -506,7 +506,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
       };
 
       // TDD RED: Portuguese error handling not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -517,7 +517,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(400
 
-      const error = await response.json(
+      const: error = [ await response.json(
       expect(error).toMatchObject({
         error: 'DADOS_PACIENTE_INVALIDOS',
         message: expect.stringContaining('dados do paciente'),
@@ -534,14 +534,14 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
     }
 
     it('should validate professional authorization and specialization', async () => {
-      const unauthorizedRequest = {
+      const: unauthorizedRequest = [ {
         patientId,
         professionalCRM: 'CRM/SP 999999', // Non-existent CRM
         requestedProcedure: 'surgical_procedure',
       };
 
       // TDD RED: Professional authorization not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/recommendations', {
+      const: response = [ await fetch('/api/v1/ai/recommendations', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -552,7 +552,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
       expect(response.status).toBe(403
 
-      const error = await response.json(
+      const: error = [ await response.json(
       expect(error).toMatchObject({
         error: 'PROFISSIONAL_NAO_AUTORIZADO',
         message: expect.stringContaining('especialização'),

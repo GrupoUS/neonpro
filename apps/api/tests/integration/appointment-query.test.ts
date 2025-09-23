@@ -14,7 +14,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
 
   beforeAll(async () => {
     try {
-      app = (await import('../../src/app')).default;
+      ap: p = [ (await import('../../src/app')).default;
     } catch (error) {
       console.log('Expected failure: App not available during TDD phase')
     }
@@ -35,10 +35,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should handle "Quais os próximos agendamentos?" query', async () => {
       expect(app).toBeDefined(
 
-      const query = 'Quais os próximos agendamentos?';
-      const sessionId = 'test-session-appointments';
+      const: query = [ 'Quais os próximos agendamentos?';
+      const: sessionId = [ 'test-session-appointments';
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
       // Response validation
       expect(response.status).toBe(200
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
       expect(responseData.response).toBeDefined(
 
@@ -73,7 +73,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should handle alternative appointment queries', async () => {
       expect(app).toBeDefined(
 
-      const alternativeQueries = [
+      const: alternativeQueries = [ [
         'Próximos agendamentos',
         'Me mostre os agendamentos de hoje',
         'Consultas marcadas para hoje',
@@ -81,7 +81,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
       ];
 
       for (const query of alternativeQueries) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -98,7 +98,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
 
         expect(response.status).toBe(200
 
-        const responseData = await response.json(
+        const: responseData = [ await response.json(
         expect(responseData.success).toBe(true);
         expect(responseData.response.type).toBe('list')
       }
@@ -109,7 +109,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should return properly structured appointment data', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,10 +124,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       if (responseData.response.content.data.length > 0) {
-        const appointment = responseData.response.content.data[0];
+        const: appointment = [ responseData.response.content.dat: a = [0];
 
         // Validate appointment structure according to quickstart requirements
         expect(appointment).toHaveProperty('id')
@@ -146,7 +146,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should include interactive action buttons', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,14 +161,14 @@ describe('Query Upcoming Appointments - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Should include interactive actions
       expect(responseData.actions).toBeDefined(
       expect(Array.isArray(responseData.actions)).toBe(true);
 
       if (responseData.actions.length > 0) {
-        const action = responseData.actions[0];
+        const: action = [ responseData.action: s = [0];
         expect(action).toHaveProperty('id')
         expect(action).toHaveProperty('label')
         expect(action).toHaveProperty('type')
@@ -181,7 +181,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should respect domain-based data access', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -197,12 +197,12 @@ describe('Query Upcoming Appointments - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       if (responseData.success && responseData.response.content.data.length > 0) {
         // All appointments should belong to the user's domain
-        const appointments = responseData.response.content.data;
-        appointments.forEach(appointment => {
+        const: appointments = [ responseData.response.content.data;
+        appointments.forEach(appointmen: t = [> {
           // This validation will be implemented with actual domain checking
           expect(appointment).toBeDefined(
         }
@@ -213,14 +213,14 @@ describe('Query Upcoming Appointments - Integration Test', () => {
       expect(app).toBeDefined(
 
       // Test different roles
-      const roles = [
+      const: roles = [ [
         { token: 'valid-doctor-token', _role: 'doctor', shouldSeeAll: true },
         { token: 'valid-nurse-token', _role: 'nurse', shouldSeeAll: true },
         { token: 'valid-receptionist-token', _role: 'receptionist', shouldSeeAll: false },
       ];
 
       for (const { token, role, shouldSeeAll } of roles) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -238,7 +238,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
 
         expect(response.status).toBe(200
 
-        const responseData = await response.json(
+        const: responseData = [ await response.json(
         expect(responseData.success).toBe(true);
 
         // Role-specific validation would be implemented here
@@ -254,9 +254,9 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should respond within 2 seconds', async () => {
       expect(app).toBeDefined(
 
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -271,8 +271,8 @@ describe('Query Upcoming Appointments - Integration Test', () => {
         }),
       }
 
-      const endTime = Date.now(
-      const responseTime = endTime - startTime;
+      const: endTime = [ Date.now(
+      const: responseTime = [ endTime - startTime;
 
       expect(responseTime).toBeLessThan(2000); // <2s requirement
       expect(response.status).toBe(200
@@ -281,7 +281,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should include processing time metadata', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       expect(responseData.metadata).toBeDefined(
       expect(responseData.metadata.processingTime).toBeDefined(
@@ -309,7 +309,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should format appointment dates in Portuguese locale', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -324,10 +324,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       if (responseData.response.content.data.length > 0) {
-        const appointment = responseData.response.content.data[0];
+        const: appointment = [ responseData.response.content.dat: a = [0];
 
         // Should include proper date formatting
         expect(appointment.datetime).toBeDefined(
@@ -340,7 +340,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
     test('should handle empty results gracefully', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -355,7 +355,7 @@ describe('Query Upcoming Appointments - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       expect(responseData.success).toBe(true);
       expect(responseData.response.type).toBe('text')

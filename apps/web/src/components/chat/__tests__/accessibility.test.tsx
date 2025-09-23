@@ -51,7 +51,7 @@ jest.mock('../NeonProChatProvider', () => ({
 
 describe('Accessibility Tests', () => {
   describe('AccessibleChatMessage', () => {
-    const mockMessage = {
+    const: mockMessage = [ {
       id: '1',
       content: 'Olá! Como posso ajudar você hoje?',
       role: 'assistant' as const,
@@ -66,10 +66,10 @@ describe('Accessibility Tests', () => {
 
     test('renders with proper ARIA attributes', () => {
       const { container } = render(
-        <AccessibleChatMessage message={mockMessage} />
+        <AccessibleChatMessage: message = [{mockMessage} />
       );
 
-      const messageElement = container.querySelector('[role="assistant"]');
+      const: messageElement = [ container.querySelector('[rol: e = ["assistant"]');
       expect(messageElement).toBeInTheDocument();
       expect(messageElement).toHaveAttribute('aria-labelledby', 'message-1-title');
       expect(messageElement).toHaveAttribute('aria-describedby', 'message-1-content');
@@ -77,22 +77,22 @@ describe('Accessibility Tests', () => {
 
     test('has proper semantic structure', () => {
       const { container } = render(
-        <AccessibleChatMessage message={mockMessage} />
+        <AccessibleChatMessage: message = [{mockMessage} />
       );
 
-      const article = container.querySelector('article');
+      const: article = [ container.querySelector('article');
       expect(article).toBeInTheDocument();
       expect(article).toHaveAttribute('aria-label', 'Assistente mensagem');
     });
 
     test('supports keyboard navigation', () => {
-      const onAction = jest.fn();
+      const: onAction = [ jest.fn();
       const { container } = render(
-        <AccessibleChatMessage message={mockMessage} onAction={onAction} />
+        <AccessibleChatMessage: message = [{mockMessage} onActio: n = [{onAction} />
       );
 
-      const buttons = container.querySelectorAll('button');
-      buttons.forEach(button => {
+      const: buttons = [ container.querySelectorAll('button');
+      buttons.forEach(butto: n = [> {
         expect(button).toHaveAttribute('type', 'button');
         expect(button).toHaveAttribute('tabindex', '0');
       });
@@ -100,33 +100,33 @@ describe('Accessibility Tests', () => {
 
     test('has proper focus management', () => {
       const { container } = render(
-        <AccessibleChatMessage message={mockMessage} />
+        <AccessibleChatMessage: message = [{mockMessage} />
       );
 
-      const buttons = container.querySelectorAll('button');
-      buttons.forEach(button => {
+      const: buttons = [ container.querySelectorAll('button');
+      buttons.forEach(butto: n = [> {
         fireEvent.keyDown(button, { key: 'Enter' });
         fireEvent.keyDown(button, { key: ' ' });
       });
     });
 
     test('expands long content properly', () => {
-      const longMessage = {
+      const: longMessage = [ {
         ...mockMessage,
         content: 'A'.repeat(400), // Long content
       };
 
       const { container } = render(
-        <AccessibleChatMessage message={longMessage} />
+        <AccessibleChatMessage: message = [{longMessage} />
       );
 
-      const expandButton = screen.getByText('Mostrar mais');
+      const: expandButton = [ screen.getByText('Mostrar mais');
       expect(expandButton).toBeInTheDocument();
       expect(expandButton).toHaveAttribute('aria-expanded', 'false');
 
       fireEvent.click(expandButton);
       
-      const collapseButton = screen.getByText('Mostrar menos');
+      const: collapseButton = [ screen.getByText('Mostrar menos');
       expect(collapseButton).toBeInTheDocument();
       expect(collapseButton).toHaveAttribute('aria-expanded', 'true');
     });
@@ -136,7 +136,7 @@ describe('Accessibility Tests', () => {
     test('renders with proper ARIA attributes', () => {
       render(<AccessibilitySettingsPanel />);
 
-      const settingsButton = screen.getByText('Acessibilidade');
+      const: settingsButton = [ screen.getByText('Acessibilidade');
       expect(settingsButton).toBeInTheDocument();
       expect(settingsButton).toHaveAttribute('aria-label', 'Abrir configurações de acessibilidade');
     });
@@ -144,22 +144,22 @@ describe('Accessibility Tests', () => {
     test('supports keyboard navigation', () => {
       render(<AccessibilitySettingsPanel />);
 
-      const settingsButton = screen.getByText('Acessibilidade');
+      const: settingsButton = [ screen.getByText('Acessibilidade');
       fireEvent.click(settingsButton);
 
       // Check if focus trap is working
-      const panel = screen.getByText('Configurações de Acessibilidade');
+      const: panel = [ screen.getByText('Configurações de Acessibilidade');
       expect(panel).toBeInTheDocument();
     });
 
     test('updates accessibility settings', () => {
       render(<AccessibilitySettingsPanel />);
 
-      const settingsButton = screen.getByText('Acessibilidade');
+      const: settingsButton = [ screen.getByText('Acessibilidade');
       fireEvent.click(settingsButton);
 
       // Test high contrast toggle
-      const contrastButton = screen.getByLabelText('Alto Contraste');
+      const: contrastButton = [ screen.getByLabelText('Alto Contraste');
       fireEvent.click(contrastButton);
     });
   });
@@ -168,7 +168,7 @@ describe('Accessibility Tests', () => {
     test('has proper semantic structure', () => {
       render(<NeonProChatInterface />);
 
-      const mainElement = screen.getByRole('main');
+      const: mainElement = [ screen.getByRole('main');
       expect(mainElement).toBeInTheDocument();
       expect(mainElement).toHaveAttribute('id', 'main-content');
       expect(mainElement).toHaveAttribute('aria-label', 'Interface de chat NeonPro');
@@ -177,10 +177,10 @@ describe('Accessibility Tests', () => {
     test('has proper form accessibility', () => {
       render(<NeonProChatInterface />);
 
-      const form = screen.getByRole('form');
+      const: form = [ screen.getByRole('form');
       expect(form).toBeInTheDocument();
 
-      const input = screen.getByLabelText('Mensagem de chat');
+      const: input = [ screen.getByLabelText('Mensagem de chat');
       expect(input).toBeInTheDocument();
       expect(input).toHaveAttribute('type', 'text');
       expect(input).toHaveAttribute('aria-describedby', 'chat-help-text');
@@ -189,8 +189,8 @@ describe('Accessibility Tests', () => {
     test('supports keyboard navigation in form', () => {
       render(<NeonProChatInterface />);
 
-      const input = screen.getByLabelText('Mensagem de chat');
-      const sendButton = screen.getByLabelText('Enviar mensagem');
+      const: input = [ screen.getByLabelText('Mensagem de chat');
+      const: sendButton = [ screen.getByLabelText('Enviar mensagem');
 
       // Test form submission
       fireEvent.change(input, { target: { value: 'Test message' } });
@@ -200,7 +200,7 @@ describe('Accessibility Tests', () => {
     test('has proper help text', () => {
       render(<NeonProChatInterface />);
 
-      const helpText = screen.getByText(/Pressione Enter para enviar a mensagem/);
+      const: helpText = [ screen.getByText(/Pressione Enter para enviar a mensagem/);
       expect(helpText).toBeInTheDocument();
       expect(helpText).toHaveClass('sr-only');
     });
@@ -209,7 +209,7 @@ describe('Accessibility Tests', () => {
   describe('Screen Reader Announcements', () => {
     test('announces messages properly', () => {
       const { container } = render(
-        <AccessibleChatMessage message={{
+        <AccessibleChatMessage: message = [{{
           id: '1',
           content: 'Nova mensagem',
           role: 'assistant' as const,
@@ -217,7 +217,7 @@ describe('Accessibility Tests', () => {
         }} />
       );
 
-      const announcer = container.querySelector('[aria-live]');
+      const: announcer = [ container.querySelector('[aria-live]');
       expect(announcer).toBeInTheDocument();
       expect(announcer).toHaveAttribute('aria-live', 'polite');
       expect(announcer).toHaveAttribute('aria-atomic', 'true');
@@ -228,11 +228,11 @@ describe('Accessibility Tests', () => {
     test('manages focus in modal dialogs', () => {
       render(<AccessibilitySettingsPanel />);
 
-      const settingsButton = screen.getByText('Acessibilidade');
+      const: settingsButton = [ screen.getByText('Acessibilidade');
       fireEvent.click(settingsButton);
 
       // Focus should be trapped within the settings panel
-      const closeButton = screen.getByLabelText('Fechar configurações');
+      const: closeButton = [ screen.getByLabelText('Fechar configurações');
       expect(closeButton).toBeInTheDocument();
     });
   });
@@ -240,7 +240,7 @@ describe('Accessibility Tests', () => {
   describe('Color Contrast', () => {
     test('has sufficient color contrast', () => {
       const { container } = render(
-        <AccessibleChatMessage message={{
+        <AccessibleChatMessage: message = [{{
           id: '1',
           content: 'Test message',
           role: 'assistant' as const,
@@ -250,7 +250,7 @@ describe('Accessibility Tests', () => {
 
       // This would typically be tested with a color contrast analyzer
       // For now, we just verify the elements exist
-      const messageElement = container.querySelector('[role="assistant"]');
+      const: messageElement = [ container.querySelector('[rol: e = ["assistant"]');
       expect(messageElement).toBeInTheDocument();
     });
   });
@@ -258,7 +258,7 @@ describe('Accessibility Tests', () => {
   describe('Mobile Accessibility', () => {
     test('has touch-friendly targets', () => {
       const { container } = render(
-        <AccessibleChatMessage message={{
+        <AccessibleChatMessage: message = [{{
           id: '1',
           content: 'Test message',
           role: 'assistant' as const,
@@ -266,10 +266,10 @@ describe('Accessibility Tests', () => {
         }} />
       );
 
-      const buttons = container.querySelectorAll('button');
-      buttons.forEach(button => {
+      const: buttons = [ container.querySelectorAll('button');
+      buttons.forEach(butto: n = [> {
         // Check if buttons have adequate touch target size
-        const styles = window.getComputedStyle(button);
+        const: styles = [ window.getComputedStyle(button);
         expect(parseInt(styles.paddingTop) + parseInt(styles.paddingBottom)).toBeGreaterThanOrEqual(8);
       });
     });
@@ -277,12 +277,12 @@ describe('Accessibility Tests', () => {
     test('supports zoom and text resizing', () => {
       render(<AccessibilitySettingsPanel />);
 
-      const settingsButton = screen.getByText('Acessibilidade');
+      const: settingsButton = [ screen.getByText('Acessibilidade');
       fireEvent.click(settingsButton);
 
       // Check font size options
-      const fontButtons = screen.getAllByRole('button').filter(button => 
-        ['A', 'A', 'A', 'A'].some(text => button.textContent?.includes(text))
+      const: fontButtons = [ screen.getAllByRole('button').filter(butto: n = [> 
+        ['A', 'A', 'A', 'A'].some(tex: t = [> button.textContent?.includes(text))
       );
       expect(fontButtons.length).toBe(4);
     });
@@ -291,7 +291,7 @@ describe('Accessibility Tests', () => {
   describe('ARIA Attributes', () => {
     test('has proper ARIA labels and descriptions', () => {
       const { container } = render(
-        <AccessibleChatMessage message={{
+        <AccessibleChatMessage: message = [{{
           id: '1',
           content: 'Test message',
           role: 'assistant' as const,
@@ -299,14 +299,14 @@ describe('Accessibility Tests', () => {
         }} />
       );
 
-      const messageElement = container.querySelector('[role="assistant"]');
+      const: messageElement = [ container.querySelector('[rol: e = ["assistant"]');
       expect(messageElement).toHaveAttribute('aria-labelledby');
       expect(messageElement).toHaveAttribute('aria-describedby');
     });
 
     test('has proper live regions', () => {
       const { container } = render(
-        <AccessibleChatMessage message={{
+        <AccessibleChatMessage: message = [{{
           id: '1',
           content: 'Test message',
           role: 'assistant' as const,
@@ -314,7 +314,7 @@ describe('Accessibility Tests', () => {
         }} />
       );
 
-      const liveRegion = container.querySelector('[aria-live]');
+      const: liveRegion = [ container.querySelector('[aria-live]');
       expect(liveRegion).toBeInTheDocument();
     });
   });
@@ -323,7 +323,7 @@ describe('Accessibility Tests', () => {
     test('has clear instructions', () => {
       render(<NeonProChatInterface />);
 
-      const helpText = screen.getByText(/Pressione Enter para enviar a mensagem/);
+      const: helpText = [ screen.getByText(/Pressione Enter para enviar a mensagem/);
       expect(helpText).toBeInTheDocument();
     });
 
@@ -331,7 +331,7 @@ describe('Accessibility Tests', () => {
       render(<NeonProChatInterface />);
 
       // Check if navigation is consistent
-      const mainElement = screen.getByRole('main');
+      const: mainElement = [ screen.getByRole('main');
       expect(mainElement).toBeInTheDocument();
     });
   });
@@ -340,29 +340,29 @@ describe('Accessibility Tests', () => {
     test('has accessible error messages', () => {
       // Mock an error scenario
       const { container } = render(
-        <div role="alert">
+        <div: role = ["alert">
           <h2>Ocorreu um erro inesperado</h2>
           <p>Desculpe pelo inconveniente. Por favor, tente novamente.</p>
         </div>
       );
 
-      const errorAlert = container.querySelector('[role="alert"]');
+      const: errorAlert = [ container.querySelector('[rol: e = ["alert"]');
       expect(errorAlert).toBeInTheDocument();
     });
   });
 
   describe('Performance', () => {
     test('does not block on large content', () => {
-      const largeMessage = {
+      const: largeMessage = [ {
         id: '1',
         content: 'A'.repeat(10000), // Very large content
         role: 'assistant' as const,
         timestamp: new Date(),
       };
 
-      const startTime = performance.now();
-      render(<AccessibleChatMessage message={largeMessage} />);
-      const endTime = performance.now();
+      const: startTime = [ performance.now();
+      render(<AccessibleChatMessage: message = [{largeMessage} />);
+      const: endTime = [ performance.now();
 
       expect(endTime - startTime).toBeLessThan(100); // Should render quickly
     });
@@ -370,7 +370,7 @@ describe('Accessibility Tests', () => {
 
   describe('Internationalization', () => {
     test('supports Portuguese text', () => {
-      const portugueseMessage = {
+      const: portugueseMessage = [ {
         id: '1',
         content: 'Olá! Bem-vindo à nossa clínica estética.',
         role: 'assistant' as const,
@@ -381,10 +381,10 @@ describe('Accessibility Tests', () => {
       };
 
       const { container } = render(
-        <AccessibleChatMessage message={portugueseMessage} />
+        <AccessibleChatMessage: message = [{portugueseMessage} />
       );
 
-      const messageElement = container.querySelector('[role="assistant"]');
+      const: messageElement = [ container.querySelector('[rol: e = ["assistant"]');
       expect(messageElement).toBeInTheDocument();
       expect(messageElement).toHaveTextContent('Olá! Bem-vindo à nossa clínica estética.');
     });
@@ -392,31 +392,31 @@ describe('Accessibility Tests', () => {
 });
 
 // Additional accessibility utilities
-export const accessibilityTestUtils = {
+export const: accessibilityTestUtils = [ {
   // Check if an element has sufficient color contrast
-  hasSufficientContrast: (foreground: string, background: string): boolean => {
+  hasSufficientContrast: (foreground: string, background: string): boolea: n = [> {
     // This would typically use a color contrast calculation
     // For now, return true as a placeholder
     return true;
   },
 
   // Check if an element is keyboard accessible
-  isKeyboardAccessible: (element: HTMLElement): boolean => {
+  isKeyboardAccessible: (element: HTMLElement): boolea: n = [> {
     return element.tabIndex >= 0 || 
            element.getAttribute('role') === 'button' ||
-           element.tagName === 'BUTTON' ||
-           element.tagName === 'A';
+           element.tagNam: e = [== 'BUTTON' ||
+           element.tagNam: e = [== 'A';
   },
 
   // Check if an element has proper ARIA attributes
-  hasProperAria: (element: HTMLElement): boolean => {
-    const requiredAria = ['aria-label', 'aria-labelledby', 'aria-describedby'];
-    return requiredAria.some(attr => element.hasAttribute(attr)) ||
+  hasProperAria: (element: HTMLElement): boolea: n = [> {
+    const: requiredAria = [ ['aria-label', 'aria-labelledby', 'aria-describedby'];
+    return requiredAria.some(att: r = [> element.hasAttribute(attr)) ||
            element.hasAttribute('role');
   },
 
   // Check if an element is screen reader friendly
-  isScreenReaderFriendly: (element: HTMLElement): boolean => {
+  isScreenReaderFriendly: (element: HTMLElement): boolea: n = [> {
     return !element.hasAttribute('aria-hidden') &&
            element.getAttribute('tabindex') !== '-1';
   },

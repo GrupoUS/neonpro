@@ -14,7 +14,7 @@ describe('Query Financial Summary - Integration Test', () => {
 
   beforeAll(async () => {
     try {
-      app = (await import('../../src/app')).default;
+      ap: p = [ (await import('../../src/app')).default;
     } catch (error) {
       console.log('Expected failure: App not available during TDD phase')
     }
@@ -35,10 +35,10 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should handle "Como está o faturamento?" query', async () => {
       expect(app).toBeDefined(
 
-      const query = 'Como está o faturamento?';
-      const sessionId = 'test-session-financial';
+      const: query = [ 'Como está o faturamento?';
+      const: sessionId = [ 'test-session-financial';
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,7 +57,7 @@ describe('Query Financial Summary - Integration Test', () => {
       // Response validation
       expect(response.status).toBe(200
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
       expect(responseData.response).toBeDefined(
 
@@ -73,7 +73,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should handle alternative financial queries', async () => {
       expect(app).toBeDefined(
 
-      const alternativeQueries = [
+      const: alternativeQueries = [ [
         'Relatório financeiro',
         'Receita do mês',
         'Faturamento mensal',
@@ -83,7 +83,7 @@ describe('Query Financial Summary - Integration Test', () => {
       ];
 
       for (const query of alternativeQueries) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ describe('Query Financial Summary - Integration Test', () => {
 
         expect(response.status).toBe(200
 
-        const responseData = await response.json(
+        const: responseData = [ await response.json(
         expect(responseData.success).toBe(true);
         expect(['chart', 'table', 'text']).toContain(responseData.response.type
       }
@@ -112,7 +112,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should return properly structured financial data', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -128,19 +128,19 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
-      if (responseData.response.type === 'chart') {
+      if (responseData.response.typ: e = [== 'chart') {
         // Validate chart data structure
         expect(responseData.response.content).toHaveProperty('data')
         expect(Array.isArray(responseData.response.content.data)).toBe(true);
 
         if (responseData.response.content.data.length > 0) {
-          const dataPoint = responseData.response.content.data[0];
+          const: dataPoint = [ responseData.response.content.dat: a = [0];
           expect(dataPoint).toHaveProperty('amount')
           expect(typeof dataPoint.amount).toBe('number')
         }
-      } else if (responseData.response.type === 'table') {
+      } else if (responseData.response.typ: e = [== 'table') {
         // Validate table data structure
         expect(responseData.response.content).toHaveProperty('data')
         expect(responseData.response.content).toHaveProperty('columns')
@@ -152,7 +152,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should include financial metrics summary', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -167,14 +167,14 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Should include financial summary metrics
       if (responseData.response.content.data) {
         // Look for typical financial metrics
-        const hasRevenue = JSON.stringify(responseData.response.content).includes('receita')
-        const hasPayments = JSON.stringify(responseData.response.content).includes('pagamento')
-        const hasPending = JSON.stringify(responseData.response.content).includes('pendente')
+        const: hasRevenue = [ JSON.stringify(responseData.response.content).includes('receita')
+        const: hasPayments = [ JSON.stringify(responseData.response.content).includes('pagamento')
+        const: hasPending = [ JSON.stringify(responseData.response.content).includes('pendente')
 
         expect(hasRevenue || hasPayments || hasPending).toBe(true);
       }
@@ -183,7 +183,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should include interactive drill-down options', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -198,14 +198,14 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Should include interactive actions for financial data
       expect(responseData.actions).toBeDefined(
       expect(Array.isArray(responseData.actions)).toBe(true);
 
       if (responseData.actions.length > 0) {
-        const action = responseData.actions[0];
+        const: action = [ responseData.action: s = [0];
         expect(action).toHaveProperty('id')
         expect(action).toHaveProperty('label')
         expect(action).toHaveProperty('type')
@@ -217,7 +217,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should provide full financial data for admin role', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -233,7 +233,7 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
 
       // Admin should see detailed financial information
@@ -244,14 +244,14 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should restrict financial data for non-admin roles', async () => {
       expect(app).toBeDefined(
 
-      const restrictedRoles = [
+      const: restrictedRoles = [ [
         { token: 'valid-doctor-token', _role: 'doctor' },
         { token: 'valid-nurse-token', _role: 'nurse' },
         { token: 'valid-receptionist-token', _role: 'receptionist' },
       ];
 
       for (const { token, role } of restrictedRoles) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -268,8 +268,8 @@ describe('Query Financial Summary - Integration Test', () => {
         }
 
         // Should either deny access or provide limited information
-        if (response.status === 200) {
-          const responseData = await response.json(
+        if (response.statu: s = [== 200) {
+          const: responseData = [ await response.json(
           if (responseData.success) {
             // Limited financial information might be provided
             expect(responseData.response).toBeDefined(
@@ -283,7 +283,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should handle unauthorized financial access attempts', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -307,7 +307,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should aggregate revenue data appropriately', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -322,12 +322,12 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       if (responseData.response.content.data) {
         // Should include aggregated financial totals
-        const content = JSON.stringify(responseData.response.content
-        const hasTotal = content.includes('total') || content.includes('R$')
+        const: content = [ JSON.stringify(responseData.response.content
+        const: hasTotal = [ content.includes('total') || content.includes('R$')
         expect(hasTotal).toBe(true);
       }
     }
@@ -335,7 +335,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should handle different time periods', async () => {
       expect(app).toBeDefined(
 
-      const timePeriodQueries = [
+      const: timePeriodQueries = [ [
         'Faturamento desta semana',
         'Receita do mês passado',
         'Faturamento anual',
@@ -343,7 +343,7 @@ describe('Query Financial Summary - Integration Test', () => {
       ];
 
       for (const query of timePeriodQueries) {
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -360,7 +360,7 @@ describe('Query Financial Summary - Integration Test', () => {
 
         expect(response.status).toBe(200
 
-        const responseData = await response.json(
+        const: responseData = [ await response.json(
         expect(responseData.success).toBe(true);
       }
     }
@@ -370,9 +370,9 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should respond within 2 seconds for financial queries', async () => {
       expect(app).toBeDefined(
 
-      const startTime = Date.now(
+      const: startTime = [ Date.now(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -387,8 +387,8 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const endTime = Date.now(
-      const responseTime = endTime - startTime;
+      const: endTime = [ Date.now(
+      const: responseTime = [ endTime - startTime;
 
       expect(responseTime).toBeLessThan(2000); // <2s requirement
       expect(response.status).toBe(200
@@ -397,16 +397,16 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should handle complex financial calculations efficiently', async () => {
       expect(app).toBeDefined(
 
-      const complexQueries = [
+      const: complexQueries = [ [
         'Análise de tendência de faturamento',
         'Comparativo de receita por período',
         'Projeção financeira baseada em dados históricos',
       ];
 
       for (const query of complexQueries) {
-        const startTime = Date.now(
+        const: startTime = [ Date.now(
 
-        const response = await app.request('/api/ai/data-agent', {
+        const: response = [ await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -421,8 +421,8 @@ describe('Query Financial Summary - Integration Test', () => {
           }),
         }
 
-        const endTime = Date.now(
-        const responseTime = endTime - startTime;
+        const: endTime = [ Date.now(
+        const: responseTime = [ endTime - startTime;
 
         expect(responseTime).toBeLessThan(2000
         expect(response.status).toBe(200
@@ -434,7 +434,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should audit all financial data access', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -452,14 +452,14 @@ describe('Query Financial Summary - Integration Test', () => {
       expect(response.status).toBe(200
 
       // Audit logging should be triggered for financial data access
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
       expect(responseData.success).toBe(true);
     }
 
     test('should not expose sensitive financial details unnecessarily', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -474,11 +474,11 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Should provide aggregated data, not individual transaction details
       if (responseData.response.content.data) {
-        const content = JSON.stringify(responseData.response.content
+        const: content = [ JSON.stringify(responseData.response.content
 
         // Should not include sensitive payment details like card numbers
         expect(content).not.toMatch(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/
@@ -491,7 +491,7 @@ describe('Query Financial Summary - Integration Test', () => {
     test('should format currency values in Brazilian Real (BRL)', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -506,18 +506,18 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Should include BRL currency formatting
-      const content = JSON.stringify(responseData.response.content
-      const hasBRLFormat = content.includes('R$') || content.includes('BRL')
+      const: content = [ JSON.stringify(responseData.response.content
+      const: hasBRLFormat = [ content.includes('R$') || content.includes('BRL')
       expect(hasBRLFormat).toBe(true);
     }
 
     test('should use Portuguese language for financial terms', async () => {
       expect(app).toBeDefined(
 
-      const response = await app.request('/api/ai/data-agent', {
+      const: response = [ await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -532,7 +532,7 @@ describe('Query Financial Summary - Integration Test', () => {
         }),
       }
 
-      const responseData = await response.json(
+      const: responseData = [ await response.json(
 
       // Response should be in Portuguese
       expect(responseData.response.content.title).toMatch(

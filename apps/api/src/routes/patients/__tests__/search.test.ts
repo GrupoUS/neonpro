@@ -7,16 +7,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
-const mockPatientService = {
+const: mockPatientService = [ {
   searchPatients: vi.fn(),
   validateAccess: vi.fn(),
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(),
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateDataAccess: vi.fn(),
   maskSensitiveData: vi.fn(),
 };
@@ -81,14 +81,14 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       success: true),
       data: { canAccess: true, accessLevel: 'full' },
 
-    mockLGPDService.maskSensitiveData.mockImplementation(data => data
+    mockLGPDService.maskSensitiveData.mockImplementation(dat: a = [> data
 
   afterEach(() => {
     vi.restoreAllMocks(
 
   it(('should export search patients route handler'), () => {
     expect(() => {
-      const module = require('../search')
+      const: module = [ require('../search')
       expect(module.default).toBeDefined(
     }).not.toThrow(
 
@@ -96,19 +96,19 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should perform full-text search with default parameters',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João Silva'),
         searchType: 'fulltext'),
   describe(('Successful Patient Search'), () => {
     it(('should perform full-text search with default parameters',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João Silva',
         searchType: 'fulltext',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -118,8 +118,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -140,7 +140,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it(('should perform structured search with filters',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         filters: {
           gender: 'male'),
           status: 'active'),
@@ -161,7 +161,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -171,8 +171,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -184,7 +184,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should perform fuzzy search for names',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'Joao Silva', // Missing accent
         searchType: 'fuzzy'),
         _userId: 'user-123',
@@ -196,7 +196,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it(('should perform fuzzy search for names',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'Joao Silva', // Missing accent
         searchType: 'fuzzy',
         fuzzyOptions: {
@@ -205,7 +205,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -215,8 +215,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -228,7 +228,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should include search performance headers',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
         _userId: 'user-123',
         searchCriteria: searchData,
@@ -239,11 +239,11 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it(('should include search performance headers',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -253,7 +253,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
+      const: response = [ await searchRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Search-Time')).toBeDefined(
@@ -263,12 +263,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should support advanced search with multiple criteria',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
     it(('should support advanced search with multiple criteria',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João',
         filters: {
           gender: 'male'),
@@ -289,7 +289,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         includeInactive: false),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -299,8 +299,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -313,7 +313,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should validate LGPD data access permissions for search',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
         _userId: 'user-123',
         searchCriteria: searchData,
@@ -326,11 +326,11 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it(('should validate LGPD data access permissions for search',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -352,7 +352,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should log search activity for audit trail',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João Silva'),
         _userId: 'user-123',
         dataType: 'patient_search',
@@ -365,12 +365,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it(('should log search activity for audit trail',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João Silva',
         filters: { gender: 'male' },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -414,12 +414,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
 
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
         _query: 'João',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -429,8 +429,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -458,12 +458,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
 
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
         _query: 'João',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -473,12 +473,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
-      expect(data.data.patients[0].cpf).toBe('***.***.***-**')
-      expect(data.data.patients[0].email).toBe('j***@example.com')
+      expect(data.data.patient: s = [0].cpf).toBe('***.***.***-**')
+      expect(data.data.patient: s = [0].email).toBe('j***@example.com')
       expect(response.headers.get('X-Access-Level')).toBe('limited')
 
   describe('Error Handling', () => {
@@ -488,7 +488,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it(('should handle authentication errors',async () => {
       const { default: searchRoute } = require('../search');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -497,8 +497,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify({ _query: 'test' }),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
@@ -509,7 +509,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it(('should handle validation errors for search criteria',async () => {
       const { default: searchRoute } = require('../search');
 
-      const invalidSearchData = {
+      const: invalidSearchData = [ {
         // Missing required query or filters
         pagination: {
           page: -1, // Invalid page
@@ -517,7 +517,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -527,8 +527,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(invalidSearchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -543,12 +543,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
 
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
         _query: 'João',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -558,8 +558,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -573,12 +573,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
 
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
         _query: 'João',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -588,8 +588,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(500
       expect(data.success).toBe(false);
@@ -599,17 +599,17 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should include CFM compliance headers',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
   describe(('Brazilian Healthcare Compliance'), () => {
     it(('should include CFM compliance headers',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -619,7 +619,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
+      const: response = [ await searchRoute.request(mockRequest
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true')
       expect(response.headers.get('X-Medical-Record-Search')).toBe('logged')
@@ -628,19 +628,19 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should validate healthcare professional context for medical searches',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
     it(('should validate healthcare professional context for medical searches',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João',
         filters: {
           medicalConditions: ['diabetes'],
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -652,7 +652,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
+      const: response = [ await searchRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(mockPatientService.searchPatients).toHaveBeenCalledWith(
@@ -666,17 +666,17 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     it('should include performance metrics in response',async () => {
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João'),
   describe(('Performance and Caching'), () => {
     it(('should include performance metrics in response',async () => {
       const { default: searchRoute } = require('../search');
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'João',
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -686,8 +686,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.searchMetadata.executionTime).toBeDefined(
@@ -696,7 +696,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
 
     it('should handle large result sets with pagination',async () => {
     it(('should handle large result sets with pagination',async () => {
-      const largeResultSet = Array.from({ length: 50 },(, i) => ({
+      const: largeResultSet = [ Array.from({ length: 50 },(, i) => ({
         id: `patient-${i}`,
         name: `Patient ${i}`,
         email: `patient${i}@example.com`,
@@ -727,7 +727,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
 
       const { default: searchRoute } = require('../search')
 
-      const searchData = {
+      const: searchData = [ {
         _query: 'Patient'),
         _query: 'Patient',
         pagination: {
@@ -736,7 +736,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'POST'),
         url: '/'),
         headers: new Headers({
@@ -746,8 +746,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         body: JSON.stringify(searchData),
       };
 
-      const response = await searchRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await searchRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.data.patients).toHaveLength(50

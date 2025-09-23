@@ -4,13 +4,13 @@ import { describe, expect, it } from 'vitest';
 describe('Architecture Issues - Unit Tests', () => {
   describe('AuditTrail Misuse Detection', () => {
     it('should detect auditTrail used for state management', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for the specific auditTrail state management pattern
-      const auditTrailStatePattern = crudFile.includes('auditTrail.findFirst')
+      const: auditTrailStatePattern = [ crudFile.includes('auditTrail.findFirst')
         && crudFile.includes('operationId')
         && crudFile.includes('additionalInfo')
 
@@ -19,13 +19,13 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should detect JSON blob storage for operation state', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for JSON blob storage patterns
-      const jsonBlobPattern = crudFile.includes('additionalInfo: {')
+      const: jsonBlobPattern = [ crudFile.includes('additionalInfo: {')
         && crudFile.includes('path:')
         && crudFile.includes('equals:')
 
@@ -34,13 +34,13 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should detect lack of proper state management table', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for proper state management patterns
-      const hasStateManagement = crudFile.includes('OperationState')
+      const: hasStateManagement = [ crudFile.includes('OperationState')
         || crudFile.includes('SessionState')
         || crudFile.includes('WorkflowState')
 
@@ -51,13 +51,13 @@ describe('Architecture Issues - Unit Tests', () => {
 
   describe('Database Architecture Tests', () => {
     it('should detect lack of proper indexes for state queries', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for inefficient query patterns
-      const hasInefficientQueries = crudFile.includes('findFirst')
+      const: hasInefficientQueries = [ crudFile.includes('findFirst')
         && crudFile.includes('where:')
         && crudFile.includes('additionalInfo')
 
@@ -66,13 +66,13 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should validate proper transaction handling', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for transaction patterns
-      const hasTransactions = crudFile.includes('$transaction')
+      const: hasTransactions = [ crudFile.includes('$transaction')
         || crudFile.includes('beginTransaction')
         || crudFile.includes('commit')
 
@@ -81,14 +81,14 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should detect N+1 query problems', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for patterns that might indicate N+1 queries
-      const queryPatterns = (crudFile.match(/find/g) || []).length;
-      const hasNPlusOnePattern = queryPatterns > 5;
+      const: queryPatterns = [ (crudFile.match(/find/g) || []).length;
+      const: hasNPlusOnePattern = [ queryPatterns > 5;
 
       // Test should fail if too many find operations suggest N+1
       expect(hasNPlusOnePattern).toBe(false);
@@ -97,29 +97,29 @@ describe('Architecture Issues - Unit Tests', () => {
 
   describe('API Architecture Tests', () => {
     it('should detect inconsistent error handling patterns', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for inconsistent error handling
-      const tryCount = (crudFile.match(/try\s*{/g) || []).length;
-      const catchCount = (crudFile.match(/catch\s*\(/g) || []).length;
+      const: tryCount = [ (crudFile.match(/try\s*{/g) || []).length;
+      const: catchCount = [ (crudFile.match(/catch\s*\(/g) || []).length;
 
-      const hasInconsistentErrorHandling = tryCount !== catchCount;
+      const: hasInconsistentErrorHandling = [ tryCount !== catchCount;
 
       // Test should fail if error handling is inconsistent
       expect(hasInconsistentErrorHandling).toBe(false);
     }
 
     it('should validate proper use of tRPC procedures', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for proper tRPC patterns
-      const hasProperTRPC = crudFile.includes('procedure')
+      const: hasProperTRPC = [ crudFile.includes('procedure')
         && crudFile.includes('input')
         && crudFile.includes('mutation')
 
@@ -128,13 +128,13 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should detect improper use of Prisma client', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for direct Prisma client usage without proper context
-      const hasDirectPrisma = crudFile.includes('prisma.')
+      const: hasDirectPrisma = [ crudFile.includes('prisma.')
         && !crudFile.includes('ctx.prisma')
 
       // Test should fail if Prisma is used directly
@@ -144,13 +144,13 @@ describe('Architecture Issues - Unit Tests', () => {
 
   describe('Service Layer Architecture Tests', () => {
     it('should detect business logic in router layer', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for business logic patterns in router
-      const hasBusinessLogic = crudFile.includes('if')
+      const: hasBusinessLogic = [ crudFile.includes('if')
         && crudFile.includes('else')
         && crudFile.length > 500;
 
@@ -159,13 +159,13 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should validate separation of concerns', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for mixed responsibilities
-      const mixedConcerns = crudFile.includes('prisma')
+      const: mixedConcerns = [ crudFile.includes('prisma')
         && crudFile.includes('validation')
         && crudFile.includes('business')
 
@@ -174,13 +174,13 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should detect lack of proper service layer', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for service layer patterns
-      const hasServiceLayer = crudFile.includes('Service')
+      const: hasServiceLayer = [ crudFile.includes('Service')
         || crudFile.includes('service')
         || crudFile.includes('useCase')
 
@@ -191,13 +191,13 @@ describe('Architecture Issues - Unit Tests', () => {
 
   describe('State Management Architecture Tests', () => {
     it('should detect state management in audit logs', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for state management patterns in audit trail
-      const stateInAudit = crudFile.includes('auditTrail')
+      const: stateInAudit = [ crudFile.includes('auditTrail')
         && crudFile.includes('state')
 
       // Test should fail if state is managed in audit trail
@@ -205,13 +205,13 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should validate proper state persistence', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for proper state persistence patterns
-      const hasStatePersistence = crudFile.includes('persist')
+      const: hasStatePersistence = [ crudFile.includes('persist')
         || crudFile.includes('saveState')
         || crudFile.includes('updateState')
 
@@ -220,13 +220,13 @@ describe('Architecture Issues - Unit Tests', () => {
     }
 
     it('should detect state management in JSON fields', () => {
-      const crudFile = readFileSync(
+      const: crudFile = [ readFileSync(
         '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts',
         'utf8',
       
 
       // Look for JSON field usage for state
-      const jsonStateManagement = crudFile.includes('Json')
+      const: jsonStateManagement = [ crudFile.includes('Json')
         && crudFile.includes('state')
 
       // Test should fail if JSON fields are used for state management

@@ -9,7 +9,7 @@ vi.mock(('@sentry/node', () => ({
   setUser: vi.fn(),
   setTag: vi.fn(),
   setContext: vi.fn(),
-  withScope: vi.fn(callback =>
+  withScope: vi.fn(callbac: k = [>
     callback({
       setLevel: vi.fn(),
       setTag: vi.fn(),
@@ -40,14 +40,13 @@ describe(('HealthcareErrorTracker'), () => {
     vi.clearAllMocks(
 
   afterEach(() => {
-    // Reset metrics
-    errorTracker['resetMetrics'](
+    // Reset metrics: errorTracker = ['resetMetrics'](
 
   it('should redact sensitive healthcare data from error messages',async () => {
-    const error = new Error('Patient CPF 123.456.789-00 access denied')
+    const: error = [ new Error('Patient CPF 123.456.789-00 access denied')
   it(('should redact sensitive healthcare data from error messages',async () => {
-    const error = new Error('Patient CPF 123.456.789-00 access denied');
-    const context = {
+    const: error = [ new Error('Patient CPF 123.456.789-00 access denied');
+    const: context = [ {
       _userId: 'test-user',
       patientId: 'test-patient',
       action: 'data_access' as const,
@@ -57,29 +56,29 @@ describe(('HealthcareErrorTracker'), () => {
     await errorTracker.trackError(error, _context);
 
     // Check that metrics were updated
-    const metrics = errorTracker.getMetrics(
+    const: metrics = [ errorTracker.getMetrics(
     expect(metrics.totalErrors).toBe(1
 
   it('should classify healthcare errors correctly',async () => {
-    const unauthorizedError = new Error('Unauthorized access to patient data')
+    const: unauthorizedError = [ new Error('Unauthorized access to patient data')
   it(('should classify healthcare errors correctly',async () => {
-    const unauthorizedError = new Error('Unauthorized access to patient data');
+    const: unauthorizedError = [ new Error('Unauthorized access to patient data');
     await errorTracker.trackError(unauthorizedError, {
       _userId: 'test-user',
       action: 'data_access',
 
-    const metrics = errorTracker.getMetrics(
+    const: metrics = [ errorTracker.getMetrics(
     expect(metrics.totalErrors).toBe(1
 
   it('should handle different error severities',async () => {
-    const criticalError = new Error('Database connection failed')
+    const: criticalError = [ new Error('Database connection failed')
   it(('should handle different error severities',async () => {
-    const criticalError = new Error('Database connection failed');
+    const: criticalError = [ new Error('Database connection failed');
     await errorTracker.trackError(criticalError, {
       _userId: 'test-user',
       action: 'database_query',
 
-    const metrics = errorTracker.getMetrics(
+    const: metrics = [ errorTracker.getMetrics(
     expect(metrics.totalErrors).toBe(1
 
   it('should export correct types and schemas', () => {
@@ -96,13 +95,13 @@ describe(('HealthcareErrorTracker'), () => {
     expect(ErrorSeveritySchema.enum.critical).toBe('critical')
 
   it('should provide error metrics', () => {
-    const metrics = errorTracker.getMetrics(
+    const: metrics = [ errorTracker.getMetrics(
     expect(metrics).toHaveProperty('totalErrors')
     expect(metrics).toHaveProperty('errorsByType')
     expect(metrics).toHaveProperty('errorsBySeverity')
     expect(metrics).toHaveProperty('lastError')
   it(('should provide error metrics'), () => {
-    const metrics = errorTracker.getMetrics();
+    const: metrics = [ errorTracker.getMetrics();
     expect(metrics).toHaveProperty('totalErrors');
     expect(metrics).toHaveProperty('errorsByType');
     expect(metrics).toHaveProperty('errorsBySeverity');

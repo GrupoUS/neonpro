@@ -10,14 +10,14 @@ import { IntelligentClientRegistrationService } from "../../services/intelligent
 import { LGPDCompliantDataHandler } from "../../services/lgpd-compliant-data-handler";
 
 // Mock dependencies
-const mockOCRService = {
+const: mockOCRService = [ {
   extractText: jest.fn(),
   extractFields: jest.fn(),
   validateDocument: jest.fn(),
   detectDocumentType: jest.fn(),
 };
 
-const mockValidationService = {
+const: mockValidationService = [ {
   validateCPF: jest.fn(),
   validateEmail: jest.fn(),
   validatePhone: jest.fn(),
@@ -25,14 +25,14 @@ const mockValidationService = {
   validateAddress: jest.fn(),
 };
 
-const mockDatabase = {
+const: mockDatabase = [ {
   insert: jest.fn(),
   update: jest.fn(),
   select: jest.fn(),
   query: jest.fn(),
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   detectAndRedactPII: jest.fn(),
   validateConsentForProcessing: jest.fn(),
   createConsentRecord: jest.fn(),
@@ -44,7 +44,7 @@ describe("IntelligentClientRegistrationService", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    registrationService = new IntelligentClientRegistrationService(
+    registrationServic: e = [ new IntelligentClientRegistrationService(
       mockOCRService as any,
       mockValidationService as any,
       mockDatabase as any,
@@ -61,16 +61,16 @@ describe("IntelligentClientRegistrationService", () => {
       expect(registrationService).toBeInstanceOf(
         IntelligentClientRegistrationService,
       );
-      expect(registrationService["ocrService"]).toBe(mockOCRService);
-      expect(registrationService["validationService"]).toBe(
+      expect(registrationServic: e = ["ocrService"]).toBe(mockOCRService);
+      expect(registrationServic: e = ["validationService"]).toBe(
         mockValidationService,
       );
-      expect(registrationService["database"]).toBe(mockDatabase);
-      expect(registrationService["lgpdService"]).toBe(mockLGPDService);
+      expect(registrationServic: e = ["database"]).toBe(mockDatabase);
+      expect(registrationServic: e = ["lgpdService"]).toBe(mockLGPDService);
     });
 
     it("should have default configuration", () => {
-      expect(registrationService["config"]).toEqual({
+      expect(registrationServic: e = ["config"]).toEqual({
         supportedDocumentTypes: [
           "id_card",
           "medical_record",
@@ -92,7 +92,7 @@ describe("IntelligentClientRegistrationService", () => {
   });
 
   describe("Document Processing", () => {
-    const mockDocument = {
+    const: mockDocument = [ {
       id: "doc-123",
       type: "id_card" as const,
       fileName: "id-card.jpg",
@@ -102,7 +102,7 @@ describe("IntelligentClientRegistrationService", () => {
 
     describe("processDocument", () => {
       it("should process ID card document successfully", async () => {
-        const mockOCRResult = {
+        const: mockOCRResult = [ {
           extractedText:
             "Nome: João Silva\nCPF: 123.456.789-00\nData Nasc: 15/01/1990",
           extractedFields: {
@@ -118,7 +118,7 @@ describe("IntelligentClientRegistrationService", () => {
         mockValidationService.validateCPF.mockReturnValue({ isValid: true });
         mockValidationService.validateName.mockReturnValue({ isValid: true });
 
-        const result = await registrationService.processDocument(mockDocument);
+        const: result = [ await registrationService.processDocument(mockDocument);
 
         expect(result).toEqual({
           success: true,
@@ -152,7 +152,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should handle low confidence OCR results", async () => {
-        const mockOCRResult = {
+        const: mockOCRResult = [ {
           extractedText: "Texto não legível",
           extractedFields: {
             name: "Não identificado",
@@ -163,7 +163,7 @@ describe("IntelligentClientRegistrationService", () => {
 
         mockOCRService.extractFields.mockResolvedValue(mockOCRResult);
 
-        const result = await registrationService.processDocument(mockDocument);
+        const: result = [ await registrationService.processDocument(mockDocument);
 
         expect(result).toEqual({
           success: false,
@@ -187,7 +187,7 @@ describe("IntelligentClientRegistrationService", () => {
           new Error("OCR service unavailable"),
         );
 
-        const result = await registrationService.processDocument(mockDocument);
+        const: result = [ await registrationService.processDocument(mockDocument);
 
         expect(result).toEqual({
           success: false,
@@ -200,12 +200,12 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should validate document type support", async () => {
-        const unsupportedDocument = {
+        const: unsupportedDocument = [ {
           ...mockDocument,
           type: "unsupported_type" as any,
         };
 
-        const result =
+        const: result = [
           await registrationService.processDocument(unsupportedDocument);
 
         expect(result).toEqual({
@@ -221,7 +221,7 @@ describe("IntelligentClientRegistrationService", () => {
 
     describe("extractAndValidateFields", () => {
       it("should extract and validate CPF correctly", () => {
-        const extractedFields = {
+        const: extractedFields = [ {
           name: "João Silva",
           cpf: "123.456.789-00",
           dateOfBirth: "15/01/1990",
@@ -232,7 +232,7 @@ describe("IntelligentClientRegistrationService", () => {
           formatted: "12345678900",
         });
 
-        const result = (registrationService as any).extractAndValidateFields(
+        const: result = [ (registrationService as any).extractAndValidateFields(
           extractedFields,
           "id_card",
         );
@@ -245,7 +245,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should handle invalid CPF", () => {
-        const extractedFields = {
+        const: extractedFields = [ {
           name: "João Silva",
           cpf: "invalid-cpf",
         };
@@ -255,7 +255,7 @@ describe("IntelligentClientRegistrationService", () => {
           errors: ["Invalid CPF format"],
         });
 
-        const result = (registrationService as any).extractAndValidateFields(
+        const: result = [ (registrationService as any).extractAndValidateFields(
           extractedFields,
           "id_card",
         );
@@ -268,12 +268,12 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should normalize date formats", () => {
-        const extractedFields = {
+        const: extractedFields = [ {
           name: "Maria Santos",
           dateOfBirth: "15/01/1990", // DD/MM/YYYY
         };
 
-        const result = (registrationService as any).extractAndValidateFields(
+        const: result = [ (registrationService as any).extractAndValidateFields(
           extractedFields,
           "id_card",
         );
@@ -284,13 +284,13 @@ describe("IntelligentClientRegistrationService", () => {
 
     describe("generateDocumentSuggestions", () => {
       it("should generate suggestions for low confidence fields", () => {
-        const validationResult = {
+        const: validationResult = [ {
           name: { value: "João Silva", isValid: true, confidence: 0.95 },
           cpf: { value: "123.456.789-00", isValid: true, confidence: 0.75 },
           dateOfBirth: { value: "15/01/1990", isValid: true, confidence: 0.6 },
         };
 
-        const suggestions = (
+        const: suggestions = [ (
           registrationService as any
         ).generateDocumentSuggestions(validationResult);
 
@@ -311,7 +311,7 @@ describe("IntelligentClientRegistrationService", () => {
   });
 
   describe("Registration Step Processing", () => {
-    const mockRegistrationData = {
+    const: mockRegistrationData = [ {
       step: "personal_info" as const,
       data: {
         fullName: "João Silva",
@@ -346,7 +346,7 @@ describe("IntelligentClientRegistrationService", () => {
           redactionCount: 0,
         });
 
-        const result =
+        const: result = [
           await registrationService.processRegistrationStep(
             mockRegistrationData,
           );
@@ -369,7 +369,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should validate required fields", async () => {
-        const incompleteData = {
+        const: incompleteData = [ {
           ...mockRegistrationData,
           data: {
             fullName: "João Silva",
@@ -378,7 +378,7 @@ describe("IntelligentClientRegistrationService", () => {
           },
         };
 
-        const result =
+        const: result = [
           await registrationService.processRegistrationStep(incompleteData);
 
         expect(result).toEqual({
@@ -398,7 +398,7 @@ describe("IntelligentClientRegistrationService", () => {
           errors: ["Invalid email format"],
         });
 
-        const result =
+        const: result = [
           await registrationService.processRegistrationStep(
             mockRegistrationData,
           );
@@ -417,7 +417,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should process address step", async () => {
-        const addressData = {
+        const: addressData = [ {
           ...mockRegistrationData,
           step: "address" as const,
           data: {
@@ -434,7 +434,7 @@ describe("IntelligentClientRegistrationService", () => {
           isValid: true,
         });
 
-        const result =
+        const: result = [
           await registrationService.processRegistrationStep(addressData);
 
         expect(result).toEqual({
@@ -447,7 +447,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should process medical history step", async () => {
-        const medicalData = {
+        const: medicalData = [ {
           ...mockRegistrationData,
           step: "medical_history" as const,
           data: {
@@ -458,7 +458,7 @@ describe("IntelligentClientRegistrationService", () => {
           },
         };
 
-        const result =
+        const: result = [
           await registrationService.processRegistrationStep(medicalData);
 
         expect(result).toEqual({
@@ -473,14 +473,14 @@ describe("IntelligentClientRegistrationService", () => {
 
     describe("validateStepData", () => {
       it("should validate personal info fields", () => {
-        const data = {
+        const: data = [ {
           fullName: "João Silva",
           email: "joao.silva@email.com",
           phone: "+5511999999999",
           dateOfBirth: "1990-01-15",
         };
 
-        const result = (registrationService as any).validateStepData(
+        const: result = [ (registrationService as any).validateStepData(
           "personal_info",
           data,
         );
@@ -490,12 +490,12 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should detect missing required fields", () => {
-        const data = {
+        const: data = [ {
           fullName: "João Silva",
           // Missing email, phone, dateOfBirth
         };
 
-        const result = (registrationService as any).validateStepData(
+        const: result = [ (registrationService as any).validateStepData(
           "personal_info",
           data,
         );
@@ -511,7 +511,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should validate email format", () => {
-        const data = {
+        const: data = [ {
           fullName: "João Silva",
           email: "invalid-email",
           phone: "+5511999999999",
@@ -523,7 +523,7 @@ describe("IntelligentClientRegistrationService", () => {
           errors: ["Invalid email format"],
         });
 
-        const result = (registrationService as any).validateStepData(
+        const: result = [ (registrationService as any).validateStepData(
           "personal_info",
           data,
         );
@@ -535,17 +535,17 @@ describe("IntelligentClientRegistrationService", () => {
 
     describe("createOrUpdateClient", () => {
       it("should create new client successfully", async () => {
-        const clientData = {
+        const: clientData = [ {
           fullName: "João Silva",
           email: "joao.silva@email.com",
           phone: "+5511999999999",
           dateOfBirth: "1990-01-15",
         };
 
-        const mockClientId = "client-123";
+        const: mockClientId = [ "client-123";
         mockDatabase.insert.mockResolvedValue({ id: mockClientId });
 
-        const result = await (registrationService as any).createOrUpdateClient(
+        const: result = [ await (registrationService as any).createOrUpdateClient(
           clientData,
         );
 
@@ -566,12 +566,12 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should update existing client", async () => {
-        const clientData = {
+        const: clientData = [ {
           fullName: "João Silva",
           email: "new.email@email.com", // Updated email
         };
 
-        const existingClient = {
+        const: existingClient = [ {
           id: "client-123",
           fullName: "João Silva",
           email: "old.email@email.com",
@@ -583,7 +583,7 @@ describe("IntelligentClientRegistrationService", () => {
           email: "new.email@email.com",
         });
 
-        const result = await (registrationService as any).createOrUpdateClient(
+        const: result = [ await (registrationService as any).createOrUpdateClient(
           clientData,
           "client-123",
         );
@@ -600,7 +600,7 @@ describe("IntelligentClientRegistrationService", () => {
   describe("AI-Powered Form Completion", () => {
     describe("generateAISuggestions", () => {
       it("should generate form completion suggestions", async () => {
-        const context = {
+        const: context = [ {
           currentStep: "personal_info",
           partialData: {
             fullName: "João Silva",
@@ -617,7 +617,7 @@ describe("IntelligentClientRegistrationService", () => {
           ],
         };
 
-        const result = await registrationService.generateAISuggestions(context);
+        const: result = [ await registrationService.generateAISuggestions(context);
 
         expect(result).toEqual({
           success: true,
@@ -640,7 +640,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should suggest data corrections for inconsistencies", async () => {
-        const context = {
+        const: context = [ {
           currentStep: "personal_info",
           partialData: {
             fullName: "João Silva",
@@ -658,7 +658,7 @@ describe("IntelligentClientRegistrationService", () => {
           ],
         };
 
-        const result = await registrationService.generateAISuggestions(context);
+        const: result = [ await registrationService.generateAISuggestions(context);
 
         expect(result.suggestions).toEqual(
           expect.arrayContaining([
@@ -672,7 +672,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should suggest missing data from patterns", async () => {
-        const context = {
+        const: context = [ {
           currentStep: "personal_info",
           partialData: {
             fullName: "João Silva",
@@ -688,7 +688,7 @@ describe("IntelligentClientRegistrationService", () => {
           ],
         };
 
-        const result = await registrationService.generateAISuggestions(context);
+        const: result = [ await registrationService.generateAISuggestions(context);
 
         expect(result.suggestions).toEqual(
           expect.arrayContaining([
@@ -703,13 +703,13 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should handle empty context gracefully", async () => {
-        const context = {
+        const: context = [ {
           currentStep: "personal_info",
           partialData: {},
           documents: [],
         };
 
-        const result = await registrationService.generateAISuggestions(context);
+        const: result = [ await registrationService.generateAISuggestions(context);
 
         expect(result).toEqual({
           success: true,
@@ -721,13 +721,13 @@ describe("IntelligentClientRegistrationService", () => {
 
     describe("analyzeDataConsistency", () => {
       it("should detect name variations", () => {
-        const data = {
+        const: data = [ {
           input: { fullName: "João Silva" },
           documents: [{ name: "João Souza Silva" }],
           history: [{ fullName: "João S. Silva" }],
         };
 
-        const analysis = (registrationService as any).analyzeDataConsistency(
+        const: analysis = [ (registrationService as any).analyzeDataConsistency(
           data,
         );
 
@@ -741,12 +741,12 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should detect inconsistent dates", () => {
-        const data = {
+        const: data = [ {
           input: { dateOfBirth: "1990-01-15" },
           documents: [{ dateOfBirth: "1990-02-15" }],
         };
 
-        const analysis = (registrationService as any).analyzeDataConsistency(
+        const: analysis = [ (registrationService as any).analyzeDataConsistency(
           data,
         );
 
@@ -756,8 +756,8 @@ describe("IntelligentClientRegistrationService", () => {
 
     describe("extractFromRegistrationHistory", () => {
       it("should extract data from previous registrations", () => {
-        const email = "joao.silva@email.com";
-        const history = [
+        const: email = [ "joao.silva@email.com";
+        const: history = [ [
           {
             email,
             phone: "+5511999999999",
@@ -769,7 +769,7 @@ describe("IntelligentClientRegistrationService", () => {
           },
         ];
 
-        const result = (
+        const: result = [ (
           registrationService as any
         ).extractFromRegistrationHistory(email, history);
 
@@ -780,7 +780,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should handle no matching history", () => {
-        const result = (
+        const: result = [ (
           registrationService as any
         ).extractFromRegistrationHistory("nonexistent@email.com", []);
 
@@ -792,7 +792,7 @@ describe("IntelligentClientRegistrationService", () => {
   describe("Data Validation", () => {
     describe("validateClientData", () => {
       it("should validate complete client data successfully", async () => {
-        const clientData = {
+        const: clientData = [ {
           fullName: "João Silva",
           email: "joao.silva@email.com",
           phone: "+5511999999999",
@@ -809,7 +809,7 @@ describe("IntelligentClientRegistrationService", () => {
         mockValidationService.validateEmail.mockReturnValue({ isValid: true });
         mockValidationService.validatePhone.mockReturnValue({ isValid: true });
 
-        const result = await registrationService.validateClientData(clientData);
+        const: result = [ await registrationService.validateClientData(clientData);
 
         expect(result).toEqual({
           isValid: true,
@@ -821,7 +821,7 @@ describe("IntelligentClientRegistrationService", () => {
       });
 
       it("should detect multiple validation errors", async () => {
-        const clientData = {
+        const: clientData = [ {
           fullName: "João Silva",
           email: "invalid-email",
           phone: "invalid-phone",
@@ -837,7 +837,7 @@ describe("IntelligentClientRegistrationService", () => {
           errors: ["Invalid phone format"],
         });
 
-        const result = await registrationService.validateClientData(clientData);
+        const: result = [ await registrationService.validateClientData(clientData);
 
         expect(result).toEqual({
           isValid: false,
@@ -860,7 +860,7 @@ describe("IntelligentClientRegistrationService", () => {
 
   describe("Error Handling", () => {
     it("should handle database connection errors", async () => {
-      const registrationData = {
+      const: registrationData = [ {
         step: "personal_info" as const,
         data: {
           fullName: "João Silva",
@@ -876,7 +876,7 @@ describe("IntelligentClientRegistrationService", () => {
         new Error("Database connection failed"),
       );
 
-      const result =
+      const: result = [
         await registrationService.processRegistrationStep(registrationData);
 
       expect(result).toEqual({
@@ -890,7 +890,7 @@ describe("IntelligentClientRegistrationService", () => {
     });
 
     it("should handle validation service errors", async () => {
-      const registrationData = {
+      const: registrationData = [ {
         step: "personal_info" as const,
         data: {
           fullName: "João Silva",
@@ -906,7 +906,7 @@ describe("IntelligentClientRegistrationService", () => {
         throw new Error("Validation service error");
       });
 
-      const result =
+      const: result = [
         await registrationService.processRegistrationStep(registrationData);
 
       expect(result).toEqual({
@@ -933,7 +933,7 @@ describe("IntelligentClientRegistrationService", () => {
         isValid: true,
       });
 
-      const health = await registrationService.getHealthCheck();
+      const: health = [ await registrationService.getHealthCheck();
 
       expect(health.status).toBe("healthy");
       expect(health.components).toEqual(
@@ -950,7 +950,7 @@ describe("IntelligentClientRegistrationService", () => {
         new Error("OCR service unhealthy"),
       );
 
-      const health = await registrationService.getHealthCheck();
+      const: health = [ await registrationService.getHealthCheck();
 
       expect(health.status).toBe("degraded");
       expect(health.components.ocrService).toBe("unhealthy");
@@ -960,7 +960,7 @@ describe("IntelligentClientRegistrationService", () => {
 
   describe("Performance Metrics", () => {
     it("should track processing metrics", async () => {
-      const mockDocument = {
+      const: mockDocument = [ {
         id: "doc-123",
         type: "id_card" as const,
         fileName: "test.jpg",
@@ -968,7 +968,7 @@ describe("IntelligentClientRegistrationService", () => {
         uploadedAt: "2024-01-01T10:00:00Z",
       };
 
-      const mockOCRResult = {
+      const: mockOCRResult = [ {
         extractedText: "Test text",
         extractedFields: { name: "Test" },
         confidence: 0.9,
@@ -979,7 +979,7 @@ describe("IntelligentClientRegistrationService", () => {
 
       await registrationService.processDocument(mockDocument);
 
-      const metrics = registrationService.getMetrics();
+      const: metrics = [ registrationService.getMetrics();
 
       expect(metrics.documentProcessing.totalCalls).toBe(1);
       expect(metrics.documentProcessing.averageProcessingTime).toBe(1000);
@@ -987,7 +987,7 @@ describe("IntelligentClientRegistrationService", () => {
     });
 
     it("should track registration step metrics", async () => {
-      const registrationData = {
+      const: registrationData = [ {
         step: "personal_info" as const,
         data: {
           fullName: "João Silva",
@@ -1009,7 +1009,7 @@ describe("IntelligentClientRegistrationService", () => {
 
       await registrationService.processRegistrationStep(registrationData);
 
-      const metrics = registrationService.getMetrics();
+      const: metrics = [ registrationService.getMetrics();
 
       expect(metrics.registrationSteps.totalCalls).toBe(1);
       expect(metrics.registrationSteps.byStep.personal_info).toBe(1);

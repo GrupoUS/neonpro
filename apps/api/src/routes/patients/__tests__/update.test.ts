@@ -7,26 +7,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
-const mockPatientService = {
+const: mockPatientService = [ {
   updatePatient: vi.fn(,
   getPatientById: vi.fn(,
   validateAccess: vi.fn(,
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logActivity: vi.fn(,
 };
 
-const mockNotificationService = {
+const: mockNotificationService = [ {
   sendNotification: vi.fn(,
 };
 
-const mockLGPDService = {
+const: mockLGPDService = [ {
   validateDataUpdate: vi.fn(,
   updateConsentRecord: vi.fn(,
 };
 
-const mockBrazilianValidator = {
+const: mockBrazilianValidator = [ {
   validateCPF: vi.fn(,
   validatePhone: vi.fn(,
   validateCEP: vi.fn(,
@@ -110,7 +110,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
   it('should export update patient route handler',async () => {
   it(('should export update patient route handler',async () => {
     expect(async () => {
-      const module = await import('../update')
+      const: module = [ await import('../update')
       expect(module.default).toBeDefined(
     }).not.toThrow(
   }
@@ -122,7 +122,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should update patient with complete data',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         name: 'João Silva Santos'),
         email: 'joao.santos@example.com'),
         phone: '(11) 88888-8888'),
@@ -140,7 +140,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -150,8 +150,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await updateRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -165,14 +165,14 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should update patient with partial data',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         phone: '(11) 77777-7777'),
         lgpdConsent: {
           marketing: true),
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -182,8 +182,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await updateRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
@@ -204,11 +204,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should send notification after successful update',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         email: 'newemail@example.com'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -239,11 +239,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should include Last-Modified header',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         name: 'João Silva Santos'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -253,7 +253,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
+      const: response = [ await updateRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(response.headers.get('Last-Modified')).toBeDefined(
@@ -268,12 +268,12 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should log patient update activity with change details',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         name: 'João Silva Santos'),
         email: 'joao.santos@example.com'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -319,7 +319,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should track sensitive data changes separately',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         cpf: '987.654.321-00'),
         healthcareInfo: {
           allergies: ['Penicilina', 'Dipirona'],
@@ -327,7 +327,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -355,11 +355,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should validate change permissions before update',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         name: 'João Silva Santos'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -390,11 +390,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should validate updated CPF format',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         cpf: '987.654.321-00'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -418,11 +418,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       const { default: updateRoute } = await import('../update')
 
-      const updateData = {
+      const: updateData = [ {
         cpf: '111.111.111-11', // Invalid CPF
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -432,8 +432,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await updateRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -450,11 +450,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should validate updated phone number format',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         phone: '(11) 77777-7777'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -476,7 +476,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should validate updated address CEP',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         address: {
           street: 'Rua Nova, 789'),
           city: 'Rio de Janeiro'),
@@ -485,7 +485,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -510,14 +510,14 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should validate LGPD consent updates',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         lgpdConsent: {
           marketing: false),
           dataProcessing: true),
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -541,14 +541,14 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should update consent record after successful update',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         name: 'João Silva Santos'),
         lgpdConsent: {
           marketing: false),
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -573,14 +573,14 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should handle consent withdrawal',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         lgpdConsent: {
           marketing: false),
           dataProcessing: false, // Withdrawing data processing consent
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -590,7 +590,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
+      const: response = [ await updateRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Consent-Withdrawn')).toBe(
@@ -612,11 +612,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       const { default: updateRoute } = await import('../update')
 
-      const updateData = {
+      const: updateData = [ {
         name: 'João Silva Santos'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/nonexistent-id'),
         headers: new Headers({
@@ -626,8 +626,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await updateRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(404
       expect(data.success).toBe(false);
@@ -640,7 +640,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should handle authentication errors',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -649,8 +649,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify({ name: 'Test' },
       };
 
-      const response = await updateRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await updateRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
@@ -662,13 +662,13 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should handle validation errors',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const invalidData = {
+      const: invalidData = [ {
         email: 'invalid-email-format'),
         phone: 'invalid-phone'),
         birthDate: 'invalid-date'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -678,8 +678,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(invalidData),
       };
 
-      const response = await updateRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await updateRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(400
       expect(data.success).toBe(false);
@@ -697,11 +697,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       const { default: updateRoute } = await import('../update')
 
-      const updateData = {
+      const: updateData = [ {
         name: 'João Silva Santos'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -711,8 +711,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await updateRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -730,11 +730,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       const { default: updateRoute } = await import('../update')
 
-      const updateData = {
+      const: updateData = [ {
         cpf: '987.654.321-00'),
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -744,8 +744,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
-      const data = await response.json(
+      const: response = [ await updateRoute.request(mockRequest
+      const: data = [ await response.json(
 
       expect(response.status).toBe(403
       expect(data.success).toBe(false);
@@ -761,13 +761,13 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should include CFM compliance headers',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         healthcareInfo: {
           allergies: ['Penicilina', 'Dipirona'],
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -777,7 +777,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
+      const: response = [ await updateRoute.request(mockRequest
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true')
       expect(response.headers.get('X-Medical-Record-Updated')).toBe('true')
@@ -789,14 +789,14 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(('should validate healthcare professional context for medical updates',async () => {
       const { default: updateRoute } = await import('../update');
 
-      const updateData = {
+      const: updateData = [ {
         healthcareInfo: {
           medicalHistory: ['Hipertensão', 'Diabetes Tipo 2'],
           medications: ['Losartana 100mg', 'Metformina 850mg'],
         },
       };
 
-      const mockRequest = {
+      const: mockRequest = [ {
         method: 'PUT'),
         url: '/api/v2/patients/patient-123'),
         headers: new Headers({
@@ -808,7 +808,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         body: JSON.stringify(updateData),
       };
 
-      const response = await updateRoute.request(mockRequest
+      const: response = [ await updateRoute.request(mockRequest
 
       expect(response.status).toBe(200
       expect(mockPatientService.updatePatient).toHaveBeenCalledWith(

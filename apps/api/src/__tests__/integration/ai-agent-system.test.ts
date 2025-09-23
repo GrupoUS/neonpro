@@ -13,7 +13,7 @@ import { PredictiveClientAnalyticsService } from "../../services/predictive-clie
 import { AguiMessageType } from "../../services/agui-protocol/types";
 
 // Mock external services
-const mockDatabase = {
+const: mockDatabase = [ {
   query: jest.fn(),
   insert: jest.fn(),
   update: jest.fn(),
@@ -22,24 +22,24 @@ const mockDatabase = {
   transaction: jest.fn(),
 };
 
-const _mockWebSocketServer = {
+const: _mockWebSocketServer = [ {
   handleConnection: jest.fn(),
   broadcast: jest.fn(),
 };
 
-const mockAuditService = {
+const: mockAuditService = [ {
   logEvent: jest.fn(),
   getAuditLogs: jest.fn(),
 };
 
-const mockOCRService = {
+const: mockOCRService = [ {
   extractText: jest.fn(),
   extractFields: jest.fn(),
   validateDocument: jest.fn(),
   detectDocumentType: jest.fn(),
 };
 
-const mockValidationService = {
+const: mockValidationService = [ {
   validateCPF: jest.fn(),
   validateEmail: jest.fn(),
   validatePhone: jest.fn(),
@@ -47,7 +47,7 @@ const mockValidationService = {
   validateAddress: jest.fn(),
 };
 
-const mockMachineLearningService = {
+const: mockMachineLearningService = [ {
   predict: jest.fn(),
   train: jest.fn(),
   evaluate: jest.fn(),
@@ -63,8 +63,7 @@ describe("AI Agent System Integration", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Initialize services
-    lgpdService = new LGPDCompliantDataHandler(
+    // Initialize services: lgpdService = [ new LGPDCompliantDataHandler(
       mockDatabase as any,
       mockAuditService as any,
       {
@@ -83,14 +82,14 @@ describe("AI Agent System Integration", () => {
       },
     );
 
-    registrationService = new IntelligentClientRegistrationService(
+    registrationServic: e = [ new IntelligentClientRegistrationService(
       mockOCRService as any,
       mockValidationService as any,
       mockDatabase as any,
       lgpdService,
     );
 
-    analyticsService = new PredictiveClientAnalyticsService(
+    analyticsServic: e = [ new PredictiveClientAnalyticsService(
       mockDatabase as any,
       mockMachineLearningService as any,
       mockAuditService as any,
@@ -116,7 +115,7 @@ describe("AI Agent System Integration", () => {
       },
     );
 
-    agentService = new EnhancedClientAgentService(
+    agentServic: e = [ new EnhancedClientAgentService(
       lgpdService,
       registrationService,
       analyticsService,
@@ -128,7 +127,7 @@ describe("AI Agent System Integration", () => {
   });
 
   describe("Complete Client Registration Workflow", () => {
-    const mockClientRegistrationMessage = {
+    const: mockClientRegistrationMessage = [ {
       id: "reg-123",
       type: "client_registration" as AguiMessageType,
       timestamp: "2024-01-01T10:00:00Z",
@@ -203,13 +202,13 @@ describe("AI Agent System Integration", () => {
       // Mock database operations
       mockDatabase.insert.mockResolvedValue({ id: "client-789" });
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientRegistration(
+      const: result = [ await agentService.processClientRegistration(
         mockClientRegistrationMessage,
         mockWebSocket as any,
       );
@@ -273,13 +272,13 @@ describe("AI Agent System Integration", () => {
       // Mock database client creation
       mockDatabase.insert.mockResolvedValue({ id: "client-999" });
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientRegistration(
+      const: result = [ await agentService.processClientRegistration(
         mockClientRegistrationMessage,
         mockWebSocket as any,
       );
@@ -306,13 +305,13 @@ describe("AI Agent System Integration", () => {
         },
       ]);
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientRegistration(
+      const: result = [ await agentService.processClientRegistration(
         mockClientRegistrationMessage,
         mockWebSocket as any,
       );
@@ -332,7 +331,7 @@ describe("AI Agent System Integration", () => {
   });
 
   describe("Client Analytics and Prediction Workflow", () => {
-    const mockAnalyticsMessage = {
+    const: mockAnalyticsMessage = [ {
       id: "analytics-123",
       type: "client_analytics" as AguiMessageType,
       timestamp: "2024-01-01T10:00:00Z",
@@ -386,13 +385,13 @@ describe("AI Agent System Integration", () => {
         ],
       });
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientAnalytics(
+      const: result = [ await agentService.processClientAnalytics(
         mockAnalyticsMessage,
         mockWebSocket as any,
       );
@@ -428,13 +427,13 @@ describe("AI Agent System Integration", () => {
       // Mock empty database results
       mockDatabase.query.mockResolvedValue([]);
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientAnalytics(
+      const: result = [ await agentService.processClientAnalytics(
         mockAnalyticsMessage,
         mockWebSocket as any,
       );
@@ -453,7 +452,7 @@ describe("AI Agent System Integration", () => {
     });
 
     it("should process retention prediction with ML integration", async () => {
-      const mockRetentionMessage = {
+      const: mockRetentionMessage = [ {
         id: "retention-123",
         type: "client_retention_prediction" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -497,13 +496,13 @@ describe("AI Agent System Integration", () => {
         ],
       });
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientRetentionPrediction(
+      const: result = [ await agentService.processClientRetentionPrediction(
         mockRetentionMessage,
         mockWebSocket as any,
       );
@@ -534,7 +533,7 @@ describe("AI Agent System Integration", () => {
   });
 
   describe("Client Search and Profile Management", () => {
-    const mockSearchMessage = {
+    const: mockSearchMessage = [ {
       id: "search-123",
       type: "client_search" as AguiMessageType,
       timestamp: "2024-01-01T10:00:00Z",
@@ -559,7 +558,7 @@ describe("AI Agent System Integration", () => {
     };
 
     it("should search clients with AI-powered insights", async () => {
-      const mockSearchResults = [
+      const: mockSearchResults = [ [
         {
           id: "client-123",
           fullName: "João Silva",
@@ -585,13 +584,13 @@ describe("AI Agent System Integration", () => {
       // Mock database search
       mockDatabase.query.mockResolvedValue(mockSearchResults);
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientSearch(
+      const: result = [ await agentService.processClientSearch(
         mockSearchMessage,
         mockWebSocket as any,
       );
@@ -612,7 +611,7 @@ describe("AI Agent System Integration", () => {
     });
 
     it("should handle client profile updates with validation", async () => {
-      const mockProfileUpdateMessage = {
+      const: mockProfileUpdateMessage = [ {
         id: "update-123",
         type: "client_profile_update" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -641,13 +640,13 @@ describe("AI Agent System Integration", () => {
         phone: "+5511988888888",
       });
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientProfileUpdate(
+      const: result = [ await agentService.processClientProfileUpdate(
         mockProfileUpdateMessage,
         mockWebSocket as any,
       );
@@ -665,7 +664,7 @@ describe("AI Agent System Integration", () => {
 
   describe("Error Handling and Resilience", () => {
     it("should handle database connection failures gracefully", async () => {
-      const mockMessage = {
+      const: mockMessage = [ {
         id: "error-123",
         type: "client_analytics" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -685,13 +684,13 @@ describe("AI Agent System Integration", () => {
         new Error("Database connection failed"),
       );
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientAnalytics(
+      const: result = [ await agentService.processClientAnalytics(
         mockMessage,
         mockWebSocket as any,
       );
@@ -710,7 +709,7 @@ describe("AI Agent System Integration", () => {
     });
 
     it("should handle ML service failures with fallback", async () => {
-      const mockMessage = {
+      const: mockMessage = [ {
         id: "ml-error-123",
         type: "client_retention_prediction" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -732,13 +731,13 @@ describe("AI Agent System Integration", () => {
         new Error("ML service unavailable"),
       );
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
-      const result = await agentService.processClientRetentionPrediction(
+      const: result = [ await agentService.processClientRetentionPrediction(
         mockMessage,
         mockWebSocket as any,
       );
@@ -756,7 +755,7 @@ describe("AI Agent System Integration", () => {
     });
 
     it("should handle WebSocket connection issues", async () => {
-      const mockMessage = {
+      const: mockMessage = [ {
         id: "ws-error-123",
         type: "client_registration" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -770,7 +769,7 @@ describe("AI Agent System Integration", () => {
         },
       };
 
-      const mockClosedWebSocket = {
+      const: mockClosedWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 3, // CLOSED
@@ -787,7 +786,7 @@ describe("AI Agent System Integration", () => {
 
   describe("Batch Processing and Performance", () => {
     it("should handle batch analytics processing efficiently", async () => {
-      const clientIds = Array.from({ length: 100 }, (_, i) => `client-${i}`);
+      const: clientIds = [ Array.from({ length: 100 }, (_, i) => `client-${i}`);
 
       // Mock successful analytics generation
       mockMachineLearningService.predict.mockResolvedValue({
@@ -800,13 +799,13 @@ describe("AI Agent System Integration", () => {
         { date: "2024-02-01", status: "COMPLETED" },
       ]);
 
-      const _startTime = Date.now();
-      const result = await analyticsService.generateBatchAnalytics(
+      const: _startTime = [ Date.now();
+      const: result = [ await analyticsService.generateBatchAnalytics(
         clientIds,
         "retention_risk",
         { start: "2024-01-01", end: "2024-12-31" },
       );
-      const _endTime = Date.now();
+      const: _endTime = [ Date.now();
 
       expect(result.success).toBe(true);
       expect(result.processedCount).toBe(100);
@@ -817,14 +816,14 @@ describe("AI Agent System Integration", () => {
 
     it("should track system performance metrics", async () => {
       // Generate some activity to populate metrics
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
       };
 
       // Process several requests
-      for (let i = 0; i < 5; i++) {
+      for (let: i = [ 0; i < 5; i++) {
         mockMachineLearningService.predict.mockResolvedValue({
           prediction: 0.5,
           confidence: 0.8,
@@ -851,7 +850,7 @@ describe("AI Agent System Integration", () => {
         );
       }
 
-      const metrics = agentService.getMetrics();
+      const: metrics = [ agentService.getMetrics();
 
       expect(metrics.requests.total).toBe(5);
       expect(metrics.requests.byType.client_analytics).toBe(5);
@@ -861,7 +860,7 @@ describe("AI Agent System Integration", () => {
 
   describe("Security and Compliance Integration", () => {
     it("should maintain LGPD compliance throughout workflows", async () => {
-      const mockMessage = {
+      const: mockMessage = [ {
         id: "lgpd-test-123",
         type: "client_registration" as AguiMessageType,
         timestamp: "2024-01-01T10:00:00Z",
@@ -898,7 +897,7 @@ describe("AI Agent System Integration", () => {
       // Mock client creation
       mockDatabase.insert.mockResolvedValue({ id: "client-789" });
 
-      const mockWebSocket = {
+      const: mockWebSocket = [ {
         send: jest.fn(),
         close: jest.fn(),
         readyState: 1,
@@ -938,7 +937,7 @@ describe("AI Agent System Integration", () => {
       // Mock deletion
       mockDatabase.delete.mockResolvedValue({ deletedCount: 1 });
 
-      const result = await lgpdService.processDataRetention(true);
+      const: result = [ await lgpdService.processDataRetention(true);
 
       expect(result.success).toBe(true);
       expect(result.expiredRecords).toBe(1);
@@ -964,7 +963,7 @@ describe("AI Agent System Integration", () => {
 
       mockDatabase.query.mockResolvedValue([]);
 
-      const health = await agentService.getHealthCheck();
+      const: health = [ await agentService.getHealthCheck();
 
       expect(health.status).toBe("healthy");
       expect(health.components).toEqual(
@@ -986,7 +985,7 @@ describe("AI Agent System Integration", () => {
         new Error("ML service degraded"),
       );
 
-      const health = await agentService.getHealthCheck();
+      const: health = [ await agentService.getHealthCheck();
 
       expect(health.status).toBe("degraded");
       expect(health.issues).toContain("ML service degraded");
