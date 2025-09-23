@@ -243,7 +243,7 @@ export class LGPDAppointmentComplianceService {
 
       return consentRecord;
 
-    } catch (error) {
+    } catch {
       console.error('Error recording consent:', error);
       throw new Error('Failed to record consent');
     }
@@ -313,7 +313,7 @@ export class LGPDAppointmentComplianceService {
 
       return { valid: true, consentRecord };
 
-    } catch (error) {
+    } catch {
       console.error('Error verifying consent:', error);
       throw new Error('Failed to verify consent');
     }
@@ -355,7 +355,7 @@ export class LGPDAppointmentComplianceService {
 
       return request;
 
-    } catch (error) {
+    } catch {
       console.error('Error processing data access request:', error);
       throw new Error('Failed to process data access request');
     }
@@ -444,7 +444,7 @@ export class LGPDAppointmentComplianceService {
 
       return { compliant: true, complianceRecord };
 
-    } catch (error) {
+    } catch {
       console.error('Error ensuring communication compliance:', error);
       throw new Error('Failed to ensure communication compliance');
     }
@@ -500,7 +500,7 @@ export class LGPDAppointmentComplianceService {
         }
       });
 
-    } catch (error) {
+    } catch {
       console.error('Error anonymizing appointment data:', error);
       throw new Error('Failed to anonymize appointment data');
     }
@@ -558,7 +558,7 @@ export class LGPDAppointmentComplianceService {
 
       return report;
 
-    } catch (error) {
+    } catch {
       console.error('Error generating compliance report:', error);
       throw new Error('Failed to generate compliance report');
     }
@@ -632,7 +632,7 @@ export class LGPDAppointmentComplianceService {
 
       return incident;
 
-    } catch (error) {
+    } catch {
       console.error('Error reporting privacy incident:', error);
       throw new Error('Failed to report privacy incident');
     }
@@ -710,7 +710,7 @@ export class LGPDAppointmentComplianceService {
         }
       });
 
-    } catch (error) {
+    } catch {
       // Update request with error
       await prisma.lgpdDataAccessRequest.update({
         where: { id: request.id },
@@ -1067,7 +1067,7 @@ export class LGPDAppointmentComplianceService {
       for (const appointment of appointmentsToAnonymize) {
         await this.anonymizeAppointmentData(appointment.id);
       }
-    } catch (error) {
+    } catch {
       console.error('Error processing data retention:', error);
     }
   }

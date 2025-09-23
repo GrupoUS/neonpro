@@ -174,7 +174,7 @@ export class PredictiveAnalyticsService {
         seasonalityFactors: seasonality,
         anomalies,
       };
-    } catch (error) {
+    } catch {
       console.error('Trend analysis failed:', error);
       throw error;
     }
@@ -207,7 +207,7 @@ export class PredictiveAnalyticsService {
           opportunities: analysis.opportunities,
         },
       };
-    } catch (error) {
+    } catch {
       console.error('Financial forecast failed:', error);
       throw error;
     }
@@ -245,7 +245,7 @@ export class PredictiveAnalyticsService {
         seasonalTrends,
         recommendations,
       };
-    } catch (error) {
+    } catch {
       console.error('Revenue insights failed:', error);
       throw error;
     }
@@ -281,7 +281,7 @@ export class PredictiveAnalyticsService {
         risks,
         recommendations,
       };
-    } catch (error) {
+    } catch {
       console.error('Cash flow analysis failed:', error);
       throw error;
     }

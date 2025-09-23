@@ -365,7 +365,7 @@ async function validateWithAI(
       aiScore: validationResult.aiScore,
       transformedData: validationResult.transformedData || data,
     };
-  } catch (_error) {
+  } catch {
   void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
@@ -427,7 +427,7 @@ async function generatePreview(
     }
 
     return preview;
-  } catch (_error) {
+  } catch {
   void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
@@ -474,7 +474,7 @@ async function getCurrentData(
       default:
         return null;
     }
-  } catch (_error) {
+  } catch {
   void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
@@ -525,7 +525,7 @@ export const crudRouter = router({
               message: 'Invalid step specified',
             });
         }
-      } catch (_error) {
+      } catch {
   void _error; void _error;
         console.error('CRUD operation error:', error);
 
@@ -597,7 +597,7 @@ export const crudRouter = router({
           error: operationState.errorMessage,
           metadata: operationState.metadata,
         };
-      } catch (_error) {
+      } catch {
   void _error; void _error;
         if (error instanceof TRPCError) {
           throw error;

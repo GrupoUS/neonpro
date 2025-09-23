@@ -308,7 +308,7 @@ export class AgentAuditService {
         total: count || 0,
         hasMore: (options.limit || 0) + (options.offset || 0) < (count || 0),
       };
-    } catch (error) {
+    } catch {
       console.error('Error querying audit logs:', error);
       return {
         events: [],
@@ -419,7 +419,7 @@ export class AgentAuditService {
           ? totalProcessingTime / processingTimeCount
           : 0,
       };
-    } catch (error) {
+    } catch {
       console.error('Error getting audit statistics:', error);
       return {
         totalEvents: 0,
@@ -508,7 +508,7 @@ export class AgentAuditService {
       }
 
       return 0; // Actual count would need to be queried separately
-    } catch (error) {
+    } catch {
       console.error('Error cleaning up old audit logs:', error);
       return 0;
     }
@@ -551,7 +551,7 @@ export class AgentAuditService {
         // Re-add failed events to pending queue
         this.pendingEvents.unshift(...eventsToFlush);
       }
-    } catch (error) {
+    } catch {
       console.error('Error flushing audit events:', error);
       // Re-add failed events to pending queue
       this.pendingEvents.unshift(...eventsToFlush);
@@ -624,7 +624,7 @@ export class AgentAuditService {
         .single();
 
       return !!data;
-    } catch (error) {
+    } catch {
       console.error('Error verifying LGPD consent:', error);
       return false;
     }

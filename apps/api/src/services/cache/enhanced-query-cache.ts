@@ -246,7 +246,7 @@ export class EnhancedQueryCacheService {
       );
 
       return { cached: false, source: 'miss', executionTime };
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error getting cached response:', error);
       this.stats.errorCount++;
@@ -339,7 +339,7 @@ export class EnhancedQueryCacheService {
       }
 
       return result;
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error caching response:', error);
       this.stats.errorCount++;
@@ -421,7 +421,7 @@ export class EnhancedQueryCacheService {
         invalidatedCount: totalInvalidated,
         details: results,
       };
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error invalidating cache:', error);
       return {
@@ -456,7 +456,7 @@ export class EnhancedQueryCacheService {
       this.stats.totalMemoryUsage = totalMemoryUsage;
 
       return { ...this.stats };
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error getting statistics:', error);
       return this.stats;
@@ -525,7 +525,7 @@ export class EnhancedQueryCacheService {
         details,
         stats: await this.getStats(),
       };
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Health check failed:', error);
       return {

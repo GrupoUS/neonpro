@@ -238,7 +238,7 @@ export class DataMaskingService {
       );
 
       // Create audit log entry
-      const auditLog = this.createAuditLogEntry(
+      const _auditLog = this.createAuditLogEntry(
         context,
         fieldsMasked,
         rulesApplied,
@@ -258,7 +258,7 @@ export class DataMaskingService {
       await this.logMaskingActivity(result, Date.now() - startTime);
 
       return result;
-    } catch (error) {
+    } catch {
       console.error('Error in maskData:', error);
       throw new Error('Failed to apply data masking');
     }
@@ -507,7 +507,7 @@ export class DataMaskingService {
       // In production, this would write to your audit log system
       this.auditLog.push(logEntry);
       console.log('[Data Masking Audit]', JSON.stringify(logEntry, null, 2));
-    } catch (error) {
+    } catch {
       console.error('Error logging masking activity:', error);
     }
   }

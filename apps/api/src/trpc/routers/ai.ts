@@ -378,7 +378,7 @@ export const aiRouter = router({
             anvisaCompliant: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process AI chat request',
@@ -504,7 +504,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
             auditTrail: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to predict no-show risk',
@@ -607,7 +607,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
             auditTrail: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to generate healthcare insights',
@@ -760,7 +760,7 @@ Forneça análise de risco e recomendações.`;
             cfm_compliant: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to analyze aesthetic risk',
@@ -845,7 +845,7 @@ Forneça análise de risco e recomendações.`;
             fallback_available: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to route AI provider',
@@ -913,7 +913,7 @@ Forneça análise de risco e recomendações.`;
                 provider: provider.name,
                 cost: result.cost,
               };
-            } catch (error) {
+            } catch {
               return {
                 id: request.id,
                 status: 'error',
@@ -963,7 +963,7 @@ Forneça análise de risco e recomendações.`;
             batch_processed: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process batch analysis',

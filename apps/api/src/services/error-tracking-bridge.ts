@@ -327,7 +327,7 @@ export function initializeLegacyErrorTracking(
 
       console.log('[Legacy Error Tracker] Initialized successfully');
       resolve();
-    } catch (error) {
+    } catch {
       console.error('[Legacy Error Tracker] Failed to initialize:', error);
       reject(error);
     }

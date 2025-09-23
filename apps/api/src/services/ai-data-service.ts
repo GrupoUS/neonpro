@@ -87,7 +87,7 @@ export class AIDataService {
         domain: this.permissionContext.domain,
         timestamp: new Date().toISOString(),
       });
-    } catch (_error) {
+    } catch {
   void _error;
       console.error('Failed to log audit entry:', error);
       // Don't throw - audit logging failures shouldn't block operations
@@ -421,7 +421,7 @@ export class AIDataService {
         timestamp: new Date().toISOString(),
         database: 'connected',
       };
-    } catch (_error) {
+    } catch {
   void _error;
       return {
         status: 'unhealthy',
@@ -482,7 +482,7 @@ export class AIDataService {
       await this.logAccess('general', { query, sessionId }, 1);
 
       return response;
-    } catch (_error) {
+    } catch {
   void _error;
       console.error('Ottomator agent query failed:', error);
 
@@ -513,7 +513,7 @@ export class AIDataService {
         case 'client_data':
           try {
             result = await this.getClientsByName({ clientNames: [query] });
-          } catch (_error) {
+          } catch {
   void _error;
             result = {
               message: 'Erro ao buscar clientes: '
@@ -529,7 +529,7 @@ export class AIDataService {
             result = await this.getAppointmentsByDate({
               dateRanges: [{ start: today, end: tomorrow }],
             });
-          } catch (_error) {
+          } catch {
   void _error;
             result = {
               message: 'Erro ao buscar agendamentos: '
@@ -542,7 +542,7 @@ export class AIDataService {
             result = await this.getFinancialSummary({
               financial: { period: 'today', type: 'all' },
             });
-          } catch (_error) {
+          } catch {
   void _error;
             result = {
               message: 'Erro ao buscar dados financeiros: '
@@ -573,7 +573,7 @@ export class AIDataService {
           model: 'fallback',
         },
       };
-    } catch (_error) {
+    } catch {
   void _error;
       return {
         success: false,

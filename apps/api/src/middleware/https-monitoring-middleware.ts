@@ -79,7 +79,7 @@ export class HTTPSMonitoringMiddleware {
               );
             });
         }
-      } catch (_error) {
+      } catch {
       void _error;
         logger.error(
           'https_monitoring_middleware',
@@ -151,7 +151,7 @@ export class HTTPSMonitoringMiddleware {
         certificateTransparency: socket.certificateTransparency || false,
         timing,
       };
-    } catch (_error) {
+    } catch {
       void _error;
       logger.debug(
         'https_monitoring_middleware',
@@ -182,7 +182,7 @@ export class HTTPSMonitoringMiddleware {
       };
 
       return versionMap[protocol] || protocol || 'UNKNOWN';
-    } catch (_error) {
+    } catch {
       void _error;
       return 'UNKNOWN';
     }
@@ -237,7 +237,7 @@ export class HTTPSMonitoringMiddleware {
           'HTTPS handshake monitoring started',
         );
       }
-    } catch (_error) {
+    } catch {
       void _error;
       logger.warning(
         'https_monitoring_middleware',
@@ -285,7 +285,7 @@ export class HTTPSMonitoringMiddleware {
       socket.on('error', (error: any) => {
         this.handleHandshakeError(sessionId, error);
       });
-    } catch (_error) {
+    } catch {
       void _error;
       logger.error(
         'https_monitoring_middleware',
@@ -346,7 +346,7 @@ export class HTTPSMonitoringMiddleware {
         // Clean up
         this.activeHandshakes.delete(sessionId);
       }
-    } catch (_error) {
+    } catch {
       void _error;
       logger.error(
         'https_monitoring_middleware',
@@ -378,7 +378,7 @@ export class HTTPSMonitoringMiddleware {
 
       // Clean up any pending handshake
       this.activeHandshakes.delete(sessionId);
-    } catch (_error) {
+    } catch {
       void _error;
       logger.error(
         'https_monitoring_middleware',

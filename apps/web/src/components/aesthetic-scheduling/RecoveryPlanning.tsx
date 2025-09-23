@@ -51,24 +51,36 @@ import {
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+// Import missing icons
+import {
+  RefreshCw,
+  Download,
+  Share2,
+  Plus,
+  Edit,
+  Save,
+  Moon,
+  Zap,
+  MessageCircle,
+  Video
+} from 'lucide-react';
+
 interface RecoveryPlanningProps {
   appointmentId?: string;
   treatmentPlanId?: string;
   procedureIds?: string[];
   patientId?: string;
-  _onRecoveryPlanCreate?: (plan: RecoveryPlan) => void;
 }
 
 export function RecoveryPlanning({ 
   appointmentId,
   treatmentPlanId,
   procedureIds,
-  patientId,
-  onRecoveryPlanCreate 
+  patientId
 }: RecoveryPlanningProps) {
   const [selectedProcedure, setSelectedProcedure] = useState<string>('');
   const [activeTab, setActiveTab] = useState('planning');
-  // const [isCreatingPlan, setIsCreatingPlan] = useState(false);
+  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
   const [customInstructions] = useState({
     phase: '',
     title: '',
@@ -86,8 +98,8 @@ export function RecoveryPlanning({
       if (selectedProcedure) {
         return await api.aestheticScheduling.getRecoveryPlan({
           procedureId: selectedProcedure,
-          treatmentPlanId,
-          appointmentId,
+          treatmentPlanId: treatmentPlanId || '',
+          appointmentId: appointmentId || '',
           includePersonalizedInstructions: true
         });
       }

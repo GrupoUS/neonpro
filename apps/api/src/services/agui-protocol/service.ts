@@ -104,7 +104,7 @@ export class AguiService extends EventEmitter {
       this.protocol.getHealthStatus();
 
       this.emit('initialized');
-    } catch (error) {
+    } catch {
       this.emit('initializationError', error);
       throw error;
     }
@@ -228,7 +228,7 @@ export class AguiService extends EventEmitter {
               skipCache: false,
             },
           );
-        } catch (error) {
+        } catch {
           console.error('[AguiService] Error caching response:', error);
           // Don't fail the query if caching fails
         }
@@ -267,7 +267,7 @@ export class AguiService extends EventEmitter {
             },
             dataClassification: this.classifyData(response.content),
           });
-        } catch (error) {
+        } catch {
           console.error(
             '[AguiService] Error storing conversation _context:',
             error,
@@ -322,7 +322,7 @@ export class AguiService extends EventEmitter {
               dataClassification: this.classifyData(result.content),
             },
           });
-        } catch (error) {
+        } catch {
           console.error(
             '[AguiService] Error broadcasting real-time events:',
             error,
@@ -341,7 +341,7 @@ export class AguiService extends EventEmitter {
       this.emit('queryCompleted', { queryId, result, context });
 
       return result;
-    } catch (error) {
+    } catch {
       // Update metrics
       this.updateMetrics({
         queryCount: 1,
@@ -406,7 +406,7 @@ export class AguiService extends EventEmitter {
       });
 
       return response;
-    } catch (error) {
+    } catch {
       this.emit('streamingQueryError', { queryId, error, context });
       throw error;
     } finally {
@@ -461,7 +461,7 @@ export class AguiService extends EventEmitter {
       }
 
       return null;
-    } catch (error) {
+    } catch {
       this.emit('sessionError', { sessionId, error });
       return null;
     }
@@ -493,7 +493,7 @@ export class AguiService extends EventEmitter {
       this.emit('sessionUpdated', { session, updates });
 
       return session;
-    } catch (error) {
+    } catch {
       this.emit('sessionError', { sessionId, error });
       return null;
     }
@@ -525,7 +525,7 @@ export class AguiService extends EventEmitter {
       this.updateMetrics({ feedbackCount: 1 });
 
       this.emit('feedbackSubmitted', feedbackData);
-    } catch (error) {
+    } catch {
       this.emit('feedbackError', { sessionId, messageId, error });
       throw error;
     }
@@ -541,7 +541,7 @@ export class AguiService extends EventEmitter {
     let ragAgentHealthy = true;
     try {
       await this.testRagAgentConnectivity();
-    } catch (error) {
+    } catch {
       // Log error securely without exposing sensitive information
       console.error(
         'RAG agent connectivity test failed:',
@@ -711,7 +711,7 @@ export class AguiService extends EventEmitter {
         );
 
         this.protocol.sendResponse(data.connection.id, result, data.messageId);
-      } catch (error) {
+      } catch {
         // Log error for debugging while protecting sensitive information
         console.error(
           'Query processing failed:',
@@ -1036,7 +1036,7 @@ export class AguiService extends EventEmitter {
       });
 
       return copilotResponse;
-    } catch (error) {
+    } catch {
       logger.error('Failed to process CopilotKit request', error, {
         requestId: request.id,
         sessionId: request.sessionId,

@@ -692,7 +692,7 @@ Equipe {{clinicName}}`,
 
       return result;
 
-    } catch (error) {
+    } catch {
       result.status = 'failed';
       result.failedAt = new Date().toISOString();
       result.errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -753,7 +753,7 @@ Equipe {{clinicName}}`,
   private async checkRateLimit(type: string, clientId: string): Promise<boolean> {
     const rateLimitKey = `${type}_${clientId}`;
     const now = Date.now();
-    const windowStart = now - 60000; // 1 minute window
+    const _windowStart = now - 60000; // 1 minute window
 
     let limit = this.rateLimiters.get(rateLimitKey);
     
@@ -957,7 +957,7 @@ Equipe {{clinicName}}`,
   async healthCheck(): Promise<boolean> {
     try {
       return this.templates.size > 0 && this.providers.size > 0;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

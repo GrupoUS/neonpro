@@ -161,7 +161,7 @@ export class ExportService {
         DEFAULT_EXPORT_FIELDS,
         processedData.length,
       );
-    } catch (error) {
+    } catch {
       job.status = 'failed';
       job.error = error instanceof Error ? error.message : 'Erro desconhecido';
       job.updatedAt = new Date();
@@ -185,7 +185,7 @@ export class ExportService {
   }
 
   private static generateMockPatientData(count: number): any[] {
-    const data = [];
+    const _data = [];
 
     for (let i = 1; i <= count; i++) {
       data.push({

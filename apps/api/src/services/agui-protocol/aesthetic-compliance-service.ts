@@ -906,7 +906,7 @@ export class AestheticComplianceService {
   async healthCheck(): Promise<boolean> {
     try {
       return this.auditLog.size > 0 && this.consentRegistry.size >= 0;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

@@ -17,6 +17,8 @@
 import { nanoid } from "nanoid";
 import type { Context, Next, MiddlewareHandler } from "hono";
 import { verify } from "hono/jwt";
+import { z } from "zod";
+import { logHealthcareError, authLogger } from '../../logging/healthcare-logger';
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -1065,7 +1067,12 @@ export class HealthcareAuthMiddleware {
           await this.logSessionActivity(c, authResult.session);
         }
       } catch (error) {
-        console.error("Authentication middleware error:", error);
+        logHealthcareError('auth', error, {
+          method: 'authenticationMiddleware',
+          component: 'HealthcareAuthMiddleware',
+          severity: 'high',
+          path: c.req.path
+        });
         return this.handleAuthError(c, error);
       }
     };
@@ -1281,7 +1288,12 @@ export class HealthcareAuthMiddleware {
         riskScore,
       );
     } catch (error) {
-      console.error("Authentication error:", error);
+      logHealthcareError('auth', error, {
+        method: 'handleAuthentication',
+        component: 'HealthcareAuthMiddleware',
+        severity: 'high',
+        operation: 'authentication'
+      });
       return this.createAuthResult(
         false,
         undefined,
@@ -1369,7 +1381,12 @@ export class HealthcareAuthMiddleware {
 
       return jwtPayload;
     } catch (error) {
-      console.error("Token validation error:", error);
+      logHealthcareError('auth', error, {
+        method: 'validateToken',
+        component: 'HealthcareAuthMiddleware',
+        severity: 'high',
+        operation: 'token_validation'
+      });
       return null;
     }
   }
@@ -1398,7 +1415,12 @@ export class HealthcareAuthMiddleware {
 
       return session;
     } catch (error) {
-      console.error("Session creation error:", error);
+      logHealthcareError('auth', error, {
+        method: 'createSession',
+        component: 'HealthcareAuthMiddleware',
+        severity: 'high',
+        operation: 'session_creation'
+      });
       return null;
     }
   }
@@ -1492,7 +1514,12 @@ export class HealthcareAuthMiddleware {
 
       return session;
     } catch (error) {
-      console.error("New session creation error:", error);
+      logHealthcareError('auth', error, {
+        method: 'createNewSession',
+        component: 'HealthcareAuthMiddleware',
+        severity: 'high',
+        operation: 'new_session_creation'
+      });
       return null;
     }
   }

@@ -95,7 +95,7 @@ export class SemanticCacheService {
       }
 
       return embedding;
-    } catch (error) {
+    } catch {
       console.error('Erro ao gerar embedding:', error);
       // Fallback para embedding aleatório em caso de erro
       return this.generateMockEmbedding(text);
@@ -286,7 +286,7 @@ export class SemanticCacheService {
       this.updateStats();
 
       return bestMatch;
-    } catch (error) {
+    } catch {
       console.error('Erro na busca semântica:', error);
       this.stats.cacheMisses++;
       this.updateStats();
@@ -386,7 +386,7 @@ export class SemanticCacheService {
         `Entrada adicionada ao cache. ID: ${id}, Patient: ${metadata.patientId}, Tamanho: ${this.cache.size}`,
       );
       return id;
-    } catch (error) {
+    } catch {
       console.error('Erro ao adicionar entrada ao cache:', error);
       throw error;
     }
@@ -565,7 +565,7 @@ export class SemanticCacheService {
       }
 
       return true;
-    } catch (error) {
+    } catch {
       console.error('Error validating cache entry integrity:', error);
       return false;
     }
@@ -806,7 +806,7 @@ export class SemanticCacheService {
           this.cache.set(entry.id, entry);
           imported++;
         }
-      } catch (error) {
+      } catch {
         console.warn(`Falha ao importar entrada ${entry.id}:`, error);
       }
     }

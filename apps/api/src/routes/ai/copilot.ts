@@ -79,7 +79,7 @@ export const copilotEndpoint = createMiddleware(async (c: Context, _next) => {
         lgpdCompliance: true,
       },
     });
-  } catch (error) {
+  } catch {
     logger.error('CopilotKit endpoint error', error, {
       requestId,
       userId,

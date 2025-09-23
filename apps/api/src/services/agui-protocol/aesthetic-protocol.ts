@@ -244,7 +244,7 @@ export class AestheticAguiProtocol extends EventEmitter {
 
       return response;
 
-    } catch (error) {
+    } catch {
       const processingTime = Date.now() - startTime;
       this.updateMetrics(processingTime, false);
       
@@ -444,7 +444,7 @@ export class AestheticAguiProtocol extends EventEmitter {
   private async checkRateLimit(message: AguiMessage): Promise<boolean> {
     const userId = message.metadata?._userId || 'anonymous';
     const now = Date.now();
-    const windowStart = now - 60000; // 1 minute window
+    const _windowStart = now - 60000; // 1 minute window
 
     let userRateLimit = this.rateLimitMap.get(userId);
     

@@ -86,7 +86,7 @@ class FunctionWarmer {
         failures: results.filter(r => !r.success).length,
         totalTargets: this.targets.length,
       });
-    } catch (error) {
+    } catch {
       console.error('Warmup error:', error);
     } finally {
       this.isWarming = false;
@@ -133,7 +133,7 @@ class FunctionWarmer {
         duration,
         statusCode: response.status,
       };
-    } catch (error) {
+    } catch {
       const duration = performance.now() - start;
       return {
         url: target.url,

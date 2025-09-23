@@ -312,7 +312,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
       data: updatedPatient,
       message: 'Paciente atualizado com sucesso',
     });
-  } catch (error) {
+  } catch {
     console.error('Error updating patient:', error);
 
     return c.json(

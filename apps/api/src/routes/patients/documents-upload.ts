@@ -119,7 +119,7 @@ app.post('/:id/documents', requireAuth, async c => {
         );
       }
       return c.json(result, 201);
-    } catch (_err: any) {
+    } catch {
     void _err;
       return c.json(
         { success: false, error: err?.message || 'Erro interno' },

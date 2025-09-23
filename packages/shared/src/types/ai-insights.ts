@@ -363,7 +363,7 @@ export function getInsightsByPatientId(
 ): AIInsight[] {
   return insights
     .filter((insight) => insight.patientId === patientId)
-    .sort((a, _b) => b.generatedAt.getTime() - a.generatedAt.getTime());
+    .sort((a, b) => b.generatedAt.getTime() - a.generatedAt.getTime());
 }
 
 // Get insights by type

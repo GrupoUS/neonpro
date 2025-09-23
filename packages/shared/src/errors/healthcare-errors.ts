@@ -90,7 +90,7 @@ export class HealthcareErrorHandler {
         error.message,
         "UNKNOWN_HEALTHCARE_ERROR",
         "MEDIUM",
-        context,
+        _context,
         "Unknown operation",
       );
     }
@@ -99,7 +99,7 @@ export class HealthcareErrorHandler {
       "An unknown error occurred",
       "UNKNOWN_ERROR",
       "LOW",
-      context,
+      _context,
       "Unknown operation",
     );
   }

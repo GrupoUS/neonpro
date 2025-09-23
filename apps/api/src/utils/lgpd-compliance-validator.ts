@@ -218,7 +218,7 @@ export class LGPDComplianceValidator {
         missingConsents: missingConsents.length > 0 ? missingConsents : undefined,
         violations: violations.length > 0 ? violations : undefined,
       };
-    } catch (error) {
+    } catch {
       throw new LGPDComplianceError(
         'LGPD compliance validation failed',
         'Art. 6',
@@ -264,7 +264,7 @@ export class LGPDComplianceValidator {
       const isSpecific = consent.purpose && consent.legalBasis;
 
       return isGranular && isSpecific;
-    } catch (error) {
+    } catch {
       console.error('Consent validation failed:', error);
       return false;
     }
@@ -318,7 +318,7 @@ export class LGPDComplianceValidator {
       );
 
       return isOriginalPurpose || isCompatiblePurpose;
-    } catch (error) {
+    } catch {
       console.error('Purpose validation failed:', error);
       return false;
     }
@@ -445,7 +445,7 @@ export class LGPDComplianceValidator {
         message,
         auditEventId,
       };
-    } catch (error) {
+    } catch {
       // Create audit event for failed request
       await this.createLGPDAuditEvent({
         eventId: auditEventId,
@@ -659,7 +659,7 @@ export class LGPDComplianceValidator {
           'Update privacy notices as needed',
         ],
       };
-    } catch (error) {
+    } catch {
       throw new LGPDComplianceError(
         'Failed to generate LGPD compliance report',
         'Art. 37',

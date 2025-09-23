@@ -782,7 +782,7 @@ export class AestheticRAGService {
   async healthCheck(): Promise<boolean> {
     try {
       return this.knowledgeBase.size > 0;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

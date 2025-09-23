@@ -568,7 +568,7 @@ function compressResponse(
     }
 
     return null;
-  } catch (error) {
+  } catch {
     console.error('Compression failed:', error);
     return null;
   }

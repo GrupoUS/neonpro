@@ -215,7 +215,7 @@ export class AIAppointmentSchedulingService {
         modelVersion: this.modelVersion
       };
 
-    } catch (error) {
+    } catch {
       console.error('Error predicting no-show:', error);
       throw new Error('Failed to predict no-show risk');
     }
@@ -314,7 +314,7 @@ export class AIAppointmentSchedulingService {
         recommendations
       };
 
-    } catch (error) {
+    } catch {
       console.error('Error optimizing resource allocation:', error);
       throw new Error('Failed to optimize resource allocation');
     }
@@ -404,7 +404,7 @@ export class AIAppointmentSchedulingService {
         conflicts
       };
 
-    } catch (error) {
+    } catch {
       console.error('Error getting real-time availability:', error);
       throw new Error('Failed to get real-time availability');
     }
@@ -497,7 +497,7 @@ export class AIAppointmentSchedulingService {
 
       return reminders;
 
-    } catch (error) {
+    } catch {
       console.error('Error generating reminder schedule:', error);
       throw new Error('Failed to generate reminder schedule');
     }

@@ -694,7 +694,7 @@ export const appointmentsRouter = router({
               input.startTime,
             );
           }
-        } catch (error) {
+        } catch {
           console.warn('Weather service integration failed:', error);
           // Continue without weather data - non-critical feature
         }
@@ -801,7 +801,7 @@ export const appointmentsRouter = router({
             anvisaCompliant: serviceType?.requiresSpecialty ? true : false,
           },
         };
-      } catch (error) {
+      } catch {
         // Log failed appointment creation
         await ctx.prisma.auditTrail.create({
           data: {
@@ -913,7 +913,7 @@ export const appointmentsRouter = router({
                 input.appointmentTime,
               );
             }
-          } catch (error) {
+          } catch {
             console.warn('Weather service integration failed:', error);
             // Continue without weather data - non-critical feature
           }
@@ -956,7 +956,7 @@ export const appointmentsRouter = router({
         });
 
         return prediction;
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to predict no-show risk',
@@ -1494,7 +1494,7 @@ export const appointmentsRouter = router({
             anvisaCompliant: serviceType?.requiresSpecialty ? true : false,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to schedule appointment',

@@ -300,7 +300,7 @@ export class ExternalServiceHealthChecker {
       });
 
       return response.ok && response.status < 500;
-    } catch (error) {
+    } catch {
       void error;
       // Error caught but not used - handled by surrounding logic
       return false;
@@ -366,7 +366,7 @@ export class ExternalServiceHealthChecker {
     try {
       // For internal services, check if the service is running
       return true; // Assume healthy for demo purposes
-    } catch (error) {
+    } catch {
       void error;
       // Error caught but not used - handled by surrounding logic
       return false;
@@ -625,7 +625,7 @@ export class ExternalServiceHealthChecker {
     this.eventCallbacks.forEach(callback => {
       try {
         callback(event);
-      } catch (error) {
+      } catch {
       void error;
         // Error caught but not used - handled by surrounding logic
         console.error('Error in health check event callback:', error);

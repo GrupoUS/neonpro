@@ -107,7 +107,7 @@ async function logFeedbackForAnalytics(
       rating: feedback.rating,
       helpful: feedback.helpful,
     });
-  } catch (error) {
+  } catch {
     console.error('Failed to log feedback for analytics:', error);
     // Don't throw - feedback logging failures shouldn't block the user experience
   }
@@ -214,7 +214,7 @@ app.post('/ai/sessions/:sessionId/feedback', async c => {
     };
 
     return c.json(response, 200);
-  } catch (error) {
+  } catch {
     console.error('Feedback endpoint error:', error);
 
     return c.json(
@@ -307,7 +307,7 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async c => {
       },
       200,
     );
-  } catch (error) {
+  } catch {
     console.error('Feedback stats endpoint error:', error);
 
     return c.json(
@@ -411,7 +411,7 @@ app.get('/ai/feedback/admin/overview', async c => {
       },
       200,
     );
-  } catch (error) {
+  } catch {
     console.error('Feedback overview endpoint error:', error);
 
     return c.json(
@@ -453,7 +453,7 @@ app.get('/ai/feedback/health', async c => {
       },
       200,
     );
-  } catch (error) {
+  } catch {
     return c.json(
       {
         status: 'unhealthy',

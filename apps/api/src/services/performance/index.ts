@@ -107,7 +107,7 @@ export async function initializePerformanceOptimization(config: {
         if (validationResult.complianceScore < 80) {
           console.error(`[Security] Low compliance score: ${validationResult.complianceScore}%`);
         }
-      } catch (error) {
+      } catch {
         console.error("[Security] Compliance validation failed:", error);
       }
     }, security.validationInterval);

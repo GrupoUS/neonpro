@@ -175,7 +175,7 @@ app.post(
             outcome: auditEvent.outcome,
             latency_ms: auditEvent.latencyMs,
           });
-        } catch (e) {
+        } catch {
           console.warn('Audit DB insert failed', e);
         }
       } else {
@@ -213,7 +213,7 @@ app.post(
             outcome: 'refusal',
             latency_ms: Date.now() - t0,
           });
-        } catch (e) {
+        } catch {
           console.warn('Audit DB insert failed', e);
         }
       } else {
@@ -263,7 +263,7 @@ app.post(
               outcome,
               latency_ms: Date.now() - t0,
             });
-          } catch (e) {
+          } catch {
             console.warn('Audit DB insert failed', e);
           }
         } else {
@@ -323,7 +323,7 @@ app.post(
               enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`),
             );
             controller.close();
-          } catch (e) {
+          } catch {
             controller.error(e);
           }
         },
@@ -347,7 +347,7 @@ app.post(
             outcome: 'success',
             latency_ms: Date.now() - t0,
           });
-        } catch (e) {
+        } catch {
           console.warn('Audit DB insert failed', e);
         }
       } else {
@@ -382,7 +382,7 @@ app.post(
             outcome: 'error',
             latency_ms: Date.now() - t0,
           });
-        } catch (e) {
+        } catch {
           console.warn('Audit DB insert failed', e);
         }
       } else {
@@ -466,7 +466,7 @@ app.get('/session/:id', async c => {
         },
         200,
       );
-    } catch (e) {
+    } catch {
       console.warn('Session DB operation failed, falling back to mock:', e);
     }
   }
@@ -559,7 +559,7 @@ app.post('/explanation', async c => {
           outcome: 'success',
           latency_ms: Date.now() - t0,
         });
-      } catch (e) {
+      } catch {
         console.warn('Audit DB insert failed', e);
       }
     }

@@ -379,7 +379,7 @@ export class BillingService {
         data: billing,
         message: 'Cobrança criada com sucesso',
       };
-    } catch (error) {
+    } catch {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -406,7 +406,7 @@ export class BillingService {
         success: true,
         data: billing,
       };
-    } catch (error) {
+    } catch {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -500,7 +500,7 @@ export class BillingService {
           },
         },
       };
-    } catch (error) {
+    } catch {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -600,7 +600,7 @@ export class BillingService {
         data: { paymentId, status: paymentStatus },
         message: 'Pagamento processado com sucesso',
       };
-    } catch (error) {
+    } catch {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -693,7 +693,7 @@ export class BillingService {
         success: true,
         data: summary,
       };
-    } catch (error) {
+    } catch {
       console.error('Billing operation failed:', error);
       return {
         success: false,

@@ -139,7 +139,7 @@ app.post('/subscribe', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     logger.error('Error creating real-time subscription', error, {
       requestId: c.req.header('X-Request-ID'),
     });
@@ -224,7 +224,7 @@ app.delete('/unsubscribe/:subscriptionId', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     logger.error('Error removing real-time subscription', error, {
       requestId: c.req.header('X-Request-ID'),
       subscriptionId: c.req.param('subscriptionId'),
@@ -306,7 +306,7 @@ app.get('/analytics', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     logger.error('Error getting real-time analytics', error, {
       requestId: c.req.header('X-Request-ID'),
     });
@@ -394,7 +394,7 @@ app.get('/subscriptions', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     logger.error('Error getting real-time subscriptions', error, {
       requestId: c.req.header('X-Request-ID'),
     });

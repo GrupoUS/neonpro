@@ -420,7 +420,7 @@ export class HealthcareProfessionalAuthorizationService {
         ethicsCompliant: professional.ethicsCompliant,
         expirationDate: professional.licenseExpiration,
       };
-    } catch (error) {
+    } catch {
       console.error('CFM validation error:', error);
       return {
         isValid: false,
@@ -568,7 +568,7 @@ export class HealthcareProfessionalAuthorizationService {
 
       // Fallback to database validation with business rules
       return await this.validateWithDatabaseRules(professional);
-    } catch (error) {
+    } catch {
       logger.error('CFM license validation failed', {
         professionalId: professional.id,
         crmNumber: professional.crmNumber,
@@ -660,7 +660,7 @@ export class HealthcareProfessionalAuthorizationService {
           errorMessage: `Unknown status: ${cfmData.situacao}`,
         };
       }
-    } catch (error) {
+    } catch {
       logger.warn('CFM API validation failed, falling back to database rules', {
         professionalId: professional.id,
         error: error instanceof Error ? error.message : String(error),
@@ -777,7 +777,7 @@ export class HealthcareProfessionalAuthorizationService {
         status: 'active',
         ethicsCompliant: professional.ethicsCompliant !== false,
       };
-    } catch (error) {
+    } catch {
       logger.error('Database validation failed', {
         professionalId: professional.id,
         error: error instanceof Error ? error.message : String(error),

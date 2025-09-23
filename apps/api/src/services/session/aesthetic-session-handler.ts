@@ -411,7 +411,7 @@ export class AestheticSessionHandler {
       });
 
       return aestheticSession;
-    } catch (error) {
+    } catch {
       console.error('Error initializing aesthetic session:', error);
       throw new Error(
         `Failed to initialize aesthetic session: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -526,7 +526,7 @@ export class AestheticSessionHandler {
         nextStep,
         workflowCompleted,
       };
-    } catch (error) {
+    } catch {
       console.error('Error processing treatment step:', error);
       return {
         success: false,
@@ -612,7 +612,7 @@ export class AestheticSessionHandler {
         photoId: photoRecord.id,
         analysisResults,
       };
-    } catch (error) {
+    } catch {
       console.error('Error uploading treatment photo:', error);
       return {
         success: false,
@@ -724,7 +724,7 @@ export class AestheticSessionHandler {
         success: true,
         result: assessmentResult,
       };
-    } catch (error) {
+    } catch {
       console.error('Error conducting client assessment:', error);
       return {
         success: false,
@@ -859,7 +859,7 @@ export class AestheticSessionHandler {
         consentId: consentRecord.id,
         status: consentRecord.granted ? 'granted' : 'revoked',
       };
-    } catch (error) {
+    } catch {
       console.error('Error managing consent:', error);
       return {
         success: false,
@@ -899,7 +899,7 @@ export class AestheticSessionHandler {
         complianceStatus: aestheticSession.complianceStatus,
         recommendations,
       };
-    } catch (error) {
+    } catch {
       console.error('Error getting aesthetic session status:', error);
       return null;
     }

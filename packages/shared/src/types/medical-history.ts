@@ -338,5 +338,5 @@ export function getRecentMedicalHistory(
 
   return histories
     .filter((history) => history.date >= cutoffDate)
-    .sort((a, _b) => b.date.getTime() - a.date.getTime());
+    .sort((a, b) => b.date.getTime() - a.date.getTime());
 }

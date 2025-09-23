@@ -180,7 +180,7 @@ export class PerformanceMonitor {
         }.bind(this);
 
         next();
-      } catch (error) {
+      } catch {
         console.error('Cache middleware error:', error);
         next();
       }

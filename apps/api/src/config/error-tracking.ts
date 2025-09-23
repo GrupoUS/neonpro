@@ -54,7 +54,7 @@ export function initializeSentry(): void {
       }
 
       if (event.contexts?.trace?.data) {
-        const data = event.contexts.trace.data;
+        const _data = event.contexts.trace.data;
         Object.keys(data).forEach(key => {
           if (
             key.toLowerCase().includes('patient')

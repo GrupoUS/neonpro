@@ -179,7 +179,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
           );
         }
         requestBody = sanitizeData(requestBody, sensitiveFields);
-      } catch (error) {
+      } catch {
         // Ignore errors when reading request body
       }
     }
@@ -327,4 +327,4 @@ export function authAuditMiddleware() {
  * Simple audit log function (alias for auditLogMiddleware)
  * @deprecated Use specific audit middleware instead
  */
-export const auditLog = auditLogMiddleware;
+export const _auditLog = auditLogMiddleware;

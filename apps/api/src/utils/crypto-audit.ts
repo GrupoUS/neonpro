@@ -114,7 +114,7 @@ export class CryptographicAuditLogger {
       this.lastHash = dataHash;
 
       return auditEntry;
-    } catch (error) {
+    } catch {
       console.error('Error creating audit entry:', error);
       throw new Error('Failed to create secure audit entry');
     }
@@ -184,7 +184,7 @@ export class CryptographicAuditLogger {
       }
 
       return true;
-    } catch (error) {
+    } catch {
       console.error('Error validating audit entry:', error);
       return false;
     }

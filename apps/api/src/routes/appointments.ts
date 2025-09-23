@@ -54,7 +54,7 @@ appointments.get('/', async c => {
       },
     });
     return ok(c, { items });
-  } catch (error) {
+  } catch {
     console.error('Error fetching appointments:', error);
     return serverError(
       c,
@@ -99,7 +99,7 @@ appointments.get('/patient/:patientId', async c => {
     });
 
     return ok(c, { items });
-  } catch (error) {
+  } catch {
     console.error('Error fetching patient appointments:', error);
     return serverError(
       c,
@@ -137,7 +137,7 @@ appointments.post(
   '/',
   zValidator('json', AppointmentCreateSchema),
   async c => {
-    const data = c.req.valid('json');
+    const _data = c.req.valid('json');
     try {
       const startTime = new Date(data.startTime);
       const endTime = new Date(data.endTime);
@@ -173,7 +173,7 @@ appointments.post(
       });
 
       return created(c, appt);
-    } catch (error) {
+    } catch {
       console.error('Error creating appointment:', error);
       return serverError(
         c,
@@ -237,7 +237,7 @@ appointments.put(
       });
 
       return ok(c, appt);
-    } catch (error) {
+    } catch {
       console.error('Error updating appointment:', error);
       return serverError(
         c,

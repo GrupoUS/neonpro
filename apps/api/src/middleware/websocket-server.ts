@@ -58,7 +58,7 @@ export class WebSocketServerMiddleware {
         port: this.config.port,
         path: this.config.path,
       });
-    } catch (error) {
+    } catch {
       logger.error('Failed to initialize WebSocket server middleware', {
         error,
       });
@@ -218,7 +218,7 @@ export class WebSocketServerMiddleware {
           ? 'healthy'
           : 'degraded',
       };
-    } catch (error) {
+    } catch {
       logger.error('Failed to get health status', { error });
       return {
         websocketServer: {
@@ -293,7 +293,7 @@ export class WebSocketServerMiddleware {
       this.isInitialized = false;
 
       logger.info('WebSocket server middleware shutdown completed');
-    } catch (error) {
+    } catch {
       logger.error('Error during WebSocket server shutdown', { error });
       throw error;
     }

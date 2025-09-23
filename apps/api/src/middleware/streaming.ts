@@ -61,7 +61,7 @@ export function sseStreamFromChunks(
         controller.enqueue(new TextEncoder().encode(finalEvent));
 
         controller.close();
-      } catch (error) {
+      } catch {
         // Error caught but not used - handled by surrounding logic
         logger.error('SSE streaming error', {
           error: error instanceof Error ? error.message : String(error),
@@ -97,7 +97,7 @@ export function createSSEStream(
         controller.enqueue(new TextEncoder().encode(doneEvent));
 
         controller.close();
-      } catch (error) {
+      } catch {
         // Error caught but not used - handled by surrounding logic
         logger.error('SSE generator error', {
           error: error instanceof Error ? error.message : String(error),
@@ -133,7 +133,7 @@ export function streamingMiddleware() {
 
       // Return the response after next() completes
       return;
-    } catch (error) {
+    } catch {
       // Log streaming error context
       logger.error('Streaming middleware error', {
         error: error instanceof Error ? error.message : String(error),
@@ -212,7 +212,7 @@ export function mergeSSEStreams(
 
         await Promise.all(readPromises);
         controller.close();
-      } catch (error) {
+      } catch {
         // Log merge error details
         logger.error('Stream merge error', {
           error: error instanceof Error ? error.message : String(error),

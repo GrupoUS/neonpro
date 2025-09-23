@@ -13,6 +13,7 @@
  */
 
 import type { PrismaClient } from '@prisma/client';
+import { z } from 'zod';
 import { generateWithFailover } from '../config/ai';
 
 // No-Show Risk Levels
@@ -517,7 +518,7 @@ export class NoShowPredictionService {
       });
     }
 
-    return interventions.sort((a, _b) => {
+    return interventions.sort((a, b) => {
       const priorityOrder: Record<string, number> = {
         high: 3,
         medium: 2,
@@ -645,7 +646,7 @@ CONSULTA:
 FATORES COMPORTAMENTAIS BRASILEIROS:
 ${
       Object.entries(behaviorFactors)
-        .map(([factor, _value]) => `- ${factor}: ${(value * 100).toFixed(1)}%`)
+        .map(([factor, value]) => `- ${factor}: ${(value * 100).toFixed(1)}%`)
         .join('\n')
     }
 
@@ -915,7 +916,7 @@ Responda APENAS em formato JSON:
       .sort(([, a], [, b]) => b - a)
       .slice(0, 5);
 
-    return sortedFactors.map(([factor, _impact]) => ({
+    return sortedFactors.map(([factor, impact]) => ({
       factor: factor as BrazilianBehaviorFactor,
       impact: impact * 2 - 1, // Convert to -1 to 1 scale
       confidence: 0.8, // High confidence for behavior factors
@@ -1097,7 +1098,7 @@ Responda APENAS em formato JSON:
     recommendations: string[];
   }> {
     const models = Array.from(this.modelPerformanceMetrics.entries()).map(
-      ([key, _metrics]) => {
+      ([key, metrics]) => {
         const [modelType, version] = key.split('_');
         return {
           modelType: modelType as AIModelType,
@@ -1108,12 +1109,12 @@ Responda APENAS em formato JSON:
     );
 
     const totalPredictions = models.reduce(
-      (sum, _model) => sum + model.metrics.totalPredictions,
+      (sum, model) => sum + model.metrics.totalPredictions,
       0,
     );
     const averageProcessingTime = models.length > 0
       ? models.reduce(
-        (sum, _model) => sum + model.metrics.averageProcessingTime,
+        (sum, model) => sum + model.metrics.averageProcessingTime,
         0,
       ) / models.length
       : 0;

@@ -284,7 +284,7 @@ export const securityLoggingMiddleware = async (c: Context, next: Next) => {
         hasAuth: !!c.req.header('authorization'),
       });
     }
-  } catch (error) {
+  } catch {
     const duration = Date.now() - startTime;
 
     // Log errors with security context

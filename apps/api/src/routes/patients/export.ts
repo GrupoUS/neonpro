@@ -100,7 +100,7 @@ exportRouter.post(
         },
         202,
       );
-    } catch (error) {
+    } catch {
       console.error('Erro ao iniciar exportação:', error);
 
       if (error instanceof z.ZodError) {
@@ -158,7 +158,7 @@ exportRouter.get(
           completedAt: job.completedAt,
         },
       });
-    } catch (error) {
+    } catch {
       console.error('Erro ao buscar status da exportação:', error);
       return c.json(
         {
@@ -195,7 +195,7 @@ exportRouter.delete(
         success: true,
         message: 'Exportação cancelada com sucesso',
       });
-    } catch (error) {
+    } catch {
       console.error('Erro ao cancelar exportação:', error);
       return c.json(
         {
@@ -247,7 +247,7 @@ exportRouter.get(
           expiresAt: job.result.expiresAt,
         },
       });
-    } catch (error) {
+    } catch {
       console.error('Erro ao gerar link de download:', error);
       return c.json(
         {
@@ -277,7 +277,7 @@ exportRouter.get(
         success: true,
         data: history,
       });
-    } catch (error) {
+    } catch {
       console.error('Erro ao buscar histórico de exportações:', error);
       return c.json(
         {
@@ -317,7 +317,7 @@ exportRouter.get(
         success: true,
         data: metrics,
       });
-    } catch (error) {
+    } catch {
       console.error('Erro ao buscar métricas:', error);
       return c.json(
         {
@@ -337,7 +337,7 @@ exportRouter.get('/export/meta/formats', async c => {
       success: true,
       data: formats,
     });
-  } catch (error) {
+  } catch {
     console.error('Erro ao buscar formatos:', error);
     return c.json(
       {
@@ -359,7 +359,7 @@ exportRouter.get(
         success: true,
         data: fields,
       });
-    } catch (error) {
+    } catch {
       console.error('Erro ao buscar campos:', error);
       return c.json(
         {

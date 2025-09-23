@@ -314,7 +314,7 @@ export function getEmergencyContacts(contacts: Contact[]): Contact[] {
   return contacts
     .filter((contact) => contact.isEmergency)
     .sort(
-      (a, _b) => (a.emergencyPriority || 999) - (b.emergencyPriority || 999),
+      (a, b) => (a.emergencyPriority || 999) - (b.emergencyPriority || 999),
     );
 }
 

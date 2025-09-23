@@ -45,34 +45,34 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
   const [validationResults, setValidationResults] = useState<CertificationValidation | null>(null);
 
   // Fetch professionals
-  const { data: professionalsData, isLoading: professionalsLoading } = trpc.professional.getAll.useQuery();
+  const { data: professionalsData, isLoading: professionalsLoading } = (trpc as any).professional.getAll.useQuery();
 
   // Fetch aesthetic procedures
-  const { data: proceduresData, isLoading: proceduresLoading } = trpc.aestheticScheduling.getAestheticProcedures.useQuery(
+  const { data: proceduresData, isLoading: proceduresLoading } = (trpc as any).aestheticScheduling.getAestheticProcedures.useQuery(
     { limit: 100, offset: 0 },
     {
-      select: (data) => data.procedures,
+      select: (data: any) => data.procedures,
     }
   );
 
   // Validate certifications mutation
-  const validateMutation = trpc.aestheticScheduling.validateProfessionalCertifications.useMutation({
-    onSuccess: (data) => {
+  const validateMutation = (trpc as any).aestheticScheduling.validateProfessionalCertifications.useMutation({
+    onSuccess: (data: any) => {
       setValidationResults(data);
       onValidationComplete?.(data);
-      queryClient.invalidateQueries(['professionals']);
+      queryClient.invalidateQueries({ queryKey: ['professionals'] });
     },
-    onError: (error) => {
+    onError: (error: any) => {
       onError?.(error as Error);
     },
   });
 
-  const filteredProfessionals = professionalsData?.filter(professional =>
+  const filteredProfessionals = professionalsData?.filter((professional: any) =>
     professional.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     professional.specialization.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
-  const filteredProcedures = proceduresData?.filter(procedure =>
+  const filteredProcedures = proceduresData?.filter((procedure: any) =>
     procedure.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     procedure.category.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
@@ -101,8 +101,8 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
     }
   };
 
-  const selectedProfessionalData = professionalsData?.find(p => p.id === selectedProfessional);
-  const selectedProceduresData = proceduresData?.filter(p => selectedProcedures.includes(p.id)) || [];
+  const selectedProfessionalData = professionalsData?.find((p: any) => p.id === selectedProfessional);
+  const selectedProceduresData = proceduresData?.filter((p: any) => selectedProcedures.includes(p.id)) || [];
   const isValidating = validateMutation.isLoading;
 
   const getExperienceLevelColor = (level: string) => {
@@ -184,7 +184,7 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-                  {filteredProfessionals.map((professional) => (
+                  {filteredProfessionals.map((professional: any) => (
                     <Card
                       key={professional.id}
                       className={`cursor-pointer transition-all hover:shadow-md ${
@@ -268,7 +268,7 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-                      {filteredProcedures.map((procedure) => (
+                      {filteredProcedures.map((procedure: any) => (
                         <Card key={procedure.id} className="hover:shadow-md transition-shadow">
                           <CardContent className="p-4">
                             <div className="flex items-start justify-between">
@@ -390,12 +390,12 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
                       <div className="bg-gray-50 rounded-lg p-4">
                         <h4 className="font-medium text-gray-900 mb-3">Nível de Experiência</h4>
                         <div className="flex items-center gap-3">
-                          <div className={`p-2 rounded-full ${getExperienceLevelColor(validationResults.experienceLevel)}`}>
-                            {getExperienceLevelIcon(validationResults.experienceLevel)}
+                          <div className={`p-2 rounded-full ${getExperienceLevelColor(validationResults.experienceLevel || '')}`}>
+                            {getExperienceLevelIcon(validationResults.experienceLevel || '')}
                           </div>
                           <div>
-                            <Badge className={getExperienceLevelColor(validationResults.experienceLevel)}>
-                              {validationResults.experienceLevel.charAt(0).toUpperCase() + validationResults.experienceLevel.slice(1)}
+                            <Badge className={getExperienceLevelColor(validationResults.experienceLevel || '')}>
+                              {validationResults.experienceLevel ? validationResults.experienceLevel.charAt(0).toUpperCase() + validationResults.experienceLevel.slice(1) : ''}
                             </Badge>
                             <p className="text-sm text-gray-600 mt-1">
                               Baseado nas certificações e experiência do profissional
@@ -405,7 +405,7 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
                       </div>
 
                       {/* Missing Certifications */}
-                      {!validationResults.isValid && validationResults.missingCertifications.length > 0 && (
+                      {!validationResults.isValid && validationResults.missingCertifications && validationResults.missingCertifications.length > 0 && (
                         <div className="bg-red-50 rounded-lg p-4">
                           <h4 className="font-medium text-red-900 mb-3">Certificações Faltantes</h4>
                           <div className="space-y-2">
@@ -420,7 +420,7 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
                       )}
 
                       {/* Warnings */}
-                      {validationResults.warnings.length > 0 && (
+                      {validationResults.warnings && validationResults.warnings.length > 0 && (
                         <div className="bg-yellow-50 rounded-lg p-4">
                           <h4 className="font-medium text-yellow-900 mb-3">Avisos</h4>
                           <div className="space-y-2">
@@ -435,7 +435,7 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
                       )}
 
                       {/* Recommendations */}
-                      {validationResults.recommendations.length > 0 && (
+                      {validationResults.recommendations && validationResults.recommendations.length > 0 && (
                         <div className="bg-blue-50 rounded-lg p-4">
                           <h4 className="font-medium text-blue-900 mb-3">Recomendações</h4>
                           <div className="space-y-2">
@@ -455,19 +455,19 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
                             <Label className="text-sm font-medium text-gray-700">Nome</Label>
-                            <p className="text-sm text-gray-900">{validationResults.professional.fullName}</p>
+                            <p className="text-sm text-gray-900">{validationResults.professional.name}</p>
                           </div>
                           <div>
                             <Label className="text-sm font-medium text-gray-700">Especialização</Label>
-                            <p className="text-sm text-gray-900">{validationResults.professional.specialization}</p>
+                            <p className="text-sm text-gray-900">{validationResults.professional.specialty}</p>
                           </div>
                           <div>
                             <Label className="text-sm font-medium text-gray-700">CRM</Label>
-                            <p className="text-sm text-gray-900">{validationResults.professional.licenseNumber}</p>
+                            <p className="text-sm text-gray-900">{validationResults.professional.councilNumber}</p>
                           </div>
                           <div>
                             <Label className="text-sm font-medium text-gray-700">Certificações</Label>
-                            <p className="text-sm text-gray-900">{validationResults.professional.certifications.length}</p>
+                            <p className="text-sm text-gray-900">Certificações</p>
                           </div>
                         </div>
                       </div>
@@ -479,13 +479,13 @@ export function CertificationValidator({ onValidationComplete, onError }: Certif
                           <div className="flex items-center gap-2">
                             <CheckCircle className="h-4 w-4 text-green-600" />
                             <span className="text-sm text-green-800">
-                              CFM: {validationResults.complianceStatus.cfmValidated ? 'Validado' : 'Não Validado'}
+                              CFM: {validationResults.complianceStatus === 'compliant' ? 'Validado' : 'Não Validado'}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
                             <CheckCircle className="h-4 w-4 text-green-600" />
                             <span className="text-sm text-green-800">
-                              ANVISA: {validationResults.complianceStatus.anvisaCompliant ? 'Conforme' : 'Não Conforme'}
+                              ANVISA: {validationResults.complianceStatus === 'compliant' ? 'Conforme' : 'Não Conforme'}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">

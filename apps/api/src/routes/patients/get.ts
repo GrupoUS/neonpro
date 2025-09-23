@@ -204,7 +204,7 @@ const getHandler = async (c: any) => {
       success: true,
       data: patientData,
     });
-  } catch (error) {
+  } catch {
     console.error('Error getting patient:', error);
 
     return c.json(

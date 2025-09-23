@@ -117,7 +117,7 @@ export class AgentSessionService {
       this.cacheSession(session);
 
       return session;
-    } catch (error) {
+    } catch {
       console.error('Error creating session:', error);
       throw new Error(
         `Failed to create session: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -152,7 +152,7 @@ export class AgentSessionService {
       this.cacheSession(session);
 
       return session;
-    } catch (error) {
+    } catch {
       console.error('Error retrieving session:', error);
       return null;
     }
@@ -181,7 +181,7 @@ export class AgentSessionService {
       sessions.forEach(session => this.cacheSession(session));
 
       return sessions;
-    } catch (error) {
+    } catch {
       console.error('Error getting user sessions:', error);
       return [];
     }
@@ -233,7 +233,7 @@ export class AgentSessionService {
       this.cacheSession(updatedSession);
 
       return updatedSession;
-    } catch (error) {
+    } catch {
       console.error('Error updating session:', error);
       return null;
     }
@@ -258,7 +258,7 @@ export class AgentSessionService {
 
       await this.storeSession(updatedSession);
       this.cacheSession(updatedSession);
-    } catch (error) {
+    } catch {
       console.error('Error recording session activity:', error);
     }
   }
@@ -286,7 +286,7 @@ export class AgentSessionService {
       this.sessionCache.delete(sessionId);
 
       return true;
-    } catch (error) {
+    } catch {
       console.error('Error expiring session:', error);
       return false;
     }
@@ -319,7 +319,7 @@ export class AgentSessionService {
       this.sessionCache.delete(sessionId);
 
       return true;
-    } catch (error) {
+    } catch {
       console.error('Error deleting session:', error);
       return false;
     }
@@ -360,7 +360,7 @@ export class AgentSessionService {
       });
 
       return expiredSessions.length;
-    } catch (error) {
+    } catch {
       console.error('Error cleaning up expired sessions:', error);
       return 0;
     }
@@ -391,7 +391,7 @@ export class AgentSessionService {
       return await this.updateSession(sessionId, {
         expiresAt: newExpiresAt,
       });
-    } catch (error) {
+    } catch {
       console.error('Error extending session:', error);
       return null;
     }
@@ -455,7 +455,7 @@ export class AgentSessionService {
         averageSessionLength,
         totalMessages,
       };
-    } catch (error) {
+    } catch {
       console.error('Error getting session statistics:', error);
       return {
         totalSessions: 0,
@@ -561,7 +561,7 @@ export class AgentSessionService {
     this.cleanupTimer = setInterval(async () => {
       try {
         await this.cleanupExpiredSessions();
-      } catch (error) {
+      } catch {
         console.error('Error in session cleanup:', error);
       }
     }, this.config.cleanupIntervalMs);
@@ -582,7 +582,7 @@ export class AgentSessionService {
     // Final cleanup
     try {
       await this.cleanupExpiredSessions();
-    } catch (error) {
+    } catch {
       console.error('Error in final cleanup:', error);
     }
   }

@@ -31,11 +31,11 @@ export class ErrorMapper {
 
     // Handle known error types
     if (error instanceof Error) {
-      return this.mapKnownError(error, context, timestamp);
+      return this.mapKnownError(error, _context, timestamp);
     }
 
     // Handle unknown errors
-    return this.mapUnknownError(error, context, timestamp);
+    return this.mapUnknownError(error, _context, timestamp);
   }
 
   private static mapKnownError(
@@ -287,13 +287,13 @@ export class ErrorMapper {
 }
 
 // Predefined error creators for common scenarios
-export const export const createRateLimitError = (_userId?: string) => {
+export const createRateLimitError = (_userId?: string) => {
   const error = new Error("Rate limit exceeded for user");
   error.name = "RateLimitError";
   return ErrorMapper.mapError(error, { _userId, action: "rate_limit_check" });
-};;
+};
 
-export const export const createConsentError = (_userId?: string, clinicId?: string) => {
+export const createConsentError = (_userId?: string, clinicId?: string) => {
   const error = new Error("LGPD consent required for data processing");
   error.name = "ConsentError";
   return ErrorMapper.mapError(error, {
@@ -301,15 +301,15 @@ export const export const createConsentError = (_userId?: string, clinicId?: str
     clinicId,
     action: "consent_validation",
   });
-};;
+};
 
-export const export const createAIServiceError = (sessionId?: string) => {
+export const createAIServiceError = (sessionId?: string) => {
   const error = new Error("AI service temporarily unavailable");
   error.name = "AIServiceError";
   return ErrorMapper.mapError(error, { sessionId, action: "ai_query" });
-};;
+};
 
-export const export const createDataProtectionError = (
+export const createDataProtectionError = (
   _userId?: string,
   sessionId?: string,
 ) => {
@@ -320,7 +320,7 @@ export const export const createDataProtectionError = (
     sessionId,
     action: "pii_detection",
   });
-};;
+};
 
 // Export for middleware usage
 export default ErrorMapper;

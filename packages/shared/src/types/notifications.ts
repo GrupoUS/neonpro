@@ -425,7 +425,7 @@ export function getNotificationsByRecipient(
 ): Notification[] {
   return notifications
     .filter((notification) => notification.recipientId === recipientId)
-    .sort((a, _b) => b.createdAt.getTime() - a.createdAt.getTime());
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 // Get notifications by type

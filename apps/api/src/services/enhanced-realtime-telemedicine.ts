@@ -323,7 +323,7 @@ export class EnhancedTelemedicineRealtime {
               encryptedData,
               encryptionKey,
             );
-          } catch (error) {
+          } catch {
             console.error('❌ Failed to decrypt message:', error);
             return;
           }

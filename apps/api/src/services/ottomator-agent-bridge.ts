@@ -114,7 +114,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       this.emit('ready');
 
       logger.info('Ottomator Agent Bridge initialized successfully');
-    } catch (error) {
+    } catch {
       logger.error('Failed to initialize Ottomator Agent Bridge', { error });
       throw error;
     }
@@ -296,7 +296,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       try {
         const message = JSON.parse(line);
         this.handleAgentMessage(message);
-      } catch (_error) {
+      } catch {
       void _error;
         // Non-JSON agent output is handled as info below
         if (this.config.enableLogging) {
@@ -349,7 +349,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       if (this.agentProcess.stdin) {
         this.agentProcess.stdin.write(JSON.stringify(healthMessage) + '\n');
       }
-    } catch (error) {
+    } catch {
       logger.error('Health check failed', { error });
       this.isHealthy = false;
     }

@@ -341,7 +341,7 @@ export function getUpcomingAppointments(
         appointment.startTime <= futureDate &&
         appointment.status !== AppointmentStatus.CANCELLED,
     )
-    .sort((a, _b) => a.startTime.getTime() - b.startTime.getTime());
+    .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
 }
 
 // Check if appointment needs reminder

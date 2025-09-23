@@ -338,7 +338,7 @@ app.post('/ai/data-agent', async c => {
         },
         200,
       );
-    } catch (error) {
+    } catch {
       console.error('Error processing query:', error);
 
       return c.json(
@@ -368,7 +368,7 @@ app.post('/ai/data-agent', async c => {
         500,
       );
     }
-  } catch (error) {
+  } catch {
     console.error('Data-agent endpoint error:', error);
 
     return c.json(

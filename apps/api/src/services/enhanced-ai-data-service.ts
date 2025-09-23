@@ -124,7 +124,7 @@ export class EnhancedAIDataService extends AIDataService {
       // Cache miss - get from database
       this.cacheStats.misses++;
       const dbStartTime = Date.now();
-      const data = await dbOperation();
+      const _data = await dbOperation();
       const dbTime = Date.now() - dbStartTime;
 
       this.cacheStats.avgDbTime = this.updateAverage(
@@ -156,7 +156,7 @@ export class EnhancedAIDataService extends AIDataService {
       }
 
       return data;
-    } catch (error) {
+    } catch {
       console.error(
         `[EnhancedAIDataService] Error in getWithCache for ${intent}:`,
         error,
@@ -277,7 +277,7 @@ export class EnhancedAIDataService extends AIDataService {
       for (const key of keys) {
         await this.cache.delete(key);
       }
-    } catch (error) {
+    } catch {
       console.error(
         `[EnhancedAIDataService] Error clearing cache for ${intent}:`,
         error,
@@ -337,7 +337,7 @@ export class EnhancedAIDataService extends AIDataService {
       }
 
       return { healthy: true };
-    } catch (error) {
+    } catch {
       return {
         healthy: false,
         message: `Cache health check failed: ${
@@ -368,7 +368,7 @@ export class EnhancedAIDataService extends AIDataService {
       }
 
       return { healthy: true };
-    } catch (error) {
+    } catch {
       return {
         healthy: false,
         message: `Database health check failed: ${

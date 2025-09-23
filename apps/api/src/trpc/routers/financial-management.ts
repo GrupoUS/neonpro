@@ -284,7 +284,7 @@ export const financialManagementRouter = createTRPCRouter({
   createFinancialAccount: {
     input: CreateFinancialAccountInputSchema,
     output: SuccessResponseSchema(FinancialAccountSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -298,7 +298,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Conta financeira criada com sucesso',
           data: account,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating financial account:', error);
         return {
           success: false,
@@ -315,7 +315,7 @@ export const financialManagementRouter = createTRPCRouter({
       updates: FinancialAccountInputSchema.partial(),
     }),
     output: SuccessResponseSchema(FinancialAccountSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -332,7 +332,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Conta financeira atualizada com sucesso',
           data: account,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating financial account:', error);
         return {
           success: false,
@@ -348,7 +348,7 @@ export const financialManagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(FinancialAccountSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -362,7 +362,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Contas financeiras recuperadas com sucesso',
           data: accounts,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching financial accounts:', error);
         return {
           success: false,
@@ -388,7 +388,7 @@ export const financialManagementRouter = createTRPCRouter({
       }
     ),
     output: SuccessResponseSchema(ServicePriceSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -402,7 +402,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Preço de serviço criado com sucesso',
           data: price,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating service price:', error);
         return {
           success: false,
@@ -419,7 +419,7 @@ export const financialManagementRouter = createTRPCRouter({
       serviceId: z.string().uuid().optional(),
     }),
     output: SuccessResponseSchema(z.array(ServicePriceSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -436,7 +436,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Preços de serviços recuperados com sucesso',
           data: prices,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching service prices:', error);
         return {
           success: false,
@@ -462,7 +462,7 @@ export const financialManagementRouter = createTRPCRouter({
       }
     ),
     output: SuccessResponseSchema(TreatmentPackageSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -476,7 +476,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Pacote de tratamento criado com sucesso',
           data: pkg,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating treatment package:', error);
         return {
           success: false,
@@ -492,7 +492,7 @@ export const financialManagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(TreatmentPackageSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -506,7 +506,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Pacotes de tratamento recuperados com sucesso',
           data: packages,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching treatment packages:', error);
         return {
           success: false,
@@ -521,7 +521,7 @@ export const financialManagementRouter = createTRPCRouter({
   createInvoice: {
     input: CreateInvoiceInputSchema,
     output: SuccessResponseSchema(InvoiceSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -535,7 +535,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Fatura criada com sucesso',
           data: invoice,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating invoice:', error);
         return {
           success: false,
@@ -551,7 +551,7 @@ export const financialManagementRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(InvoiceSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -565,7 +565,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Fatura recuperada com sucesso',
           data: invoice,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching invoice:', error);
         return {
           success: false,
@@ -585,7 +585,7 @@ export const financialManagementRouter = createTRPCRouter({
       endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
     }),
     output: SuccessResponseSchema(z.array(InvoiceSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -604,7 +604,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Faturas recuperadas com sucesso',
           data: invoices,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching invoices:', error);
         return {
           success: false,
@@ -619,7 +619,7 @@ export const financialManagementRouter = createTRPCRouter({
   createPaymentTransaction: {
     input: CreatePaymentInputSchema,
     output: SuccessResponseSchema(PaymentTransactionSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -633,7 +633,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Transação de pagamento criada com sucesso',
           data: payment,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating payment transaction:', error);
         return {
           success: false,
@@ -653,7 +653,7 @@ export const financialManagementRouter = createTRPCRouter({
       endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
     }),
     output: SuccessResponseSchema(z.array(PaymentTransactionSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -675,7 +675,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Transações de pagamento recuperadas com sucesso',
           data: transactions,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching payment transactions:', error);
         return {
           success: false,
@@ -690,7 +690,7 @@ export const financialManagementRouter = createTRPCRouter({
   createProfessionalCommission: {
     input: ProfessionalCommissionInputSchema,
     output: SuccessResponseSchema(ProfessionalCommissionSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -704,7 +704,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Comissão profissional criada com sucesso',
           data: commission,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating professional commission:', error);
         return {
           success: false,
@@ -721,7 +721,7 @@ export const financialManagementRouter = createTRPCRouter({
       professionalId: z.string().uuid().optional(),
     }),
     output: SuccessResponseSchema(z.array(ProfessionalCommissionSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -738,7 +738,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Comissões profissionais recuperadas com sucesso',
           data: commissions,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching professional commissions:', error);
         return {
           success: false,
@@ -764,7 +764,7 @@ export const financialManagementRouter = createTRPCRouter({
       }
     ),
     output: SuccessResponseSchema(FinancialGoalSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -778,7 +778,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Meta financeira criada com sucesso',
           data: goal,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating financial goal:', error);
         return {
           success: false,
@@ -795,7 +795,7 @@ export const financialManagementRouter = createTRPCRouter({
       currentValue: z.number().min(0),
     }),
     output: SuccessResponseSchema(FinancialGoalSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -812,7 +812,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Progresso da meta financeira atualizado com sucesso',
           data: goal,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating financial goal progress:', error);
         return {
           success: false,
@@ -828,7 +828,7 @@ export const financialManagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(FinancialGoalSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -842,7 +842,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Metas financeiras recuperadas com sucesso',
           data: goals,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching financial goals:', error);
         return {
           success: false,
@@ -860,7 +860,7 @@ export const financialManagementRouter = createTRPCRouter({
       reportDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     }),
     output: SuccessResponseSchema(FinancialReportSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -877,7 +877,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Relatório financeiro gerado com sucesso',
           data: report,
         };
-      } catch (error) {
+      } catch {
         console.error('Error generating financial report:', error);
         return {
           success: false,
@@ -893,7 +893,7 @@ export const financialManagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(FinancialDashboardSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -907,7 +907,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Dashboard financeiro recuperado com sucesso',
           data: dashboard,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching financial dashboard:', error);
         return {
           success: false,
@@ -924,7 +924,7 @@ export const financialManagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(TaxConfigurationSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -938,7 +938,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Configurações fiscais recuperadas com sucesso',
           data: configurations,
         };
-      } catch (error) {
+      } catch {
         console.error('Error fetching tax configurations:', error);
         return {
           success: false,
@@ -955,7 +955,7 @@ export const financialManagementRouter = createTRPCRouter({
       invoiceId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(NFSeResponseSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -969,7 +969,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'NFSe gerada com sucesso',
           data: nfse,
         };
-      } catch (error) {
+      } catch {
         console.error('Error generating NFSe:', error);
         return {
           success: false,
@@ -988,7 +988,7 @@ export const financialManagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(PaymentTransactionSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1002,7 +1002,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Pagamento PIX processado com sucesso',
           data: payment,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing PIX payment:', error);
         return {
           success: false,
@@ -1019,7 +1019,7 @@ export const financialManagementRouter = createTRPCRouter({
       dueDays: z.number().min(1).max(365).default(5),
     }),
     output: SuccessResponseSchema(BoletoResponseSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const financialManagementService = new FinancialManagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1036,7 +1036,7 @@ export const financialManagementRouter = createTRPCRouter({
           message: 'Boleto calculado com sucesso',
           data: boleto,
         };
-      } catch (error) {
+      } catch {
         console.error('Error calculating boleto:', error);
         return {
           success: false,

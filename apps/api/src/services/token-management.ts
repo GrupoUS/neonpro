@@ -115,7 +115,7 @@ export class TokenManagementService {
       });
 
       return { success: true };
-    } catch (error) {
+    } catch {
       console.error('Token blacklisting error:', error);
       return { success: false, error: 'Failed to blacklist token' };
     }
@@ -165,7 +165,7 @@ export class TokenManagementService {
       this.tokenBindings.delete(userId);
 
       return { success: true, revokedCount };
-    } catch (error) {
+    } catch {
       console.error('User token blacklisting error:', error);
       return { success: false, revokedCount: 0 };
     }
@@ -205,7 +205,7 @@ export class TokenManagementService {
       await this.createTokenBinding(userId, _context);
 
       return { token, expiresAt };
-    } catch (error) {
+    } catch {
       console.error('Refresh token creation error:', error);
       throw new Error('Failed to create refresh token');
     }
@@ -284,7 +284,7 @@ export class TokenManagementService {
       }
 
       return { success: true };
-    } catch (error) {
+    } catch {
       if (error instanceof jwt.JsonWebTokenError) {
         return {
           success: false,
@@ -321,7 +321,7 @@ export class TokenManagementService {
       };
 
       this.tokenBindings.set(userId, binding);
-    } catch (error) {
+    } catch {
       console.error('Token binding creation error:', error);
     }
   }
@@ -368,7 +368,7 @@ export class TokenManagementService {
       binding.lastUsed = Date.now();
 
       return true;
-    } catch (error) {
+    } catch {
       console.error('Token binding validation error:', error);
       return false;
     }
@@ -483,7 +483,7 @@ export class TokenManagementService {
         ip_address: context?.req.header('x-forwarded-for'),
         user_agent: context?.req.header('user-agent'),
       });
-    } catch (error) {
+    } catch {
       console.error('Audit logging error:', error);
       // Don't fail the operation if audit logging fails
     }

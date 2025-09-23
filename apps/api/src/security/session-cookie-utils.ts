@@ -171,7 +171,7 @@ export class SessionCookieUtils {
         sessionId,
         warnings: warnings.length > 0 ? warnings : undefined,
       };
-    } catch (error) {
+    } catch {
       return {
         isValid: false,
         error: 'Failed to parse session cookies',
@@ -205,7 +205,7 @@ export class SessionCookieUtils {
     secretKey: string,
   ): string {
     const encoder = new TextEncoder();
-    const data = encoder.encode(sessionId);
+    const _data = encoder.encode(sessionId);
     const key = encoder.encode(secretKey);
 
     return crypto.subtle.sign('HMAC', key, data).then(signature => {

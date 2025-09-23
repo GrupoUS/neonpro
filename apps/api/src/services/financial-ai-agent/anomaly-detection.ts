@@ -408,7 +408,7 @@ export class AnomalyDetectionService {
         behaviorAnalysis,
         networkAnalysis,
       };
-    } catch (error) {
+    } catch {
       console.error('Anomaly detection failed:', error);
       throw error;
     }
@@ -1309,7 +1309,7 @@ export class AnomalyDetectionService {
       // Example: "severity === 'high' || severity === 'critical'"
       // eslint-disable-next-line no-eval
       return eval(condition.replace(/severity/g, `"${alert.severity}"`));
-    } catch (error) {
+    } catch {
       console.error('Condition evaluation failed:', error);
       return false;
     }

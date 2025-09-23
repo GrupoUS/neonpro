@@ -200,7 +200,7 @@ export class HealthcareMetricsService {
       }
 
       return { success: true, metricId: data.id };
-    } catch (error) {
+    } catch {
       console.error('Error recording healthcare metric:', error);
       return { success: false, error: 'Internal metric recording error' };
     }
@@ -261,7 +261,7 @@ export class HealthcareMetricsService {
         complianceStatus,
         trend,
       };
-    } catch (error) {
+    } catch {
       console.error('Error getting KPI status:', error);
       return { success: false, error: 'Internal KPI status error' };
     }
@@ -341,7 +341,7 @@ export class HealthcareMetricsService {
       };
 
       return { success: true, data: aggregation };
-    } catch (error) {
+    } catch {
       console.error('Error in getMetricAggregation:', error);
       return { success: false, error: 'Internal aggregation error' };
     }
@@ -423,7 +423,7 @@ export class HealthcareMetricsService {
           recentAlerts: recentAlerts.success ? recentAlerts.alerts! : [],
         },
       };
-    } catch (error) {
+    } catch {
       console.error('Error generating compliance dashboard:', error);
       return { success: false, error: 'Internal dashboard generation error' };
     }
@@ -495,7 +495,7 @@ export class HealthcareMetricsService {
       }));
 
       return { success: true, alerts };
-    } catch (error) {
+    } catch {
       console.error('Failed to aggregate alerts:', error);
       return { success: false, error: 'Internal alerts error' };
     }

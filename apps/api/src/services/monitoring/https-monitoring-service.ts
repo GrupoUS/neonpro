@@ -392,7 +392,7 @@ export class HTTPSMonitoringService {
           summary,
         );
       }
-    } catch (error) {
+    } catch {
       logger.error('https_monitoring_health_check', 'Health check failed', {
         error: (error as Error).message,
       });

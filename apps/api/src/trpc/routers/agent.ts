@@ -296,7 +296,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -372,7 +372,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list agent sessions',
@@ -454,7 +454,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -600,7 +600,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -673,7 +673,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to add knowledge entry',
@@ -736,7 +736,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to search knowledge base',
@@ -794,7 +794,7 @@ export const agentRouter = router({
           tokens_used: Math.floor(response.length / 4),
           processing_time: Date.now() - startTime,
         };
-      } catch (error) {
+      } catch {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -874,7 +874,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -958,7 +958,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get agent analytics',

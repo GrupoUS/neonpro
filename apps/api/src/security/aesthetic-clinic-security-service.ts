@@ -147,9 +147,7 @@ export type AestheticClinicPermission = (typeof AESTHETIC_CLINIC_PERMISSIONS)[ke
 // Role-Permission Mapping
 export const ROLE_PERMISSIONS: Record<AestheticClinicRole, AestheticClinicPermission[]> = {
   [AESTHETIC_CLINIC_ROLES.CLINIC_OWNER]: Object.values(AESTHETIC_CLINIC_PERMISSIONS),
-  [AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR]: [
-    ...Object.values(AESTHETIC_CLINIC_PERMISSIONS).filter(p => !p.includes('security:')),
-  ],
+  [AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR]: Object.values(AESTHETIC_CLINIC_PERMISSIONS).filter(p => !p.includes('security:')),
   [AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR]: [
     AESTHETIC_CLINIC_PERMISSIONS.PATIENT_READ,
     AESTHETIC_CLINIC_PERMISSIONS.PATIENT_WRITE,
@@ -429,7 +427,7 @@ export class AestheticClinicSecurityService {
         qrCodeUrl,
         backupCodes,
       };
-    } catch (error) {
+    } catch {
       logger.error('MFA setup failed', { userId, error: error.message });
       throw new Error('MFA_SETUP_FAILED');
     }
@@ -532,7 +530,7 @@ export class AestheticClinicSecurityService {
       logger.info('MFA verification successful', { userId, method: isBackupCodeValid ? 'backup_code' : 'totp' });
 
       return true;
-    } catch (error) {
+    } catch {
       await this.logSecurityEvent({
         eventType: 'mfa_verification',
         severity: 'high',
@@ -596,7 +594,7 @@ export class AestheticClinicSecurityService {
       }
 
       return permissions.has(permission);
-    } catch (error) {
+    } catch {
       logger.error('Permission check failed', { userId, permission, error: error.message });
       return false;
     }
@@ -702,7 +700,7 @@ export class AestheticClinicSecurityService {
         encryptedPath,
         watermarkSignature,
       };
-    } catch (error) {
+    } catch {
       logger.error('Medical image upload failed', {
         patientId: metadata.patientId,
         uploadedBy,
@@ -807,7 +805,7 @@ export class AestheticClinicSecurityService {
       });
 
       return storedTransaction.id;
-    } catch (error) {
+    } catch {
       logger.error('Financial transaction authorization failed', {
         amount: transaction.amount,
         clinicId: transaction.clinicId,
@@ -841,7 +839,7 @@ export class AestheticClinicSecurityService {
       }
 
       logger.debug('Security checks completed');
-    } catch (error) {
+    } catch {
       logger.error('Security checks failed', { error: error.message });
     }
   }

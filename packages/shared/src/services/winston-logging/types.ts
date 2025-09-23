@@ -6,6 +6,8 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
+import { z } from "zod";
+
 // Enhanced log levels mapping to Winston levels
 export const WinstonLogLevelSchema = z.enum([
   "error", // Winston error level

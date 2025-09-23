@@ -248,7 +248,7 @@ export class AestheticClinicPerformanceOptimizer {
       this.recordMetric("client_profile_query", duration);
 
       return result;
-    } catch (error) {
+    } catch {
       const duration = performance.now() - startTime;
       this.recordMetric("client_profile_error", duration);
       
@@ -320,7 +320,7 @@ export class AestheticClinicPerformanceOptimizer {
       this.recordMetric("treatment_catalog_query", duration);
 
       return treatments || [];
-    } catch (error) {
+    } catch {
       const duration = performance.now() - startTime;
       this.recordMetric("treatment_catalog_error", duration);
       
@@ -397,7 +397,7 @@ export class AestheticClinicPerformanceOptimizer {
       this.recordMetric("before_after_photos_query", duration);
 
       return optimizedPhotos;
-    } catch (error) {
+    } catch {
       const duration = performance.now() - startTime;
       this.recordMetric("before_after_photos_error", duration);
       
@@ -475,7 +475,7 @@ export class AestheticClinicPerformanceOptimizer {
       this.recordMetric("clinic_analytics_query", duration);
 
       return analytics;
-    } catch (error) {
+    } catch {
       const duration = performance.now() - startTime;
       this.recordMetric("clinic_analytics_error", duration);
       
@@ -567,7 +567,7 @@ export class AestheticClinicPerformanceOptimizer {
       this.recordMetric("client_search_query", duration);
 
       return result;
-    } catch (error) {
+    } catch {
       const duration = performance.now() - startTime;
       this.recordMetric("client_search_error", duration);
       
@@ -799,7 +799,7 @@ export class AestheticClinicPerformanceOptimizer {
       });
 
       console.log("[Performance] Cache warm-up completed");
-    } catch (error) {
+    } catch {
       console.error("[Performance] Cache warm-up failed:", error);
     }
   }

@@ -182,7 +182,7 @@ const TreatmentRecommendationSchema = z.object({
 /**
  * Treatment plan output schema
  */
-const TreatmentPlanSchema = z.object({
+const _TreatmentPlanSchema = z.object({
   id: z.string(),
   patientId: z.string(),
   primaryGoals: z.array(z.string()),
@@ -216,7 +216,7 @@ const TreatmentPlanSchema = z.object({
 /**
  * Contraindication analysis output schema
  */
-const ContraindicationAnalysisOutputSchema = z.object({
+const _ContraindicationAnalysisOutputSchema = z.object({
   patientId: z.string(),
   procedureId: z.string(),
   absoluteContraindications: z.array(z.string()),
@@ -500,7 +500,7 @@ export const aiClinicalSupportRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         // Log error
         await ctx.prisma.auditTrail.create({
           data: {
@@ -616,7 +616,7 @@ export const aiClinicalSupportRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao criar plano de tratamento',
@@ -712,7 +712,7 @@ export const aiClinicalSupportRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao analisar contraindicações',
@@ -785,7 +785,7 @@ export const aiClinicalSupportRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao gerar diretrizes de tratamento',
@@ -866,7 +866,7 @@ export const aiClinicalSupportRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao prever resultados do tratamento',
@@ -976,7 +976,7 @@ export const aiClinicalSupportRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao monitorar progresso do tratamento',
@@ -1066,7 +1066,7 @@ export const aiClinicalSupportRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao recuperar histórico de tratamentos',
@@ -1144,7 +1144,7 @@ export const aiClinicalSupportRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Falha ao verificar status do modelo AI',

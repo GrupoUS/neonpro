@@ -218,7 +218,7 @@ app.post(
           ].includes(requestData.entity || ''),
         },
       });
-    } catch (error) {
+    } catch {
       console.error('AI CRUD endpoint error:', error);
 
       // Log error for audit
@@ -297,7 +297,7 @@ app.get(
         success: true,
         data: responseData.data,
       });
-    } catch (error) {
+    } catch {
       console.error('CRUD status check error:', error);
 
       return c.json(
@@ -349,7 +349,7 @@ app.get('/crud/entities', requireAuth, requireAIAccess, async c => {
       success: true,
       data: responseData.data,
     });
-  } catch (error) {
+  } catch {
     console.error('CRUD entities list error:', error);
 
     return c.json(

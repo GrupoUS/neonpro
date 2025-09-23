@@ -447,7 +447,7 @@ export class HealthcareAIOptimizationUtils {
     _context: HealthcareAIUseCase,
   ): string {
     // Simple hash implementation - in production, use proper semantic hashing
-    const combined = `${prompt}:${context}`;
+    const combined = `${prompt}:${_context}`;
     return Buffer.from(combined).toString("base64url").substring(0, 32);
   }
 

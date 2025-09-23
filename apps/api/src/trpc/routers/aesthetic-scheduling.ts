@@ -16,7 +16,6 @@
 
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import * as v from 'valibot';
 
 import { EnhancedAestheticSchedulingService } from '../../../packages/core-services/src/services/enhanced-aesthetic-scheduling-service';
 import {
@@ -315,7 +314,7 @@ export const aestheticSchedulingRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         // Log failed aesthetic scheduling
         await ctx.prisma.auditTrail.create({
           data: {
@@ -470,7 +469,7 @@ export const aestheticSchedulingRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to schedule treatment package',
@@ -550,7 +549,7 @@ export const aestheticSchedulingRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to validate professional certifications',
@@ -622,7 +621,7 @@ export const aestheticSchedulingRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to optimize room allocation',
@@ -782,7 +781,7 @@ export const aestheticSchedulingRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to check contraindications',
@@ -843,7 +842,7 @@ export const aestheticSchedulingRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to calculate variable duration',
@@ -928,7 +927,7 @@ export const aestheticSchedulingRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get aesthetic procedures',
@@ -1016,7 +1015,7 @@ export const aestheticSchedulingRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get treatment packages',

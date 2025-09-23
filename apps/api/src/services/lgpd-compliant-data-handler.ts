@@ -330,7 +330,7 @@ export class LGPDCompliantDataHandler {
         valid: missingConsents.length === 0,
         missingConsents,
       };
-    } catch (error) {
+    } catch {
       console.error('Error validating consent:', error);
       return { valid: false, missingConsents: ['all'] };
     }
@@ -376,7 +376,7 @@ export class LGPDCompliantDataHandler {
       ]);
 
       if (error) throw error;
-    } catch (error) {
+    } catch {
       console.error('Error logging data processing:', error);
     }
   }
@@ -429,7 +429,7 @@ export class LGPDCompliantDataHandler {
       ]);
 
       if (error) throw error;
-    } catch (error) {
+    } catch {
       console.error('Error logging PII detection:', error);
     }
   }
@@ -511,7 +511,7 @@ export class LGPDCompliantDataHandler {
       }
 
       return { success: false, errors };
-    } catch (error) {
+    } catch {
       console.error('Error in LGPD-compliant client registration:', error);
       errors.push(`Erro no registro: ${error}`);
       return { success: false, errors };
@@ -609,7 +609,7 @@ export class LGPDCompliantDataHandler {
       });
 
       return { success: true, consentId, errors: [] };
-    } catch (error) {
+    } catch {
       console.error('Error in consent management:', error);
       errors.push(`Erro no gerenciamento de consentimento: ${error}`);
       return { success: false, errors };
@@ -665,13 +665,13 @@ export class LGPDCompliantDataHandler {
             .eq('id', record.id);
 
           processed++;
-        } catch (error) {
+        } catch {
           errors.push(`Erro ao anonimizar cliente ${record.id}: ${error}`);
         }
       }
 
       return { processed, errors };
-    } catch (error) {
+    } catch {
       console.error('Error in data retention processing:', error);
       errors.push(`Erro no processamento de retenção: ${error}`);
       return { processed, errors };
@@ -737,7 +737,7 @@ export class LGPDCompliantDataHandler {
       });
 
       return { success: true, data: exportData, errors: [] };
-    } catch (error) {
+    } catch {
       console.error('Error in client data export:', error);
       errors.push(`Erro na exportação de dados: ${error}`);
       return { success: false, errors };
@@ -776,7 +776,7 @@ export class LGPDCompliantDataHandler {
           dataRetentionPeriod: `${this.config.dataRetentionPeriod} days`,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         status: 'unhealthy',
         details: { error: error.message },

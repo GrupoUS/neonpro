@@ -185,7 +185,7 @@ export class AestheticMFAService {
       });
 
       return setupData;
-    } catch (error) {
+    } catch {
       logger.error('MFA setup initialization failed', {
         userId,
         error: error instanceof Error ? error.message : String(error),
@@ -261,7 +261,7 @@ export class AestheticMFAService {
       });
 
       return true;
-    } catch (error) {
+    } catch {
       logger.error('MFA setup completion failed', {
         userId,
         error: error instanceof Error ? error.message : String(error),
@@ -353,7 +353,7 @@ export class AestheticMFAService {
         userAgent,
         riskScore: riskAssessment.score,
       };
-    } catch (error) {
+    } catch {
       logger.error('MFA verification failed', {
         userId,
         method: MFA_METHOD.TOTP,
@@ -452,7 +452,7 @@ export class AestheticMFAService {
         riskScore: riskAssessment.score,
         backupCodeUsed: true,
       };
-    } catch (error) {
+    } catch {
       logger.error('MFA backup code verification failed', {
         userId,
         method: MFA_METHOD.BACKUP_CODE,
@@ -546,7 +546,7 @@ export class AestheticMFAService {
       });
 
       return newBackupCodes;
-    } catch (error) {
+    } catch {
       logger.error('Backup code regeneration failed', {
         userId,
         error: error instanceof Error ? error.message : String(error),
@@ -593,7 +593,7 @@ export class AestheticMFAService {
       });
 
       return true;
-    } catch (error) {
+    } catch {
       logger.error('MFA disable failed', {
         userId,
         error: error instanceof Error ? error.message : String(error),
@@ -649,7 +649,7 @@ export class AestheticMFAService {
         digits: TOTP_CONFIG.digits,
         algorithm: TOTP_CONFIG.algorithm as any,
       });
-    } catch (error) {
+    } catch {
       logger.error('TOTP verification error', { error });
       return false;
     }
@@ -734,7 +734,7 @@ export class AestheticMFAService {
         details: event.details,
         risk_score: event.riskScore,
       });
-    } catch (error) {
+    } catch {
       logger.error('Failed to log MFA security event', { error });
     }
   }

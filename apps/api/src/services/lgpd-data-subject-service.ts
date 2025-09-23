@@ -156,7 +156,7 @@ export class LGPDDataSubjectService {
         requestId,
         estimatedCompletion,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -231,7 +231,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         accessData: accessReport,
       };
-    } catch (error) {
+    } catch {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -320,7 +320,7 @@ export class LGPDDataSubjectService {
         operationId: `deletion_${requestId}`,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -391,7 +391,7 @@ export class LGPDDataSubjectService {
         exportData: exportResult.exportData,
         exportUrl: exportResult.exportUrl,
       };
-    } catch (error) {
+    } catch {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -475,7 +475,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         explanation: explanationReport,
       };
-    } catch (error) {
+    } catch {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -520,7 +520,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         request,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -575,7 +575,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         requests: formattedRequests,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -836,7 +836,7 @@ export class LGPDDataSubjectService {
         },
       });
       deletedCount++;
-    } catch (error) {
+    } catch {
       console.error('Error deleting personal data:', error);
     }
 
@@ -858,7 +858,7 @@ export class LGPDDataSubjectService {
       console.log(
         `Would process ${appointments.length} health records for deletion`,
       );
-    } catch (error) {
+    } catch {
       console.error('Error deleting health data:', error);
     }
 

@@ -246,7 +246,7 @@ export class AutomatedReminderService {
 
       return reminders;
 
-    } catch (error) {
+    } catch {
       console.error('Error generating reminder schedule:', error);
       throw new Error('Failed to generate reminder schedule');
     }
@@ -300,7 +300,7 @@ export class AutomatedReminderService {
 
       return reminder;
 
-    } catch (error) {
+    } catch {
       console.error('Error sending immediate reminder:', error);
       throw new Error('Failed to send immediate reminder');
     }
@@ -333,11 +333,11 @@ export class AutomatedReminderService {
       for (const reminder of pendingReminders) {
         try {
           await this.sendReminder(reminder);
-        } catch (error) {
+        } catch {
           console.error(`Error sending reminder ${reminder.id}:`, error);
         }
       }
-    } catch (error) {
+    } catch {
       console.error('Error processing reminder queue:', error);
     } finally {
       this.processingQueue = false;
@@ -415,7 +415,7 @@ export class AutomatedReminderService {
         });
       }
 
-    } catch (error) {
+    } catch {
       console.error('Error tracking reminder delivery:', error);
       throw new Error('Failed to track reminder delivery');
     }
@@ -463,7 +463,7 @@ export class AutomatedReminderService {
       
       return analytics;
 
-    } catch (error) {
+    } catch {
       console.error('Error getting reminder analytics:', error);
       throw new Error('Failed to get reminder analytics');
     }
@@ -504,7 +504,7 @@ export class AutomatedReminderService {
         return newProfile;
       }
 
-    } catch (error) {
+    } catch {
       console.error('Error updating patient communication profile:', error);
       throw new Error('Failed to update patient communication profile');
     }
@@ -749,7 +749,7 @@ export class AutomatedReminderService {
       // Track delivery
       await this.trackReminderDelivery(reminder.id, deliveryResult);
 
-    } catch (error) {
+    } catch {
       console.error('Error sending reminder:', error);
       
       // Handle retry logic

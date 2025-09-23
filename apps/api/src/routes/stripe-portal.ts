@@ -94,7 +94,7 @@ app.post('/create-portal-session', async c => {
       success: true,
       portal_url: session.url,
     });
-  } catch (error) {
+  } catch {
     console.error('Error creating customer portal session:', error);
     return c.json(
       {
@@ -133,7 +133,7 @@ app.get('/portal-config', async c => {
         default_return_url: config?.default_return_url,
       },
     });
-  } catch (error) {
+  } catch {
     console.error('Error fetching portal configuration:', error);
     return c.json(
       {
@@ -191,7 +191,7 @@ app.post('/create-customer', async c => {
       customer_id: customer.id,
       message: 'Customer created successfully',
     });
-  } catch (error) {
+  } catch {
     console.error('Error creating Stripe customer:', error);
     return c.json(
       {

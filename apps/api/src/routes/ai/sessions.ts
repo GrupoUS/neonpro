@@ -113,7 +113,7 @@ app.get('/ai/sessions/:sessionId', async c => {
     };
 
     return c.json(response, 200);
-  } catch (error) {
+  } catch {
     console.error('Session endpoint error:', error);
 
     return c.json(
@@ -276,7 +276,7 @@ app.get('/ai/sessions/health', async c => {
       },
       200,
     );
-  } catch (error) {
+  } catch {
     return c.json(
       {
         status: 'unhealthy',

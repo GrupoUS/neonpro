@@ -103,7 +103,7 @@ const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, _next) => {
         ip: c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For'),
       },
     });
-  } catch (error) {
+  } catch {
     console.error('Failed to log audit trail:', error);
   }
 });
@@ -146,7 +146,7 @@ const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
       });
 
       await next();
-    } catch (error) {
+    } catch {
       console.error('Authentication error:', error);
       return c.json({ error: 'Erro de autenticação' }, 401);
     }
@@ -255,7 +255,7 @@ healthcare.get(
           cached: false,
         },
       });
-    } catch (error) {
+    } catch {
       console.error('Error fetching patients:', error);
       return c.json(
         {
@@ -310,7 +310,7 @@ healthcare.get('/patients/:id', async c => {
       success: true,
       data: patient,
     });
-  } catch (error) {
+  } catch {
     console.error('Error fetching patient:', error);
     return c.json(
       {
@@ -355,7 +355,7 @@ healthcare.post('/patients', zValidator('json', patientSchema), async c => {
       },
       201,
     );
-  } catch (error) {
+  } catch {
     console.error('Error creating patient:', error);
     return c.json(
       {
@@ -406,7 +406,7 @@ healthcare.put(
         data: patient,
         message: 'Paciente atualizado com sucesso',
       });
-    } catch (error) {
+    } catch {
       console.error('Error updating patient:', error);
       return c.json(
         {
@@ -456,7 +456,7 @@ healthcare.get('/patients/:id/appointments', async c => {
       success: true,
       data: appointments || [],
     });
-  } catch (error) {
+  } catch {
     console.error('Error fetching appointments:', error);
     return c.json(
       {
@@ -536,7 +536,7 @@ healthcare.post(
         },
         201,
       );
-    } catch (error) {
+    } catch {
       console.error('Error creating appointment:', error);
       return c.json(
         {
@@ -595,7 +595,7 @@ healthcare.get(
         success: true,
         data: analytics,
       });
-    } catch (error) {
+    } catch {
       console.error('Error fetching analytics:', error);
       return c.json(
         {

@@ -492,7 +492,7 @@ export const prismaRLSMiddleware = async ({
     }
 
     return result;
-  } catch (error) {
+  } catch {
     const duration = performance.now() - start;
 
     // Log RLS failures for security auditing

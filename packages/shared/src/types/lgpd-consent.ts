@@ -361,7 +361,7 @@ export function getConsentByPatientId(
     .filter(
       (consent) => consent.patientId === patientId && !consent.withdrawalDate,
     )
-    .sort((a, _b) => b.consentDate.getTime() - a.consentDate.getTime())[0];
+    .sort((a, b) => b.consentDate.getTime() - a.consentDate.getTime())[0];
 }
 
 // Get expired consents

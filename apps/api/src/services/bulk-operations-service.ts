@@ -175,7 +175,7 @@ export class BulkOperationsService {
 
       result.processingTimeMs = Date.now() - startTime;
       return result;
-    } catch (_error: any) { void _error;
+    } catch { void _error;
       // Log error
       await this.logOperationError(request, error, auditTrailId);
 
@@ -220,7 +220,7 @@ export class BulkOperationsService {
       logger.info('Bulk operation undone', { undoToken, requesterUserId });
 
       return true;
-    } catch (_error: any) { void _error;
+    } catch { void _error;
       logger.error('Failed to undo bulk operation', { undoToken, error });
       return false;
     }
@@ -316,7 +316,7 @@ export class BulkOperationsService {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await this.executeBulkOperationCore(request, auditTrailId);
-      } catch (_error: any) { void _error;
+      } catch { void _error;
         lastError = error;
 
         // Don't retry validation errors or auth errors
@@ -376,7 +376,7 @@ export class BulkOperationsService {
           await this.executeEntityOperation(request, entityId);
 
           result.processed++;
-        } catch (_error: any) { void _error;
+        } catch { void _error;
           result.failed++;
           result.errors.push({
             entityId,
@@ -600,7 +600,7 @@ export class BulkOperationsService {
         operationType: request.operationType,
         allowedRoles: config.allowedRoles,
       });
-    } catch (error) {
+    } catch {
       logger.error('User permission validation failed', {
         _userId: request.requesterUserId,
         operationType: request.operationType,
@@ -672,7 +672,7 @@ export class BulkOperationsService {
         entityType: request.entityType,
         entityCount: request.entityIds.length,
       });
-    } catch (error) {
+    } catch {
       logger.error('Clinic access validation failed', {
         _userId: request.requesterUserId,
         clinicId: request.clinicId,
@@ -781,7 +781,7 @@ export class BulkOperationsService {
           }
         }
       }
-    } catch (error) {
+    } catch {
       logger.error('LGPD consent validation failed', {
         _userId: request.requesterUserId,
         operationType: request.operationType,

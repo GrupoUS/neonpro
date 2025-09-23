@@ -65,7 +65,7 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
         userRole: userRole,
       },
     });
-  } catch (error) {
+  } catch {
     console.error('Error in RLS patients route:', error);
     return c.json({ error: 'Internal server error' }, 500);
   }
@@ -149,7 +149,7 @@ rlsPatients.get(
           accessedBy: userId,
         },
       });
-    } catch (error) {
+    } catch {
       console.error('Error in RLS patient detail route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }
@@ -211,7 +211,7 @@ rlsPatients.get(
           accessedBy: userId,
         },
       });
-    } catch (error) {
+    } catch {
       console.error('Error in RLS patient appointments route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }
@@ -263,7 +263,7 @@ rlsPatients.get(
           accessedBy: userId,
         },
       });
-    } catch (error) {
+    } catch {
       console.error('Error in RLS patient consent route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }

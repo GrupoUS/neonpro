@@ -261,7 +261,7 @@ export class AIAppointmentRepository {
 
       return result;
 
-    } catch (error) {
+    } catch {
       console.error('Error getting appointments:', error);
       throw new Error('Failed to get appointments');
     }
@@ -316,7 +316,7 @@ export class AIAppointmentRepository {
         take: limit
       });
 
-    } catch (error) {
+    } catch {
       console.error('Error getting high-risk appointments:', error);
       throw new Error('Failed to get high-risk appointments');
     }
@@ -396,7 +396,7 @@ export class AIAppointmentRepository {
         };
       });
 
-    } catch (error) {
+    } catch {
       console.error('Error getting no-show prediction data:', error);
       throw new Error('Failed to get no-show prediction data');
     }
@@ -477,7 +477,7 @@ export class AIAppointmentRepository {
 
       return recommendations.sort((a, b) => b.efficiency - a.efficiency);
 
-    } catch (error) {
+    } catch {
       console.error('Error getting resource allocation recommendations:', error);
       throw new Error('Failed to get resource allocation recommendations');
     }
@@ -532,7 +532,7 @@ export class AIAppointmentRepository {
         };
       });
 
-    } catch (error) {
+    } catch {
       console.error('Error getting appointment efficiency metrics:', error);
       throw new Error('Failed to get appointment efficiency metrics');
     }
@@ -564,7 +564,7 @@ export class AIAppointmentRepository {
       // Log prediction update for model training
       await this.logPredictionUpdate(appointmentId, predictionData);
 
-    } catch (error) {
+    } catch {
       console.error('Error updating no-show prediction:', error);
       throw new Error('Failed to update no-show prediction');
     }
@@ -618,7 +618,7 @@ export class AIAppointmentRepository {
         riskAlerts
       };
 
-    } catch (error) {
+    } catch {
       console.error('Error getting predictive scheduling insights:', error);
       throw new Error('Failed to get predictive scheduling insights');
     }

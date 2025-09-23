@@ -215,7 +215,7 @@ export class HealthcareTelemetryManager {
 
     // Add custom attributes
     Object.entries(attributes).forEach(([key, _value]) => {
-      span.setAttribute(key, value);
+      span.setAttribute(key, _value);
     });
 
     return span;

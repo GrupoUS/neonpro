@@ -157,7 +157,7 @@ copilotBridge.post('/chat/completions', async c => {
       );
       return c.json(response);
     }
-  } catch (error) {
+  } catch {
     logger.error('CopilotKit bridge error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -222,7 +222,7 @@ async function callAGUIAgent(
 
     const agentData = await response.json();
     return agentData;
-  } catch (error) {
+  } catch {
     logger.error('AG-UI Agent call failed', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -258,7 +258,7 @@ function formatCopilotResponse(
 
   // Add structured data formatting for healthcare responses
   if (agentResponse.data) {
-    const data = agentResponse.data;
+    const _data = agentResponse.data;
 
     if (data.type === 'appointments_list') {
       content += `\n\n📅 **${data.title}**\n${data.summary}`;

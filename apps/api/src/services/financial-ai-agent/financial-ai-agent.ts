@@ -240,7 +240,7 @@ export class FinancialAIAgent {
         },
         message: 'Cobrança inteligente criada com sucesso',
       };
-    } catch (_error) {
+    } catch {
       console.error('Intelligent billing creation failed:', error);
       return {
         success: false,
@@ -349,7 +349,7 @@ export class FinancialAIAgent {
             await this.sendAnomalyAlert(result);
           }
         }
-      } catch (_error) {
+      } catch {
         console.error(`Anomaly detector ${detectorName} failed:`, error);
       }
     }
@@ -370,7 +370,7 @@ export class FinancialAIAgent {
             await this.sendFraudAlert(result);
           }
         }
-      } catch (_error) {
+      } catch {
         console.error(`Fraud detection rule ${ruleName} failed:`, error);
       }
     }
@@ -471,7 +471,7 @@ export class FinancialAIAgent {
         data: prediction,
         message: 'Predição financeira gerada com sucesso',
       };
-    } catch (_error) {
+    } catch {
       console.error('Financial prediction failed:', error);
       return {
         success: false,
@@ -611,7 +611,7 @@ export class FinancialAIAgent {
         data: this.config,
         message: 'Configuração atualizada com sucesso',
       };
-    } catch (_error) {
+    } catch {
       return {
         success: false,
         error: 'Configuração inválida',

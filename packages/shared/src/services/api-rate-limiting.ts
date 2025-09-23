@@ -14,6 +14,7 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
+import { z } from "zod";
 // import { nanoid } from "nanoid";
 
 // ============================================================================
@@ -401,7 +402,7 @@ class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
     _context: RateLimitContext,
   ): Promise<RateLimitResult> {
     const _now = Date.now();
-    void _now;
+    const now = Date.now();
     const windowMs = 60 * 1000; // 1 minute window
     const limit = this.config.requestsPerMinute;
 
@@ -421,13 +422,13 @@ class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
     const allowed = currentUsage < limit;
 
     if (allowed) {
-      windowData.requests.push(now);
+      windowData.requests.push(_now);
       this.storage.set(key, windowData);
     }
 
-    const windowStart = new Date(now - windowMs);
-    const windowEnd = new Date(now);
-    const resetTime = new Date(now + windowMs);
+    const windowStart = new Date(_now - windowMs);
+    const windowEnd = new Date(_now);
+    const resetTime = new Date(_now + windowMs);
 
     return {
       allowed,
@@ -472,10 +473,11 @@ class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
     // Get or create bucket data
     let bucket = this.storage.get(key) || {
       tokens: capacity,
-      lastRefill: now,
+      lastRefill: _now,
     };
 
     // Calculate tokens to add based on time elapsed
+    const now = Date.now();
     const timeDelta = (now - bucket.lastRefill) / 1000; // seconds
     const tokensToAdd = Math.floor(timeDelta * refillRate);
 
@@ -504,7 +506,7 @@ class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
       limitValue: capacity,
       remainingRequests: bucket.tokens,
       windowStart: new Date(bucket.lastRefill).toISOString(),
-      windowEnd: new Date(now).toISOString(),
+      windowEnd: new Date(Date.now()).toISOString(),
       resetTime: resetTime.toISOString(),
       retryAfter: allowed ? undefined : Math.ceil(1 / refillRate),
       bypassApplied: false,
@@ -714,7 +716,7 @@ export class APIRateLimitingService {
   async checkRateLimit(_context: RateLimitContext): Promise<RateLimitResult> {
     try {
       // Classify request and determine tier
-      const tier = this.determineRateLimitTier(context);
+      const tier = this.determineRateLimitTier(_context);
       const algorithm = this.algorithms.get(tier.name);
 
       if (!algorithm) {
@@ -722,10 +724,10 @@ export class APIRateLimitingService {
       }
 
       // Generate rate limit key
-      const key = this.generateRateLimitKey(context, tier);
+      const key = this.generateRateLimitKey(_context, tier);
 
       // Check for emergency bypass
-      const bypassResult = this.checkEmergencyBypass(context, tier);
+      const bypassResult = this.checkEmergencyBypass(_context, tier);
       if (bypassResult.allowed) {
         return bypassResult;
       }
@@ -734,14 +736,14 @@ export class APIRateLimitingService {
       const result = await algorithm.checkLimit(key, _context);
 
       // Log rate limiting decision
-      await this.logRateLimitDecision(context, result);
+      await this.logRateLimitDecision(_context, result);
 
       // Update metrics
-      this.updateMetrics(context, result);
+      this.updateMetrics(_context, result);
 
       // Check for alerting thresholds
       if (this.config.monitoring.enableAlerting) {
-        await this.checkAlertingThresholds(context, result);
+        await this.checkAlertingThresholds(_context, result);
       }
 
       return result;
@@ -772,15 +774,15 @@ export class APIRateLimitingService {
    */
   private determineRateLimitTier(_context: RateLimitContext): RateLimitTier {
     // Emergency and patient safety requests get highest priority
-    if (context.healthcareContext?.emergencyFlag) {
+    if (_context.healthcareContext?.emergencyFlag) {
       return this.config.tiers.find((t) => t.name === "emergency")!;
     }
 
-    if (context.healthcareContext?.patientSafetyFlag) {
+    if (_context.healthcareContext?.patientSafetyFlag) {
       return this.config.tiers.find((t) => t.name === "critical")!;
     }
 
-    if (context.healthcareContext?.criticalSystemFlag) {
+    if (_context.healthcareContext?.criticalSystemFlag) {
       return this.config.tiers.find((t) => t.name === "critical")!;
     }
 
@@ -817,7 +819,7 @@ export class APIRateLimitingService {
     };
 
     const priority =
-      context.priority || categoryPriorityMap[context.category] || "normal";
+      _context.priority || categoryPriorityMap[_context.category] || "normal";
 
     // Find tier matching priority
     const tier = this.config.tiers.find((t) => t.priority === priority);
@@ -831,23 +833,23 @@ export class APIRateLimitingService {
     _context: RateLimitContext,
     tier: RateLimitTier,
   ): string {
-    const parts = [this.config.storage.keyPrefix, tier.name, context.clientId];
+    const parts = [this.config.storage.keyPrefix, tier.name, _context.clientId];
 
     // Add user ID if available
-    if (context._userId) {
-      parts.push(context._userId);
+    if (_context._userId) {
+      parts.push(_context._userId);
     }
 
     // Add facility ID for facility-based limits
     if (
       this.config.healthcareConfig.facilityBasedLimits &&
-      context.healthcareContext?.facilityId
+      _context.healthcareContext?.facilityId
     ) {
-      parts.push(context.healthcareContext.facilityId);
+      parts.push(_context.healthcareContext?.facilityId);
     }
 
     // Add endpoint for endpoint-specific limits
-    parts.push(context.endpoint);
+    parts.push(_context.endpoint);
 
     return parts.join(":");
   }
@@ -863,7 +865,7 @@ export class APIRateLimitingService {
     let bypassReason = "";
 
     // Emergency request bypass
-    if (tier.emergencyBypass && context.healthcareContext?.emergencyFlag) {
+    if (tier.emergencyBypass && _context.healthcareContext?.emergencyFlag) {
       bypassApplied = true;
       bypassReason = "Emergency request bypass";
     }
@@ -871,7 +873,7 @@ export class APIRateLimitingService {
     // Patient safety bypass
     else if (
       tier.patientSafetyBypass &&
-      context.healthcareContext?.patientSafetyFlag
+      _context.healthcareContext?.patientSafetyFlag
     ) {
       bypassApplied = true;
       bypassReason = "Patient safety bypass";
@@ -880,7 +882,7 @@ export class APIRateLimitingService {
     // Critical system bypass
     else if (
       this.config.healthcareConfig.criticalSystemBypass &&
-      context.healthcareContext?.criticalSystemFlag
+      _context.healthcareContext?.criticalSystemFlag
     ) {
       bypassApplied = true;
       bypassReason = "Critical system bypass";
@@ -923,11 +925,11 @@ export class APIRateLimitingService {
     if (!shouldLog) return;
 
     const logData = {
-      requestId: context.requestId,
-      clientId: context.clientId,
-      category: context.category,
-      priority: context.priority,
-      endpoint: context.endpoint,
+      requestId: _context.requestId,
+      clientId: _context.clientId,
+      category: _context.category,
+      priority: _context.priority,
+      endpoint: _context.endpoint,
       rateLimitResult: {
         allowed: result.allowed,
         reason: result.reason,
@@ -937,9 +939,9 @@ export class APIRateLimitingService {
         bypassApplied: result.bypassApplied,
         bypassReason: result.bypassReason,
       },
-      facilityId: context.healthcareContext?.facilityId,
-      emergencyFlag: context.healthcareContext?.emergencyFlag,
-      patientSafetyFlag: context.healthcareContext?.patientSafetyFlag,
+      facilityId: _context.healthcareContext?.facilityId,
+      emergencyFlag: _context.healthcareContext?.emergencyFlag,
+      patientSafetyFlag: _context.healthcareContext?.patientSafetyFlag,
     };
 
     // TODO: Integrate with structured logging service

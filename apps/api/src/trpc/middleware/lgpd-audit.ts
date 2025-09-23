@@ -254,7 +254,7 @@ export const lgpdAuditMiddleware = async ({
     }
 
     return minimizedResult;
-  } catch (error) {
+  } catch {
     const duration = performance.now() - start;
 
     // Log failed operations with enhanced detail

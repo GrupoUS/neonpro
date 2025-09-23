@@ -196,7 +196,7 @@ export class CopilotKitSessionIntegration {
       });
 
       return sessionState;
-    } catch (error) {
+    } catch {
       console.error('Error initializing CopilotKit session:', error);
       
       // Update session state to error
@@ -285,7 +285,7 @@ export class CopilotKitSessionIntegration {
         response,
         processingTime,
       };
-    } catch (error) {
+    } catch {
       const processingTime = Date.now() - startTime;
       await this.updateSessionMetrics(sessionId, processingTime, false);
 
@@ -399,7 +399,7 @@ export class CopilotKitSessionIntegration {
     let action: CopilotKitAction;
     try {
       action = JSON.parse(message.content);
-    } catch (error) {
+    } catch {
       throw new Error('Invalid action message format');
     }
 
@@ -475,7 +475,7 @@ export class CopilotKitSessionIntegration {
       });
 
       return result;
-    } catch (error) {
+    } catch {
       action.status = 'failed';
       action.error = error instanceof Error ? error.message : 'Unknown error';
       throw error;
@@ -499,7 +499,7 @@ export class CopilotKitSessionIntegration {
         try {
           const message = JSON.parse(event.data);
           await this.handleRealtimeMessage(sessionId, message);
-        } catch (error) {
+        } catch {
           console.error('Error handling realtime message:', error);
         }
       };
@@ -520,7 +520,7 @@ export class CopilotKitSessionIntegration {
           ws.close();
         }
       }, this.config.requestTimeout);
-    } catch (error) {
+    } catch {
       console.error('Error setting up realtime connection:', error);
     }
   }
@@ -551,7 +551,7 @@ export class CopilotKitSessionIntegration {
         default:
           console.warn(`Unknown realtime message type: ${message.type}`);
       }
-    } catch (error) {
+    } catch {
       console.error('Error handling realtime message:', error);
     }
   }
@@ -625,7 +625,7 @@ export class CopilotKitSessionIntegration {
 
       // Enhanced session cleanup
       await this.enhancedSessionService.expireEnhancedSession(sessionId);
-    } catch (error) {
+    } catch {
       console.error('Error closing CopilotKit session:', error);
     }
   }

@@ -6,6 +6,8 @@
  * Based on 002-platform-architecture-improvements data-model.md specification
  */
 
+import { z } from "zod";
+
 // ============================================================================
 // Core Security Policy Types
 // ============================================================================
@@ -1064,12 +1066,12 @@ export class SecurityPolicyValidator {
       "very_strong",
     ];
     const strength =
-      strengthLevels[Math.min(strengthScore, strengthLevels.length - 1)];
+      strengthLevels[Math.min(strengthScore, strengthLevels.length - 1)] || "unknown";
 
     return {
       isValid: violations.length === 0,
       violations,
-      strength,
+      strength: strength || "unknown",
     };
   }
 

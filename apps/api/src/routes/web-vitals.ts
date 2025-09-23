@@ -124,7 +124,7 @@ webVitalsRouter.post('/api/analytics/web-vitals', async c => {
       metricId: metricEntry.id,
       timestamp: metricEntry.timestamp,
     });
-  } catch (error) {
+  } catch {
     console.error('Web vitals recording error:', error);
     return c.json({ error: 'Failed to record metric' }, 500);
   }
@@ -192,7 +192,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
 
     // Return empty response for beacon (standard)
     return new Response(null, { status: 204 });
-  } catch (error) {
+  } catch {
     console.error('Web vitals beacon error:', error);
     return new Response(null, { status: 204 });
   }
@@ -233,7 +233,7 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
     };
 
     return c.json(dashboard);
-  } catch (error) {
+  } catch {
     console.error('Dashboard generation error:', error);
     return c.json({ error: 'Failed to generate dashboard' }, 500);
   }

@@ -163,7 +163,7 @@ export class RealtimeAvailabilityService {
 
       return results;
 
-    } catch (error) {
+    } catch {
       console.error('Error getting real-time availability:', error);
       throw new Error('Failed to get real-time availability');
     }
@@ -223,7 +223,7 @@ export class RealtimeAvailabilityService {
 
       return conflicts.sort((a, b) => this.getConflictSeverityPriority(b.severity) - this.getConflictSeverityPriority(a.severity));
 
-    } catch (error) {
+    } catch {
       console.error('Error detecting conflicts:', error);
       throw new Error('Failed to detect conflicts');
     }
@@ -286,9 +286,9 @@ export class RealtimeAvailabilityService {
 
     connection.on('message', async (message: string) => {
       try {
-        const data = JSON.parse(message);
+        const _data = JSON.parse(message);
         await this.handleWebSocketMessage(connection, data);
-      } catch (error) {
+      } catch {
         console.error('Error handling WebSocket message:', error);
       }
     });
@@ -387,7 +387,7 @@ export class RealtimeAvailabilityService {
         improvements
       };
 
-    } catch (error) {
+    } catch {
       console.error('Error optimizing availability:', error);
       throw new Error('Failed to optimize availability');
     }
@@ -750,7 +750,7 @@ export class RealtimeAvailabilityService {
       });
 
       subscription.callback(availability);
-    } catch (error) {
+    } catch {
       console.error('Error sending initial availability:', error);
     }
   }
@@ -822,7 +822,7 @@ export class RealtimeAvailabilityService {
       for (const update of updates) {
         await this.processUpdate(update);
       }
-    } catch (error) {
+    } catch {
       console.error('Error processing update batch:', error);
     } finally {
       this.isProcessing = false;
@@ -860,7 +860,7 @@ export class RealtimeAvailabilityService {
       });
 
       subscription.callback(availability);
-    } catch (error) {
+    } catch {
       console.error('Error sending update to subscription:', error);
     }
   }

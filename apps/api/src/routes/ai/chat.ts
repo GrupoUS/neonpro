@@ -305,7 +305,7 @@ app.post(
         success: true,
         data: responseData,
       });
-    } catch (error) {
+    } catch {
       console.error('AI Chat endpoint error:', error);
 
       // Log error for audit
@@ -528,7 +528,7 @@ app.post(
         },
         201,
       );
-    } catch (error) {
+    } catch {
       console.error('Chat request failed:', error);
       return c.json(
         {
@@ -737,7 +737,7 @@ app.post(
           201,
         );
       }
-    } catch (error) {
+    } catch {
       console.error('Chat request failed:', error);
       return c.json(
         {

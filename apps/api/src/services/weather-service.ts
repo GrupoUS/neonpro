@@ -88,7 +88,7 @@ export class WeatherService {
       });
 
       return weatherData;
-    } catch (error) {
+    } catch {
       console.error('Weather service error:', error);
 
       // Fallback to mock data on API failure
@@ -118,7 +118,7 @@ export class WeatherService {
         ...currentWeather,
         timestamp: appointmentTime,
       };
-    } catch (error) {
+    } catch {
       console.error('Weather forecast error:', error);
       return null;
     }
@@ -134,7 +134,7 @@ export class WeatherService {
     try {
       // Mock implementation - in real scenario, this would call weather alert API
       return [];
-    } catch (error) {
+    } catch {
       console.error('Weather alerts error:', error);
       return [];
     }
@@ -216,7 +216,7 @@ export class WeatherService {
       throw new Error(`Weather API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const _data = await response.json();
 
     return {
       temperature: data.main.temp,

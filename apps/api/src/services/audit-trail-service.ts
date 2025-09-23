@@ -267,7 +267,7 @@ export class AuditTrailService {
       await this.loadInvestigations();
 
       logger.info('Audit Trail Service initialized');
-    } catch (error) {
+    } catch {
       logger.error('Failed to initialize Audit Trail Service', { error });
       throw error;
     }
@@ -329,7 +329,7 @@ export class AuditTrailService {
       });
 
       return eventId;
-    } catch (error) {
+    } catch {
       logger.error('Failed to log audit event', {
         error: error instanceof Error ? error.message : String(error),
         eventData,
@@ -441,7 +441,7 @@ export class AuditTrailService {
       const offset = filters.offset || 0;
 
       return filteredEvents.slice(offset, offset + limit);
-    } catch (error) {
+    } catch {
       logger.error('Failed to get audit events', { error });
       throw new Error('Failed to get audit events');
     }
@@ -469,7 +469,7 @@ export class AuditTrailService {
         investigationRequired: events.filter(e => e.metadata.requiresInvestigation).length,
         trends: this.calculateTrends(events),
       };
-    } catch (error) {
+    } catch {
       logger.error('Failed to get audit analytics', { error });
       throw new Error('Failed to get audit analytics');
     }
@@ -530,7 +530,7 @@ export class AuditTrailService {
       });
 
       return report;
-    } catch (error) {
+    } catch {
       logger.error('Failed to generate audit report', { error });
       throw new Error('Failed to generate audit report');
     }
@@ -576,7 +576,7 @@ export class AuditTrailService {
       });
 
       return investigation;
-    } catch (error) {
+    } catch {
       logger.error('Failed to create investigation', { error });
       throw new Error('Failed to create investigation');
     }
@@ -620,7 +620,7 @@ export class AuditTrailService {
       });
 
       return updatedInvestigation;
-    } catch (error) {
+    } catch {
       logger.error('Failed to update investigation', { error });
       throw new Error('Failed to update investigation');
     }
@@ -688,7 +688,7 @@ export class AuditTrailService {
       logger.info('Expired audit events cleaned up', { count });
 
       return count;
-    } catch (error) {
+    } catch {
       logger.error('Failed to cleanup expired events', { error });
       throw new Error('Failed to cleanup expired events');
     }
@@ -837,7 +837,7 @@ export class AuditTrailService {
         investigation_status: event.metadata.investigationStatus,
         investigation_notes: event.metadata.investigationNotes,
       });
-    } catch (error) {
+    } catch {
       logger.error('Failed to store audit event', { error, eventId: event.id });
     }
   }
@@ -846,7 +846,7 @@ export class AuditTrailService {
     this.realTimeCallbacks.forEach(callback => {
       try {
         callback(event);
-      } catch (error) {
+      } catch {
         logger.error('Real-time callback error', { error });
       }
     });

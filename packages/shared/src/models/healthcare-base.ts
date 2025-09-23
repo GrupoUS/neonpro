@@ -361,7 +361,7 @@ export class HealthcareDataClassificationUtils {
       [HealthcareDataClassification.MEDICAL_RECORDS]: 6,
     };
 
-    return classifications.reduce((mostRestrictive, _current) => {
+    return classifications.reduce((mostRestrictive, current) => {
       return hierarchy[current] > hierarchy[mostRestrictive]
         ? current
         : mostRestrictive;

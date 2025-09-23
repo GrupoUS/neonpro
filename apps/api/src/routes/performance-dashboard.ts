@@ -49,7 +49,7 @@ export const createPerformanceDashboardRoutes = (
           timestamp: new Date().toISOString(),
         },
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "get_performance_metrics",
         timestamp: new Date().toISOString(),
@@ -75,7 +75,7 @@ export const createPerformanceDashboardRoutes = (
         data: insights,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "get_performance_insights",
         timestamp: new Date().toISOString(),
@@ -101,7 +101,7 @@ export const createPerformanceDashboardRoutes = (
         data: cacheStats,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "get_cache_statistics",
         timestamp: new Date().toISOString(),
@@ -131,7 +131,7 @@ export const createPerformanceDashboardRoutes = (
           : "All cache entries cleared",
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "clear_cache",
         pattern: req.body.pattern,
@@ -158,7 +158,7 @@ export const createPerformanceDashboardRoutes = (
         message: "Cache warm-up initiated",
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "warm_up_cache",
         timestamp: new Date().toISOString(),
@@ -198,7 +198,7 @@ export const createPerformanceDashboardRoutes = (
         },
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "get_query_performance",
         timestamp: new Date().toISOString(),
@@ -224,7 +224,7 @@ export const createPerformanceDashboardRoutes = (
         data: imageMetrics,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "get_image_metrics",
         timestamp: new Date().toISOString(),
@@ -271,7 +271,7 @@ export const createPerformanceDashboardRoutes = (
       req.on("close", () => {
         clearInterval(interval);
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "performance_stream",
         timestamp: new Date().toISOString(),
@@ -300,7 +300,7 @@ export const createPerformanceDashboardRoutes = (
         data: health,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "performance_health_check",
         timestamp: new Date().toISOString(),
@@ -357,7 +357,7 @@ export const createPerformanceDashboardRoutes = (
       res.setHeader("Content-Type", contentType);
       res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
       res.send(exportData);
-    } catch (error) {
+    } catch {
       const mappedError = ErrorMapper.mapError(error, {
         action: "export_performance_data",
         format: req.query.format,

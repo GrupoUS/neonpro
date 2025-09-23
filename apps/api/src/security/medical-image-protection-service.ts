@@ -182,7 +182,7 @@ export class MedicalImageProtectionService {
       await this.loadImageMetadata();
 
       logger.info('Medical Image Protection Service initialized');
-    } catch (error) {
+    } catch {
       logger.error('Failed to initialize Medical Image Protection Service', { error });
       throw error;
     }
@@ -275,7 +275,7 @@ export class MedicalImageProtectionService {
         securityScore: this.calculateSecurityScore(result),
         warnings: this.generateWarnings(result, securityLevel),
       };
-    } catch (error) {
+    } catch {
       logger.error('Image upload and protection failed', {
         error: error instanceof Error ? error.message : String(error),
         userId,
@@ -333,7 +333,7 @@ export class MedicalImageProtectionService {
         buffer: decryptedBuffer,
         metadata,
       };
-    } catch (error) {
+    } catch {
       logger.error('Failed to retrieve protected image', {
         imageId,
         userId,
@@ -378,7 +378,7 @@ export class MedicalImageProtectionService {
       const encryptedThumbnail = await this.encryptBuffer(thumbnailBuffer, thumbnailEncryptionKey, iv);
 
       return encryptedThumbnail;
-    } catch (error) {
+    } catch {
       logger.error('Failed to create encrypted thumbnail', {
         imageId,
         error: error instanceof Error ? error.message : String(error),
@@ -409,7 +409,7 @@ export class MedicalImageProtectionService {
 
       // Compare with stored hash
       return currentHash === metadata.hash;
-    } catch (error) {
+    } catch {
       logger.error('Image integrity verification failed', {
         imageId,
         error: error instanceof Error ? error.message : String(error),
@@ -467,7 +467,7 @@ export class MedicalImageProtectionService {
       });
 
       return true;
-    } catch (error) {
+    } catch {
       logger.error('Failed to rotate encryption keys', {
         imageId,
         userId,
@@ -513,7 +513,7 @@ export class MedicalImageProtectionService {
       });
 
       return true;
-    } catch (error) {
+    } catch {
       logger.error('Failed to delete protected image', {
         imageId,
         userId,
@@ -575,7 +575,7 @@ export class MedicalImageProtectionService {
       });
 
       return true;
-    } catch (error) {
+    } catch {
       logger.error('Failed to set image access control', {
         imageId,
         userId,
@@ -604,7 +604,7 @@ export class MedicalImageProtectionService {
 
       // Check for potential malicious content
       await this.scanForMaliciousContent(imageBuffer);
-    } catch (error) {
+    } catch {
       throw new Error(`Image validation failed: ${error}`);
     }
   }
@@ -699,7 +699,7 @@ export class MedicalImageProtectionService {
         encryptedPath: `encrypted/${metadata.id}.enc`,
         metadata,
       };
-    } catch (error) {
+    } catch {
       metadata.processingStatus = IMAGE_PROCESSING_STATUS.FAILED;
       throw error;
     }

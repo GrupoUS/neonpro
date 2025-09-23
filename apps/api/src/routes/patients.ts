@@ -354,7 +354,7 @@ app.get(
       c.header('X-Page', result.pagination.page.toString());
 
       return ok(c, result);
-    } catch (error) {
+    } catch {
       console.error('Error fetching patients:', error);
 
       return serverError(
@@ -388,7 +388,7 @@ app.get(
       c.header('X-Retention-Policy', '7-years');
 
       return ok(c, patient);
-    } catch (error) {
+    } catch {
       console.error('Error fetching patient:', error);
 
       if (error instanceof Error && error.message === 'Patient not found') {
@@ -410,7 +410,7 @@ app.post(
   zValidator('json', PatientCreateSchema),
   validateClinicAccess,
   async c => {
-    const data = c.req.valid('json');
+    const _data = c.req.valid('json');
     const _userId = c.get('userId'); // Now properly typed
 
     try {
@@ -421,7 +421,7 @@ app.post(
       c.header('Location', `/patients/${patient.id}`);
 
       return created(c, patient, `/patients/${patient.id}`);
-    } catch (error) {
+    } catch {
       console.error('Error creating patient:', error);
 
       return badRequest(

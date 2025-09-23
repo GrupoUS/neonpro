@@ -231,7 +231,7 @@ export class MonitoringService {
 
       // Security health
       await this.checkSecurityHealth();
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       logger.error('Health check failed:', error);
     }
@@ -279,7 +279,7 @@ export class MonitoringService {
       if (!health.cache.healthy || !health.database.healthy) {
         logger.error('Service health check failed', health);
       }
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       logger.error('Service health check error:', error);
     }
@@ -302,7 +302,7 @@ export class MonitoringService {
         // > 2s is concerning
         logger.warn('Slow database response', { responseTime });
       }
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       logger.error('Database health check failed:', error);
     }
@@ -321,7 +321,7 @@ export class MonitoringService {
       if (stats.hitRate < 0.3) {
         logger.warn('Low cache hit rate', { hitRate: stats.hitRate });
       }
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       logger.error('Cache health check failed:', error);
     }
@@ -344,7 +344,7 @@ export class MonitoringService {
           count: recentEvents.length,
         });
       }
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       logger.error('Security health check failed:', error);
     }
@@ -364,7 +364,7 @@ export class MonitoringService {
 
       // Update AI metrics
       await this.updateAIMetrics();
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       logger.error('Metrics collection failed:', error);
     }
@@ -378,7 +378,7 @@ export class MonitoringService {
       try {
         const cacheStats = await this.dataService.getCacheStats();
         this.metrics.performance.cacheHitRate = cacheStats.customStats?.hitRate || 0;
-      } catch (error) {
+      } catch {
         // Error caught but not used - handled by surrounding logic
         logger.error('Failed to update performance metrics:', error);
       }

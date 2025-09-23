@@ -168,7 +168,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
 
       this.emit('subscription_created', subscription);
       return subscription;
-    } catch (error) {
+    } catch {
       this.logError('create_subscription_failed', { userId, options, error });
       throw new Error(`Failed to create subscription: ${error.message}`);
     }
@@ -194,7 +194,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
 
       this.emit('subscription_removed', { subscriptionId });
       this.logEvent('subscription_removed', { subscriptionId });
-    } catch (error) {
+    } catch {
       this.logError('remove_subscription_failed', { subscriptionId, error });
       throw new Error(`Failed to remove subscription: ${error.message}`);
     }
@@ -255,7 +255,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
         type: fullEvent.type,
         channelsCount: channels.length,
       });
-    } catch (error) {
+    } catch {
       this.logError('broadcast_failed', { event, error });
       throw new Error(`Failed to broadcast event: ${error.message}`);
     }
@@ -347,7 +347,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       }
 
       this.updateAnalytics(eventType);
-    } catch (error) {
+    } catch {
       this.logError('event_handling_failed', { payload, eventType, error });
     }
   }
@@ -532,7 +532,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       if (this.analytics.latencies.length > 1000) {
         this.analytics.latencies = this.analytics.latencies.slice(-1000);
       }
-    } catch (error) {
+    } catch {
       this.analytics.errors++;
       this.logError('event_processing_failed', { eventId: event.id, error });
     }
@@ -673,7 +673,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       this.supabase.close();
 
       this.emit('shutdown');
-    } catch (error) {
+    } catch {
       this.logError('shutdown_failed', { error });
       throw error;
     }

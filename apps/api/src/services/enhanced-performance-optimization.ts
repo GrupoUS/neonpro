@@ -229,7 +229,7 @@ export class EnhancedPerformanceOptimizationService {
       );
 
       return paginatedResult;
-    } catch (error) {
+    } catch {
       this.updatePerformanceMetrics(
         queryKey,
         performance.now() - startTime,
@@ -456,7 +456,7 @@ export class EnhancedPerformanceOptimizationService {
       }
 
       return result;
-    } catch (error) {
+    } catch {
       throw this.handleQueryError(error, 'appointments_calendar');
     }
   }
@@ -533,7 +533,7 @@ export class EnhancedPerformanceOptimizationService {
       }
 
       return result;
-    } catch (error) {
+    } catch {
       throw this.handleQueryError(error, 'dashboard_metrics');
     }
   }
@@ -590,7 +590,7 @@ export class EnhancedPerformanceOptimizationService {
               }
 
               return { success: true, result, index: actualIndex };
-            } catch (error) {
+            } catch {
               failed++;
               const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
@@ -645,7 +645,7 @@ export class EnhancedPerformanceOptimizationService {
           averageTimePerItem,
         },
       };
-    } catch (error) {
+    } catch {
       const totalTime = performance.now() - startTime;
 
       return {
@@ -699,7 +699,7 @@ export class EnhancedPerformanceOptimizationService {
       });
 
       console.log(`Cache warming completed for clinic ${clinicId}`);
-    } catch (error) {
+    } catch {
       console.error('Cache warming failed:', error);
     }
   }
@@ -946,7 +946,7 @@ export class EnhancedPerformanceOptimizationService {
       // Use the query optimizer's cache
       const cache = (this.queryOptimizer as any).cache;
       return cache ? await cache.get(key) : null;
-    } catch (error) {
+    } catch {
       console.warn('Cache get failed:', error);
       return null;
     }
@@ -964,7 +964,7 @@ export class EnhancedPerformanceOptimizationService {
       if (cache) {
         await cache.set(key, value, ttl);
       }
-    } catch (error) {
+    } catch {
       console.warn('Cache set failed:', error);
     }
   }

@@ -185,7 +185,7 @@ export const aestheticClinicRouter = router({
           data: client,
           message: 'Aesthetic client profile created successfully',
         };
-      } catch (error) {
+      } catch {
         if (error instanceof TRPCError) {
           throw error;
         }
@@ -238,7 +238,7 @@ export const aestheticClinicRouter = router({
           success: true,
           data: client,
         };
-      } catch (error) {
+      } catch {
         if (error instanceof TRPCError) {
           throw error;
         }
@@ -346,7 +346,7 @@ export const aestheticClinicRouter = router({
           data: updatedClient,
           message: 'Aesthetic client profile updated successfully',
         };
-      } catch (error) {
+      } catch {
         if (error instanceof TRPCError) {
           throw error;
         }
@@ -417,7 +417,7 @@ export const aestheticClinicRouter = router({
             },
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to search aesthetic client profiles',
@@ -542,7 +542,7 @@ export const aestheticClinicRouter = router({
           data: treatment,
           message: 'Aesthetic treatment created successfully',
         };
-      } catch (error) {
+      } catch {
         if (error instanceof TRPCError) {
           throw error;
         }
@@ -585,7 +585,7 @@ export const aestheticClinicRouter = router({
           success: true,
           data: treatments,
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to retrieve treatment catalog',
@@ -732,7 +732,7 @@ export const aestheticClinicRouter = router({
           data: session,
           message: 'Aesthetic session created successfully',
         };
-      } catch (error) {
+      } catch {
         if (error instanceof TRPCError) {
           throw error;
         }
@@ -826,7 +826,7 @@ export const aestheticClinicRouter = router({
             },
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list aesthetic sessions',
@@ -987,7 +987,7 @@ export const aestheticClinicRouter = router({
             },
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to calculate client retention metrics',

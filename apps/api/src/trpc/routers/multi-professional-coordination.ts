@@ -292,7 +292,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   createProfessionalTeam: {
     input: ProfessionalTeamInputSchema,
     output: SuccessResponseSchema(ProfessionalTeamSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -306,7 +306,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Equipe profissional criada com sucesso',
           data: team,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating professional team:', error);
         return {
           success: false,
@@ -322,7 +322,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       clinicId: z.string().uuid('ID da clínica inválido'),
     }),
     output: SuccessResponseSchema(z.array(ProfessionalTeamSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -336,7 +336,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Equipes profissionais obtidas com sucesso',
           data: teams,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting professional teams:', error);
         return {
           success: false,
@@ -350,7 +350,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   addTeamMember: {
     input: TeamMemberInputSchema,
     output: SuccessResponseSchema(TeamMemberSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -364,7 +364,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Membro adicionado à equipe com sucesso',
           data: member,
         };
-      } catch (error) {
+      } catch {
         console.error('Error adding team member:', error);
         return {
           success: false,
@@ -380,7 +380,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       teamMemberId: z.string().uuid('ID do membro inválido'),
     }),
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -394,7 +394,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Membro removido da equipe com sucesso',
           data: true,
         };
-      } catch (error) {
+      } catch {
         console.error('Error removing team member:', error);
         return {
           success: false,
@@ -409,7 +409,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   createReferral: {
     input: ProfessionalReferralInputSchema,
     output: SuccessResponseSchema(ProfessionalReferralSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -423,7 +423,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Encaminhamento profissional criado com sucesso',
           data: referral,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating referral:', error);
         return {
           success: false,
@@ -440,7 +440,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       type: z.enum(['sent', 'received', 'all']).default('all'),
     }),
     output: SuccessResponseSchema(z.array(ProfessionalReferralSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -454,7 +454,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Encaminhamentos obtidos com sucesso',
           data: referrals,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting referrals:', error);
         return {
           success: false,
@@ -468,7 +468,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   respondToReferral: {
     input: ReferralResponseSchema,
     output: SuccessResponseSchema(ProfessionalReferralSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -486,7 +486,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: `Encaminhamento ${input.response === 'accept' ? 'aceito' : 'recusado'} com sucesso`,
           data: referral,
         };
-      } catch (error) {
+      } catch {
         console.error('Error responding to referral:', error);
         return {
           success: false,
@@ -501,7 +501,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   createCollaborativeSession: {
     input: CollaborativeSessionInputSchema,
     output: SuccessResponseSchema(CollaborativeSessionSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -515,7 +515,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Sessão colaborativa criada com sucesso',
           data: session,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating collaborative session:', error);
         return {
           success: false,
@@ -532,7 +532,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       professionalId: z.string().uuid().optional(),
     }),
     output: SuccessResponseSchema(z.array(CollaborativeSessionSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -546,7 +546,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Sessões colaborativas obtidas com sucesso',
           data: sessions,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting collaborative sessions:', error);
         return {
           success: false,
@@ -560,7 +560,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   addSessionParticipant: {
     input: SessionParticipantInputSchema,
     output: SuccessResponseSchema(TeamMemberSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -574,7 +574,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Participante adicionado à sessão com sucesso',
           data: participant,
         };
-      } catch (error) {
+      } catch {
         console.error('Error adding session participant:', error);
         return {
           success: false,
@@ -589,7 +589,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   createCoordinationThread: {
     input: CoordinationThreadInputSchema,
     output: SuccessResponseSchema(CoordinationThreadSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -603,7 +603,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Tópico de coordenação criado com sucesso',
           data: thread,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating coordination thread:', error);
         return {
           success: false,
@@ -620,7 +620,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       patientId: z.string().uuid().optional(),
     }),
     output: SuccessResponseSchema(z.array(CoordinationThreadSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -634,7 +634,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Tópicos de coordenação obtidos com sucesso',
           data: threads,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting coordination threads:', error);
         return {
           success: false,
@@ -648,7 +648,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   addCoordinationMessage: {
     input: CoordinationMessageInputSchema,
     output: SuccessResponseSchema(CoordinationMessageSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -662,7 +662,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Mensagem de coordenação adicionada com sucesso',
           data: message,
         };
-      } catch (error) {
+      } catch {
         console.error('Error adding coordination message:', error);
         return {
           success: false,
@@ -677,7 +677,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   createProfessionalSupervision: {
     input: ProfessionalSupervisionInputSchema,
     output: SuccessResponseSchema(ProfessionalSupervisionSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -691,7 +691,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Supervisão profissional criada com sucesso',
           data: supervision,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating professional supervision:', error);
         return {
           success: false,
@@ -708,7 +708,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       type: z.enum(['supervisor', 'supervisee', 'all']).default('all'),
     }),
     output: SuccessResponseSchema(z.array(ProfessionalSupervisionSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -722,7 +722,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Relacionamentos de supervisão obtidos com sucesso',
           data: relationships,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting supervision relationships:', error);
         return {
           success: false,
@@ -745,7 +745,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       authorizationLevel: z.string(),
       conditions: z.array(z.string()),
     })),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -763,7 +763,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Validação de escopo profissional concluída',
           data: validation,
         };
-      } catch (error) {
+      } catch {
         console.error('Error validating professional scope:', error);
         return {
           success: false,
@@ -777,7 +777,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   createScopeValidation: {
     input: ScopeValidationInputSchema,
     output: SuccessResponseSchema(ScopeValidationSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -791,7 +791,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Validação de escopo criada com sucesso',
           data: validation,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating scope validation:', error);
         return {
           success: false,
@@ -806,7 +806,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   createCoordinationProtocol: {
     input: CoordinationProtocolInputSchema,
     output: SuccessResponseSchema(CoordinationProtocolSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -820,7 +820,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Protocolo de coordenação criado com sucesso',
           data: protocol,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating coordination protocol:', error);
         return {
           success: false,
@@ -836,7 +836,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       clinicId: z.string().uuid('ID da clínica inválido'),
     }),
     output: SuccessResponseSchema(z.array(CoordinationProtocolSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -850,7 +850,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Protocolos de coordenação obtidos com sucesso',
           data: protocols,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting coordination protocols:', error);
         return {
           success: false,
@@ -869,7 +869,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       triggeredBy: z.string().uuid('ID do profissional que acionou inválido'),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -888,7 +888,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Protocolo executado com sucesso',
           data: execution,
         };
-      } catch (error) {
+      } catch {
         console.error('Error executing protocol:', error);
         return {
           success: false,
@@ -903,7 +903,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   checkOverdueReferrals: {
     input: z.object({}),
     output: SuccessResponseSchema(z.array(ProfessionalReferralSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -917,7 +917,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Verificação de encaminhamentos pendentes concluída',
           data: overdueReferrals,
         };
-      } catch (error) {
+      } catch {
         console.error('Error checking overdue referrals:', error);
         return {
           success: false,
@@ -935,7 +935,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       sessionType: z.enum(['planning', 'treatment', 'assessment', 'follow_up', 'emergency']).default('planning'),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -953,7 +953,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Sessão colaborativa criada para tratamento com sucesso',
           data: session,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating collaborative session for treatment:', error);
         return {
           success: false,
@@ -974,7 +974,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       }),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -988,7 +988,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Análises de coordenação obtidas com sucesso',
           data: analytics,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting coordination analytics:', error);
         return {
           success: false,
@@ -1008,7 +1008,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
       }),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1025,7 +1025,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
           message: 'Métricas de colaboração profissional obtidas com sucesso',
           data: metrics,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting professional collaboration metrics:', error);
         return {
           success: false,

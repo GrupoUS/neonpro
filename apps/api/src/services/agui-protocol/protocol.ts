@@ -82,7 +82,7 @@ export class AguiProtocol extends EventEmitter {
       this.sendHello(connection);
 
       this.emit('connection', connection);
-    } catch (_error) {
+    } catch {
       void _error;
       this.emit('connectionError', { connectionId, error });
       ws.close(1011, 'Internal server error');
@@ -141,7 +141,7 @@ export class AguiProtocol extends EventEmitter {
       }
 
       this.emit('message', { connection, message });
-    } catch (_error) {
+    } catch {
       void _error;
       this.emit('messageError', { connectionId, error, data });
       this.sendError(
@@ -170,7 +170,7 @@ export class AguiProtocol extends EventEmitter {
       }
 
       return message as AguiMessage;
-    } catch (_error) {
+    } catch {
       void _error;
       return null;
     }
@@ -267,7 +267,7 @@ export class AguiProtocol extends EventEmitter {
       });
 
       this.emit('authenticated', { connection, _userId: connection.userId });
-    } catch (_error) {
+    } catch {
       void _error;
       this.sendError(
         connection.ws,
@@ -506,7 +506,7 @@ export class AguiProtocol extends EventEmitter {
   private sendMessage(ws: WebSocket, message: AguiMessage): void {
     try {
       ws.send(JSON.stringify(message));
-    } catch (_error) {
+    } catch {
       void _error;
       this.emit('sendError', { error, message });
     }
@@ -556,7 +556,7 @@ export class AguiProtocol extends EventEmitter {
       }
 
       return { success: false, error: 'Unsupported authentication type' };
-    } catch (_error) {
+    } catch {
       void _error;
       return { success: false, error: 'Invalid authentication token' };
     }

@@ -198,7 +198,7 @@ export class AGUIAppointmentProtocol {
       for (const handler of handlers) {
         try {
           await handler(message);
-        } catch (error) {
+        } catch {
           console.error(`Error in handler for ${message.type}:`, error);
         }
       }
@@ -206,7 +206,7 @@ export class AGUIAppointmentProtocol {
       // Log for compliance and debugging
       await this.logMessage(message);
 
-    } catch (error) {
+    } catch {
       console.error('Error sending AG-UI message:', error);
       throw error;
     }

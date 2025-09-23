@@ -303,7 +303,7 @@ export class SecurityHeadersService {
         missingHeaders,
         warnings,
       };
-    } catch (error) {
+    } catch {
       console.error('Error generating security headers:', error);
       return {
         headers: {},
@@ -552,7 +552,7 @@ export class SecurityHeadersService {
       if (this.isHighRiskViolation(violation)) {
         await this.triggerSecurityAlert(violation);
       }
-    } catch (error) {
+    } catch {
       console.error('Error handling CSP violation:', error);
     }
   }
@@ -747,7 +747,7 @@ export class SecurityHeadersService {
         c.header('X-Security-Score', securityResult.securityScore.toString());
 
         await next();
-      } catch (error) {
+      } catch {
         console.error('Error in security headers middleware:', error);
         // Don't block requests on security header errors
         await next();

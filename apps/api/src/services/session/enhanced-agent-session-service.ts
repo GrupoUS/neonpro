@@ -318,7 +318,7 @@ export class EnhancedAgentSessionService {
       }
 
       return sessionData;
-    } catch (error) {
+    } catch {
       console.error('Error creating enhanced session:', error);
       throw new Error(
         `Failed to create enhanced session: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -374,7 +374,7 @@ export class EnhancedAgentSessionService {
       }
 
       return integration;
-    } catch (error) {
+    } catch {
       console.error('Error initializing CopilotKit integration:', error);
       return {
         sessionId,
@@ -415,7 +415,7 @@ export class EnhancedAgentSessionService {
       this.cacheEnhancedSession(session);
 
       return session;
-    } catch (error) {
+    } catch {
       console.error('Error retrieving enhanced session:', error);
       return null;
     }
@@ -471,7 +471,7 @@ export class EnhancedAgentSessionService {
       this.cacheEnhancedSession(session);
 
       return session;
-    } catch (error) {
+    } catch {
       console.error('Error updating aesthetic session data:', error);
       return null;
     }
@@ -552,7 +552,7 @@ export class EnhancedAgentSessionService {
           dataFields: ['message_content'],
         });
       }
-    } catch (error) {
+    } catch {
       console.error('Error recording enhanced activity:', error);
     }
   }
@@ -591,7 +591,7 @@ export class EnhancedAgentSessionService {
       };
 
       return analytics;
-    } catch (error) {
+    } catch {
       console.error('Error getting session analytics:', error);
       return null;
     }
@@ -639,7 +639,7 @@ export class EnhancedAgentSessionService {
       this.sessionCache.delete(sessionId);
 
       return true;
-    } catch (error) {
+    } catch {
       console.error('Error expiring enhanced session:', error);
       return false;
     }
@@ -712,7 +712,7 @@ export class EnhancedAgentSessionService {
         riskFactors,
         recommendations,
       };
-    } catch (error) {
+    } catch {
       console.error('Error assessing session risk:', error);
       return { riskScore: 0, riskFactors: [], recommendations: [] };
     }
@@ -842,7 +842,7 @@ export class EnhancedAgentSessionService {
         analytics_data: analytics,
         archived_at: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       console.error('Error archiving session analytics:', error);
     }
   }
@@ -876,7 +876,7 @@ export class EnhancedAgentSessionService {
     this.cleanupTimer = setInterval(async () => {
       try {
         await this.cleanupExpiredEnhancedSessions();
-      } catch (error) {
+      } catch {
         console.error('Error in enhanced session cleanup:', error);
       }
     }, this.config.cleanupIntervalMs);
@@ -912,7 +912,7 @@ export class EnhancedAgentSessionService {
       }
 
       return cleanupCount;
-    } catch (error) {
+    } catch {
       console.error('Error cleaning up expired enhanced sessions:', error);
       return 0;
     }
@@ -934,7 +934,7 @@ export class EnhancedAgentSessionService {
     // Final cleanup
     try {
       await this.cleanupExpiredEnhancedSessions();
-    } catch (error) {
+    } catch {
       console.error('Error in final enhanced cleanup:', error);
     }
 

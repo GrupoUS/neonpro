@@ -108,10 +108,25 @@ export interface ProfessionalCertification {
 
 export interface CertificationValidation {
   isValid: boolean;
-  missingCertifications: string[];
-  experienceLevel: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-  warnings: string[];
-  recommendations: string[];
+  professionalId: string;
+  professional: {
+    id: string
+    name: string
+    council: string
+    councilNumber: string
+    specialty: string
+  }
+  procedures: Array<{
+    id: string
+    name: string
+    certified: boolean
+    requirements: string[]
+  }>
+  complianceStatus: 'compliant' | 'non-compliant' | 'partial'
+  recommendations: string[]
+  warnings: string[]
+  missingCertifications?: string[];
+  experienceLevel?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
 }
 
 // =====================================
@@ -237,11 +252,23 @@ export interface AestheticSchedulingResponse {
 }
 
 export interface RecoveryPlan {
+  patientId?: string;
   recoveryPeriodDays: number;
   followUpAppointments: FollowUpAppointment[];
   activityRestrictions: string[];
   careInstructions: string[];
   emergencyContacts: string[];
+}
+
+export interface RecoveryPhase {
+  id: string;
+  name: string;
+  description: string;
+  duration: number; // in days
+  instructions: string[];
+  restrictions: string[];
+  warnings: string[];
+  followUpRequired: boolean;
 }
 
 export interface FollowUpAppointment {

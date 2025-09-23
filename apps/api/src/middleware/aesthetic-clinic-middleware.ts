@@ -225,7 +225,7 @@ export class AestheticClinicMiddleware {
       });
 
       await next();
-    } catch (error) {
+    } catch {
       await this.handleSecurityError(c, error, requestPath, requestMethod);
     }
   }
@@ -242,7 +242,7 @@ export class AestheticClinicMiddleware {
       await this.validateHealthcareData(c);
       await this.enforceDataRetention(c);
       await this.checkDataAnonymization(c);
-    } catch (error) {
+    } catch {
       await this.handleHealthcareError(c, error);
     }
   }
@@ -278,7 +278,7 @@ export class AestheticClinicMiddleware {
       });
 
       await next();
-    } catch (error) {
+    } catch {
       await this.handleImageUploadError(c, error);
     }
   }
@@ -314,7 +314,7 @@ export class AestheticClinicMiddleware {
       });
 
       await next();
-    } catch (error) {
+    } catch {
       await this.handleFinancialError(c, error);
     }
   }
@@ -355,7 +355,7 @@ export class AestheticClinicMiddleware {
       });
 
       await next();
-    } catch (error) {
+    } catch {
       await this.handlePatientDataError(c, error);
     }
   }
@@ -384,7 +384,7 @@ export class AestheticClinicMiddleware {
         userAgent: c.req.header('user-agent') || 'unknown',
         sensitivity: this.determineRequestSensitivity(requestPath, requestMethod),
       });
-    } catch (error) {
+    } catch {
       // Log failed request
       await this.logAuditEvent({
         userId: c.get('user')?.id || 'anonymous',

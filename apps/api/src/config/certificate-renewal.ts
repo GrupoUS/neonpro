@@ -52,7 +52,7 @@ function parseCertificate(certPath: string): CertificateInfo | null {
       daysUntilExpiry,
       serialNumber: cert.serialNumber,
     };
-  } catch (error) {
+  } catch {
     logger.error('Failed to parse certificate', { error: error.message });
     return null;
   }
@@ -113,7 +113,7 @@ async function triggerCertificateRenewal(config: RenewalConfig): Promise<void> {
       logger.warn('Manual certificate renewal required');
       await notifyManualRenewalRequired(config);
     }
-  } catch (error) {
+  } catch {
     logger.error('Certificate renewal failed', { error: error.message });
     await notifyRenewalFailure(error as Error);
   }
@@ -286,7 +286,7 @@ export function getCertificateHealth(): {
       daysUntilExpiry: certInfo.daysUntilExpiry,
       expiryDate: certInfo.expiryDate,
     };
-  } catch (error) {
+  } catch {
     return {
       status: 'critical',
       daysUntilExpiry: 0,

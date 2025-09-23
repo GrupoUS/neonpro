@@ -521,7 +521,7 @@ app.get(
       setCache(cacheKey, finalResponse);
 
       return c.json(finalResponse);
-    } catch (error) {
+    } catch {
       console.error('AI Insights endpoint error:', error);
 
       // Log error for audit
@@ -694,7 +694,7 @@ app.post(
           },
         },
       });
-    } catch (error) {
+    } catch {
       console.error('No-show prediction endpoint error:', error);
 
       return c.json(

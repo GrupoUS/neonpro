@@ -191,7 +191,7 @@ financialCopilot.post('/chat/completions', async c => {
       );
       return c.json(response);
     }
-  } catch (error) {
+  } catch {
     logger.error('Financial CopilotKit error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -277,7 +277,7 @@ financialCopilot.post('/actions', async c => {
       result,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     logger.error('Financial action execution error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -357,7 +357,7 @@ financialCopilot.post('/analytics', async c => {
       },
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch {
     logger.error('Financial analytics error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -427,7 +427,7 @@ async function processFinancialQuery(
       default:
         return await financialAgent.processFinancialMessage(query, intent.type);
     }
-  } catch (error) {
+  } catch {
     logger.error('Financial query processing failed', {
       requestId,
       intent,
@@ -555,7 +555,7 @@ function formatFinancialCopilotResponse(
 
   // Add structured financial data formatting
   if (agentResponse.data) {
-    const data = agentResponse.data;
+    const _data = agentResponse.data;
 
     if (data.type === 'financial_summary') {
       content += `\n\n💰 **${data.title}**`;

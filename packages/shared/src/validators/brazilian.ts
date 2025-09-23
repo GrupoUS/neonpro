@@ -176,7 +176,7 @@ export function validateCNPJ(cnpj: string): boolean {
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
   for (let i = 0; i < 12; i++) {
-    sum += parseInt(cleanCNPJ.charAt(i)) * weights1[i];
+    sum += parseInt(cleanCNPJ.charAt(i) || '0') * weights1[i];
   }
 
   let remainder = sum % 11;
@@ -189,7 +189,7 @@ export function validateCNPJ(cnpj: string): boolean {
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
 
   for (let i = 0; i < 13; i++) {
-    sum += parseInt(cleanCNPJ.charAt(i)) * weights2[i];
+    sum += parseInt(cleanCNPJ.charAt(i) || '0') * weights2[i];
   }
 
   remainder = sum % 11;
@@ -517,7 +517,7 @@ export function createValidationSchema(fields: Record<string, any>): {
             }
             break;
           case "cnpj":
-            if (!validateCNPJ(value)) {
+            if (typeof value === "string" && !validateCNPJ(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -526,7 +526,7 @@ export function createValidationSchema(fields: Record<string, any>): {
             }
             break;
           case "phone":
-            if (!validateBrazilianPhone(value)) {
+            if (typeof value === "string" && !validateBrazilianPhone(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -535,7 +535,7 @@ export function createValidationSchema(fields: Record<string, any>): {
             }
             break;
           case "cep":
-            if (!validateCEP(value)) {
+            if (typeof value === "string" && !validateCEP(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -544,7 +544,7 @@ export function createValidationSchema(fields: Record<string, any>): {
             }
             break;
           case "email":
-            if (!validateEmail(value)) {
+            if (typeof value === "string" && !validateEmail(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -553,7 +553,7 @@ export function createValidationSchema(fields: Record<string, any>): {
             }
             break;
           case "crm":
-            if (!validateCRM(value, data.crm_state)) {
+            if (typeof value === "string" && typeof data.crm_state === "string" && !validateCRM(value, data.crm_state)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -562,7 +562,7 @@ export function createValidationSchema(fields: Record<string, any>): {
             }
             break;
           case "crmv":
-            if (!validateCRMV(value, data.crmv_state)) {
+            if (typeof value === "string" && typeof data.crmv_state === "string" && !validateCRMV(value, data.crmv_state)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -571,7 +571,7 @@ export function createValidationSchema(fields: Record<string, any>): {
             }
             break;
           case "cns":
-            if (!validateCNS(value)) {
+            if (typeof value === "string" && !validateCNS(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -580,7 +580,7 @@ export function createValidationSchema(fields: Record<string, any>): {
             }
             break;
           case "anvisa_code":
-            if (!validateANVISACode(value)) {
+            if (typeof value === "string" && !validateANVISACode(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -694,7 +694,7 @@ function validateCNSType1(cns: string): boolean {
   let sum = 0;
 
   for (let i = 0; i < 15; i++) {
-    sum += parseInt(cns[i]) * weights[i];
+    sum += parseInt(cns[i] || '0') * weights[i];
   }
 
   const remainder = sum % 11;
@@ -707,7 +707,7 @@ function validateCNSType2(cns: string): boolean {
   let sum = 0;
 
   for (let i = 0; i < 15; i++) {
-    sum += parseInt(cns[i]) * weights[i];
+    sum += parseInt(cns[i] || '0') * weights[i];
   }
 
   return sum % 11 === 0;

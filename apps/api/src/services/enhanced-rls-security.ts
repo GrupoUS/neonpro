@@ -161,7 +161,7 @@ export class EnhancedRLSSecurityService {
       });
 
       return finalDecision;
-    } catch (error) {
+    } catch {
       console.error('Enhanced RLS security evaluation failed:', error);
 
       // Fail safe for healthcare systems - log the security failure
@@ -321,7 +321,7 @@ export class EnhancedRLSSecurityService {
         securityScore: Math.max(0, securityScore),
         anomalies,
       };
-    } catch (error) {
+    } catch {
       console.error('Access pattern analysis failed:', error);
       return {
         securityScore: 50,
@@ -380,7 +380,7 @@ export class EnhancedRLSSecurityService {
         reason: result.reason || 'RLS policy evaluation completed',
         requirements,
       };
-    } catch (error) {
+    } catch {
       console.error('Enhanced RLS evaluation failed:', error);
       return {
         granted: false,
@@ -433,7 +433,7 @@ export class EnhancedRLSSecurityService {
         scoreModifier: Math.max(-50, scoreModifier),
         issues,
       };
-    } catch (error) {
+    } catch {
       console.error('Security headers validation failed:', error);
       return {
         scoreModifier: -20,
@@ -508,7 +508,7 @@ export class EnhancedRLSSecurityService {
           actionTaken: 'Emergency access granted with full audit logging',
         },
       };
-    } catch (error) {
+    } catch {
       console.error('Emergency access validation error:', error);
       return {
         overrideGranted: false,
@@ -577,7 +577,7 @@ export class EnhancedRLSSecurityService {
       if (auditLog.threatLevel > 70 || !auditLog.accessGranted) {
         await this.triggerSecurityAlert(auditLog);
       }
-    } catch (error) {
+    } catch {
       console.error('Failed to log security event:', error);
     }
   }
@@ -840,7 +840,7 @@ export class EnhancedRLSSecurityService {
           lastAccess: auditData?.[0]?.timestamp,
         },
       };
-    } catch (error) {
+    } catch {
       console.error('Failed to get user security summary:', error);
       return {
         securityScore: 50,
@@ -898,7 +898,7 @@ export class EnhancedRLSSecurityService {
         threats: auditData?.filter(log => log.threat_level >= threatThreshold) || [],
         trends: this.analyzeSecurityTrends(auditData || []),
       };
-    } catch (error) {
+    } catch {
       console.error('Failed to generate security report:', error);
       return { error: 'Failed to generate security report' };
     }
@@ -922,7 +922,7 @@ export class EnhancedRLSSecurityService {
     });
 
     Object.keys(hourlyData).forEach(hour => {
-      const data = hourlyData[parseInt(hour)];
+      const _data = hourlyData[parseInt(hour)];
       data.avgScore = data.avgScore / data.total;
     });
 

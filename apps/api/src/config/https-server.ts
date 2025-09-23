@@ -177,7 +177,7 @@ export class HTTPSServerManager {
         validation: validation,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       this.logger.logError('tls_initialization_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         config: {
@@ -252,7 +252,7 @@ export class HTTPSServerManager {
       );
 
       return this.httpsServer;
-    } catch (error) {
+    } catch {
       this.logger.logError('https_server_creation_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         port: this.config.port,
@@ -507,7 +507,7 @@ export class HTTPSServerManager {
       try {
         await this.stop();
         process.exit(0);
-      } catch (error) {
+      } catch {
         this.logger.logError('graceful_shutdown_failed', {
           error: error instanceof Error ? error.message : 'Unknown error',
           signal,

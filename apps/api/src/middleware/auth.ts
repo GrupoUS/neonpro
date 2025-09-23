@@ -99,7 +99,7 @@ export function auth() {
       });
 
       await next();
-    } catch (error) {
+    } catch {
       if (error instanceof HTTPException) {
         throw error;
       }
@@ -136,7 +136,7 @@ export function optionalAuth() {
       }
 
       await next();
-    } catch (error) {
+    } catch {
       // Silent fail for optional auth
       logger.debug('Optional auth failed', {
         error: error instanceof Error ? error.message : String(error),

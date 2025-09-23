@@ -200,7 +200,7 @@ app.use('*', async (c, next) => {
       duration,
       requestId,
     });
-  } catch (error) {
+  } catch {
     const duration = Date.now() - startTime;
 
     // Capture error with context
@@ -526,7 +526,7 @@ if (process.env.NODE_ENV !== 'production') {
     // Test error tracking
     try {
       throw new Error('This is a test error for error tracking');
-    } catch (error) {
+    } catch {
       errorTracker.captureException(error as Error, {
         requestId,
         endpoint: 'test',

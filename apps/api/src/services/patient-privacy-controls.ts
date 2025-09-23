@@ -176,7 +176,7 @@ export class PatientPrivacyControlsService {
         lastUpdated: new Date(),
         quickActions,
       };
-    } catch (error) {
+    } catch {
       console.error('Error getting privacy dashboard summary:', error);
       if (error instanceof Error) {
         throw new Error(
@@ -213,7 +213,7 @@ export class PatientPrivacyControlsService {
         dataCategories: consent.granularity.dataCategories,
         lastAccessed: this.getLastAccessDate(consent.id),
       }));
-    } catch (error) {
+    } catch {
       console.error('Error getting patient consents:', error);
       if (error instanceof Error) {
         throw new Error(`Failed to get patient consents: ${error.message}`);
@@ -287,7 +287,7 @@ export class PatientPrivacyControlsService {
       });
 
       return data;
-    } catch (error) {
+    } catch {
       console.error('Error submitting data access _request:', error);
       if (error instanceof Error) {
         throw new Error(
@@ -388,7 +388,7 @@ export class PatientPrivacyControlsService {
           estimatedSize: exportResult.size,
           processingTime,
         };
-      } catch (error) {
+      } catch {
         // Mark request as failed
         await this.supabase
           .from('data_access_requests')
@@ -405,7 +405,7 @@ export class PatientPrivacyControlsService {
           error: error instanceof Error ? error.message : 'Processing failed',
         };
       }
-    } catch (error) {
+    } catch {
       console.error('Error in processDataAccessRequest:', error);
       if (error instanceof Error) {
         throw new Error(
@@ -475,7 +475,7 @@ export class PatientPrivacyControlsService {
       );
 
       return data;
-    } catch (error) {
+    } catch {
       console.error('Error submitting data subject _request:', error);
       if (error instanceof Error) {
         throw new Error(
@@ -541,7 +541,7 @@ export class PatientPrivacyControlsService {
       });
 
       return updatedPreferences;
-    } catch (error) {
+    } catch {
       console.error('Error updating privacy preferences:', error);
       if (error instanceof Error) {
         throw new Error(
@@ -568,7 +568,7 @@ export class PatientPrivacyControlsService {
       }
 
       return data || [];
-    } catch (error) {
+    } catch {
       console.error('Error getting privacy preferences:', error);
       if (error instanceof Error) {
         throw new Error(`Failed to get privacy preferences: ${error.message}`);
@@ -629,7 +629,7 @@ export class PatientPrivacyControlsService {
         ipAddress: entry.ipAddress,
         userAgent: entry.userAgent,
       }));
-    } catch (error) {
+    } catch {
       console.error('Error getting privacy audit trail:', error);
       if (error instanceof Error) {
         throw new Error(`Failed to get privacy audit trail: ${error.message}`);
@@ -1055,7 +1055,7 @@ export class PatientPrivacyControlsService {
       };
 
       await this.supabase.from('privacy_audit_trail').insert(auditEntry);
-    } catch (error) {
+    } catch {
       console.error('Error logging privacy activity:', error);
     }
   }

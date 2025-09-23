@@ -252,7 +252,7 @@ export class ResponseCacheService {
       this.stats.totalMisses++;
       this.updateHitRate();
       return null;
-    } catch (error) {
+    } catch {
       console.error('[Cache] Error retrieving cached response:', error);
       this.stats.totalMisses++;
       this.updateHitRate();
@@ -335,7 +335,7 @@ export class ResponseCacheService {
       }
 
       this.stats.cacheSize++;
-    } catch (error) {
+    } catch {
       console.error('[Cache] Error caching response:', error);
     }
   }
@@ -413,7 +413,7 @@ export class ResponseCacheService {
 
       this.stats.evictionCount += invalidatedCount;
       return invalidatedCount;
-    } catch (error) {
+    } catch {
       console.error('[Cache] Error invalidating cache:', error);
       return 0;
     }
@@ -432,7 +432,7 @@ export class ResponseCacheService {
       // Get cache size
       const cacheSize = await this.redis.dbsize();
       this.stats.cacheSize = cacheSize;
-    } catch (error) {
+    } catch {
       console.error('[Cache] Error getting cache stats:', error);
     }
 
@@ -454,7 +454,7 @@ export class ResponseCacheService {
           this.stats.evictionCount++;
         }
       }
-    } catch (error) {
+    } catch {
       console.error('[Cache] Health check failed:', error);
     }
   }

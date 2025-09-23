@@ -160,7 +160,7 @@ export class PredictiveClientAnalyticsService {
       this.predictionsCache.set(message.clientId, prediction);
 
       return { success: true, prediction };
-    } catch (error) {
+    } catch {
       console.error('Error predicting client retention:', error);
       return { success: false, error: error.message };
     }
@@ -228,7 +228,7 @@ export class PredictiveClientAnalyticsService {
       };
 
       return { success: true, analytics };
-    } catch (error) {
+    } catch {
       console.error('Error generating client analytics:', error);
       return { success: false, error: error.message };
     }
@@ -265,7 +265,7 @@ export class PredictiveClientAnalyticsService {
             if (result.success && result.prediction) {
               predictions.push(result.prediction);
             }
-          } catch (error) {
+          } catch {
             errors.push(
               `Erro ao processar cliente ${client.id}: ${error.message}`,
             );
@@ -279,7 +279,7 @@ export class PredictiveClientAnalyticsService {
       const summary = this.generateAnalyticsSummary(predictions);
 
       return { success: true, summary, errors };
-    } catch (error) {
+    } catch {
       console.error('Error generating batch analytics:', error);
       return { success: false, errors: [error.message] };
     }
@@ -320,7 +320,7 @@ export class PredictiveClientAnalyticsService {
         appointments: appointments || [],
         consents: consents || [],
       };
-    } catch (error) {
+    } catch {
       console.error('Error gathering client data:', error);
       return null;
     }
@@ -1203,7 +1203,7 @@ export class PredictiveClientAnalyticsService {
           threshold: this.config.predictionThreshold,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         status: 'unhealthy',
         details: { error: error.message },

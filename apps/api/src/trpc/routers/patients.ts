@@ -271,7 +271,7 @@ export const patientsRouter = router({
           consentStatus: 'active',
           consentProof: consentProof.integrity,
         };
-      } catch (error) {
+      } catch {
         // Log failed attempt
         await ctx.prisma.auditTrail.create({
           data: {
@@ -370,7 +370,7 @@ export const patientsRouter = router({
           consentExpiresAt: consent.expirationDate,
           dataMinimizationApplied: true,
         };
-      } catch (error) {
+      } catch {
         // Log access attempt failure
         await ctx.prisma.auditTrail.create({
           data: {
@@ -484,7 +484,7 @@ export const patientsRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to retrieve patient list',
@@ -549,7 +549,7 @@ export const patientsRouter = router({
           ...updatedPatient,
           updateProof: updateProof.integrity,
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update patient',
@@ -642,7 +642,7 @@ export const patientsRouter = router({
           withdrawalProof: withdrawalProof.integrity,
           message: 'Consent withdrawn and patient data anonymized per LGPD compliance',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to withdraw consent and anonymize data',

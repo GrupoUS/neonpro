@@ -171,7 +171,7 @@ export const complianceManagementRouter = createTRPCRouter({
       regulatoryBody: z.string().optional()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const categories = await complianceService.getComplianceCategories(input.regulatoryBody);
@@ -181,7 +181,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Categorias de compliance obtidas com sucesso",
           data: categories
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar categorias de compliance",
@@ -196,7 +196,7 @@ export const complianceManagementRouter = createTRPCRouter({
       categoryId: z.string().optional()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const requirements = await complianceService.getComplianceRequirements(input.categoryId);
@@ -206,7 +206,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Requisitos de compliance obtidos com sucesso",
           data: requirements
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar requisitos de compliance",
@@ -220,7 +220,7 @@ export const complianceManagementRouter = createTRPCRouter({
   createComplianceAssessment: {
     input: ComplianceAssessmentInputSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const assessment = await complianceService.createComplianceAssessment(input);
@@ -230,7 +230,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Avaliação de compliance criada com sucesso",
           data: assessment
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao criar avaliação de compliance",
@@ -248,7 +248,7 @@ export const complianceManagementRouter = createTRPCRouter({
       pageSize: z.number().min(1).max(100).default(20)
     }),
     output: PaginatedResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const assessments = await complianceService.getComplianceAssessments(input.clinicId, input.status);
@@ -268,7 +268,7 @@ export const complianceManagementRouter = createTRPCRouter({
             totalPages: Math.ceil(assessments.length / input.pageSize)
           }
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar avaliações de compliance",
@@ -281,7 +281,7 @@ export const complianceManagementRouter = createTRPCRouter({
   updateAssessmentStatus: {
     input: UpdateAssessmentStatusSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const assessment = await complianceService.updateAssessmentStatus(
@@ -295,7 +295,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Status da avaliação atualizado com sucesso",
           data: assessment
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao atualizar status da avaliação",
@@ -309,7 +309,7 @@ export const complianceManagementRouter = createTRPCRouter({
   createDataConsent: {
     input: DataConsentInputSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const consent = await complianceService.createDataConsent(input);
@@ -319,7 +319,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Registro de consentimento criado com sucesso",
           data: consent
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao criar registro de consentimento",
@@ -335,7 +335,7 @@ export const complianceManagementRouter = createTRPCRouter({
       clinicId: z.string()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const consents = await complianceService.getClientConsents(input.clientId, input.clinicId);
@@ -345,7 +345,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Consentimentos do cliente obtidos com sucesso",
           data: consents
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar consentimentos do cliente",
@@ -358,7 +358,7 @@ export const complianceManagementRouter = createTRPCRouter({
   withdrawConsent: {
     input: WithdrawConsentSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const consent = await complianceService.withdrawConsent(input.consentId, input.withdrawalReason);
@@ -368,7 +368,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Consentimento revogado com sucesso",
           data: consent
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao revogar consentimento",
@@ -382,7 +382,7 @@ export const complianceManagementRouter = createTRPCRouter({
   createDataSubjectRequest: {
     input: DataSubjectRequestInputSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const request = await complianceService.createDataSubjectRequest(input);
@@ -392,7 +392,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Solicitação de titular criada com sucesso",
           data: request
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao criar solicitação de titular",
@@ -410,7 +410,7 @@ export const complianceManagementRouter = createTRPCRouter({
       pageSize: z.number().min(1).max(100).default(20)
     }),
     output: PaginatedResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const requests = await complianceService.getDataSubjectRequests(input.clinicId, input.status);
@@ -430,7 +430,7 @@ export const complianceManagementRouter = createTRPCRouter({
             totalPages: Math.ceil(requests.length / input.pageSize)
           }
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar solicitações de titulares",
@@ -443,7 +443,7 @@ export const complianceManagementRouter = createTRPCRouter({
   processDataSubjectRequest: {
     input: ProcessDataSubjectRequestSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const request = await complianceService.processDataSubjectRequest(
@@ -458,7 +458,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Solicitação de titular processada com sucesso",
           data: request
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao processar solicitação de titular",
@@ -472,7 +472,7 @@ export const complianceManagementRouter = createTRPCRouter({
   createDataBreachIncident: {
     input: DataBreachInputSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const incident = await complianceService.createDataBreachIncident(input);
@@ -482,7 +482,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Incidente de vazamento de dados criado com sucesso",
           data: incident
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao criar incidente de vazamento",
@@ -499,7 +499,7 @@ export const complianceManagementRouter = createTRPCRouter({
       pageSize: z.number().min(1).max(100).default(20)
     }),
     output: PaginatedResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const incidents = await complianceService.getDataBreachIncidents(input.clinicId);
@@ -519,7 +519,7 @@ export const complianceManagementRouter = createTRPCRouter({
             totalPages: Math.ceil(incidents.length / input.pageSize)
           }
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar incidentes de vazamento",
@@ -535,7 +535,7 @@ export const complianceManagementRouter = createTRPCRouter({
       updates: UpdateDataBreachSchema
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const incident = await complianceService.updateDataBreachIncident(input.incidentId, input.updates);
@@ -545,7 +545,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Incidente de vazamento atualizado com sucesso",
           data: incident
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao atualizar incidente de vazamento",
@@ -559,7 +559,7 @@ export const complianceManagementRouter = createTRPCRouter({
   updateAnvisaCompliance: {
     input: UpdateAnvisaComplianceSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const compliance = await complianceService.updateAnvisaCompliance(input.productId, input);
@@ -569,7 +569,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Compliance ANVISA atualizado com sucesso",
           data: compliance
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao atualizar compliance ANVISA",
@@ -584,7 +584,7 @@ export const complianceManagementRouter = createTRPCRouter({
       clinicId: z.string()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const compliance = await complianceService.getAnvisaComplianceStatus(input.clinicId);
@@ -594,7 +594,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Status ANVISA obtido com sucesso",
           data: compliance
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar status ANVISA",
@@ -608,7 +608,7 @@ export const complianceManagementRouter = createTRPCRouter({
   updateProfessionalLicenseCompliance: {
     input: UpdateLicenseComplianceSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const compliance = await complianceService.updateProfessionalLicenseCompliance(input.professionalId, input);
@@ -618,7 +618,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Compliance de licença profissional atualizado com sucesso",
           data: compliance
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao atualizar compliance de licença",
@@ -633,7 +633,7 @@ export const complianceManagementRouter = createTRPCRouter({
       clinicId: z.string()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const compliance = await complianceService.getProfessionalLicenseCompliance(input.clinicId);
@@ -643,7 +643,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Compliance de licenças profissionais obtido com sucesso",
           data: compliance
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar compliance de licenças",
@@ -657,7 +657,7 @@ export const complianceManagementRouter = createTRPCRouter({
   generateComplianceReport: {
     input: ComplianceReportInputSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const report = await complianceService.generateComplianceReport(input);
@@ -667,7 +667,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Relatório de compliance gerado com sucesso",
           data: report
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao gerar relatório de compliance",
@@ -685,7 +685,7 @@ export const complianceManagementRouter = createTRPCRouter({
       pageSize: z.number().min(1).max(100).default(20)
     }),
     output: PaginatedResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         let query = ctx.supabase
           .from('compliance_reports')
@@ -719,7 +719,7 @@ export const complianceManagementRouter = createTRPCRouter({
             totalPages: Math.ceil((data?.length || 0) / input.pageSize)
           }
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar relatórios de compliance",
@@ -738,7 +738,7 @@ export const complianceManagementRouter = createTRPCRouter({
       pageSize: z.number().min(1).max(100).default(20)
     }),
     output: PaginatedResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const alerts = await complianceService.getComplianceAlerts(input.clinicId, input.unresolvedOnly);
@@ -758,7 +758,7 @@ export const complianceManagementRouter = createTRPCRouter({
             totalPages: Math.ceil(alerts.length / input.pageSize)
           }
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao buscar alertas de compliance",
@@ -771,7 +771,7 @@ export const complianceManagementRouter = createTRPCRouter({
   createComplianceAlert: {
     input: ComplianceAlertInputSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const alert = await complianceService.createComplianceAlert(input);
@@ -781,7 +781,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Alerta de compliance criado com sucesso",
           data: alert
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao criar alerta de compliance",
@@ -794,7 +794,7 @@ export const complianceManagementRouter = createTRPCRouter({
   resolveAlert: {
     input: ResolveAlertSchema,
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         const alert = await complianceService.resolveAlert(input.alertId, input.resolvedBy, input.resolutionNotes);
@@ -804,7 +804,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Alerta de compliance resolvido com sucesso",
           data: alert
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao resolver alerta de compliance",
@@ -820,7 +820,7 @@ export const complianceManagementRouter = createTRPCRouter({
       clinicId: z.string()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         await complianceService.runAutomatedComplianceChecks(input.clinicId);
@@ -829,7 +829,7 @@ export const complianceManagementRouter = createTRPCRouter({
           success: true,
           message: "Verificações automáticas de compliance executadas com sucesso"
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao executar verificações automáticas de compliance",
@@ -845,7 +845,7 @@ export const complianceManagementRouter = createTRPCRouter({
       clinicId: z.string().optional()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         await complianceService.processScheduledDataRetention(input.clinicId);
@@ -854,7 +854,7 @@ export const complianceManagementRouter = createTRPCRouter({
           success: true,
           message: "Processamento de retenção de dados agendado com sucesso"
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao processar retenção de dados",
@@ -870,7 +870,7 @@ export const complianceManagementRouter = createTRPCRouter({
       clinicId: z.string()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         
@@ -926,7 +926,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Dados do dashboard de compliance obtidos com sucesso",
           data: dashboardData
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao obter dados do dashboard de compliance",
@@ -942,7 +942,7 @@ export const complianceManagementRouter = createTRPCRouter({
       clinicId: z.string()
     }),
     output: SuccessResponseSchema,
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const complianceService = new ComplianceManagementService(ctx.supabase);
         
@@ -981,7 +981,7 @@ export const complianceManagementRouter = createTRPCRouter({
           message: "Compliance por órgão regulador obtido com sucesso",
           data: complianceByBody
         };
-      } catch (error) {
+      } catch {
         return {
           success: false,
           message: "Erro ao obter compliance por órgão regulador",

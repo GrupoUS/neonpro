@@ -217,7 +217,7 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
     // Get healthcare professional context from headers
     const healthcareProfessional = c.req.header('X-Healthcare-Professional');
     const healthcareContext = c.req.header('X-Healthcare-Context');
-    const lgpdRequest = c.req.header('X-LGPD-Request');
+    const _lgpdRequest = c.req.header('X-LGPD-Request');
 
     let result;
     let statusCode = 200;
@@ -356,7 +356,7 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
       },
       statusCode,
     );
-  } catch (error) {
+  } catch {
     console.error('Bulk actions endpoint error:', error);
 
     // Handle validation errors

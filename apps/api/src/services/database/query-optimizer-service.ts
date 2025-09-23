@@ -224,7 +224,7 @@ export class QueryOptimizerService {
       this.connectionMetrics.totalQueries++;
 
       return { data: result, metrics };
-    } catch (error) {
+    } catch {
       const executionTime = performance.now() - startTime;
       const metrics: QueryMetrics = {
         queryId,
@@ -329,7 +329,7 @@ export class QueryOptimizerService {
         indexesUsed,
         recommendations,
       };
-    } catch (error) {
+    } catch {
       console.error('[QueryOptimizer] Failed to get query plan:', error);
       return {
         query,
@@ -436,7 +436,7 @@ export class QueryOptimizerService {
         recommendations: plan.recommendations,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       console.error(
         '[QueryOptimizer] Failed to provide optimization recommendations:',
         error,
@@ -687,7 +687,7 @@ export class QueryOptimizerService {
         details: event,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       console.error(
         '[QueryOptimizer] Failed to log optimization event:',
         error,

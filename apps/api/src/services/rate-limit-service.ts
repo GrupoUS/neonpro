@@ -95,7 +95,7 @@ export function evaluateRateLimit(
   // In a real implementation, this would check against a store (Redis, memory, etc.)
   // For now, we'll simulate rate limiting logic
 
-  const windowStart = new Date(currentTime.getTime() - rule.windowMs);
+  const _windowStart = new Date(currentTime.getTime() - rule.windowMs);
 
   // Simulate current usage (in real implementation, this would come from store)
   const currentUsage = Math.floor(Math.random() * rule.maxRequests);

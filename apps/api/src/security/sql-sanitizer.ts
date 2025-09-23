@@ -197,7 +197,7 @@ class SQLSanitizer {
       this.auditSQLOperation(operation, result);
 
       return result;
-    } catch (error) {
+    } catch {
       logger.error('SQL validation failed', error as Error, {
         operation: operation.type,
         table: operation.table,

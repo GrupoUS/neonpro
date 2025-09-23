@@ -181,7 +181,7 @@ export class CircuitBreakerService {
       });
 
       return result;
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       // Record failure
       this.recordFailure(error as Error, Date.now() - startTime);
@@ -583,7 +583,7 @@ export class CircuitBreakerService {
     this.eventCallbacks.forEach(callback => {
       try {
         callback(event);
-      } catch (error) {
+      } catch {
         // Error caught but not used - handled by surrounding logic
         console.error('Error in circuit breaker event callback:', error);
       }

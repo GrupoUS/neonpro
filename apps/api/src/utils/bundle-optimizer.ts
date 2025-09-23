@@ -88,7 +88,7 @@ export async function importHealthcareModule<T = any>(
     );
 
     return module.default || module;
-  } catch (error) {
+  } catch {
     console.error(`Failed to load healthcare module ${modulePath}:`, error);
 
     // Use fallback for non-critical modules
@@ -168,7 +168,7 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
     console.log(
       `Critical healthcare modules preloaded in ${Math.round(loadTime)}ms`,
     );
-  } catch (error) {
+  } catch {
     console.error('Failed to preload critical healthcare modules:', error);
     throw error;
   }

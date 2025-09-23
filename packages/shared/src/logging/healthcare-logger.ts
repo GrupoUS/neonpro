@@ -65,7 +65,7 @@ const healthcareFormat = format.combine(
   format.errors({ stack: true }),
   format((info) => {
     // Redact sensitive data from the message
-    if (info.message) {
+    if (info.message && typeof info.message === 'string') {
       info.message = redactSensitiveData(info.message);
     }
     
@@ -93,7 +93,7 @@ const consoleFormat = format.combine(
   format.printf(({ timestamp, level, message, service, ...meta }) => {
     const serviceTag = service ? `[${service}]` : '';
     const metaStr = Object.keys(meta).length > 0 ? ` ${JSON.stringify(meta)}` : '';
-    return `${timestamp} ${level}: ${serviceTag} ${redactSensitiveData(message)}${metaStr}`;
+    return `${timestamp} ${level}: ${serviceTag} ${redactSensitiveData(String(message || ''))}${metaStr}`;
   })
 );
 
@@ -186,7 +186,7 @@ export function logAuditEvent(
   userId?: string,
   metadata?: Record<string, any>
 ): void {
-  auditLogger.audit('Healthcare audit event', {
+  auditLogger.log('audit', 'Healthcare audit event', {
     action,
     resource,
     userId: userId || 'anonymous',

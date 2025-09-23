@@ -275,7 +275,7 @@ export class ReminderScheduler {
       );
 
       return { processed, sent, failed, skipped };
-    } catch (error) {
+    } catch {
       console.error('Error in processScheduledReminders:', error);
       return { processed, sent, failed, skipped };
     }
@@ -376,7 +376,7 @@ export class ReminderScheduler {
         scheduled: scheduledReminders.length,
         reminders: scheduledReminders,
       };
-    } catch (error) {
+    } catch {
       console.error('Error scheduling reminders for appointment:', error);
       throw error;
     }
@@ -407,7 +407,7 @@ export class ReminderScheduler {
       );
 
       return cancelledCount;
-    } catch (error) {
+    } catch {
       console.error('Error cancelling scheduled reminders:', error);
       throw error;
     }
@@ -429,7 +429,7 @@ export class ReminderScheduler {
       }
 
       return data || [];
-    } catch (error) {
+    } catch {
       console.error('Error getting reminder schedules:', error);
       throw error;
     }
@@ -469,7 +469,7 @@ export class ReminderScheduler {
       }
 
       return data;
-    } catch (error) {
+    } catch {
       console.error('Error upserting reminder schedule:', error);
       throw error;
     }
@@ -491,7 +491,7 @@ export class ReminderScheduler {
       if (error) {
         console.error('Error updating scheduled reminder:', error);
       }
-    } catch (error) {
+    } catch {
       console.error('Error updating scheduled reminder:', error);
     }
   }
@@ -566,7 +566,7 @@ export class ReminderScheduler {
         successRate: Math.round(successRate * 100) / 100,
         averageProcessingTime: Math.round(averageProcessingTime),
       };
-    } catch (error) {
+    } catch {
       console.error('Error getting scheduler statistics:', error);
       throw error;
     }

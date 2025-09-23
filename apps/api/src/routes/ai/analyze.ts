@@ -259,7 +259,7 @@ app.post(
         success: true,
         data: analysisResponse.data,
       });
-    } catch (error) {
+    } catch {
       console.error('AI Analyze endpoint error:', error);
 
       // Log error for audit

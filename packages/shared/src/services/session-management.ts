@@ -15,6 +15,7 @@
  */
 
 import { webcrypto } from "node:crypto";
+import { z } from "zod";
 
 // Ensure crypto is available in both Node.js and browser environments
 const crypto = globalThis.crypto || webcrypto;

@@ -456,7 +456,7 @@ export interface AnalyticsService {
   generateComparativeAnalysis(clinicId: string, comparisonType: string, baselinePeriod: any, comparisonPeriod: any): Promise<ComparativeAnalytics>;
 
   // Data Export
-  createDataExport(export: DataExportInput): Promise<any>;
+  createDataExport(exportData: DataExportInput): Promise<any>;
   getDataExports(clinicId: string): Promise<any[]>;
   downloadExport(id: string): Promise<Blob>;
 
@@ -1847,8 +1847,8 @@ export class AnalyticsService implements AnalyticsService {
   }
 
   // Data Export
-  async createDataExport(export: DataExportInput): Promise<any> {
-    const validatedExport = DataExportInputSchema.parse(export);
+  async createDataExport(exportData: DataExportInput): Promise<any> {
+    const validatedExport = DataExportInputSchema.parse(exportData);
 
     const { data, error } = await this.supabase
       .from('data_export_requests')

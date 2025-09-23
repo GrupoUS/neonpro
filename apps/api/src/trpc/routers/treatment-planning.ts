@@ -13,7 +13,6 @@ import {
   CreateTreatmentDocumentInput,
   CreateTreatmentOutcomeInput
 } from "@neonpro/types";
-import { protectedProcedure } from "~/trpc";
 
 export const treatmentPlanningRouter = createTRPCRouter({
   // Treatment Plan CRUD
@@ -25,7 +24,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const treatmentPlan = await service.createTreatmentPlan({
@@ -38,7 +37,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Plano de tratamento criado com sucesso",
           data: treatmentPlan,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating treatment plan:", error);
         return {
           success: false,
@@ -59,7 +58,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const treatmentPlan = await service.getTreatmentPlanById(input.id);
@@ -76,7 +75,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Plano de tratamento encontrado",
           data: treatmentPlan,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment plan:", error);
         return {
           success: false,
@@ -102,7 +101,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const filters: any = {};
@@ -126,7 +125,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Planos de tratamento encontrados",
           data: treatmentPlans,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment plans:", error);
         return {
           success: false,
@@ -147,7 +146,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const { id, ...updateData } = input;
@@ -158,7 +157,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Plano de tratamento atualizado com sucesso",
           data: treatmentPlan,
         };
-      } catch (error) {
+      } catch {
         console.error("Error updating treatment plan:", error);
         return {
           success: false,
@@ -178,7 +177,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       message: z.string(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const { error } = await ctx.supabase
           .from('treatment_plans')
@@ -193,7 +192,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           success: true,
           message: "Plano de tratamento excluído com sucesso",
         };
-      } catch (error) {
+      } catch {
         console.error("Error deleting treatment plan:", error);
         return {
           success: false,
@@ -213,7 +212,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const session = await service.createTreatmentSession({
@@ -226,7 +225,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Sessão de tratamento criada com sucesso",
           data: session,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating treatment session:", error);
         return {
           success: false,
@@ -247,7 +246,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const sessions = await service.getTreatmentSessionsByPlan(input.treatmentPlanId);
@@ -257,7 +256,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Sessões de tratamento encontradas",
           data: sessions,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment sessions:", error);
         return {
           success: false,
@@ -278,7 +277,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const { id, ...updateData } = input;
@@ -289,7 +288,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Sessão de tratamento atualizada com sucesso",
           data: session,
         };
-      } catch (error) {
+      } catch {
         console.error("Error updating treatment session:", error);
         return {
           success: false,
@@ -309,7 +308,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       message: z.string(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const { error } = await ctx.supabase
           .from('treatment_sessions')
@@ -324,7 +323,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           success: true,
           message: "Sessão de tratamento excluída com sucesso",
         };
-      } catch (error) {
+      } catch {
         console.error("Error deleting treatment session:", error);
         return {
           success: false,
@@ -344,7 +343,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const procedure = await service.createTreatmentProcedure(input);
@@ -354,7 +353,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Procedimento de tratamento criado com sucesso",
           data: procedure,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating treatment procedure:", error);
         return {
           success: false,
@@ -375,7 +374,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const procedures = await service.getTreatmentProceduresByPlan(input.treatmentPlanId);
@@ -385,7 +384,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Procedimentos de tratamento encontrados",
           data: procedures,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment procedures:", error);
         return {
           success: false,
@@ -405,7 +404,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const assessment = await service.createTreatmentAssessment({
@@ -418,7 +417,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Avaliação de tratamento criada com sucesso",
           data: assessment,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating treatment assessment:", error);
         return {
           success: false,
@@ -439,7 +438,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const assessments = await service.getTreatmentAssessmentsByPlan(input.treatmentPlanId);
@@ -449,7 +448,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Avaliações de tratamento encontradas",
           data: assessments,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment assessments:", error);
         return {
           success: false,
@@ -469,7 +468,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const progress = await service.createTreatmentProgress({
@@ -482,7 +481,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Registro de progresso criado com sucesso",
           data: progress,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating treatment progress:", error);
         return {
           success: false,
@@ -503,7 +502,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const progress = await service.getTreatmentProgressByPlan(input.treatmentPlanId);
@@ -513,7 +512,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Registros de progresso encontrados",
           data: progress,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment progress:", error);
         return {
           success: false,
@@ -533,7 +532,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const recommendation = await service.createTreatmentRecommendation(input);
@@ -543,7 +542,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Recomendação de tratamento criada com sucesso",
           data: recommendation,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating treatment recommendation:", error);
         return {
           success: false,
@@ -564,7 +563,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const recommendations = await service.getTreatmentRecommendationsByPlan(input.treatmentPlanId);
@@ -574,7 +573,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Recomendações de tratamento encontradas",
           data: recommendations,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment recommendations:", error);
         return {
           success: false,
@@ -594,7 +593,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       message: z.string(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         await service.acceptTreatmentRecommendation(input.id, ctx.user.id);
@@ -603,7 +602,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           success: true,
           message: "Recomendação aceita com sucesso",
         };
-      } catch (error) {
+      } catch {
         console.error("Error accepting treatment recommendation:", error);
         return {
           success: false,
@@ -624,7 +623,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       message: z.string(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         await service.rejectTreatmentRecommendation(input.id, input.reason);
@@ -633,7 +632,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           success: true,
           message: "Recomendação rejeitada com sucesso",
         };
-      } catch (error) {
+      } catch {
         console.error("Error rejecting treatment recommendation:", error);
         return {
           success: false,
@@ -653,7 +652,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const document = await service.createTreatmentDocument({
@@ -666,7 +665,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Documento de tratamento criado com sucesso",
           data: document,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating treatment document:", error);
         return {
           success: false,
@@ -687,7 +686,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const documents = await service.getTreatmentDocumentsByPlan(input.treatmentPlanId);
@@ -697,7 +696,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Documentos de tratamento encontrados",
           data: documents,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment documents:", error);
         return {
           success: false,
@@ -718,7 +717,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       message: z.string(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const { error } = await ctx.supabase
           .from('treatment_documents')
@@ -739,7 +738,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           success: true,
           message: "Documento assinado com sucesso",
         };
-      } catch (error) {
+      } catch {
         console.error("Error signing treatment document:", error);
         return {
           success: false,
@@ -759,7 +758,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const outcome = await service.createTreatmentOutcome({
@@ -772,7 +771,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Registro de resultado criado com sucesso",
           data: outcome,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating treatment outcome:", error);
         return {
           success: false,
@@ -795,7 +794,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const templates = await service.getAssessmentTemplates(input);
@@ -805,7 +804,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Templates de avaliação encontrados",
           data: templates,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting assessment templates:", error);
         return {
           success: false,
@@ -828,7 +827,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const templates = await service.getDocumentationTemplates(input);
@@ -838,7 +837,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Templates de documentação encontrados",
           data: templates,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting documentation templates:", error);
         return {
           success: false,
@@ -861,7 +860,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const dateRange = input.startDate && input.endDate ? {
@@ -876,7 +875,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Estatísticas de planos de tratamento encontradas",
           data: stats,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment plan stats:", error);
         return {
           success: false,
@@ -898,7 +897,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const dateRange = input.startDate && input.endDate ? {
@@ -913,7 +912,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Estatísticas de sessões de tratamento encontradas",
           data: stats,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment session stats:", error);
         return {
           success: false,
@@ -934,7 +933,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const summary = await service.getTreatmentProgressSummary(input.treatmentPlanId);
@@ -944,7 +943,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Resumo de progresso de tratamento encontrado",
           data: summary,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting treatment progress summary:", error);
         return {
           success: false,
@@ -966,7 +965,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const summary = await service.generateTreatmentPlanSummary(input.treatmentPlanId);
@@ -976,7 +975,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Resumo do plano de tratamento gerado com sucesso",
           data: { summary },
         };
-      } catch (error) {
+      } catch {
         console.error("Error generating treatment plan summary:", error);
         return {
           success: false,
@@ -997,7 +996,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const service = new treatmentPlanningService(ctx.supabase);
         const compliance = await service.checkTreatmentPlanCompliance(input.treatmentPlanId);
@@ -1007,7 +1006,7 @@ export const treatmentPlanningRouter = createTRPCRouter({
           message: "Verificação de conformidade concluída",
           data: compliance,
         };
-      } catch (error) {
+      } catch {
         console.error("Error checking treatment plan compliance:", error);
         return {
           success: false,

@@ -63,7 +63,7 @@ export class ExportLGPDCompliance {
         userId,
         purpose,
       );
-    } catch (error) {
+    } catch {
       console.error('Erro ao verificar consentimento LGPD:', error);
       return false;
     }
@@ -178,7 +178,7 @@ export class ExportLGPDCompliance {
     fields: PatientExportField[],
     recordCount: number,
   ): Promise<void> {
-    const auditLog = this.generateAuditTrail(
+    const _auditLog = this.generateAuditTrail(
       userId,
       exportId,
       recordCount,
@@ -197,7 +197,7 @@ export class ExportLGPDCompliance {
         legalBasis: 'CONSENT',
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch {
       console.error('Erro ao registrar acesso de dados LGPD:', error);
     }
   }

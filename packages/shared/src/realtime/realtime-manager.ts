@@ -124,7 +124,7 @@ export class RealtimeManager {
           }
           break;
         case "DELETE":
-          options.onDelete?.({ old: payload.old as T });
+          options.onDelete?.({ old: _payload.old as T });
           if (options.optimisticUpdates !== false) {
             await this.optimisticDelete(tableName, _payload.old as T);
           }

@@ -176,7 +176,7 @@ export class LGPDComplianceHelper {
         consentRecord: consentRecords[0],
         missingCategories: isValid ? undefined : missingCategories,
       };
-    } catch (error) {
+    } catch {
       console.error('Consent validity check failed:', error);
       return { isValid: false };
     }
@@ -236,7 +236,7 @@ export class LGPDComplianceHelper {
       );
 
       return consentRecord;
-    } catch (error) {
+    } catch {
       console.error('Consent recording failed:', error);
       throw error;
     }
@@ -268,7 +268,7 @@ export class LGPDComplianceHelper {
         action: 'consent_withdrawn',
         reason,
       });
-    } catch (error) {
+    } catch {
       console.error('Consent withdrawal failed:', error);
       throw error;
     }
@@ -339,7 +339,7 @@ export class HealthcareAppointmentHelper {
       }
 
       return Math.min(riskScore, 100); // Cap at 100
-    } catch (error) {
+    } catch {
       console.error('No-show risk calculation failed:', error);
       return 0;
     }
@@ -399,7 +399,7 @@ export class HealthcareAppointmentHelper {
       });
 
       return conflicts;
-    } catch (error) {
+    } catch {
       console.error('Appointment conflict check failed:', error);
       return [];
     }
@@ -457,7 +457,7 @@ export class HealthcareAppointmentHelper {
       // based on professional schedule, breaks, and existing appointments
 
       return availableSlots;
-    } catch (error) {
+    } catch {
       console.error('Available time slots calculation failed:', error);
       return [];
     }

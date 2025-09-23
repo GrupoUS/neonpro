@@ -118,7 +118,7 @@ export class SecurityHeadersMiddleware {
         });
 
         next();
-      } catch (error) {
+      } catch {
         this.logger.logError('security_headers_middleware_error', {
           error: error instanceof Error ? error.message : 'Unknown error',
           url: req.url,

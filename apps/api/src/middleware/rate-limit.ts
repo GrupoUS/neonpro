@@ -199,7 +199,7 @@ export function chatRateLimit() {
       c.header('X-RateLimit-Remaining-Long', remainingLong.toString());
 
       await next();
-    } catch (error) {
+    } catch {
       if (error instanceof HTTPException) {
         throw error;
       }

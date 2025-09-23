@@ -221,7 +221,7 @@ export const realtimeTelemedicineRouter = router({
           priority: input.priority,
           requiresAcknowledgment: input.requiresAcknowledgment,
         };
-      } catch (_error: any) {
+      } catch {
         void _error;
         console.error('❌ Failed to send message:', error);
         throw new TRPCError({
@@ -301,7 +301,7 @@ export const realtimeTelemedicineRouter = router({
           updated: new Date().toISOString(),
           alertsTriggered: quality === 'poor' ? ['poor_connection_quality'] : [],
         };
-      } catch (_error: any) {
+      } catch {
         void _error;
         console.error('❌ Failed to update presence:', error);
         throw new TRPCError({
@@ -364,7 +364,7 @@ export const realtimeTelemedicineRouter = router({
             emergency_protocol_ready: true,
           },
         };
-      } catch (_error: any) {
+      } catch {
         void _error;
         console.error('❌ Failed to monitor quality:', error);
         throw new TRPCError({
@@ -407,7 +407,7 @@ export const realtimeTelemedicineRouter = router({
             emergencyProtocolsActive: true,
           },
         };
-      } catch (_error: any) {
+      } catch {
         void _error;
         console.error('❌ Failed to get session info:', error);
         throw new TRPCError({
@@ -469,7 +469,7 @@ export const realtimeTelemedicineRouter = router({
             dataRetentionCompliant: true,
           },
         };
-      } catch (_error: any) {
+      } catch {
         void _error;
         console.error('❌ Failed to end session:', error);
         throw new TRPCError({
@@ -509,7 +509,7 @@ export const realtimeTelemedicineRouter = router({
           audit_logging: true,
         },
       };
-    } catch (_error: any) {
+    } catch {
         void _error;
       console.error('❌ Realtime service health check failed:', error);
       return {
@@ -572,7 +572,7 @@ export const realtimeTelemedicineRouter = router({
           ],
           estimatedResponseTime: input.severity === 'critical' ? '< 30 seconds' : '< 2 minutes',
         };
-      } catch (_error: any) {
+      } catch {
         void _error;
         console.error('❌ Failed to send emergency alert:', error);
         throw new TRPCError({

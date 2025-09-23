@@ -65,7 +65,7 @@ export function errorTrackingMiddleware() {
   return async (c: any, next: () => Promise<void>) => {
     try {
       await next();
-    } catch (error) {
+    } catch {
       // Log the error
       logger.error('Request error', {
         error: error instanceof Error ? error.message : String(error),

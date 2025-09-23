@@ -198,7 +198,7 @@ export class JWTSecurityValidator {
         _payload: verifyResult.payload,
         securityLevel: 'high',
       };
-    } catch (_error) {
+    } catch {
     void _error;
       return {
         isValid: false,
@@ -230,7 +230,7 @@ export class JWTSecurityValidator {
       for (const part of parts) {
         Buffer.from(part, 'base64');
       }
-    } catch (_error) {
+    } catch {
     void _error;
       return {
         isValid: false,
@@ -251,7 +251,7 @@ export class JWTSecurityValidator {
       const headerPart = token.split('.')[0];
       const header = JSON.parse(Buffer.from(headerPart, 'base64').toString());
       return header;
-    } catch (_error) {
+    } catch {
     void _error;
       return null;
     }
@@ -378,7 +378,7 @@ export class JWTSecurityValidator {
         payload,
         securityLevel: 'high',
       };
-    } catch (_error) {
+    } catch {
     void _error;
       if (error instanceof jwt.JsonWebTokenError) {
         return {

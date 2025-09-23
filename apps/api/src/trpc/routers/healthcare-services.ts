@@ -112,7 +112,7 @@ export const healthcareServicesRouter = router({
           record,
           message: 'Data processing record created successfully',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to create data processing record: ${error.message}`,
@@ -182,7 +182,7 @@ export const healthcareServicesRouter = router({
           withdrawalRecord,
           message: 'Consent withdrawal processed successfully',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to process consent withdrawal: ${error.message}`,
@@ -247,7 +247,7 @@ export const healthcareServicesRouter = router({
             ? `Successfully anonymized ${result.anonymizedRecords} records`
             : 'Anonymization completed with errors',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to execute anonymization: ${error.message}`,
@@ -304,7 +304,7 @@ export const healthcareServicesRouter = router({
           report,
           message: 'Compliance report generated successfully',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to generate compliance report: ${error.message}`,
@@ -386,7 +386,7 @@ export const healthcareServicesRouter = router({
           prediction,
           message: 'No-show risk prediction completed successfully',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to predict no-show risk: ${error.message}`,
@@ -434,7 +434,7 @@ export const healthcareServicesRouter = router({
         report,
         message: 'Model performance report retrieved successfully',
       };
-    } catch (error) {
+    } catch {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to get model performance: ${error.message}`,
@@ -513,7 +513,7 @@ export const healthcareServicesRouter = router({
           session,
           message: 'Telemedicine session created successfully',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to create telemedicine session: ${error.message}`,
@@ -597,7 +597,7 @@ export const healthcareServicesRouter = router({
             ? 'Telemedicine session started successfully'
             : 'Failed to start telemedicine session',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to start telemedicine session: ${error.message}`,
@@ -670,7 +670,7 @@ export const healthcareServicesRouter = router({
             ? 'Quality issues detected - escalation recommended'
             : 'Session quality monitoring completed',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to monitor session quality: ${error.message}`,
@@ -753,7 +753,7 @@ export const healthcareServicesRouter = router({
             ? 'Digital prescription created successfully'
             : 'Failed to create valid digital prescription',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to create digital prescription: ${error.message}`,
@@ -831,7 +831,7 @@ export const healthcareServicesRouter = router({
             ? 'Emergency escalation activated successfully'
             : 'Failed to activate emergency escalation',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to activate emergency escalation: ${error.message}`,
@@ -915,7 +915,7 @@ export const healthcareServicesRouter = router({
             ? 'Telemedicine session ended successfully'
             : 'Failed to end telemedicine session properly',
         };
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to end telemedicine session: ${error.message}`,
@@ -961,7 +961,7 @@ export const healthcareServicesRouter = router({
         summary,
         message: 'Active sessions summary retrieved successfully',
       };
-    } catch (error) {
+    } catch {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to get active sessions summary: ${error.message}`,
@@ -1019,7 +1019,7 @@ export const healthcareServicesRouter = router({
           ? 'Retention periods enforced successfully'
           : 'Retention enforcement completed with some errors',
       };
-    } catch (error) {
+    } catch {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to enforce retention periods: ${error.message}`,
@@ -1124,7 +1124,7 @@ export const healthcareServicesRouter = router({
         dashboard: dashboardData,
         message: 'Compliance dashboard data retrieved successfully',
       };
-    } catch (error) {
+    } catch {
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to get compliance dashboard: ${error.message}`,

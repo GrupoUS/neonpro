@@ -347,7 +347,7 @@ export class WhatsAppReminderService {
         deliveryStatus,
         fallbackUsed,
       };
-    } catch (error) {
+    } catch {
       console.error('WhatsApp reminder service error:', error);
 
       const errorDeliveryStatus: DeliveryStatus = {
@@ -415,7 +415,7 @@ export class WhatsAppReminderService {
       }
 
       return true;
-    } catch (error) {
+    } catch {
       console.error('Error validating LGPD consent:', error);
       return false;
     }
@@ -525,7 +525,7 @@ export class WhatsAppReminderService {
 
       const result = await response.json();
       return { messageId: result.messages[0].id };
-    } catch (error) {
+    } catch {
       console.error('WhatsApp message send error:', error);
       throw error;
     }
@@ -559,7 +559,7 @@ export class WhatsAppReminderService {
 
       const result = await response.json();
       return { messageId: result.id || result.messageId };
-    } catch (error) {
+    } catch {
       console.error('SMS send error:', error);
       throw error;
     }
@@ -618,7 +618,7 @@ export class WhatsAppReminderService {
 
       const result = await response.json();
       return { messageId: result.messageId || 'email-' + Date.now() };
-    } catch (error) {
+    } catch {
       console.error('Email send error:', error);
       throw error;
     }
@@ -647,7 +647,7 @@ export class WhatsAppReminderService {
         sent_at: deliveryStatus.timestamp,
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       console.error('Failed to log delivery attempt:', error);
     }
   }
@@ -684,7 +684,7 @@ export class WhatsAppReminderService {
         user_agent: 'NeonPro-WhatsApp-Service/1.0',
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch {
       console.error('Failed to create audit record:', error);
     }
   }
@@ -727,7 +727,7 @@ export class WhatsAppReminderService {
       }
 
       return { success: true, processed };
-    } catch (error) {
+    } catch {
       console.error('Webhook processing error:', error);
       return { success: false, processed: 0 };
     }
@@ -816,7 +816,7 @@ export class WhatsAppReminderService {
         // Send confirmation message
         await this.sendConfirmationResponse(fromPhone, responseAction);
       }
-    } catch (error) {
+    } catch {
       console.error('Error processing incoming message:', error);
     }
   }
@@ -839,7 +839,7 @@ export class WhatsAppReminderService {
           updated_at: new Date().toISOString(),
         })
         .eq('message_id', messageId);
-    } catch (error) {
+    } catch {
       console.error('Error processing delivery status:', error);
     }
   }
@@ -869,7 +869,7 @@ export class WhatsAppReminderService {
           type: 'text',
           text: { body: message },
         });
-      } catch (error) {
+      } catch {
         console.error('Failed to send confirmation response:', error);
       }
     }
@@ -1013,7 +1013,7 @@ export class WhatsAppReminderService {
         processingTime,
         averageProcessingTimePerReminder,
       };
-    } catch (error) {
+    } catch {
       const processingTime = Date.now() - startTime;
 
       console.error('Bulk reminder processing failed:', error);
@@ -1099,7 +1099,7 @@ export class WhatsAppReminderService {
         channelBreakdown,
         fallbackRate: totalSent > 0 ? (fallbackUsed / totalSent) * 100 : 0,
       };
-    } catch (error) {
+    } catch {
       console.error('Error getting delivery statistics:', error);
       throw error;
     }

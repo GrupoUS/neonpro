@@ -258,7 +258,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return result;
-    } catch (error) {
+    } catch {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -376,7 +376,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return result;
-    } catch (error) {
+    } catch {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -421,7 +421,7 @@ export class HealthcareQueryOptimizer {
                 },
               });
               return { success: true, index: actualIndex };
-            } catch (error) {
+            } catch {
               return {
                 success: false,
                 index: actualIndex,
@@ -453,7 +453,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return results;
-    } catch (error) {
+    } catch {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -583,7 +583,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return { metrics, fromCache: false };
-    } catch (error) {
+    } catch {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -697,7 +697,7 @@ export class ConnectionPoolMonitor {
             metrics.utilization + '%',
           );
         }
-      } catch (error) {
+      } catch {
         console.error('Connection pool monitoring failed:', error);
       }
     }, intervalMs);

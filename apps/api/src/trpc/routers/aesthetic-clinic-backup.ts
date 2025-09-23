@@ -269,7 +269,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic client profile',
@@ -334,7 +334,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get aesthetic client profile',
@@ -418,7 +418,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update aesthetic client profile',
@@ -480,7 +480,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to search aesthetic client profiles',
@@ -554,7 +554,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic treatment',
@@ -611,7 +611,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get aesthetic treatment',
@@ -691,7 +691,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update aesthetic treatment',
@@ -757,7 +757,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get treatment catalog',
@@ -836,7 +836,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create aesthetic session',
@@ -901,7 +901,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get aesthetic session',
@@ -968,7 +968,7 @@ export const aestheticClinicRouter = router({
           data: updatedSession,
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update aesthetic session',
@@ -1032,7 +1032,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list aesthetic sessions',
@@ -1105,7 +1105,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create photo assessment',
@@ -1171,7 +1171,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get photo assessment',
@@ -1238,7 +1238,7 @@ export const aestheticClinicRouter = router({
           data: updatedAssessment,
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update photo assessment',
@@ -1302,7 +1302,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list photo assessments',
@@ -1376,7 +1376,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create treatment plan',
@@ -1441,7 +1441,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get treatment plan',
@@ -1508,7 +1508,7 @@ export const aestheticClinicRouter = router({
           data: updatedPlan,
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update treatment plan',
@@ -1562,7 +1562,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get treatment plans by client',
@@ -1627,7 +1627,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create financial transaction',
@@ -1694,7 +1694,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get financial transaction',
@@ -1763,7 +1763,7 @@ export const aestheticClinicRouter = router({
           data: updatedTransaction,
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update financial transaction',
@@ -1829,7 +1829,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list financial transactions',
@@ -1892,7 +1892,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get client retention metrics',
@@ -1953,7 +1953,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get revenue analytics',
@@ -2008,7 +2008,7 @@ export const aestheticClinicRouter = router({
           },
         };
 
-      } catch (error) {
+      } catch {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get predictive analytics',

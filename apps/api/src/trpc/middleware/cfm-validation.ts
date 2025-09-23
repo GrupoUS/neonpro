@@ -115,7 +115,7 @@ export const cfmValidationMiddleware = middleware(
       });
 
       return next();
-    } catch (error) {
+    } catch {
       logger.error('CFM validation failed', {
         path,
         _userId: ctx.user?.id,
@@ -398,7 +398,7 @@ export async function auditCFMCompliance(
 
     // Store in audit database (implement as needed)
     // await storeAuditRecord(auditData);
-  } catch (error) {
+  } catch {
     logger.error('CFM compliance audit failed', {
       operation,
       _userId: ctx.user?.id,
@@ -452,7 +452,7 @@ export async function generateCFMComplianceReport(
     });
 
     return report;
-  } catch (error) {
+  } catch {
     logger.error('Failed to generate CFM compliance report', {
       startDate,
       endDate,
@@ -516,7 +516,7 @@ export function validateCFMInput(
 ): z.infer<typeof cfmValidationSchema> {
   try {
     return cfmValidationSchema.parse(input);
-  } catch (error) {
+  } catch {
     if (error instanceof z.ZodError) {
       const errorMessages = error.errors.map(
         err => `${err.path.join('.')}: ${err.message}`,

@@ -184,7 +184,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       this.loggingService.info(
         'Enhanced Client Agent service initialized successfully',
       );
-    } catch (error) {
+    } catch {
       this.emit('error', error);
       this.loggingService.error(
         'Failed to initialize Enhanced Client Agent service',
@@ -323,7 +323,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       this.activeSessions.delete(sessionId);
 
       return response;
-    } catch (error) {
+    } catch {
       const _processingTime = Date.now() - startTime;
 
       this.loggingService.error('Client registration failed', {
@@ -408,7 +408,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       });
 
       return response;
-    } catch (error) {
+    } catch {
       this.loggingService.error('Client profile update failed', {
         sessionId,
         clientId: message.clientId,
@@ -475,7 +475,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       };
 
       return response;
-    } catch (error) {
+    } catch {
       this.loggingService.error('Client search failed', {
         userId: context._userId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -538,7 +538,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       };
 
       return response;
-    } catch (error) {
+    } catch {
       this.loggingService.error('Client analytics processing failed', {
         clientId: message.clientId,
         analyticsType: message.analyticsType,
@@ -604,7 +604,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       await this.storePredictionResult(message.clientId, prediction, context);
 
       return response;
-    } catch (error) {
+    } catch {
       this.loggingService.error('Client retention prediction failed', {
         clientId: message.clientId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -678,7 +678,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       };
 
       return response;
-    } catch (error) {
+    } catch {
       this.loggingService.error('Client communication failed', {
         clientId: message.clientId,
         communicationType: message.communicationType,
@@ -748,7 +748,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       };
 
       return response;
-    } catch (error) {
+    } catch {
       this.loggingService.error('Document OCR processing failed', {
         documentId: message.documentId,
         documentType: message.documentType,
@@ -833,7 +833,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       };
 
       return response;
-    } catch (error) {
+    } catch {
       this.loggingService.error('Consent management failed', {
         clientId: message.clientId,
         consentAction: message.consentAction,
@@ -907,7 +907,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       };
 
       return response;
-    } catch (error) {
+    } catch {
       this.loggingService.error('Client validation failed', {
         clientId: message.clientId,
         validationType: message.validationType,
@@ -1464,7 +1464,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         components,
         metrics: this.metrics,
       };
-    } catch (_error) {
+    } catch {
       void _error;
       return {
         status: 'unhealthy',

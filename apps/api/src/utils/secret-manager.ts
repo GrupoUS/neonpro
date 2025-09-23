@@ -82,7 +82,7 @@ class SecretManager {
         provider: this.config.provider,
         secretCount: this.secrets.size,
       });
-    } catch (error) {
+    } catch {
       logger.error('Failed to load secrets', error as Error, {
         provider: this.config.provider,
       });
@@ -221,7 +221,7 @@ class SecretManager {
 
     try {
       return this.decrypt(encryptedValue);
-    } catch (error) {
+    } catch {
       logger.error('Failed to decrypt secret', error as Error, {
         secretName: name,
         accessedBy,

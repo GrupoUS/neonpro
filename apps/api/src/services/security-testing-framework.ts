@@ -365,7 +365,7 @@ export class HealthcareSecurityTestFramework {
       }
 
       return finalResult;
-    } catch (error) {
+    } catch {
       const executionTime = Date.now() - startTime;
 
       const errorResult: SecurityTestResult = {
@@ -447,7 +447,7 @@ export class HealthcareSecurityTestFramework {
           );
         }
       }
-    } catch (error) {
+    } catch {
       issues.push({
         id: 'hsts-test-error',
         type: 'TEST_ERROR',
@@ -511,7 +511,7 @@ export class HealthcareSecurityTestFramework {
           );
         }
       }
-    } catch (error) {
+    } catch {
       issues.push({
         id: 'csp-test-error',
         type: 'TEST_ERROR',
@@ -580,7 +580,7 @@ export class HealthcareSecurityTestFramework {
           owaspId: 'A8-2017',
         });
       }
-    } catch (error) {
+    } catch {
       issues.push({
         id: 'xss-test-error',
         type: 'TEST_ERROR',

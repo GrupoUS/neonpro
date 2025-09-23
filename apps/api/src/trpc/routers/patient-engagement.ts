@@ -85,7 +85,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -102,7 +102,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Preferências de comunicação obtidas com sucesso',
           data: preferences,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting communication preferences:', error);
         return {
           success: false,
@@ -116,7 +116,7 @@ export const patientEngagementRouter = createTRPCRouter({
   updateCommunicationPreferences: {
     input: CommunicationPreferencesInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -130,7 +130,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Preferências de comunicação atualizadas com sucesso',
           data: preferences,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating communication preferences:', error);
         return {
           success: false,
@@ -145,7 +145,7 @@ export const patientEngagementRouter = createTRPCRouter({
   sendCommunication: {
     input: CommunicationHistoryInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -159,7 +159,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Comunicação enviada com sucesso',
           data: communication,
         };
-      } catch (error) {
+      } catch {
         console.error('Error sending communication:', error);
         return {
           success: false,
@@ -177,7 +177,7 @@ export const patientEngagementRouter = createTRPCRouter({
       limit: z.number().min(1).max(100).default(50),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -195,7 +195,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Histórico de comunicação obtido com sucesso',
           data: history,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting communication history:', error);
         return {
           success: false,
@@ -210,7 +210,7 @@ export const patientEngagementRouter = createTRPCRouter({
   createTemplate: {
     input: CommunicationTemplateInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -224,7 +224,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Template criado com sucesso',
           data: template,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating template:', error);
         return {
           success: false,
@@ -244,7 +244,7 @@ export const patientEngagementRouter = createTRPCRouter({
       ]),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -261,7 +261,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Templates obtidos com sucesso',
           data: templates,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting templates:', error);
         return {
           success: false,
@@ -276,7 +276,7 @@ export const patientEngagementRouter = createTRPCRouter({
   updatePatientJourneyStage: {
     input: PatientJourneyStageInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -290,7 +290,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Estágio da jornada do paciente atualizado com sucesso',
           data: journey,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating patient journey stage:', error);
         return {
           success: false,
@@ -307,7 +307,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -324,7 +324,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Jornada do paciente obtida com sucesso',
           data: journey,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting patient journey:', error);
         return {
           success: false,
@@ -339,7 +339,7 @@ export const patientEngagementRouter = createTRPCRouter({
   recordEngagementAction: {
     input: EngagementActionInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -353,7 +353,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Ação de engajamento registrada com sucesso',
           data: action,
         };
-      } catch (error) {
+      } catch {
         console.error('Error recording engagement action:', error);
         return {
           success: false,
@@ -371,7 +371,7 @@ export const patientEngagementRouter = createTRPCRouter({
       limit: z.number().min(1).max(100).default(50),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -389,7 +389,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Ações de engajamento obtidas com sucesso',
           data: actions,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting engagement actions:', error);
         return {
           success: false,
@@ -404,7 +404,7 @@ export const patientEngagementRouter = createTRPCRouter({
   createLoyaltyProgram: {
     input: LoyaltyProgramInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -418,7 +418,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Programa de fidelidade criado com sucesso',
           data: program,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating loyalty program:', error);
         return {
           success: false,
@@ -434,7 +434,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -448,7 +448,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Programas de fidelidade obtidos com sucesso',
           data: programs,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting loyalty programs:', error);
         return {
           success: false,
@@ -465,7 +465,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -482,7 +482,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Saldo de pontos obtido com sucesso',
           data: balance,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting patient points balance:', error);
         return {
           success: false,
@@ -500,7 +500,7 @@ export const patientEngagementRouter = createTRPCRouter({
       pointsToAdd: z.number(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -518,7 +518,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Pontos do paciente atualizados com sucesso',
           data: updatedBalance,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating patient points:', error);
         return {
           success: false,
@@ -533,7 +533,7 @@ export const patientEngagementRouter = createTRPCRouter({
   createSurvey: {
     input: PatientSurveyInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -547,7 +547,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Pesquisa criada com sucesso',
           data: survey,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating survey:', error);
         return {
           success: false,
@@ -563,7 +563,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -577,7 +577,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Pesquisas obtidas com sucesso',
           data: surveys,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting surveys:', error);
         return {
           success: false,
@@ -591,7 +591,7 @@ export const patientEngagementRouter = createTRPCRouter({
   submitSurveyResponse: {
     input: SurveyResponseInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -605,7 +605,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Resposta da pesquisa enviada com sucesso',
           data: response,
         };
-      } catch (error) {
+      } catch {
         console.error('Error submitting survey response:', error);
         return {
           success: false,
@@ -620,7 +620,7 @@ export const patientEngagementRouter = createTRPCRouter({
   createCampaign: {
     input: EngagementCampaignInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -634,7 +634,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Campanha criada com sucesso',
           data: campaign,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating campaign:', error);
         return {
           success: false,
@@ -650,7 +650,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -664,7 +664,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Campanhas obtidas com sucesso',
           data: campaigns,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting campaigns:', error);
         return {
           success: false,
@@ -679,7 +679,7 @@ export const patientEngagementRouter = createTRPCRouter({
   createReengagementTrigger: {
     input: ReengagementTriggerInputSchema,
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -693,7 +693,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Gatilho de reengajamento criado com sucesso',
           data: trigger,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating reengagement trigger:', error);
         return {
           success: false,
@@ -710,7 +710,7 @@ export const patientEngagementRouter = createTRPCRouter({
       status: z.enum(['pending', 'in_progress', 'completed', 'skipped']).default('pending'),
     }),
     output: SuccessResponseSchema(z.array(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -727,7 +727,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Gatilhos de reengajamento obtidos com sucesso',
           data: triggers,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting reengagement triggers:', error);
         return {
           success: false,
@@ -746,7 +746,7 @@ export const patientEngagementRouter = createTRPCRouter({
       outcome: z.any(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -765,7 +765,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Gatilho de reengajamento atualizado com sucesso',
           data: trigger,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating reengagement trigger:', error);
         return {
           success: false,
@@ -786,7 +786,7 @@ export const patientEngagementRouter = createTRPCRouter({
       }),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -803,7 +803,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Análise de engajamento obtida com sucesso',
           data: analytics,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting engagement analytics:', error);
         return {
           success: false,
@@ -820,7 +820,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -837,7 +837,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Relatório de engajamento do paciente obtido com sucesso',
           data: report,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting patient engagement report:', error);
         return {
           success: false,
@@ -854,7 +854,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -868,7 +868,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Lembretes de agendamento processados com sucesso',
           data: result,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing appointment reminders:', error);
         return {
           success: false,
@@ -884,7 +884,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -898,7 +898,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Comunicações de follow-up processadas com sucesso',
           data: result,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing follow up communications:', error);
         return {
           success: false,
@@ -914,7 +914,7 @@ export const patientEngagementRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.any()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -928,7 +928,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Saudações de aniversário processadas com sucesso',
           data: result,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing birthday greetings:', error);
         return {
           success: false,
@@ -949,7 +949,7 @@ export const patientEngagementRouter = createTRPCRouter({
       content: z.string(),
       subject: z.string().optional(),
     })),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const patientEngagementService = new PatientEngagementService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -966,7 +966,7 @@ export const patientEngagementRouter = createTRPCRouter({
           message: 'Template processado com sucesso',
           data: processed,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing template:', error);
         return {
           success: false,

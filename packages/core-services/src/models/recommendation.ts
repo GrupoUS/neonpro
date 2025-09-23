@@ -937,6 +937,6 @@ export class RecommendationModel {
    * Creates RecommendationModel from context
    */
   static fromContext(_context: RecommendationContext): RecommendationModel {
-    return new RecommendationModel(context);
+    return new RecommendationModel(_context);
   }
 }

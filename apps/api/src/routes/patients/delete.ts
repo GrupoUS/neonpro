@@ -77,9 +77,9 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
     const userAgent = c.req.header('User-Agent') || 'unknown';
     const healthcareProfessional = c.req.header('X-Healthcare-Professional');
-    const lgpdRequest = c.req.header('X-LGPD-Request');
-    const adminOverride = c.req.header('X-Admin-Override');
-    const medicalDeviceData = c.req.header('X-Medical-Device-Data');
+    const _lgpdRequest = c.req.header('X-LGPD-Request');
+    const _adminOverride = c.req.header('X-Admin-Override');
+    const _medicalDeviceData = c.req.header('X-Medical-Device-Data');
 
     // Get patient data first
     const patientService = new PatientService();
@@ -339,7 +339,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
       data: deletionResult.data,
       message: 'Paciente removido com sucesso',
     });
-  } catch (error) {
+  } catch {
     console.error('Error deleting patient:', error);
 
     return c.json(

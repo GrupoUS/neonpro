@@ -234,7 +234,7 @@ export class PatientService {
         data: patient,
         message: 'Paciente criado com sucesso',
       };
-    } catch (error) {
+    } catch {
       console.error('Error creating patient:', error);
 
       if (
@@ -299,7 +299,7 @@ export class PatientService {
         success: true,
         data: patient,
       };
-    } catch (error) {
+    } catch {
       console.error('Error getting patient by ID:', error);
 
       if (
@@ -451,7 +451,7 @@ export class PatientService {
           },
         },
       };
-    } catch (error) {
+    } catch {
       console.error('Error listing patients:', error);
 
       if (
@@ -554,7 +554,7 @@ export class PatientService {
         success: true,
         data: result.data?.patients || [],
       };
-    } catch (error) {
+    } catch {
       console.error('Error searching patients:', error);
       return {
         success: false,
@@ -599,7 +599,7 @@ export class PatientService {
         success: true,
         data: patient,
       };
-    } catch (error) {
+    } catch {
       console.error('Error finding patient by CPF:', error);
 
       if (
@@ -703,7 +703,7 @@ export class PatientService {
         data: patient,
         message: 'Paciente atualizado com sucesso',
       };
-    } catch (error) {
+    } catch {
       console.error('Error updating patient:', error);
 
       if (
@@ -765,7 +765,7 @@ export class PatientService {
         success: true,
         message: 'Paciente removido com sucesso',
       };
-    } catch (error) {
+    } catch {
       console.error('Error deleting patient:', error);
 
       if (

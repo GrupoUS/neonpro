@@ -41,7 +41,7 @@ async function startServer() {
         });
       });
     }
-  } catch (_error) {
+  } catch {
     void _error;
     secureLogger.error('Failed to start server', error, {
       component: 'server-startup',
@@ -63,7 +63,7 @@ const gracefulShutdown = async (signal: string) => {
       component: 'server-shutdown',
     });
     process.exit(0);
-  } catch (_error) {
+  } catch {
     void _error;
     secureLogger.error('Error during shutdown', error, {
       component: 'server-shutdown',

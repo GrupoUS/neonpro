@@ -93,7 +93,7 @@ export function authenticationMiddleware() {
       });
 
       await next();
-    } catch (error) {
+    } catch {
       if (error instanceof HTTPException) {
         throw error;
       }
@@ -229,7 +229,7 @@ async function validateUserFromToken(
       clinicId: user.clinic_id,
       name: user.name,
     };
-  } catch (error) {
+  } catch {
     logger.error('User validation from token failed', {
       error: error instanceof Error ? error.message : String(error),
     });
@@ -292,7 +292,7 @@ export function optionalAuth() {
           });
         }
       }
-    } catch (error) {
+    } catch {
       // Silently fail for optional auth
       logger.debug('Optional authentication failed', {
         error: error instanceof Error ? error.message : String(error),

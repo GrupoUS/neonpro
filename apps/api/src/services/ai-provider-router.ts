@@ -182,7 +182,7 @@ export class AIProviderRouterService {
       );
 
       return response;
-    } catch (error) {
+    } catch {
       await this.security_manager.auditRequestError(
         request,
         error as Error,
@@ -646,7 +646,7 @@ export class AIProviderRouterService {
             fallback_used,
           },
         };
-      } catch (error) {
+      } catch {
         last_error = error as Error;
 
         // Update circuit breaker on failure
@@ -896,7 +896,7 @@ export class AIProviderRouterService {
           },
         };
       }
-    } catch (error) {
+    } catch {
       console.warn('Cache lookup failed:', error);
     }
 
@@ -927,7 +927,7 @@ export class AIProviderRouterService {
         ttlMs: this.getCacheTTLForUseCase(request.healthcare_context.use_case),
         compliance: [],
       } as any);
-    } catch (error) {
+    } catch {
       console.warn('Failed to cache response:', error);
     }
   }

@@ -344,7 +344,7 @@ export class DatabaseAuditStorage implements AuditStorage {
       // await db.auditEvents.create(signedEvent);
 
       console.log('[Audit] Event stored:', event.id);
-    } catch (error) {
+    } catch {
       console.error('[Audit] Failed to store event:', error);
       // Don't throw - audit failures shouldn't break application flow
     }
@@ -514,7 +514,7 @@ export class AuditTrailService {
       if (this.config.realTimeLogging) {
         await this.processRealTimeEvent(auditEvent);
       }
-    } catch (error) {
+    } catch {
       console.error('[AuditTrail] Failed to log event:', error);
       // Log audit failure as a separate event
       await this.logAuditFailure(eventType, error);
@@ -997,7 +997,7 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
           },
         );
       }
-    } catch (error) {
+    } catch {
       // Log failed request
       await auditService.logEvent(
         AuditEventType.SYSTEM_CONFIGURATION_CHANGE,

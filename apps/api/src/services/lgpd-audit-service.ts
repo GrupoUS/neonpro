@@ -192,7 +192,7 @@ export class LGPDAuditService {
         operationId: `audit_${auditEntry.id}`,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -254,7 +254,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         requestId,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -313,7 +313,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         auditTrail: formattedEntries,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -387,7 +387,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         breachId,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -453,7 +453,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         report,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,

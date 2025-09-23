@@ -171,17 +171,17 @@ function recordApiMetrics(
     const labels = {
       method: c.req.method,
       status_code: c.res.status.toString(),
-      feature: context["healthcare.feature"] || "unknown",
-      compliance_level: context["healthcare.compliance_level"] || "public",
+      feature: _context["healthcare.feature"] || "unknown",
+      compliance_level: _context["healthcare.compliance_level"] || "public",
       patient_data_involved:
-        context["healthcare.patient_data_involved"]?.toString() || "false",
+        _context["healthcare.patient_data_involved"]?.toString() || "false",
     };
 
     requestDuration.record(duration, labels);
     requestTotal.add(1, labels);
 
     // Healthcare-specific metrics
-    if (context["healthcare.patient_data_involved"]) {
+    if (_context["healthcare.patient_data_involved"]) {
       const patientDataAccess = meter.createCounter(
         "patient_data_access_total",
         {
@@ -189,8 +189,8 @@ function recordApiMetrics(
         },
       );
       patientDataAccess.add(1, {
-        operation_type: context["healthcare.operation_type"] || "read",
-        clinic_id: context["healthcare.clinic_id"] || "unknown",
+        operation_type: _context["healthcare.operation_type"] || "read",
+        clinic_id: _context["healthcare.clinic_id"] || "unknown",
       });
     }
   } catch (error) {
@@ -217,9 +217,9 @@ function recordApiError(
 
     const labels = {
       method: c.req.method,
-      feature: context["healthcare.feature"] || "unknown",
+      feature: _context["healthcare.feature"] || "unknown",
       error_type: error.constructor.name,
-      compliance_level: context["healthcare.compliance_level"] || "public",
+      compliance_level: _context["healthcare.compliance_level"] || "public",
     };
 
     errorTotal.add(1, labels);

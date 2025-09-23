@@ -125,7 +125,7 @@ export class IntelligentClientRegistrationService {
       this.updateEstimatedCompletionTime(flowId);
 
       return { success: true, flowId };
-    } catch (error) {
+    } catch {
       console.error('Error starting registration flow:', error);
       return { success: false, error: error.message };
     }
@@ -190,7 +190,7 @@ export class IntelligentClientRegistrationService {
       this.updateEstimatedCompletionTime(flowId);
 
       return { success: true, flow, errors };
-    } catch (error) {
+    } catch {
       console.error('Error processing registration step:', error);
       errors.push(`Erro no processamento: ${error.message}`);
       return { success: false, errors };
@@ -256,7 +256,7 @@ export class IntelligentClientRegistrationService {
         suggestions,
         processingTime,
       };
-    } catch (error) {
+    } catch {
       console.error('Error processing document:', error);
       return {
         success: false,
@@ -299,7 +299,7 @@ export class IntelligentClientRegistrationService {
       }
 
       return await response.json();
-    } catch (error) {
+    } catch {
       console.error('OCR service call failed:', error);
       throw error;
     }
@@ -726,7 +726,7 @@ export class IntelligentClientRegistrationService {
           estimatedImpact: 'Melhoria na taxa de resposta',
         });
       }
-    } catch (error) {
+    } catch {
       console.error('Error generating AI suggestions:', error);
     }
 
@@ -1008,7 +1008,7 @@ export class IntelligentClientRegistrationService {
         errors.push(...result.errors);
         return { success: false, errors };
       }
-    } catch (error) {
+    } catch {
       console.error('Error completing registration:', error);
       errors.push(`Erro na conclusão do registro: ${error.message}`);
       return { success: false, errors };
@@ -1047,7 +1047,7 @@ export class IntelligentClientRegistrationService {
           aiSuggestionsEnabled: this.config.enableAISuggestions,
         },
       };
-    } catch (error) {
+    } catch {
       return {
         status: 'unhealthy',
         details: { error: error.message },

@@ -74,7 +74,7 @@ export const financialAgentRouter = router({
           created_at: session.createdAt,
           updated_at: session.updatedAt,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating financial agent session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -116,7 +116,7 @@ export const financialAgentRouter = router({
           created_at: session.createdAt,
           updated_at: session.updatedAt,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting financial agent session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -206,7 +206,7 @@ export const financialAgentRouter = router({
           ai_insights: message.metadata?.ai_insights,
           created_at: message.createdAt,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing financial message:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -261,7 +261,7 @@ export const financialAgentRouter = router({
           },
           timestamp: new Date().toISOString(),
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting financial messages:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -307,7 +307,7 @@ export const financialAgentRouter = router({
           tax_breakdown: billing.taxBreakdown,
           discount_breakdown: billing.discountBreakdown,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing billing operation:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -370,7 +370,7 @@ export const financialAgentRouter = router({
           created_at: payment.createdAt,
           processed_at: payment.processedAt,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing payment:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -428,7 +428,7 @@ export const financialAgentRouter = router({
           },
           timestamp: new Date().toISOString(),
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting financial analytics:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -473,7 +473,7 @@ export const financialAgentRouter = router({
           created_at: alert.createdAt,
           status: alert.status as any,
         }));
-      } catch (error) {
+      } catch {
         console.error('Error running fraud detection:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -510,7 +510,7 @@ export const financialAgentRouter = router({
           compliance_certificate: compliance.complianceCertificate,
           completed_at: compliance.completedAt,
         };
-      } catch (error) {
+      } catch {
         console.error('Error processing LGPD request:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -575,7 +575,7 @@ export const financialAgentRouter = router({
             total_pages: totalPages,
           },
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting audit trail:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -631,7 +631,7 @@ export const financialAgentRouter = router({
           },
           timestamp: new Date().toISOString(),
         };
-      } catch (error) {
+      } catch {
         console.error('Error executing financial action:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -662,7 +662,7 @@ export const financialAgentRouter = router({
           success: true,
           event_id: eventId,
         };
-      } catch (error) {
+      } catch {
         console.error('Error emitting financial event:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

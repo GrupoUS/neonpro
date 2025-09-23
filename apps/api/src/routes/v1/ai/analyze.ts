@@ -487,7 +487,7 @@ app.post(
       }
 
       return c.json(v1Response);
-    } catch (error) {
+    } catch {
       console.error('V1 AI Analyze endpoint error:', error);
 
       // Log error for audit

@@ -175,7 +175,7 @@ export class WebSocketOptimizer extends EventEmitter {
     socket.on("message", async (data: any) => {
       try {
         await this.handleMessage(connection, data);
-      } catch (error) {
+      } catch {
         this.metrics.errors.messageErrors++;
         this.emit("messageError", { connection, error });
       }
@@ -253,7 +253,7 @@ export class WebSocketOptimizer extends EventEmitter {
       const duration = performance.now() - startTime;
       this.updateLatencyMetrics(duration);
       
-    } catch (error) {
+    } catch {
       this.metrics.errors.messageErrors++;
       
       this.sendToConnection(connection, {
@@ -469,7 +469,7 @@ export class WebSocketOptimizer extends EventEmitter {
       this.updateThroughputMetrics(messageSize);
 
       return true;
-    } catch (error) {
+    } catch {
       this.metrics.errors.messageErrors++;
       console.error(`[WebSocket] Error sending message to ${connection.id}:`, error);
       return false;

@@ -108,7 +108,7 @@ export const aiRouter = router({
             ConsentPurpose.AI_ANALYSIS,
             'AI chat processing',
           );
-        } catch (error) {
+        } catch {
           // Create audit entry for consent violation
           await lgpdAuditService.recordAudit({
             _userId: ctx.userId,
@@ -384,7 +384,7 @@ export const aiRouter = router({
           message: 'AI chat completion successful',
           timestamp: new Date().toISOString(),
         };
-      } catch (_error: unknown) {
+      } catch {
         // Handle AI service errors
         const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
         const errorCode = (_error as any)?.code;
@@ -861,7 +861,7 @@ export const aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         await ctx.prisma.auditLog.create({
           data: {
             action: 'ai_health_analysis_error',
@@ -933,7 +933,7 @@ export const aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         return {
           success: true,
           data: {
@@ -1097,7 +1097,7 @@ export const aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch {
         throw new HealthcareTRPCError(
           'INTERNAL_SERVER_ERROR',
           'Failed to generate appointment suggestions',

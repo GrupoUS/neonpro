@@ -106,7 +106,7 @@ const getServices = async (): Promise<ServiceInterface> => {
         },
       };
     }
-  } catch (_e) { void _e;
+  } catch { void _e;
     // fallback stub if import fails
     auditService = {
       logActivity: async () => {
@@ -333,7 +333,7 @@ app.get(
       }
 
       return c.json(finalResponse);
-    } catch (error) {
+    } catch {
       console.error('AI Models endpoint error:', error);
 
       // Log error for audit

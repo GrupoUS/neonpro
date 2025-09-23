@@ -345,7 +345,7 @@ export class AestheticCacheService {
           const value = await rule.prefetchFn(key);
           await this.set(key, value, rule.ttl);
           this.stats.prefetchCount++;
-        } catch (error) {
+        } catch {
           console.error(`Failed to warm cache for key ${key}:`, error);
         }
       }
@@ -518,7 +518,7 @@ export class AestheticCacheService {
         try {
           const relatedKeys = await this.generateRelatedKeys(key, value);
           await this.warmCache(relatedKeys);
-        } catch (error) {
+        } catch {
           console.error(`Failed to trigger prefetch for key ${key}:`, error);
         }
       }, 0);
@@ -568,7 +568,7 @@ export class AestheticCacheService {
         (jsonString.length - compressed.length) / jsonString.length : 0;
       
       return { value: compressed, ratio };
-    } catch (error) {
+    } catch {
       return { value, ratio: 0 };
     }
   }
@@ -577,7 +577,7 @@ export class AestheticCacheService {
     try {
       // Mock decompression
       return typeof value === 'string' ? JSON.parse(value) : value;
-    } catch (error) {
+    } catch {
       return value;
     }
   }
@@ -628,7 +628,7 @@ export class AestheticCacheService {
   async healthCheck(): Promise<boolean> {
     try {
       return this.cache.size >= 0 && this.stats !== null;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

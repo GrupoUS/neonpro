@@ -411,7 +411,7 @@ export const analyticsRouter = createTRPCRouter({
   createAnalyticsConfiguration: {
     input: CreateAnalyticsConfigurationInputSchema,
     output: SuccessResponseSchema(AnalyticsConfigurationSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -425,7 +425,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Configuração de analytics criada com sucesso',
           data: configuration,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating analytics configuration:', error);
         return {
           success: false,
@@ -442,7 +442,7 @@ export const analyticsRouter = createTRPCRouter({
       configuration: UpdateAnalyticsConfigurationInputSchema,
     }),
     output: SuccessResponseSchema(AnalyticsConfigurationSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -459,7 +459,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Configuração de analytics atualizada com sucesso',
           data: configuration,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating analytics configuration:', error);
         return {
           success: false,
@@ -475,7 +475,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -489,7 +489,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Configuração de analytics excluída com sucesso',
           data: success,
         };
-      } catch (error) {
+      } catch {
         console.error('Error deleting analytics configuration:', error);
         return {
           success: false,
@@ -505,7 +505,7 @@ export const analyticsRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(AnalyticsConfigurationSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -519,7 +519,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Configurações de analytics recuperadas com sucesso',
           data: configurations,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting analytics configurations:', error);
         return {
           success: false,
@@ -534,7 +534,7 @@ export const analyticsRouter = createTRPCRouter({
   createKPIDefinition: {
     input: CreateKPIDefinitionInputSchema,
     output: SuccessResponseSchema(KPIDefinitionSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -548,7 +548,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'KPI criada com sucesso',
           data: kpi,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating KPI definition:', error);
         return {
           success: false,
@@ -565,7 +565,7 @@ export const analyticsRouter = createTRPCRouter({
       kpi: UpdateKPIDefinitionInputSchema,
     }),
     output: SuccessResponseSchema(KPIDefinitionSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -582,7 +582,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'KPI atualizada com sucesso',
           data: kpi,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating KPI definition:', error);
         return {
           success: false,
@@ -598,7 +598,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -612,7 +612,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'KPI excluída com sucesso',
           data: success,
         };
-      } catch (error) {
+      } catch {
         console.error('Error deleting KPI definition:', error);
         return {
           success: false,
@@ -628,7 +628,7 @@ export const analyticsRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(KPIDefinitionSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -642,7 +642,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'KPIs recuperadas com sucesso',
           data: kpis,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting KPI definitions:', error);
         return {
           success: false,
@@ -656,7 +656,7 @@ export const analyticsRouter = createTRPCRouter({
   calculateKPIValue: {
     input: KpiCalculationInputSchema,
     output: SuccessResponseSchema(z.number()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -675,7 +675,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Valor da KPI calculado com sucesso',
           data: value,
         };
-      } catch (error) {
+      } catch {
         console.error('Error calculating KPI value:', error);
         return {
           success: false,
@@ -690,7 +690,7 @@ export const analyticsRouter = createTRPCRouter({
   createBIDashboard: {
     input: CreateBIDashboardInputSchema,
     output: SuccessResponseSchema(BIDashboardSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -704,7 +704,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Dashboard criado com sucesso',
           data: dashboard,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating BI dashboard:', error);
         return {
           success: false,
@@ -721,7 +721,7 @@ export const analyticsRouter = createTRPCRouter({
       dashboard: UpdateBIDashboardInputSchema,
     }),
     output: SuccessResponseSchema(BIDashboardSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -738,7 +738,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Dashboard atualizado com sucesso',
           data: dashboard,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating BI dashboard:', error);
         return {
           success: false,
@@ -754,7 +754,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -768,7 +768,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Dashboard excluído com sucesso',
           data: success,
         };
-      } catch (error) {
+      } catch {
         console.error('Error deleting BI dashboard:', error);
         return {
           success: false,
@@ -782,7 +782,7 @@ export const analyticsRouter = createTRPCRouter({
   getBIDashboards: {
     input: DashboardQueryInputSchema,
     output: SuccessResponseSchema(z.array(BIDashboardSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -796,7 +796,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Dashboards recuperados com sucesso',
           data: dashboards,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting BI dashboards:', error);
         return {
           success: false,
@@ -812,7 +812,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(BIDashboardSchema.nullable()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -826,7 +826,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Dashboard recuperado com sucesso',
           data: dashboard,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting BI dashboard by ID:', error);
         return {
           success: false,
@@ -841,7 +841,7 @@ export const analyticsRouter = createTRPCRouter({
   createDashboardWidget: {
     input: CreateDashboardWidgetInputSchema,
     output: SuccessResponseSchema(DashboardWidgetSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -855,7 +855,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Widget criado com sucesso',
           data: widget,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating dashboard widget:', error);
         return {
           success: false,
@@ -872,7 +872,7 @@ export const analyticsRouter = createTRPCRouter({
       widget: UpdateDashboardWidgetInputSchema,
     }),
     output: SuccessResponseSchema(DashboardWidgetSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -889,7 +889,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Widget atualizado com sucesso',
           data: widget,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating dashboard widget:', error);
         return {
           success: false,
@@ -905,7 +905,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -919,7 +919,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Widget excluído com sucesso',
           data: success,
         };
-      } catch (error) {
+      } catch {
         console.error('Error deleting dashboard widget:', error);
         return {
           success: false,
@@ -935,7 +935,7 @@ export const analyticsRouter = createTRPCRouter({
       dashboardId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(DashboardWidgetSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -949,7 +949,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Widgets recuperados com sucesso',
           data: widgets,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting dashboard widgets:', error);
         return {
           success: false,
@@ -964,7 +964,7 @@ export const analyticsRouter = createTRPCRouter({
   createScheduledReport: {
     input: CreateScheduledReportInputSchema,
     output: SuccessResponseSchema(ScheduledReportSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -978,7 +978,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Relatório agendado criado com sucesso',
           data: report,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating scheduled report:', error);
         return {
           success: false,
@@ -995,7 +995,7 @@ export const analyticsRouter = createTRPCRouter({
       report: UpdateScheduledReportInputSchema,
     }),
     output: SuccessResponseSchema(ScheduledReportSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1012,7 +1012,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Relatório agendado atualizado com sucesso',
           data: report,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating scheduled report:', error);
         return {
           success: false,
@@ -1028,7 +1028,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1042,7 +1042,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Relatório agendado excluído com sucesso',
           data: success,
         };
-      } catch (error) {
+      } catch {
         console.error('Error deleting scheduled report:', error);
         return {
           success: false,
@@ -1056,7 +1056,7 @@ export const analyticsRouter = createTRPCRouter({
   getScheduledReports: {
     input: ReportQueryInputSchema,
     output: SuccessResponseSchema(z.array(ScheduledReportSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1070,7 +1070,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Relatórios agendados recuperados com sucesso',
           data: reports,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting scheduled reports:', error);
         return {
           success: false,
@@ -1086,7 +1086,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.string()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1101,7 +1101,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Relatório gerado com sucesso',
           data: reportData,
         };
-      } catch (error) {
+      } catch {
         console.error('Error generating report:', error);
         return {
           success: false,
@@ -1116,7 +1116,7 @@ export const analyticsRouter = createTRPCRouter({
   createPredictiveModel: {
     input: CreatePredictiveModelInputSchema,
     output: SuccessResponseSchema(PredictiveModelSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1130,7 +1130,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Modelo preditivo criado com sucesso',
           data: model,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating predictive model:', error);
         return {
           success: false,
@@ -1147,7 +1147,7 @@ export const analyticsRouter = createTRPCRouter({
       model: UpdatePredictiveModelInputSchema,
     }),
     output: SuccessResponseSchema(PredictiveModelSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1164,7 +1164,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Modelo preditivo atualizado com sucesso',
           data: model,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating predictive model:', error);
         return {
           success: false,
@@ -1180,7 +1180,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1194,7 +1194,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Modelo preditivo excluído com sucesso',
           data: success,
         };
-      } catch (error) {
+      } catch {
         console.error('Error deleting predictive model:', error);
         return {
           success: false,
@@ -1208,7 +1208,7 @@ export const analyticsRouter = createTRPCRouter({
   getPredictiveModels: {
     input: PredictiveQueryInputSchema,
     output: SuccessResponseSchema(z.array(PredictiveModelSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1222,7 +1222,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Modelos preditivos recuperados com sucesso',
           data: models,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting predictive models:', error);
         return {
           success: false,
@@ -1238,7 +1238,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(PredictiveModelSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1252,7 +1252,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Modelo treinado com sucesso',
           data: model,
         };
-      } catch (error) {
+      } catch {
         console.error('Error training model:', error);
         return {
           success: false,
@@ -1269,7 +1269,7 @@ export const analyticsRouter = createTRPCRouter({
       inputData: z.record(z.any()),
     }),
     output: SuccessResponseSchema(z.record(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1283,7 +1283,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Predição gerada com sucesso',
           data: prediction,
         };
-      } catch (error) {
+      } catch {
         console.error('Error predicting with model:', error);
         return {
           success: false,
@@ -1298,7 +1298,7 @@ export const analyticsRouter = createTRPCRouter({
   createAnalyticsAlert: {
     input: CreateAnalyticsAlertInputSchema,
     output: SuccessResponseSchema(AnalyticsAlertSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1312,7 +1312,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Alerta de analytics criado com sucesso',
           data: alert,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating analytics alert:', error);
         return {
           success: false,
@@ -1329,7 +1329,7 @@ export const analyticsRouter = createTRPCRouter({
       alert: UpdateAnalyticsAlertInputSchema,
     }),
     output: SuccessResponseSchema(AnalyticsAlertSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1346,7 +1346,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Alerta de analytics atualizado com sucesso',
           data: alert,
         };
-      } catch (error) {
+      } catch {
         console.error('Error updating analytics alert:', error);
         return {
           success: false,
@@ -1362,7 +1362,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1376,7 +1376,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Alerta de analytics excluído com sucesso',
           data: success,
         };
-      } catch (error) {
+      } catch {
         console.error('Error deleting analytics alert:', error);
         return {
           success: false,
@@ -1390,7 +1390,7 @@ export const analyticsRouter = createTRPCRouter({
   getAnalyticsAlerts: {
     input: AlertQueryInputSchema,
     output: SuccessResponseSchema(z.array(AnalyticsAlertSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1404,7 +1404,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Alertas de analytics recuperados com sucesso',
           data: alerts,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting analytics alerts:', error);
         return {
           success: false,
@@ -1420,7 +1420,7 @@ export const analyticsRouter = createTRPCRouter({
       clinicId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.array(AnalyticsAlertSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1434,7 +1434,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Alertas verificados com sucesso',
           data: triggeredAlerts,
         };
-      } catch (error) {
+      } catch {
         console.error('Error checking and triggering alerts:', error);
         return {
           success: false,
@@ -1462,21 +1462,21 @@ export const analyticsRouter = createTRPCRouter({
       sourceSystem: z.string(),
       createdAt: z.string(),
     }))),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
           supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
         });
 
-        const data = await analyticsService.getAnalyticsData(input as AnalyticsQueryInput);
+        const _data = await analyticsService.getAnalyticsData(input as AnalyticsQueryInput);
 
         return {
           success: true,
           message: 'Dados de analytics recuperados com sucesso',
           data: data,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting analytics data:', error);
         return {
           success: false,
@@ -1490,7 +1490,7 @@ export const analyticsRouter = createTRPCRouter({
   getPerformanceMetrics: {
     input: PerformanceMetricsQueryInputSchema,
     output: SuccessResponseSchema(z.array(PerformanceMetricsSchema)),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1504,7 +1504,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Métricas de desempenho recuperadas com sucesso',
           data: metrics,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting performance metrics:', error);
         return {
           success: false,
@@ -1521,7 +1521,7 @@ export const analyticsRouter = createTRPCRouter({
       config: z.record(z.any()),
     }),
     output: SuccessResponseSchema(z.record(z.any())),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1535,7 +1535,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Dados agregados com sucesso',
           data: aggregatedData,
         };
-      } catch (error) {
+      } catch {
         console.error('Error aggregating data:', error);
         return {
           success: false,
@@ -1549,7 +1549,7 @@ export const analyticsRouter = createTRPCRouter({
   generateComparativeAnalysis: {
     input: ComparativeAnalysisInputSchema,
     output: SuccessResponseSchema(ComparativeAnalyticsSchema),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1568,7 +1568,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Análise comparativa gerada com sucesso',
           data: analysis,
         };
-      } catch (error) {
+      } catch {
         console.error('Error generating comparative analysis:', error);
         return {
           success: false,
@@ -1591,7 +1591,7 @@ export const analyticsRouter = createTRPCRouter({
       status: z.string(),
       createdAt: z.string(),
     })),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1605,7 +1605,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Solicitação de exportação criada com sucesso',
           data: exportRequest,
         };
-      } catch (error) {
+      } catch {
         console.error('Error creating data export:', error);
         return {
           success: false,
@@ -1630,7 +1630,7 @@ export const analyticsRouter = createTRPCRouter({
       createdAt: z.string(),
       completedAt: z.string().nullable(),
     }))),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1644,7 +1644,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Exportações recuperadas com sucesso',
           data: exports,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting data exports:', error);
         return {
           success: false,
@@ -1660,7 +1660,7 @@ export const analyticsRouter = createTRPCRouter({
       id: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.string()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1675,7 +1675,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Exportação baixada com sucesso',
           data: exportData,
         };
-      } catch (error) {
+      } catch {
         console.error('Error downloading export:', error);
         return {
           success: false,
@@ -1690,7 +1690,7 @@ export const analyticsRouter = createTRPCRouter({
   trackEvent: {
     input: TrackEventInputSchema,
     output: SuccessResponseSchema(z.boolean()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1710,7 +1710,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Evento rastreado com sucesso',
           data: true,
         };
-      } catch (error) {
+      } catch {
         console.error('Error tracking event:', error);
         return {
           success: false,
@@ -1731,7 +1731,7 @@ export const analyticsRouter = createTRPCRouter({
       newPatients: z.number(),
       noShowRate: z.number(),
     })),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1745,7 +1745,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Métricas em tempo real recuperadas com sucesso',
           data: metrics,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting realtime metrics:', error);
         return {
           success: false,
@@ -1770,7 +1770,7 @@ export const analyticsRouter = createTRPCRouter({
       widgets: z.array(DashboardWidgetSchema),
       widgetData: z.record(z.any()),
     })),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1784,7 +1784,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Dados do dashboard recuperados com sucesso',
           data: dashboardData,
         };
-      } catch (error) {
+      } catch {
         console.error('Error getting dashboard data:', error);
         return {
           success: false,
@@ -1807,7 +1807,7 @@ export const analyticsRouter = createTRPCRouter({
       appointmentDate: z.string().datetime(),
     }),
     output: SuccessResponseSchema(z.number()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1825,7 +1825,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Probabilidade de não comparecimento calculada com sucesso',
           data: probability,
         };
-      } catch (error) {
+      } catch {
         console.error('Error predicting no-show probability:', error);
         return {
           success: false,
@@ -1847,7 +1847,7 @@ export const analyticsRouter = createTRPCRouter({
       confidenceLower: z.number(),
       confidenceUpper: z.number(),
     }))),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1861,7 +1861,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Previsão de receita gerada com sucesso',
           data: forecast,
         };
-      } catch (error) {
+      } catch {
         console.error('Error generating revenue forecast:', error);
         return {
           success: false,
@@ -1883,7 +1883,7 @@ export const analyticsRouter = createTRPCRouter({
       predictedDemand: z.number(),
       confidence: z.number(),
     }))),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1901,7 +1901,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Previsão de demanda de estoque gerada com sucesso',
           data: forecast,
         };
-      } catch (error) {
+      } catch {
         console.error('Error predicting inventory demand:', error);
         return {
           success: false,
@@ -1918,7 +1918,7 @@ export const analyticsRouter = createTRPCRouter({
       patientId: z.string().uuid(),
     }),
     output: SuccessResponseSchema(z.number()),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const analyticsService = new AnalyticsService({
           supabaseUrl: process.env.SUPABASE_URL!,
@@ -1932,7 +1932,7 @@ export const analyticsRouter = createTRPCRouter({
           message: 'Probabilidade de retenção de paciente calculada com sucesso',
           data: retentionProbability,
         };
-      } catch (error) {
+      } catch {
         console.error('Error predicting patient retention:', error);
         return {
           success: false,

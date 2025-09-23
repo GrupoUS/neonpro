@@ -101,7 +101,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -119,7 +119,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Produto criado com sucesso",
           data: product,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating product:", error);
         return {
           success: false,
@@ -138,7 +138,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -154,7 +154,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Produto atualizado com sucesso",
           data: product,
         };
-      } catch (error) {
+      } catch {
         console.error("Error updating product:", error);
         return {
           success: false,
@@ -179,7 +179,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -194,7 +194,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Produtos recuperados com sucesso",
           data: products,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting products:", error);
         return {
           success: false,
@@ -215,7 +215,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -234,7 +234,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Lote de inventário criado com sucesso",
           data: batch,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating inventory batch:", error);
         return {
           success: false,
@@ -256,7 +256,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -271,7 +271,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Lotes de inventário recuperados com sucesso",
           data: batches,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting inventory batches:", error);
         return {
           success: false,
@@ -296,7 +296,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       }).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -311,7 +311,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Verificação de validade do lote concluída",
           data: expiryInfo,
         };
-      } catch (error) {
+      } catch {
         console.error("Error checking batch expiry:", error);
         return {
           success: false,
@@ -336,7 +336,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       message: z.string(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -355,7 +355,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           success: true,
           message: "Nível de estoque atualizado com sucesso",
         };
-      } catch (error) {
+      } catch {
         console.error("Error updating stock level:", error);
         return {
           success: false,
@@ -375,7 +375,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       message: z.string(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -392,7 +392,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           success: true,
           message: "Uso de produto registrado com sucesso",
         };
-      } catch (error) {
+      } catch {
         console.error("Error recording product usage:", error);
         return {
           success: false,
@@ -414,7 +414,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -429,7 +429,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Estatísticas de uso recuperadas com sucesso",
           data: stats,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting product usage stats:", error);
         return {
           success: false,
@@ -454,7 +454,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -469,7 +469,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Alertas de inventário recuperados com sucesso",
           data: alerts,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting inventory alerts:", error);
         return {
           success: false,
@@ -502,7 +502,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Alertas de baixo estoque verificados com sucesso",
           data: alerts,
         };
-      } catch (error) {
+      } catch {
         console.error("Error checking low stock alerts:", error);
         return {
           success: false,
@@ -535,7 +535,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Alertas de validade verificados com sucesso",
           data: alerts,
         };
-      } catch (error) {
+      } catch {
         console.error("Error checking expiry alerts:", error);
         return {
           success: false,
@@ -556,7 +556,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -576,7 +576,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Ordem de compra criada com sucesso",
           data: order,
         };
-      } catch (error) {
+      } catch {
         console.error("Error creating purchase order:", error);
         return {
           success: false,
@@ -600,7 +600,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.array(z.any()).optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -615,7 +615,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Ordens de compra recuperadas com sucesso",
           data: orders,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting purchase orders:", error);
         return {
           success: false,
@@ -639,7 +639,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -654,7 +654,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Resumo de inventário recuperado com sucesso",
           data: summary,
         };
-      } catch (error) {
+      } catch {
         console.error("Error getting inventory summary:", error);
         return {
           success: false,
@@ -678,7 +678,7 @@ export const inventoryManagementRouter = createTRPCRouter({
       data: z.any().optional(),
       error: z.string().optional(),
     }),
-    resolve: async ({ input, ctx }) => {
+    resolve: async ({ input, ctx: _ctx }) => {
       try {
         const inventoryService = new InventoryManagementService({
           clinicId: ctx.clinicId,
@@ -693,7 +693,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Relatório de inventário gerado com sucesso",
           data: report,
         };
-      } catch (error) {
+      } catch {
         console.error("Error generating inventory report:", error);
         return {
           success: false,
@@ -726,7 +726,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           success: true,
           message: "Verificações diárias de inventário processadas com sucesso",
         };
-      } catch (error) {
+      } catch {
         console.error("Error processing daily inventory checks:", error);
         return {
           success: false,
@@ -759,7 +759,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Quantidades de reposição calculadas com sucesso",
           data: recommendations,
         };
-      } catch (error) {
+      } catch {
         console.error("Error calculating reorder quantities:", error);
         return {
           success: false,

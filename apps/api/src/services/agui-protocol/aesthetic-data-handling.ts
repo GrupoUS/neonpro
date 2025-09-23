@@ -783,7 +783,7 @@ export class AestheticDataHandlingService {
       };
       
       return JSON.stringify(result);
-    } catch (error) {
+    } catch {
       console.error(`Encryption failed for field ${field}:`, error);
       throw new Error(`Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -805,7 +805,7 @@ export class AestheticDataHandlingService {
       decrypted += decipher.final('utf8');
       
       return JSON.parse(decrypted);
-    } catch (error) {
+    } catch {
       console.error('Decryption failed:', error);
       throw new Error(`Decryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -1100,7 +1100,7 @@ export class AestheticDataHandlingService {
           if (encryptionKey && typeof value === 'string') {
             try {
               decryptedData[field] = await this.decryptData(value, encryptionKey);
-            } catch (error) {
+            } catch {
               console.error(`Failed to decrypt field ${field}:`, error);
               decryptedData[field] = value;
             }
@@ -1533,7 +1533,7 @@ export class AestheticDataHandlingService {
       return this.sensitiveFields.size > 0 && 
              this.retentionPolicies.size > 0 && 
              this.encryptionKeys.size > 0;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

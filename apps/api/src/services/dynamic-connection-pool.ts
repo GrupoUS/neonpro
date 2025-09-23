@@ -208,7 +208,7 @@ export class DynamicConnectionPoolService {
       };
 
       return { ...this.metrics };
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Error getting metrics:', error);
       return this.metrics;
@@ -257,7 +257,7 @@ export class DynamicConnectionPoolService {
         success: true,
         executionTime,
       };
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       const executionTime = Date.now() - startTime;
 
@@ -391,7 +391,7 @@ export class DynamicConnectionPoolService {
         actionRequired: false,
         autoResolve: true,
       });
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Scale up failed:', error);
 
@@ -454,7 +454,7 @@ export class DynamicConnectionPoolService {
       console.log(
         `[Dynamic Pool] Scaled down: ${oldSize} -> ${newSize} (${reason})`,
       );
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Scale down failed:', error);
     }
@@ -596,7 +596,7 @@ export class DynamicConnectionPoolService {
         success: true,
         executionTime,
       };
-    } catch (error) {
+    } catch {
       // Log and degrade gracefully
       logger?.warn?.('Dynamic connection pool - degraded path failed', { message: error instanceof Error ? error.message : String(error) });
       const executionTime = Date.now() - originalExecutionTime;
@@ -633,7 +633,7 @@ export class DynamicConnectionPoolService {
         await this.checkScalingConditions();
         await this.cleanupOldEvents();
         await this.resetHourlyCounters();
-      } catch (error) {
+      } catch {
         // Error caught but not used - handled by surrounding logic
         console.error('[Dynamic Pool] Monitoring error:', error);
       }
@@ -660,7 +660,7 @@ export class DynamicConnectionPoolService {
     this.healthCheckTimer = setInterval(async () => {
       try {
         await this.performHealthCheck();
-      } catch (error) {
+      } catch {
         // Error caught but not used - handled by surrounding logic
         console.error('[Dynamic Pool] Health check error:', error);
       }

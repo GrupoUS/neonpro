@@ -511,7 +511,7 @@ export class EnhancedLGPDLifecycleService {
 
           this.processingRecords.set(record.id, record);
           anonymizedRecords++;
-        } catch (error) {
+        } catch {
           const errorMessage = error instanceof Error ? error.message : String(error);
           errors.push(
             `Failed to anonymize record ${record.id}: ${errorMessage}`,
@@ -533,7 +533,7 @@ export class EnhancedLGPDLifecycleService {
         anonymizedRecords,
         errors,
       };
-    } catch (error) {
+    } catch {
       const errorMessage = error instanceof Error ? error.message : String(error);
       errors.push(`Anonymization process failed: ${errorMessage}`);
       return {
@@ -606,14 +606,14 @@ export class EnhancedLGPDLifecycleService {
               results.notificationsSent++;
             }
           }
-        } catch (error) {
+        } catch {
           const errorMessage = error instanceof Error ? error.message : String(error);
           results.errors.push(
             `Failed to process record ${recordId}: ${errorMessage}`,
           );
         }
       }
-    } catch (error) {
+    } catch {
       const errorMessage = error instanceof Error ? error.message : String(error);
       results.errors.push(`Retention enforcement failed: ${errorMessage}`);
     }

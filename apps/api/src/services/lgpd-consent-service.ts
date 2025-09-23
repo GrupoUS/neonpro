@@ -172,7 +172,7 @@ export class LGPDConsentService {
         timestamp: new Date().toISOString(),
         consentId: consentRecord.id,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -253,7 +253,7 @@ export class LGPDConsentService {
         operationId: `withdrawal_${consent.id}`,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,
@@ -360,7 +360,7 @@ export class LGPDConsentService {
         timestamp: new Date().toISOString(),
         report,
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
         recordsProcessed: 0,

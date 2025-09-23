@@ -241,7 +241,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
               controller.enqueue(encoder.encode(chunk));
             }
             controller.close();
-          } catch (error) {
+          } catch {
             controller.error(error);
           }
         },
@@ -307,7 +307,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
           }
 
           controller.close();
-        } catch (error) {
+        } catch {
           console.error('Streaming error:', error);
           controller.error(error);
         }
@@ -344,7 +344,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
         'X-Chat-Started-At': new Date().toISOString(),
       },
     });
-  } catch (error) {
+  } catch {
     const ms = endTimerMs(t0);
     logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
     console.error('AI chat error:', error);
@@ -391,7 +391,7 @@ app.post(
             }),
           });
           if (resp.ok) {
-            const data = await resp.json();
+            const _data = await resp.json();
             webHints = Array.isArray(data?.results)
               ? data.results
                 .map((r: any) => r.title)
@@ -429,7 +429,7 @@ app.post(
           .map(s => s.trim())
           .filter(Boolean)
           .slice(0, 5);
-      } catch (error) {
+      } catch {
         console.error('AI suggestions failed:', error);
         // Fallback suggestions
         suggestions = [
@@ -452,7 +452,7 @@ app.post(
       logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: true });
       c.header('X-Response-Time', `${ms}ms`);
       return c.json({ suggestions });
-    } catch (error) {
+    } catch {
       const ms = endTimerMs(t0);
       logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: false });
       console.error('Search suggestions error:', error);

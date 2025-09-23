@@ -219,7 +219,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       }
 
       return hasAccess;
-    } catch (error) {
+    } catch {
       console.error('Context validation failed:', error);
       return false;
     }
@@ -349,7 +349,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       });
 
       return exportData;
-    } catch (error) {
+    } catch {
       console.error('Patient data export failed:', error);
       throw error;
     }
@@ -423,7 +423,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
           where: { id: patientId },
         });
       });
-    } catch (error) {
+    } catch {
       console.error('Patient data deletion failed:', error);
       throw error;
     }
@@ -481,7 +481,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       });
 
       return patients;
-    } catch (error) {
+    } catch {
       console.error('Find patients in clinic failed:', error);
       throw error;
     }
@@ -546,7 +546,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       });
 
       return appointments;
-    } catch (error) {
+    } catch {
       console.error('Find appointments for professional failed:', error);
       throw error;
     }
@@ -581,7 +581,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       await this.auditTrail.create({
         data: auditData,
       });
-    } catch (error) {
+    } catch {
       console.error('Audit log creation failed:', error);
       // Don't throw here to avoid breaking the main operation
     }
@@ -598,7 +598,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       this.connectionPool.lastHealthCheck = new Date();
 
       return true;
-    } catch (error) {
+    } catch {
       console.error('Database connection validation failed:', error);
       this.connectionPool.healthStatus = 'unhealthy';
       this.connectionPool.lastHealthCheck = new Date();
@@ -648,7 +648,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
           timestamp: new Date().toISOString(),
         },
       };
-    } catch (error) {
+    } catch {
       console.error('Health metrics collection failed:', error);
       throw new Error(`Failed to collect health metrics: ${error}`);
     }
@@ -709,7 +709,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       }
 
       return result;
-    } catch (error) {
+    } catch {
       // Log errors for monitoring
       console.error('Prisma operation failed:', {
         action: params.action,

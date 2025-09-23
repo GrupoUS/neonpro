@@ -287,7 +287,7 @@ app.post(
                   controller.enqueue(encoder.encode(chunk));
                 }
                 controller.close();
-              } catch (error) {
+              } catch {
                 controller.error(error);
               }
             },
@@ -332,7 +332,7 @@ app.post(
             try {
               controller.enqueue(encoder.encode(mockResponse.content));
               controller.close();
-            } catch (error) {
+            } catch {
               controller.error(error);
             }
           },
@@ -373,7 +373,7 @@ app.post(
               controller.enqueue(encoder.encode(chunk));
             }
             controller.close();
-          } catch (error) {
+          } catch {
             console.error('Streaming error:', error);
             controller.error(error);
           }
@@ -429,7 +429,7 @@ app.post(
           'X-Chat-Started-At': new Date().toISOString(),
         },
       });
-    } catch (error) {
+    } catch {
       const ms = endTimerMs(t0);
       logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
 

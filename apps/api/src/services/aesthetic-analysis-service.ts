@@ -277,7 +277,7 @@ export class AestheticAnalysisService {
       });
 
       return result;
-    } catch (error) {
+    } catch {
       logger.error('Aesthetic assessment failed', {
         sessionId,
         error: error.message,

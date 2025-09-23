@@ -22,6 +22,7 @@ import {
   type MultiSessionSchedulingRequest,
   type AestheticProcedure,
   type AestheticSchedulingResponse,
+  type PregnancyStatus,
 } from '@/types/aesthetic-scheduling';
 
 interface MultiSessionSchedulerProps {
@@ -37,7 +38,12 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
   const [preferredProfessionals, setPreferredProfessionals] = useState<string[]>([]);
   const [urgencyLevel, setUrgencyLevel] = useState<'routine' | 'priority' | 'urgent'>('routine');
   const [specialRequirements, setSpecialRequirements] = useState<string[]>([]);
-  const [medicalHistory, setMedicalHistory] = useState({
+  const [medicalHistory, setMedicalHistory] = useState<{
+    pregnancyStatus: PregnancyStatus;
+    contraindications: string[];
+    medications: string[];
+    allergies: string[];
+  }>({
     pregnancyStatus: 'none' as const,
     contraindications: [] as string[],
     medications: [] as string[],
@@ -52,7 +58,7 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
   const { data: proceduresData, isLoading: proceduresLoading } = trpc.aestheticScheduling.getAestheticProcedures.useQuery(
     { limit: 100, offset: 0 },
     {
-      select: (data) => data.procedures,
+      select: (data: { procedures: AestheticProcedure[] }) => data.procedures,
     }
   );
 
@@ -61,12 +67,12 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
 
   // Schedule procedures mutation
   const scheduleMutation = trpc.aestheticScheduling.scheduleProcedures.useMutation({
-    onSuccess: (data) => {
-      queryClient.invalidateQueries(['appointments']);
-      queryClient.invalidateQueries(['patients', patientId]);
+    onSuccess: (data: AestheticSchedulingResponse) => {
+      queryClient.invalidateQueries({ queryKey: ['appointments'] });
+      queryClient.invalidateQueries({ queryKey: ['patients', patientId] });
       onSuccess?.(data);
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       onError?.(error as Error);
     },
   });
@@ -193,9 +199,9 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
   };
 
   const isSubmitting = scheduleMutation.isLoading;
-  const selectedProceduresData = proceduresData?.filter(p => selectedProcedures.includes(p.id)) || [];
-  const totalEstimatedDuration = selectedProceduresData.reduce((total, proc) => total + proc.baseDuration, 0);
-  const totalEstimatedCost = selectedProceduresData.reduce((total, proc) => total + proc.basePrice, 0);
+  const selectedProceduresData = proceduresData?.filter((p: AestheticProcedure) => selectedProcedures.includes(p.id)) || [];
+  const totalEstimatedDuration = selectedProceduresData.reduce((total: number, proc: AestheticProcedure) => total + proc.baseDuration, 0);
+  const totalEstimatedCost = selectedProceduresData.reduce((total: number, proc: AestheticProcedure) => total + proc.basePrice, 0);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -246,7 +252,7 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {proceduresData?.map((procedure) => (
+                    {proceduresData?.map((procedure: AestheticProcedure) => (
                       <Card key={procedure.id} className="cursor-pointer hover:shadow-md transition-shadow">
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between">
@@ -361,7 +367,7 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
                     </div>
                   ) : (
                     <div className="space-y-2">
-                      {professionalsData?.map((professional) => (
+                      {professionalsData?.map((professional: any) => (
                         <div key={professional.id} className="flex items-center gap-2">
                           <input
                             type="checkbox"
@@ -369,10 +375,10 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
                             checked={preferredProfessionals.includes(professional.id)}
                             onChange={(e) => handleProfessionalSelect(professional.id, e.target.checked)}
                             className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                            aria-label={`Selecionar profissional ${professional.fullName}`}
+                            aria-label={`Selecionar profissional ${professional.name}`}
                           />
                           <Label htmlFor={professional.id} className="text-sm">
-                            {professional.fullName} - {professional.specialization}
+                            {professional.name} - {professional.specialty}
                           </Label>
                         </div>
                       ))}
@@ -446,7 +452,7 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
                   <Label htmlFor="pregnancyStatus">Status de Gravidez</Label>
                   <Select 
                     value={medicalHistory.pregnancyStatus} 
-                    onValueChange={(value: 'none' | 'pregnant' | 'breastfeeding' | 'planning') => 
+                    onValueChange={(value: PregnancyStatus) =>
                       setMedicalHistory({...medicalHistory, pregnancyStatus: value})
                     }
                   >
@@ -556,7 +562,7 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
                   <div>
                     <h3 className="font-medium text-gray-900 mb-2">Procedimentos Selecionados</h3>
                     <div className="space-y-2">
-                      {selectedProceduresData.map((procedure) => (
+                      {selectedProceduresData.map((procedure: AestheticProcedure) => (
                         <div key={procedure.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
                           <div>
                             <span className="font-medium">{procedure.name}</span>
@@ -597,11 +603,11 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
                   <div>
                     <h3 className="font-medium text-gray-900 mb-2">Profissionais Preferenciais</h3>
                     <div className="flex flex-wrap gap-2">
-                      {preferredProfessionals.map((professionalId) => {
-                        const professional = professionalsData?.find(p => p.id === professionalId);
+                      {preferredProfessionals.map((professionalId: string) => {
+                        const professional = professionalsData?.find((p: any) => p.id === professionalId);
                         return professional ? (
                           <Badge key={professionalId} variant="secondary">
-                            {professional.fullName}
+                            {professional.name}
                           </Badge>
                         ) : null;
                       })}

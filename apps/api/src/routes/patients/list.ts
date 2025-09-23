@@ -264,7 +264,7 @@ app.openapi(
           cfmValidated: healthcareContext.cfmValidated,
         },
       });
-    } catch (error) {
+    } catch {
       console.error('Error listing patients:', error);
 
       // Enhanced error handling for healthcare compliance errors

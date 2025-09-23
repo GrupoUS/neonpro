@@ -204,7 +204,7 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
       c.set('lgpdCompliant', true);
 
       await next();
-    } catch (error) {
+    } catch {
       if (error instanceof HTTPException) {
         throw error;
       }
@@ -309,7 +309,7 @@ export function consentMiddleware() {
         throw new HTTPException(400, {
           message: 'Invalid action. Use "grant" or "withdraw"',
         });
-      } catch (error) {
+      } catch {
         if (error instanceof HTTPException) {
           throw error;
         }
@@ -352,7 +352,7 @@ export function dataPortabilityMiddleware() {
         });
 
         return c.json(userData);
-      } catch (error) {
+      } catch {
         logger.error('Data portability error', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -395,7 +395,7 @@ export function dataErasureMiddleware() {
           userId,
           processedAt: new Date().toISOString(),
         });
-      } catch (error) {
+      } catch {
         logger.error('Data erasure error', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -559,7 +559,7 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
     });
 
     return exportedData;
-  } catch (error) {
+  } catch {
     logger.error('LGPD: Data export failed', {
       userId,
       error: error instanceof Error ? error.message : String(error),
@@ -667,7 +667,7 @@ async function deleteUserData(_supabase: any, _userId: string): Promise<void> {
       totalRecordsAffected,
       deletionTimestamp,
     });
-  } catch (error) {
+  } catch {
     logger.error('LGPD: Data deletion failed', {
       userId,
       error: error instanceof Error ? error.message : String(error),
