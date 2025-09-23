@@ -510,7 +510,7 @@ export class PrivacyAlgorithms {
     return { records: generalizedRecords, generalizedFields };
   }
 
-  private generalizeValues(values: any[], fieldName: string): any {
+  private generalizeValues(values: any[], _fieldName: string): any {
     // Simple generalization strategies
     if (typeof values[0] === 'number') {
       const min = Math.min(...values);

@@ -222,6 +222,7 @@ export const realtimeTelemedicineRouter = router({
           requiresAcknowledgment: input.requiresAcknowledgment,
         };
       } catch (_error: any) {
+        void _error;
         console.error('❌ Failed to send message:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -301,6 +302,7 @@ export const realtimeTelemedicineRouter = router({
           alertsTriggered: quality === 'poor' ? ['poor_connection_quality'] : [],
         };
       } catch (_error: any) {
+        void _error;
         console.error('❌ Failed to update presence:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -363,6 +365,7 @@ export const realtimeTelemedicineRouter = router({
           },
         };
       } catch (_error: any) {
+        void _error;
         console.error('❌ Failed to monitor quality:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -405,6 +408,7 @@ export const realtimeTelemedicineRouter = router({
           },
         };
       } catch (_error: any) {
+        void _error;
         console.error('❌ Failed to get session info:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -466,6 +470,7 @@ export const realtimeTelemedicineRouter = router({
           },
         };
       } catch (_error: any) {
+        void _error;
         console.error('❌ Failed to end session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -505,6 +510,7 @@ export const realtimeTelemedicineRouter = router({
         },
       };
     } catch (_error: any) {
+        void _error;
       console.error('❌ Realtime service health check failed:', error);
       return {
         status: 'unhealthy',
@@ -567,6 +573,7 @@ export const realtimeTelemedicineRouter = router({
           estimatedResponseTime: input.severity === 'critical' ? '< 30 seconds' : '< 2 minutes',
         };
       } catch (_error: any) {
+        void _error;
         console.error('❌ Failed to send emergency alert:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

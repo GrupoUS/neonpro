@@ -14,7 +14,7 @@ interface RecoveryPlanningLoaderData {
 
 export const Route = createFileRoute("/aesthetic-scheduling/recovery/")({
   component: RecoveryPlanningPage,
-  loader: async ({ params, search }) => {
+  loader: async ({ params: _params, search: _search }) => {
     // Get procedure IDs from URL parameters or search params
     const procedureIds = search.procedureIds?.split(",") || [];
     const appointmentId = search.appointmentId as string;
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/aesthetic-scheduling/recovery/")({
 function RecoveryPlanningPage() {
   const loaderData = useLoaderData({ from: "/aesthetic-scheduling/recovery/" });
   
-  const { data: procedures } = useQuery({
+  const { data: _procedures } = useQuery({
     queryKey: ["aesthetic-procedures"],
     queryFn: () => api.aestheticScheduling.getAestheticProcedures(),
   });

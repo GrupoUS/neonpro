@@ -19,7 +19,7 @@ async function api(path: string, init?: RequestInit) {
 }
 
 // Message request schema validation
-const MessageRequestSchema = z.object({
+const _MessageRequestSchema = z.object({)
   content: z.string().min(1),
   type: z.enum(["text", "image", "document"]).default("text"),
   attachments: z

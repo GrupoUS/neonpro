@@ -93,7 +93,7 @@ billing.post(
   async c => {
     try {
       const invoiceData = c.req.valid('json');
-      const userId = c.get('userId');
+      const _userId = c.get('userId');
 
       const result = await billingService.createInvoice(invoiceData, _userId);
 
@@ -120,7 +120,7 @@ billing.post(
 billing.get('/invoices/:id', async c => {
   try {
     const invoiceId = c.req.param('id');
-    const userId = c.get('userId');
+    const _userId = c.get('userId');
 
     if (!invoiceId) {
       return badRequest(c, 'ID da fatura é obrigatório');
@@ -155,7 +155,7 @@ billing.get(
   async c => {
     try {
       const searchParams = c.req.valid('query');
-      const userId = c.get('userId');
+      const _userId = c.get('userId');
 
       // Convert string dates to Date objects
       const options = {
@@ -191,7 +191,7 @@ billing.put(
     try {
       const invoiceId = c.req.param('id');
       const updateData = c.req.valid('json');
-      const userId = c.get('userId');
+      const _userId = c.get('userId');
 
       if (!invoiceId) {
         return badRequest(c, 'ID da fatura é obrigatório');
@@ -232,7 +232,7 @@ billing.put(
 billing.delete('/invoices/:id', async c => {
   try {
     const invoiceId = c.req.param('id');
-    const userId = c.get('userId');
+    const _userId = c.get('userId');
 
     if (!invoiceId) {
       return badRequest(c, 'ID da fatura é obrigatório');
@@ -268,7 +268,7 @@ billing.post(
     try {
       const invoiceId = c.req.param('id');
       const paymentData = c.req.valid('json');
-      const userId = c.get('userId');
+      const _userId = c.get('userId');
 
       if (!invoiceId) {
         return badRequest(c, 'ID da fatura é obrigatório');
@@ -306,7 +306,7 @@ billing.post(
 billing.get('/invoices/:id/payments', async c => {
   try {
     const invoiceId = c.req.param('id');
-    const userId = c.get('userId');
+    const _userId = c.get('userId');
 
     if (!invoiceId) {
       return badRequest(c, 'ID da fatura é obrigatório');
@@ -341,7 +341,7 @@ billing.get(
   async c => {
     try {
       const reportParams = c.req.valid('query');
-      const userId = c.get('userId');
+      const _userId = c.get('userId');
 
       // Convert string dates to Date objects
       const params = {
@@ -377,7 +377,7 @@ billing.get(
 billing.get('/dashboard/stats', async c => {
   try {
     const clinicId = c.get('clinicId');
-    const userId = c.get('userId');
+    const _userId = c.get('userId');
     const period = (c.req.query('period') as 'day' | 'week' | 'month' | 'year') || 'month';
 
     const result = await billingService.getBillingStats(

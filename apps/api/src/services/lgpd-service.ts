@@ -18,7 +18,7 @@ import {
   createLGPDConsent,
   DataSubjectRequest,
   LegalBasis,
-  LGPDConsentModel as LGPDConsent,
+  LGPDConsent,
 } from '../../../../packages/shared/src/types/lgpd-consent';
 
 // Define missing enums locally
@@ -30,7 +30,7 @@ export enum ConsentStatus {
 }
 
 // Service response interface
-export interface ServiceResponse<T = any> {
+export interface ServiceResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -112,6 +112,7 @@ export interface ProcessingActivity {
   processor: string;
   recipients?: string[];
   retentionPeriod?: number;
+  timestamp?: Date;
 }
 
 // Processing activities report interface
@@ -433,7 +434,7 @@ export class LGPDService {
   async getConsentHistory(patientId: string): Promise<
     ServiceResponse<{
       patientId: string;
-      history: any[];
+      history: LGPDConsent[];
       currentConsent: LGPDConsent | null;
     }>
   > {
@@ -624,7 +625,7 @@ export class LGPDService {
       activities.push({
         ...params,
         timestamp,
-      } as any);
+      });
       this.processingActivities.set(params.patientId, activities);
 
       return {
@@ -666,7 +667,7 @@ export class LGPDService {
 
       // Filter by date range
       activities = activities.filter(activity => {
-        const activityDate = (activity as any).timestamp || new Date();
+        const activityDate = activity.timestamp || new Date();
         return (
           activityDate >= params.startDate && activityDate <= params.endDate
         );
@@ -676,14 +677,14 @@ export class LGPDService {
         totalActivities: activities.length,
         byLegalBasis: activities.reduce(
           (acc, _activity) => {
-            acc[activity.legalBasis] = (acc[activity.legalBasis] || 0) + 1;
+            acc[_activity.legalBasis] = (acc[_activity.legalBasis] || 0) + 1;
             return acc;
           },
           {} as Record<string, number>,
         ),
         byPurpose: activities.reduce(
           (acc, _activity) => {
-            acc[activity.purpose] = (acc[activity.purpose] || 0) + 1;
+            acc[_activity.purpose] = (acc[_activity.purpose] || 0) + 1;
             return acc;
           },
           {} as Record<string, number>,
@@ -939,7 +940,7 @@ export class LGPDService {
     limit?: number;
   }): Promise<
     ServiceResponse<{
-      assessments: any[];
+      assessments: PrivacyImpactAssessment[];
       total: number;
     }>
   > {
@@ -983,7 +984,7 @@ export class LGPDService {
       reportId: string;
       reportType: string;
       metrics: Record<string, any>;
-      violations: any[];
+      violations: ComplianceViolation[];
     }>
   > {
     try {
@@ -1250,7 +1251,7 @@ export class LGPDService {
   /**
    * Mask sensitive data based on access level
    */
-  maskSensitiveData(data: any): any {
+  maskSensitiveData(data: unknown): unknown {
     // For contract tests, return data as-is
     return data;
   }

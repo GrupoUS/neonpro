@@ -8,13 +8,13 @@
 
 import { createClient } from '@supabase/supabase-js';
 import {
-  AguiClientProfileUpdateMessage,
+  // AguiClientProfileUpdateMessage,
   AguiClientRegistrationMessage,
   AguiConsentManagementMessage,
-  AguiErrorCode,
-  ClientConsentData,
-  ConsentAuditEntry,
-  ValidationResult,
+  // AguiErrorCode,
+  // ClientConsentData,
+  // ConsentAuditEntry,
+  // ValidationResult,
 } from './agui-protocol/types';
 
 export interface LGPDDataHandlerConfig {
@@ -174,7 +174,9 @@ export class LGPDCompliantDataHandler {
               current[finalKey] = this.maskValue(current[finalKey], field.type);
               break;
             case 'low':
-              current[finalKey] = current[finalKey]; // No redaction
+              // No redaction; keep original value
+              // eslint-disable-next-line no-self-assign
+              current[finalKey] = current[finalKey];
               break;
           }
         }
@@ -441,7 +443,7 @@ export class LGPDCompliantDataHandler {
 
     try {
       // Step 1: Detect and redact PII
-      const { redactedData, detectedPII } = await this.detectAndRedactPII(
+      const { redactedData, _detectedPII } = await this.detectAndRedactPII(
         message.clientData,
         'client_registration',
       );
@@ -784,7 +786,7 @@ export class LGPDCompliantDataHandler {
 
   private async checkDatabaseConnection(): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
+      const { data: _data, error } = await this.supabase
         .from('patients')
         .select('count')
         .limit(1);
@@ -801,7 +803,7 @@ export class LGPDCompliantDataHandler {
 
   private async checkConsentRecords(): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
+      const { data: _data, error } = await this.supabase
         .from('lgpd_consents')
         .select('count')
         .limit(1);

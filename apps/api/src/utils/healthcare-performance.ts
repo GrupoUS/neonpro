@@ -287,11 +287,11 @@ export class HealthcareQueryOptimizer {
   }> {
     const startTime = Date.now();
     const {
-      professionalId: professionalId,
-      patientId: patientId,
-      startDate: startDate,
-      endDate: endDate,
-      status: status,
+      _professionalId,
+      _patientId,
+      _startDate,
+      _endDate,
+      _status,
       includePatientDetails = true,
       includeProfessionalDetails = true,
       page = 1,
@@ -402,7 +402,7 @@ export class HealthcareQueryOptimizer {
     try {
       // Process in batches to avoid overwhelming the database
       for (let i = 0; i < patientsData.length; i += batchSize) {
-        const batch = patientsData.slice(i, i + batchSize);
+        const _batch = patientsData.slice(i, i + batchSize);
 
         const batchResults = await Promise.allSettled(
           _batch.map(async (patientData, _batchIndex) => {

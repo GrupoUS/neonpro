@@ -398,9 +398,9 @@ export const ProfessionalSchema = z.object({
 // =====================================
 
 /**
- * Get validation schema for entity type
+ * Get validation schema for entity type with type safety
  */
-export function getEntitySchema(entity: string): z.ZodSchema<any> {
+export function getEntitySchema<T = unknown>(entity: string): z.ZodSchema<T> {
   switch (entity) {
     case 'patients':
       return PatientSchema;
@@ -425,16 +425,16 @@ export function getEntitySchema(entity: string): z.ZodSchema<any> {
 }
 
 /**
- * Validate data against entity schema
+ * Validate data against entity schema with type safety
  */
-export function validateEntityData(
+export function validateEntityData<T>(
   entity: string,
-  data: any,
+  data: T,
 ): {
   isValid: boolean;
   errors: string[];
   warnings: string[];
-  sanitizedData: any;
+  sanitizedData: T;
 } {
   try {
     const schema = getEntitySchema(entity);

@@ -239,7 +239,19 @@ export function validateKPI(data: unknown) {
   return COMPLIANCE_SCHEMAS.HealthcareKPI.parse(data);
 }
 export function validateAIGovernance(data: unknown) {
-  return COMPLIANCE_SCHEMAS.AIEvaluation.parse(data);
+  try {
+    const parsed = COMPLIANCE_SCHEMAS.AIEvaluation.parse(data);
+    return { valid: true, data: parsed, errors: [] };
+  } catch (_err: unknown) {
+    if (_err && typeof _err === 'object' && 'issues' in _err) {
+      return { valid: false, data: null, errors: (_err as { issues: unknown[] }).issues };
+    }
+    return {
+      valid: false,
+      data: null,
+      errors: [{ message: (_err && typeof _err === 'object' && 'message' in _err) ? (_err as { message: string }).message : "Unknown error" }],
+    };
+  }
 }
 export function validateRisk(data: unknown) {
   return COMPLIANCE_SCHEMAS.RiskAssessment.parse(data);
@@ -252,15 +264,15 @@ export function checkComplianceRequirements(
   try {
     // @ts-ignore dynamic index
     const parsed = COMPLIANCE_SCHEMAS[schemaType].parse(data);
-    return { valid: true, data: parsed, errors: [] as any[] };
-  } catch (_err: any) {
-    if (_err?.issues) {
-      return { valid: false, data: null, errors: _err.issues };
+    return { valid: true, data: parsed, errors: [] };
+  } catch (_err: unknown) {
+    if (_err && typeof _err === 'object' && 'issues' in _err) {
+      return { valid: false, data: null, errors: (_err as { issues: unknown[] }).issues };
     }
     return {
       valid: false,
       data: null,
-      errors: [{ message: _err?.message || "Unknown error" }],
+      errors: [{ message: (_err && typeof _err === 'object' && 'message' in _err) ? (_err as { message: string }).message : "Unknown error" }],
     };
   }
 }

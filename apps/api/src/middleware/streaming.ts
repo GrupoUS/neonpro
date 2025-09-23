@@ -167,7 +167,7 @@ export function createHeartbeatStream(
         try {
           const heartbeat = formatSSEData('heartbeat', 'ping');
           controller.enqueue(new TextEncoder().encode(heartbeat));
-        } catch (error) {
+        } catch {
           // Stop heartbeat on error
           clearInterval(interval);
           controller.close();

@@ -1,7 +1,7 @@
 import * as React from "react";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+// import { useQuery } from "@tanstack/react-query";
+// import { api } from "@/lib/api";
 import { ContraindicationAnalysis } from "@/components/ai-clinical-support/ContraindicationAnalysis";
 
 // Define loader data type

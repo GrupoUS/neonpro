@@ -3,6 +3,24 @@
 // in compliance with Brazilian data protection regulations
 
 // Types for LGPD operations
+export interface MedicalRecord {
+  id: string;
+  patientId: string;
+  recordType: string;
+  data: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Appointment {
+  id: string;
+  patientId: string;
+  dateTime: Date;
+  type: string;
+  status: string;
+  notes?: string;
+}
+
 export interface LGPDPatientData {
   id: string;
   name?: string;
@@ -10,8 +28,8 @@ export interface LGPDPatientData {
   email?: string;
   phone?: string;
   address?: string;
-  medical_records?: any[];
-  appointments?: any[];
+  medical_records?: MedicalRecord[];
+  appointments?: Appointment[];
   created_at?: string;
   updated_at?: string;
 }
@@ -66,7 +84,7 @@ export async function anonymize_patient_data(
   } = options;
 
   const patients = Array.isArray(patientData) ? patientData : [patientData];
-  const processedRecords: any[] = [];
+  const processedRecords: unknown[] = [];
   const errors: string[] = [];
 
   try {
@@ -226,7 +244,7 @@ export async function delete_patient_data(
 export async function export_patient_data(
   patientId: string | string[],
   options: ExportOptions = {},
-): Promise<LGPDOperationResult & { exportData?: any; exportUrl?: string }> {
+): Promise<LGPDOperationResult & { exportData?: unknown; exportUrl?: string }> {
   const {
     format = 'json',
     includeMetadata = true,
@@ -236,7 +254,7 @@ export async function export_patient_data(
 
   const patientIds = Array.isArray(patientId) ? patientId : [patientId];
   const errors: string[] = [];
-  const exportedData: any[] = [];
+  const exportedData: unknown[] = [];
 
   try {
     for (const id of patientIds) {
@@ -299,7 +317,7 @@ export async function export_patient_data(
     }
 
     // Format data according to requested format
-    let formattedData: any;
+    let formattedData: unknown;
     switch (format) {
       case 'csv':
         formattedData = convertToCSV(exportedData);
@@ -336,8 +354,8 @@ export async function export_patient_data(
 }
 
 // Utility functions
-import { createHash, randomBytes } from 'crypto';
-import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
+import { createHash } from 'crypto';
+// import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
 
 /**
  * LGPD-compliant cryptographic hash function for patient data anonymization
@@ -364,7 +382,7 @@ function generateStaticSalt(): string {
   return 'NEONPRO_LGPD_DEV_SALT_2025';
 }
 
-function convertToCSV(data: any[]): string {
+function convertToCSV(data: unknown[]): string {
   if (data.length === 0) return '';
 
   const headers = Object.keys(data[0]);
@@ -383,7 +401,7 @@ function convertToCSV(data: any[]): string {
   return csvRows.join('\n');
 }
 
-function convertToXML(data: any[]): string {
+function convertToXML(data: unknown[]): string {
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<patients>\n';
 
   for (const patient of data) {

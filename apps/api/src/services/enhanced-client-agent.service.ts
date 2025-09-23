@@ -1052,7 +1052,7 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async createConsentRecords(
-    clientId: string,
+    _clientId: string,
     _context: ClientAgentContext,
     _consent?: ClientConsentData,
   ): Promise<string[]> {
@@ -1061,7 +1061,7 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async sendWelcomeCommunication(
-    clientId: string,
+    _clientId: string,
     _clientData: ClientRegistrationData,
     _context: ClientAgentContext,
   ): Promise<void> {
@@ -1106,7 +1106,7 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private isSignificantProfileChange(
-    updates: Partial<ClientRegistrationData>,
+    _updates: Partial<ClientRegistrationData>,
   ): boolean {
     // Determine if profile changes are significant enough to trigger retention prediction
     return false;
@@ -1156,11 +1156,11 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async gatherAnalyticsData(
-    analyticsType: string,
-    clientId?: string,
-    timeRange?: any,
-    filters?: any,
-    context?: ClientAgentContext,
+    _analyticsType: string,
+    _clientId?: string,
+    _timeRange?: any,
+    _filters?: any,
+    _context?: ClientAgentContext,
   ): Promise<any> {
     // Gather analytics data based on type
     return { metrics: {}, trends: [] };
@@ -1255,7 +1255,7 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async personalizeCommunicationContent(
-    content: string,
+    _content: string,
     _personalization: any,
     _clientId: string,
     _context: ClientAgentContext,
@@ -1266,8 +1266,8 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async sendCommunication(
     _clientId: string,
-    content: string,
-    channel: string,
+    _content: string,
+    _channel: string,
     _scheduledFor?: string,
     _context?: ClientAgentContext,
   ): Promise<any> {
@@ -1353,10 +1353,10 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async executeConsentAction(
-    clientId: string,
-    consentType: string,
-    consentAction: string,
-    consentData: ClientConsentData,
+    _clientId: string,
+    _consentType: string,
+    _consentAction: string,
+    _consentData: ClientConsentData,
     _context: ClientAgentContext,
   ): Promise<any> {
     // Execute consent action in database
@@ -1369,26 +1369,26 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async createConsentAuditTrail(
-    clientId: string,
-    consentId: string,
-    consentAction: string,
-    reason?: string,
-    context?: ClientAgentContext,
+    _clientId: string,
+    _consentId: string,
+    _consentAction: string,
+    _reason?: string,
+    _context?: ClientAgentContext,
   ): Promise<any[]> {
     // Create consent audit trail
     return [];
   }
 
   private async handleConsentRevocation(
-    clientId: string,
-    consentType: string,
+    _clientId: string,
+    _consentType: string,
     _context: ClientAgentContext,
   ): Promise<void> {
     // Handle consent revocation actions
   }
 
   private async executeValidationRules(
-    data: Record<string, any>,
+    _data: Record<string, any>,
     _validationRules: ValidationRule[],
     _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
@@ -1397,8 +1397,8 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async applyAIValidation(
-    data: Record<string, any>,
-    validationType: string,
+    _data: Record<string, any>,
+    _validationType: string,
     _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Apply AI-powered validation
@@ -1407,7 +1407,7 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async generateValidationSuggestions(
     _validationResults: ValidationResult[],
-    validationType: string,
+    _validationType: string,
     _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI suggestions for validation improvements
@@ -1463,7 +1463,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         components,
         metrics: this.metrics,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         status: 'unhealthy',
         components: {

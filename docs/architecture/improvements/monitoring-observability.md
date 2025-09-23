@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers the comprehensive monitoring and observability system implemented for the NeonPro healthcare platform, including Sentry error tracking and OpenTelemetry distributed tracing with healthcare-specific compliance features.
+This guide covers the comprehensive monitoring and observability system implemented for the NeonPro aesthetic clinic platform, including Sentry error tracking and OpenTelemetry distributed tracing with aesthetic clinic-specific compliance features.
 
 ## Architecture
 
@@ -14,7 +14,7 @@ This guide covers the comprehensive monitoring and observability system implemen
 ├─────────────────────────────────────────────────────────────┤
 │  Sentry Middleware  │  OpenTelemetry Spans  │  Health Checks │
 ├─────────────────────────────────────────────────────────────┤
-│           Healthcare PII Redaction Layer                    │
+│           Aesthetic Clinic PII Redaction Layer            │
 ├─────────────────────────────────────────────────────────────┤
 │  Supabase Telemetry │   Performance Metrics │  Error Context│
 ├─────────────────────────────────────────────────────────────┤
@@ -25,7 +25,7 @@ This guide covers the comprehensive monitoring and observability system implemen
 
 ### Data Flow
 
-1. **Application Events** → Healthcare PII Redaction → Telemetry Processing
+1. **Application Events** → Aesthetic Clinic PII Redaction → Telemetry Processing
 2. **Error Events** → Sentry Middleware → Context Enrichment → Sentry SaaS
 3. **Database Operations** → OpenTelemetry Spans → Trace Collection → Monitoring Dashboard
 4. **Performance Metrics** → Real-time Processing → Alert Generation
@@ -45,14 +45,14 @@ export function initializeSentry() {
     dsn: process.env.SENTRY_DSN,
     environment: process.env.NODE_ENV || "development",
 
-    // Healthcare compliance settings
+    // Aesthetic clinic compliance settings
     beforeSend: (event, hint) => {
-      // Redact PII from healthcare data
-      return redactHealthcarePII(event);
+      // Redact PII from aesthetic clinic data
+      return redactAestheticClinicPII(event);
     },
 
     beforeSendTransaction: (event) => {
-      // Sanitize transaction data for healthcare compliance
+      // Sanitize transaction data for aesthetic clinic compliance
       return sanitizeTransactionData(event);
     },
 
@@ -89,26 +89,26 @@ export function initializeSentry() {
 
 ### Healthcare PII Redaction
 
-**File**: `apps/api/src/lib/sentry-healthcare.ts`
+**File**: `apps/api/src/lib/sentry-aesthetic-clinic.ts`
 
 ```typescript
-interface HealthcarePIIPatterns {
+interface AestheticClinicPIIPatterns {
   cpf: RegExp;
   phone: RegExp;
   email: RegExp;
-  medicalRecord: RegExp;
-  patientId: RegExp;
+  clientRecord: RegExp;
+  clientId: RegExp;
 }
 
-const PII_PATTERNS: HealthcarePIIPatterns = {
+const PII_PATTERNS: AestheticClinicPIIPatterns = {
   cpf: /\d{3}\.\d{3}\.\d{3}-\d{2}/g,
   phone: /\(\d{2}\)\s*\d{4,5}-?\d{4}/g,
   email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
-  medicalRecord: /MR-\d{6,10}/g,
-  patientId: /PAT-[A-Z0-9]{8,12}/g,
+  clientRecord: /CR-\d{6,10}/g,
+  clientId: /CLI-[A-Z0-9]{8,12}/g,
 };
 
-export function redactHealthcarePII(event: Sentry.Event): Sentry.Event | null {
+export function redactAestheticClinicPII(event: Sentry.Event): Sentry.Event | null {
   try {
     // Redact from message
     if (event.message) {
@@ -141,12 +141,12 @@ export function redactHealthcarePII(event: Sentry.Event): Sentry.Event | null {
       event.extra = redactObject(event.extra);
     }
 
-    // Add healthcare compliance tags
+    // Add aesthetic clinic compliance tags
     event.tags = {
       ...event.tags,
-      "healthcare.pii_redacted": "true",
+      "aesthetic_clinic.pii_redacted": "true",
       "compliance.lgpd": "compliant",
-      "healthcare.data_classification": "redacted",
+      "aesthetic_clinic.data_classification": "redacted",
     };
 
     return event;
@@ -197,8 +197,8 @@ function isPIIField(fieldName: string): boolean {
     "email",
     "phone",
     "address",
-    "medical_record",
-    "patient_id",
+    "client_record",
+    "client_id",
     "full_name",
     "birth_date",
     "social_security",
@@ -226,12 +226,12 @@ const app = new Hono();
 // Sentry middleware for error tracking and performance monitoring
 app.use("*", sentryMiddleware());
 
-// Healthcare context middleware
+// Aesthetic clinic context middleware
 app.use("*", async (c, next) => {
-  // Add healthcare context to Sentry scope
+  // Add aesthetic clinic context to Sentry scope
   Sentry.withScope((scope) => {
-    scope.setTag("healthcare.app", "neonpro");
-    scope.setTag("healthcare.environment", process.env.NODE_ENV);
+    scope.setTag("aesthetic_clinic.app", "neonpro");
+    scope.setTag("aesthetic_clinic.environment", process.env.NODE_ENV);
 
     if (c.get("user")) {
       scope.setUser({
@@ -239,7 +239,7 @@ app.use("*", async (c, next) => {
         // Don't include PII in user context
         role: c.get("user").role,
       });
-      scope.setTag("healthcare.user_type", c.get("user").role);
+      scope.setTag("aesthetic_clinic.user_type", c.get("user").role);
     }
 
     return next();
@@ -269,7 +269,7 @@ export interface SupabaseTelemetryContext {
 
 export class TelemetryEnabledSupabaseClient {
   private client: SupabaseClient;
-  private tracer = trace.getTracer("supabase-healthcare");
+  private tracer = trace.getTracer("supabase-aesthetic-clinic");
 
   constructor(url: string, key: string) {
     this.client = createClient(url, key);
@@ -287,13 +287,13 @@ export class TelemetryEnabledSupabaseClient {
         "db.operation": context.operation,
         "db.sql.table": context.table || "unknown",
 
-        // Healthcare-specific attributes
-        "healthcare.data_classification": context.dataClassification,
-        "healthcare.compliance_required": context.complianceRequired || false,
+        // Aesthetic clinic-specific attributes
+        "aesthetic_clinic.data_classification": context.dataClassification,
+        "aesthetic_clinic.compliance_required": context.complianceRequired || false,
 
         // Privacy-compliant identifiers (hashed)
         ...(context.patientId && {
-          "healthcare.patient_context": this.hashIdentifier(context.patientId),
+          "aesthetic_clinic.client_context": this.hashIdentifier(context.patientId),
         }),
         ...(context.professionalId && {
           "healthcare.professional_id": context.professionalId,
@@ -309,7 +309,7 @@ export class TelemetryEnabledSupabaseClient {
       const duration = Date.now() - startTime;
       span.setAttributes({
         "db.duration_ms": duration,
-        "healthcare.operation_success": true,
+        "aesthetic_clinic.operation_success": true,
       });
 
       span.setStatus({ code: SpanStatusCode.OK });
@@ -318,7 +318,7 @@ export class TelemetryEnabledSupabaseClient {
       const duration = Date.now() - startTime;
       span.setAttributes({
         "db.duration_ms": duration,
-        "healthcare.operation_success": false,
+        "aesthetic_clinic.operation_success": false,
         "error.type": (error as Error).constructor.name,
         "error.message": this.sanitizeErrorMessage((error as Error).message),
       });
@@ -417,46 +417,46 @@ export function createTelemetrySupabaseClient(): TelemetryEnabledSupabaseClient 
 
 ### Service Integration Example
 
-**File**: `packages/database/src/services/patient.service.ts`
+**File**: `packages/database/src/services/client.service.ts`
 
 ```typescript
 import { createTelemetrySupabaseClient } from "../lib/supabase-telemetry";
 
-export class PatientService {
+export class ClientService {
   private supabase = createTelemetrySupabaseClient();
 
-  async getPatient(
-    patientId: string,
+  async getClient(
+    clientId: string,
     professionalId: string,
-  ): Promise<Patient> {
+  ): Promise<Client> {
     return this.supabase.selectWithTelemetry(
-      "patients",
-      "*, medical_records(*)",
+      "clients",
+      "*, aesthetic_records(*)",
       {
-        operation: "get_patient",
-        table: "patients",
+        operation: "get_client",
+        table: "clients",
         dataClassification: "restricted",
-        patientId,
+        patientId: clientId,
         professionalId,
         complianceRequired: true,
       },
     );
   }
 
-  async updatePatientRecord(
-    patientId: string,
-    updates: Partial<Patient>,
+  async updateClientRecord(
+    clientId: string,
+    updates: Partial<Client>,
     professionalId: string,
-  ): Promise<Patient> {
+  ): Promise<Client> {
     return this.supabase.updateWithTelemetry(
-      "patients",
+      "clients",
       updates,
-      { id: patientId },
+      { id: clientId },
       {
-        operation: "update_patient",
-        table: "patients",
+        operation: "update_client",
+        table: "clients",
         dataClassification: "restricted",
-        patientId,
+        patientId: clientId,
         professionalId,
         complianceRequired: true,
       },
@@ -476,15 +476,15 @@ SENTRY_RELEASE=v1.0.0
 SENTRY_ENVIRONMENT=production
 
 # OpenTelemetry Configuration
-OTEL_SERVICE_NAME=neonpro-healthcare-api
+OTEL_SERVICE_NAME=neonpro-aesthetic-clinic-api
 OTEL_SERVICE_VERSION=1.0.0
 OTEL_EXPORTER_OTLP_ENDPOINT=https://your-otel-collector
-OTEL_RESOURCE_ATTRIBUTES=service.namespace=healthcare,deployment.environment=production
+OTEL_RESOURCE_ATTRIBUTES=service.namespace=aesthetic_clinic,deployment.environment=production
 
-# Healthcare Compliance
-HEALTHCARE_PII_REDACTION_ENABLED=true
-HEALTHCARE_AUDIT_LOG_RETENTION_DAYS=2555  # 7 years as per LGPD
-HEALTHCARE_COMPLIANCE_MODE=strict
+# Aesthetic Clinic Compliance
+AESTHETIC_CLINIC_PII_REDACTION_ENABLED=true
+AESTHETIC_CLINIC_AUDIT_LOG_RETENTION_DAYS=2555  # 7 years as per LGPD
+AESTHETIC_CLINIC_COMPLIANCE_MODE=strict
 ```
 
 ### Docker Compose Integration
@@ -699,4 +699,4 @@ const telemetryConfig = {
 };
 ```
 
-This comprehensive monitoring and observability system ensures that the NeonPro healthcare platform maintains high reliability while complying with strict healthcare data protection requirements.
+This comprehensive monitoring and observability system ensures that the NeonPro aesthetic clinic platform maintains high reliability while complying with strict aesthetic clinic data protection requirements.

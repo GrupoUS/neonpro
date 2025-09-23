@@ -153,7 +153,7 @@ export class QueryOptimizerService {
     } = {},
   ): Promise<{ data: T[] | null; metrics: QueryMetrics }> {
     const queryId = this.generateQueryId();
-    const startTime = performance.now();
+    const _startTime = performance.now();
     let cacheHit = false;
     let result: T[] | null = null;
 
@@ -259,7 +259,7 @@ export class QueryOptimizerService {
     }
 
     const timeout = options.timeout || this.config.queryTimeout!;
-    const startTime = performance.now();
+    const _startTime = performance.now();
 
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {

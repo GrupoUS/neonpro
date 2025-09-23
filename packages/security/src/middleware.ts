@@ -197,6 +197,7 @@ export function authentication() {
 
       await next();
     } catch (_error: unknown) {
+      void _error;
       // TODO: consider logging _error at debug level if needed
 
       if (error instanceof Error) {

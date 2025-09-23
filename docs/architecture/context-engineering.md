@@ -22,7 +22,7 @@ This document defines the minimal, deterministic strategy for AI (and human) con
 - Start from the thinnest slice that can validate assumptions.
 - Escalate in controlled layers (Meta → Structure → Contracts → Implementations → Edge Cases).
 - Never duplicate already loaded context—reference it.
-- Compliance surfaces (LGPD/ANVISA) always trump speed when patient data paths are touched.
+- Compliance surfaces (LGPD/Cosmetic Regulations) always trump speed when client data paths are touched.
 
 ## Layered Context Model
 
@@ -57,14 +57,14 @@ Escalate only if the previous layer leaves unanswered questions.
 2. Identify target subtree (Layer 1) via `source-tree.md`.
 3. Pull necessary contracts (Layer 2) for affected data (types/interfaces/Zod schemas).
 4. Inspect ONE representative implementation (Layer 3). If pattern consistent → proceed; else sample max 2 more.
-5. Scan for security / compliance (Layer 4) ONLY if handling patient, appointment, clinic, financial, or PII-related identifiers.
+5. Scan for security / compliance (Layer 4) ONLY if handling client, appointment, clinic, financial, or PII-related identifiers.
 6. Before coding, locate or create at least one test (Layer 5). Mirror existing test naming & structure.
 7. Escalate to Layer 6 (edge/perf) only if latency, concurrency, or heavy iteration is introduced.
 
 ## Heuristic Guards
 
 - If you opened >6 files without writing anything, pause and re-evaluate scope.
-- If adding a parameter leaks a patient identifier to logs → STOP and route through secure utility.
+- If adding a parameter leaks a client identifier to logs → STOP and route through secure utility.
 - If modifying shared type with >10 references, consider incremental migration (introduce new type alias then replace).
 - If a change spans >2 packages unexpectedly, verify it isn’t two separate tasks.
 
@@ -77,22 +77,22 @@ Pseudo-sequence for an agent planning a feature:
 2. load(source-tree segment)
 3. locate(types) -> targeted symbols
 4. inspect(core-service or route) -> confirm integration points
-5. check(security|RLS) if domain = patient|clinic|billing
+5. check(security|RLS) if domain = client|clinic|billing
 6. discover(existing tests) -> pattern extraction
 7. generate(plan) -> diff outline + tests first
 ```
 
 ## Examples
 
-### Example: Add new patient risk scoring endpoint
+### Example: Add new client risk scoring endpoint
 
 Initial load:
 
 - `docs/architecture/source-tree.md` (API subtree)
 - `apps/api/src/routes/*` similar existing file
-- `packages/types/src/patient/` (patient core types)
+- `packages/types/src/client/` (client core types)
   Then:
-- `packages/core-services/src/services/patient*` (scoring integration point)
+- `packages/core-services/src/services/client*` (scoring integration point)
 - `packages/security` (ensure no PII leakage)
 
 ### Example: Frontend appointment reschedule UI
@@ -120,12 +120,12 @@ Initial load:
 - Blanket reading entire `packages/` directory “just in case”.
 - Creating new shared package before 2+ concrete consumers exist.
 - Expanding a refactor to unrelated feature modules mid-task.
-- Adding logs containing raw CPF, patient name, or clinic identifiers.
+- Adding logs containing raw CPF, client name, or clinic identifiers.
 - Writing tests after large implementation instead of incrementally.
 
 ## Compliance Hooks Quick Checklist
 
-- PII Field touched? → Ensure type branded (`CPF`, `PatientId`).
+- PII Field touched? → Ensure type branded (`CPF`, `ClientId`).
 - Storage or transmission? → Confirm encryption or redaction path.
 - Cross-clinic data access? → Verify RLS helper or access guard.
 - External logging or analytics? → Strip or hash sensitive identifiers.

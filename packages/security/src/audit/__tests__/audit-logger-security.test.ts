@@ -141,7 +141,7 @@ describe('Audit Logger Security Tests_, () => {
 
 
     it('should handle circular references in metadata_,_async () => {
-      const circularObject: any = { name: 'test' };
+      const circularObject: Record<string, unknown> = { name: 'test' };
       circularObject.self = circularObject;
 
       const entry: AuditLogEntry = {

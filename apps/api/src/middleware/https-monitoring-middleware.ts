@@ -79,7 +79,8 @@ export class HTTPSMonitoringMiddleware {
               );
             });
         }
-      } catch (error) {
+      } catch (_error) {
+      void _error;
         logger.error(
           'https_monitoring_middleware',
           'Error in handshake monitoring',
@@ -151,6 +152,7 @@ export class HTTPSMonitoringMiddleware {
         timing,
       };
     } catch (_error) {
+      void _error;
       logger.debug(
         'https_monitoring_middleware',
         'Failed to extract TLS info',
@@ -180,7 +182,8 @@ export class HTTPSMonitoringMiddleware {
       };
 
       return versionMap[protocol] || protocol || 'UNKNOWN';
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       return 'UNKNOWN';
     }
   }
@@ -234,7 +237,8 @@ export class HTTPSMonitoringMiddleware {
           'HTTPS handshake monitoring started',
         );
       }
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       logger.warning(
         'https_monitoring_middleware',
         'Failed to setup server TLS monitoring',
@@ -281,7 +285,8 @@ export class HTTPSMonitoringMiddleware {
       socket.on('error', (error: any) => {
         this.handleHandshakeError(sessionId, error);
       });
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       logger.error(
         'https_monitoring_middleware',
         'Error handling secure connection',
@@ -341,7 +346,8 @@ export class HTTPSMonitoringMiddleware {
         // Clean up
         this.activeHandshakes.delete(sessionId);
       }
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       logger.error(
         'https_monitoring_middleware',
         'Error handling handshake completion',
@@ -372,7 +378,8 @@ export class HTTPSMonitoringMiddleware {
 
       // Clean up any pending handshake
       this.activeHandshakes.delete(sessionId);
-    } catch (error) {
+    } catch (_error) {
+      void _error;
       logger.error(
         'https_monitoring_middleware',
         'Error handling TLS client error',

@@ -6,6 +6,7 @@
  * risk assessment visualization, and interaction handlers.
  */
 
+import React from 'react';
 import {
   render,
   screen,
@@ -18,13 +19,20 @@ import { CopilotProvider } from "@copilotkit/react-core";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ClientManagementDashboard } from "../../../components/clients/ClientManagementDashboard";
 import {
-  AguiClientSearchResponse,
-  AguiClientAnalyticsResponse,
-  useQuery,
-  useMutation,
-  useCoAgent,
-  useCopilotAction,
+  // AguiClientSearchResponse,
+  // AguiClientAnalyticsResponse,
+  // useQuery,
+  // useMutation,
+  // useCoAgent,
+  // useCopilotAction,
 } from "@neonpro/agui-protocol";
+
+// Setup DOM environment for React Testing Library
+const { JSDOM } = require('jsdom');
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.document = dom.window.document;
+global.window = dom.window;
+global.navigator = dom.window.navigator;
 
 // Replace the async vi.mock for @copilotkit/react-core with synchronous
 vi.mock("@copilotkit/react-core", () => ({

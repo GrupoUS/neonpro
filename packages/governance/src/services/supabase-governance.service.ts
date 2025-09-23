@@ -16,9 +16,6 @@ import {
   RiskAssessment,
   UpdateEscalationWorkflow,
   UpdateKPIMetric,
-} from "@neonpro/types/governance.types";
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import {
   AuditTrailRecord,
   KPIMetricRecord,
   ComplianceStatusRecord,
@@ -26,7 +23,8 @@ import {
   AIGovernanceMetricRecord,
   PolicyManagementRecord,
   EscalationWorkflowRecord,
-} from "@neonpro/types/database-records";
+} from "@neonpro/types";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export class SupabaseGovernanceService implements GovernanceService {
   protected supabase: SupabaseClient;

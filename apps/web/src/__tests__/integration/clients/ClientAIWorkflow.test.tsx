@@ -6,6 +6,7 @@
  * and backend services for comprehensive client management scenarios.
  */
 
+import React from 'react';
 import {
   render,
   screen,
@@ -18,10 +19,14 @@ import { CopilotProvider } from "@copilotkit/react-core";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { ClientRegistrationAgent } from "../../../components/clients/ClientRegistrationAgent";
 import { ClientManagementDashboard } from "../../../components/clients/ClientManagementDashboard";
-import {
-  AguiClientRegistrationMessage,
-  AguiClientSearchMessage,
-} from "@neonpro/agui-protocol";
+
+// Setup DOM environment for React Testing Library
+const { JSDOM } = require('jsdom');
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.document = dom.window.document;
+global.window = dom.window;
+global.navigator = dom.window.navigator;
+
 
 // Mock all dependencies
 vi.mock("@copilotkit/react-core", async () => {
@@ -65,7 +70,6 @@ describe("Client AI Workflow Integration", () => {
   let queryClient: QueryClient;
   let mockAgent: any;
   let mockAction: any;
-  let mockService: any;
 
   const mockProps = {
     clinicId: "test-clinic-id",
@@ -114,14 +118,9 @@ describe("Client AI Workflow Integration", () => {
 
     // Mock CopilotKit actions
     mockAction = vi.fn();
-
-    // Mock backend service
-    mockService = {
-      processClientRegistration: vi.fn(),
-      processClientSearch: vi.fn(),
-      processClientAnalytics: vi.fn(),
-      processClientRetentionPrediction: vi.fn(),
-      processDocumentOCR: vi.fn(),
+    
+    // Mock AI service functions
+    const mockAIService = {
       validateClientData: vi.fn(),
       generateAISuggestions: vi.fn(),
     };

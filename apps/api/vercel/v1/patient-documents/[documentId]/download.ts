@@ -15,7 +15,7 @@ const documentService = new PatientDocumentService({
 /**
  * GET /api/v1/patient-documents/{documentId}/download
  */
-export default async function handler(req: Request, ctx: Context) {
+export default async function handler(req: Request, _ctx: Context) {
   try {
     const url = new URL(req.url);
     const pathParts = url.pathname.split('/');

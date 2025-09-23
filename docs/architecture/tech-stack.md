@@ -88,7 +88,7 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 - **Why**: Rapid development, design system consistency, responsive design
 - **Benefits**: Utility classes, dark mode support, accessibility focus
-- **Config**: Custom Brazilian healthcare color palette, responsive breakpoints
+- **Config**: Custom Brazilian aesthetic clinic color palette, responsive breakpoints
 
 **shadcn/ui v4** - Component Library
 
@@ -108,9 +108,9 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 **tRPC v11.0.0** - End-to-End Type-Safe API Framework
 
-- **Why**: Full TypeScript type safety, automatic client generation, Brazilian healthcare compliance
+- **Why**: Full TypeScript type safety, automatic client generation, Brazilian aesthetic clinic compliance
 - **Features**: Type-safe procedures, middleware composition, real-time subscriptions, Valibot validation
-- **Performance**: Zero runtime overhead, edge-compatible, <100ms healthcare API responses
+- **Performance**: Zero runtime overhead, edge-compatible, <100ms aesthetic clinic API responses
 - **Migration**: From Hono.dev for enhanced type safety and developer experience
 
 **Node.js 20+** - Runtime Environment
@@ -133,17 +133,17 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 **Prisma v5.7.0** - Next-Generation ORM
 
-- **Why**: Type-safe database access, Brazilian healthcare compliance, multi-schema support
+- **Why**: Type-safe database access, Brazilian aesthetic clinic compliance, multi-schema support
 - **Features**: Auto-generated types, migration system, connection pooling, edge compatibility
 - **Benefits**: LGPD compliance, audit logging, Brazilian identity validation (CPF, CNS)
-- **Performance**: <50ms database queries, optimized for healthcare workflows
+- **Performance**: <50ms database queries, optimized for aesthetic clinic workflows
 
 **Valibot v0.30.0** - Primary Runtime Schema Validation
 
 - **Why**: 75% smaller bundle size vs Zod, edge runtime optimized, TypeScript-first
-- **Features**: Brazilian healthcare validation (CPF, TUSS codes), streaming validation, composable schemas
-- **Benefits**: Edge function compatibility, healthcare compliance, performance optimization
-- **Usage**: Primary validation library for all new development, tRPC input validation, healthcare data schemas
+- **Features**: Brazilian aesthetic clinic validation (CPF, TUSS codes), streaming validation, composable schemas
+- **Benefits**: Edge function compatibility, aesthetic clinic compliance, performance optimization
+- **Usage**: Primary validation library for all new development, tRPC input validation, aesthetic clinic data schemas
 - **Fallback Strategy**: Use Zod v4.22.0 when specific Valibot features are not available
 
 **Zod v4.22.0** - Secondary Runtime Schema Validation
@@ -202,37 +202,37 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 **CopilotKit v1.10.4** - AI Assistant Integration
 
-- **Why**: Comprehensive AI agent framework, healthcare compliance, Brazilian Portuguese support
+- **Why**: Comprehensive AI agent framework, aesthetic clinic compliance, Brazilian Portuguese support
 - **Features**: Context-aware conversations, multi-agent coordination, audit logging
-- **Benefits**: Enhanced patient experience, automated scheduling, clinical decision support
+- **Benefits**: Enhanced client experience, automated scheduling, treatment decision support
 - **Implementation**: 9.2/10 rating, excellent integration with existing systems
 
 **AG-UI Protocol** - AI User Interface Framework
 
-- **Why**: Specialized for healthcare interfaces, accessibility compliance, Brazilian healthcare standards
-- **Features**: WCAG 2.1 AA+ compliance, medical workflow optimization, responsive design
+- **Why**: Specialized for aesthetic clinic interfaces, accessibility compliance, Brazilian aesthetic clinic standards
+- **Features**: WCAG 2.1 AA+ compliance, aesthetic workflow optimization, responsive design
 - **Benefits**: Improved user experience, regulatory compliance, mobile-first approach
-- **Implementation**: Excellent (9.2/10) rating with comprehensive healthcare features
+- **Implementation**: Excellent (9.2/10) rating with comprehensive aesthetic clinic features
 
 **Enhanced Aesthetic Scheduling System** - Multi-Session Treatment Management
 
 - **Why**: Specialized for aesthetic clinic workflows, multi-session treatments, recovery planning
 - **Features**: Professional certification validation, treatment package scheduling, resource optimization
-- **Benefits**: Reduced scheduling conflicts, improved resource utilization, enhanced patient experience
-- **Implementation**: Comprehensive system with Brazilian healthcare compliance
+- **Benefits**: Reduced scheduling conflicts, improved resource utilization, enhanced client experience
+- **Implementation**: Comprehensive system with Brazilian aesthetic clinic compliance
 
-**AI Clinical Decision Support System** - Treatment Intelligence & Safety
+**AI Treatment Decision Support System** - Treatment Intelligence & Safety
 
 - **Why**: Evidence-based treatment recommendations, contraindication analysis, outcome prediction
 - **Features**: Treatment recommendation engine, contraindication analysis, progress monitoring
-- **Benefits**: Enhanced patient safety, improved treatment outcomes, reduced complications
-- **Implementation**: Advanced AI system with comprehensive Brazilian healthcare compliance
+- **Benefits**: Enhanced client safety, improved aesthetic outcomes, reduced complications
+- **Implementation**: Advanced AI system with comprehensive Brazilian aesthetic clinic compliance
 
 **TensorFlow.js (Latest)** - Client-Side Machine Learning
 
 - **Why**: Browser-native ML, privacy-preserving, offline capabilities
 - **Benefits**: Client-side inference, privacy protection, offline support
-- **Use Cases**: Anti-No-Show prediction, client-side validation, offline analytics, aesthetic treatment outcome prediction
+- **Use Cases**: Anti-No-Show prediction, client-side validation, offline analytics, aesthetic procedure outcome prediction
 
 **AI Governance**:
 
@@ -240,8 +240,8 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **PII Protection**: Automatic redaction
 - **Failover**: OpenAI → Anthropic with exponential backoff
 - **Rate Limiting**: Provider-specific limits with graceful degradation
-- **Clinical Safety**: Multi-layer validation for treatment recommendations
-- **Audit Trail**: Complete logging for all AI interactions with patient data
+- **Aesthetic Safety**: Multi-layer validation for treatment recommendations
+- **Audit Trail**: Complete logging for all AI interactions with client data
 
 ### Testing & Quality Assurance Stack
 
@@ -255,7 +255,7 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 - **Why**: Cross-browser testing, reliable automation, excellent debugging
 - **Benefits**: Multi-browser support, network interception, visual testing, mobile testing
-- **Config**: Brazilian Portuguese locale, healthcare-specific test scenarios
+- **Config**: Brazilian Portuguese locale, aesthetic clinic-specific test scenarios
 
 **React Testing Library v16.3.0** - Component Testing
 
@@ -288,12 +288,6 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Benefits**: Workflow automation, security scanning, deployment automation
 - **Security**: Pinned action versions, secret management, supply chain security
 
-**Docker v24.0.7** - Containerization
-
-- **Why**: Consistent environments, reproducible builds, industry standard
-- **Benefits**: Environment consistency, dependency isolation, scalability
-- **Usage**: Development environments, testing isolation, production consistency
-
 ### Monitoring & Analytics Stack
 
 **Vercel Analytics v1.2.2** - Performance Monitoring
@@ -310,7 +304,7 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 ## Major Technology Decisions & Rationale
 
-### Frontend Framework: TanStack Router + Vite vs Next.js
+### Frontend Framework: TanStack Router + Vite
 
 **Decision**: TanStack Router + Vite + React 19
 **Key Factors**:
@@ -330,9 +324,9 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Type Safety**: End-to-end TypeScript vs manual type definitions
 - **Developer Experience**: Automatic client generation vs manual API integration
 - **Performance**: Zero runtime overhead vs GraphQL complexity
-- **Healthcare Compliance**: Brazilian LGPD/CFM compliance built-in
+- **Aesthetic Clinic Compliance**: Brazilian LGPD/Professional Council compliance built-in
 
-**Impact**: 90% reduction in API bugs, 60% faster development, full healthcare compliance
+**Impact**: 90% reduction in API bugs, 60% faster development, full aesthetic clinic compliance
 
 ### ORM: Prisma vs TypeORM/Drizzle
 
@@ -340,11 +334,11 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 **Key Factors**:
 
 - **Type Safety**: Auto-generated types vs manual definitions
-- **Healthcare Features**: Multi-schema support for LGPD compliance
+- **Aesthetic Clinic Features**: Multi-schema support for LGPD compliance
 - **Performance**: Connection pooling and edge runtime optimization
 - **Brazilian Compliance**: Built-in audit logging and data governance
 
-**Impact**: Healthcare-compliant database layer, 50% faster development, audit-ready
+**Impact**: Aesthetic clinic-compliant database layer, 50% faster development, audit-ready
 
 ### Database: Supabase vs Traditional PostgreSQL/MySQL
 
@@ -365,11 +359,11 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 - **Reliability**: Multi-provider failover capability vs single point of failure
 - **Cost Optimization**: Provider switching based on usage patterns and complexity
-- **Feature Diversity**: GPT-5 for Portuguese, Gemini for reasoning, CopilotKit for healthcare workflows
+- **Feature Diversity**: GPT-5 for Portuguese, Gemini for reasoning, CopilotKit for aesthetic clinic workflows
 - **Vendor Independence**: Reduced lock-in risk, comprehensive AI ecosystem
-- **Healthcare Compliance**: Built-in LGPD, ANVISA, and professional regulation compliance
+- **Aesthetic Clinic Compliance**: Built-in LGPD, ANVISA, and professional regulation compliance
 
-**Impact**: 99.9% AI service uptime, cost optimization, comprehensive healthcare workflows
+**Impact**: 99.9% AI service uptime, cost optimization, comprehensive aesthetic clinic workflows
 
 ## Version Management & Upgrade Strategy
 
@@ -471,14 +465,14 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 **ANVISA Compliance**:
 
-- **Device Validation**: Real-time medical device registration checking
+- **Device Validation**: Real-time cosmetic device registration checking
 - **Compliance Monitoring**: Continuous device compliance status tracking
 - **Audit Logging**: Immutable records for regulatory reporting
 
 **Standards Compliance**:
 
-- **Medical Device Software**: SaMD Class I compliance framework
-- **Professional Regulation**: CFM professional standards adherence
+- **Cosmetic Device Software**: SaMD Class I compliance framework
+- **Professional Regulation**: Professional Council standards adherence
 - **Data Residency**: Brazilian data center requirements
 
 ### Deployment & Infrastructure Stack
@@ -535,7 +529,7 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 - **Offline Support**: Progressive Web App with offline functionality
 - **Mobile Applications**: React Native apps for iOS and Android
-- **Custom AI Models**: Fine-tuned models for Brazilian healthcare
+- **Custom AI Models**: Fine-tuned models for Brazilian aesthetic clinic
 - **Multi-Region Expansion**: Additional Brazilian data centers
 
 **Infrastructure Evolution**:

@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This document outlines the comprehensive technical architecture for enhancing AI agents with CopilotKit integration, AG-UI Protocol extensions, and database interaction patterns for aesthetic clinics. The architecture builds upon the existing sophisticated healthcare infrastructure while introducing advanced AI capabilities through seamless integration.
+This document outlines the comprehensive technical architecture for enhancing AI agents with CopilotKit integration, AG-UI Protocol extensions, and database interaction patterns for aesthetic clinics. The architecture builds upon the existing sophisticated aesthetic clinic infrastructure while introducing advanced AI capabilities through seamless integration.
 
 ### Key Objectives
 
@@ -15,7 +15,7 @@ This document outlines the comprehensive technical architecture for enhancing AI
 ### Architectural Decisions
 
 - **Extend, Don't Replace**: Leverage existing AG-UI Protocol and infrastructure
-- **Healthcare-First Design**: All components prioritize compliance and security
+- **Aesthetic Clinic-First Design**: All components prioritize compliance and security
 - **Event-Driven Architecture**: Real-time communication and reactive updates
 - **Microservices Integration**: Modular, scalable service architecture
 - **Unified API Layer**: Consistent interfaces across all components
@@ -35,7 +35,7 @@ This document outlines the comprehensive technical architecture for enhancing AI
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Frontend Layer                              │
-│  React 19 + CopilotKit + AG-UI Client + Healthcare UI        │
+│  React 19 + CopilotKit + AG-UI Client + Aesthetic Clinic UI        │
 └─────────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────────┐
@@ -100,14 +100,14 @@ Real-time UI Updates ← Event Bus ← Multiple Services ← Database Events
 
 - TypeScript for type safety
 - Modern React patterns (hooks, concurrent features)
-- Healthcare-specific component library
+- Aesthetic clinic-specific component library
 - Accessibility compliance (WCAG 2.1 AA+)
 
 **CopilotKit Integration**
 
 - `@copilotkit/react-core` for AI chat interface
 - `@copilotkit/react-ui` for pre-built components
-- Custom healthcare-specific Copilot actions
+- Custom aesthetic clinic-specific Copilot actions
 - Multi-language support (Portuguese primary)
 
 **AG-UI Protocol Client**
@@ -119,9 +119,9 @@ Real-time UI Updates ← Event Bus ← Multiple Services ← Database Events
 
 **UI/UX Components**
 
-- Chat interface with medical context
+- Chat interface with aesthetic context
 - Appointment scheduling components
-- Patient management dashboards
+- Client management dashboards
 - Financial reporting interfaces
 - Mobile-responsive design
 
@@ -130,12 +130,12 @@ Real-time UI Updates ← Event Bus ← Multiple Services ← Database Events
 1. **Unified Chat Interface**
    - Supports both CopilotKit and AG-UI protocols
    - Context-aware suggestions
-   - Medical history integration
+   - Aesthetic history integration
    - Real-time typing indicators
 
-2. **Healthcare-Specific Components**
+2. **Aesthetic Clinic-Specific Components**
    - Appointment calendar with AI assistance
-   - Patient records with privacy controls
+   - Client records with privacy controls
    - Financial dashboards with insights
    - Treatment planning interfaces
 
@@ -154,15 +154,15 @@ Real-time UI Updates ← Event Bus ← Multiple Services ← Database Events
 ```typescript
 const runtime = new CopilotRuntime({
   actions: ({ properties, url }) => [
-    // Healthcare-specific actions
+    // Aesthetic clinic-specific actions
     {
       name: "scheduleAppointment",
-      description: "Schedule medical appointment with AI assistance",
+      description: "Schedule aesthetic appointment with AI assistance",
       parameters: [
         {
-          name: "patientId",
+          name: "clientId",
           type: "string",
-          description: "Patient identifier",
+          description: "Client identifier",
           required: true,
         },
         {
@@ -174,26 +174,26 @@ const runtime = new CopilotRuntime({
         {
           name: "specialty",
           type: "string",
-          description: "Medical specialty required",
+          description: "Aesthetic specialty required",
           required: true,
         },
       ],
-      handler: async ({ patientId, preferredDate, specialty }) => {
+      handler: async ({ clientId, preferredDate, specialty }) => {
         // Integrate with appointment service
         return await appointmentService.scheduleWithAI({
-          patientId,
+          clientId,
           preferredDate,
           specialty,
         });
       },
     },
-    // Additional healthcare actions...
+    // Additional aesthetic clinic actions...
   ],
   langserve: [
     {
       chainUrl: process.env.LANGSERVE_URL,
-      name: "medicalKnowledge",
-      description: "Access to medical knowledge base",
+      name: "aestheticKnowledge",
+      description: "Access to aesthetic knowledge base",
     },
   ],
 });
@@ -282,10 +282,10 @@ const gateway = new APIGateway({
 **Agent Types**
 
 1. **Client Agent**
-   - Patient communication
-   - Medical history analysis
+   - Client communication
+   - Aesthetic history analysis
    - Appointment follow-ups
-   - Health education
+   - Aesthetic education
 
 2. **Financial Agent**
    - Billing inquiries
@@ -364,10 +364,10 @@ export class EnhancedAIAgentService {
 - Conflict resolution
 - Reminder systems
 
-**Patient Service**
+**Client Service**
 
-- Patient record management
-- Medical history integration
+- Client record management
+- Aesthetic history integration
 - Privacy controls
 - Communication preferences
 
@@ -382,7 +382,7 @@ export class EnhancedAIAgentService {
 
 **Workflow Types**
 
-1. **New Patient Onboarding**
+1. **New Client Onboarding**
 2. **Appointment Scheduling**
 3. **Treatment Planning**
 4. **Billing and Payment**
@@ -621,8 +621,8 @@ const cacheConfig = {
 
 **Data Classification**
 
-- **Restricted**: Sensitive medical information (diagnoses, treatments)
-- **Confidential**: Patient identifiable information
+- **Restricted**: Sensitive aesthetic information (diagnoses, treatments)
+- **Confidential**: Client identifiable information
 - **Internal**: Operational data and business processes
 - **Public**: General clinic information
 
@@ -655,10 +655,10 @@ const cacheConfig = {
 
 ```typescript
 const roles = {
-  admin: ["system:*", "user:*", "patient:*", "financial:*", "appointment:*"],
-  doctor: ["patient:read", "appointment:*", "medical:*"],
-  receptionist: ["patient:read", "appointment:*", "financial:read"],
-  patient: ["own:read", "appointment:own"],
+  admin: ["system:*", "user:*", "client:*", "financial:*", "appointment:*"],
+  aesthetic_professional: ["client:read", "appointment:*", "aesthetic:*"],
+  coordinator: ["client:read", "appointment:*", "financial:read"],
+  client: ["own:read", "appointment:own"],
 };
 ```
 
@@ -765,49 +765,49 @@ const roles = {
 
 #### 1. Backend Actions Integration
 
-**Healthcare-Specific Actions**
+**Aesthetic Clinic-Specific Actions**
 
 ```typescript
-// Patient Management Actions
-const patientActions = [
+// Client Management Actions
+const clientActions = [
   {
-    name: "getPatientInfo",
-    description: "Retrieve patient information with privacy controls",
+    name: "getClientInfo",
+    description: "Retrieve client information with privacy controls",
     parameters: [
       {
-        name: "patientId",
+        name: "clientId",
         type: "string",
-        description: "Patient identifier",
+        description: "Client identifier",
         required: true,
       },
       {
-        name: "includeMedicalHistory",
+        name: "includeAestheticHistory",
         type: "boolean",
-        description: "Include medical history in response",
+        description: "Include aesthetic history in response",
         required: false,
       },
     ],
-    handler: async ({ patientId, includeMedicalHistory }) => {
-      return await patientService.getPatientInfo(
-        patientId,
-        includeMedicalHistory,
+    handler: async ({ clientId, includeAestheticHistory }) => {
+      return await clientService.getClientInfo(
+        clientId,
+        includeAestheticHistory,
       );
     },
   },
   {
     name: "scheduleAppointment",
-    description: "Schedule medical appointment with AI optimization",
+    description: "Schedule aesthetic appointment with AI optimization",
     parameters: [
       {
-        name: "patientId",
+        name: "clientId",
         type: "string",
-        description: "Patient identifier",
+        description: "Client identifier",
         required: true,
       },
       {
         name: "specialty",
         type: "string",
-        description: "Medical specialty required",
+        description: "Aesthetic specialty required",
         required: true,
       },
       {
@@ -817,9 +817,9 @@ const patientActions = [
         required: false,
       },
     ],
-    handler: async ({ patientId, specialty, preferredTime }) => {
+    handler: async ({ clientId, specialty, preferredTime }) => {
       return await appointmentService.scheduleWithAI({
-        patientId,
+        clientId,
         specialty,
         preferredTime,
       });
@@ -831,27 +831,27 @@ const patientActions = [
 const financialActions = [
   {
     name: "getBillingInfo",
-    description: "Retrieve patient billing information",
+    description: "Retrieve client billing information",
     parameters: [
       {
-        name: "patientId",
+        name: "clientId",
         type: "string",
-        description: "Patient identifier",
+        description: "Client identifier",
         required: true,
       },
     ],
-    handler: async ({ patientId }) => {
-      return await financialService.getBillingInfo(patientId);
+    handler: async ({ clientId }) => {
+      return await financialService.getBillingInfo(clientId);
     },
   },
   {
     name: "processPayment",
-    description: "Process patient payment securely",
+    description: "Process client payment securely",
     parameters: [
       {
-        name: "patientId",
+        name: "clientId",
         type: "string",
-        description: "Patient identifier",
+        description: "Client identifier",
         required: true,
       },
       {
@@ -867,9 +867,9 @@ const financialActions = [
         required: true,
       },
     ],
-    handler: async ({ patientId, amount, paymentMethod }) => {
+    handler: async ({ clientId, amount, paymentMethod }) => {
       return await financialService.processPayment({
-        patientId,
+        clientId,
         amount,
         paymentMethod,
       });
@@ -884,7 +884,7 @@ const financialActions = [
 
 ```typescript
 // Enhanced Chat Interface
-const HealthcareChatInterface = () => {
+const AestheticClinicChatInterface = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -903,7 +903,7 @@ const HealthcareChatInterface = () => {
   };
 
   return (
-    <div className="healthcare-chat-interface">
+    <div className="aesthetic-clinic-chat-interface">
       <ChatHeader />
       <MessageList messages={messages} />
       <MessageInput onSend={handleSendMessage} disabled={isLoading} />
@@ -912,40 +912,40 @@ const HealthcareChatInterface = () => {
   );
 };
 
-// Patient Dashboard with AI Assistant
-const PatientDashboard = ({ patientId }) => {
+// Client Dashboard with AI Assistant
+const ClientDashboard = ({ clientId }) => {
   const { actions } = useCopilotAction({
-    name: "getPatientOverview",
+    name: "getClientOverview",
     parameters: [
       {
-        name: "patientId",
+        name: "clientId",
         type: "string",
-        description: "Patient identifier",
+        description: "Client identifier",
         required: true,
       },
     ],
   });
 
-  const [patientData, setPatientData] = useState(null);
+  const [clientData, setClientData] = useState(null);
 
   useEffect(() => {
-    const fetchPatientData = async () => {
-      const data = await actions.execute({ patientId });
-      setPatientData(data);
+    const fetchClientData = async () => {
+      const data = await actions.execute({ clientId });
+      setClientData(data);
     };
 
-    if (patientId) {
-      fetchPatientData();
+    if (clientId) {
+      fetchClientData();
     }
-  }, [patientId]);
+  }, [clientId]);
 
   return (
-    <div className="patient-dashboard">
-      <PatientInfo patient={patientData} />
-      <AppointmentScheduler patientId={patientId} />
-      <MedicalHistory patientId={patientId} />
-      <BillingInfo patientId={patientId} />
-      <AIAssistant patientId={patientId} />
+    <div className="client-dashboard">
+      <ClientInfo client={clientData} />
+      <AppointmentScheduler clientId={clientId} />
+      <AestheticHistory clientId={clientId} />
+      <BillingInfo clientId={clientId} />
+      <AIAssistant clientId={clientId} />
     </div>
   );
 };
@@ -964,11 +964,11 @@ interface AguiCopilotEvents {
   "copilot:typing": { isTyping: boolean };
   "copilot:context": { context: any; timestamp: string };
 
-  // Healthcare specific events
+  // Aesthetic clinic specific events
   "appointment:scheduled": { appointmentId: string; timestamp: string };
-  "patient:updated": { patientId: string; changes: any };
+  "client:updated": { clientId: string; changes: any };
   "payment:processed": { paymentId: string; amount: number; status: string };
-  "medical:alert": { patientId: string; alertType: string; severity: string };
+  "aesthetic:alert": { clientId: string; alertType: string; severity: string };
 }
 
 // Event Handler Integration
@@ -981,8 +981,8 @@ class AguiCopilotEventHandler {
     });
   }
 
-  handleHealthcareEvent(event: keyof AguiCopilotEvents) {
-    // Broadcast healthcare events to relevant clients
+  handleAestheticClinicEvent(event: keyof AguiCopilotEvents) {
+    // Broadcast aesthetic clinic events to relevant clients
     this.broadcastToSubscribers(event);
 
     // Update real-time dashboards
@@ -1008,7 +1008,7 @@ interface AguiCopilotMessageTypes {
   COPILOT_ACTION: CopilotActionMessage;
   COPILOT_CONTEXT: CopilotContextMessage;
 
-  // Healthcare workflows
+  // Aesthetic clinic workflows
   WORKFLOW_START: WorkflowStartMessage;
   WORKFLOW_STEP: WorkflowStepMessage;
   WORKFLOW_COMPLETE: WorkflowCompleteMessage;
@@ -1029,17 +1029,17 @@ interface AguiEnhancedContext {
   // Basic context
   sessionId: string;
   userId: string;
-  patientId?: string;
+  clientId?: string;
 
   // CopilotKit context
   copilotSessionId?: string;
   copilotProperties?: Record<string, any>;
 
-  // Healthcare context
-  medicalContext?: {
-    allergies: string[];
-    medications: string[];
-    conditions: string[];
+  // Aesthetic clinic context
+  aestheticContext?: {
+    treatmentAllergies: string[];
+    cosmeticProducts: string[];
+    treatmentConcerns: string[];
     lastVisit?: string;
     upcomingAppointments?: string[];
   };
@@ -1145,11 +1145,11 @@ class EnhancedRAGService {
 
 ```typescript
 class SessionAwareDataService {
-  async getPatientData(
-    patientId: string,
+  async getClientData(
+    clientId: string,
     sessionId: string,
     options: DataOptions = {},
-  ): Promise<PatientData> {
+  ): Promise<ClientData> {
     // Get session context
     const session = await this.sessionService.getSession(sessionId);
 
@@ -1157,42 +1157,42 @@ class SessionAwareDataService {
     const privacyFilters = this.getPrivacyFilters(session);
 
     // Query with privacy constraints
-    const patientData = await this.patientRepository.findWithFilters(
-      patientId,
+    const clientData = await this.clientRepository.findWithFilters(
+      clientId,
       privacyFilters,
       options,
     );
 
     // Apply session-specific transformations
-    return this.transformForSession(patientData, session);
+    return this.transformForSession(clientData, session);
   }
 }
 ```
 
 #### 2. Transaction Management
 
-**Healthcare Transactions**
+**Aesthetic Clinic Transactions**
 
 ```typescript
-class HealthcareTransactionManager {
+class AestheticClinicTransactionManager {
   async executeAppointmentTransaction(
     appointmentData: AppointmentData,
-    patientData: PatientData,
+    clientData: ClientData,
     billingData: BillingData,
   ): Promise<AppointmentResult> {
     return await this.prisma.$transaction(async (tx) => {
-      // Step 1: Create/update patient
-      const patient = await tx.patient.upsert({
-        where: { id: patientData.id },
-        update: patientData,
-        create: patientData,
+      // Step 1: Create/update client
+      const client = await tx.client.upsert({
+        where: { id: clientData.id },
+        update: clientData,
+        create: clientData,
       });
 
       // Step 2: Create appointment
       const appointment = await tx.appointment.create({
         data: {
           ...appointmentData,
-          patientId: patient.id,
+          clientId: client.id,
           status: "scheduled",
         },
       });
@@ -1201,7 +1201,7 @@ class HealthcareTransactionManager {
       const billing = await tx.billing.create({
         data: {
           ...billingData,
-          patientId: patient.id,
+          clientId: client.id,
           appointmentId: appointment.id,
         },
       });
@@ -1215,19 +1215,19 @@ class HealthcareTransactionManager {
       // Step 5: Create audit trail
       await tx.auditTrail.create({
         data: {
-          userId: patientData.userId,
+          userId: clientData.userId,
           action: "APPOINTMENT_CREATED",
           resource: "appointment",
           resourceId: appointment.id,
           additionalInfo: JSON.stringify({
             appointmentId: appointment.id,
-            patientId: patient.id,
+            clientId: client.id,
             billingId: billing.id,
           }),
         },
       });
 
-      return { appointment, patient, billing };
+      return { appointment, client, billing };
     });
   }
 }
@@ -1317,7 +1317,7 @@ tRPC Router: agentEnhanced
 - updateAgentPreferences: Update agent preferences
 
 tRPC Router: workflow
-- startWorkflow: Start healthcare workflow
+- startWorkflow: Start aesthetic clinic workflow
 - getWorkflowStatus: Get workflow execution status
 - pauseWorkflow: Pause workflow execution
 - resumeWorkflow: Resume workflow execution
@@ -1428,7 +1428,7 @@ CREATE TABLE vector_embeddings (
     updated_at TIMESTAMPTZ DEFAULT NOW(),
 
     -- Constraints
-    CONSTRAINT chk_vector_embeddings_source CHECK (source_type IN ('knowledge_base', 'patient_records', 'appointments', 'financial', 'workflow'))
+    CONSTRAINT chk_vector_embeddings_source CHECK (source_type IN ('knowledge_base', 'client_records', 'appointments', 'financial', 'workflow'))
 );
 
 -- Indexes for vector_embeddings
@@ -1637,13 +1637,13 @@ interface ActionEvents {
 }
 ```
 
-#### Healthcare Events
+#### Aesthetic Clinic Events
 
 ```typescript
-interface HealthcareEvents {
+interface AestheticClinicEvents {
   "appointment:scheduled": {
     appointmentId: string;
-    patientId: string;
+    clientId: string;
     userId: string;
     timestamp: string;
     details: any;
@@ -1651,14 +1651,14 @@ interface HealthcareEvents {
 
   "appointment:cancelled": {
     appointmentId: string;
-    patientId: string;
+    clientId: string;
     userId: string;
     reason: string;
     timestamp: string;
   };
 
-  "patient:updated": {
-    patientId: string;
+  "client:updated": {
+    clientId: string;
     userId: string;
     changes: any;
     timestamp: string;
@@ -1666,15 +1666,15 @@ interface HealthcareEvents {
 
   "payment:processed": {
     paymentId: string;
-    patientId: string;
+    clientId: string;
     amount: number;
     status: string;
     timestamp: string;
   };
 
-  "medical:alert": {
+  "aesthetic:alert": {
     alertId: string;
-    patientId: string;
+    clientId: string;
     alertType: string;
     severity: "low" | "medium" | "high" | "critical";
     message: string;
@@ -1713,7 +1713,7 @@ interface SystemEvents {
 #### Error Types
 
 ```typescript
-interface HealthcareErrors {
+interface AestheticClinicErrors {
   // Authentication errors
   AUTHENTICATION_FAILED: {
     code: "AUTH_001";
@@ -1885,15 +1885,15 @@ class IndexManager {
   // Composite indexes for common query patterns
   indexes = [
     {
-      name: "idx_patient_search",
-      table: "patients",
+      name: "idx_client_search",
+      table: "clients",
       columns: ["clinic_id", "status", "created_at"],
       where: "deleted_at IS NULL",
     },
     {
       name: "idx_appointment_search",
       table: "appointments",
-      columns: ["clinic_id", "patient_id", "date", "status"],
+      columns: ["clinic_id", "client_id", "date", "status"],
       where: "cancelled_at IS NULL",
     },
     {
@@ -2216,7 +2216,7 @@ class DataClassifier {
       }
     }
 
-    if (context.includes("patient") || context.includes("medical")) {
+    if (context.includes("client") || context.includes("aesthetic")) {
       return DataSensitivity.CONFIDENTIAL;
     }
 
@@ -2376,7 +2376,7 @@ class AuditService {
 class MFAService {
   async setupMFA(userId: string): Promise<MFASetup> {
     const secret = speakeasy.generateSecret({
-      name: "NeonPro Healthcare",
+      name: "NeonPro Aesthetic Clinic",
       user: userId,
     });
 
@@ -2466,22 +2466,22 @@ class ABACService {
     context: Record<string, any>,
   ): boolean {
     const rules = [
-      // Doctors can access their own patients
+      // Professionals can access their own clients
       {
         condition:
           user.roles.some((r) => r.name === "doctor") &&
-          resource === "patient" &&
+          resource === "client" &&
           action === "read" &&
-          context.patientId === user.id,
+          context.clientId === user.id,
         result: true,
       },
-      // Patients can only access their own data
+      // Clients can only access their own data
       {
         condition:
-          user.roles.some((r) => r.name === "patient") &&
-          resource === "patient" &&
+          user.roles.some((r) => r.name === "client") &&
+          resource === "client" &&
           action === "read" &&
-          context.patientId === user.id,
+          context.clientId === user.id,
         result: true,
       },
     ];
@@ -2608,28 +2608,28 @@ class EncryptionService {
 
 - **Tasks**:
   - Implement enhanced agent service with CopilotKit actions
-  - Create healthcare-specific action definitions
+  - Create aesthetic clinic-specific action definitions
   - Add context management capabilities
   - Implement workflow engine integration
 - **Deliverables**:
   - Enhanced AI agent service
-  - Healthcare action library
+  - Aesthetic clinic action library
   - Context management system
   - Workflow engine integration
 - **Success Criteria**:
-  - All healthcare actions work correctly
+  - All aesthetic clinic actions work correctly
   - Context management improves response accuracy
   - Workflow engine executes complex processes
 
 #### 2.2 CopilotKit Action Definitions
 
 - **Tasks**:
-  - Define comprehensive set of healthcare actions
+  - Define comprehensive set of aesthetic clinic actions
   - Implement action handlers with proper error handling
   - Add action validation and sanitization
   - Create action testing framework
 - **Deliverables**:
-  - Healthcare action definitions
+  - Aesthetic clinic action definitions
   - Action handler implementations
   - Validation and sanitization rules
   - Testing framework and test cases
@@ -2819,16 +2819,16 @@ class EncryptionService {
 
 ## Conclusion
 
-This comprehensive technical architecture provides a robust foundation for enhancing AI agents with CopilotKit integration while maintaining healthcare compliance and system reliability. The architecture builds upon the existing sophisticated infrastructure, extending capabilities through seamless integration rather than replacement.
+This comprehensive technical architecture provides a robust foundation for enhancing AI agents with CopilotKit integration while maintaining aesthetic clinic compliance and system reliability. The architecture builds upon the existing sophisticated infrastructure, extending capabilities through seamless integration rather than replacement.
 
 The 6-layer architecture ensures clear separation of concerns, scalability, and maintainability. The phased implementation approach minimizes risk while delivering incremental value. Comprehensive security and compliance measures ensure LGPD compliance and data protection.
 
 Key success factors include:
 
 - **Seamless Integration**: CopilotKit enhances existing systems without disruption
-- **Healthcare-First Design**: All components prioritize compliance and security
+- **Aesthetic Clinic-First Design**: All components prioritize compliance and security
 - **Performance Optimization**: Multi-layer caching and database optimization
 - **Scalability**: Microservices architecture with auto-scaling
 - **User Experience**: Intuitive interfaces with real-time AI assistance
 
-This architecture positions the system for future growth and innovation while maintaining the high standards required for healthcare applications.
+This architecture positions the system for future growth and innovation while maintaining the high standards required for aesthetic clinic applications.

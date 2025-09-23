@@ -445,7 +445,7 @@ export const prismaRLSMiddleware = async ({
   ctx,
   next,
   _path,
-  type,
+  _type,
   _input,
 }: any) => {
   const start = performance.now();

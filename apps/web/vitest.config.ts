@@ -8,7 +8,7 @@ export default defineConfig({
     // Environment settings optimized for clinic app
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test/dom-environment.ts', './src/test-setup.ts'],
+    setupFiles: ['./src/test-setup.ts'],
 
     // Performance optimization for clinic app testing
     threads: true,

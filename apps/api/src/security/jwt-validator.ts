@@ -198,7 +198,7 @@ export class JWTSecurityValidator {
         _payload: verifyResult.payload,
         securityLevel: 'high',
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         isValid: false,
         error: 'Token validation failed',
@@ -229,7 +229,7 @@ export class JWTSecurityValidator {
       for (const part of parts) {
         Buffer.from(part, 'base64');
       }
-    } catch (error) {
+    } catch (_error) {
       return {
         isValid: false,
         error: 'Invalid base64 encoding',
@@ -249,7 +249,7 @@ export class JWTSecurityValidator {
       const headerPart = token.split('.')[0];
       const header = JSON.parse(Buffer.from(headerPart, 'base64').toString());
       return header;
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -375,7 +375,7 @@ export class JWTSecurityValidator {
         payload,
         securityLevel: 'high',
       };
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof jwt.JsonWebTokenError) {
         return {
           isValid: false,
@@ -543,7 +543,7 @@ export class JWTSecurityValidator {
     _payload: JwtPayload,
   ): JWTValidationResult {
     // Ensure healthcare-specific claims are present if required
-    const { role, permissions: permissions } = payload;
+    const { role } = payload;
 
     // For healthcare applications, validate user role if present
     if (role && typeof role === 'string') {

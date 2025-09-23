@@ -12,7 +12,7 @@ declare module 'hono' {
     professionalId?: string;
     requestId?: string;
     startTime?: number;
-    user?: any;
+    user?: Record<string, unknown>;
   }
 }
 

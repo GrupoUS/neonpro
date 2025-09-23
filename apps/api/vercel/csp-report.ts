@@ -25,7 +25,7 @@ export default async function handler(req: Request): Promise<Response> {
     } else if (contentType.includes('text/plain')) {
       body = await req.text();
     }
-  } catch (e) {
+  } catch {
     // Ignore parse errors but acknowledge
   }
 
@@ -76,7 +76,7 @@ function pickCommonFields(obj: any): Record<string, unknown> {
     'source-file': sourceFile,
     referrer,
     'status-code': statusCode,
-    originalPolicy,
+    _originalPolicy,
   } = obj;
 
   return {

@@ -1,51 +1,51 @@
-# Healthcare-Specific Implementation Guide
+# Aesthetic Clinic-Specific Implementation Guide
 
 ## Overview
 
-This guide covers healthcare-specific configurations, compliance requirements, and implementation patterns for the NeonPro healthcare platform, focusing on Brazilian healthcare regulations (ANVISA, CFM) and international healthcare standards.
+This guide covers aesthetic clinic-specific configurations, compliance requirements, and implementation patterns for the NeonPro aesthetic clinic platform, focusing on Brazilian aesthetic regulations (ANVISA, Professional Councils) and international aesthetic practice standards.
 
-## Healthcare Regulatory Framework
+## Aesthetic Clinic Regulatory Framework
 
-### Brazilian Healthcare Compliance
+### Brazilian Aesthetic Clinic Compliance
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                Brazilian Healthcare Regulatory Stack        │
+│            Brazilian Aesthetic Clinic Regulatory Stack      │
 ├─────────────────────────────────────────────────────────────┤
-│  CFM (Federal Council of Medicine) │  ANVISA (Health Agency)│
+│  Professional Councils  │  ANVISA (Health Agency)         │
 ├─────────────────────────────────────────────────────────────┤
-│        Professional Standards      │  Medical Device Standards│
+│    Aesthetic Standards     │  Cosmetic Product Standards    │
 ├─────────────────────────────────────────────────────────────┤
-│  LGPD (Data Protection)  │  Healthcare Ethics  │ Patient Rights│
+│   LGPD (Data Protection)  │  Aesthetic Ethics  │ Client Rights │
 ├─────────────────────────────────────────────────────────────┤
-│             International Standards Integration              │
-│   FHIR HL7   │   DICOM    │   ICD-11   │   SNOMED CT      │
+│                Industry Standards Integration                 │
+│   Safety Protocols  │  Best Practices  │ Quality Standards   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### Compliance Requirements
 
-#### CFM (Conselho Federal de Medicina) Requirements
+#### Professional Council Requirements (CNEP, COREN, CRO, CRF)
 
-- **Professional Registration**: Verification of medical licenses (CRM)
-- **Telemedicine Standards**: CFM Resolution 2.314/2022 compliance
-- **Medical Record Retention**: Permanent retention of medical records
-- **Professional Ethics**: Adherence to medical ethics code
-- **Audit Trail**: Complete logging of medical professional actions
+- **Professional Registration**: Verification of aesthetic professional licenses
+- **Virtual Consultation Standards**: Professional council guidelines for remote aesthetic services
+- **Client Record Retention**: Retention according to professional council requirements
+- **Professional Ethics**: Adherence to aesthetic practice ethics code
+- **Audit Trail**: Complete logging of aesthetic professional actions
 
 #### ANVISA (Agência Nacional de Vigilância Sanitária) Requirements
 
-- **Medical Device Classification**: Software as Medical Device (SaMD) compliance
-- **Risk Management**: ISO 14971 healthcare risk management
-- **Quality Management**: ISO 13485 healthcare quality systems
-- **Clinical Evaluation**: Evidence-based clinical safety and effectiveness
-- **Post-Market Surveillance**: Continuous monitoring and reporting
+- **Cosmetic Product Classification**: Product safety and compliance monitoring
+- **Equipment Safety**: Aesthetic device safety and validation
+- **Quality Management**: Quality systems for aesthetic clinic operations
+- **Safety Monitoring**: Client safety and adverse event reporting
+- **Product Surveillance**: Continuous monitoring of cosmetic products
 
-## Healthcare Data Models
+## Aesthetic Clinic Data Models
 
-### Patient Data Structure
+### Client Data Structure
 
-**File**: `packages/shared/src/models/healthcare-base.ts`
+**File**: `packages/shared/src/models/aesthetic-clinic-base.ts`
 
 ```typescript
 import { z } from "zod";
@@ -55,41 +55,42 @@ const CPFSchema = z
   .string()
   .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, "Invalid CPF format");
 
-// Brazilian healthcare professional registration
-const CRMSchema = z.object({
-  number: z.string().regex(/^\d{4,6}$/, "Invalid CRM number"),
+// Brazilian aesthetic professional registration
+const LicenseSchema = z.object({
+  number: z.string().regex(/^\d{4,6}$/, "Invalid license number"),
   state: z.string().length(2, "State must be 2 characters"),
+  councilType: z.enum(["CNEP", "COREN", "CRO", "CRF"]),
   specialty: z.string().optional(),
   isActive: z.boolean().default(true),
 });
 
-// Healthcare data classification according to LGPD
-export const HealthcareDataClassification = z.enum([
-  "public", // Public health information
+// Aesthetic data classification according to LGPD
+export const AestheticDataClassification = z.enum([
+  "public", // Public clinic information
   "internal", // Internal administrative data
-  "confidential", // Professional and clinical data
-  "restricted", // Patient sensitive data
-  "highly_sensitive", // Genetic, biometric, mental health data
+  "confidential", // Professional and client data
+  "restricted", // Client sensitive data
+  "highly_sensitive", // Treatment records, photos, biometric data
 ]);
 
-// Patient consent granular structure for LGPD compliance
-export const PatientConsentSchema = z.object({
+// Client consent granular structure for LGPD compliance
+export const ClientConsentSchema = z.object({
   consentId: z.string().uuid(),
-  patientId: z.string().uuid(),
+  clientId: z.string().uuid(),
   purposes: z.array(
     z.object({
       purposeId: z.enum([
-        "medical_treatment",
-        "telemedicine_consultation",
-        "health_monitoring",
-        "research_participation",
-        "health_analytics",
+        "aesthetic_treatment",
+        "virtual_consultation",
+        "treatment_monitoring",
+        "product_recommendations",
+        "analytics",
         "marketing_communications",
         "data_sharing_partners",
       ]),
       granted: z.boolean(),
       timestamp: z.date(),
-      legalBasis: z.enum(["consent", "vital_interests", "medical_care"]),
+      legalBasis: z.enum(["consent", "vital_interests", "aesthetic_care"]),
       withdrawable: z.boolean().default(true),
     }),
   ),
@@ -97,12 +98,11 @@ export const PatientConsentSchema = z.object({
     z.enum([
       "personal_identification",
       "contact_information",
-      "medical_history",
-      "diagnostic_data",
-      "treatment_records",
+      "aesthetic_history",
+      "treatment_data",
+      "before_after_photos",
       "biometric_data",
-      "genetic_information",
-      "mental_health_data",
+      "skin_analysis_data",
       "lifestyle_data",
     ]),
   ),
@@ -136,8 +136,8 @@ export const PatientConsentSchema = z.object({
   ),
 });
 
-// Healthcare professional data structure
-export const HealthcareProfessionalSchema = z.object({
+// Aesthetic professional data structure
+export const AestheticProfessionalSchema = z.object({
   professionalId: z.string().uuid(),
   personalInfo: z.object({
     fullName: z.string().min(2),
@@ -161,10 +161,10 @@ export const HealthcareProfessionalSchema = z.object({
     }),
   }),
   professionalInfo: z.object({
-    crm: CRMSchema,
+    license: LicenseSchema,
     specialties: z.array(
       z.object({
-        code: z.string(), // CBHPM or SUS specialty code
+        code: z.string(), // Professional council specialty code
         name: z.string(),
         certificationDate: z.date(),
         certifyingBody: z.string(),
@@ -178,10 +178,10 @@ export const HealthcareProfessionalSchema = z.object({
         recognitionNumber: z.string().optional(),
       }),
     ),
-    licenses: z.array(
+    certifications: z.array(
       z.object({
-        type: z.enum(["medical", "specialty", "procedure"]),
-        number: z.string(),
+        type: z.enum(["aesthetic", "specialty", "equipment"]),
+        name: z.string(),
         issuingAuthority: z.string(),
         issueDate: z.date(),
         expiryDate: z.date().optional(),
@@ -191,8 +191,8 @@ export const HealthcareProfessionalSchema = z.object({
   }),
   platformAccess: z.object({
     accessLevel: z.enum([
-      "resident",
-      "physician",
+      "aesthetician",
+      "professional",
       "specialist",
       "consultant",
       "administrator",
@@ -211,25 +211,22 @@ export const HealthcareProfessionalSchema = z.object({
     privacyPolicyAccepted: z.boolean(),
   }),
   compliance: z.object({
-    dataClassification: HealthcareDataClassification.default("confidential"),
+    dataClassification: AestheticDataClassification.default("confidential"),
     auditRequired: z.boolean().default(true),
     dataRetentionPeriod: z.number().default(2555), // 7 years in days
     crossBorderTransferApproved: z.boolean().default(false),
   }),
 });
 
-// Patient data structure with healthcare-specific requirements
-export const PatientSchema = z.object({
-  patientId: z.string().uuid(),
+// Client data structure with aesthetic-specific requirements
+export const ClientSchema = z.object({
+  clientId: z.string().uuid(),
   personalInfo: z.object({
     fullName: z.string().min(2),
-    socialName: z.string().optional(), // For transgender patients
-    cpf: CPFSchema.optional(), // Optional for foreign patients
-    rg: z.string().optional(),
+    socialName: z.string().optional(),
+    cpf: CPFSchema.optional(),
     birthDate: z.date(),
     gender: z.enum(["male", "female", "other", "prefer_not_to_say"]),
-    ethnicity: z.string().optional(),
-    nationality: z.string().default("Brazilian"),
     contactInfo: z.object({
       email: z.string().email(),
       phone: z
@@ -248,67 +245,53 @@ export const PatientSchema = z.object({
         city: z.string(),
         state: z.string().length(2),
         zipCode: z.string().regex(/^\d{5}-?\d{3}$/, "Invalid CEP format"),
-        coordinates: z
-          .object({
-            latitude: z.number().optional(),
-            longitude: z.number().optional(),
-          })
-          .optional(),
       }),
     }),
   }),
-  medicalInfo: z.object({
-    medicalRecordNumber: z
-      .string()
-      .regex(/^MR-\d{6,10}$/, "Invalid medical record format"),
-    bloodType: z
-      .enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "unknown"])
-      .optional(),
-    allergies: z.array(
+  aestheticProfile: z.object({
+    skinType: z.enum(["oily", "dry", "combination", "sensitive", "normal"]),
+    skinConcerns: z.array(
       z.object({
-        allergen: z.string(),
-        severity: z.enum(["mild", "moderate", "severe", "life_threatening"]),
-        reaction: z.string(),
-        diagnosedDate: z.date().optional(),
+        concern: z.enum([
+          "acne",
+          "aging",
+          "pigmentation",
+          "scars",
+          "texture",
+          "redness",
+          "sensitivity",
+          "dehydration",
+        ]),
+        severity: z.enum(["mild", "moderate", "severe"]),
+        priority: z.enum(["low", "medium", "high"]),
       }),
     ),
-    chronicConditions: z.array(
+    treatmentHistory: z.array(
+      z.object({
+        treatmentType: z.string(),
+        datePerformed: z.date(),
+        professionalId: z.string().uuid(),
+        results: z.string().optional(),
+        satisfaction: z.number().min(1).max(5).optional(),
+      }),
+    ),
+    productPreferences: z.array(
+      z.object({
+        productLine: z.string(),
+        brand: z.string(),
+        suitable: z.boolean(),
+        allergies: z.array(z.string()).optional(),
+      }),
+    ),
+    contraindications: z.array(
       z.object({
         condition: z.string(),
-        icdCode: z.string().optional(), // ICD-11 code
-        diagnosedDate: z.date(),
-        status: z.enum(["active", "controlled", "resolved", "in_remission"]),
-      }),
-    ),
-    medications: z.array(
-      z.object({
-        medication: z.string(),
-        dosage: z.string(),
-        frequency: z.string(),
-        prescribedDate: z.date(),
-        prescribingPhysician: z.string(),
-        status: z.enum(["active", "discontinued", "completed"]),
-      }),
-    ),
-    familyHistory: z.array(
-      z.object({
-        relationship: z.string(),
-        condition: z.string(),
-        ageAtDiagnosis: z.number().optional(),
+        severity: z.enum(["mild", "moderate", "severe"]),
+        notes: z.string().optional(),
       }),
     ),
   }),
-  healthInsurance: z
-    .object({
-      provider: z.string(),
-      policyNumber: z.string(),
-      validFrom: z.date(),
-      validTo: z.date(),
-      coverageType: z.enum(["basic", "comprehensive", "premium"]),
-      susCardNumber: z.string().optional(), // Brazilian public health system
-    })
-    .optional(),
-  consent: PatientConsentSchema,
+  consent: ClientConsentSchema,
   accessibility: z.object({
     needsAssistance: z.boolean().default(false),
     assistanceType: z
@@ -324,7 +307,7 @@ export const PatientSchema = z.object({
       .optional(),
     preferredLanguage: z.string().default("pt-BR"),
     communicationPreferences: z.object({
-      preferredMethod: z.enum(["email", "sms", "phone", "postal"]),
+      preferredMethod: z.enum(["email", "sms", "phone", "whatsapp"]),
       timePreference: z.string().optional(),
       accessibilityFormat: z
         .enum(["standard", "large_print", "braille", "audio"])
@@ -332,29 +315,23 @@ export const PatientSchema = z.object({
     }),
   }),
   compliance: z.object({
-    dataClassification: HealthcareDataClassification.default("restricted"),
+    dataClassification: AestheticDataClassification.default("restricted"),
     auditRequired: z.boolean().default(true),
-    dataRetentionPeriod: z.number().default(2555), // 7 years in days per LGPD
+    dataRetentionPeriod: z.number().default(2555),
     crossBorderTransferApproved: z.boolean().default(false),
-    minorRequiresParentalConsent: z.boolean().default(false),
-    legalGuardian: z
-      .object({
-        name: z.string(),
-        relationship: z.string(),
-        cpf: CPFSchema,
-        contactInfo: z.object({
-          email: z.string().email(),
-          phone: z.string(),
-        }),
-      })
-      .optional(),
+    photoConsent: z.object({
+      beforeAfterPhotos: z.boolean(),
+      treatmentDocumentation: z.boolean(),
+      marketingUsage: z.boolean(),
+      socialMedia: z.boolean(),
+    }),
   }),
 });
 
-// Medical appointment structure with telemedicine support
+// Aesthetic appointment structure with virtual consultation support
 export const AppointmentSchema = z.object({
   appointmentId: z.string().uuid(),
-  type: z.enum(["in_person", "telemedicine", "hybrid"]),
+  type: z.enum(["in_person", "virtual_consultation", "hybrid"]),
   status: z.enum([
     "scheduled",
     "confirmed",
@@ -364,13 +341,13 @@ export const AppointmentSchema = z.object({
     "no_show",
   ]),
   participants: z.object({
-    patient: z.object({
-      patientId: z.string().uuid(),
+    client: z.object({
+      clientId: z.string().uuid(),
       confirmationStatus: z.enum(["pending", "confirmed", "declined"]),
     }),
-    healthcare_professional: z.object({
+    aestheticProfessional: z.object({
       professionalId: z.string().uuid(),
-      role: z.enum(["attending", "resident", "specialist", "consultant"]),
+      role: z.enum(["attending", "specialist", "consultant"]),
     }),
     assistants: z
       .array(
@@ -403,7 +380,7 @@ export const AppointmentSchema = z.object({
       }),
     }),
     z.object({
-      type: z.literal("telemedicine"),
+      type: z.literal("virtual_consultation"),
       platform: z.object({
         provider: z.string(),
         meetingId: z.string(),
@@ -413,16 +390,23 @@ export const AppointmentSchema = z.object({
       }),
     }),
   ]),
-  clinical: z.object({
-    specialty: z.string(),
-    appointmentReason: z.string(),
-    priorityLevel: z.enum(["routine", "urgent", "emergency"]),
+  treatment: z.object({
+    category: z.enum([
+      "facial_harmonization",
+      "injectables",
+      "skincare",
+      "body_treatments",
+      "laser_treatments",
+      "consultation",
+    ]),
+    specificTreatment: z.string(),
+    treatmentPlan: z.string().optional(),
+    priorityLevel: z.enum(["routine", "urgent"]),
     followUpRequired: z.boolean().default(false),
     referralSource: z.string().optional(),
-    preliminaryDiagnosis: z.string().optional(),
   }),
   compliance: z.object({
-    cfmTelemedicineCompliant: z.boolean().default(false),
+    councilCompliant: z.boolean().default(false),
     recordingConsent: z.boolean().default(false),
     recordingPurpose: z.string().optional(),
     dataSharing: z.object({
@@ -441,30 +425,29 @@ export const AppointmentSchema = z.object({
   }),
 });
 
-// Healthcare service definitions
-export const HealthcareServiceSchema = z.object({
+// Aesthetic service definitions
+export const AestheticServiceSchema = z.object({
   serviceId: z.string().uuid(),
   category: z.enum([
     "consultation",
-    "diagnosis",
-    "treatment",
-    "prevention",
-    "rehabilitation",
-    "emergency",
-    "surgery",
-    "therapy",
+    "facial_treatment",
+    "injectable",
+    "laser_treatment",
+    "body_treatment",
+    "skincare",
+    "analysis",
   ]),
   specialty: z.string(),
   name: z.string(),
   description: z.string(),
   requirements: z.object({
-    minimumProfessionalLevel: z.enum(["resident", "physician", "specialist"]),
+    minimumProfessionalLevel: z.enum(["aesthetician", "professional", "specialist"]),
     requiredCertifications: z.array(z.string()),
     equipmentRequired: z.array(z.string()).optional(),
-    facilitiesRequired: z.array(z.string()).optional(),
+    productsRequired: z.array(z.string()).optional(),
   }),
   delivery: z.object({
-    availableFormats: z.array(z.enum(["in_person", "telemedicine", "hybrid"])),
+    availableFormats: z.array(z.enum(["in_person", "virtual_consultation", "hybrid"])),
     duration: z.object({
       typical: z.number(), // minutes
       minimum: z.number(),
@@ -473,95 +456,98 @@ export const HealthcareServiceSchema = z.object({
     followUpRequired: z.boolean().default(false),
   }),
   billing: z.object({
-    susCode: z.string().optional(), // Brazilian public health system code
-    cbhpmCode: z.string().optional(), // Brazilian medical procedures classification
-    privatePrice: z.number().optional(),
-    insuranceCoverage: z.array(z.string()).optional(),
+    basePrice: z.number(),
+    priceRange: z.object({
+      minimum: z.number(),
+      maximum: z.number(),
+    }),
+    sessionPackage: z.object({
+      sessions: z.number(),
+      discount: z.number().optional(),
+    }).optional(),
   }),
   compliance: z.object({
     anvisaRegulated: z.boolean().default(false),
-    cfmApproved: z.boolean().default(false),
+    councilApproved: z.boolean().default(false),
     requiredDocumentation: z.array(z.string()),
-    qualityMetrics: z.array(z.string()).optional(),
+    safetyProtocols: z.array(z.string()).optional(),
   }),
 });
 
-export type Patient = z.infer<typeof PatientSchema>;
-export type HealthcareProfessional = z.infer<
-  typeof HealthcareProfessionalSchema
->;
+export type Client = z.infer<typeof ClientSchema>;
+export type AestheticProfessional = z.infer<typeof AestheticProfessionalSchema>;
 export type Appointment = z.infer<typeof AppointmentSchema>;
-export type HealthcareService = z.infer<typeof HealthcareServiceSchema>;
-export type PatientConsent = z.infer<typeof PatientConsentSchema>;
+export type AestheticService = z.infer<typeof AestheticServiceSchema>;
+export type ClientConsent = z.infer<typeof ClientConsentSchema>;
 ```
 
-## Telemedicine Implementation (CFM Resolution 2.314/2022)
+## Virtual Consultation Implementation (Professional Council Guidelines)
 
-### CFM Compliance Requirements
+### Professional Council Compliance Requirements
 
-**File**: `packages/core-services/src/telemedicine/cfm-compliance.service.ts`
+**File**: `packages/core-services/src/virtual-consultation/council-compliance.service.ts`
 
 ```typescript
 import { z } from "zod";
 import {
-  Patient,
-  HealthcareProfessional,
+  Client,
+  AestheticProfessional,
   Appointment,
-} from "../models/healthcare-base";
+} from "../models/aesthetic-clinic-base";
 
-export interface CFMTelemedicineRequirements {
+export interface CouncilVirtualConsultationRequirements {
   professionalRegistration: boolean;
-  patientIdentification: boolean;
+  clientIdentification: boolean;
   informedConsent: boolean;
   dataSecurityMeasures: boolean;
-  medicalRecordIntegrity: boolean;
-  emergencyProtocols: boolean;
+  recordIntegrity: boolean;
+  safetyProtocols: boolean;
   qualityAssurance: boolean;
 }
 
-export class CFMComplianceService {
-  async validateTelemedicineConsultation(
+export class CouncilComplianceService {
+  async validateVirtualConsultation(
     appointment: Appointment,
-    patient: Patient,
-    professional: HealthcareProfessional,
-  ): Promise<CFMTelemedicineRequirements> {
-    const compliance: CFMTelemedicineRequirements = {
+    client: Client,
+    professional: AestheticProfessional,
+  ): Promise<CouncilVirtualConsultationRequirements> {
+    const compliance: CouncilVirtualConsultationRequirements = {
       professionalRegistration: false,
-      patientIdentification: false,
+      clientIdentification: false,
       informedConsent: false,
       dataSecurityMeasures: false,
-      medicalRecordIntegrity: false,
-      emergencyProtocols: false,
+      recordIntegrity: false,
+      safetyProtocols: false,
       qualityAssurance: false,
     };
 
-    // 1. Professional Registration Validation (CFM Article 3)
+    // 1. Professional Registration Validation
     compliance.professionalRegistration =
       await this.validateProfessionalRegistration(professional);
 
-    // 2. Patient Identification (CFM Article 4)
-    compliance.patientIdentification =
-      await this.validatePatientIdentification(patient);
+    // 2. Client Identification
+    compliance.clientIdentification =
+      await this.validateClientIdentification(client);
 
-    // 3. Informed Consent for Telemedicine (CFM Article 5)
-    compliance.informedConsent = await this.validateTelemedicineConsent(
-      patient,
+    // 3. Informed Consent for Virtual Consultation
+    compliance.informedConsent = await this.validateVirtualConsultationConsent(
+      client,
       appointment,
     );
 
-    // 4. Data Security Measures (CFM Article 6)
+    // 4. Data Security Measures
     compliance.dataSecurityMeasures =
       await this.validateDataSecurity(appointment);
 
-    // 5. Medical Record Integrity (CFM Article 7)
-    compliance.medicalRecordIntegrity =
-      await this.validateMedicalRecordIntegrity(appointment);
+    // 5. Record Integrity
+    compliance.recordIntegrity =
+      await this.validateRecordIntegrity(appointment);
 
-    // 6. Emergency Protocols (CFM Article 8)
-    compliance.emergencyProtocols =
-      await this.validateEmergencyProtocols(appointment);
+    // 6. Safety Protocols
+    compliance.safetyProtocols =
+      await this.validateSafetyProtocols(appointment);
 
-    // 7. Quality Assurance (CFM Article 9)
+    // 7. Quality Assurance
     compliance.qualityAssurance =
       await this.validateQualityAssurance(appointment);
 
@@ -569,62 +555,62 @@ export class CFMComplianceService {
   }
 
   private async validateProfessionalRegistration(
-    professional: HealthcareProfessional,
+    professional: AestheticProfessional,
   ): Promise<boolean> {
-    // Validate CRM registration with CFM database
-    const crmValidation = await this.validateCRMWithCFM(
-      professional.professionalInfo.crm,
+    // Validate professional license with relevant council
+    const licenseValidation = await this.validateLicenseWithCouncil(
+      professional.professionalInfo.license,
     );
 
     return (
-      crmValidation.isValid &&
-      crmValidation.isActive &&
-      professional.professionalInfo.crm.isActive &&
+      licenseValidation.isValid &&
+      licenseValidation.isActive &&
+      professional.professionalInfo.license.isActive &&
       professional.platformAccess.accountStatus === "active"
     );
   }
 
-  private async validatePatientIdentification(
-    patient: Patient,
+  private async validateClientIdentification(
+    client: Client,
   ): Promise<boolean> {
-    // CFM requires positive patient identification
-    const hasValidId = patient.personalInfo.cpf || patient.personalInfo.rg;
+    // Positive client identification requirements
+    const hasValidId = client.personalInfo.cpf;
     const hasVerifiedContact =
-      patient.personalInfo.contactInfo.email &&
-      patient.personalInfo.contactInfo.phone;
+      client.personalInfo.contactInfo.email &&
+      client.personalInfo.contactInfo.phone;
     const hasEmergencyContact =
-      patient.personalInfo.contactInfo.emergencyContact;
+      client.personalInfo.contactInfo.emergencyContact;
 
     return Boolean(hasValidId && hasVerifiedContact && hasEmergencyContact);
   }
 
-  private async validateTelemedicineConsent(
-    patient: Patient,
+  private async validateVirtualConsultationConsent(
+    client: Client,
     appointment: Appointment,
   ): Promise<boolean> {
-    // CFM specific consent requirements for telemedicine
-    const telemedicineConsent = patient.consent.purposes.find(
-      (purpose) => purpose.purposeId === "telemedicine_consultation",
+    // Virtual consultation consent requirements
+    const virtualConsultationConsent = client.consent.purposes.find(
+      (purpose) => purpose.purposeId === "virtual_consultation",
     );
 
-    const hasTelemedicineConsent = telemedicineConsent?.granted === true;
+    const hasVirtualConsultationConsent = virtualConsultationConsent?.granted === true;
     const hasRecordingConsent = appointment.compliance.recordingConsent;
     const consentIsValid =
-      telemedicineConsent && new Date() >= patient.consent.validity.startDate;
+      virtualConsultationConsent && new Date() >= client.consent.validity.startDate;
 
     return Boolean(
-      hasTelemedicineConsent && hasRecordingConsent && consentIsValid,
+      hasVirtualConsultationConsent && hasRecordingConsent && consentIsValid,
     );
   }
 
   private async validateDataSecurity(
     appointment: Appointment,
   ): Promise<boolean> {
-    if (appointment.location.type !== "telemedicine") return true;
+    if (appointment.location.type !== "virtual_consultation") return true;
 
     const platform = appointment.location.platform;
 
-    // CFM requires end-to-end encryption and secure platforms
+    // Security requirements for virtual consultation platforms
     const platformSecurity = await this.validatePlatformSecurity(
       platform.provider,
     );
@@ -637,46 +623,45 @@ export class CFMComplianceService {
     );
   }
 
-  private async validateMedicalRecordIntegrity(
+  private async validateRecordIntegrity(
     appointment: Appointment,
   ): Promise<boolean> {
-    // CFM requires complete and tamper-proof medical records
+    // Complete and tamper-proof records
     const recordingPolicies = {
-      mandatoryRecording: appointment.clinical.priorityLevel !== "routine",
-      recordingQuality: "high_definition",
-      storageCompliance: "permanent_retention",
+      recordingConsent: appointment.compliance.recordingConsent,
+      storageCompliance: "retention_per_policy",
       accessControl: "role_based",
     };
 
     return this.validateRecordingCompliance(recordingPolicies);
   }
 
-  private async validateEmergencyProtocols(
+  private async validateSafetyProtocols(
     appointment: Appointment,
   ): Promise<boolean> {
-    if (appointment.type !== "telemedicine") return true;
+    if (appointment.type !== "virtual_consultation") return true;
 
-    // CFM requires emergency protocols for telemedicine
-    const emergencyProtocols = {
-      hasEmergencyContact: Boolean(appointment.participants.patient),
-      hasLocationServices: appointment.location.type === "telemedicine",
-      hasReferralProtocol: Boolean(appointment.clinical.referralSource),
-      hasEmergencyHandoff: appointment.clinical.priorityLevel === "emergency",
+    // Safety protocols for virtual consultations
+    const safetyProtocols = {
+      hasEmergencyContact: Boolean(appointment.participants.client),
+      hasLocationServices: appointment.location.type === "virtual_consultation",
+      hasSafetyGuidelines: Boolean(appointment.treatment.treatmentPlan),
+      hasRiskAssessment: appointment.treatment.priorityLevel === "urgent",
     };
 
-    return Object.values(emergencyProtocols).every(Boolean);
+    return Object.values(safetyProtocols).every(Boolean);
   }
 
   private async validateQualityAssurance(
     appointment: Appointment,
   ): Promise<boolean> {
-    // CFM requires quality assurance measures
+    // Quality assurance measures
     const qualityMetrics = {
       audioVideoQuality: await this.validateAVQuality(appointment),
       professionalCompetency:
         await this.validateProfessionalCompetency(appointment),
-      patientSatisfaction:
-        await this.validatePatientSatisfactionProcess(appointment),
+      clientSatisfaction:
+        await this.validateClientSatisfactionProcess(appointment),
       technicalSupport:
         await this.validateTechnicalSupportAvailability(appointment),
     };
@@ -684,14 +669,13 @@ export class CFMComplianceService {
     return Object.values(qualityMetrics).every(Boolean);
   }
 
-  private async validateCRMWithCFM(
-    crm: any,
+  private async validateLicenseWithCouncil(
+    license: any,
   ): Promise<{ isValid: boolean; isActive: boolean }> {
-    // Integration with CFM database to validate CRM
-    // This would be an actual API call to CFM services
+    // Integration with professional council database
     return {
-      isValid: crm.number && crm.state,
-      isActive: crm.isActive,
+      isValid: license.number && license.state && license.councilType,
+      isActive: license.isActive,
     };
   }
 
@@ -700,11 +684,12 @@ export class CFMComplianceService {
     isCompliant: boolean;
     hasAuditTrail: boolean;
   }> {
-    // Validate telemedicine platform security
+    // Validate virtual consultation platform security
     const approvedProviders = [
       "webex",
-      "zoom_healthcare",
-      "microsoft_teams_healthcare",
+      "zoom",
+      "microsoft_teams",
+      "whatsapp_business",
     ];
 
     return {
@@ -719,7 +704,7 @@ export class CFMComplianceService {
   }
 
   private async validateAVQuality(appointment: Appointment): Promise<boolean> {
-    return appointment.location.type === "telemedicine";
+    return appointment.location.type === "virtual_consultation";
   }
 
   private async validateProfessionalCompetency(
@@ -728,205 +713,202 @@ export class CFMComplianceService {
     return true;
   }
 
-  private async validatePatientSatisfactionProcess(
+  private async validateClientSatisfactionProcess(
     appointment: Appointment,
   ): Promise<boolean> {
-    return appointment.compliance.cfmTelemedicineCompliant;
+    return appointment.compliance.councilCompliant;
   }
 
   private async validateTechnicalSupportAvailability(
     appointment: Appointment,
   ): Promise<boolean> {
-    return appointment.location.type === "telemedicine";
+    return appointment.location.type === "virtual_consultation";
   }
 
-  // CFM Reporting Requirements
-  async generateCFMComplianceReport(period: {
+  // Council Reporting Requirements
+  async generateCouncilComplianceReport(period: {
     startDate: Date;
     endDate: Date;
   }) {
     return {
       reportPeriod: period,
-      totalTelemedicineConsultations: 0,
+      totalVirtualConsultations: 0,
       complianceRate: 100,
       professionalRegistrationCompliance: 100,
-      patientIdentificationCompliance: 100,
+      clientIdentificationCompliance: 100,
       informedConsentCompliance: 100,
       dataSecurityCompliance: 100,
-      medicalRecordIntegrityCompliance: 100,
-      emergencyProtocolCompliance: 100,
+      recordIntegrityCompliance: 100,
+      safetyProtocolCompliance: 100,
       qualityAssuranceCompliance: 100,
       violations: [],
       correctiveActions: [],
       generatedAt: new Date(),
-      certifiedBy: "CFM_Compliance_System",
+      certifiedBy: "Council_Compliance_System",
     };
   }
 }
 ```
 
-## ANVISA Medical Device Compliance
+## ANVISA Cosmetic Product Compliance
 
-### Software as Medical Device (SaMD) Classification
+### Cosmetic Product Safety and Classification
 
-**File**: `packages/core-services/src/compliance/anvisa-samd.service.ts`
+**File**: `packages/core-services/src/compliance/anvisa-cosmetic.service.ts`
 
 ```typescript
-export enum ANVISARiskClass {
-  CLASS_I = "I", // Low risk
-  CLASS_II = "II", // Medium risk
-  CLASS_III = "III", // High risk
-  CLASS_IV = "IV", // Very high risk
+export enum ANVISACosmeticClass {
+  CLASS_I = "I", // Low risk (cosmetics)
+  CLASS_II = "II", // Medium risk (personal hygiene)
+  GRADE_1 = "Grade 1", // Cosmetic products
+  GRADE_2 = "Grade 2", // Cosmetic products with restricted ingredients
 }
 
-export interface SaMDClassification {
-  riskClass: ANVISARiskClass;
-  healthcareDecisionType: "inform" | "drive" | "trigger";
-  healthcareSituation: "serious" | "non_serious" | "critical";
-  regulatoryPathway: "registration" | "notification" | "exemption";
+export interface CosmeticProductClassification {
+  riskClass: ANVISACosmeticClass;
+  productType: "cosmetic" | "hygiene" | "perfume" | "treatment";
+  application: "facial" | "body" | "hair" | "nails" | "specialized";
+  regulatoryPathway: "notification" | "registration" | "exemption";
   qualityManagementRequired: boolean;
-  clinicalEvaluationRequired: boolean;
+  safetyAssessmentRequired: boolean;
   postMarketSurveillanceRequired: boolean;
 }
 
-export class ANVISASaMDService {
-  classifyHealthcareSoftware(
-    functionality: string,
-    healthcareDecisionType: "inform" | "drive" | "trigger",
-    healthcareSituation: "serious" | "non_serious" | "critical",
-  ): SaMDClassification {
-    let riskClass: ANVISARiskClass;
+export class ANVISACosmeticService {
+  classifyCosmeticProduct(
+    productType: string,
+    application: string,
+    restrictedIngredients: boolean,
+  ): CosmeticProductClassification {
+    let riskClass: ANVISACosmeticClass;
 
-    // ANVISA SaMD Risk Classification Matrix
-    if (healthcareSituation === "critical") {
-      if (healthcareDecisionType === "inform") {
-        riskClass = ANVISARiskClass.CLASS_III;
-      } else if (healthcareDecisionType === "drive") {
-        riskClass = ANVISARiskClass.CLASS_IV;
-      } else {
-        // trigger
-        riskClass = ANVISARiskClass.CLASS_IV;
-      }
-    } else if (healthcareSituation === "serious") {
-      if (healthcareDecisionType === "inform") {
-        riskClass = ANVISARiskClass.CLASS_II;
-      } else if (healthcareDecisionType === "drive") {
-        riskClass = ANVISARiskClass.CLASS_III;
-      } else {
-        // trigger
-        riskClass = ANVISARiskClass.CLASS_IV;
-      }
+    // ANVISA Cosmetic Product Classification
+    if (restrictedIngredients) {
+      riskClass = ANVISACosmeticClass.GRADE_2;
+    } else if (application === "specialized") {
+      riskClass = ANVISACosmeticClass.GRADE_2;
     } else {
-      // non_serious
-      if (healthcareDecisionType === "inform") {
-        riskClass = ANVISARiskClass.CLASS_I;
-      } else if (healthcareDecisionType === "drive") {
-        riskClass = ANVISARiskClass.CLASS_II;
-      } else {
-        // trigger
-        riskClass = ANVISARiskClass.CLASS_III;
-      }
+      riskClass = ANVISACosmeticClass.GRADE_1;
     }
 
     return {
       riskClass,
-      healthcareDecisionType,
-      healthcareSituation,
+      productType: this.mapProductType(productType),
+      application: this.mapApplication(application),
       regulatoryPathway: this.determineRegulatoryPathway(riskClass),
-      qualityManagementRequired: riskClass !== ANVISARiskClass.CLASS_I,
-      clinicalEvaluationRequired: [
-        ANVISARiskClass.CLASS_III,
-        ANVISARiskClass.CLASS_IV,
-      ].includes(riskClass),
+      qualityManagementRequired: riskClass !== ANVISACosmeticClass.GRADE_1,
+      safetyAssessmentRequired: true,
       postMarketSurveillanceRequired: true,
     };
   }
 
+  private mapProductType(type: string): "cosmetic" | "hygiene" | "perfume" | "treatment" {
+    const typeMap: Record<string, "cosmetic" | "hygiene" | "perfume" | "treatment"> = {
+      skincare: "cosmetic",
+      makeup: "cosmetic",
+      perfume: "perfume",
+      deodorant: "hygiene",
+      soap: "hygiene",
+      treatment: "treatment",
+    };
+
+    return typeMap[type.toLowerCase()] || "cosmetic";
+  }
+
+  private mapApplication(app: string): "facial" | "body" | "hair" | "nails" | "specialized" {
+    const appMap: Record<string, "facial" | "body" | "hair" | "nails" | "specialized"> = {
+      face: "facial",
+      body: "body",
+      hair: "hair",
+      nails: "nails",
+      specialized: "specialized",
+    };
+
+    return appMap[app.toLowerCase()] || "facial";
+  }
+
   private determineRegulatoryPathway(
-    riskClass: ANVISARiskClass,
-  ): "registration" | "notification" | "exemption" {
+    riskClass: ANVISACosmeticClass,
+  ): "notification" | "registration" | "exemption" {
     switch (riskClass) {
-      case ANVISARiskClass.CLASS_I:
-        return "exemption";
-      case ANVISARiskClass.CLASS_II:
+      case ANVISACosmeticClass.GRADE_1:
         return "notification";
-      case ANVISARiskClass.CLASS_III:
-      case ANVISARiskClass.CLASS_IV:
+      case ANVISACosmeticClass.GRADE_2:
         return "registration";
       default:
-        return "registration";
+        return "notification";
     }
   }
 
   async generateANVISAComplianceDocumentation(
-    classification: SaMDClassification,
+    classification: CosmeticProductClassification,
   ) {
     return {
       technicalDocumentation: {
-        softwareLifecycleProcesses: "IEC_62304_compliant",
-        riskManagement: "ISO_14971_compliant",
-        usabilityEngineering: "IEC_62366_compliant",
-        cybersecurity: "IEC_81001_5_1_compliant",
+        safetyAssessment: "required",
+        stabilityTesting: "required",
+        microbiologicalTesting: classification.riskClass === ANVISACosmeticClass.GRADE_2 ? "required" : "optional",
+        packagingInformation: "required",
+        labelingRequirements: "required",
       },
-      clinicalEvidence: classification.clinicalEvaluationRequired
+      safetyEvidence: classification.safetyAssessmentRequired
         ? {
-            clinicalEvaluationPlan: "required",
-            clinicalData: "literature_review_and_clinical_investigation",
-            benefitRiskAnalysis: "required",
-            postMarketClinicalFollowUp: "required",
+            safetyAssessmentReport: "required",
+            ingredientSafetyData: "required",
+            usageInstructions: "required",
+            warningStatements: "required",
+            adverseEventReporting: "required",
           }
         : undefined,
       qualityManagementSystem: classification.qualityManagementRequired
         ? {
-            iso13485Certification: "required",
-            qualityManualDocumentation: "required",
-            designControls: "required",
-            riskManagementFile: "required",
+            goodManufacturingPractices: "required",
+            qualityControlProcedures: "required",
+            supplierQualification: "required",
+            batchReleaseTesting: "required",
           }
         : undefined,
       postMarketSurveillance: {
-        vigilanceSystem: "adverse_event_reporting",
-        periodicSafetyUpdateReports: "annual",
-        postMarketStudies: classification.clinicalEvaluationRequired
-          ? "required"
-          : "optional",
+        adverseEventMonitoring: "required",
+        productQualityComplaints: "required",
+        periodicSafetyUpdates: "annual",
+        marketSurveillance: "required",
       },
     };
   }
 }
 ```
 
-## Healthcare Data Analytics Compliance
+## Aesthetic Clinic Data Analytics Compliance
 
-### AI in Healthcare Implementation
+### AI in Aesthetic Clinic Implementation
 
-**File**: `packages/core-services/src/analytics/ai-analytics/healthcare-ai-orchestrator.ts`
+**File**: `packages/core-services/src/analytics/ai-analytics/aesthetic-ai-orchestrator.ts`
 
 ```typescript
 import { z } from "zod";
 
-export const HealthcareAIConfigSchema = z.object({
+export const AestheticAIConfigSchema = z.object({
   aiModel: z.object({
     type: z.enum([
-      "diagnostic_support",
       "treatment_recommendation",
-      "risk_assessment",
+      "skin_analysis",
+      "product_recommendation",
       "administrative",
     ]),
     classification: z.enum([
-      "Class_I_SaMD",
-      "Class_II_SaMD",
-      "Class_III_SaMD",
-      "Class_IV_SaMD",
+      "Cosmetic_Analysis",
+      "Treatment_Planning",
+      "Skin_Assessment",
+      "Administrative_Support",
     ]),
-    clinicalValidation: z.object({
+    validation: z.object({
       validatedUseCases: z.array(z.string()),
       clinicalEvidence: z.string(),
       performanceMetrics: z.object({
-        sensitivity: z.number().min(0).max(1),
-        specificity: z.number().min(0).max(1),
         accuracy: z.number().min(0).max(1),
-        aurocScore: z.number().min(0).max(1).optional(),
+        precision: z.number().min(0).max(1),
+        reliability: z.number().min(0).max(1),
       }),
       validationDataset: z.object({
         size: z.number(),
@@ -947,11 +929,10 @@ export const HealthcareAIConfigSchema = z.object({
     ]),
   }),
   regulatory_compliance: z.object({
-    anvisa_samd_compliant: z.boolean(),
-    cfm_ai_guidelines: z.boolean(),
+    anvisa_cosmetic_compliant: z.boolean(),
+    council_guidelines: z.boolean(),
     lgpd_compliant: z.boolean(),
-    fda_approval: z.boolean().optional(),
-    ce_marking: z.boolean().optional(),
+    data_protection: z.boolean(),
   }),
   data_governance: z.object({
     data_minimization: z.boolean(),
@@ -963,19 +944,19 @@ export const HealthcareAIConfigSchema = z.object({
   }),
 });
 
-export class HealthcareAIOrchestrator {
-  private config: z.infer<typeof HealthcareAIConfigSchema>;
+export class AestheticAIOrchestrator {
+  private config: z.infer<typeof AestheticAIConfigSchema>;
 
-  constructor(config: z.infer<typeof HealthcareAIConfigSchema>) {
-    this.config = HealthcareAIConfigSchema.parse(config);
+  constructor(config: z.infer<typeof AestheticAIConfigSchema>) {
+    this.config = AestheticAIConfigSchema.parse(config);
   }
 
-  async processHealthcareAIRequest(request: {
-    patientData: any;
+  async processAestheticAIRequest(request: {
+    clientData: any;
     professionalId: string;
     aiFunction: string;
     consentVerified: boolean;
-    urgency: "routine" | "urgent" | "emergency";
+    priority: "routine" | "urgent";
   }): Promise<{
     result: any;
     confidence: number;
@@ -987,8 +968,8 @@ export class HealthcareAIOrchestrator {
     await this.validateConsentForAI(request);
 
     // 2. Data preprocessing with privacy protection
-    const processedData = await this.preprocessHealthcareData(
-      request.patientData,
+    const processedData = await this.preprocessAestheticData(
+      request.clientData,
     );
 
     // 3. AI model execution with monitoring
@@ -1003,7 +984,7 @@ export class HealthcareAIOrchestrator {
     // 5. Determine human oversight requirements
     const humanReviewRequired = this.determineHumanOversightRequirement(
       aiResult,
-      request.urgency,
+      request.priority,
       this.config.ethicalConsiderations.human_oversight,
     );
 
@@ -1028,25 +1009,24 @@ export class HealthcareAIOrchestrator {
 
   private async validateConsentForAI(request: any): Promise<void> {
     if (!request.consentVerified) {
-      throw new Error("Patient consent for AI processing not verified");
+      throw new Error("Client consent for AI processing not verified");
     }
 
     // Validate specific AI consent
-    const aiConsentRequired =
-      this.config.aiModel.classification !== "Class_I_SaMD";
+    const aiConsentRequired = this.config.aiModel.type !== "administrative";
     if (aiConsentRequired && !request.consentVerified) {
       throw new Error(
-        "Explicit consent required for AI medical device processing",
+        "Explicit consent required for AI aesthetic treatment processing",
       );
     }
   }
 
-  private async preprocessHealthcareData(patientData: any): Promise<any> {
+  private async preprocessAestheticData(clientData: any): Promise<any> {
     // 1. Data minimization - only use necessary data
-    const minimizedData = this.applyDataMinimization(patientData);
+    const minimizedData = this.applyDataMinimization(clientData);
 
     // 2. Anonymization/Pseudonymization for analytics
-    const anonymizedData = await this.anonymizeHealthcareData(minimizedData);
+    const anonymizedData = await this.anonymizeAestheticData(minimizedData);
 
     // 3. Data quality validation
     const validatedData = this.validateDataQuality(anonymizedData);
@@ -1055,30 +1035,30 @@ export class HealthcareAIOrchestrator {
   }
 
   private async executeAIModel(data: any, aiFunction: string): Promise<any> {
-    // AI model execution with healthcare-specific considerations
+    // AI model execution with aesthetic clinic-specific considerations
     const modelResult = await this.callAIModel(data, aiFunction);
 
-    // Apply clinical validation rules
-    const clinicallyValidatedResult = this.applyClinicalValidation(modelResult);
+    // Apply aesthetic validation rules
+    const validatedResult = this.applyAestheticValidation(modelResult);
 
-    return clinicallyValidatedResult;
+    return validatedResult;
   }
 
   private async validateAIResult(aiResult: any, request: any): Promise<any> {
-    // 1. Clinical plausibility check
-    const clinicallyPlausible =
-      await this.validateClinicalPlausibility(aiResult);
+    // 1. Aesthetic plausibility check
+    const aestheticallyPlausible =
+      await this.validateAestheticPlausibility(aiResult);
 
     // 2. Bias detection
-    const biasAssessment = await this.assessBias(aiResult, request.patientData);
+    const biasAssessment = await this.assessBias(aiResult, request.clientData);
 
     // 3. Confidence threshold validation
     const meetsConfidenceThreshold =
-      aiResult.confidence >= this.getConfidenceThreshold(request.urgency);
+      aiResult.confidence >= this.getConfidenceThreshold(request.priority);
 
-    if (!clinicallyPlausible || !meetsConfidenceThreshold) {
+    if (!aestheticallyPlausible || !meetsConfidenceThreshold) {
       aiResult.humanReviewRequired = true;
-      aiResult.validationFlags = ["clinical_review_required"];
+      aiResult.validationFlags = ["aesthetic_review_required"];
     }
 
     if (biasAssessment.biasDetected) {
@@ -1094,16 +1074,16 @@ export class HealthcareAIOrchestrator {
 
   private determineHumanOversightRequirement(
     aiResult: any,
-    urgency: string,
+    priority: string,
     oversightLevel: string,
   ): boolean {
     switch (oversightLevel) {
       case "human_in_loop":
         return true; // Always requires human review
       case "human_on_loop":
-        return aiResult.confidence < 0.9 || urgency === "emergency";
+        return aiResult.confidence < 0.9 || priority === "urgent";
       case "human_out_loop":
-        return aiResult.confidence < 0.95 && urgency === "emergency";
+        return aiResult.confidence < 0.95 && priority === "urgent";
       default:
         return true;
     }
@@ -1119,7 +1099,7 @@ export class HealthcareAIOrchestrator {
       professionalId: request.professionalId,
       aiFunction: request.aiFunction,
       modelVersion: this.config.aiModel.type,
-      inputDataHash: this.hashData(request.patientData),
+      inputDataHash: this.hashData(request.clientData),
       outputConfidence: aiResult.confidence,
       humanReviewTriggered: validatedResult.humanReviewRequired,
       complianceValidation: "passed",
@@ -1132,10 +1112,10 @@ export class HealthcareAIOrchestrator {
     aiResult: any,
   ): Promise<any> {
     return {
-      anvisaSaMDCompliant:
-        this.config.regulatory_compliance.anvisa_samd_compliant,
-      cfmAIGuidelinesCompliant:
-        this.config.regulatory_compliance.cfm_ai_guidelines,
+      anvisaCosmeticCompliant:
+        this.config.regulatory_compliance.anvisa_cosmetic_compliant,
+      councilGuidelinesCompliant:
+        this.config.regulatory_compliance.council_guidelines,
       lgpdCompliant: this.config.regulatory_compliance.lgpd_compliant,
       ethicalStandardsMet: this.config.ethicalConsiderations.bias_mitigation,
       dataGovernanceCompliant: this.config.data_governance.data_minimization,
@@ -1148,7 +1128,7 @@ export class HealthcareAIOrchestrator {
     return data;
   }
 
-  private async anonymizeHealthcareData(data: any): Promise<any> {
+  private async anonymizeAestheticData(data: any): Promise<any> {
     // Apply k-anonymity, l-diversity, or differential privacy
     return data;
   }
@@ -1163,31 +1143,30 @@ export class HealthcareAIOrchestrator {
     return { result: "ai_output", confidence: 0.92 };
   }
 
-  private applyClinicalValidation(result: any): any {
-    // Apply clinical rules and validation
+  private applyAestheticValidation(result: any): any {
+    // Apply aesthetic clinic rules and validation
     return result;
   }
 
-  private async validateClinicalPlausibility(result: any): Promise<boolean> {
-    // Validate against clinical knowledge base
+  private async validateAestheticPlausibility(result: any): Promise<boolean> {
+    // Validate against aesthetic knowledge base
     return true;
   }
 
   private async assessBias(
     result: any,
-    patientData: any,
+    clientData: any,
   ): Promise<{ biasDetected: boolean }> {
-    // Assess for demographic, cultural, or clinical bias
+    // Assess for demographic, cultural, or aesthetic bias
     return { biasDetected: false };
   }
 
-  private getConfidenceThreshold(urgency: string): number {
+  private getConfidenceThreshold(priority: string): number {
     const thresholds = {
       routine: 0.85,
       urgent: 0.9,
-      emergency: 0.95,
     };
-    return thresholds[urgency as keyof typeof thresholds] || 0.85;
+    return thresholds[priority as keyof typeof thresholds] || 0.85;
   }
 
   private hashData(data: any): string {
@@ -1201,24 +1180,24 @@ export class HealthcareAIOrchestrator {
 }
 ```
 
-## Healthcare Platform Integration Patterns
+## Aesthetic Clinic Platform Integration Patterns
 
-### FHIR Integration for Interoperability
+### Industry Standards Integration
 
-**File**: `packages/core-services/src/interoperability/fhir-integration.service.ts`
+**File**: `packages/core-services/src/interoperability/aesthetic-standards.service.ts`
 
 ```typescript
 import { z } from "zod";
 
-// FHIR R4 resource schemas for Brazilian healthcare
-export const FHIRPatientSchema = z.object({
-  resourceType: z.literal("Patient"),
+// Aesthetic industry standard schemas for Brazilian clinics
+export const AestheticClientSchema = z.object({
+  resourceType: z.literal("Client"),
   id: z.string(),
   identifier: z.array(
     z.object({
       system: z.enum([
         "http://www.saude.gov.br/fhir/r4/identifier/cpf",
-        "http://www.saude.gov.br/fhir/r4/identifier/cns",
+        "http://www.aesthetic.org.br/identifier/client",
       ]),
       value: z.string(),
     }),
@@ -1227,12 +1206,12 @@ export const FHIRPatientSchema = z.object({
     z.object({
       family: z.string(),
       given: z.array(z.string()),
-      use: z.enum(["official", "usual", "nickname", "maiden"]),
+      use: z.enum(["official", "usual", "nickname"]),
     }),
   ),
   telecom: z.array(
     z.object({
-      system: z.enum(["phone", "email", "fax", "pager"]),
+      system: z.enum(["phone", "email", "whatsapp"]),
       value: z.string(),
       use: z.enum(["home", "work", "mobile"]),
     }),
@@ -1251,64 +1230,68 @@ export const FHIRPatientSchema = z.object({
   ),
 });
 
-export class FHIRIntegrationService {
-  async convertPatientToFHIR(
-    patient: Patient,
-  ): Promise<z.infer<typeof FHIRPatientSchema>> {
-    const fhirPatient = {
-      resourceType: "Patient" as const,
-      id: patient.patientId,
+export class AestheticStandardsService {
+  async convertClientToStandard(
+    client: Client,
+  ): Promise<z.infer<typeof AestheticClientSchema>> {
+    const standardClient = {
+      resourceType: "Client" as const,
+      id: client.clientId,
       identifier: [
-        ...(patient.personalInfo.cpf
+        ...(client.personalInfo.cpf
           ? [
               {
                 system:
                   "http://www.saude.gov.br/fhir/r4/identifier/cpf" as const,
-                value: patient.personalInfo.cpf,
+                value: client.personalInfo.cpf,
               },
             ]
           : []),
+        {
+          system: "http://www.aesthetic.org.br/identifier/client" as const,
+          value: client.clientId,
+        },
       ],
       name: [
         {
-          family: patient.personalInfo.fullName.split(" ").slice(-1)[0],
-          given: patient.personalInfo.fullName.split(" ").slice(0, -1),
+          family: client.personalInfo.fullName.split(" ").slice(-1)[0],
+          given: client.personalInfo.fullName.split(" ").slice(0, -1),
           use: "official" as const,
         },
       ],
       telecom: [
         {
           system: "email" as const,
-          value: patient.personalInfo.contactInfo.email,
+          value: client.personalInfo.contactInfo.email,
           use: "home" as const,
         },
         {
           system: "phone" as const,
-          value: patient.personalInfo.contactInfo.phone,
+          value: client.personalInfo.contactInfo.phone,
           use: "mobile" as const,
         },
       ],
-      gender: this.mapGenderToFHIR(patient.personalInfo.gender),
-      birthDate: patient.personalInfo.birthDate.toISOString().split("T")[0],
+      gender: this.mapGenderToStandard(client.personalInfo.gender),
+      birthDate: client.personalInfo.birthDate.toISOString().split("T")[0],
       address: [
         {
           use: "home" as const,
           line: [
-            `${patient.personalInfo.contactInfo.address.street}, ${patient.personalInfo.contactInfo.address.number}`,
-            patient.personalInfo.contactInfo.address.complement || "",
+            `${client.personalInfo.contactInfo.address.street}, ${client.personalInfo.contactInfo.address.number}`,
+            client.personalInfo.contactInfo.address.complement || "",
           ].filter(Boolean),
-          city: patient.personalInfo.contactInfo.address.city,
-          state: patient.personalInfo.contactInfo.address.state,
-          postalCode: patient.personalInfo.contactInfo.address.zipCode,
+          city: client.personalInfo.contactInfo.address.city,
+          state: client.personalInfo.contactInfo.address.state,
+          postalCode: client.personalInfo.contactInfo.address.zipCode,
           country: "BR",
         },
       ],
     };
 
-    return FHIRPatientSchema.parse(fhirPatient);
+    return AestheticClientSchema.parse(standardClient);
   }
 
-  private mapGenderToFHIR(
+  private mapGenderToStandard(
     gender: string,
   ): "male" | "female" | "other" | "unknown" {
     const genderMap = {
@@ -1321,16 +1304,16 @@ export class FHIRIntegrationService {
     return genderMap[gender as keyof typeof genderMap] || "unknown";
   }
 
-  async syncWithRNDS(
-    patient: Patient,
-  ): Promise<{ success: boolean; rndssId?: string }> {
-    // Integration with Brazilian National Registry of Health Data (RNDS)
-    const fhirPatient = await this.convertPatientToFHIR(patient);
+  async syncWithIndustryStandards(
+    client: Client,
+  ): Promise<{ success: boolean; standardId?: string }> {
+    // Integration with aesthetic industry standards
+    const standardClient = await this.convertClientToStandard(client);
 
-    // This would be an actual integration with RNDS API
+    // This would be an actual integration with industry standard APIs
     return {
       success: true,
-      rndssId: `rnds_${patient.patientId}`,
+      standardId: `aesthetic_${client.clientId}`,
     };
   }
 }
@@ -1338,13 +1321,13 @@ export class FHIRIntegrationService {
 
 ## Deployment and Operations
 
-### Healthcare Environment Configuration
+### Aesthetic Clinic Environment Configuration
 
-**File**: `deployment/healthcare-config.yaml`
+**File**: `deployment/aesthetic-clinic-config.yaml`
 
 ```yaml
-# Healthcare-specific environment configuration
-healthcare:
+# Aesthetic clinic-specific environment configuration
+aesthetic_clinic:
   compliance:
     lgpd:
       enabled: true
@@ -1352,18 +1335,18 @@ healthcare:
       cross_border_restrictions: true
       audit_log_retention_days: 2555
     anvisa:
-      samd_classification: "Class_II"
-      quality_management_system: "ISO_13485"
+      cosmetic_compliance: true
+      product_safety_monitoring: true
       post_market_surveillance: true
-    cfm:
-      telemedicine_enabled: true
+    professional_councils:
+      virtual_consultation_enabled: true
       professional_verification: true
-      medical_record_retention: "permanent"
+      record_retention: "per_council_requirements"
 
   security:
     encryption:
       at_rest: "AES-256"
-      in_transit: "TLS_1_3"
+      in_transit: "TLS_1.3"
       key_management: "HSM"
     access_control:
       multi_factor_authentication: true
@@ -1375,25 +1358,24 @@ healthcare:
       compliance_reporting: true
 
   interoperability:
-    fhir:
-      version: "R4"
-      profiles: ["BR_Core", "BR_Healthcare"]
-    rnds:
+    aesthetic_standards:
       integration_enabled: true
       sync_frequency: "real_time"
-    healthcare_systems:
-      sus_integration: true
-      pni_integration: true # National Immunization Program
+    industry_systems:
+      product_catalog_integration: true
+      equipment_monitoring: true
+      supply_chain_integration: true
 
   monitoring:
     performance:
       response_time_threshold_ms: 2000
       availability_target: 99.9
       error_rate_threshold: 0.1
-    clinical:
+    aesthetic:
       ai_model_performance: true
-      clinical_decision_support: true
-      patient_safety_monitoring: true
+      treatment_planning: true
+      client_satisfaction_monitoring: true
+      product_effectiveness: true
 
   data_governance:
     classification:
@@ -1404,6 +1386,10 @@ healthcare:
       differential_privacy: true
       k_anonymity: 5
       data_minimization: true
+    photo_management:
+      secure_storage: true
+      access_controls: true
+      retention_policy: "per_client_consent"
 ```
 
-This comprehensive healthcare-specific guide provides the foundation for implementing a fully compliant Brazilian healthcare platform with proper regulatory compliance, data protection, and interoperability standards.
+This comprehensive aesthetic clinic-specific guide provides the foundation for implementing a fully compliant Brazilian aesthetic clinic platform with proper regulatory compliance, data protection, and industry standards integration.

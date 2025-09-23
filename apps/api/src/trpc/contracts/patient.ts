@@ -408,7 +408,7 @@ function calculateDataRetention(): string {
 
 async function validateClinicAccess(
   _userId: string,
-  clinicId: string,
+  _clinicId: string,
 ): Promise<void> {
   // Implementation depends on your authorization system
   // This is a placeholder for clinic access validation

@@ -9,6 +9,11 @@ import { randomUUID } from "crypto";
 /**
  * Input sanitization utilities for preventing XSS and injection attacks
  */
+// Type definitions for security utilities
+type LogArgument = string | number | boolean | object | null | undefined;
+type SanitizedObject = Record<string, LogArgument>;
+type SanitizedLogArgument = LogArgument | SanitizedObject;
+
 export class SecurityUtils {
   /**
    * Sanitize user input to prevent XSS attacks
@@ -480,7 +485,7 @@ export class SecureLogger {
   /**
    * Secure log method that sanitizes sensitive data
    */
-  private static secureLog = (...args: any[]): void => {
+  private static secureLog = (...args: LogArgument[]): void => {
     const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.log(...sanitizedArgs);
   };
@@ -488,7 +493,7 @@ export class SecureLogger {
   /**
    * Secure error method that sanitizes sensitive data
    */
-  private static secureError = (...args: any[]): void => {
+  private static secureError = (...args: LogArgument[]): void => {
     const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.error(...sanitizedArgs);
   };
@@ -496,7 +501,7 @@ export class SecureLogger {
   /**
    * Secure warn method that sanitizes sensitive data
    */
-  private static secureWarn = (...args: any[]): void => {
+  private static secureWarn = (...args: LogArgument[]): void => {
     const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.warn(...sanitizedArgs);
   };
@@ -504,7 +509,7 @@ export class SecureLogger {
   /**
    * Secure info method that sanitizes sensitive data
    */
-  private static secureInfo = (...args: any[]): void => {
+  private static secureInfo = (...args: LogArgument[]): void => {
     const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.info(...sanitizedArgs);
   };
@@ -512,7 +517,7 @@ export class SecureLogger {
   /**
    * Secure debug method that sanitizes sensitive data
    */
-  private static secureDebug = (...args: any[]): void => {
+  private static secureDebug = (...args: LogArgument[]): void => {
     const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.debug(...sanitizedArgs);
   };
@@ -520,7 +525,7 @@ export class SecureLogger {
   /**
    * Sanitize a single log argument
    */
-  private static sanitizeLogArgument(arg: any): any {
+  private static sanitizeLogArgument(arg: LogArgument): SanitizedLogArgument {
     if (typeof arg === "string") {
       return this.sanitizeString(arg);
     } else if (typeof arg === "object" && arg !== null) {
@@ -604,23 +609,23 @@ export class SecureLogger {
   /**
    * Sanitize object recursively
    */
-  private static sanitizeObject(obj: any): any {
+  private static sanitizeObject(obj: LogArgument): SanitizedObject {
     if (obj === null || typeof obj !== "object") {
-      return obj;
+      return obj as SanitizedObject;
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.sanitizeLogArgument(item));
+      return obj.map((item) => this.sanitizeLogArgument(item)) as unknown as SanitizedObject;
     }
 
-    const sanitized: any = {};
-    for (const [key, value] of Object.entries(obj)) {
+    const sanitized: SanitizedObject = {};
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
       // Skip certain sensitive keys entirely
       if (this.isSensitiveKey(key)) {
         continue;
       }
 
-      sanitized[key] = this.sanitizeLogArgument(value);
+      sanitized[key] = this.sanitizeLogArgument(value as LogArgument);
     }
 
     return sanitized;

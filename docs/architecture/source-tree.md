@@ -15,7 +15,7 @@ This document provides detailed guidance on **HOW** the NeonPro codebase is orga
 
 ## Monorepo Structure Overview
 
-NeonPro uses a **Turborepo-based monorepo** with 2 applications and 7 shared packages, optimized for Brazilian healthcare compliance and rapid development.
+NeonPro uses a **Turborepo-based monorepo** with 2 applications and 7 shared packages, optimized for Brazilian aesthetic clinic compliance and rapid development.
 
 ```
 neonpro/
@@ -33,27 +33,27 @@ neonpro/
 │   │       │   ├── 📄 index.ts           # Clean exports for client integration
 │   │       │   ├── 📁 routers/           # Domain-specific tRPC routers
 │   │       │   ├── 📁 contracts/         # tRPC contract definitions
-│   │       │   │   ├── 📄 patients.ts    # LGPD-compliant patient operations
-│   │       │   │   ├── 📄 appointments.ts # CFM validation + no-show prediction
-│   │       │   │   └── 📄 ai.ts          # Portuguese healthcare AI support
-│   │       │   └── 📁 middleware/        # Healthcare compliance middleware
+│   │       │   │   ├── 📄 clients.ts    # LGPD-compliant client operations
+│   │       │   │   ├── 📄 appointments.ts # Professional Council validation + no-show prediction
+│   │       │   │   └── 📄 ai.ts          # Portuguese aesthetic clinic AI support
+│   │       │   └── 📁 middleware/        # Aesthetic clinic compliance middleware
 │   │       │       ├── 📄 lgpd-audit.ts  # LGPD audit logging
-│   │       │       ├── 📄 cfm-validation.ts # CFM license validation
+│   │       │       ├── 📄 professional-council-validation.ts # Professional Council license validation
 │   │       │       └── 📄 prisma-rls.ts  # Row Level Security enforcement
-│   │       ├── 📁 services/              # Healthcare business logic services
+│   │       ├── 📁 services/              # Aesthetic clinic business logic services
 │   │       │   ├── 📄 lgpd-compliance.ts # Data lifecycle management
 │   │       │   ├── 📄 no-show-prediction.ts # AI-powered predictions
-│   │       │   └── 📄 telemedicine.ts    # CFM-compliant telemedicine
+│   │       │   └── 📄 virtual-consultation.ts    # Professional Council-compliant virtual consultation
 │   │       ├── 📁 types/                 # API-specific types
 │   │       └── 📁 tests/                 # API test suites
 │   │           ├── 📁 contract/          # tRPC contract tests
-│   │           │   ├── 📄 patients.contract.test.ts
+│   │           │   ├── 📄 clients.contract.test.ts
 │   │           │   ├── 📄 appointments.contract.test.ts
 │   │           │   └── 📄 ai.contract.test.ts
-│   │           └── 📁 integration/       # Healthcare compliance tests
+│   │           └── 📁 integration/       # Aesthetic clinic compliance tests
 │   │               ├── 📄 lgpd-compliance.test.ts
-│   │               ├── 📄 cfm-telemedicine.test.ts
-│   │               └── 📄 anvisa-compliance.test.ts
+│   │               ├── 📄 professional-council-virtual-consultation.test.ts
+│   │               └── 📄 cosmetic-compliance.test.ts
 │   │
 │   └── 📁 web/                           # Frontend Application (TanStack Router + Vite)
 │       ├── 📄 package.json               # Web dependencies & scripts
@@ -81,7 +81,7 @@ neonpro/
 │           │   ├── 📁 profile/            # User profile management
 │           │   ├── 📁 ai/                 # AI-powered features
 │           │   ├── 📁 appointments/       # Appointment scheduling
-│           │   └── 📁 patients/           # Patient management
+│           │   └── 📁 clients/           # Client management
 │           ├── 📁 components/            # React components
 │           │   └── 📁 ui/                # shadcn/ui components
 │           ├── 📁 __tests__/             # Consolidated test directory
@@ -103,19 +103,19 @@ neonpro/
 ├── 📁 packages/                          # Shared Package Layer (7 packages)
 │   ├── 📁 types/                         # @neonpro/types - TypeScript definitions
 │   │   └── 📁 src/                       # Type definitions
-│   │       ├── 📄 patient.valibot.ts     # Brazilian patient validation (CPF, CNS)
+│   │       ├── 📄 client.valibot.ts     # Brazilian client validation (CPF)
 │   │       ├── 📄 lgpd.valibot.ts        # LGPD consent schemas
 │   │       ├── 📄 appointment.valibot.ts # Appointment + TUSS validation
 │   │       └── 📄 index.ts               # Unified type exports
 │   ├── 📁 database/                      # @neonpro/database - Prisma + Supabase
 │   │   ├── 📄 package.json               # Database package config
 │   │   ├── 📁 prisma/                    # Prisma ORM configuration
-│   │   │   ├── 📄 schema.prisma          # Healthcare data models (Patient, LGPD, etc)
+│   │   │   ├── 📄 schema.prisma          # Aesthetic clinic data models (Client, LGPD, etc)
 │   │   │   └── 📁 migrations/            # Database migration scripts
 │   │   ├── 📁 src/                       # Database utilities
 │   │   │   └── 📁 types/                 # Generated Prisma types
 │   │   └── 📁 scripts/                   # Database scripts
-│   │       └── 📁 healthcare/            # Healthcare-specific scripts
+│   │       └── 📁 aesthetic-clinic/            # Aesthetic clinic-specific scripts
 │   ├── 📁 shared/                        # @neonpro/shared - Common utilities
 │   │   └── 📁 src/                       # Shared source code
 │   │       ├── 📁 auth/                  # Authentication utilities
@@ -126,7 +126,7 @@ neonpro/
 │   │       ├── 📁 components/            # Component utilities
 │   │       ├── 📁 analytics/             # Analytics utilities
 │   │       ├── 📁 performance/           # Performance utilities
-│   │       └── 📁 compliance/            # LGPD/ANVISA compliance
+│   │       └── 📁 compliance/            # LGPD/Cosmetic compliance
 │   ├── 📁 security/                      # @neonpro/security - Security utilities
 │   ├── 📁 core-services/                 # @neonpro/core-services - Business logic
 │   │   └── 📁 src/                       # Service source code
@@ -326,10 +326,10 @@ The build system follows a **dependency-first approach** where packages build in
 ```typescript
 // Type-only imports (preferred for types)
 import type { Database } from "@neonpro/database";
-import type { Appointment, Patient } from "@neonpro/types";
+import type { Appointment, Client } from "@neonpro/types";
 
 // Runtime imports
-import { PatientService } from "@neonpro/core-services";
+import { ClientService } from "@neonpro/core-services";
 import { encryptPII } from "@neonpro/security";
 import { formatCurrency, formatDate } from "@neonpro/utils";
 ```
@@ -407,12 +407,12 @@ bun run lint
 bun run type-check
 bun run test:backend
 bun run test:frontend
-bun run test:healthcare -- --regression
+bun run test:aesthetic-clinic -- --regression
 bun run constitutional:full
 
 # With intelligent fallback
 ./scripts/package-manager-fallback.sh lint
-./scripts/package-manager-fallback.sh test:healthcare
+./scripts/package-manager-fallback.sh test:aesthetic-clinic
 
 # Fallback options when needed
 pnpm lint
@@ -421,7 +421,7 @@ pnpm test:backend
 pnpm test:frontend
 ```
 
-Always archive CLI output in Archon task notes and fall back to `./scripts/package-manager-fallback.sh test:healthcare -- --audit-only` when compliance gates fail so the rerun is traceable.
+Always archive CLI output in Archon task notes and fall back to `./scripts/package-manager-fallback.sh test:aesthetic-clinic -- --audit-only` when compliance gates fail so the rerun is traceable.
 
 ### Package-Specific Scripts
 
@@ -439,19 +439,19 @@ Each package includes standardized scripts:
 
 | File Type             | Convention               | Example                | Location      |
 | --------------------- | ------------------------ | ---------------------- | ------------- |
-| **React Components**  | PascalCase               | `PatientCard.tsx`      | `components/` |
-| **Custom Hooks**      | camelCase + `use` prefix | `usePatientData.ts`    | `hooks/`      |
+| **React Components**  | PascalCase               | `ClientCard.tsx`      | `components/` |
+| **Custom Hooks**      | camelCase + `use` prefix | `useClientData.ts`    | `hooks/`      |
 | **Utility Functions** | camelCase                | `formatCurrency.ts`    | `utils/`      |
-| **Type Definitions**  | PascalCase               | `Patient.ts`           | `types/`      |
-| **API Routes**        | kebab-case               | `patient-profile.ts`   | `routes/`     |
-| **Test Files**        | Same as source + `.test` | `PatientCard.test.tsx` | `__tests__/`  |
+| **Type Definitions**  | PascalCase               | `Client.ts`           | `types/`      |
+| **API Routes**        | kebab-case               | `client-profile.ts`   | `routes/`     |
+| **Test Files**        | Same as source + `.test` | `ClientCard.test.tsx` | `__tests__/`  |
 | **Configuration**     | kebab-case               | `vite.config.ts`       | Root level    |
 
 ### Directory Naming
 
 | Directory Type         | Convention | Example                 | Rationale              |
 | ---------------------- | ---------- | ----------------------- | ---------------------- |
-| **Feature Modules**    | kebab-case | `patient-management/`   | URL-friendly, readable |
+| **Feature Modules**    | kebab-case | `client-management/`   | URL-friendly, readable |
 | **Technical Concepts** | camelCase  | `components/`, `hooks/` | JavaScript convention  |
 | **Package Names**      | kebab-case | `core-services/`        | NPM convention         |
 | **Configuration**      | dot-prefix | `.github/`, `.vscode/`  | Hidden/config files    |
@@ -484,7 +484,7 @@ Each package includes standardized scripts:
 | **Type Definitions**    | `packages/types/src/`         | `apps/*/src/types/`              | Shared vs app-specific |
 | **Database Schemas**    | `packages/database/src/`      | -                                | Supabase schemas       |
 | **Utilities**           | `packages/utils/src/`         | `apps/*/src/lib/`                | Shared vs app-specific |
-| **Security/Compliance** | `packages/security/src/`      | `packages/utils/src/compliance/` | LGPD/ANVISA            |
+| **Security/Compliance** | `packages/security/src/`      | `packages/utils/src/compliance/` | LGPD/Cosmetic Regulations |
 | **Tests**               | `apps/*/src/__tests__/`       | `packages/*/src/*.test.ts`       | App vs package tests   |
 | **Configuration**       | `packages/config/`            | Root config files                | Shared vs global       |
 
@@ -495,7 +495,7 @@ Each package includes standardized scripts:
 ```
 apps/web/src/
 ├── features/
-│   ├── patient-management/
+│   ├── client-management/
 │   │   ├── components/
 │   │   ├── hooks/
 │   │   ├── types/

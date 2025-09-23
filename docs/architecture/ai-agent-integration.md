@@ -2,11 +2,11 @@
 
 ## Overview
 
-This document describes the architectural patterns and integration strategies for AI agents within the NeonPro healthcare platform, focusing on secure, scalable, and compliant AI-powered healthcare data access and analysis.
+This document describes the architectural patterns and integration strategies for AI agents within the NeonPro aesthetic clinic platform, focusing on secure, scalable, and compliant AI-powered aesthetic clinic data access and analysis.
 
 **Version**: 1.0.0  
 **Last Updated**: January 15, 2024  
-**Compliance**: LGPD, ANVISA, CFM, ISO 27001
+**Compliance**: LGPD, ANVISA, Professional Councils, ISO 27001
 
 ## Table of Contents
 
@@ -53,7 +53,7 @@ This document describes the architectural patterns and integration strategies fo
     │   AI Agent   │        │   Core API   │        │   WebSocket  │
     │   Service    │        │   Service    │        │   Service    │
     │              │        │              │        │              │
-    │ • Data Agent │        │ • Patients   │        │ • Real-time  │
+    │ • Data Agent │        │ • Clients   │        │ • Real-time  │
     │ • Intent     │        │ • Appointments│        │ • Sessions   │
     │ • Context    │        │ • Billing     │        │ • Events     │
     └──────┬───────┘        └──────────────┘        └──────────────┘
@@ -126,7 +126,7 @@ type AguiMessageType =
 ```typescript
 interface AguiMessageMetadata {
   userId: string; // User identifier
-  patientId?: string; // Patient context (if applicable)
+  clientId?: string; // Client context (if applicable)
   requestId?: string; // Original request ID
   version: string; // Protocol version
   compression?: "gzip" | "none"; // Payload compression
@@ -334,18 +334,18 @@ export class IntentClassifier {
       "appointment_query",
       {
         keywords: ["appointment", "schedule", "booking", "consultation"],
-        entities: ["date", "time", "patient", "provider"],
+        entities: ["date", "time", "client", "provider"],
         requiredPermissions: ["read:appointments"],
-        dataSources: ["appointments", "patients", "providers"],
+        dataSources: ["appointments", "clients", "providers"],
       },
     ],
     [
-      "patient_query",
+      "client_query",
       {
-        keywords: ["patient", "client", "record", "history"],
-        entities: ["patient", "condition", "medication"],
-        requiredPermissions: ["read:patients"],
-        dataSources: ["patients", "medical_records", "medications"],
+        keywords: ["client", "client", "record", "history"],
+        entities: ["client", "treatment concern", "cosmetic product"],
+        requiredPermissions: ["read:clients"],
+        dataSources: ["clients", "aesthetic_records", "cosmetic products"],
       },
     ],
     [
@@ -434,39 +434,39 @@ export class PermissionMatrix {
     [
       "admin",
       new Set([
-        "read:patients",
-        "write:patients",
-        "delete:patients",
+        "read:clients",
+        "write:clients",
+        "delete:clients",
         "read:appointments",
         "write:appointments",
         "delete:appointments",
         "read:billing",
         "write:billing",
         "delete:billing",
-        "read:medical_records",
-        "write:medical_records",
+        "read:aesthetic_records",
+        "write:aesthetic_records",
         "admin:users",
         "admin:system",
         "admin:security",
       ]),
     ],
     [
-      "healthcare_provider",
+      "aesthetic_professional",
       new Set([
-        "read:patients",
-        "write:patients",
+        "read:clients",
+        "write:clients",
         "read:appointments",
         "write:appointments",
         "read:billing",
-        "read:medical_records",
-        "write:medical_records",
+        "read:aesthetic_records",
+        "write:aesthetic_records",
       ]),
     ],
     [
-      "patient",
+      "client",
       new Set([
-        "read:own_patients",
-        "write:own_patients",
+        "read:own_clients",
+        "write:own_clients",
         "read:own_appointments",
         "write:own_appointments",
         "read:own_billing",
@@ -498,14 +498,14 @@ export class PermissionMatrix {
     permission: string,
     context: AccessContext,
   ): boolean {
-    // Patient can only access own data
-    if (role === "patient" && context.resourceOwnerId) {
+    // Client can only access own data
+    if (role === "client" && context.resourceOwnerId) {
       return context.userId === context.resourceOwnerId;
     }
 
-    // Healthcare provider needs patient relationship
-    if (role === "healthcare_provider" && context.patientId) {
-      return this.hasPatientRelationship(context.userId, context.patientId);
+    // Aesthetic professional needs client relationship
+    if (role === "aesthetic_professional" && context.clientId) {
+      return this.hasClientRelationship(context.userId, context.clientId);
     }
 
     return true;
@@ -641,11 +641,11 @@ export class MultiTierCache {
 export class QueryOptimizer {
   private queryPatterns = new Map([
     [
-      "patient_search",
+      "client_search",
       {
-        indexes: ["patients_full_text_search", "patients_active_status"],
+        indexes: ["clients_full_text_search", "clients_active_status"],
         joinStrategies: ["use_nested_loops_for_small_sets"],
-        cacheStrategy: "cache_by_patient_id",
+        cacheStrategy: "cache_by_client_id",
       },
     ],
     [
@@ -678,10 +678,10 @@ export class QueryOptimizer {
     pattern: QueryPattern,
   ): string {
     switch (intent.type) {
-      case "patient_search":
+      case "client_search":
         return `
           SELECT p.id, p.name, p.email, p.phone, p.status
-          FROM patients p
+          FROM clients p
           WHERE p.status = 'active'
             AND (
               p.full_text_search @@ plainto_tsquery('portuguese', $1)
@@ -721,7 +721,7 @@ export class QueryOptimizer {
 ```
 Data Processing
        ↓
-Purpose Limitation (Specific healthcare purposes only)
+Purpose Limitation (Specific aesthetic clinic purposes only)
        ↓
 Data Minimization (Collect only necessary data)
        ↓
@@ -790,8 +790,8 @@ export class AuditLogger {
 // apps/api/src/services/compliance/retention-policy.ts
 export class RetentionPolicyService {
   private retentionRules = new Map([
-    ["patient_data", { duration: 365 * 10, unit: "days" }], // 10 years
-    ["medical_records", { duration: 365 * 25, unit: "days" }], // 25 years
+    ["client_data", { duration: 365 * 10, unit: "days" }], // 10 years
+    ["aesthetic_records", { duration: 365 * 25, unit: "days" }], // 25 years
     ["appointment_data", { duration: 365 * 5, unit: "days" }], // 5 years
     ["billing_data", { duration: 365 * 7, unit: "days" }], // 7 years
     ["audit_logs", { duration: 365 * 2, unit: "days" }], // 2 years
@@ -1110,8 +1110,8 @@ spec:
 
 ### Compliance Best Practices
 
-1. **Data Minimization**: Collect only necessary healthcare data
-2. **Purpose Limitation**: Use data only for specified healthcare purposes
+1. **Data Minimization**: Collect only necessary aesthetic clinic data
+2. **Purpose Limitation**: Use data only for specified aesthetic clinic purposes
 3. **Storage Limitation**: Implement automatic data deletion policies
 4. **Access Control**: Restrict data access based on roles and context
 5. **Rights Management**: Support data subject rights under LGPD
@@ -1130,10 +1130,10 @@ spec:
 
 ### Planned Improvements
 
-1. **Advanced AI Models**: Integration with more sophisticated healthcare AI models
+1. **Advanced AI Models**: Integration with more sophisticated aesthetic clinic AI models
 2. **Real-time Analytics**: Enhanced real-time data analysis capabilities
 3. **Mobile Optimization**: Improved mobile performance and user experience
-4. **Integration Hub**: Expanded third-party healthcare system integration
+4. **Integration Hub**: Expanded third-party aesthetic clinic system integration
 5. **Advanced Security**: Enhanced security features including zero-trust architecture
 6. **Compliance Automation**: Automated compliance checking and reporting
 
@@ -1142,8 +1142,8 @@ spec:
 1. **Federated Learning**: Privacy-preserving AI model training
 2. **Blockchain Integration**: Enhanced audit trail and data integrity
 3. **Quantum Computing**: Future-proofing encryption strategies
-4. **Advanced NLP**: Improved natural language understanding for healthcare contexts
-5. **Predictive Analytics**: Enhanced patient outcome prediction models
+4. **Advanced NLP**: Improved natural language understanding for aesthetic clinic contexts
+5. **Predictive Analytics**: Enhanced client outcome prediction models
 
 ---
 

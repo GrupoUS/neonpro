@@ -839,25 +839,25 @@ function isValidCNPJ(cnpj: string): boolean {
 }
 
 async function validateBusinessLicense(
-  cnpj: string,
+  _cnpj: string,
 ): Promise<{ isValid: boolean; errors?: string[] }> {
   // Placeholder for actual business license validation with Receita Federal
   return { isValid: true };
 }
 
 async function validateHealthcareLicense(
-  licenseNumber: string,
-  city: string,
-  state: string,
+  _licenseNumber: string,
+  _city: string,
+  _state: string,
 ): Promise<{ isValid: boolean; errors?: string[] }> {
   // Placeholder for healthcare license validation with ANVISA/municipal authorities
   return { isValid: true };
 }
 
 async function calculateClinicMetrics(
-  clinicId: string,
-  dateFrom: Date,
-  dateTo: Date,
+  _clinicId: string,
+  _dateFrom: Date,
+  _dateTo: Date,
 ): Promise<any> {
   // Placeholder for clinic metrics calculation
   return {

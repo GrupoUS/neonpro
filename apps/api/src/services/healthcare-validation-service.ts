@@ -97,7 +97,7 @@ export class HealthcareValidationService {
           warnings.push(...lgpdValidation.warnings);
           aiScore -= lgpdValidation.warnings.length * 0.05;
         }
-      } catch (error) {
+      } catch (_error) {
         errors.push('Erro na validação LGPD');
         result.isValid = false;
         aiScore -= 0.2;
@@ -134,7 +134,7 @@ export class HealthcareValidationService {
             warnings.push('Conformidade ANVISA requer atenção');
             aiScore -= 0.1;
           }
-        } catch (error) {
+        } catch (_error) {
           warnings.push('Não foi possível validar conformidade ANVISA');
           aiScore -= 0.1;
         }
@@ -169,7 +169,7 @@ export class HealthcareValidationService {
       result.isValid = result.isValid && result.aiScore >= 0.7;
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error('Healthcare validation error:', error);
       return {
         isValid: false,
@@ -216,7 +216,7 @@ export class HealthcareValidationService {
         authorized,
         licenseInfo: authorized ? licenseInfo : undefined,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Professional authorization error:', error);
       return { authorized: false };
     }
@@ -268,7 +268,7 @@ export class HealthcareValidationService {
         errors,
         warnings,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         isValid: false,
         errors: ['Erro na validação LGPD'],

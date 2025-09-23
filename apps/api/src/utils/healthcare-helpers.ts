@@ -65,7 +65,7 @@ export class BrazilianHealthcareValidator {
   /**
    * Validates CFM (Conselho Federal de Medicina) license numbers
    */
-  static validateCFM(cfmNumber: string, state?: string): boolean {
+  static validateCFM(cfmNumber: string, _state?: string): boolean {
     if (!cfmNumber) return false;
 
     const cleanCFM = cfmNumber.replace(/[^\d]/g, '');
@@ -412,7 +412,7 @@ export class HealthcareAppointmentHelper {
     prisma: HealthcarePrismaClient,
     professionalId: string,
     date: Date,
-    serviceDurationMinutes: number,
+    _serviceDurationMinutes: number,
   ): Promise<Array<{ startTime: Date; endTime: Date }>> {
     try {
       const professional = await prisma.professional.findUnique({
@@ -434,7 +434,7 @@ export class HealthcareAppointmentHelper {
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const existingAppointments = await prisma.appointment.findMany({
+      const _existingAppointments = await prisma.appointment.findMany({
         where: {
           professionalId,
           startTime: { gte: startOfDay },

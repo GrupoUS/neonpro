@@ -247,7 +247,7 @@ export class BrazilianPIIRedactionService {
     });
 
     // Apply healthcare patterns
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([type, _config]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(([_type, _config]) => {
       redactedText = redactedText.replace(config.pattern, config.mask);
     });
 
@@ -413,7 +413,7 @@ export class BrazilianPIIRedactionService {
       }
     });
 
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([type, _config]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(([_type, _config]) => {
       if (config.pattern.test(text)) {
         types.push(type);
       }

@@ -14,9 +14,9 @@
  * - Professional access controls and patient data protection
  */
 
-import { type Prisma, PrismaClient } from '@prisma/client';
-import type { Database } from '../../../packages/database/src/types/supabase';
-import { createAdminClient, healthcareRLS } from './supabase.js';
+import { PrismaClient } from '@prisma/client';
+// import type { Database } from '../../../packages/database/src/types/supabase';
+import { healthcareRLS } from './supabase.js';
 
 // Healthcare context interface for RLS
 interface HealthcareContext {
@@ -592,7 +592,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       await this.$queryRaw`SELECT 1`;
 
       // Test healthcare-specific tables
-      const testQuery = await this.clinic.count();
+      const _testQuery = await this.clinic.count();
 
       this.connectionPool.healthStatus = 'healthy';
       this.connectionPool.lastHealthCheck = new Date();

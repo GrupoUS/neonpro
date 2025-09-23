@@ -195,6 +195,7 @@ export function createAdminClient(): HealthcareAdminClient {
             .eq('user_id', _userId);
           exportData[table] = data || [];
         } catch (error) {
+    void error;
           console.error(
             `Failed to export ${table} data for user ${userId}:`,
             error,
@@ -212,6 +213,7 @@ export function createAdminClient(): HealthcareAdminClient {
         data: exportData,
       };
     } catch (error) {
+    void error;
       throw new Error(`Failed to export user data`);
     }
   };
@@ -249,6 +251,7 @@ export function createAdminClient(): HealthcareAdminClient {
         .eq('id', _userId);
       await adminClient.auth.admin.deleteUser(userId);
     } catch (error) {
+    void error;
       throw new Error(`Failed to delete user data: ${error}`);
     }
   };
@@ -378,6 +381,7 @@ export const healthcareRLS = {
 
       return !!membership;
     } catch (error) {
+    void error;
       console.error(
         `Failed to check user clinic membership for user ${userId}, clinic ${clinicId}`,
       );
@@ -416,6 +420,7 @@ export const healthcareRLS = {
 
       return !!patientClinic;
     } catch (error) {
+    void error;
       console.error(
         `Failed to check patient access for patient ${patientId}:`,
         error,

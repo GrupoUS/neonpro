@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers the comprehensive security and compliance systems implemented for the NeonPro healthcare platform, including security headers testing for healthcare compliance and LGPD (Brazilian General Data Protection Law) validation framework.
+This guide covers the comprehensive security and compliance systems implemented for the NeonPro aesthetic clinic platform, including security headers testing for aesthetic clinic compliance and LGPD (Brazilian General Data Protection Law) validation framework.
 
 ## Architecture
 
@@ -14,9 +14,9 @@ This guide covers the comprehensive security and compliance systems implemented 
 ├─────────────────────────────────────────────────────────────┤
 │  Security Headers │  LGPD Compliance  │  Audit Framework   │
 ├─────────────────────────────────────────────────────────────┤
-│              Healthcare Compliance Layer                    │
+│              Aesthetic Clinic Compliance Layer                    │
 ├─────────────────────────────────────────────────────────────┤
-│  ANVISA Standards │  CFM Requirements │  Medical Data Protection│
+│  ANVISA Standards │  Professional Council Requirements  │  Client Data Protection│
 ├─────────────────────────────────────────────────────────────┤
 │               Infrastructure Security                       │
 │   Rate Limiting   │  Content Security │  Session Management │
@@ -26,8 +26,8 @@ This guide covers the comprehensive security and compliance systems implemented 
 ### Compliance Standards
 
 - **LGPD**: Brazilian General Data Protection Law compliance
-- **ANVISA**: Brazilian Health Regulatory Agency standards
-- **CFM**: Federal Council of Medicine requirements
+- **ANVISA**: Brazilian Health Regulatory Agency standards for cosmetic products
+- **Professional Councils**: Brazilian aesthetic professional council requirements (CNEP, COREN, CRO, CRF)
 - **WCAG 2.1 AA+**: Web accessibility standards
 - **ISO 27001**: Information security management
 
@@ -42,7 +42,7 @@ import { describe, it, expect, beforeAll, afterAll } from "bun:test";
 import { testClient } from "hono/testing";
 import { app } from "../../src/app";
 
-describe("Security Headers for Healthcare Compliance", () => {
+describe("Security Headers for Aesthetic Clinic Compliance", () => {
   let client: ReturnType<typeof testClient>;
 
   beforeAll(() => {
@@ -50,7 +50,7 @@ describe("Security Headers for Healthcare Compliance", () => {
   });
 
   describe("Content Security Policy (CSP)", () => {
-    it("should include strict CSP headers for healthcare data protection", async () => {
+    it("should include strict CSP headers for aesthetic clinic data protection", async () => {
       const res = await client.index.$get();
       const cspHeader = res.headers.get("Content-Security-Policy");
 
@@ -68,23 +68,23 @@ describe("Security Headers for Healthcare Compliance", () => {
       const res = await client.index.$get();
       const cspHeader = res.headers.get("Content-Security-Policy");
 
-      // Ensure no 'unsafe-eval' is present for healthcare security
+      // Ensure no 'unsafe-eval' is present for aesthetic clinic security
       expect(cspHeader).not.toContain("'unsafe-eval'");
     });
 
-    it("should include healthcare-specific CSP directives", async () => {
+    it("should include aesthetic clinic-specific CSP directives", async () => {
       const res = await client.index.$get();
       const cspHeader = res.headers.get("Content-Security-Policy");
 
-      // WebRTC for telemedicine
+      // WebRTC for virtual consultations
       expect(cspHeader).toContain("media-src 'self' mediastream:");
-      // Healthcare file uploads
+      // Aesthetic clinic file uploads
       expect(cspHeader).toContain("img-src 'self' blob: data:");
     });
   });
 
   describe("HTTP Strict Transport Security (HSTS)", () => {
-    it("should enforce HTTPS for healthcare data transmission", async () => {
+    it("should enforce HTTPS for aesthetic clinic data transmission", async () => {
       const res = await client.index.$get();
       const hstsHeader = res.headers.get("Strict-Transport-Security");
 
@@ -101,8 +101,8 @@ describe("Security Headers for Healthcare Compliance", () => {
   });
 
   describe("Cross-Origin Resource Sharing (CORS)", () => {
-    it("should have restrictive CORS policy for healthcare APIs", async () => {
-      const res = await client.api.v1.patients.$get();
+    it("should have restrictive CORS policy for aesthetic clinic APIs", async () => {
+      const res = await client.api.v1.clients.$get();
 
       const corsOrigin = res.headers.get("Access-Control-Allow-Origin");
       const corsCredentials = res.headers.get(
@@ -110,7 +110,7 @@ describe("Security Headers for Healthcare Compliance", () => {
       );
       const corsMethods = res.headers.get("Access-Control-Allow-Methods");
 
-      // Should be restrictive for healthcare data
+      // Should be restrictive for aesthetic clinic data
       expect(corsOrigin).not.toBe("*");
       expect(corsCredentials).toBe("true");
       expect(corsMethods).toContain("GET");
@@ -119,14 +119,14 @@ describe("Security Headers for Healthcare Compliance", () => {
       expect(corsMethods).toContain("DELETE");
     });
 
-    it("should allow only trusted healthcare domains", async () => {
-      const res = await client.api.v1.patients.$get();
+    it("should allow only trusted aesthetic clinic domains", async () => {
+      const res = await client.api.v1.clients.$get();
       const corsOrigin = res.headers.get("Access-Control-Allow-Origin");
 
       const trustedDomains = [
-        "https://neonpro.health.br",
-        "https://app.neonpro.health.br",
-        "https://admin.neonpro.health.br",
+        "https://neonpro.aesthetic.br",
+        "https://app.neonpro.aesthetic.br",
+        "https://admin.neonpro.aesthetic.br",
       ];
 
       if (corsOrigin !== null) {
@@ -164,11 +164,11 @@ describe("Security Headers for Healthcare Compliance", () => {
       expect(xssProtection).toBe("1; mode=block");
     });
 
-    it("should include Permissions-Policy for healthcare features", async () => {
+    it("should include Permissions-Policy for aesthetic clinic features", async () => {
       const res = await client.index.$get();
       const permissionsPolicy = res.headers.get("Permissions-Policy");
 
-      // Allow necessary features for telemedicine
+      // Allow necessary features for virtual consultations
       expect(permissionsPolicy).toContain("camera=self");
       expect(permissionsPolicy).toContain("microphone=self");
       expect(permissionsPolicy).toContain("geolocation=self");
@@ -181,7 +181,7 @@ describe("Security Headers for Healthcare Compliance", () => {
 
   describe("Rate Limiting Headers", () => {
     it("should include rate limiting information", async () => {
-      const res = await client.api.v1.patients.$get();
+      const res = await client.api.v1.clients.$get();
 
       const rateLimitRemaining = res.headers.get("X-RateLimit-Remaining");
       const rateLimitReset = res.headers.get("X-RateLimit-Reset");
@@ -190,33 +190,33 @@ describe("Security Headers for Healthcare Compliance", () => {
       expect(rateLimitReset).toBeDefined();
     });
 
-    it("should have different rate limits for healthcare endpoints", async () => {
-      // Patient data endpoints should have stricter limits
-      const patientRes = await client.api.v1.patients.$get();
+    it("should have different rate limits for aesthetic clinic endpoints", async () => {
+      // Client data endpoints should have stricter limits
+      const clientRes = await client.api.v1.clients.$get();
       const publicRes = await client.api.v1.public.info.$get();
 
-      const patientLimit = parseInt(
-        patientRes.headers.get("X-RateLimit-Limit") || "0",
+      const clientLimit = parseInt(
+        clientRes.headers.get("X-RateLimit-Limit") || "0",
       );
       const publicLimit = parseInt(
         publicRes.headers.get("X-RateLimit-Limit") || "0",
       );
 
-      expect(publicLimit).toBeGreaterThan(patientLimit);
+      expect(publicLimit).toBeGreaterThan(clientLimit);
     });
   });
 
-  describe("Healthcare-Specific Security", () => {
-    it("should include medical data classification headers", async () => {
-      const res = await client.api.v1.patients.$get();
+  describe("Aesthetic Clinic-Specific Security", () => {
+    it("should include aesthetic data classification headers", async () => {
+      const res = await client.api.v1.clients.$get();
 
       const dataClassification = res.headers.get(
-        "X-Healthcare-Data-Classification",
+        "X-Aesthetic-Data-Classification",
       );
-      const complianceLevel = res.headers.get("X-Healthcare-Compliance-Level");
+      const complianceLevel = res.headers.get("X-Aesthetic-Compliance-Level");
 
       expect(dataClassification).toBe("restricted");
-      expect(complianceLevel).toBe("lgpd-anvisa-cfm");
+      expect(complianceLevel).toBe("lgpd-anvisa-professional-councils");
     });
 
     it("should include audit trail headers", async () => {
@@ -262,12 +262,12 @@ describe("Security Headers Integration Tests", () => {
     expect(securityScanResults.highRiskVulnerabilities).toBe(0);
   });
 
-  it("should meet healthcare security benchmarks", async () => {
-    const benchmarkResults = await runHealthcareSecurityBenchmark();
+  it("should meet aesthetic clinic security benchmarks", async () => {
+    const benchmarkResults = await runAestheticClinicSecurityBenchmark();
 
     expect(benchmarkResults.lgpdCompliance).toBe(true);
     expect(benchmarkResults.anvisaCompliance).toBe(true);
-    expect(benchmarkResults.cfmCompliance).toBe(true);
+    expect(benchmarkResults.professionalCouncilCompliance).toBe(true);
     expect(benchmarkResults.overallScore).toBeGreaterThanOrEqual(95);
   });
 });
@@ -284,12 +284,12 @@ async function runSecurityScan(url: string) {
   };
 }
 
-async function runHealthcareSecurityBenchmark() {
-  // Healthcare-specific security benchmarking
+async function runAestheticClinicSecurityBenchmark() {
+  // Aesthetic clinic-specific security benchmarking
   return {
     lgpdCompliance: true,
     anvisaCompliance: true,
-    cfmCompliance: true,
+    professionalCouncilCompliance: true,
     overallScore: 98,
   };
 }
@@ -362,7 +362,7 @@ const SECURITY_CONFIG: SecurityConfig = {
   rateLimit: {
     public: 1000,
     authenticated: 500,
-    healthcare: 100,
+    aestheticClinic: 100,
     admin: 50,
   },
 };
@@ -401,7 +401,7 @@ export function securityHeadersMiddleware() {
     // Referrer Policy
     c.header("Referrer-Policy", "strict-origin-when-cross-origin");
 
-    // Permissions Policy for healthcare features
+    // Permissions Policy for aesthetic clinic features
     const permissionsPolicy = [
       "camera=self",
       "microphone=self",
@@ -414,16 +414,16 @@ export function securityHeadersMiddleware() {
     ].join(", ");
     c.header("Permissions-Policy", permissionsPolicy);
 
-    // Healthcare-specific headers
-    c.header("X-Healthcare-Platform", "NeonPro");
+    // Aesthetic clinic-specific headers
+    c.header("X-Aesthetic-Platform", "NeonPro");
     c.header("X-Compliance-Version", "LGPD-2023");
     c.header("X-Request-ID", requestId);
     c.header("X-Audit-ID", auditId);
 
     // Determine data classification based on route
     const dataClassification = getDataClassification(c.req.path);
-    c.header("X-Healthcare-Data-Classification", dataClassification);
-    c.header("X-Healthcare-Compliance-Level", "lgpd-anvisa-cfm");
+    c.header("X-Aesthetic-Data-Classification", dataClassification);
+    c.header("X-Aesthetic-Compliance-Level", "lgpd-anvisa-professional-councils");
 
     // Rate limiting headers
     const userType = getUserType(c);
@@ -502,7 +502,7 @@ function buildHSTSHeader(hsts: SecurityConfig["hsts"]): string {
 }
 
 function getDataClassification(path: string): string {
-  if (path.includes("/patients") || path.includes("/medical-records")) {
+  if (path.includes("/clients") || path.includes("/client-records")) {
     return "restricted";
   }
 
@@ -523,24 +523,24 @@ function getUserType(c: Context): string {
   if (!user) return "public";
 
   if (user.role === "admin") return "admin";
-  if (user.role === "healthcare_professional") return "healthcare";
-  if (user.role === "patient") return "authenticated";
+  if (user.role === "aesthetic_professional") return "aestheticClinic";
+  if (user.role === "client") return "authenticated";
 
   return "authenticated";
 }
 
 // Security middleware for specific routes
-export function healthcareSecurityMiddleware() {
+export function aestheticClinicSecurityMiddleware() {
   return async (c: Context, next: Next) => {
-    // Additional security for healthcare routes
-    c.header("X-Healthcare-Route", "true");
+    // Additional security for aesthetic clinic routes
+    c.header("X-Aesthetic-Clinic-Route", "true");
     c.header("X-PII-Protection", "enabled");
     c.header("X-Audit-Required", "true");
 
-    // Enhanced CSP for healthcare routes
+    // Enhanced CSP for aesthetic clinic routes
     const enhancedCSP = [
       "default-src 'self'",
-      "script-src 'self'", // No unsafe-inline for healthcare
+      "script-src 'self'", // No unsafe-inline for aesthetic clinics
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "connect-src 'self' https://api.supabase.co",
@@ -585,11 +585,11 @@ describe("LGPD Compliance Validation", () => {
   });
 
   describe("Article 7 - Legal Basis for Data Processing", () => {
-    it("should validate consent for patient data processing", async () => {
+    it("should validate consent for client data processing", async () => {
       const processingContext = {
-        dataSubjectId: "patient-123",
-        purpose: "medical_treatment",
-        dataTypes: ["medical_history", "personal_information"],
+        dataSubjectId: "client-123",
+        purpose: "aesthetic_treatment",
+        dataTypes: ["aesthetic_history", "personal_information"],
         legalBasis: "consent",
       };
 
@@ -600,11 +600,11 @@ describe("LGPD Compliance Validation", () => {
       expect(validation.auditTrail).toBeDefined();
     });
 
-    it("should validate legitimate interest for healthcare professional data", async () => {
+    it("should validate legitimate interest for aesthetic professional data", async () => {
       const processingContext = {
         dataSubjectId: "professional-456",
         purpose: "professional_verification",
-        dataTypes: ["crm_number", "specialization"],
+        dataTypes: ["license_number", "specialization"],
         legalBasis: "legitimate_interest",
       };
 
@@ -614,11 +614,11 @@ describe("LGPD Compliance Validation", () => {
       expect(validation.legalBasis).toBe("legitimate_interest");
     });
 
-    it("should validate vital interests for emergency medical situations", async () => {
+    it("should validate vital interests for emergency aesthetic situations", async () => {
       const processingContext = {
-        dataSubjectId: "patient-emergency-789",
+        dataSubjectId: "client-emergency-789",
         purpose: "emergency_treatment",
-        dataTypes: ["medical_history", "allergies", "medications"],
+        dataTypes: ["aesthetic_history", "allergies", "contraindications"],
         legalBasis: "vital_interests",
         emergency: true,
       };
@@ -632,7 +632,7 @@ describe("LGPD Compliance Validation", () => {
 
     it("should reject processing without valid legal basis", async () => {
       const processingContext = {
-        dataSubjectId: "patient-invalid",
+        dataSubjectId: "client-invalid",
         purpose: "marketing",
         dataTypes: ["personal_information"],
         legalBasis: "invalid_basis",
@@ -648,27 +648,27 @@ describe("LGPD Compliance Validation", () => {
   });
 
   describe("Article 8 - Consent Requirements", () => {
-    it("should validate granular consent for healthcare data", async () => {
+    it("should validate granular consent for aesthetic clinic data", async () => {
       const consentRequest = {
-        dataSubjectId: "patient-123",
+        dataSubjectId: "client-123",
         purposes: [
           {
-            id: "medical_treatment",
-            description: "Atendimento médico e acompanhamento clínico",
+            id: "aesthetic_treatment",
+            description: "Atendimento estético e acompanhamento de tratamentos",
             required: true,
           },
           {
-            id: "telemedicine",
-            description: "Consultas por telemedicina e monitoramento remoto",
+            id: "virtual_consultation",
+            description: "Consultas virtuais e acompanhamento remoto",
             required: false,
           },
           {
-            id: "health_analytics",
-            description: "Análise de dados para melhoria dos cuidados de saúde",
+            id: "aesthetic_analytics",
+            description: "Análise de dados para melhoria dos cuidados estéticos",
             required: false,
           },
         ],
-        dataTypes: ["personal_data", "health_data", "biometric_data"],
+        dataTypes: ["personal_data", "aesthetic_data", "biometric_data"],
       };
 
       const consent = await consentManager.requestConsent(consentRequest);
@@ -678,11 +678,11 @@ describe("LGPD Compliance Validation", () => {
       expect(consent.granularPurposes).toHaveLength(3);
     });
 
-    it("should handle consent withdrawal for healthcare services", async () => {
+    it("should handle consent withdrawal for aesthetic clinic services", async () => {
       const withdrawalRequest = {
-        dataSubjectId: "patient-123",
+        dataSubjectId: "client-123",
         consentId: "consent-456",
-        purpose: "health_analytics",
+        purpose: "aesthetic_analytics",
         reason: "No longer wish to participate in analytics",
       };
 
@@ -696,7 +696,7 @@ describe("LGPD Compliance Validation", () => {
 
     it("should maintain consent history and audit trail", async () => {
       const consentHistory =
-        await consentManager.getConsentHistory("patient-123");
+        await consentManager.getConsentHistory("client-123");
 
       expect(consentHistory.length).toBeGreaterThan(0);
       expect(consentHistory[0]).toHaveProperty("timestamp");
@@ -707,15 +707,15 @@ describe("LGPD Compliance Validation", () => {
 
     it("should validate consent for children under 18 (Article 14)", async () => {
       const minorConsentRequest = {
-        dataSubjectId: "minor-patient-789",
+        dataSubjectId: "minor-client-789",
         age: 16,
         parentalConsent: {
           parentId: "parent-guardian-456",
           relationship: "mother",
           verified: true,
         },
-        purposes: ["medical_treatment"],
-        dataTypes: ["health_data"],
+        purposes: ["aesthetic_treatment"],
+        dataTypes: ["aesthetic_data"],
       };
 
       const consent =
@@ -730,9 +730,9 @@ describe("LGPD Compliance Validation", () => {
   describe("Article 18 - Data Subject Rights", () => {
     it("should handle right of access (Article 15 equivalent)", async () => {
       const accessRequest = {
-        dataSubjectId: "patient-123",
+        dataSubjectId: "client-123",
         requestType: "access",
-        specificData: ["medical_records", "appointment_history"],
+        specificData: ["aesthetic_records", "appointment_history"],
         format: "structured",
       };
 
@@ -742,12 +742,12 @@ describe("LGPD Compliance Validation", () => {
       expect(accessResponse.requestId).toBeDefined();
       expect(accessResponse.status).toBe("processing");
       expect(accessResponse.estimatedCompletionDate).toBeDefined();
-      expect(accessResponse.dataClassification).toBe("personal_health_data");
+      expect(accessResponse.dataClassification).toBe("personal_aesthetic_data");
     });
 
     it("should handle right of rectification", async () => {
       const rectificationRequest = {
-        dataSubjectId: "patient-123",
+        dataSubjectId: "client-123",
         requestType: "rectification",
         dataToCorrect: {
           field: "address",
@@ -765,12 +765,12 @@ describe("LGPD Compliance Validation", () => {
       expect(rectificationResponse.dataIntegrityCheck).toBe(true);
     });
 
-    it("should handle right of erasure with healthcare considerations", async () => {
+    it("should handle right of erasure with aesthetic clinic considerations", async () => {
       const erasureRequest = {
-        dataSubjectId: "patient-123",
+        dataSubjectId: "client-123",
         requestType: "erasure",
         dataToErase: ["marketing_preferences", "optional_analytics_data"],
-        retainMedicalData: true, // Required by CFM for medical records
+        retainAestheticData: true, // Required by professional councils for aesthetic records
         justification: "Withdrawal of consent for non-essential data",
       };
 
@@ -778,9 +778,9 @@ describe("LGPD Compliance Validation", () => {
         await rightsManager.processErasureRequest(erasureRequest);
 
       expect(erasureResponse.success).toBe(true);
-      expect(erasureResponse.medicalDataRetained).toBe(true);
+      expect(erasureResponse.aestheticDataRetained).toBe(true);
       expect(erasureResponse.retentionJustification).toContain(
-        "CFM medical record retention",
+        "Professional council aesthetic record retention",
       );
       expect(erasureResponse.erasedDataTypes).toEqual([
         "marketing_preferences",
@@ -790,17 +790,17 @@ describe("LGPD Compliance Validation", () => {
 
     it("should handle right of data portability", async () => {
       const portabilityRequest = {
-        dataSubjectId: "patient-123",
+        dataSubjectId: "client-123",
         requestType: "portability",
-        dataFormat: "FHIR", // Healthcare data standard
-        includeTypes: ["medical_records", "test_results", "prescriptions"],
-        destination: "external_healthcare_provider",
+        dataFormat: "JSON", // Aesthetic clinic data standard
+        includeTypes: ["aesthetic_records", "treatment_history", "product_recommendations"],
+        destination: "external_aesthetic_provider",
       };
 
       const portabilityResponse =
         await rightsManager.processPortabilityRequest(portabilityRequest);
 
-      expect(portabilityResponse.exportFormat).toBe("FHIR");
+      expect(portabilityResponse.exportFormat).toBe("JSON");
       expect(portabilityResponse.dataIntegrity).toBe(true);
       expect(portabilityResponse.encryptionApplied).toBe(true);
       expect(portabilityResponse.transferAuditLog).toBeDefined();
@@ -808,9 +808,9 @@ describe("LGPD Compliance Validation", () => {
 
     it("should handle right to object to processing", async () => {
       const objectionRequest = {
-        dataSubjectId: "patient-123",
+        dataSubjectId: "client-123",
         requestType: "objection",
-        processingPurpose: "health_analytics",
+        processingPurpose: "aesthetic_analytics",
         objectionReason: "Privacy concerns about data analytics",
         maintainEssentialServices: true,
       };
@@ -820,7 +820,7 @@ describe("LGPD Compliance Validation", () => {
 
       expect(objectionResponse.success).toBe(true);
       expect(objectionResponse.processingsStopped).toContain(
-        "health_analytics",
+        "aesthetic_analytics",
       );
       expect(objectionResponse.essentialServicesUnaffected).toBe(true);
     });
@@ -831,7 +831,7 @@ describe("LGPD Compliance Validation", () => {
       const breachEvent = {
         eventId: "breach-2024-001",
         detectionTime: new Date(),
-        affectedDataTypes: ["medical_records", "personal_information"],
+        affectedDataTypes: ["aesthetic_records", "personal_information"],
         estimatedAffectedSubjects: 150,
         breachType: "unauthorized_access",
         containmentMeasures: [
@@ -861,16 +861,16 @@ describe("LGPD Compliance Validation", () => {
   });
 
   describe("Article 48 - Data Protection Impact Assessment (DPIA)", () => {
-    it("should conduct DPIA for high-risk healthcare processing", async () => {
+    it("should conduct DPIA for high-risk aesthetic clinic processing", async () => {
       const processingActivity = {
-        activityId: "ai-diagnosis-system",
-        description: "Sistema de IA para auxílio em diagnósticos médicos",
-        dataTypes: ["medical_images", "patient_history", "genetic_data"],
-        processingPurpose: "ai_assisted_diagnosis",
-        dataSubjects: ["patients"],
+        activityId: "ai-treatment-recommendation-system",
+        description: "Sistema de IA para recomendações de tratamentos estéticos",
+        dataTypes: ["aesthetic_images", "client_history", "skin_analysis_data"],
+        processingPurpose: "ai_assisted_treatment_planning",
+        dataSubjects: ["clients"],
         riskFactors: [
           "ai_processing",
-          "sensitive_health_data",
+          "sensitive_aesthetic_data",
           "automated_decision_making",
         ],
       };
@@ -889,9 +889,9 @@ describe("LGPD Compliance Validation", () => {
     it("should validate international data transfers", async () => {
       const transferRequest = {
         transferId: "transfer-2024-001",
-        dataTypes: ["medical_consultation_data"],
+        dataTypes: ["aesthetic_consultation_data"],
         destinationCountry: "United States",
-        recipient: "Healthcare AI Provider",
+        recipient: "Aesthetic AI Provider",
         transferMechanism: "standard_contractual_clauses",
         additionalSafeguards: [
           "encryption",
@@ -917,9 +917,9 @@ describe("LGPD Compliance Validation", () => {
       const auditQuery = {
         startDate: new Date("2024-01-01"),
         endDate: new Date("2024-12-31"),
-        dataSubjectId: "patient-123",
+        dataSubjectId: "client-123",
         operations: ["read", "write", "delete"],
-        purposes: ["medical_treatment", "telemedicine"],
+        purposes: ["aesthetic_treatment", "virtual_consultation"],
       };
 
       const auditLog = await validator.getAuditLog(auditQuery);
@@ -954,7 +954,7 @@ describe("LGPD Compliance Validation", () => {
     it("should validate data retention policies", async () => {
       const retentionValidation = await validator.validateDataRetention();
 
-      expect(retentionValidation.medicalRecordsRetention).toBe("permanent"); // CFM requirement
+      expect(retentionValidation.aestheticRecordsRetention).toBe("permanent"); // Professional council requirement
       expect(retentionValidation.marketingDataRetention).toBe("consent_based");
       expect(retentionValidation.auditLogRetention).toBe("7_years"); // LGPD requirement
       expect(retentionValidation.expiredDataIdentified).toBeDefined();
@@ -978,7 +978,7 @@ class MockLGPDComplianceValidator {
 
   async assessDataBreach(event: any) {
     return {
-      riskLevel: event.affectedDataTypes.includes("medical_records")
+      riskLevel: event.affectedDataTypes.includes("aesthetic_records")
         ? "high"
         : "medium",
       notificationRequired: true,
@@ -1016,8 +1016,8 @@ class MockLGPDComplianceValidator {
           timestamp: new Date(),
           operation: "read",
           legalBasis: "consent",
-          dataProcessor: "healthcare_professional",
-          purpose: "medical_treatment",
+          dataProcessor: "aesthetic_professional",
+          purpose: "aesthetic_treatment",
         },
       ],
     };
@@ -1035,7 +1035,7 @@ class MockLGPDComplianceValidator {
 
   async validateDataRetention() {
     return {
-      medicalRecordsRetention: "permanent",
+      aestheticRecordsRetention: "permanent",
       marketingDataRetention: "consent_based",
       auditLogRetention: "7_years",
       expiredDataIdentified: [],
@@ -1055,9 +1055,9 @@ import { z } from "zod";
 const ProcessingContextSchema = z.object({
   dataSubjectId: z.string(),
   purpose: z.enum([
-    "medical_treatment",
-    "telemedicine",
-    "health_analytics",
+    "aesthetic_treatment",
+    "virtual_consultation",
+    "aesthetic_analytics",
     "professional_verification",
     "emergency_treatment",
   ]),
@@ -1110,7 +1110,7 @@ export class LGPDComplianceValidator {
           validation.isValid = await this.validateVitalInterests(context);
           if (context.emergency) {
             validation.emergencyJustification =
-              "Emergency medical treatment requires immediate access to patient data";
+              "Emergency aesthetic treatment requires immediate access to client data";
           }
           break;
         case "legal_obligation":
@@ -1167,7 +1167,7 @@ export class LGPDComplianceValidator {
     const legalObligationPurposes = [
       "tax_reporting",
       "regulatory_compliance",
-      "cfm_reporting",
+      "professional_council_reporting",
     ];
 
     return legalObligationPurposes.includes(context.purpose);
@@ -1185,7 +1185,7 @@ export class LGPDComplianceValidator {
 
   private async validateContractBasis(context: any): Promise<boolean> {
     // Validate contract necessity under LGPD Article 7, V
-    return context.purpose === "medical_treatment";
+    return context.purpose === "aesthetic_treatment";
   }
 
   private generateAuditTrail(context: any, validation: any): string {
@@ -1202,4 +1202,4 @@ export class LGPDComplianceValidator {
 }
 ```
 
-This comprehensive security and compliance guide provides detailed implementation patterns for ensuring the NeonPro healthcare platform meets all required security standards and LGPD compliance requirements, with practical testing approaches and real-world implementation examples.
+This comprehensive security and compliance guide provides detailed implementation patterns for ensuring the NeonPro aesthetic clinic platform meets all required security standards and LGPD compliance requirements, with practical testing approaches and real-world implementation examples.

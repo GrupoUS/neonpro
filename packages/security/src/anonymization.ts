@@ -601,7 +601,3 @@ export const DEFAULT_MASKING_OPTIONS: Record<
     preserveFormat: false,
   },
 };
-
-/**
- * Version of the anonymization utilities
- */

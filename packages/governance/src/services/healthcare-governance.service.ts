@@ -21,7 +21,7 @@ import {
   HealthcarePolicyFilters,
   HealthcareAlertFilters,
   ComplianceReportFilters,
-  AuditTrail,
+  AuditTrailEntry,
 } from "@neonpro/types";
 
 export class HealthcareGovernanceService
@@ -615,7 +615,7 @@ export class HealthcareGovernanceService
   // Integration with Audit System
   async createHealthcareAuditEntry(
     entry: HealthcareAuditEvent,
-  ): Promise<AuditTrail> {
+  ): Promise<AuditTrailEntry> {
     try {
       // Create the base audit entry
       const auditEntry = await this.createAuditEntry({

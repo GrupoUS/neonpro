@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createFileRoute, useLoaderData } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { RoomAllocation } from "@/components/aesthetic-scheduling/RoomAllocation";
 

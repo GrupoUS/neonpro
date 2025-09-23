@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers the comprehensive performance optimization system implemented for the NeonPro healthcare platform, including semantic caching for AI cost reduction, bundle optimization with performance budgets, and Core Web Vitals monitoring for healthcare interfaces.
+This guide covers the comprehensive performance optimization system implemented for the NeonPro aesthetic clinic platform, including semantic caching for AI cost reduction, bundle optimization with performance budgets, and Core Web Vitals monitoring for aesthetic clinic interfaces.
 
 ## Architecture
 
@@ -25,7 +25,7 @@ This guide covers the comprehensive performance optimization system implemented 
 
 ### Performance Targets
 
-- **Page Load Time**: <2s average (healthcare compliance requirement)
+- **Page Load Time**: <2s average (aesthetic clinic compliance requirement)
 - **Time to Interactive**: <1.5s
 - **Bundle Size**: <500KB gzipped main bundle
 - **AI Response Time**: <200ms for cached responses
@@ -35,7 +35,7 @@ This guide covers the comprehensive performance optimization system implemented 
 
 ### Architecture Overview
 
-The semantic caching system reduces AI costs by 80%+ through intelligent vector similarity matching while maintaining healthcare compliance.
+The semantic caching system reduces AI costs by 80%+ through intelligent vector similarity matching while maintaining aesthetic clinic compliance.
 
 ```typescript
 interface SemanticCacheEntry {
@@ -105,9 +105,9 @@ export class SemanticCacheService {
     options: CacheOptions = {},
   ): Promise<CachedResponse | null> {
     try {
-      // Healthcare validation
+      // Aesthetic clinic validation
       if (options.validateHealthcare && this.config.healthcareMode) {
-        await this.validateHealthcareContext(options.context);
+        await this.validateAestheticClinicContext(options.context);
       }
 
       // Redact PII from query before processing
@@ -134,12 +134,12 @@ export class SemanticCacheService {
       if (similarEntries.length > 0) {
         const bestMatch = similarEntries[0];
 
-        // Healthcare context validation
+        // Aesthetic clinic context validation
         if (options.healthcareContext && options.professionalId) {
           if (
-            !this.validateHealthcareAccess(bestMatch, options.professionalId)
+            !this.validateAestheticClinicAccess(bestMatch, options.professionalId)
           ) {
-            return null; // Access denied for healthcare context
+            return null; // Access denied for aesthetic clinic context
           }
         }
 
@@ -198,9 +198,9 @@ export class SemanticCacheService {
       this.cache.set(queryHash, entry);
       this.vectorCache.set(queryHash, queryVector);
 
-      // Healthcare audit logging
+      // Aesthetic clinic audit logging
       if (options.healthcareContext) {
-        await this.logHealthcareAccess(entry, "cache_set");
+        await this.logAestheticClinicAccess(entry, "cache_set");
       }
     } catch (error) {
       console.error("Semantic cache set error:", error);
@@ -290,8 +290,8 @@ export class SemanticCacheService {
         "[REDACTED_EMAIL]",
       )
       .replace(/\(\d{2}\)\s*\d{4,5}-?\d{4}/g, "[REDACTED_PHONE]")
-      .replace(/MR-\d{6,10}/g, "[REDACTED_MEDICAL_RECORD]")
-      .replace(/PAT-[A-Z0-9]{8,12}/g, "[REDACTED_PATIENT_ID]");
+      .replace(/MR-\d{6,10}/g, "[REDACTED_CLIENT_RECORD]")
+      .replace(/PAT-[A-Z0-9]{8,12}/g, "[REDACTED_CLIENT_ID]");
   }
 
   private hashVector(vector: number[]): string {
@@ -322,34 +322,34 @@ export class SemanticCacheService {
     };
   }
 
-  private validateHealthcareAccess(
+  private validateAestheticClinicAccess(
     entry: SemanticCacheEntry,
     professionalId: string,
   ): boolean {
-    // Validate professional access to cached healthcare data
+    // Validate professional access to cached aesthetic clinic data
     if (entry.complianceInfo.dataClassification === "restricted") {
       return entry.metadata.professionalId === professionalId;
     }
 
     if (entry.complianceInfo.dataClassification === "confidential") {
       // Additional validation logic for confidential data
-      return this.hasHealthcareAccess(professionalId);
+      return this.hasAestheticClinicAccess(professionalId);
     }
 
     return true;
   }
 
-  private async validateHealthcareContext(context: any): Promise<void> {
+  private async validateAestheticClinicContext(context: any): Promise<void> {
     if (!context || !context.professionalId) {
       throw new Error(
-        "Healthcare context validation failed: missing professional ID",
+        "Aesthetic clinic context validation failed: missing professional ID",
       );
     }
 
-    // Additional healthcare validation logic
-    if (context.requiresPatientConsent && !context.patientConsent) {
+    // Additional aesthetic clinic validation logic
+    if (context.requiresClientConsent && !context.clientConsent) {
       throw new Error(
-        "Healthcare context validation failed: patient consent required",
+        "Aesthetic clinic context validation failed: client consent required",
       );
     }
   }
@@ -358,7 +358,7 @@ export class SemanticCacheService {
     content: string,
   ): "public" | "internal" | "confidential" | "restricted" {
     // Simple classification based on content patterns
-    if (content.includes("patient") || content.includes("medical")) {
+    if (content.includes("client") || content.includes("aesthetic")) {
       return "restricted";
     }
     if (content.includes("internal") || content.includes("professional")) {
@@ -380,18 +380,18 @@ export class SemanticCacheService {
     });
   }
 
-  private hasHealthcareAccess(professionalId: string): boolean {
-    // Implement healthcare professional access validation
-    // This would typically check against a healthcare professional registry
+  private hasAestheticClinicAccess(professionalId: string): boolean {
+    // Implement aesthetic professional access validation
+    // This would typically check against an aesthetic professional registry
     return true; // Simplified for example
   }
 
-  private async logHealthcareAccess(
+  private async logAestheticClinicAccess(
     entry: SemanticCacheEntry,
     operation: string,
   ): Promise<void> {
-    // Healthcare audit logging implementation
-    console.log("Healthcare cache access:", {
+    // Aesthetic clinic audit logging implementation
+    console.log("Aesthetic clinic cache access:", {
       entryId: entry.id,
       operation,
       professionalId: entry.metadata.professionalId,
@@ -588,11 +588,11 @@ export default defineConfig({
             "lucide-react",
           ],
 
-          // Healthcare-specific modules
-          "healthcare-core": [
-            "./src/lib/healthcare",
+          // Aesthetic clinic-specific modules
+          "aesthetic-clinic-core": [
+            "./src/lib/aesthetic-clinic",
             "./src/lib/compliance",
-            "./src/lib/telemedicine",
+            "./src/lib/virtual-consultation",
           ],
 
           // Charts and visualization
@@ -648,7 +648,7 @@ export default defineConfig({
     "vendor-react": { maxSize: "150KB", warning: "120KB" },
     "vendor-router": { maxSize: "100KB", warning: "80KB" },
     "vendor-ui": { maxSize: "200KB", warning: "160KB" },
-    "healthcare-core": { maxSize: "250KB", warning: "200KB" },
+    "aesthetic-clinic-core": { maxSize: "250KB", warning: "200KB" },
     "vendor-charts": { maxSize: "300KB", warning: "250KB" },
     "vendor-date": { maxSize: "50KB", warning: "40KB" },
     main: { maxSize: "300KB", warning: "250KB" },
@@ -663,7 +663,7 @@ export default defineConfig({
   // Development optimizations
   server: {
     hmr: {
-      overlay: false, // Reduce noise in healthcare development
+      overlay: false, // Reduce noise in aesthetic clinic development
     },
   },
 
@@ -674,7 +674,7 @@ export default defineConfig({
     },
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/styles/healthcare-variables.scss";`,
+        additionalData: `@import "@/styles/aesthetic-clinic-variables.scss";`,
       },
     },
   },
@@ -804,9 +804,9 @@ async function analyzeBundlePerformance() {
     );
   }
 
-  if (stats.chunks["healthcare-core"]?.size > 250 * 1024) {
+  if (stats.chunks["aesthetic-clinic-core"]?.size > 250 * 1024) {
     console.log(
-      "⚠️  Healthcare core bundle is large - consider splitting compliance and telemedicine modules",
+      "⚠️  Aesthetic clinic core bundle is large - consider splitting compliance and virtual consultation modules",
     );
   }
 

@@ -457,6 +457,7 @@ export class HealthcareMiddlewareService {
         "🔄 [HealthcareMiddlewareService] Healthcare middleware service initialized",
       );
     } catch (_error) {
+      void _error;
       console.error(
         "Failed to initialize healthcare middleware _service:",
         error,
@@ -588,6 +589,7 @@ export class HealthcareMiddlewareService {
         // Phase 8: Post-processing
         await this.performPostProcessing(c, requestContext, startTime);
       } catch (_error) {
+      void _error;
         // Error handling
         await this.handleMiddlewareError(c, error, requestContext!, startTime);
       }
@@ -1358,6 +1360,7 @@ export class HealthcareMiddlewareService {
         return await c.req.json();
       }
     } catch (_error) {
+      void _error;
       // Ignore parsing errors
     }
     return null;

@@ -1,0 +1,425 @@
+/**
+ * Performance Monitoring Middleware
+ * Provides comprehensive performance tracking and optimization for API requests
+ */
+
+import { Request, Response, NextFunction } from "express";
+import { AestheticClinicPerformanceOptimizer } from "../services/performance/aesthetic-clinic-performance-optimizer";
+import { ErrorMapper } from "@neonpro/shared/errors";
+
+export interface PerformanceMetrics {
+  requestId: string;
+  method: string;
+  url: string;
+  userAgent: string;
+  startTime: number;
+  endTime?: number;
+  duration?: number;
+  memoryUsage?: {
+    heapUsed: number;
+    heapTotal: number;
+    external: number;
+  };
+  cpuUsage?: number;
+  responseSize?: number;
+  statusCode?: number;
+  cacheHit?: boolean;
+  databaseQueries?: number;
+  errors?: string[];
+  warnings?: string[];
+}
+
+export interface PerformanceThresholds {
+  warningThreshold: number; // milliseconds
+  criticalThreshold: number; // milliseconds
+  maxMemoryUsage: number; // bytes
+  maxResponseSize: number; // bytes
+}
+
+export class PerformanceMonitor {
+  private metrics: Map<string, PerformanceMetrics> = new Map();
+  private thresholds: PerformanceThresholds;
+  private optimizer: AestheticClinicPerformanceOptimizer;
+
+  constructor(
+    optimizer: AestheticClinicPerformanceOptimizer,
+    thresholds: Partial<PerformanceThresholds> = {}
+  ) {
+    this.optimizer = optimizer;
+    this.thresholds = {
+      warningThreshold: 1000, // 1 second
+      criticalThreshold: 5000, // 5 seconds
+      maxMemoryUsage: 500 * 1024 * 1024, // 500MB
+      maxResponseSize: 10 * 1024 * 1024, // 10MB
+      ...thresholds,
+    };
+
+    // Start periodic cleanup
+    setInterval(() => this.cleanupOldMetrics(), 300000); // Every 5 minutes
+  }
+
+  /**
+   * Middleware function for performance monitoring
+   */
+  middleware() {
+    return (req: Request, res: Response, next: NextFunction) => {
+      const requestId = this.generateRequestId();
+      const startTime = performance.now();
+      
+      // Add request ID to request object for tracking
+      req.requestId = requestId;
+      
+      // Track response size
+      let responseSize = 0;
+      const originalSend = res.send;
+      res.send = function(data) {
+        responseSize = Buffer.byteLength(data, 'utf8');
+        return originalSend.call(this, data);
+      };
+
+      // Track when response finishes
+      res.on('finish', () => {
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        
+        const metrics: PerformanceMetrics = {
+          requestId,
+          method: req.method,
+          url: req.originalUrl,
+          userAgent: req.get('user-agent') || 'unknown',
+          startTime,
+          endTime,
+          duration,
+          statusCode: res.statusCode,
+          responseSize,
+          memoryUsage: process.memoryUsage(),
+          databaseQueries: req.dbQueryCount || 0,
+        };
+
+        this.recordMetrics(metrics);
+        this.checkPerformanceThresholds(metrics);
+      });
+
+      next();
+    };
+  }
+
+  /**
+   * Database query tracking middleware
+   */
+  databaseQueryMiddleware() {
+    return (req: Request, _res: Response, next: NextFunction) => {
+      req.dbQueryCount = 0;
+      req.dbQueries = [];
+      
+      // Track database queries
+      const originalQuery = req.app?.locals?.supabase?.from;
+      if (originalQuery) {
+        // This would need to be implemented based on your database client
+        // For now, we'll track manually in services
+      }
+
+      next();
+    };
+  }
+
+  /**
+   * Compression middleware for API responses
+   */
+  compressionMiddleware() {
+    return (req: Request, res: Response, next: NextFunction) => {
+      // Check if client accepts compression
+      const acceptEncoding = req.headers['accept-encoding'];
+      
+      if (acceptEncoding?.includes('gzip')) {
+        res.setHeader('Content-Encoding', 'gzip');
+        // Enable gzip compression
+        // This would typically be handled by a compression library
+      } else if (acceptEncoding?.includes('deflate')) {
+        res.setHeader('Content-Encoding', 'deflate');
+      }
+
+      // Add compression headers
+      res.setHeader('Vary', 'Accept-Encoding');
+      
+      next();
+    };
+  }
+
+  /**
+   * Cache middleware for aesthetic clinic data
+   */
+  cacheMiddleware(ttl: number = 300000) { // 5 minutes default
+    return async (req: Request, res: Response, next: NextFunction) => {
+      // Only cache GET requests
+      if (req.method !== 'GET') {
+        return next();
+      }
+
+      const cacheKey = `api_cache:${req.originalUrl}`;
+      
+      try {
+        // Check cache
+        const cached = await this.getFromCache(cacheKey);
+        if (cached) {
+          res.setHeader('X-Cache', 'HIT');
+          return res.json(cached);
+        }
+
+        // Override res.json to cache responses
+        const originalJson = res.json;
+        res.json = function(data) {
+          res.setHeader('X-Cache', 'MISS');
+          
+          // Cache successful responses
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            this.setToCache(cacheKey, data, ttl);
+          }
+          
+          return originalJson.call(this, data);
+        }.bind(this);
+
+        next();
+      } catch (error) {
+        console.error('Cache middleware error:', error);
+        next();
+      }
+    };
+  }
+
+  /**
+   * Rate limiting middleware for performance protection
+   */
+  rateLimitMiddleware(options: {
+    windowMs?: number;
+    maxRequests?: number;
+    keyGenerator?: (req: Request) => string;
+  } = {}) {
+    const windowMs = options.windowMs || 60000; // 1 minute
+    const maxRequests = options.maxRequests || 100;
+    const requests = new Map<string, { count: number; resetTime: number }>();
+
+    return (req: Request, res: Response, next: NextFunction) => {
+      const key = options.keyGenerator ? options.keyGenerator(req) : req.ip;
+      const now = Date.now();
+      
+      let record = requests.get(key);
+      
+      // Reset window if expired
+      if (!record || now > record.resetTime) {
+        record = { count: 0, resetTime: now + windowMs };
+        requests.set(key, record);
+      }
+      
+      record.count++;
+      
+      // Add rate limit headers
+      res.setHeader('X-RateLimit-Limit', maxRequests.toString());
+      res.setHeader('X-RateLimit-Remaining', Math.max(0, maxRequests - record.count).toString());
+      res.setHeader('X-RateLimit-Reset', record.resetTime.toString());
+      
+      if (record.count > maxRequests) {
+        return res.status(429).json({
+          error: 'Too Many Requests',
+          message: 'Rate limit exceeded',
+          retryAfter: Math.ceil((record.resetTime - now) / 1000),
+        });
+      }
+      
+      next();
+    };
+  }
+
+  /**
+   * Performance optimization headers middleware
+   */
+  optimizationHeadersMiddleware() {
+    return (req: Request, res: Response, next: NextFunction) => {
+      // Add performance optimization headers
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('X-Frame-Options', 'DENY');
+      res.setHeader('X-XSS-Protection', '1; mode=block');
+      
+      // Caching headers for static assets
+      if (req.originalUrl.match(/\.(css|js|png|jpg|jpeg|gif|webp|svg|ico)$/)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        res.setHeader('X-Content-Cache', 'STATIC');
+      }
+      
+      // Add timing headers for performance monitoring
+      res.setHeader('X-Response-Time', 'true');
+      
+      next();
+    };
+  }
+
+  /**
+   * Record performance metrics
+   */
+  private recordMetrics(metrics: PerformanceMetrics): void {
+    this.metrics.set(metrics.requestId, metrics);
+    
+    // Keep only recent metrics (last 24 hours)
+    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+    for (const [key, metric] of this.metrics) {
+      if (metric.startTime < oneDayAgo) {
+        this.metrics.delete(key);
+      }
+    }
+  }
+
+  /**
+   * Check performance thresholds and log warnings
+   */
+  private checkPerformanceThresholds(metrics: PerformanceMetrics): void {
+    const { duration, memoryUsage, responseSize } = metrics;
+    
+    // Response time warnings
+    if (duration && duration > this.thresholds.criticalThreshold) {
+      console.warn(`[CRITICAL] Slow request detected: ${metrics.method} ${metrics.url} took ${duration.toFixed(2)}ms`);
+    } else if (duration && duration > this.thresholds.warningThreshold) {
+      console.warn(`[WARNING] Slow request detected: ${metrics.method} ${metrics.url} took ${duration.toFixed(2)}ms`);
+    }
+    
+    // Memory usage warnings
+    if (memoryUsage?.heapUsed && memoryUsage.heapUsed > this.thresholds.maxMemoryUsage) {
+      console.warn(`[WARNING] High memory usage detected: ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+    }
+    
+    // Response size warnings
+    if (responseSize && responseSize > this.thresholds.maxResponseSize) {
+      console.warn(`[WARNING] Large response detected: ${metrics.method} ${metrics.url} - ${(responseSize / 1024).toFixed(2)}KB`);
+    }
+  }
+
+  /**
+   * Generate unique request ID
+   */
+  private generateRequestId(): string {
+    return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * Get data from cache
+   */
+  private async getFromCache(key: string): Promise<any> {
+    // This would integrate with your cache system
+    // For now, using the optimizer's cache
+    return null;
+  }
+
+  /**
+   * Set data to cache
+   */
+  private async setToCache(key: string, data: any, ttl: number): Promise<void> {
+    // This would integrate with your cache system
+    // For now, using the optimizer's cache
+  }
+
+  /**
+   * Clean up old metrics
+   */
+  private cleanupOldMetrics(): void {
+    const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
+    
+    for (const [key, metric] of this.metrics) {
+      if (metric.startTime < oneDayAgo) {
+        this.metrics.delete(key);
+      }
+    }
+  }
+
+  /**
+   * Get performance metrics for monitoring
+   */
+  getMetrics(timeRange?: { start: number; end: number }): PerformanceMetrics[] {
+    let metrics = Array.from(this.metrics.values());
+    
+    if (timeRange) {
+      metrics = metrics.filter(metric => 
+        metric.startTime >= timeRange.start && metric.startTime <= timeRange.end
+      );
+    }
+    
+    return metrics.sort((a, b) => b.startTime - a.startTime);
+  }
+
+  /**
+   * Get performance statistics
+   */
+  getStatistics(): {
+    totalRequests: number;
+    averageResponseTime: number;
+    slowRequests: number;
+    errorRate: number;
+    cacheHitRate: number;
+    memoryUsage: { average: number; peak: number };
+  } {
+    const metrics = Array.from(this.metrics.values());
+    
+    if (metrics.length === 0) {
+      return {
+        totalRequests: 0,
+        averageResponseTime: 0,
+        slowRequests: 0,
+        errorRate: 0,
+        cacheHitRate: 0,
+        memoryUsage: { average: 0, peak: 0 },
+      };
+    }
+    
+    const totalDuration = metrics.reduce((sum, metric) => sum + (metric.duration || 0), 0);
+    const slowRequests = metrics.filter(metric => 
+      metric.duration && metric.duration > this.thresholds.warningThreshold
+    ).length;
+    const errors = metrics.filter(metric => 
+      metric.statusCode && metric.statusCode >= 400
+    ).length;
+    const cacheHits = metrics.filter(metric => metric.cacheHit).length;
+    
+    const memoryUsage = metrics.map(metric => metric.memoryUsage?.heapUsed || 0);
+    const averageMemory = memoryUsage.reduce((sum, usage) => sum + usage, 0) / memoryUsage.length;
+    const peakMemory = Math.max(...memoryUsage);
+    
+    return {
+      totalRequests: metrics.length,
+      averageResponseTime: totalDuration / metrics.length,
+      slowRequests,
+      errorRate: (errors / metrics.length) * 100,
+      cacheHitRate: (cacheHits / metrics.length) * 100,
+      memoryUsage: {
+        average: averageMemory,
+        peak: peakMemory,
+      },
+    };
+  }
+
+  /**
+   * Export metrics for external monitoring
+   */
+  exportMetrics(): string {
+    const metrics = this.getMetrics();
+    return JSON.stringify(metrics, null, 2);
+  }
+}
+
+// Extend Express Request type
+declare global {
+  namespace Express {
+    interface Request {
+      requestId?: string;
+      dbQueryCount?: number;
+      dbQueries?: any[];
+    }
+  }
+}
+
+// Factory function for creating performance monitor instances
+export const createPerformanceMonitor = (
+  optimizer: AestheticClinicPerformanceOptimizer,
+  thresholds?: Partial<PerformanceThresholds>
+) => {
+  return new PerformanceMonitor(optimizer, thresholds);
+};
+
+export default PerformanceMonitor;

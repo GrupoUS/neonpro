@@ -1,5 +1,5 @@
 // Basic test without DOM dependencies
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 
 describe('Basic JavaScript Test', () => {
   it('should perform basic arithmetic', () => {

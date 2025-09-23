@@ -24,7 +24,7 @@ related:
 
 ## Overview
 
-This document defines the high-level architectural decisions, patterns, and design philosophy for the NeonPro frontend - a **mobile-first aesthetic clinic management platform** built with **production-validated Turborepo monorepo architecture**. NeonPro serves advanced aesthetic professionals in Brazil with AI-powered automation, predictive analytics, and intelligent patient engagement.
+This document defines the high-level architectural decisions, patterns, and design philosophy for the NeonPro frontend - a **mobile-first aesthetic clinic management platform** built with **production-validated Turborepo monorepo architecture**. NeonPro serves advanced aesthetic professionals in Brazil with AI-powered automation, predictive analytics, and intelligent client engagement.
 
 **Architecture Status**: ✅ **Production-Ready** (Grade A- 9.2/10)
 **Performance Validated**: 8.93s build time, 603.49 kB bundle, 3 warnings/0 errors
@@ -41,7 +41,7 @@ This document defines the high-level architectural decisions, patterns, and desi
 
 ### 1. Mobile-First Philosophy
 
-- **95% mobile usage** by aesthetic professionals and patients
+- **95% mobile usage** by aesthetic professionals and clients
 - Touch-optimized interfaces with minimum 44px touch targets
 - Offline-capable core functions for unreliable connections
 - Progressive Web App (PWA) capabilities for app-like experience
@@ -49,14 +49,14 @@ This document defines the high-level architectural decisions, patterns, and desi
 ### 2. AI-First Architecture
 
 - **Universal AI Chat** as primary interaction method
-- Context-aware AI responses based on user role and patient data
+- Context-aware AI responses based on user role and client data
 - Predictive UI elements powered by machine learning
 - Intelligent automation reducing administrative burden by 40%
 
 ### 3. Healthcare Compliance by Design
 
 - **LGPD compliance** built into every component
-- Audit logging for all patient data access
+- Audit logging for all client data access
 - Role-based access control (RBAC) at component level
 - Data masking and encryption for sensitive information
 
@@ -80,7 +80,7 @@ This document defines the high-level architectural decisions, patterns, and desi
 
 **TypeScript 5.7.2 Strict Mode**
 
-- **Why**: Healthcare data requires absolute type safety
+- **Why**: Aesthetic clinic data requires absolute type safety
 - **Benefits**: Compile-time error detection, excellent IDE support, self-documenting code
 - **Implementation**: Strict null checks, no implicit any, monorepo path mapping
 - **Validation**: 2 pre-existing Radix UI errors (unrelated to architecture)
@@ -90,7 +90,7 @@ This document defines the high-level architectural decisions, patterns, and desi
 - **Why**: Rapid development, consistent design system, accessibility built-in
 - **Benefits**: Utility-first approach, responsive design, WCAG 2.1 AA compliance
 - **Customization**: NeonPro golden color scheme (#AC9469), neumorphic effects
-- **Validation**: 95%+ accessibility score, professional healthcare aesthetic
+- **Validation**: 95%+ accessibility score, professional aesthetic clinic aesthetic
 
 **Turborepo Monorepo Architecture**
 
@@ -117,7 +117,7 @@ apps/
 
 packages/
 ├── @neonpro/ui                    # Core UI components ✅ RESTRUCTURED
-├── @neonpro/brazilian-healthcare-ui # Healthcare-specific components
+├── @neonpro/brazilian-aesthetic-ui # Aesthetic clinic-specific components
 ├── @neonpro/database              # Supabase + Prisma integration
 ├── @neonpro/auth                  # Authentication utilities
 ├── @neonpro/ai                    # AI integration layer
@@ -154,18 +154,18 @@ import { Dashboard, GovernanceDashboard } from "@/components/organisms"; // Orga
 import { Alert, Badge, Button, Card } from "@neonpro/ui"; // Shared components first
 ```
 
-**Healthcare Component Pattern (LGPD-Compliant)**
+**Aesthetic Clinic Component Pattern (LGPD-Compliant)**
 
 ```typescript
-interface HealthcareComponentProps {
-  readonly patientId?: string;
+interface AestheticClinicComponentProps {
+  readonly clientId?: string;
   readonly userRole: "admin" | "professional" | "coordinator";
   readonly lgpdCompliant: boolean;
   readonly onAuditLog?: (action: string) => void;
 }
 
 // ✅ VALIDATED ACCESSIBILITY PATTERN
-interface AccessibleHealthcareProps extends HealthcareComponentProps {
+interface AccessibleAestheticClinicProps extends AestheticClinicComponentProps {
   readonly ariaLabel?: string;
   readonly role?: string;
   readonly screenReaderText?: string;
@@ -229,7 +229,7 @@ interface AccessibleHealthcareProps extends HealthcareComponentProps {
 **Typography Scale (Portuguese-Optimized)**
 
 - **Primary Font**: Inter (optimized for Portuguese) ✅ VALIDATED
-- **Monospace**: JetBrains Mono (for medical data display)
+- **Monospace**: JetBrains Mono (for aesthetic data display)
 - **Line Height**: 1.6 (optimal for Portuguese readability)
 - **Accessibility**: Proper contrast ratios for WCAG 2.1 AA compliance
 
@@ -242,10 +242,10 @@ interface AccessibleHealthcareProps extends HealthcareComponentProps {
 - Theme-aware with CSS variables
 - Responsive design built-in
 
-**Healthcare Extensions**
+**Aesthetic Clinic Extensions**
 
-- Patient data components with privacy controls
-- Medical procedure interfaces
+- Client data components with privacy controls
+- Aesthetic procedure interfaces
 - Appointment scheduling components
 - AI chat interfaces
 
@@ -325,7 +325,7 @@ interface AccessibleHealthcareProps extends HealthcareComponentProps {
 
 **Context-Aware Architecture**
 
-- Patient context injection for personalized responses
+- Client context injection for personalized responses
 - Role-based response filtering
 - Emergency detection with automatic escalation
 - Multi-language support (Portuguese primary)
@@ -335,7 +335,7 @@ interface AccessibleHealthcareProps extends HealthcareComponentProps {
 ```typescript
 interface AIContext {
   userRole: UserRole;
-  patientId?: string;
+  clientId?: string;
   clinicId: string;
   conversationHistory: Message[];
   emergencyProtocols: EmergencyProtocol[];
@@ -404,7 +404,7 @@ interface AIContext {
 - **Integration Tests**: API interactions and workflows (20%)
 - **E2E Tests**: Critical user journeys (10%)
 
-**Healthcare-Specific Testing**
+**Aesthetic Clinic-Specific Testing**
 
 - LGPD compliance validation
 - Accessibility testing with screen readers
@@ -454,16 +454,16 @@ interface AIContext {
 - Predictive analytics dashboard
 - Automated workflow optimization
 - Intelligent resource allocation
-- Advanced patient insights
+- Advanced client insights
 
 ## Conclusion
 
-The NeonPro frontend architecture prioritizes mobile-first design, AI integration, and healthcare compliance while maintaining high performance and scalability. The monorepo structure enables code sharing and consistent development practices, while the component-based architecture ensures maintainability and reusability.
+The NeonPro frontend architecture prioritizes mobile-first design, AI integration, and aesthetic clinic compliance while maintaining high performance and scalability. The monorepo structure enables code sharing and consistent development practices, while the component-based architecture ensures maintainability and reusability.
 
 Key architectural decisions focus on:
 
 - **User Experience**: Mobile-first, AI-powered, intuitive interfaces
-- **Compliance**: LGPD, ANVISA, and healthcare regulatory requirements
+- **Compliance**: LGPD, ANVISA, and aesthetic clinic regulatory requirements
 - **Performance**: Sub-2-second load times, 99.9% uptime, offline capabilities
 - **Scalability**: Horizontal scaling, microservices preparation, global distribution
 
@@ -476,15 +476,15 @@ This architecture provides a solid foundation for NeonPro's evolution from a sma
 **Performance Benchmarks**
 
 - ✅ **Build Time**: 8.93s (production-ready)
-- ✅ **Bundle Size**: 603.49 kB (acceptable for healthcare application)
+- ✅ **Bundle Size**: 603.49 kB (acceptable for aesthetic clinic application)
 - ✅ **Code Quality**: 3 warnings, 0 errors (excellent quality)
 - ✅ **Type Safety**: 2 pre-existing Radix UI errors (unrelated to architecture)
 
 **Compliance Verification**
 
-- ✅ **LGPD Compliance**: 100% (Brazilian healthcare data protection)
+- ✅ **LGPD Compliance**: 100% (Brazilian aesthetic clinic data protection)
 - ✅ **Accessibility**: 95%+ WCAG 2.1 AA compliance
-- ✅ **Healthcare Standards**: Professional aesthetic clinic requirements met
+- ✅ **Aesthetic Clinic Standards**: Professional aesthetic clinic requirements met
 - ✅ **Security**: Row-level security, audit logging, data encryption
 
 **Component Architecture Success**
@@ -501,7 +501,7 @@ This architecture provides a solid foundation for NeonPro's evolution from a sma
 3. **shadcn/ui v4**: ✅ Excellent accessibility and customization capabilities
 4. **TanStack Router**: ✅ Excellent performance and developer experience
 5. **TypeScript Strict**: ✅ Caught potential issues, improved code quality
-6. **NeonPro Brand System**: ✅ Professional healthcare aesthetic achieved
+6. **NeonPro Brand System**: ✅ Professional aesthetic clinic aesthetic achieved
 
 ## See Also
 

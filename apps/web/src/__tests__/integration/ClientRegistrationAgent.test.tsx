@@ -1,7 +1,46 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@/test/utils';
-import { generateMockPatient } from '@/test/utils';
+import '@testing-library/jest-dom';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { renderWithProviders, generateMockPatient } from '@/test/utils';
+
+// Setup DOM environment for React Testing Library
+const { JSDOM } = require('jsdom');
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+
+// Mock localStorage for JSDOM
+const store: Record<string, string> = {};
+const localStorageMock = {
+  getItem: vi.fn((key: string) => store[key]),
+  setItem: vi.fn((key: string, value: string) => { store[key] = value; }),
+  removeItem: vi.fn((key: string) => { delete store[key]; }),
+  clear: vi.fn(() => { Object.keys(store).forEach(key => delete store[key]); }),
+  length: 0,
+  key: vi.fn((index: number) => Object.keys(store)[index]),
+};
+
+Object.defineProperty(dom.window, 'localStorage', {
+  value: localStorageMock,
+  writable: false,
+  configurable: true,
+});
+
+Object.defineProperty(dom.window, 'sessionStorage', {
+  value: localStorageMock,
+  writable: false,
+  configurable: true,
+});
+
+global.document = dom.window.document;
+global.window = dom.window;
+global.navigator = dom.window.navigator;
+global.localStorage = localStorageMock;
+global.sessionStorage = localStorageMock;
+globalThis.document = dom.window.document;
+globalThis.window = dom.window.window;
+globalThis.navigator = dom.window.navigator;
+globalThis.localStorage = localStorageMock;
+globalThis.sessionStorage = localStorageMock;
 
 // Mock ClientRegistrationAgent component
 const ClientRegistrationAgent = ({ onSuccess, onError }) => {
@@ -121,7 +160,7 @@ describe('ClientRegistrationAgent Integration', () => {
   });
 
   it('renders registration form with all fields', () => {
-    render(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
+    renderWithProviders(<ClientRegistrationAgent onSuccess={mockOnSuccess} onError={mockOnError} />);
     
     expect(screen.getByTestId('client-registration-agent')).toBeInTheDocument();
     expect(screen.getByTestId('registration-form')).toBeInTheDocument();

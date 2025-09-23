@@ -106,6 +106,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       this.isInitialized = true;
       console.log("SupabaseRealtimeAdapter initialized successfully");
     } catch (_error) {
+      void _error;
       throw new Error(`Failed to initialize SupabaseRealtimeAdapter: ${error}`);
     }
   }
@@ -190,6 +191,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
         `Participant ${fullParticipant.id} joined channel ${channelId}`,
       );
     } catch (_error) {
+      void _error;
       await this.handleError({
         code: "JOIN_CHANNEL_FAILED",
         message: `Failed to join channel ${channelId}: ${error}`,
@@ -261,6 +263,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
       console.log(`Participant ${participantId} left channel ${channelId}`);
     } catch (_error) {
+      void _error;
       await this.handleError({
         code: "LEAVE_CHANNEL_FAILED",
         message: `Failed to leave channel ${channelId}: ${error}`,
@@ -393,6 +396,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       this.healthStatus.latency = Date.now() - start;
       this.healthStatus.status = "healthy";
     } catch (_error) {
+      void _error;
       this.healthStatus.latency = -1;
       this.healthStatus.status = "unhealthy";
     }
@@ -464,6 +468,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
           break;
       }
     } catch (_error) {
+      void _error;
       console.error(`Error emitting event ${event.type}:`, error);
     }
   }
@@ -486,6 +491,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       // Mark as logged for compliance
       event.metadata.compliance.lgpdLogged = true;
     } catch (_error) {
+      void _error;
       console.error("Failed to log audit event:", error);
     }
   }

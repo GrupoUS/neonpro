@@ -357,7 +357,7 @@ export class CryptographicAuditLogger {
   }
 
   private createSignature(data: any, dataHash: string): string {
-    const payload = JSON.stringify(data) + dataHash;
+    const _payload = JSON.stringify(data) + dataHash;
     return createHmac('sha256', this.secretKey).update(_payload).digest('hex');
   }
 

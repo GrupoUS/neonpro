@@ -185,7 +185,7 @@ const crudRequestSchema = v.union([
 /**
  * CRUD Intent Response Schema
  */
-// const crudIntentResponseSchema = v.object({
+const crudIntentResponseSchema = v.object({
   intentId: v.string(),
   step: v.literal('intent'),
   status: v.string([
@@ -244,7 +244,7 @@ const crudRequestSchema = v.union([
 /**
  * CRUD Confirm Response Schema
  */
-// const crudConfirmResponseSchema = v.object({
+const crudConfirmResponseSchema = v.object({
   confirmationId: v.string(),
   intentId: v.string(),
   step: v.literal('confirm'),
@@ -283,7 +283,7 @@ const crudRequestSchema = v.union([
 /**
  * CRUD Execute Response Schema
  */
-// const crudExecuteResponseSchema = v.object({
+const crudExecuteResponseSchema = v.object({
   executionId: v.string(),
   intentId: v.string(),
   confirmationId: v.string(),

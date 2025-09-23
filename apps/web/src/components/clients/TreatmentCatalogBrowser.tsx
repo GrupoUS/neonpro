@@ -5,7 +5,7 @@
  * comparison tools, and Brazilian healthcare compliance information.
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -15,31 +15,31 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+// import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Alert, AlertDescription } from '@/components/ui/alert';;
-import { Progress } from '@/components/ui/progress';
+// import { Alert, AlertDescription } from '@/components/ui/alert';
+// import { Progress } from '@/components/ui/progress';
 import {
   Search,
   Filter,
-  Heart,
+  // Heart,
   Star,
   Clock,
   DollarSign,
   Shield,
-  Activity,
+  // Activity,
   Target,
-  Users,
+  // Users,
   Calendar,
   CheckCircle,
   AlertTriangle,
-  Info,
-  Camera,
+  // Info,
+  // Camera,
   Package,
   Zap,
   Eye,
-  EyeOff,
-  RefreshCw,
+  // EyeOff,
+  // RefreshCw,
   SortAsc,
   SortDesc,
   Grid,

@@ -57,7 +57,7 @@ const patterns = [
   {
     pattern:
       /\.(map|filter|reduce|forEach|find|some|every)\s*\(\s*\([^)]*\)\s*=>\s*=>\s*\{/g,
-    replacement: (match, method) => match.replace(/=>\s*=>/g, "=>"),
+    replacement: (match, _method) => match.replace(/=>\s*=>/g, "=>"),
   },
 
   // Fix React.useEffect patterns

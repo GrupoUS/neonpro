@@ -13,6 +13,17 @@ interface ValidatedUser {
   name: string;
 }
 
+// Interface for JWT token payload
+interface JWTPayload {
+  sub: string;
+  email: string;
+  role: string;
+  clinic_id: string;
+  name?: string;
+  iat?: number;
+  exp?: number;
+}
+
 /**
  * Authentication middleware for protected routes
  */
@@ -174,13 +185,13 @@ export function clinicAccessMiddleware() {
  * Validate user from JWT token payload and fetch user data
  */
 async function validateUserFromToken(
-  _payload: any,
+  payload: JWTPayload,
 ): Promise<ValidatedUser | null> {
   try {
     const { sub: userId, email, role, clinic_id: clinicId, name } = payload;
 
     if (!userId || !email) {
-      logger.error('Invalid token _payload: missing required fields', {
+      logger.error('Invalid token payload: missing required fields', {
         payload,
       });
       return null;

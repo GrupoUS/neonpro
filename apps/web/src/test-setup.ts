@@ -3,14 +3,20 @@
 import "@testing-library/jest-dom";
 import { JSDOM } from "jsdom";
 
-// Setup JSDOM environment before all tests
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
-  url: 'http://localhost:8080',
-});
+// Setup JSDOM environment before all tests - only if not already set by vitest
+if (typeof global.document === 'undefined') {
+  const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+    url: 'http://localhost:8080',
+  });
 
-// Set global DOM objects (with proper handling of read-only properties)
-global.document = dom.window.document;
-global.window = dom.window;
+  // Set global DOM objects (with proper handling of read-only properties)
+  global.document = dom.window.document;
+  global.window = dom.window;
+
+  // Also set on globalThis for React Testing Library
+  globalThis.document = dom.window.document;
+  globalThis.window = dom.window;
+}
 
 
 // Use Object.defineProperty for read-only properties
@@ -32,6 +38,24 @@ Object.defineProperty(global, 'sessionStorage', {
   configurable: true
 });
 
+Object.defineProperty(globalThis, 'navigator', {
+  value: dom.window.navigator,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(globalThis, 'localStorage', {
+  value: dom.window.localStorage,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(globalThis, 'sessionStorage', {
+  value: dom.window.sessionStorage,
+  writable: false,
+  configurable: true
+});
+
 Object.defineProperty(global, 'location', {
   value: dom.window.location,
   writable: false,
@@ -45,6 +69,24 @@ Object.defineProperty(global, 'history', {
 });
 
 Object.defineProperty(global, 'URL', {
+  value: dom.window.URL,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(globalThis, 'location', {
+  value: dom.window.location,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(globalThis, 'history', {
+  value: dom.window.history,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(globalThis, 'URL', {
   value: dom.window.URL,
   writable: false,
   configurable: true

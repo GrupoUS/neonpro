@@ -16,7 +16,34 @@ export function maskName(_name: string): string {
   return "*** *** ***";
 }
 
-export function maskPatientData(data: any, level: LGPDComplianceLevel): any {
+// Type definitions for LGPD compliance levels
+export type LGPDComplianceLevel = "basic" | "enhanced" | "strict";
+
+interface PatientData {
+  name: string;
+  cpf: string;
+  email: string;
+  phone: string;
+  address: {
+    street: string;
+    number: string;
+    zipCode: string;
+    city: string;
+    state: string;
+  };
+}
+
+interface AnonymizedPatientResult {
+  data: PatientData;
+  metadata: {
+    complianceLevel: LGPDComplianceLevel;
+    fieldsAnonymized: string[];
+    version: string;
+    anonymizedAt: string;
+  };
+}
+
+export function maskPatientData(data: PatientData, level: LGPDComplianceLevel): AnonymizedPatientResult {
   let maskedName;
   if (level === "basic") {
     maskedName = data.name.split(" ")[0] + " ***";
@@ -26,7 +53,7 @@ export function maskPatientData(data: any, level: LGPDComplianceLevel): any {
     maskedName = "ANONIMIZADO";
   }
 
-  const maskedData = {
+  const maskedData: PatientData = {
     ...data,
     name: maskedName,
     cpf: maskCPF(data.cpf),

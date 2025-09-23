@@ -87,7 +87,7 @@ app.post(
   async c => {
     const startTime = Date.now();
     const user = c.get('user');
-    const userId = c.get('userId');
+    const _userId = c.get('userId');
     const clinicId = c.get('clinicId');
     const requestData = c.req.valid('json');
     const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
@@ -259,7 +259,7 @@ app.get(
   async c => {
     const operationId = c.req.param('operationId');
     const user = c.get('user');
-    const userId = c.get('userId');
+    const _userId = c.get('userId');
     const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
     const userAgent = c.req.header('User-Agent') || 'unknown';
 
@@ -314,7 +314,7 @@ app.get(
 // GET endpoint to list supported entities
 app.get('/crud/entities', requireAuth, requireAIAccess, async c => {
   const user = c.get('user');
-  const userId = c.get('userId');
+  const _userId = c.get('userId');
   const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
   const userAgent = c.req.header('User-Agent') || 'unknown';
 

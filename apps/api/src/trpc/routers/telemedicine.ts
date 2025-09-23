@@ -49,7 +49,7 @@ const joinSessionSchema = z.object({
   }),
 });
 
-const patientVerificationSchema = z.object({
+const _patientVerificationSchema = z.object({
   patientId: z.string().uuid(),
   documents: z.array(
     z.object({
@@ -63,7 +63,7 @@ const patientVerificationSchema = z.object({
   enableBiometric: z.boolean().default(false),
 });
 
-const licenseVerificationSchema = z.object({
+const _licenseVerificationSchema = z.object({
   cfmNumber: z.string(),
   physicianState: z.string().length(2),
   requestedSpecialty: z.string().optional(),

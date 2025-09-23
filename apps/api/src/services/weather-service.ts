@@ -59,8 +59,8 @@ export class WeatherService {
    * Get current weather data for a location
    */
   async getCurrentWeather(
-    latitude: number,
-    longitude: number,
+    _latitude: number,
+    _longitude: number,
     city?: string,
     state?: string,
   ): Promise<WeatherData | null> {
@@ -100,8 +100,8 @@ export class WeatherService {
    * Get weather forecast for appointment planning
    */
   async getWeatherForecast(
-    latitude: number,
-    longitude: number,
+    _latitude: number,
+    _longitude: number,
     appointmentTime: Date,
   ): Promise<WeatherData | null> {
     try {
@@ -128,8 +128,8 @@ export class WeatherService {
    * Get weather alerts for a location
    */
   async getWeatherAlerts(
-    latitude: number,
-    longitude: number,
+    _latitude: number,
+    _longitude: number,
   ): Promise<WeatherAlert[]> {
     try {
       // Mock implementation - in real scenario, this would call weather alert API

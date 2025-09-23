@@ -3,7 +3,7 @@ title: "NeonPro Frontend Implementation Specification"
 last_updated: 2025-12-12
 form: how-to
 tags:
-  [frontend, healthcare, implementation, components, monorepo, atomic-design]
+  [frontend, aesthetic-clinic, implementation, components, monorepo, atomic-design]
 related:
   - ./frontend-architecture.md
   - ./tech-stack.md
@@ -16,7 +16,7 @@ related:
 
 ## Introduction
 
-This document defines **healthcare-specific frontend implementation patterns** for NeonPro aesthetic clinic management platform, built on a proven **Turborepo monorepo architecture** with **atomic design methodology**. It focuses exclusively on components, APIs, and patterns unique to aesthetic healthcare workflows, validated through comprehensive component restructuring and optimization.
+This document defines **aesthetic clinic-specific frontend implementation patterns** for NeonPro aesthetic clinic management platform, built on a proven **Turborepo monorepo architecture** with **atomic design methodology**. It focuses exclusively on components, APIs, and patterns unique to aesthetic clinic workflows, validated through comprehensive component restructuring and optimization.
 
 **Prerequisites**: Read [Tech Stack](./tech-stack.md), [Source Tree](./source-tree.md), [Component Usage Guide](../components/usage-guide.md), and [Coding Standards](../rules/coding-standards.md)
 
@@ -33,8 +33,8 @@ This document defines **healthcare-specific frontend implementation patterns** f
 
 ```typescript
 // PROVEN PATTERN - Use this exact hierarchy
-import { HealthcareSpecificComponent } from "@/components/healthcare"; // ✅ Domain-specific last
-import { AppointmentForm, PatientCard } from "@/components/molecules"; // ✅ Molecules second
+import { AestheticClinicSpecificComponent } from "@/components/aesthetic-clinic"; // ✅ Domain-specific last
+import { AppointmentForm, ClientCard } from "@/components/molecules"; // ✅ Molecules second
 import { DashboardLayout } from "@/components/organisms"; // ✅ Organisms third
 import { Alert, Badge, Button, Card } from "@neonpro/ui"; // ✅ Shared components first
 ```
@@ -45,7 +45,7 @@ import { Alert, Badge, Button, Card } from "@neonpro/ui"; // ✅ Shared componen
 /* Validated Color Scheme - Grade A- (9.2/10) */
 :root {
   --neonpro-primary: #ac9469; /* Golden primary - tested in production */
-  --neonpro-deep-blue: #112031; /* Deep blue - healthcare professional */
+  --neonpro-deep-blue: #112031; /* Deep blue - aesthetic clinic professional */
   --neonpro-accent: #d4af37; /* Gold accent - luxury aesthetic */
 
   /* Neumorphic Effects - Validated */
@@ -55,7 +55,7 @@ import { Alert, Badge, Button, Card } from "@neonpro/ui"; // ✅ Shared componen
 }
 ```
 
-## Healthcare Component Standards
+## Aesthetic Clinic Component Standards
 
 ### Validated Component Architecture Patterns
 
@@ -77,7 +77,7 @@ export {
 // ✅ MOLECULES - Simple combinations (app-specific)
 export {
   AppointmentForm,
-  PatientCard,
+  ClientCard,
   SearchBox,
 } from "@/components/molecules";
 
@@ -92,35 +92,35 @@ export {
 **Performance Metrics (Validated)**
 
 - **Build Time**: 8.93s (production-ready)
-- **Bundle Size**: 603.49 kB (acceptable for healthcare application)
+- **Bundle Size**: 603.49 kB (acceptable for aesthetic clinic application)
 - **Code Quality**: 3 warnings, 0 errors (excellent quality)
 - **Accessibility**: WCAG 2.1 AA compliance (95%+ score)
 
-### Base Healthcare Component Interface
+### Base Aesthetic Clinic Component Interface
 
 ```typescript
-interface HealthcareComponentProps {
-  readonly patientId?: string;
+interface AestheticClinicComponentProps {
+  readonly clientId?: string;
   readonly userRole: "admin" | "professional" | "coordinator";
   readonly lgpdCompliant: boolean;
   readonly onAuditLog?: (action: string, details?: Record<string, any>) => void;
 }
 ```
 
-### Patient Risk Assessment Card
+### Client Risk Assessment Card
 
 ```typescript
-interface PatientRiskCardProps extends HealthcareComponentProps {
-  patient: Patient;
+interface ClientRiskCardProps extends AestheticClinicComponentProps {
+  client: Client;
   riskScore: NoShowRiskScore;
   onScheduleIntervention: (interventionType: string) => void;
 }
 
-export function PatientRiskCard({
-  patient,
+export function ClientRiskCard({
+  client,
   riskScore,
   onScheduleIntervention,
-}: PatientRiskCardProps) {
+}: ClientRiskCardProps) {
   const getRiskColor = (score: number) => {
     if (score >= 0.7) return 'bg-red-100 border-red-300 text-red-800';
     if (score >= 0.4) return 'bg-yellow-100 border-yellow-300 text-yellow-800';
@@ -131,13 +131,13 @@ export function PatientRiskCard({
     <Card className={cn('transition-all', getRiskColor(riskScore.score))}>
       <CardHeader>
         <div className='flex justify-between items-center'>
-          <CardTitle>{patient.name}</CardTitle>
+          <CardTitle>{client.name}</CardTitle>
           <Badge variant='outline' className='font-mono'>
             {Math.round(riskScore.score * 100)}% risco
           </Badge>
         </div>
         <div className='space-y-1 text-sm'>
-          <p>Próximo: {patient.nextAppointment}</p>
+          <p>Próximo: {client.nextAppointment}</p>
           <p>Histórico: {riskScore.historicalNoShows} faltas</p>
         </div>
       </CardHeader>
@@ -161,14 +161,14 @@ export function PatientRiskCard({
 ### AI Chat for Aesthetic Procedures
 
 ```typescript
-interface AestheticAIChatProps extends HealthcareComponentProps {
+interface AestheticAIChatProps extends AestheticClinicComponentProps {
   context: 'scheduling' | 'procedures' | 'aftercare' | 'emergency';
   onEmergencyDetected: (severity: 'low' | 'medium' | 'high') => void;
 }
 
 export function AestheticAIChat({
   context,
-  patientId,
+  clientId,
   onEmergencyDetected,
 }: AestheticAIChatProps) {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
@@ -176,7 +176,7 @@ export function AestheticAIChat({
     body: {
       language: 'pt-BR',
       context,
-      patientId,
+      clientId,
       specialization: 'aesthetic_procedures',
     },
     onFinish: message => {
@@ -241,7 +241,7 @@ export function AestheticAIChat({
 ### Appointment Scheduler for Procedures
 
 ```typescript
-interface AestheticSchedulerProps extends HealthcareComponentProps {
+interface AestheticSchedulerProps extends AestheticClinicComponentProps {
   availableSlots: TimeSlot[];
   procedures: AestheticProcedure[];
   onScheduleAppointment: (appointment: AppointmentRequest) => Promise<void>;
@@ -250,7 +250,7 @@ interface AestheticSchedulerProps extends HealthcareComponentProps {
 export function AestheticScheduler({
   availableSlots,
   procedures,
-  patientId,
+  clientId,
   onScheduleAppointment,
 }: AestheticSchedulerProps) {
   const [selectedProcedure, setSelectedProcedure] = useState<AestheticProcedure>();
@@ -318,7 +318,7 @@ export function AestheticScheduler({
           onClick={() => {
             if (selectedProcedure && selectedSlot) {
               onScheduleAppointment({
-                patientId: patientId!,
+                clientId: clientId!,
                 procedureId: selectedProcedure.id,
                 slotId: selectedSlot.id,
                 duration: procedureDurations[selectedProcedure.type] || 60,
@@ -338,25 +338,25 @@ export function AestheticScheduler({
 
 ## API Integration Patterns
 
-### Patient Management API
+### Client Management API
 
 ```typescript
-export const patientsAPI = {
-  getPatientWithHistory: async (
-    patientId: string,
-  ): Promise<PatientWithHistory> => {
+export const clientsAPI = {
+  getClientWithHistory: async (
+    clientId: string,
+  ): Promise<ClientWithHistory> => {
     const response = await api.get(
-      `/patients/${patientId}?include=aesthetic_history`,
+      `/clients/${clientId}?include=aesthetic_history`,
     );
     return response.data;
   },
 
   updateAestheticPreferences: async (
-    patientId: string,
+    clientId: string,
     preferences: AestheticPreferences,
-  ): Promise<Patient> => {
+  ): Promise<Client> => {
     const response = await api.patch(
-      `/patients/${patientId}/aesthetic-preferences`,
+      `/clients/${clientId}/aesthetic-preferences`,
       {
         preferences,
         updatedBy: getCurrentUser().id,
@@ -366,8 +366,8 @@ export const patientsAPI = {
     return response.data;
   },
 
-  getNoShowRisk: async (patientId: string): Promise<NoShowRiskScore> => {
-    const response = await api.get(`/patients/${patientId}/no-show-risk`);
+  getNoShowRisk: async (clientId: string): Promise<NoShowRiskScore> => {
+    const response = await api.get(`/clients/${clientId}/no-show-risk`);
     return response.data;
   },
 };
@@ -380,7 +380,7 @@ export const aestheticAI = {
   chatWithProcedureContext: async (
     messages: ChatMessage[],
     context: {
-      patientId?: string;
+      clientId?: string;
       procedureType?: string;
       clinicSpecialization: string[];
     },
@@ -397,10 +397,10 @@ export const aestheticAI = {
   },
 
   getProcedureRecommendations: async (
-    patientProfile: PatientProfile,
+    clientProfile: ClientProfile,
   ): Promise<ProcedureRecommendation[]> => {
     const response = await api.post("/ai/procedure-recommendations", {
-      patientProfile,
+      clientProfile,
       clinicCapabilities: getCurrentClinic().capabilities,
     });
     return response.data;
@@ -410,57 +410,57 @@ export const aestheticAI = {
 
 ## State Management for Clinics
 
-### Aesthetic Patient Store
+### Aesthetic Client Store
 
 ```typescript
-interface AestheticPatientStore {
-  patients: PatientWithHistory[];
-  selectedPatient: PatientWithHistory | null;
+interface AestheticClientStore {
+  clients: ClientWithHistory[];
+  selectedClient: ClientWithHistory | null;
   riskAssessments: Record<string, NoShowRiskScore>;
 
-  loadPatientWithHistory: (patientId: string) => Promise<void>;
+  loadClientWithHistory: (clientId: string) => Promise<void>;
   updateAestheticPreferences: (
-    patientId: string,
+    clientId: string,
     preferences: AestheticPreferences,
   ) => Promise<void>;
-  calculateNoShowRisk: (patientId: string) => Promise<void>;
+  calculateNoShowRisk: (clientId: string) => Promise<void>;
 }
 
-export const useAestheticPatientStore = create<AestheticPatientStore>(
+export const useAestheticClientStore = create<AestheticClientStore>(
   (set, get) => ({
-    patients: [],
-    selectedPatient: null,
+    clients: [],
+    selectedClient: null,
     riskAssessments: {},
 
-    loadPatientWithHistory: async (patientId: string) => {
+    loadClientWithHistory: async (clientId: string) => {
       try {
-        const patient = await patientsAPI.getPatientWithHistory(patientId);
-        const riskScore = await patientsAPI.getNoShowRisk(patientId);
+        const client = await clientsAPI.getClientWithHistory(clientId);
+        const riskScore = await clientsAPI.getNoShowRisk(clientId);
 
         set((state) => ({
-          selectedPatient: patient,
+          selectedClient: client,
           riskAssessments: {
             ...state.riskAssessments,
-            [patientId]: riskScore,
+            [clientId]: riskScore,
           },
         }));
       } catch (error) {
-        console.error("Failed to load patient:", error);
+        console.error("Failed to load client:", error);
       }
     },
 
     updateAestheticPreferences: async (
-      patientId: string,
+      clientId: string,
       preferences: AestheticPreferences,
     ) => {
       try {
-        await patientsAPI.updateAestheticPreferences(patientId, preferences);
+        await clientsAPI.updateAestheticPreferences(clientId, preferences);
 
         set((state) => ({
-          patients: state.patients.map((p) =>
-            p.id === patientId
-              ? { ...p, aestheticPreferences: preferences }
-              : p,
+          clients: state.clients.map((c) =>
+            c.id === clientId
+              ? { ...c, aestheticPreferences: preferences }
+              : c,
           ),
         }));
       } catch (error) {
@@ -468,14 +468,14 @@ export const useAestheticPatientStore = create<AestheticPatientStore>(
       }
     },
 
-    calculateNoShowRisk: async (patientId: string) => {
+    calculateNoShowRisk: async (clientId: string) => {
       try {
-        const riskScore = await patientsAPI.getNoShowRisk(patientId);
+        const riskScore = await clientsAPI.getNoShowRisk(clientId);
 
         set((state) => ({
           riskAssessments: {
             ...state.riskAssessments,
-            [patientId]: riskScore,
+            [clientId]: riskScore,
           },
         }));
       } catch (error) {
@@ -530,7 +530,7 @@ export function MobileProcedureSelector({
 }
 ```
 
-### Swipe Gestures for Patient Management
+### Swipe Gestures for Client Management
 
 ```typescript
 export function useSwipeGestures(
@@ -566,12 +566,12 @@ export function useSwipeGestures(
 }
 ```
 
-## Accessibility for Healthcare
+## Accessibility for Aesthetic Clinics
 
-### Screen Reader Support for Medical Data
+### Screen Reader Support for Aesthetic Data
 
 ```typescript
-export function MedicalDataWithScreenReader({
+export function AestheticDataWithScreenReader({
   data,
   label,
 }: {
@@ -609,15 +609,15 @@ export function useHighContrastMode() {
 }
 ```
 
-## Testing Healthcare Components
+## Testing Aesthetic Clinic Components
 
 ### Mock Data Utilities
 
 ```typescript
-export const createMockPatient = (
-  overrides: Partial<Patient> = {},
-): Patient => ({
-  id: "patient-123",
+export const createMockClient = (
+  overrides: Partial<Client> = {},
+): Client => ({
+  id: "client-123",
   name: "João Silva",
   cpf: "123.456.789-01",
   lgpdCompliant: true,
@@ -643,14 +643,14 @@ export const createMockRiskScore = (score: number = 0.3): NoShowRiskScore => ({
 ### Component Testing Example
 
 ```typescript
-describe('PatientRiskCard', () => {
-  it('displays high risk styling for high-risk patients', () => {
-    const mockPatient = createMockPatient();
+describe('ClientRiskCard', () => {
+  it('displays high risk styling for high-risk clients', () => {
+    const mockClient = createMockClient();
     const mockRiskScore = createMockRiskScore(0.8);
 
     render(
-      <PatientRiskCard
-        patient={mockPatient}
+      <ClientRiskCard
+        client={mockClient}
         riskScore={mockRiskScore}
         userRole='professional'
         lgpdCompliant={true}
@@ -708,7 +708,7 @@ export function useMobilePerformance() {
 // ✅ PROVEN STRUCTURE - Successfully restructured and validated
 packages/
 ├── ui/                    # @neonpro/ui - Shared components (Badge, Alert, Button)
-├── brazilian-healthcare-ui/ # Healthcare-specific components
+├── brazilian-aesthetic-ui/ # Aesthetic clinic-specific components
 ├── database/              # Supabase + Prisma integration
 ├── auth/                  # Authentication utilities
 ├── ai/                    # AI integration layer
@@ -721,7 +721,7 @@ packages/
 
 ```typescript
 // ✅ OPTIMAL IMPORTS - Enables tree-shaking for 603.49 kB bundle
-import type { Patient } from "@neonpro/database"; // ✅ Type-only imports
+import type { Client } from "@neonpro/database"; // ✅ Type-only imports
 import { Badge, Button, Card } from "@neonpro/ui"; // ✅ Named imports
 
 // ❌ AVOID - Prevents tree-shaking
@@ -729,40 +729,40 @@ import * as UI from "@neonpro/ui"; // ❌ Namespace imports
 import "@neonpro/ui"; // ❌ Side-effect imports
 ```
 
-### LGPD Compliance Patterns (Healthcare-Validated)
+### LGPD Compliance Patterns (Aesthetic Clinic-Validated)
 
 ```typescript
 // ✅ PROVEN PATTERN - 100% LGPD compliance maintained
 interface LGPDCompliantComponent {
   readonly lgpdConsent: boolean;
   readonly dataMinimization: boolean;
-  readonly auditLogging: (action: string, patientId?: string) => void;
-  readonly dataPortability: () => Promise<PatientDataExport>;
+  readonly auditLogging: (action: string, clientId?: string) => void;
+  readonly dataPortability: () => Promise<ClientDataExport>;
 }
 
 // Progressive Disclosure Pattern (Validated)
-export function PatientDataWithPrivacy({ patient, userRole }: PatientProps) {
+export function ClientDataWithPrivacy({ client, userRole }: ClientProps) {
   const [showSensitiveData, setShowSensitiveData] = useState(false);
 
   return (
     <Card className='neonpro-card'>
       <CardHeader>
-        <CardTitle>{patient.name}</CardTitle>
+        <CardTitle>{client.name}</CardTitle>
         {userRole === 'professional' && (
           <Button
             variant='outline'
             onClick={() => setShowSensitiveData(!showSensitiveData)}
             aria-label='Mostrar dados sensíveis'
           >
-            {showSensitiveData ? 'Ocultar' : 'Mostrar'} Dados Médicos
+            {showSensitiveData ? 'Ocultar' : 'Mostrar'} Dados Estéticos
           </Button>
         )}
       </CardHeader>
       {showSensitiveData && (
         <CardContent>
-          <MedicalDataWithScreenReader
-            data={patient.medicalHistory}
-            label='Histórico médico'
+          <AestheticDataWithScreenReader
+            data={client.aestheticHistory}
+            label='Histórico estético'
           />
         </CardContent>
       )}
@@ -775,7 +775,7 @@ export function PatientDataWithPrivacy({ patient, userRole }: PatientProps) {
 
 ```typescript
 // ✅ PROVEN ACCESSIBILITY PATTERNS - 95%+ compliance score
-export function AccessibleHealthcareComponent() {
+export function AccessibleAestheticClinicComponent() {
   return (
     <div>
       {/* ✅ Loading states with proper ARIA */}

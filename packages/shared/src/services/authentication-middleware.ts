@@ -1585,7 +1585,7 @@ export class HealthcareAuthMiddleware {
   /**
    * Assess authentication risk
    */
-  private async assessRisk(session: AuthSession, c: Context): Promise<number> {
+  private async assessRisk(session: AuthSession, _c: Context): Promise<number> {
     if (!this.config.security.enableRiskAssessment) {
       return 0;
     }
@@ -1642,7 +1642,7 @@ export class HealthcareAuthMiddleware {
   /**
    * Check if MFA is required for current request
    */
-  private checkMfaRequirement(session: AuthSession, c: Context): boolean {
+  private checkMfaRequirement(session: AuthSession, _c: Context): boolean {
     if (!this.config.mfa.enabled) {
       return false;
     }
@@ -1680,7 +1680,7 @@ export class HealthcareAuthMiddleware {
   /**
    * Update session with current request information
    */
-  private async updateSession(session: AuthSession, c: Context): Promise<void> {
+  private async updateSession(session: AuthSession, _c: Context): Promise<void> {
     const now = new Date().toISOString();
 
     // Update activity timestamp

@@ -159,7 +159,7 @@ class SecretManager {
     }
 
     const [ivHex, authTagHex, encrypted] = parts;
-    const iv = Buffer.from(ivHex, 'hex');
+    const _iv = Buffer.from(ivHex, 'hex');
     const authTag = Buffer.from(authTagHex, 'hex');
 
     const decipher = crypto.createDecipher('aes-256-gcm', this.encryptionKey);

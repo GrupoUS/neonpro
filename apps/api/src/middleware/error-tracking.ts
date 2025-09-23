@@ -28,7 +28,7 @@ export function setupGlobalErrorHandlers(): void {
   // Handle unhandled promise rejections
   process.on(
     'unhandledRejection',
-    (reason: unknown, promise: Promise<unknown>) => {
+    (reason: unknown, _promise: Promise<unknown>) => {
       logger.error('Unhandled Promise Rejection', {
         reason: reason instanceof Error ? reason.message : String(reason),
         stack: reason instanceof Error ? reason.stack : undefined,
