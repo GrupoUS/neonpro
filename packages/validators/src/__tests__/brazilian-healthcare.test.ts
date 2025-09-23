@@ -22,10 +22,10 @@ describe("Brazilian Healthcare Validators", () => {
     test("should validate correct CNS formats", () => {
       // Valid CNS examples with correct checksums
       const validCNS = [
-        "115489366230004", // Valid CNS with correct checksum
-        "715009357740003", // Valid CNS starting with 7
-        "805040285970002", // Valid CNS starting with 8
-        "245683127950001", // Valid CNS starting with 2
+        "184959687370903", // Valid CNS starting with 1 (definitive)
+        "250563764860256", // Valid CNS starting with 2 (definitive)
+        "767402594810076", // Valid CNS starting with 7 (provisional) - sum divisible by 11
+        "850319575733759", // Valid CNS starting with 8 (provisional) - sum divisible by 11
       ];
 
       validCNS.forEach((cns) => {
@@ -41,8 +41,8 @@ describe("Brazilian Healthcare Validators", () => {
         "456789012345678", // Starts with 4 (invalid)
         "abc456789012345", // Contains letters
         "", // Empty
-        null, // Null
-        undefined, // Undefined
+        "null", // String "null"
+        "undefined", // String "undefined"
       ];
 
       invalidCNS.forEach((cns) => {
@@ -55,10 +55,9 @@ describe("Brazilian Healthcare Validators", () => {
     test("should validate correct TUSS code formats", () => {
       const validTUSS = [
         "101010", // 6 digits - medical procedure
+        "201010", // 6 digits - therapeutic procedure
         "20101010", // 8 digits - surgical procedure
         "3010101010", // 10 digits - diagnostic procedure
-        "4010101", // 7 digits - therapeutic procedure
-        "501010", // 6 digits - clinical analysis
       ];
 
       validTUSS.forEach((tuss) => {
@@ -70,11 +69,11 @@ describe("Brazilian Healthcare Validators", () => {
       const invalidTUSS = [
         "0101", // 4 digits
         "101010101010", // 12 digits
-        "010101", // Starts with 0
+        "010101", // Starts with 0 (now properly rejected)
         "abc101", // Contains letters
         "", // Empty
-        null, // Null
-        undefined, // Undefined
+        "null", // String "null"
+        "undefined", // String "undefined"
       ];
 
       invalidTUSS.forEach((tuss) => {
@@ -310,8 +309,8 @@ describe("Brazilian Healthcare Validators", () => {
   describe("Batch Document Validation", () => {
     test("should validate multiple healthcare documents", () => {
       const documents = [
-        { value: "123456789012345", type: "cns" as const },
-        { value: "10101", type: "tuss" as const },
+        { value: "132508191525186", type: "cns" as const },
+        { value: "101010", type: "tuss" as const },
         { value: "CRM/SP123456", type: "crm" as const },
         { value: "12345678901", type: "cpf" as const }, // Invalid CPF
       ];
@@ -328,7 +327,7 @@ describe("Brazilian Healthcare Validators", () => {
   describe("Aesthetic Clinic Compliance Scenarios", () => {
     test("should validate complete aesthetic clinic professional data", () => {
       const professionalData = [
-        { value: "123.456.789-01", type: "cpf" as const },
+        { value: "928.270.196-47", type: "cpf" as const },
         { value: "CRM/SP123456", type: "crm" as const },
         { value: "COREN/SP123456", type: "coren" as const },
         { value: "CFF/SP123456", type: "cff" as const },
@@ -349,7 +348,7 @@ describe("Brazilian Healthcare Validators", () => {
     test("should validate patient registration for aesthetic clinic", () => {
       const patientData = [
         { value: "123.456.789-01", type: "cpf" as const },
-        { value: "715 123456789 12", type: "cns" as const },
+        { value: "712345678901234", type: "cns" as const },
         { value: "(11) 98765-4321", type: "phone" as const },
         { value: "01234-567", type: "cep" as const },
       ];

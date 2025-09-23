@@ -1,6 +1,6 @@
-import { TRPCError } from "@trpc/server";
-import { initTRPC } from "@trpc/server";
-import { logger } from "../../lib/logger";
+import { TRPCError } from '@trpc/server';
+import { initTRPC } from '@trpc/server';
+import { logger } from '../../lib/logger';
 
 const t = initTRPC.create();
 const { middleware } = t;
@@ -22,34 +22,34 @@ const { middleware } = t;
 // CFM Validation Schema
 const cfmValidationSchema = z.object({
   // Professional Information
-  professionalId: z.string().min(1, "Professional ID is required"),
-  crmNumber: z.string().regex(/^\d{4,6}$/, "Invalid CRM number format"),
-  crmState: z.string().length(2, "CRM state must be 2 characters"),
+  professionalId: z.string().min(1, 'Professional ID is required'),
+  crmNumber: z.string().regex(/^\d{4,6}$/, 'Invalid CRM number format'),
+  crmState: z.string().length(2, 'CRM state must be 2 characters'),
 
   // Patient Information
-  patientId: z.string().min(1, "Patient ID is required"),
+  patientId: z.string().min(1, 'Patient ID is required'),
   patientConsent: z
     .boolean()
-    .refine((val) => val === true, "Patient consent is required"),
+    .refine(val => val === true, 'Patient consent is required'),
 
   // Procedure Information
   procedureType: z.enum([
-    "consultation",
-    "aesthetic_procedure",
-    "medical_evaluation",
-    "telemedicine",
-    "prescription",
-    "follow_up",
+    'consultation',
+    'aesthetic_procedure',
+    'medical_evaluation',
+    'telemedicine',
+    'prescription',
+    'follow_up',
   ]),
 
   // Telemedicine Specific (CFM Resolution 2.314/2022)
   isTelemedicine: z.boolean().optional(),
   telemedicineType: z
     .enum([
-      "teleconsultation",
-      "telediagnosis",
-      "telemonitoring",
-      "telesurgery",
+      'teleconsultation',
+      'telediagnosis',
+      'telemonitoring',
+      'telesurgery',
     ])
     .optional(),
 
@@ -86,7 +86,7 @@ export const cfmValidationMiddleware = middleware(
         return next();
       }
 
-      logger.info("CFM validation started", {
+      logger.info('CFM validation started', {
         path,
         _userId: ctx.user?.id,
         timestamp: new Date().toISOString(),
@@ -108,7 +108,7 @@ export const cfmValidationMiddleware = middleware(
         await validateEmergencyProtocols(ctx);
       }
 
-      logger.info("CFM validation completed successfully", {
+      logger.info('CFM validation completed successfully', {
         path,
         _userId: ctx.user?.id,
         timestamp: new Date().toISOString(),
@@ -116,10 +116,10 @@ export const cfmValidationMiddleware = middleware(
 
       return next();
     } catch (error) {
-      logger.error("CFM validation failed", {
+      logger.error('CFM validation failed', {
         path,
         _userId: ctx.user?.id,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
       });
 
@@ -128,8 +128,8 @@ export const cfmValidationMiddleware = middleware(
       }
 
       throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "CFM validation failed: Medical operation not authorized",
+        code: 'FORBIDDEN',
+        message: 'CFM validation failed: Medical operation not authorized',
         cause: error,
       });
     }
@@ -144,16 +144,16 @@ async function validateProfessionalCredentials(ctx: any): Promise<void> {
 
   if (!user) {
     throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "User authentication required for medical operations",
+      code: 'UNAUTHORIZED',
+      message: 'User authentication required for medical operations',
     });
   }
 
   // Check if user has medical professional role
-  if (!user.roles?.includes("medical_professional")) {
+  if (!user.roles?.includes('medical_professional')) {
     throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Medical professional credentials required",
+      code: 'FORBIDDEN',
+      message: 'Medical professional credentials required',
     });
   }
 
@@ -161,32 +161,32 @@ async function validateProfessionalCredentials(ctx: any): Promise<void> {
   const crmData = user.professionalData?.crm;
   if (!crmData?.number || !crmData?.state || !crmData?.isActive) {
     throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Valid CRM registration required for medical operations",
+      code: 'FORBIDDEN',
+      message: 'Valid CRM registration required for medical operations',
     });
   }
 
   // Check CRM expiration
   if (crmData.expirationDate && new Date(crmData.expirationDate) < new Date()) {
     throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "CRM registration has expired",
+      code: 'FORBIDDEN',
+      message: 'CRM registration has expired',
     });
   }
 
   // Validate specialization for aesthetic procedures
   const requiredSpecializations = [
-    "dermatology",
-    "plastic_surgery",
-    "aesthetic_medicine",
+    'dermatology',
+    'plastic_surgery',
+    'aesthetic_medicine',
   ];
 
   if (
     !user.professionalData?.specializations?.some((spec: string) =>
-      requiredSpecializations.includes(spec),
+      requiredSpecializations.includes(spec)
     )
   ) {
-    logger.warn("Professional lacks required specialization", {
+    logger.warn('Professional lacks required specialization', {
       _userId: user.id,
       specializations: user.professionalData?.specializations,
       required: requiredSpecializations,
@@ -206,8 +206,7 @@ async function validateTelemedicineCompliance(
   // Telemedicine specific validations
   const telemedicineRequirements = {
     hasDigitalCertificate: user.professionalData?.digitalCertificate?.isValid,
-    hasTelemedicineLicense:
-      user.professionalData?.licenses?.telemedicine?.isActive,
+    hasTelemedicineLicense: user.professionalData?.licenses?.telemedicine?.isActive,
     hasSecurePlatform: true, // Platform-level validation
     hasPatientIdentification: true, // To be validated per operation
   };
@@ -215,16 +214,16 @@ async function validateTelemedicineCompliance(
   // Check digital certificate (required for telemedicine)
   if (!telemedicineRequirements.hasDigitalCertificate) {
     throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Valid digital certificate required for telemedicine operations",
+      code: 'FORBIDDEN',
+      message: 'Valid digital certificate required for telemedicine operations',
     });
   }
 
   // Check telemedicine license
   if (!telemedicineRequirements.hasTelemedicineLicense) {
     throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Telemedicine license required for remote medical operations",
+      code: 'FORBIDDEN',
+      message: 'Telemedicine license required for remote medical operations',
     });
   }
 
@@ -234,7 +233,7 @@ async function validateTelemedicineCompliance(
 
   if (patientState && crmState && patientState !== crmState) {
     // Cross-state telemedicine requires additional validation
-    logger.warn("Cross-state telemedicine operation detected", {
+    logger.warn('Cross-state telemedicine operation detected', {
       professionalCrmState: crmState,
       patientState,
       _userId: user.id,
@@ -246,13 +245,13 @@ async function validateTelemedicineCompliance(
       !user.professionalData?.crossStateAuthorization?.includes(patientState)
     ) {
       throw new TRPCError({
-        code: "FORBIDDEN",
+        code: 'FORBIDDEN',
         message: `Cross-state telemedicine not authorized for state: ${patientState}`,
       });
     }
   }
 
-  logger.info("Telemedicine compliance validated", {
+  logger.info('Telemedicine compliance validated', {
     _userId: user.id,
     path,
     crmState,
@@ -268,16 +267,16 @@ async function validatePatientConsent(ctx: any): Promise<void> {
 
   if (!patientData) {
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Patient data required for medical operations",
+      code: 'BAD_REQUEST',
+      message: 'Patient data required for medical operations',
     });
   }
 
   // Check informed consent
   if (!patientData.informedConsent?.isProvided) {
     throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Patient informed consent required",
+      code: 'FORBIDDEN',
+      message: 'Patient informed consent required',
     });
   }
 
@@ -287,8 +286,8 @@ async function validatePatientConsent(ctx: any): Promise<void> {
 
   if (Date.now() - consentDate.getTime() > maxConsentAge) {
     throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Patient consent has expired, new consent required",
+      code: 'FORBIDDEN',
+      message: 'Patient consent has expired, new consent required',
     });
   }
 
@@ -298,12 +297,12 @@ async function validatePatientConsent(ctx: any): Promise<void> {
 
   if (procedureType && !consentTypes.includes(procedureType)) {
     throw new TRPCError({
-      code: "FORBIDDEN",
+      code: 'FORBIDDEN',
       message: `Specific consent required for procedure type: ${procedureType}`,
     });
   }
 
-  logger.info("Patient consent validated", {
+  logger.info('Patient consent validated', {
     patientId: patientData.id,
     procedureType,
     consentTypes,
@@ -323,8 +322,8 @@ async function validateEmergencyProtocols(ctx: any): Promise<void> {
   // Check emergency contact information
   if (!procedureData.emergencyContact) {
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Emergency contact information required for medical procedures",
+      code: 'BAD_REQUEST',
+      message: 'Emergency contact information required for medical procedures',
     });
   }
 
@@ -332,14 +331,13 @@ async function validateEmergencyProtocols(ctx: any): Promise<void> {
 
   // Validate emergency contact data
   if (
-    !emergencyContact.name ||
-    !emergencyContact.phone ||
-    !emergencyContact.relationship
+    !emergencyContact.name
+    || !emergencyContact.phone
+    || !emergencyContact.relationship
   ) {
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message:
-        "Complete emergency contact information required (name, phone, relationship)",
+      code: 'BAD_REQUEST',
+      message: 'Complete emergency contact information required (name, phone, relationship)',
     });
   }
 
@@ -347,20 +345,20 @@ async function validateEmergencyProtocols(ctx: any): Promise<void> {
   const phoneRegex = /^(\+55\s?)?(\(?\d{2}\)?\s?)?\d{4,5}-?\d{4}$/;
   if (!phoneRegex.test(emergencyContact.phone)) {
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Invalid emergency contact phone number format",
+      code: 'BAD_REQUEST',
+      message: 'Invalid emergency contact phone number format',
     });
   }
 
   // Check if emergency protocols are documented
   if (!procedureData.emergencyProtocols?.isDocumented) {
-    logger.warn("Emergency protocols not documented for procedure", {
+    logger.warn('Emergency protocols not documented for procedure', {
       procedureId: procedureData.id,
       _userId: ctx.user?.id,
     });
   }
 
-  logger.info("Emergency protocols validated", {
+  logger.info('Emergency protocols validated', {
     procedureId: procedureData.id,
     emergencyContact: {
       name: emergencyContact.name,
@@ -388,7 +386,7 @@ export async function auditCFMCompliance(
       patientId: ctx.input?.patientData?.id,
       procedureType: ctx.input?.procedureType,
       isTelemedicine: isTelemedicineOperation(operation),
-      complianceStatus: "compliant",
+      complianceStatus: 'compliant',
       result: {
         success: !!result,
         operationId: result?.id,
@@ -396,15 +394,15 @@ export async function auditCFMCompliance(
     };
 
     // Log audit trail
-    logger.info("CFM compliance audit", auditData);
+    logger.info('CFM compliance audit', auditData);
 
     // Store in audit database (implement as needed)
     // await storeAuditRecord(auditData);
   } catch (error) {
-    logger.error("CFM compliance audit failed", {
+    logger.error('CFM compliance audit failed', {
       operation,
       _userId: ctx.user?.id,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
 
     // Don't throw error here to avoid disrupting the main operation
@@ -448,18 +446,18 @@ export async function generateCFMComplianceReport(
       recommendations: [],
     };
 
-    logger.info("CFM compliance report generated", {
+    logger.info('CFM compliance report generated', {
       period: report.period,
       filters,
     });
 
     return report;
   } catch (error) {
-    logger.error("Failed to generate CFM compliance report", {
+    logger.error('Failed to generate CFM compliance report', {
       startDate,
       endDate,
       filters,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
 
     throw error;
@@ -472,42 +470,42 @@ export async function generateCFMComplianceReport(
 
 function requiresCFMValidation(path: string): boolean {
   const medicalPaths = [
-    "appointments.create",
-    "appointments.update",
-    "patients.create",
-    "patients.update",
-    "telemedicine",
-    "prescriptions",
-    "diagnosis",
-    "medical-records",
-    "procedures",
+    'appointments.create',
+    'appointments.update',
+    'patients.create',
+    'patients.update',
+    'telemedicine',
+    'prescriptions',
+    'diagnosis',
+    'medical-records',
+    'procedures',
   ];
 
-  return medicalPaths.some((medicalPath) => path.includes(medicalPath));
+  return medicalPaths.some(medicalPath => path.includes(medicalPath));
 }
 
 function isTelemedicineOperation(path: string): boolean {
   const telemedicinePaths = [
-    "telemedicine",
-    "teleconsultation",
-    "telediagnosis",
-    "telemonitoring",
-    "remote-consultation",
+    'telemedicine',
+    'teleconsultation',
+    'telediagnosis',
+    'telemonitoring',
+    'remote-consultation',
   ];
 
-  return telemedicinePaths.some((telePath) => path.includes(telePath));
+  return telemedicinePaths.some(telePath => path.includes(telePath));
 }
 
 function isProcedureOperation(path: string): boolean {
   const procedurePaths = [
-    "procedures.create",
-    "procedures.update",
-    "aesthetic-procedures",
-    "medical-procedures",
-    "treatments.create",
+    'procedures.create',
+    'procedures.update',
+    'aesthetic-procedures',
+    'medical-procedures',
+    'treatments.create',
   ];
 
-  return procedurePaths.some((procPath) => path.includes(procPath));
+  return procedurePaths.some(procPath => path.includes(procPath));
 }
 
 /**
@@ -521,11 +519,11 @@ export function validateCFMInput(
   } catch (error) {
     if (error instanceof z.ZodError) {
       const errorMessages = error.errors.map(
-        (err) => `${err.path.join(".")}: ${err.message}`,
+        err => `${err.path.join('.')}: ${err.message}`,
       );
       throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: `CFM validation failed: ${errorMessages.join(", ")}`,
+        code: 'BAD_REQUEST',
+        message: `CFM validation failed: ${errorMessages.join(', ')}`,
       });
     }
     throw error;

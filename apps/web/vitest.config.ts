@@ -1,77 +1,174 @@
-import path from "path";
-import { defineConfig } from "vitest/config";
-import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react()],
   test: {
-    environment: "jsdom",
-    globals: false,
-    setupFiles: ["./src/test-setup.ts"],
-    env: {
-      NODE_ENV: "test",
-      VITE_SUPABASE_URL:
-        process.env.VITE_SUPABASE_URL ||
-        "https://ownkoxryswokcdanrdgj.supabase.co",
-      VITE_SUPABASE_ANON_KEY:
-        process.env.VITE_SUPABASE_ANON_KEY ||
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im93bmtveHJ5c3dva2NkYW5yZGdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjQ2MTEwNDQsImV4cCI6MjA0MDE4NzA0NH0.2kD9rN4tOFgJQWbOhYHDxMkVqJ_3-0EfP5gK2vKC0-0",
-    },
-    include: [
-      "src/**/*.{test,spec}.{ts,tsx}",
-      "tests/**/*.{test,spec}.{ts,tsx}",
-    ],
-    exclude: [
-      "node_modules/**",
-      "dist/**",
-      ".vercel/**",
-      "**/*.d.ts",
-      "**/*.config.{js,ts}",
-    ],
-    reporters: ["default", "vitest-reporter"],
-    bail: 1,
-    timeout: 10000,
+    // Environment settings optimized for clinic app
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test-setup.ts'],
+
+    // Performance optimization for clinic app testing
+    threads: true,
+    isolate: true,
+    maxConcurrency: 6,
+    minThreads: 3,
+    maxThreads: 8,
+    testTimeout: 15000,
+    hookTimeout: 15000,
+
+    // Smart retry for flaky tests
+    retry: process.env.CI ? 3 : 2,
+
+    // Memory optimization
+    maxWorkers: 8,
+    minWorkers: 3,
+    
+    // Coverage configuration optimized for clinic app
     coverage: {
-      provider: "v8",
-      reporter: ["text", "json", "html"],
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov', 'clover'],
       exclude: [
-        "node_modules/**",
-        "dist/**",
-        "**/*.d.ts",
-        "**/*.config.{js,ts}",
-        "**/*.stories.{ts,tsx}",
-        "src/test-setup.ts",
+        'node_modules/',
+        'src/test-setup.ts',
+        '**/*.d.ts',
+        '**/*.config.*',
+        '**/coverage/**',
+        'src/test/**',
+        'src/test-utils/**',
+        '**/*.stories.*',
+        '**/__mocks__/**',
       ],
       thresholds: {
         global: {
-          branches: 80,
-          functions: 80,
-          lines: 80,
-          statements: 80,
+          branches: 85,
+          functions: 85,
+          lines: 85,
+          statements: 85,
+        },
+        perFile: {
+          branches: 75,
+          functions: 75,
+          lines: 75,
+          statements: 75,
         },
       },
+      include: [
+        'src/**/*.{js,jsx,ts,tsx}',
+      ],
     },
-    transformMode: {
-      web: [/\.[jt]sx?$/],
-      ssr: [/\.ts$/],
+    
+    // Test matching optimized for clinic app structure
+    include: [
+      'src/**/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      'src/**/test/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      'src/**/*.{test,spec}.{js,jsx,ts,tsx}',
+    ],
+    exclude: [
+      'node_modules/',
+      'dist/',
+      'build/',
+      'cypress/',
+      'src/test-setup.ts',
+      'src/test/**',
+      '**/*.config.*',
+      '**/coverage/**',
+    ],
+
+    // Snapshot testing optimized for clinic UI
+    snapshotFormat: {
+      printBasicPrototype: false,
+      escapeString: true,
+      printFunctionName: true,
     },
+
+    // Mock settings
+    clearMocks: true,
+    mockReset: true,
+    restoreMocks: true,
+
+    // Global test files
+    globalSetup: ['./src/test/global-setup.ts'],
+    globalTeardown: ['./src/test/global-teardown.ts'],
+
+    // Test isolation
+    isolate: true,
+    singleThread: false,
+
+    // Environment variables for testing
+    env: {
+      NODE_ENV: 'test',
+      VITE_SUPABASE_URL: 'http://localhost:54321',
+      VITE_SUPABASE_ANON_KEY: 'test-anon-key',
+      VITE_API_URL: 'http://localhost:3001',
+    },
+    
+    // Snapshot configuration
+    snapshotFormat: {
+      printBasicPrototype: false,
+      escapeString: true,
+    },
+    
+    // Global test variables
+    globalSetup: ['./src/test/global-setup.ts'],
+    globalTeardown: ['./src/test/global-teardown.ts'],
   },
+  
+  // Path aliases optimized for clinic app structure
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@neonpro/types": path.resolve(__dirname, "../../packages/types/src"),
-      "@neonpro/utils": path.resolve(__dirname, "../../packages/utils/src"),
-      "@neonpro/shared": path.resolve(__dirname, "../../packages/shared/src"),
-      "@neonpro/database": path.resolve(
-        __dirname,
-        "../../packages/database/src",
-      ),
-      "@neonpro/security": path.resolve(
-        __dirname,
-        "../../packages/security/src",
-      ),
-      "@neonpro/ui": path.resolve(__dirname, "../../packages/ui/src"),
+      '@': path.resolve(__dirname, './src'),
+      '@/components': path.resolve(__dirname, './src/components'),
+      '@/components/ui': path.resolve(__dirname, './src/components/ui'),
+      '@/components/clients': path.resolve(__dirname, './src/components/clients'),
+      '@/components/appointments': path.resolve(__dirname, './src/components/appointments'),
+      '@/components/dashboard': path.resolve(__dirname, './src/components/dashboard'),
+      '@/lib': path.resolve(__dirname, './src/lib'),
+      '@/lib/utils': path.resolve(__dirname, './src/lib/utils'),
+      '@/routes': path.resolve(__dirname, './src/routes'),
+      '@/types': path.resolve(__dirname, './src/types'),
+      '@/integrations': path.resolve(__dirname, './src/integrations'),
+      '@/hooks': path.resolve(__dirname, './src/hooks'),
+      '@/store': path.resolve(__dirname, './src/store'),
+      '@/services': path.resolve(__dirname, './src/services'),
+      '@/constants': path.resolve(__dirname, './src/constants'),
     },
+  },
+  
+  // Environment variables for tests
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('test'),
+    'process.env.VITE_SUPABASE_URL': JSON.stringify('http://localhost:54321'),
+    'process.env.VITE_SUPABASE_ANON_KEY': JSON.stringify('test-anon-key'),
+    'process.env.VITE_API_URL': JSON.stringify('http://localhost:3001'),
+    'process.env.VITE_WEBSOCKET_URL': JSON.stringify('ws://localhost:3001/ws'),
+  },
+
+  // Deps optimization for clinic app
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom',
+      '@testing-library/jest-dom',
+      '@testing-library/react',
+      '@testing-library/user-event',
+      '@tanstack/react-query',
+      '@tanstack/react-router',
+      'react-hook-form',
+      '@hookform/resolvers',
+      'zod',
+      'valibot',
+      'recharts',
+      'lucide-react',
+      '@radix-ui/react-slot',
+      '@radix-ui/react-dialog',
+      '@radix-ui/react-dropdown-menu',
+      '@radix-ui/react-select',
+      '@radix-ui/react-tabs',
+      '@radix-ui/react-toast',
+    ],
+    exclude: [],
   },
 });

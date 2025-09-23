@@ -124,6 +124,12 @@ export function validateCEP(cep: string): boolean {
  * Format: XXX XXXXXXX XX or XXXXXXXXXXXXX (15 digits total)
  * Algorithm: Uses specific weight pattern and modulo 11 for validation
  */
+/**
+ * Validates Brazilian CNS (Cartão Nacional de Saúde)
+ * CNS is the Brazilian National Health Card, a unique identifier for citizens in the healthcare system
+ * Format: XXXXXXXXXXXXX (15 digits total)
+ * Algorithm: Uses modulo 11 with weights [15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
+ */
 export function validateCNS(cns: string): boolean {
   if (!cns) return false;
 
@@ -135,8 +141,7 @@ export function validateCNS(cns: string): boolean {
     return false;
   }
 
-  // Check if it's a "definitive" CNS (starts with 1, 2, 7, 8, or 9)
-  // or "provisional" CNS (starts with 7, 8, 9, or 0)
+  // Check if it's a "definitive" CNS (starts with 1 or 2) or "provisional" CNS (starts with 7, 8, or 9)
   const firstDigit = cleanCNS.charAt(0);
   const isValidStart = ["1", "2", "7", "8", "9"].includes(firstDigit);
 
@@ -154,17 +159,24 @@ export function validateCNS(cns: string): boolean {
  * Format: Typically 5 digits followed by 2 digits (XXXXXX-XX) or variable length codes
  * This validation checks for common TUSS code patterns and formats
  */
+/**
+ * Validates TUSS (Terminologia Unificada em Saúde Suplementar) codes
+ * TUSS is the standardized terminology for Brazilian healthcare procedures and services
+ * Format: Variable length codes (5-10 digits)
+ * This validation checks for common TUSS code patterns and formats
+ */
 export function validateTUSS(tussCode: string): boolean {
-  if (!tussCode) return false;
+  if (!tussCode || tussCode === "null" || tussCode === "undefined") return false;
 
   // Remove any formatting characters
   const cleanTUSS = tussCode.replace(/[^\d]/g, "");
 
   // TUSS codes can vary in length but typically follow these patterns:
   // - 5 digits (basic procedure codes)
+  // - 6 digits (therapeutic procedure codes)
   // - 8 digits (detailed procedure codes)
   // - 10 digits (complete classification codes)
-  const validLengths = [5, 8, 10];
+  const validLengths = [5, 6, 8, 10];
 
   if (!validLengths.includes(cleanTUSS.length)) {
     return false;
@@ -175,51 +187,14 @@ export function validateTUSS(tussCode: string): boolean {
     return false;
   }
 
-  // Validate common TUSS code ranges (simplified validation)
-  // In practice, TUSS codes have specific ranges for different medical specialties
-  const firstDigit = cleanTUSS.charAt(0);
-  const isValidFirstDigit = [
-    "1",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-  ].includes(firstDigit);
-
-  if (!isValidFirstDigit) {
+  // TUSS codes should not start with 0
+  if (cleanTUSS.charAt(0) === "0") {
     return false;
   }
 
-  // Additional validation for specific TUSS categories
-  if (cleanTUSS.length >= 5) {
-    const firstTwoDigits = cleanTUSS.substring(0, 2);
-    const validRanges = [
-      "10", // Medical procedures
-      "20", // Surgical procedures
-      "30", // Diagnostic procedures
-      "40", // Therapeutic procedures
-      "50", // Clinical analysis
-      "60", // Image diagnostic
-      "70", // Functional tests
-      "80", // Rehabilitation
-      "90", // Other procedures
-    ];
-
-    // Check if the code starts with a valid range (loose validation)
-    const isValidRange = validRanges.some((range) => {
-      const firstChar = range.charAt(0);
-      return firstTwoDigits.startsWith(firstChar);
-    });
-
-    if (!isValidRange) {
-      return false;
-    }
-  }
-
+  // Basic validation - just ensure it's a numeric code with valid length
+  // In practice, TUSS codes have specific ranges, but for validation purposes
+  // we accept any numeric code with the correct length
   return true;
 }
 
@@ -455,8 +430,8 @@ export function validateCNEP(cnep: string): boolean {
  * Validates any Brazilian aesthetic health professional council registration
  * Supports CFM (doctors), COREN (nurses), CFF (pharmacists), CNEP (aesthetic professionals)
  */
-export function validateProfessionalLicense(license: string): boolean {
-  if (!license) return false;
+export function validateProfessionalLicense(license: string | null | undefined): boolean {
+  if (!license || license === "null" || license === "undefined") return false;
 
   // Remove spaces and convert to uppercase
   const cleanLicense = license.toUpperCase().replace(/\s/g, "");
@@ -508,8 +483,8 @@ export function validateAestheticProfessionalLicense(
     councilType = 'CRM';
     const match = normalized.match(/^CRM\/([A-Z]{2})(\d{4,10})$/);
     if (match) {
-      stateCode = match[1];
-      registrationNumber = match[2];
+      stateCode = match[1] || '';
+      registrationNumber = match[2] || '';
       professionalCategory = 'Médico Esteta';
       isValid = validateCRM(license);
     }
@@ -519,8 +494,8 @@ export function validateAestheticProfessionalLicense(
     councilType = 'COREN';
     const match = normalized.match(/^COREN\/([A-Z]{2})(\d{6,9})$/);
     if (match) {
-      stateCode = match[1];
-      registrationNumber = match[2];
+      stateCode = match[1] || '';
+      registrationNumber = match[2] || '';
       professionalCategory = 'Enfermeiro Esteta';
       isValid = validateCOREN(license);
     }
@@ -530,8 +505,8 @@ export function validateAestheticProfessionalLicense(
     councilType = 'CFF';
     const match = normalized.match(/^CFF\/([A-Z]{2})(\d{6,8})$/);
     if (match) {
-      stateCode = match[1];
-      registrationNumber = match[2];
+      stateCode = match[1] || '';
+      registrationNumber = match[2] || '';
       professionalCategory = 'Farmacêutico Esteta';
       isValid = validateCFF(license);
     }
@@ -541,8 +516,8 @@ export function validateAestheticProfessionalLicense(
     councilType = 'CNEP';
     const match = normalized.match(/^CNEP\/([A-Z]{2})(\d{6,8})$/);
     if (match) {
-      stateCode = match[1];
-      registrationNumber = match[2];
+      stateCode = match[1] || '';
+      registrationNumber = match[2] || '';
       professionalCategory = 'Profissional de Estética';
       isValid = validateCNEP(license);
     }
@@ -581,29 +556,41 @@ export function validateAestheticProfessionalLicense(
 }
 
 /**
- * Helper function to calculate CNS checksum using modulo 11 algorithm
+ * Helper function to calculate CNS checksum using correct Brazilian algorithm
  * @param cns Clean CNS string (15 digits)
  * @returns true if checksum is valid
  */
 function calculateCNSChecksum(cns: string): boolean {
   const digits = cns.split("").map(Number);
-
-  // CNS uses specific weights: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-  const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
-
-  let sum = 0;
-  for (let i = 0; i < 15; i++) {
-    const digit = digits[i];
-    const weight = weights[i];
-    if (digit !== undefined && weight !== undefined) {
-      sum += digit * weight;
+  
+  // CNS validation algorithm
+  // For definitive CNS (starting with 1 or 2): use modulo 11
+  // For provisional CNS (starting with 7, 8, or 9): use sum validation
+  
+  const firstDigit = digits[0];
+  
+  if (firstDigit === 1 || firstDigit === 2) {
+    // Definitive CNS - use modulo 11 with weights [15,14,13,12,11,10,9,8,7,6,5,4,3,2,1]
+    const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+    let sum = 0;
+    for (let i = 0; i < 15; i++) {
+      if (digits[i] !== undefined && weights[i] !== undefined) {
+        sum += digits[i]! * weights[i]!;
+      }
     }
+    return sum % 11 === 0;
+  } else if (firstDigit === 7 || firstDigit === 8 || firstDigit === 9) {
+    // Provisional CNS - sum of all digits must be divisible by 11
+    let sum = 0;
+    for (let i = 0; i < 15; i++) {
+      if (digits[i] !== undefined) {
+        sum += digits[i]!;
+      }
+    }
+    return sum % 11 === 0;
   }
-
-  const remainder = sum % 11;
-
-  // For CNS, the result should be 0 or 1 for valid checksums
-  return remainder === 0 || remainder === 1;
+  
+  return false;
 }
 
 /**

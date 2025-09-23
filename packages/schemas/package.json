@@ -9,9 +9,9 @@
     "build": "bun x tsc --noEmit",
     "dev": "bun x tsc -w --noEmit",
     "clean": "rm -rf dist",
-    "test": "vitest --run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest --run --coverage"
+    "test": "bun test --run",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage"
   },
   "dependencies": {
     "zod": "^3.22.0",

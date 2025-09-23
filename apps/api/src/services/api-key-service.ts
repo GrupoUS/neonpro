@@ -7,8 +7,8 @@
  * @compliance LGPD, ANVISA, CFM
  */
 
-import crypto from "crypto";
-import { z } from "zod";
+import crypto from 'crypto';
+import { z } from 'zod';
 
 // API Key Permissions Schema
 export const ApiKeyPermissionsSchema = z.object({
@@ -61,7 +61,7 @@ const apiKeys = new Map<string, ApiKey>();
  */
 export async function createApiKey(
   permissions: ApiKeyPermissions,
-  metadata: Omit<ApiKeyMetadata, "createdAt" | "isActive">,
+  metadata: Omit<ApiKeyMetadata, 'createdAt' | 'isActive'>,
 ): Promise<ApiKey> {
   const id = crypto.randomUUID();
   const key = generateSecureApiKey();
@@ -148,9 +148,9 @@ export async function rotateApiKey(oldKey: string): Promise<ApiKey | null> {
  * Generate a secure API key
  */
 function generateSecureApiKey(): string {
-  const prefix = "neonpro";
+  const prefix = 'neonpro';
   const randomBytes = crypto.randomBytes(32);
-  const key = randomBytes.toString("base64url");
+  const key = randomBytes.toString('base64url');
 
   return `${prefix}${key}`;
 }

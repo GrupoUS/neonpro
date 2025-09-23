@@ -130,7 +130,7 @@ test.describe('Aesthetic Platform Flows', () => {
       // Login as client
       await page.goto('/auth/login');
       await page.fill('input[type="email"]', 'client@example.com');
-      await page.fill('input[type="password']', 'clientpassword123');
+      await page.fill('input[type="password"]', 'clientpassword123');
       await page.click('button[type="submit"]');
       
       await page.waitForURL('/dashboard');
@@ -163,7 +163,7 @@ test.describe('Aesthetic Platform Flows', () => {
       // Login as professional
       await page.goto('/auth/login');
       await page.fill('input[type="email"]', 'professional@example.com');
-      await page.fill('input[type="password']', 'professionalpassword123');
+      await page.fill('input[type="password"]', 'professionalpassword123');
       await page.click('button[type="submit"]');
       
       await page.waitForURL('/dashboard');

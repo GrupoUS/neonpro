@@ -4,7 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "noEmit": true,
+    "noEmit": false,
     "outDir": "./dist",
     "rootDir": ".",
     "types": ["node", "vitest", "vitest/globals", "vite/client"],
@@ -12,6 +12,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "composite": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

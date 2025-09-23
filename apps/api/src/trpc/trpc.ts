@@ -10,14 +10,14 @@
  * Compliance: LGPD, CFM Resolution 2,314/2022, ANVISA, NGS2
  */
 
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
-import { Context } from "./context";
+import { initTRPC, TRPCError } from '@trpc/server';
+import superjson from 'superjson';
+import { Context } from './context';
 
 // Import enhanced middleware functions
-import { cfmValidationMiddleware } from "./middleware/cfm-validation";
-import { lgpdAuditMiddleware } from "./middleware/lgpd-audit";
-import { prismaRLSMiddleware } from "./middleware/prisma-rls";
+import { cfmValidationMiddleware } from './middleware/cfm-validation';
+import { lgpdAuditMiddleware } from './middleware/lgpd-audit';
+import { prismaRLSMiddleware } from './middleware/prisma-rls';
 
 /**
  * Initialize tRPC with superjson transformer for enhanced type support
@@ -29,10 +29,9 @@ const t = initTRPC.context<Context>().create({
       ...shape,
       data: {
         ...shape.data,
-        zodError:
-          error.cause instanceof Error && error.cause.name === "ZodError"
-            ? error.cause.message
-            : null,
+        zodError: error.cause instanceof Error && error.cause.name === 'ZodError'
+          ? error.cause.message
+          : null,
       },
     };
   },
@@ -45,8 +44,8 @@ const t = initTRPC.context<Context>().create({
 const authMiddleware = t.middleware(async ({ ctx, _next }) => {
   if (!ctx._userId) {
     throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "Authentication required",
+      code: 'UNAUTHORIZED',
+      message: 'Authentication required',
     });
   }
 
@@ -59,14 +58,14 @@ const authMiddleware = t.middleware(async ({ ctx, _next }) => {
  */
 const consentMiddleware = t.middleware(async ({ ctx, next, _input }) => {
   // For patient data operations, verify LGPD consent
-  if (input && typeof input === "object" && "patientId" in input) {
+  if (input && typeof input === 'object' && 'patientId' in input) {
     const patientId = input.patientId as string;
 
     const consent = await ctx.prisma.consentRecord.findFirst({
       where: {
         patientId,
-        consentType: "data_processing",
-        status: "active",
+        consentType: 'data_processing',
+        status: 'active',
         expiresAt: {
           gt: new Date(),
         },
@@ -75,8 +74,8 @@ const consentMiddleware = t.middleware(async ({ ctx, next, _input }) => {
 
     if (!consent) {
       throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "Valid LGPD consent required for patient data operations",
+        code: 'FORBIDDEN',
+        message: 'Valid LGPD consent required for patient data operations',
       });
     }
 

@@ -1,8 +1,8 @@
-import { Context, Next } from "hono";
-import { HTTPException } from "hono/http-exception";
-import { createAdminClient } from "../clients/supabase";
-import { logger } from "../lib/logger";
-import { jwtValidator } from "../security/jwt-validator";
+import { Context, Next } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import { createAdminClient } from '../clients/supabase';
+import { logger } from '../lib/logger';
+import { jwtValidator } from '../security/jwt-validator';
 
 // Interface for validated user token data
 interface ValidatedUser {
@@ -20,25 +20,25 @@ export function authenticationMiddleware() {
   return async (c: Context, next: Next) => {
     try {
       // Get authorization header
-      const authHeader = c.req.header("authorization");
+      const authHeader = c.req.header('authorization');
 
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        logger.warn("Missing or invalid authorization header", {
+      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        logger.warn('Missing or invalid authorization header', {
           path: c.req.path,
           method: c.req.method,
-          ip: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
+          ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
         });
 
         throw new HTTPException(401, {
-          message: "Authorization header required",
+          message: 'Authorization header required',
         });
       }
 
-      const token = authHeader.replace("Bearer ", "");
+      const token = authHeader.replace('Bearer ', '');
 
       if (!token) {
         throw new HTTPException(401, {
-          message: "Bearer token required",
+          message: 'Bearer token required',
         });
       }
 
@@ -46,17 +46,17 @@ export function authenticationMiddleware() {
       const validationResult = await jwtValidator.validateToken(token, c);
 
       if (!validationResult.isValid) {
-        logger.warn("Token validation failed", {
+        logger.warn('Token validation failed', {
           error: validationResult.error,
           errorCode: validationResult.errorCode,
           securityLevel: validationResult.securityLevel,
           path: c.req.path,
           method: c.req.method,
-          ip: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
+          ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
         });
 
         throw new HTTPException(401, {
-          message: validationResult.error || "Invalid token",
+          message: validationResult.error || 'Invalid token',
         });
       }
 
@@ -65,16 +65,16 @@ export function authenticationMiddleware() {
 
       if (!user) {
         throw new HTTPException(401, {
-          message: "Invalid or expired token",
+          message: 'Invalid or expired token',
         });
       }
 
       // Set user context for downstream handlers
-      c.set("user", user);
-      c.set("userId", user.id);
-      c.set("clinicId", user.clinicId);
+      c.set('user', user);
+      c.set('userId', user.id);
+      c.set('clinicId', user.clinicId);
 
-      logger.debug("User authenticated successfully", {
+      logger.debug('User authenticated successfully', {
         _userId: user.id,
         clinicId: user.clinicId,
         path: c.req.path,
@@ -87,14 +87,14 @@ export function authenticationMiddleware() {
         throw error;
       }
 
-      logger.error("Authentication error", {
+      logger.error('Authentication error', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
       });
 
       throw new HTTPException(401, {
-        message: "Authentication failed",
+        message: 'Authentication failed',
       });
     }
   };
@@ -105,16 +105,16 @@ export function authenticationMiddleware() {
  */
 export function authorizationMiddleware(allowedRoles: string[] = []) {
   return async (c: Context, next: Next) => {
-    const user = c.get("user");
+    const user = c.get('user');
 
     if (!user) {
       throw new HTTPException(401, {
-        message: "User not authenticated",
+        message: 'User not authenticated',
       });
     }
 
     if (allowedRoles.length > 0 && !allowedRoles.includes(user._role)) {
-      logger.warn("Access denied - insufficient permissions", {
+      logger.warn('Access denied - insufficient permissions', {
         _userId: user.id,
         userRole: user.role,
         allowedRoles,
@@ -123,11 +123,11 @@ export function authorizationMiddleware(allowedRoles: string[] = []) {
       });
 
       throw new HTTPException(403, {
-        message: "Insufficient permissions",
+        message: 'Insufficient permissions',
       });
     }
 
-    logger.debug("User authorized successfully", {
+    logger.debug('User authorized successfully', {
       _userId: user.id,
       userRole: user.role,
       path: c.req.path,
@@ -143,18 +143,17 @@ export function authorizationMiddleware(allowedRoles: string[] = []) {
  */
 export function clinicAccessMiddleware() {
   return async (c: Context, next: Next) => {
-    const user = c.get("user");
-    const requestedClinicId =
-      c.req.param("clinicId") || c.req.query("clinicId");
+    const user = c.get('user');
+    const requestedClinicId = c.req.param('clinicId') || c.req.query('clinicId');
 
     if (!user) {
       throw new HTTPException(401, {
-        message: "User not authenticated",
+        message: 'User not authenticated',
       });
     }
 
     if (requestedClinicId && requestedClinicId !== user.clinicId) {
-      logger.warn("Access denied - clinic mismatch", {
+      logger.warn('Access denied - clinic mismatch', {
         _userId: user.id,
         userClinicId: user.clinicId,
         requestedClinicId,
@@ -163,7 +162,7 @@ export function clinicAccessMiddleware() {
       });
 
       throw new HTTPException(403, {
-        message: "Access denied to clinic data",
+        message: 'Access denied to clinic data',
       });
     }
 
@@ -181,34 +180,34 @@ async function validateUserFromToken(
     const { sub: userId, email, role, clinic_id: clinicId, name } = payload;
 
     if (!userId || !email) {
-      logger.error("Invalid token _payload: missing required fields", {
+      logger.error('Invalid token _payload: missing required fields', {
         payload,
       });
       return null;
     }
 
     // For development/testing, allow test tokens
-    if (userId === "test-user-id" && email === "test@example.com") {
+    if (userId === 'test-user-id' && email === 'test@example.com') {
       return {
         id: userId,
         email,
-        _role: role || "admin",
-        clinicId: clinicId || "test-clinic-id",
-        name: name || "Test User",
+        _role: role || 'admin',
+        clinicId: clinicId || 'test-clinic-id',
+        name: name || 'Test User',
       };
     }
 
     // In production, validate user against database
     const supabase = createAdminClient();
     const { data: user, error } = await supabase
-      .from("users")
-      .select("id, email, role, clinic_id, name")
-      .eq("id", _userId)
-      .eq("email", email)
+      .from('users')
+      .select('id, email, role, clinic_id, name')
+      .eq('id', _userId)
+      .eq('email', email)
       .single();
 
     if (error || !user) {
-      logger.error("User not found in database", { userId, email, error });
+      logger.error('User not found in database', { userId, email, error });
       return null;
     }
 
@@ -220,7 +219,7 @@ async function validateUserFromToken(
       name: user.name,
     };
   } catch (error) {
-    logger.error("User validation from token failed", {
+    logger.error('User validation from token failed', {
       error: error instanceof Error ? error.message : String(error),
     });
     return null;
@@ -251,10 +250,10 @@ export function requireAuth(allowedRoles: string[] = []) {
 export function optionalAuth() {
   return async (c: Context, next: Next) => {
     try {
-      const authHeader = c.req.header("authorization");
+      const authHeader = c.req.header('authorization');
 
-      if (authHeader && authHeader.startsWith("Bearer ")) {
-        const token = authHeader.replace("Bearer ", "");
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.replace('Bearer ', '');
 
         // Validate token using comprehensive security validator
         const validationResult = await jwtValidator.validateToken(token, c);
@@ -263,11 +262,11 @@ export function optionalAuth() {
           const user = await validateUserFromToken(validationResult._payload);
 
           if (user) {
-            c.set("user", user);
-            c.set("userId", user.id);
-            c.set("clinicId", user.clinicId);
+            c.set('user', user);
+            c.set('userId', user.id);
+            c.set('clinicId', user.clinicId);
 
-            logger.debug("Optional authentication succeeded", {
+            logger.debug('Optional authentication succeeded', {
               _userId: user.id,
               clinicId: user.clinicId,
               path: c.req.path,
@@ -275,7 +274,7 @@ export function optionalAuth() {
             });
           }
         } else {
-          logger.debug("Optional authentication failed - invalid token", {
+          logger.debug('Optional authentication failed - invalid token', {
             error: validationResult.error,
             path: c.req.path,
             method: c.req.method,
@@ -284,7 +283,7 @@ export function optionalAuth() {
       }
     } catch (error) {
       // Silently fail for optional auth
-      logger.debug("Optional authentication failed", {
+      logger.debug('Optional authentication failed', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,

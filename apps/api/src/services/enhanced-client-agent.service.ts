@@ -6,49 +6,44 @@
  * Follows the 6-layer architecture design for enterprise-grade healthcare operations.
  */
 
-import { EventEmitter } from "events";
-import { v4 as uuidv4 } from "uuid";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
+import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
+import { ConversationContextService } from '../conversation/conversation-context-service';
+import { RealtimeSubscriptionService } from '../realtime/realtime-subscription-service';
+import { AguiService, AguiServiceConfig, QueryContext, QueryResult } from './agui-protocol/service';
 import {
-  AguiService,
-  AguiServiceConfig,
-  QueryContext,
-  QueryResult,
-} from "./agui-protocol/service";
-import {
-  AguiClientRegistrationMessage,
-  AguiClientProfileUpdateMessage,
-  AguiClientSearchMessage,
   AguiClientAnalyticsMessage,
-  AguiClientRetentionPredictionMessage,
-  AguiClientCommunicationMessage,
-  AguiDocumentOCRMessage,
-  AguiConsentManagementMessage,
-  AguiClientValidationMessage,
-  AguiClientRegistrationResponse,
-  AguiClientProfileUpdateResponse,
-  AguiClientSearchResponse,
   AguiClientAnalyticsResponse,
-  AguiClientRetentionPredictionResponse,
+  AguiClientCommunicationMessage,
   AguiClientCommunicationResponse,
-  AguiDocumentOCRResponse,
-  AguiConsentManagementResponse,
+  AguiClientProfileUpdateMessage,
+  AguiClientProfileUpdateResponse,
+  AguiClientRegistrationMessage,
+  AguiClientRegistrationResponse,
+  AguiClientRetentionPredictionMessage,
+  AguiClientRetentionPredictionResponse,
+  AguiClientSearchMessage,
+  AguiClientSearchResponse,
+  AguiClientValidationMessage,
   AguiClientValidationResponse,
-  ValidationResult,
-  RetentionFeatures,
-  OCRResult,
-  ClientRegistrationData,
-  ClientConsentData,
-  ValidationRule,
+  AguiConsentManagementMessage,
+  AguiConsentManagementResponse,
+  AguiDocumentOCRMessage,
+  AguiDocumentOCRResponse,
   AISuggestion,
-} from "./agui-protocol/types";
-import { ResponseCacheService } from "./cache/response-cache-service";
-import { AgentPermissionService } from "./permissions/agent-permissions";
-import { ConversationContextService } from "../conversation/conversation-context-service";
-import { RealtimeSubscriptionService } from "../realtime/realtime-subscription-service";
-import { DataMaskingService } from "./data-masking-service";
-import { LGPDService } from "./lgpd-service";
-import { StructuredLoggingService } from "./structured-logging";
+  ClientConsentData,
+  ClientRegistrationData,
+  OCRResult,
+  RetentionFeatures,
+  ValidationResult,
+  ValidationRule,
+} from './agui-protocol/types';
+import { ResponseCacheService } from './cache/response-cache-service';
+import { DataMaskingService } from './data-masking-service';
+import { LGPDService } from './lgpd-service';
+import { AgentPermissionService } from './permissions/agent-permissions';
+import { StructuredLoggingService } from './structured-logging';
 
 export interface EnhancedClientAgentConfig extends AguiServiceConfig {
   enableOCR: boolean;
@@ -81,11 +76,11 @@ export interface EnhancedClientAgentConfig extends AguiServiceConfig {
 export interface ClientAgentContext extends QueryContext {
   clinicId: string;
   sessionType:
-    | "registration"
-    | "profile_update"
-    | "search"
-    | "analytics"
-    | "communication";
+    | 'registration'
+    | 'profile_update'
+    | 'search'
+    | 'analytics'
+    | 'communication';
   workflowStep?: string;
   documents?: any[];
   validationRules?: ValidationRule[];
@@ -154,7 +149,7 @@ export class EnhancedClientAgentService extends EventEmitter {
 
     this.dataMaskingService = new DataMaskingService();
     this.lgpdService = new LGPDService(config);
-    this.loggingService = new StructuredLoggingService("EnhancedClientAgent");
+    this.loggingService = new StructuredLoggingService('EnhancedClientAgent');
 
     this.setupEventHandlers();
   }
@@ -163,7 +158,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    * Initialize the service
    */
   async initialize(): Promise<void> {
-    this.emit("initializing");
+    this.emit('initializing');
 
     try {
       // Test database connectivity
@@ -184,14 +179,14 @@ export class EnhancedClientAgentService extends EventEmitter {
       // Load ML models and configurations
       await this.initializeModels();
 
-      this.emit("ready");
+      this.emit('ready');
       this.loggingService.info(
-        "Enhanced Client Agent service initialized successfully",
+        'Enhanced Client Agent service initialized successfully',
       );
     } catch (error) {
-      this.emit("error", error);
+      this.emit('error', error);
       this.loggingService.error(
-        "Failed to initialize Enhanced Client Agent service",
+        'Failed to initialize Enhanced Client Agent service',
         { error },
       );
       throw error;
@@ -209,17 +204,17 @@ export class EnhancedClientAgentService extends EventEmitter {
     const sessionId = uuidv4();
     const session: ClientAgentSession = {
       id: sessionId,
-      type: "registration",
+      type: 'registration',
       userId: context._userId,
       clinicId: context.clinicId,
       startTime,
-      status: "active",
+      status: 'active',
     };
 
     this.activeSessions.set(sessionId, session);
 
     try {
-      this.loggingService.info("Processing client registration", {
+      this.loggingService.info('Processing client registration', {
         sessionId,
         userId: context._userId,
         clinicId: context.clinicId,
@@ -228,18 +223,21 @@ export class EnhancedClientAgentService extends EventEmitter {
       // Step 1: Validate input data
       const validationResults = await this.validateClientData(
         message.clientData,
-        message.consent,
         context.validationRules || [],
+        message.consent,
       );
 
       // Step 2: Process OCR if documents provided
       let ocrResults: OCRResult[] = [];
       if (
-        message.documents &&
-        message.documents.length > 0 &&
-        this.config.enableOCR
+        message.documents
+        && message.documents.length > 0
+        && this.config.enableOCR
       ) {
-        ocrResults = await this.processDocumentOCR(message.documents, context);
+        ocrResults = await this.internalProcessDocumentOCR(
+          message.documents,
+          context,
+        );
       }
 
       // Step 3: Apply LGPD compliance
@@ -258,8 +256,8 @@ export class EnhancedClientAgentService extends EventEmitter {
       // Step 5: Create client in database
       const clientId = await this.createClientInDatabase(
         lgpdProcessedData,
-        message.consent,
         context,
+        message.consent,
       );
 
       // Step 6: Process and store documents
@@ -273,14 +271,14 @@ export class EnhancedClientAgentService extends EventEmitter {
       // Step 7: Create consent records
       const consentRecords = await this.createConsentRecords(
         clientId,
-        message.consent,
         context,
+        message.consent,
       );
 
       // Step 8: Send welcome communication if enabled
       if (
-        this.config.enableCommunication &&
-        message.consent?.marketingConsent
+        this.config.enableCommunication
+        && message.consent?.marketingConsent
       ) {
         await this.sendWelcomeCommunication(
           clientId,
@@ -294,17 +292,16 @@ export class EnhancedClientAgentService extends EventEmitter {
       // Update metrics
       this.metrics.totalRegistrations++;
       this.metrics.successfulRegistrations++;
-      this.metrics.averageRegistrationTime =
-        (this.metrics.averageRegistrationTime *
-          (this.metrics.totalRegistrations - 1) +
-          processingTime) /
-        this.metrics.totalRegistrations;
+      this.metrics.averageRegistrationTime = (this.metrics.averageRegistrationTime
+          * (this.metrics.totalRegistrations - 1)
+        + processingTime)
+        / this.metrics.totalRegistrations;
 
       const response: AguiClientRegistrationResponse = {
         clientId,
-        status: validationResults.every((v) => v.isValid)
-          ? "success"
-          : "partial_success",
+        status: validationResults.every(v => v.isValid)
+          ? 'success'
+          : 'partial_success',
         validationResults,
         createdDocuments,
         consentRecords,
@@ -313,7 +310,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       };
 
       // Log completion
-      this.loggingService.info("Client registration completed", {
+      this.loggingService.info('Client registration completed', {
         sessionId,
         clientId,
         status: response.status,
@@ -321,21 +318,21 @@ export class EnhancedClientAgentService extends EventEmitter {
       });
 
       session.endTime = Date.now();
-      session.status = "completed";
+      session.status = 'completed';
       this.activeSessions.delete(sessionId);
 
       return response;
     } catch (error) {
       const processingTime = Date.now() - startTime;
 
-      this.loggingService.error("Client registration failed", {
+      this.loggingService.error('Client registration failed', {
         sessionId,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
         processingTime,
       });
 
       session.endTime = Date.now();
-      session.status = "failed";
+      session.status = 'failed';
       this.activeSessions.delete(sessionId);
 
       throw error;
@@ -353,7 +350,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     const sessionId = uuidv4();
 
     try {
-      this.loggingService.info("Processing client profile update", {
+      this.loggingService.info('Processing client profile update', {
         sessionId,
         clientId: message.clientId,
         userId: context._userId,
@@ -403,7 +400,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         processingTime,
       };
 
-      this.loggingService.info("Client profile update completed", {
+      this.loggingService.info('Client profile update completed', {
         sessionId,
         clientId: message.clientId,
         processingTime,
@@ -411,10 +408,10 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      this.loggingService.error("Client profile update failed", {
+      this.loggingService.error('Client profile update failed', {
         sessionId,
         clientId: message.clientId,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       throw error;
@@ -431,7 +428,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     const startTime = Date.now();
 
     try {
-      this.loggingService.info("Processing client search", {
+      this.loggingService.info('Processing client search', {
         userId: context._userId,
         clinicId: context.clinicId,
         searchCriteria: message.searchCriteria,
@@ -478,9 +475,9 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      this.loggingService.error("Client search failed", {
+      this.loggingService.error('Client search failed', {
         userId: context._userId,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       throw error;
@@ -497,7 +494,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     const startTime = Date.now();
 
     try {
-      this.loggingService.info("Processing client analytics", {
+      this.loggingService.info('Processing client analytics', {
         clientId: message.clientId,
         analyticsType: message.analyticsType,
         userId: context._userId,
@@ -541,10 +538,10 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      this.loggingService.error("Client analytics processing failed", {
+      this.loggingService.error('Client analytics processing failed', {
         clientId: message.clientId,
         analyticsType: message.analyticsType,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       throw error;
@@ -561,15 +558,14 @@ export class EnhancedClientAgentService extends EventEmitter {
     const startTime = Date.now();
 
     try {
-      this.loggingService.info("Processing client retention prediction", {
+      this.loggingService.info('Processing client retention prediction', {
         clientId: message.clientId,
         userId: context._userId,
       });
 
       // Step 1: Gather retention features
-      const features =
-        message.features ||
-        (await this.gatherRetentionFeatures(message.clientId, context));
+      const features = message.features
+        || (await this.gatherRetentionFeatures(message.clientId, context));
 
       // Step 2: Apply ML prediction model
       const prediction = await this.predictRetentionRisk(
@@ -599,7 +595,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         prediction,
         recommendations,
         nextReviewDate,
-        modelVersion: message.modelVersion || "1.0.0",
+        modelVersion: message.modelVersion || '1.0.0',
         processingTime,
       };
 
@@ -608,9 +604,9 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      this.loggingService.error("Client retention prediction failed", {
+      this.loggingService.error('Client retention prediction failed', {
         clientId: message.clientId,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       throw error;
@@ -627,7 +623,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     const startTime = Date.now();
 
     try {
-      this.loggingService.info("Processing client communication", {
+      this.loggingService.info('Processing client communication', {
         clientId: message.clientId,
         communicationType: message.communicationType,
         channel: message.channel,
@@ -665,10 +661,9 @@ export class EnhancedClientAgentService extends EventEmitter {
       const processingTime = Date.now() - startTime;
 
       // Update metrics
-      this.metrics.communicationSuccessRate =
-        (this.metrics.communicationSuccessRate * 99 +
-          (communicationResult.status === "sent" ? 100 : 0)) /
-        100;
+      this.metrics.communicationSuccessRate = (this.metrics.communicationSuccessRate * 99
+        + (communicationResult.status === 'sent' ? 100 : 0))
+        / 100;
 
       const response: AguiClientCommunicationResponse = {
         communicationId: communicationResult.communicationId,
@@ -683,10 +678,10 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      this.loggingService.error("Client communication failed", {
+      this.loggingService.error('Client communication failed', {
         clientId: message.clientId,
         communicationType: message.communicationType,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       throw error;
@@ -703,7 +698,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     const startTime = Date.now();
 
     try {
-      this.loggingService.info("Processing document OCR", {
+      this.loggingService.info('Processing document OCR', {
         documentId: message.documentId,
         documentType: message.documentType,
         userId: context._userId,
@@ -719,8 +714,8 @@ export class EnhancedClientAgentService extends EventEmitter {
       const ocrResult = await this.extractDocumentText(
         documentData,
         message.documentType,
-        message.extractionFields,
         context,
+        message.extractionFields,
       );
 
       // Step 4: Validate extracted data
@@ -740,8 +735,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       const processingTime = Date.now() - startTime;
 
       // Update metrics
-      this.metrics.ocrProcessingTime =
-        (this.metrics.ocrProcessingTime * 99 + processingTime) / 100;
+      this.metrics.ocrProcessingTime = (this.metrics.ocrProcessingTime * 99 + processingTime) / 100;
 
       const response: AguiDocumentOCRResponse = {
         documentId: message.documentId,
@@ -754,10 +748,10 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      this.loggingService.error("Document OCR processing failed", {
+      this.loggingService.error('Document OCR processing failed', {
         documentId: message.documentId,
         documentType: message.documentType,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       throw error;
@@ -774,7 +768,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     const startTime = Date.now();
 
     try {
-      this.loggingService.info("Processing consent management", {
+      this.loggingService.info('Processing consent management', {
         clientId: message.clientId,
         consentAction: message.consentAction,
         consentType: message.consentType,
@@ -789,8 +783,8 @@ export class EnhancedClientAgentService extends EventEmitter {
         message.clientId,
         message.consentType,
         message.consentAction,
-        message.consentData,
         context,
+        message.consentData,
       );
 
       // Step 3: Execute consent action
@@ -812,7 +806,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       );
 
       // Step 5: Trigger data processing actions if required
-      if (message.consentAction === "revoke") {
+      if (message.consentAction === 'revoke') {
         await this.handleConsentRevocation(
           message.clientId,
           message.consentType,
@@ -839,11 +833,11 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      this.loggingService.error("Consent management failed", {
+      this.loggingService.error('Consent management failed', {
         clientId: message.clientId,
         consentAction: message.consentAction,
         consentType: message.consentType,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       throw error;
@@ -860,7 +854,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     const startTime = Date.now();
 
     try {
-      this.loggingService.info("Processing client validation", {
+      this.loggingService.info('Processing client validation', {
         clientId: message.clientId,
         validationType: message.validationType,
         userId: context._userId,
@@ -892,16 +886,15 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       // Step 5: Calculate overall validity
       const overallValidity = combinedResults.every(
-        (result) => result.isValid || result.severity === "info",
+        result => result.isValid || result.severity === 'info',
       );
 
       const processingTime = Date.now() - startTime;
 
       // Update metrics
-      this.metrics.dataValidationAccuracy =
-        (this.metrics.dataValidationAccuracy * 99 +
-          (overallValidity ? 100 : 0)) /
-        100;
+      this.metrics.dataValidationAccuracy = (this.metrics.dataValidationAccuracy * 99
+        + (overallValidity ? 100 : 0))
+        / 100;
 
       const response: AguiClientValidationResponse = {
         validationId: uuidv4(),
@@ -914,10 +907,10 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      this.loggingService.error("Client validation failed", {
+      this.loggingService.error('Client validation failed', {
         clientId: message.clientId,
         validationType: message.validationType,
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       });
 
       throw error;
@@ -944,8 +937,8 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async testDatabaseConnectivity(): Promise<void> {
     const { data, error } = await this.supabase
-      .from("clinics")
-      .select("count")
+      .from('clinics')
+      .select('count')
       .limit(1);
 
     if (error) {
@@ -955,47 +948,47 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async testOCRConnectivity(): Promise<void> {
     // Implement OCR service connectivity test
-    this.loggingService.info("OCR connectivity test passed");
+    this.loggingService.info('OCR connectivity test passed');
   }
 
   private async testAnalyticsConnectivity(): Promise<void> {
     // Implement analytics service connectivity test
-    this.loggingService.info("Analytics connectivity test passed");
+    this.loggingService.info('Analytics connectivity test passed');
   }
 
   private async initializeRealtimeSubscriptions(): Promise<void> {
     // Subscribe to client-related real-time events
-    await this.realtimeService.subscribe("clients", "*", (payload) => {
-      this.emit("clientUpdate", payload);
+    await this.realtimeService.subscribe('clients', '*', payload => {
+      this.emit('clientUpdate', payload);
     });
   }
 
   private async initializeModels(): Promise<void> {
     // Load ML models and configurations
-    this.loggingService.info("ML models initialized");
+    this.loggingService.info('ML models initialized');
   }
 
   private setupEventHandlers(): void {
-    this.aguiService.on("error", (error) => {
-      this.emit("error", error);
+    this.aguiService.on('error', error => {
+      this.emit('error', error);
     });
 
-    this.aguiService.on("ready", () => {
-      this.emit("aguiReady");
+    this.aguiService.on('ready', () => {
+      this.emit('aguiReady');
     });
   }
 
   // Placeholder methods for core functionality
   private async validateClientData(
     clientData: ClientRegistrationData,
-    consent?: ClientConsentData,
     validationRules: ValidationRule[],
+    consent?: ClientConsentData,
   ): Promise<ValidationResult[]> {
     // Implement client data validation
     return [];
   }
 
-  private async processDocumentOCR(
+  private async internalProcessDocumentOCR(
     documents: any[],
     context: ClientAgentContext,
   ): Promise<OCRResult[]> {
@@ -1022,12 +1015,12 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async createClientInDatabase(
     clientData: ClientRegistrationData,
-    consent?: ClientConsentData,
     context: ClientAgentContext,
+    consent?: ClientConsentData,
   ): Promise<string> {
     // Create client record in database
     const { data, error } = await this.supabase
-      .from("patients")
+      .from('patients')
       .insert({
         clinic_id: context.clinicId,
         full_name: clientData.fullName,
@@ -1060,8 +1053,8 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async createConsentRecords(
     clientId: string,
-    consent?: ClientConsentData,
     context: ClientAgentContext,
+    consent?: ClientConsentData,
   ): Promise<string[]> {
     // Create consent records in database
     return [];
@@ -1159,7 +1152,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     context: ClientAgentContext,
   ): Promise<string> {
     // Generate AI insights from search results
-    return "";
+    return '';
   }
 
   private async gatherAnalyticsData(
@@ -1214,7 +1207,7 @@ export class EnhancedClientAgentService extends EventEmitter {
   ): Promise<any> {
     // Apply ML model for retention prediction
     return {
-      riskLevel: "low" as const,
+      riskLevel: 'low' as const,
       riskScore: 0.1,
       confidence: 0.9,
       factors: [],
@@ -1234,10 +1227,10 @@ export class EnhancedClientAgentService extends EventEmitter {
     // Schedule next review date based on risk level
     const date = new Date();
     switch (riskLevel) {
-      case "high":
+      case 'high':
         date.setDate(date.getDate() + 7);
         break;
-      case "medium":
+      case 'medium':
         date.setDate(date.getDate() + 30);
         break;
       default:
@@ -1281,7 +1274,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     // Send communication via specified channel
     return {
       communicationId: uuidv4(),
-      status: "sent",
+      status: 'sent',
       sentAt: new Date().toISOString(),
       cost: 0,
     };
@@ -1311,8 +1304,8 @@ export class EnhancedClientAgentService extends EventEmitter {
   private async extractDocumentText(
     documentData: any,
     documentType: string,
-    extractionFields?: string[],
     context: ClientAgentContext,
+    extractionFields?: string[],
   ): Promise<OCRResult> {
     // Extract text using OCR
     return {
@@ -1352,8 +1345,8 @@ export class EnhancedClientAgentService extends EventEmitter {
     clientId: string,
     consentType: string,
     consentAction: string,
-    consentData?: ClientConsentData,
     context: ClientAgentContext,
+    consentData?: ClientConsentData,
   ): Promise<ClientConsentData> {
     // Apply LGPD consent rules
     return consentData || ({} as ClientConsentData);
@@ -1369,7 +1362,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     // Execute consent action in database
     return {
       consentId: uuidv4(),
-      status: "success",
+      status: 'success',
       expiryDate: null,
       confirmationNumber: uuidv4(),
     };
@@ -1443,8 +1436,8 @@ export class EnhancedClientAgentService extends EventEmitter {
    * Health check
    */
   async healthCheck(): Promise<{
-    status: "healthy" | "degraded" | "unhealthy";
-    components: Record<string, "healthy" | "degraded" | "unhealthy">;
+    status: 'healthy' | 'degraded' | 'unhealthy';
+    components: Record<string, 'healthy' | 'degraded' | 'unhealthy'>;
     metrics: ClientAgentMetrics;
   }> {
     try {
@@ -1452,36 +1445,36 @@ export class EnhancedClientAgentService extends EventEmitter {
       await this.testDatabaseConnectivity();
 
       // Test core services
-      const components: Record<string, "healthy" | "degraded" | "unhealthy"> = {
-        database: "healthy",
-        aguiService: "healthy",
-        cache: "healthy",
-        permissions: "healthy",
-        realtime: "healthy",
-        ocr: this.config.enableOCR ? "healthy" : "disabled",
+      const components: Record<string, 'healthy' | 'degraded' | 'unhealthy'> = {
+        database: 'healthy',
+        aguiService: 'healthy',
+        cache: 'healthy',
+        permissions: 'healthy',
+        realtime: 'healthy',
+        ocr: this.config.enableOCR ? 'healthy' : 'disabled',
         analytics: this.config.enablePredictiveAnalytics
-          ? "healthy"
-          : "disabled",
-        communication: this.config.enableCommunication ? "healthy" : "disabled",
+          ? 'healthy'
+          : 'disabled',
+        communication: this.config.enableCommunication ? 'healthy' : 'disabled',
       };
 
       return {
-        status: "healthy",
+        status: 'healthy',
         components,
         metrics: this.metrics,
       };
     } catch (error) {
       return {
-        status: "unhealthy",
+        status: 'unhealthy',
         components: {
-          database: "unhealthy",
-          aguiService: "unhealthy",
-          cache: "unhealthy",
-          permissions: "unhealthy",
-          realtime: "unhealthy",
-          ocr: "unhealthy",
-          analytics: "unhealthy",
-          communication: "unhealthy",
+          database: 'unhealthy',
+          aguiService: 'unhealthy',
+          cache: 'unhealthy',
+          permissions: 'unhealthy',
+          realtime: 'unhealthy',
+          ocr: 'unhealthy',
+          analytics: 'unhealthy',
+          communication: 'unhealthy',
         },
         metrics: this.metrics,
       };
@@ -1496,14 +1489,14 @@ export class EnhancedClientAgentService extends EventEmitter {
 export interface ClientAgentSession {
   id: string;
   type:
-    | "registration"
-    | "profile_update"
-    | "search"
-    | "analytics"
-    | "communication";
+    | 'registration'
+    | 'profile_update'
+    | 'search'
+    | 'analytics'
+    | 'communication';
   userId: string;
   clinicId: string;
   startTime: number;
   endTime?: number;
-  status: "active" | "completed" | "failed";
+  status: 'active' | 'completed' | 'failed';
 }

@@ -5,13 +5,13 @@
  * T056: Implement role-based permission checking in data service
  */
 
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
-import { HealthcareLogger } from "../logging/healthcare-logger";
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { HealthcareLogger } from '../logging/healthcare-logger';
 
 interface UserPermissions {
   _userId: string;
   clinicId: string;
-  _role: "doctor" | "nurse" | "admin" | "receptionist" | "agent";
+  _role: 'doctor' | 'nurse' | 'admin' | 'receptionist' | 'agent';
   permissions: {
     canAccessPatients: boolean;
     canModifyPatients: boolean;
@@ -24,8 +24,8 @@ interface UserPermissions {
 }
 
 interface DataAccessRequest {
-  action: "read" | "write" | "delete";
-  resourceType: "patient" | "appointment" | "medical_record" | "ai_log";
+  action: 'read' | 'write' | 'delete';
+  resourceType: 'patient' | 'appointment' | 'medical_record' | 'ai_log';
   resourceId?: string;
   patientId?: string;
   clinicId: string;
@@ -51,7 +51,7 @@ export class SupabaseConnector {
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error("Missing Supabase configuration");
+      throw new Error('Missing Supabase configuration');
     }
 
     this.supabase = createClient(supabaseUrl, supabaseKey, {
@@ -61,15 +61,15 @@ export class SupabaseConnector {
       },
       global: {
         headers: {
-          "X-Healthcare-App": "NeonPro-Agent",
-          "X-LGPD-Compliance": "true",
+          'X-Healthcare-App': 'NeonPro-Agent',
+          'X-LGPD-Compliance': 'true',
         },
       },
     });
 
-    this.logger.info("Supabase connector initialized", {
-      component: "supabase-connector",
-      url: supabaseUrl.substring(0, 20) + "...",
+    this.logger.info('Supabase connector initialized', {
+      component: 'supabase-connector',
+      url: supabaseUrl.substring(0, 20) + '...',
     });
   }
 
@@ -85,20 +85,20 @@ export class SupabaseConnector {
 
     // Check cache (5 minute expiry)
     if (
-      this.permissionsCache.has(cacheKey) &&
-      this.cacheExpiry.get(cacheKey)! > now
+      this.permissionsCache.has(cacheKey)
+      && this.cacheExpiry.get(cacheKey)! > now
     ) {
       return this.permissionsCache.get(cacheKey)!;
     }
 
     if (!this.supabase) {
-      throw new Error("Supabase not initialized");
+      throw new Error('Supabase not initialized');
     }
 
     try {
       // Get professional role and permissions
       const { data: professional, error } = await this.supabase
-        .from("professionals")
+        .from('professionals')
         .select(
           `
           id,
@@ -109,13 +109,13 @@ export class SupabaseConnector {
           permissions
         `,
         )
-        .eq("user_id", _userId)
-        .eq("clinic_id", clinicId)
-        .eq("is_active", true)
+        .eq('user_id', _userId)
+        .eq('clinic_id', clinicId)
+        .eq('is_active', true)
         .single();
 
       if (error || !professional) {
-        this.logger.warn("User permissions not found", {
+        this.logger.warn('User permissions not found', {
           userId,
           clinicId,
           error: error?.message,
@@ -130,38 +130,38 @@ export class SupabaseConnector {
         permissions: {
           canAccessPatients: this.getRolePermission(
             professional.role,
-            "read",
-            "patients",
+            'read',
+            'patients',
           ),
           canModifyPatients: this.getRolePermission(
             professional.role,
-            "write",
-            "patients",
+            'write',
+            'patients',
           ),
           canAccessMedicalRecords: this.getRolePermission(
             professional.role,
-            "read",
-            "medical_records",
+            'read',
+            'medical_records',
           ),
           canModifyMedicalRecords: this.getRolePermission(
             professional.role,
-            "write",
-            "medical_records",
+            'write',
+            'medical_records',
           ),
           canAccessAppointments: this.getRolePermission(
             professional.role,
-            "read",
-            "appointments",
+            'read',
+            'appointments',
           ),
           canModifyAppointments: this.getRolePermission(
             professional.role,
-            "write",
-            "appointments",
+            'write',
+            'appointments',
           ),
           canAccessAuditLogs: this.getRolePermission(
             professional.role,
-            "read",
-            "audit_logs",
+            'read',
+            'audit_logs',
           ),
         },
       };
@@ -172,7 +172,7 @@ export class SupabaseConnector {
 
       return permissions;
     } catch (error) {
-      this.logger.error("Failed to get user permissions", error as Error, {
+      this.logger.error('Failed to get user permissions', error as Error, {
         userId,
         clinicId,
       });
@@ -190,23 +190,23 @@ export class SupabaseConnector {
   ): boolean {
     const rolePermissions: Record<string, Record<string, string[]>> = {
       doctor: {
-        read: ["patients", "medical_records", "appointments", "audit_logs"],
-        write: ["patients", "medical_records", "appointments"],
+        read: ['patients', 'medical_records', 'appointments', 'audit_logs'],
+        write: ['patients', 'medical_records', 'appointments'],
       },
       nurse: {
-        read: ["patients", "appointments"],
-        write: ["appointments"],
+        read: ['patients', 'appointments'],
+        write: ['appointments'],
       },
       admin: {
-        read: ["patients", "medical_records", "appointments", "audit_logs"],
-        write: ["patients", "appointments"],
+        read: ['patients', 'medical_records', 'appointments', 'audit_logs'],
+        write: ['patients', 'appointments'],
       },
       receptionist: {
-        read: ["patients", "appointments"],
-        write: ["appointments"],
+        read: ['patients', 'appointments'],
+        write: ['appointments'],
       },
       agent: {
-        read: ["patients", "appointments"],
+        read: ['patients', 'appointments'],
         write: [],
       },
     };
@@ -231,8 +231,8 @@ export class SupabaseConnector {
         resource_type: request.resourceType,
         resource_id: request.resourceId,
         patient_id: request.patientId,
-        result: "denied",
-        reason: "no_permissions_found",
+        result: 'denied',
+        reason: 'no_permissions_found',
       });
       return false;
     }
@@ -241,25 +241,22 @@ export class SupabaseConnector {
     let hasPermission = false;
 
     switch (request.resourceType) {
-      case "patient":
-        hasPermission =
-          request.action === "read"
-            ? permissions.permissions.canAccessPatients
-            : permissions.permissions.canModifyPatients;
+      case 'patient':
+        hasPermission = request.action === 'read'
+          ? permissions.permissions.canAccessPatients
+          : permissions.permissions.canModifyPatients;
         break;
-      case "appointment":
-        hasPermission =
-          request.action === "read"
-            ? permissions.permissions.canAccessAppointments
-            : permissions.permissions.canModifyAppointments;
+      case 'appointment':
+        hasPermission = request.action === 'read'
+          ? permissions.permissions.canAccessAppointments
+          : permissions.permissions.canModifyAppointments;
         break;
-      case "medical_record":
-        hasPermission =
-          request.action === "read"
-            ? permissions.permissions.canAccessMedicalRecords
-            : permissions.permissions.canModifyMedicalRecords;
+      case 'medical_record':
+        hasPermission = request.action === 'read'
+          ? permissions.permissions.canAccessMedicalRecords
+          : permissions.permissions.canModifyMedicalRecords;
         break;
-      case "ai_log":
+      case 'ai_log':
         hasPermission = permissions.permissions.canAccessAuditLogs;
         break;
     }
@@ -279,8 +276,8 @@ export class SupabaseConnector {
       resource_type: request.resourceType,
       resource_id: request.resourceId,
       patient_id: request.patientId,
-      result: hasPermission ? "granted" : "denied",
-      reason: hasPermission ? "authorized" : "insufficient_permissions",
+      result: hasPermission ? 'granted' : 'denied',
+      reason: hasPermission ? 'authorized' : 'insufficient_permissions',
       session_id: request.sessionId,
     });
 
@@ -300,10 +297,10 @@ export class SupabaseConnector {
     try {
       // Check if patient belongs to the clinic
       const { data: patient } = await this.supabase
-        .from("patients")
-        .select("clinic_id")
-        .eq("id", patientId)
-        .eq("clinic_id", clinicId)
+        .from('patients')
+        .select('clinic_id')
+        .eq('id', patientId)
+        .eq('clinic_id', clinicId)
         .single();
 
       if (!patient) {
@@ -312,17 +309,17 @@ export class SupabaseConnector {
 
       // Check LGPD consent for AI assistance
       const { data: consent } = await this.supabase
-        .from("consent_records")
-        .select("status, expires_at")
-        .eq("patient_id", patientId)
-        .eq("purpose", "ai_assistance")
-        .eq("status", "granted")
-        .gt("expires_at", new Date().toISOString())
+        .from('consent_records')
+        .select('status, expires_at')
+        .eq('patient_id', patientId)
+        .eq('purpose', 'ai_assistance')
+        .eq('status', 'granted')
+        .gt('expires_at', new Date().toISOString())
         .single();
 
       return !!consent;
     } catch (error) {
-      this.logger.error("Failed to validate patient access", error as Error, {
+      this.logger.error('Failed to validate patient access', error as Error, {
         userId,
         patientId,
         clinicId,
@@ -340,33 +337,33 @@ export class SupabaseConnector {
     clinicId: string,
   ): Promise<void> {
     if (!this.supabase) {
-      throw new Error("Supabase not initialized");
+      throw new Error('Supabase not initialized');
     }
 
     try {
       // Set session context using Supabase RLS
-      await this.supabase.rpc("set", {
-        parameter_name: "app.ai_session_id",
+      await this.supabase.rpc('set', {
+        parameter_name: 'app.ai_session_id',
         parameter_value: sessionId,
       });
 
-      await this.supabase.rpc("set", {
-        parameter_name: "app.user_id",
+      await this.supabase.rpc('set', {
+        parameter_name: 'app.user_id',
         parameter_value: userId,
       });
 
-      await this.supabase.rpc("set", {
-        parameter_name: "app.clinic_id",
+      await this.supabase.rpc('set', {
+        parameter_name: 'app.clinic_id',
         parameter_value: clinicId,
       });
 
-      this.logger.info("AI session context set", {
+      this.logger.info('AI session context set', {
         sessionId,
         userId,
         clinicId,
       });
     } catch (error) {
-      this.logger.error("Failed to set AI session context", error as Error, {
+      this.logger.error('Failed to set AI session context', error as Error, {
         sessionId,
         userId,
         clinicId,
@@ -385,8 +382,8 @@ export class SupabaseConnector {
     sessionId: string,
   ): Promise<any> {
     const _request: DataAccessRequest = {
-      action: "read",
-      resourceType: "patient",
+      action: 'read',
+      resourceType: 'patient',
       resourceId: patientId,
       patientId,
       clinicId,
@@ -396,19 +393,19 @@ export class SupabaseConnector {
 
     if (!(await this.validateDataAccess(request))) {
       throw new Error(
-        "Access denied: Insufficient permissions to view patient data",
+        'Access denied: Insufficient permissions to view patient data',
       );
     }
 
     if (!this.supabase) {
-      throw new Error("Supabase not initialized");
+      throw new Error('Supabase not initialized');
     }
 
     try {
       await this.setAISessionContext(sessionId, userId, clinicId);
 
       const { data, error } = await this.supabase
-        .from("patients")
+        .from('patients')
         .select(
           `
           id,
@@ -420,7 +417,7 @@ export class SupabaseConnector {
           created_at
         `,
         )
-        .eq("id", patientId)
+        .eq('id', patientId)
         .single();
 
       if (error) {
@@ -429,7 +426,7 @@ export class SupabaseConnector {
 
       return data;
     } catch (error) {
-      this.logger.error("Failed to get patient data", error as Error, {
+      this.logger.error('Failed to get patient data', error as Error, {
         patientId,
         userId,
         clinicId,
@@ -448,8 +445,8 @@ export class SupabaseConnector {
     filters?: any,
   ): Promise<any> {
     const _request: DataAccessRequest = {
-      action: "read",
-      resourceType: "appointment",
+      action: 'read',
+      resourceType: 'appointment',
       clinicId,
       userId,
       sessionId,
@@ -457,19 +454,19 @@ export class SupabaseConnector {
 
     if (!(await this.validateDataAccess(request))) {
       throw new Error(
-        "Access denied: Insufficient permissions to view appointment data",
+        'Access denied: Insufficient permissions to view appointment data',
       );
     }
 
     if (!this.supabase) {
-      throw new Error("Supabase not initialized");
+      throw new Error('Supabase not initialized');
     }
 
     try {
       await this.setAISessionContext(sessionId, userId, clinicId);
 
       let query = this.supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           id,
@@ -490,21 +487,21 @@ export class SupabaseConnector {
           )
         `,
         )
-        .eq("clinic_id", clinicId);
+        .eq('clinic_id', clinicId);
 
       // Apply filters if provided
       if (filters?.startDate) {
-        query = query.gte("scheduled_at", filters.startDate);
+        query = query.gte('scheduled_at', filters.startDate);
       }
       if (filters?.endDate) {
-        query = query.lte("scheduled_at", filters.endDate);
+        query = query.lte('scheduled_at', filters.endDate);
       }
       if (filters?.status) {
-        query = query.eq("status", filters.status);
+        query = query.eq('status', filters.status);
       }
 
       const { data, error } = await query
-        .order("scheduled_at", { ascending: true })
+        .order('scheduled_at', { ascending: true })
         .limit(100);
 
       if (error) {
@@ -515,7 +512,7 @@ export class SupabaseConnector {
 
       return data;
     } catch (error) {
-      this.logger.error("Failed to get appointment data", error as Error, {
+      this.logger.error('Failed to get appointment data', error as Error, {
         clinicId,
         userId,
         filters,
@@ -533,8 +530,8 @@ export class SupabaseConnector {
     sessionId: string,
   ): Promise<any> {
     const _request: DataAccessRequest = {
-      action: "read",
-      resourceType: "appointment",
+      action: 'read',
+      resourceType: 'appointment',
       clinicId,
       userId,
       sessionId,
@@ -542,12 +539,12 @@ export class SupabaseConnector {
 
     if (!(await this.validateDataAccess(request))) {
       throw new Error(
-        "Access denied: Insufficient permissions to view clinic data",
+        'Access denied: Insufficient permissions to view clinic data',
       );
     }
 
     if (!this.supabase) {
-      throw new Error("Supabase not initialized");
+      throw new Error('Supabase not initialized');
     }
 
     try {
@@ -555,25 +552,25 @@ export class SupabaseConnector {
 
       // Get clinic basic info
       const { data: clinic } = await this.supabase
-        .from("clinics")
-        .select("name, address, phone")
-        .eq("id", clinicId)
+        .from('clinics')
+        .select('name, address, phone')
+        .eq('id', clinicId)
         .single();
 
       // Get today's appointments count
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toISOString().split('T')[0];
       const { count: todayAppointments } = await this.supabase
-        .from("appointments")
-        .select("*", { count: "exact", head: true })
-        .eq("clinic_id", clinicId)
-        .gte("scheduled_at", today)
-        .lt("scheduled_at", today + "T23:59:59");
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .eq('clinic_id', clinicId)
+        .gte('scheduled_at', today)
+        .lt('scheduled_at', today + 'T23:59:59');
 
       // Get total patients count
       const { count: totalPatients } = await this.supabase
-        .from("patients")
-        .select("*", { count: "exact", head: true })
-        .eq("clinic_id", clinicId);
+        .from('patients')
+        .select('*', { count: 'exact', head: true })
+        .eq('clinic_id', clinicId);
 
       return {
         clinic,
@@ -583,7 +580,7 @@ export class SupabaseConnector {
         },
       };
     } catch (error) {
-      this.logger.error("Failed to get clinic summary", error as Error, {
+      this.logger.error('Failed to get clinic summary', error as Error, {
         clinicId,
         userId,
       });

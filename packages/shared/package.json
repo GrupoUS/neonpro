@@ -38,8 +38,8 @@
     "dev": "tsc -w -p tsconfig.json",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "bun test run",
+    "test:watch": "bun test --watch",
     "lint": "echo 'lint placeholder'",
     "prepare": "echo 'prepare script disabled for workspace install'"
   },

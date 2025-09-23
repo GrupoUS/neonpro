@@ -4,18 +4,18 @@
  * for secure telemedicine sessions with comprehensive compliance
  */
 
-import { TRPCError } from "@trpc/server";
+import { TRPCError } from '@trpc/server';
 import {
   healthcareProcedure,
   patientProcedure,
   publicProcedure,
   router,
   telemedicineProcedure,
-} from "../trpc";
+} from '../trpc';
 
 // Import services
-import { CFMComplianceService } from "../../services/cfm-compliance";
-import { telemedicineService } from "../../services/telemedicine-service";
+import { CFMComplianceService } from '../../services/cfm-compliance';
+import { telemedicineService } from '../../services/telemedicine-service';
 // import { PatientIdentityService } from '@neonpro/database/src/services/patient-identity.service';
 
 // Initialize services
@@ -27,10 +27,10 @@ const createSessionSchema = z.object({
   patientId: z.string().uuid(),
   physicianId: z.string().uuid(),
   sessionType: z.enum([
-    "consultation",
-    "follow_up",
-    "emergency",
-    "second_opinion",
+    'consultation',
+    'follow_up',
+    'emergency',
+    'second_opinion',
   ]),
   specialty: z.string().optional(),
   scheduledFor: z.date().optional(),
@@ -40,7 +40,7 @@ const createSessionSchema = z.object({
 
 const joinSessionSchema = z.object({
   sessionId: z.string().uuid(),
-  participantType: z.enum(["physician", "patient", "observer"]),
+  participantType: z.enum(['physician', 'patient', 'observer']),
   deviceInfo: z.object({
     browser: z.string(),
     os: z.string(),
@@ -53,7 +53,7 @@ const patientVerificationSchema = z.object({
   patientId: z.string().uuid(),
   documents: z.array(
     z.object({
-      type: z.enum(["cpf", "rg", "cns", "passport", "driver_license"]),
+      type: z.enum(['cpf', 'rg', 'cns', 'passport', 'driver_license']),
       number: z.string(),
       issuingAuthority: z.string().optional(),
       issueDate: z.date().optional(),
@@ -73,10 +73,10 @@ const consentSchema = z.object({
   patientId: z.string().uuid(),
   sessionId: z.string().uuid(),
   consentType: z.enum([
-    "telemedicine",
-    "data_processing",
-    "recording",
-    "second_opinion",
+    'telemedicine',
+    'data_processing',
+    'recording',
+    'second_opinion',
   ]),
   consentData: z.record(z.any()),
 });
@@ -92,10 +92,10 @@ const complianceReportSchema = z.object({
     })
     .optional(),
   reportType: z.enum([
-    "session_audit",
-    "compliance_violations",
-    "license_status",
-    "consent_status",
+    'session_audit',
+    'compliance_violations',
+    'license_status',
+    'consent_status',
   ]),
 });
 
@@ -111,28 +111,28 @@ export const telemedicineRouter = router({
       try {
         // Verify physician license and authorization
         const { data: physician } = await ctx.supabase
-          .from("users")
-          .select("cfm_number, state, specialty")
-          .eq("id", input.physicianId)
-          .eq("role", "physician")
+          .from('users')
+          .select('cfm_number, state, specialty')
+          .eq('id', input.physicianId)
+          .eq('role', 'physician')
           .single();
 
         if (!physician) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Physician not found",
+            code: 'NOT_FOUND',
+            message: 'Physician not found',
           });
         }
 
         // Verify medical license using telemedicine service
         const licenseVerification = await telemedicineService[
-          "verifyPhysicianLicense"
+          'verifyPhysicianLicense'
         ](input.physicianId, input.specialty || physician.specialty);
 
         if (!licenseVerification.complianceStatus.telemedicineCompliant) {
           throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Physician not authorized for telemedicine",
+            code: 'FORBIDDEN',
+            message: 'Physician not authorized for telemedicine',
             cause: licenseVerification.riskIndicators,
           });
         }
@@ -165,21 +165,20 @@ export const telemedicineRouter = router({
           complianceRecord,
           licenseVerification: {
             cfmCompliant: licenseVerification.complianceStatus.cfmCompliant,
-            telemedicineCompliant:
-              licenseVerification.complianceStatus.telemedicineCompliant,
+            telemedicineCompliant: licenseVerification.complianceStatus.telemedicineCompliant,
             restrictions: licenseVerification.telemedicineAuth.restrictions,
           },
         };
       } catch (error) {
-        console.error("Error creating telemedicine session:", error);
+        console.error('Error creating telemedicine session:', error);
 
         if (error instanceof TRPCError) {
           throw error;
         }
 
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create telemedicine session",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to create telemedicine session',
           cause: error,
         });
       }
@@ -202,14 +201,14 @@ export const telemedicineRouter = router({
           sessionId: input.sessionId,
           participantId: ctx.userId,
           participantType: input.participantType,
-          status: "joined",
+          status: 'joined',
           joinedAt: new Date(),
         };
 
         // Log compliance event
         await cfmService.logComplianceEvent({
           sessionId: input.sessionId,
-          eventType: "session_join",
+          eventType: 'session_join',
           _userId: ctx.userId!,
           participantType: input.participantType,
           metadata: { deviceInfo: input.deviceInfo },
@@ -217,10 +216,10 @@ export const telemedicineRouter = router({
 
         return sessionDetails;
       } catch (error) {
-        console.error("Error joining telemedicine session:", error);
+        console.error('Error joining telemedicine session:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to join session",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to join session',
           cause: error,
         });
       }
@@ -232,10 +231,10 @@ export const telemedicineRouter = router({
       z.object({
         sessionId: z.string().uuid(),
         endReason: z.enum([
-          "completed",
-          "cancelled",
-          "technical_issue",
-          "emergency",
+          'completed',
+          'cancelled',
+          'technical_issue',
+          'emergency',
         ]),
         notes: z.string().max(1000).optional(),
       }),
@@ -267,10 +266,10 @@ export const telemedicineRouter = router({
 
         return sessionSummary;
       } catch (error) {
-        console.error("Error ending telemedicine session:", error);
+        console.error('Error ending telemedicine session:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to end session",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to end session',
           cause: error,
         });
       }
@@ -296,10 +295,10 @@ export const telemedicineRouter = router({
           createdAt: sessionStatus.session.scheduledFor,
         };
       } catch (error) {
-        console.error("Error getting session status:", error);
+        console.error('Error getting session status:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to get session status",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to get session status',
           cause: error,
         });
       }
@@ -440,10 +439,10 @@ export const telemedicineRouter = router({
 
         return consent;
       } catch (error) {
-        console.error("Error recording patient consent:", error);
+        console.error('Error recording patient consent:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to record patient consent",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to record patient consent',
           cause: error,
         });
       }
@@ -456,10 +455,10 @@ export const telemedicineRouter = router({
         patientId: z.string().uuid(),
         consentType: z
           .enum([
-            "telemedicine",
-            "data_processing",
-            "recording",
-            "second_opinion",
+            'telemedicine',
+            'data_processing',
+            'recording',
+            'second_opinion',
           ])
           .optional(),
       }),
@@ -471,10 +470,10 @@ export const telemedicineRouter = router({
           input.consentType,
         );
       } catch (error) {
-        console.error("Error getting consent status:", error);
+        console.error('Error getting consent status:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to get consent status",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to get consent status',
           cause: error,
         });
       }
@@ -497,10 +496,10 @@ export const telemedicineRouter = router({
           reportType: input.reportType,
         });
       } catch (error) {
-        console.error("Error generating compliance report:", error);
+        console.error('Error generating compliance report:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to generate compliance report",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to generate compliance report',
           cause: error,
         });
       }
@@ -513,10 +512,10 @@ export const telemedicineRouter = router({
       try {
         return await cfmService.getSessionAuditTrail(input.sessionId);
       } catch (error) {
-        console.error("Error getting session audit trail:", error);
+        console.error('Error getting session audit trail:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to get session audit trail",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to get session audit trail',
           cause: error,
         });
       }
@@ -549,10 +548,10 @@ export const telemedicineRouter = router({
           offset: input.offset,
         };
       } catch (error) {
-        console.error("Error listing active sessions:", error);
+        console.error('Error listing active sessions:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to list active sessions",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to list active sessions',
           cause: error,
         });
       }
@@ -568,7 +567,7 @@ export const telemedicineRouter = router({
       z.object({
         sessionId: z.string().uuid(),
         signal: z.object({
-          type: z.enum(["offer", "answer", "ice-candidate"]),
+          type: z.enum(['offer', 'answer', 'ice-candidate']),
           data: z.any(),
         }),
         targetParticipant: z.string().uuid(),
@@ -584,7 +583,7 @@ export const telemedicineRouter = router({
         // );
 
         // Temporary signal handling - just log for now
-        console.log("Signal sent:", {
+        console.log('Signal sent:', {
           sessionId: input.sessionId,
           fromUserId: ctx.userId,
           targetParticipant: input.targetParticipant,
@@ -593,10 +592,10 @@ export const telemedicineRouter = router({
 
         return { success: true };
       } catch (error) {
-        console.error("Error sending WebRTC signal:", error);
+        console.error('Error sending WebRTC signal:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to send WebRTC signal",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to send WebRTC signal',
           cause: error,
         });
       }
@@ -617,10 +616,10 @@ export const telemedicineRouter = router({
           startedAt: null,
         };
       } catch (error) {
-        console.error("Error getting recording status:", error);
+        console.error('Error getting recording status:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to get recording status",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to get recording status',
           cause: error,
         });
       }
@@ -631,7 +630,7 @@ export const telemedicineRouter = router({
     .input(
       z.object({
         sessionId: z.string().uuid(),
-        recordingType: z.enum(["video", "audio", "screen"]),
+        recordingType: z.enum(['video', 'audio', 'screen']),
       }),
     )
     .mutation(async ({ input, _ctx }) => {
@@ -640,13 +639,13 @@ export const telemedicineRouter = router({
         const consentStatus = await cfmService.getPatientConsentStatus(
           // We'll need to get patientId from session
           input.sessionId,
-          "recording",
+          'recording',
         );
 
         if (!consentStatus.hasValidConsent) {
           throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Recording consent required",
+            code: 'FORBIDDEN',
+            message: 'Recording consent required',
           });
         }
 
@@ -665,10 +664,10 @@ export const telemedicineRouter = router({
           startedBy: ctx.userId,
         };
       } catch (error) {
-        console.error("Error starting recording:", error);
+        console.error('Error starting recording:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to start recording",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to start recording',
           cause: error,
         });
       }
@@ -691,10 +690,10 @@ export const telemedicineRouter = router({
           duration: recordingResult.duration,
         };
       } catch (error) {
-        console.error("Error stopping recording:", error);
+        console.error('Error stopping recording:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to stop recording",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to stop recording',
           cause: error,
         });
       }

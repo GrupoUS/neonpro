@@ -1,38 +1,35 @@
-import {
-  getHealthcarePrismaClient,
-  type HealthcarePrismaClient,
-} from "../clients/prisma";
-import { type LGPDOperationResult } from "../types/lgpd.js";
-import { createHealthcareError } from "./createHealthcareError.js";
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
+import { type LGPDOperationResult } from '../types/lgpd.js';
+import { createHealthcareError } from './createHealthcareError.js';
 
 // LGPD Consent Types
 export const ConsentPurpose = z.enum([
-  "TREATMENT",
-  "BILLING",
-  "RESEARCH",
-  "MARKETING",
-  "STATISTICS",
-  "LEGAL_COMPLIANCE",
-  "TELEMEDICINE",
-  "AI_ANALYSIS",
-  "THIRD_PARTY_SHARING",
+  'TREATMENT',
+  'BILLING',
+  'RESEARCH',
+  'MARKETING',
+  'STATISTICS',
+  'LEGAL_COMPLIANCE',
+  'TELEMEDICINE',
+  'AI_ANALYSIS',
+  'THIRD_PARTY_SHARING',
 ]);
 
 export const ConsentStatus = z.enum([
-  "ACTIVE",
-  "REVOKED",
-  "EXPIRED",
-  "PENDING",
-  "WITHDRAWN",
+  'ACTIVE',
+  'REVOKED',
+  'EXPIRED',
+  'PENDING',
+  'WITHDRAWN',
 ]);
 
 export const ConsentChannel = z.enum([
-  "WEB_PORTAL",
-  "MOBILE_APP",
-  "IN_PERSON",
-  "PHONE",
-  "EMAIL",
-  "PAPER_FORM",
+  'WEB_PORTAL',
+  'MOBILE_APP',
+  'IN_PERSON',
+  'PHONE',
+  'EMAIL',
+  'PAPER_FORM',
 ]);
 
 export interface LGPDConsentRecord {
@@ -105,7 +102,7 @@ export class LGPDConsentService {
 
       if (!patient) {
         throw createHealthcareError(
-          "PATIENT_NOT_FOUND",
+          'PATIENT_NOT_FOUND',
           `Patient not found: ${request.patientId}`,
           { patientId: request.patientId },
         );
@@ -125,15 +122,15 @@ export class LGPDConsentService {
 
       if (existingConsent) {
         // Revoke existing consent before creating new one
-        await this.revokeConsent(existingConsent.id, "CONSENT_RENEWED");
+        await this.revokeConsent(existingConsent.id, 'CONSENT_RENEWED');
       }
 
       // Create new consent record
       const consentRecord = await this.prisma.auditTrail.create({
         data: {
           _userId: request.patientId,
-          action: "CONSENT_GRANTED",
-          entityType: "LGPD_CONSENT",
+          action: 'CONSENT_GRANTED',
+          entityType: 'LGPD_CONSENT',
           entityId: this.generateConsentId(),
           metadata: {
             purpose: request.purpose,
@@ -156,13 +153,13 @@ export class LGPDConsentService {
       await this.prisma.auditTrail.create({
         data: {
           _userId: request.patientId,
-          action: "LGPD_CONSENT_RECORD",
-          entityType: "CONSENT_MANAGEMENT",
+          action: 'LGPD_CONSENT_RECORD',
+          entityType: 'CONSENT_MANAGEMENT',
           entityId: consentRecord.id,
           metadata: {
             purpose: request.purpose,
             channel: request.channel,
-            action: "GRANTED",
+            action: 'GRANTED',
             timestamp: new Date().toISOString(),
           },
         },
@@ -181,7 +178,7 @@ export class LGPDConsentService {
         recordsProcessed: 0,
         operationId: `consent_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -198,15 +195,15 @@ export class LGPDConsentService {
           id: request.consentId,
           _userId: request.patientId,
           metadata: {
-            path: ["status"],
-            equals: "ACTIVE",
+            path: ['status'],
+            equals: 'ACTIVE',
           },
         },
       });
 
       if (!consent) {
         throw createHealthcareError(
-          "CONSENT_NOT_FOUND",
+          'CONSENT_NOT_FOUND',
           `Active consent not found: ${request.consentId}`,
           { consentId: request.consentId, patientId: request.patientId },
         );
@@ -218,7 +215,7 @@ export class LGPDConsentService {
         data: {
           metadata: {
             ...consent.metadata,
-            status: "WITHDRAWN",
+            status: 'WITHDRAWN',
             withdrawalReason: request.reason,
             withdrawalDate: new Date().toISOString(),
             withdrawalChannel: request.channel,
@@ -232,8 +229,8 @@ export class LGPDConsentService {
       await this.prisma.auditTrail.create({
         data: {
           _userId: request.patientId,
-          action: "CONSENT_WITHDRAWN",
-          entityType: "CONSENT_MANAGEMENT",
+          action: 'CONSENT_WITHDRAWN',
+          entityType: 'CONSENT_MANAGEMENT',
           entityId: consent.id,
           metadata: {
             originalPurpose: consent.metadata?.purpose,
@@ -262,7 +259,7 @@ export class LGPDConsentService {
         recordsProcessed: 0,
         operationId: `withdrawal_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -274,16 +271,16 @@ export class LGPDConsentService {
     const consents = await this.prisma.auditTrail.findMany({
       where: {
         _userId: patientId,
-        action: "CONSENT_GRANTED",
+        action: 'CONSENT_GRANTED',
         metadata: {
-          path: ["status"],
-          equals: "ACTIVE",
+          path: ['status'],
+          equals: 'ACTIVE',
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
-    return consents.map((consent) => this.mapToConsentRecord(consent));
+    return consents.map(consent => this.mapToConsentRecord(consent));
   }
 
   /**
@@ -310,7 +307,7 @@ export class LGPDConsentService {
 
     if (!hasConsent) {
       throw createHealthcareError(
-        "CONSENT_REQUIRED",
+        'CONSENT_REQUIRED',
         `Patient consent required for ${operation}`,
         { patientId, purpose, operation },
       );
@@ -334,24 +331,24 @@ export class LGPDConsentService {
         where: {
           _userId: patientId,
           action: {
-            in: ["CONSENT_GRANTED", "CONSENT_WITHDRAWN", "LGPD_CONSENT_RECORD"],
+            in: ['CONSENT_GRANTED', 'CONSENT_WITHDRAWN', 'LGPD_CONSENT_RECORD'],
           },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       });
 
       const report = {
         patientId,
         generatedAt: new Date().toISOString(),
         activeConsents: consents,
-        consentHistory: auditEntries.map((entry) => ({
+        consentHistory: auditEntries.map(entry => ({
           action: entry.action,
           timestamp: entry.createdAt,
           metadata: entry.metadata,
         })),
         summary: {
           totalConsents: consents.length,
-          purposes: consents.map((c) => c.purpose),
+          purposes: consents.map(c => c.purpose),
           lastActivity: auditEntries[0]?.createdAt,
         },
       };
@@ -369,7 +366,7 @@ export class LGPDConsentService {
         recordsProcessed: 0,
         operationId: `consent_report_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -382,13 +379,13 @@ export class LGPDConsentService {
     return this.prisma.auditTrail.findFirst({
       where: {
         _userId: patientId,
-        action: "CONSENT_GRANTED",
+        action: 'CONSENT_GRANTED',
         metadata: {
-          path: ["purpose"],
+          path: ['purpose'],
           equals: purpose,
         },
       },
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -400,8 +397,8 @@ export class LGPDConsentService {
       where: { id: consentId },
       data: {
         metadata: {
-          path: ["status"],
-          equals: "REVOKED",
+          path: ['status'],
+          equals: 'REVOKED',
         },
       },
     });
@@ -414,31 +411,36 @@ export class LGPDConsentService {
     // Default consent templates for different purposes
     const templates: Record<string, { text: string; version: string }> = {
       TREATMENT: {
-        text: `Autorizo o processamento de meus dados pessoais para fins de tratamento médico, diagnóstico e terapia.`,
-        version: "1.0",
+        text:
+          `Autorizo o processamento de meus dados pessoais para fins de tratamento médico, diagnóstico e terapia.`,
+        version: '1.0',
       },
       BILLING: {
-        text: `Autorizo o processamento de meus dados pessoais para fins de faturamento e cobrança de serviços médicos.`,
-        version: "1.0",
+        text:
+          `Autorizo o processamento de meus dados pessoais para fins de faturamento e cobrança de serviços médicos.`,
+        version: '1.0',
       },
       RESEARCH: {
-        text: `Autorizo o uso de meus dados para fins de pesquisa médica, garantindo o anonimato e confidencialidade.`,
-        version: "1.0",
+        text:
+          `Autorizo o uso de meus dados para fins de pesquisa médica, garantindo o anonimato e confidencialidade.`,
+        version: '1.0',
       },
       TELEMEDICINE: {
-        text: `Autorizo o processamento de meus dados para realização de consultas médicas via telemedicina.`,
-        version: "1.0",
+        text:
+          `Autorizo o processamento de meus dados para realização de consultas médicas via telemedicina.`,
+        version: '1.0',
       },
       AI_ANALYSIS: {
-        text: `Autorizo o uso de meus dados para análise por IA auxiliar no diagnóstico e tratamento.`,
-        version: "1.0",
+        text:
+          `Autorizo o uso de meus dados para análise por IA auxiliar no diagnóstico e tratamento.`,
+        version: '1.0',
       },
     };
 
     return (
       templates[purpose] || {
         text: `Autorizo o processamento de meus dados para ${purpose}.`,
-        version: "1.0",
+        version: '1.0',
       }
     );
   }
@@ -449,7 +451,7 @@ export class LGPDConsentService {
       id: audit.id,
       patientId: audit.userId,
       purpose: metadata.purpose,
-      status: metadata.status || "ACTIVE",
+      status: metadata.status || 'ACTIVE',
       channel: metadata.channel,
       consentText: metadata.consentText,
       version: metadata.version,
@@ -478,12 +480,12 @@ export class LGPDConsentService {
 
   private isSensitiveOperation(operation: string): boolean {
     const sensitiveOperations = [
-      "GENETIC_ANALYSIS",
-      "BIOMETRIC_DATA",
-      "MENTAL_HEALTH",
-      "SEXUAL_HEALTH",
-      "RELIGIOUS_DATA",
-      "POLITICAL_OPINIONS",
+      'GENETIC_ANALYSIS',
+      'BIOMETRIC_DATA',
+      'MENTAL_HEALTH',
+      'SEXUAL_HEALTH',
+      'RELIGIOUS_DATA',
+      'POLITICAL_OPINIONS',
     ];
     return sensitiveOperations.includes(operation);
   }
@@ -498,8 +500,8 @@ export class LGPDConsentService {
 
     if (!specialConsent?.metadata?.specialDataConsent) {
       throw createHealthcareError(
-        "SPECIAL_CONSENT_REQUIRED",
-        "Special consent required for sensitive data processing",
+        'SPECIAL_CONSENT_REQUIRED',
+        'Special consent required for sensitive data processing',
         { patientId, purpose },
       );
     }

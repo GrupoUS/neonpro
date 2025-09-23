@@ -7,8 +7,8 @@
   "scripts": {
     "build": "bun x tsc",
     "dev": "tsc --watch",
-    "test": "vitest",
-    "test:ui": "vitest --ui",
+    "test": "bun test",
+    "test:ui": "bun test --ui",
     "lint": "oxlint \"src/**/*.ts\"",
     "lint:fix": "oxlint --fix \"src/**/*.ts\"",
     "type-check": "tsc --noEmit"

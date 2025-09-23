@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     // TDD Compliance: Require tests to exist (no empty suites allowed)
     passWithNoTests: false,
-    globals: false,
+    globals: true,
     environment: "node",
     coverage: {
       reporter: ["text", "json", "html"],

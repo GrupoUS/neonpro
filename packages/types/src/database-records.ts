@@ -16,7 +16,7 @@ export interface HealthcareDatabaseRecord extends DatabaseRecord {
   clinic_id?: string;
   patient_id?: string;
   compliance_status?: string;
-  audit_trail?: AuditTrailEntry[];
+  audit_trail?: any[];
 }
 
 export type { AuditTrailEntry } from "./governance.types";

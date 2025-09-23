@@ -663,9 +663,9 @@ describe('Real-time Notification Service (T042)', () => {
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: ',
-        channel: ',
-        templateId: ',
+        recipientId: '',
+        channel: '',
+        templateId: '',
         data: {},
       });
 

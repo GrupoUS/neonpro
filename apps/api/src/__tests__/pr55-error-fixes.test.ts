@@ -184,7 +184,7 @@ describe('Error message formatting issues', () => {
           clinicId: 'test-clinic',
         });
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : ';
+        const errorMessage = error instanceof Error ? error.message : '';
         // Error message contains prefixed parameter names instead of clean names
         expect(errorMessage).toContain('_request');
         expect(errorMessage).toContain('_userId');

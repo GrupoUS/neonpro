@@ -9,11 +9,11 @@
  * - Validation and type safety
  */
 
-import crypto from "crypto";
-import { logger } from "./secure-logger";
+import crypto from 'crypto';
+import { logger } from './secure-logger';
 
 interface SecretConfig {
-  provider: "env" | "vault" | "file";
+  provider: 'env' | 'vault' | 'file';
   encryption?: boolean;
   auditTrail?: boolean;
   encryptionKey?: string;
@@ -40,23 +40,22 @@ class SecretManager {
       provider: config.provider,
       encryption: config.encryption ?? true,
       auditTrail: config.auditTrail ?? true,
-      encryptionKey:
-        config.encryptionKey ||
-        process.env.SECRET_ENCRYPTION_KEY ||
-        this.generateEncryptionKey(),
-      vaultUrl: config.vaultUrl || process.env.VAULT_URL || "",
-      vaultToken: config.vaultToken || process.env.VAULT_TOKEN || "",
+      encryptionKey: config.encryptionKey
+        || process.env.SECRET_ENCRYPTION_KEY
+        || this.generateEncryptionKey(),
+      vaultUrl: config.vaultUrl || process.env.VAULT_URL || '',
+      vaultToken: config.vaultToken || process.env.VAULT_TOKEN || '',
     };
 
-    this.encryptionKey = Buffer.from(this.config.encryptionKey, "hex");
+    this.encryptionKey = Buffer.from(this.config.encryptionKey, 'hex');
     this.loadSecrets();
   }
 
   private generateEncryptionKey(): string {
-    const key = crypto.randomBytes(32).toString("hex");
+    const key = crypto.randomBytes(32).toString('hex');
     logger.warn(
-      "Generated new encryption key. Store this securely: SECRET_ENCRYPTION_KEY=" +
-        key,
+      'Generated new encryption key. Store this securely: SECRET_ENCRYPTION_KEY='
+        + key,
     );
     return key;
   }
@@ -64,13 +63,13 @@ class SecretManager {
   private async loadSecrets(): Promise<void> {
     try {
       switch (this.config.provider) {
-        case "env":
+        case 'env':
           this.loadFromEnvironment();
           break;
-        case "vault":
+        case 'vault':
           await this.loadFromVault();
           break;
-        case "file":
+        case 'file':
           this.loadFromFile();
           break;
         default:
@@ -79,12 +78,12 @@ class SecretManager {
           );
       }
 
-      logger.info("Secrets loaded successfully", {
+      logger.info('Secrets loaded successfully', {
         provider: this.config.provider,
         secretCount: this.secrets.size,
       });
     } catch (error) {
-      logger.error("Failed to load secrets", error as Error, {
+      logger.error('Failed to load secrets', error as Error, {
         provider: this.config.provider,
       });
       throw error;
@@ -93,21 +92,21 @@ class SecretManager {
 
   private loadFromEnvironment(): void {
     const secretKeys = [
-      "DATABASE_URL",
-      "JWT_SECRET",
-      "ENCRYPTION_KEY",
-      "API_KEY",
-      "OPENAI_API_KEY",
-      "ANTHROPIC_API_KEY",
-      "REDIS_URL",
-      "SMTP_PASSWORD",
-      "WEBHOOK_SECRET",
-      "OAUTH_CLIENT_SECRET",
-      "SUPABASE_SERVICE_ROLE_KEY",
-      "SUPABASE_ANON_KEY",
+      'DATABASE_URL',
+      'JWT_SECRET',
+      'ENCRYPTION_KEY',
+      'API_KEY',
+      'OPENAI_API_KEY',
+      'ANTHROPIC_API_KEY',
+      'REDIS_URL',
+      'SMTP_PASSWORD',
+      'WEBHOOK_SECRET',
+      'OAUTH_CLIENT_SECRET',
+      'SUPABASE_SERVICE_ROLE_KEY',
+      'SUPABASE_ANON_KEY',
     ];
 
-    secretKeys.forEach((key) => {
+    secretKeys.forEach(key => {
       const value = process.env[key];
       if (value) {
         this.setSecret(key, value, false); // Don't audit initial loading
@@ -117,13 +116,13 @@ class SecretManager {
 
   private async loadFromVault(): Promise<void> {
     if (!this.config.vaultUrl || !this.config.vaultToken) {
-      throw new Error("Vault URL and token are required for vault provider");
+      throw new Error('Vault URL and token are required for vault provider');
     }
 
     // Vault integration would go here
     // For now, fallback to environment
     logger.warn(
-      "Vault provider not fully implemented, falling back to environment",
+      'Vault provider not fully implemented, falling back to environment',
     );
     this.loadFromEnvironment();
   }
@@ -132,7 +131,7 @@ class SecretManager {
     // File-based secret loading would go here
     // For now, fallback to environment
     logger.warn(
-      "File provider not fully implemented, falling back to environment",
+      'File provider not fully implemented, falling back to environment',
     );
     this.loadFromEnvironment();
   }
@@ -141,33 +140,33 @@ class SecretManager {
     if (!this.config.encryption) return value;
 
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipher("aes-256-gcm", this.encryptionKey);
+    const cipher = crypto.createCipher('aes-256-gcm', this.encryptionKey);
 
-    let encrypted = cipher.update(value, "utf8", "hex");
-    encrypted += cipher.final("hex");
+    let encrypted = cipher.update(value, 'utf8', 'hex');
+    encrypted += cipher.final('hex');
 
     const authTag = cipher.getAuthTag();
 
-    return iv.toString("hex") + ":" + authTag.toString("hex") + ":" + encrypted;
+    return iv.toString('hex') + ':' + authTag.toString('hex') + ':' + encrypted;
   }
 
   private decrypt(encryptedValue: string): string {
     if (!this.config.encryption) return encryptedValue;
 
-    const parts = encryptedValue.split(":");
+    const parts = encryptedValue.split(':');
     if (parts.length !== 3) {
-      throw new Error("Invalid encrypted value format");
+      throw new Error('Invalid encrypted value format');
     }
 
     const [ivHex, authTagHex, encrypted] = parts;
-    const iv = Buffer.from(ivHex, "hex");
-    const authTag = Buffer.from(authTagHex, "hex");
+    const iv = Buffer.from(ivHex, 'hex');
+    const authTag = Buffer.from(authTagHex, 'hex');
 
-    const decipher = crypto.createDecipher("aes-256-gcm", this.encryptionKey);
+    const decipher = crypto.createDecipher('aes-256-gcm', this.encryptionKey);
     decipher.setAuthTag(authTag);
 
-    let decrypted = decipher.update(encrypted, "hex", "utf8");
-    decrypted += decipher.final("utf8");
+    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
 
     return decrypted;
   }
@@ -185,9 +184,9 @@ class SecretManager {
 
     if (audit && this.config.auditTrail) {
       logger.auditDataModification({
-        _userId: "system",
-        operation: "CREATE",
-        dataType: "secret",
+        _userId: 'system',
+        operation: 'CREATE',
+        dataType: 'secret',
         recordId: name,
       });
     }
@@ -196,7 +195,7 @@ class SecretManager {
   public getSecret(name: string, accessedBy?: string): string | undefined {
     const encryptedValue = this.secrets.get(name);
     if (!encryptedValue) {
-      logger.warn("Secret not found", { secretName: name, accessedBy });
+      logger.warn('Secret not found', { secretName: name, accessedBy });
       return undefined;
     }
 
@@ -211,19 +210,19 @@ class SecretManager {
     // Audit access
     if (this.config.auditTrail) {
       logger.auditDataAccess({
-        _userId: accessedBy || "unknown",
-        operation: "READ",
-        dataType: "secret",
-        endpoint: "secret-manager",
-        ip: "internal",
-        userAgent: "secret-manager",
+        _userId: accessedBy || 'unknown',
+        operation: 'READ',
+        dataType: 'secret',
+        endpoint: 'secret-manager',
+        ip: 'internal',
+        userAgent: 'secret-manager',
       });
     }
 
     try {
       return this.decrypt(encryptedValue);
     } catch (error) {
-      logger.error("Failed to decrypt secret", error as Error, {
+      logger.error('Failed to decrypt secret', error as Error, {
         secretName: name,
         accessedBy,
       });
@@ -256,15 +255,15 @@ class SecretManager {
 
     if (this.config.auditTrail) {
       logger.auditDataModification({
-        _userId: rotatedBy || "system",
-        operation: "UPDATE",
-        dataType: "secret",
+        _userId: rotatedBy || 'system',
+        operation: 'UPDATE',
+        dataType: 'secret',
         recordId: name,
-        changes: ["value_rotated"],
+        changes: ['value_rotated'],
       });
     }
 
-    logger.info("Secret rotated successfully", {
+    logger.info('Secret rotated successfully', {
       secretName: name,
       rotatedBy,
     });
@@ -276,9 +275,9 @@ class SecretManager {
 
     if (existed && this.config.auditTrail) {
       logger.auditDataModification({
-        _userId: deletedBy || "system",
-        operation: "DELETE",
-        dataType: "secret",
+        _userId: deletedBy || 'system',
+        operation: 'DELETE',
+        dataType: 'secret',
         recordId: name,
       });
     }
@@ -288,11 +287,11 @@ class SecretManager {
 
   // Convenience methods for common secrets
   public getDatabaseUrl(): string | undefined {
-    return this.getSecret("DATABASE_URL", "database-connection");
+    return this.getSecret('DATABASE_URL', 'database-connection');
   }
 
   public getJwtSecret(): string | undefined {
-    return this.getSecret("JWT_SECRET", "jwt-service");
+    return this.getSecret('JWT_SECRET', 'jwt-service');
   }
 
   public getApiKey(_service: string): string | undefined {
@@ -305,23 +304,23 @@ class SecretManager {
   public getSupabaseKeys(): { serviceRole?: string; anon?: string } {
     return {
       serviceRole: this.getSecret(
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "supabase-service",
+        'SUPABASE_SERVICE_ROLE_KEY',
+        'supabase-service',
       ),
-      anon: this.getSecret("SUPABASE_ANON_KEY", "supabase-client"),
+      anon: this.getSecret('SUPABASE_ANON_KEY', 'supabase-client'),
     };
   }
 
   // Health check method
-  public healthCheck(): { status: "healthy" | "unhealthy"; details: any } {
-    const requiredSecrets = ["DATABASE_URL", "JWT_SECRET"];
+  public healthCheck(): { status: 'healthy' | 'unhealthy'; details: any } {
+    const requiredSecrets = ['DATABASE_URL', 'JWT_SECRET'];
     const missingSecrets = requiredSecrets.filter(
-      (secret) => !this.hasSecret(secret),
+      secret => !this.hasSecret(secret),
     );
 
     if (missingSecrets.length > 0) {
       return {
-        status: "unhealthy",
+        status: 'unhealthy',
         details: {
           missingSecrets,
           totalSecrets: this.secrets.size,
@@ -331,7 +330,7 @@ class SecretManager {
     }
 
     return {
-      status: "healthy",
+      status: 'healthy',
       details: {
         totalSecrets: this.secrets.size,
         provider: this.config.provider,
@@ -346,7 +345,7 @@ export function createSecretManager(
   config?: Partial<SecretConfig>,
 ): SecretManager {
   return new SecretManager({
-    provider: "env",
+    provider: 'env',
     encryption: true,
     auditTrail: true,
     ...config,

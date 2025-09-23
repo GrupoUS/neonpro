@@ -1,4 +1,4 @@
-import { Context, Next } from "hono";
+import { Context, Next } from 'hono';
 import {
   getSecurityHeaders,
   isSafeHeaderValue,
@@ -6,39 +6,39 @@ import {
   RateLimiter,
   validateAndSanitizeInput,
   validatePassword,
-} from "../types/guards";
+} from '../types/guards';
 
 // Security configuration
 const SECURITY_CONFIG = {
-  maxRequestBodySize: "10mb",
-  maxRequestParamSize: "1mb",
-  allowedOrigins: process.env.ALLOWED_ORIGINS?.split(",") || [],
+  maxRequestBodySize: '10mb',
+  maxRequestParamSize: '1mb',
+  allowedOrigins: process.env.ALLOWED_ORIGINS?.split(',') || [],
   blockedUserAgents: [
-    "sqlmap",
-    "nikto",
-    "nmap",
-    "masscan",
-    "zgrab",
-    "curl",
-    "wget",
-    "python-requests",
-    "bot",
-    "spider",
-    "crawler",
+    'sqlmap',
+    'nikto',
+    'nmap',
+    'masscan',
+    'zgrab',
+    'curl',
+    'wget',
+    'python-requests',
+    'bot',
+    'spider',
+    'crawler',
   ],
   sensitiveHeaders: [
-    "authorization",
-    "cookie",
-    "set-cookie",
-    "proxy-authorization",
-    "www-authenticate",
+    'authorization',
+    'cookie',
+    'set-cookie',
+    'proxy-authorization',
+    'www-authenticate',
   ],
   sensitivePaths: [
-    "/api/auth",
-    "/api/users",
-    "/api/patients",
-    "/api/appointments",
-    "/api/admin",
+    '/api/auth',
+    '/api/users',
+    '/api/patients',
+    '/api/appointments',
+    '/api/admin',
   ],
 } as const;
 
@@ -62,16 +62,16 @@ export const securityMiddleware = async (c: Context, next: Next) => {
   });
 
   // Check for blocked user agents
-  const userAgent = c.req.header("user-agent")?.toLowerCase() || "";
+  const userAgent = c.req.header('user-agent')?.toLowerCase() || '';
   if (
-    SECURITY_CONFIG.blockedUserAgents.some((agent) => userAgent.includes(agent))
+    SECURITY_CONFIG.blockedUserAgents.some(agent => userAgent.includes(agent))
   ) {
     return c.json(
       {
         success: false,
         error: {
-          code: "ACCESS_DENIED",
-          message: "Access denied",
+          code: 'ACCESS_DENIED',
+          message: 'Access denied',
         },
       },
       403,
@@ -79,19 +79,18 @@ export const securityMiddleware = async (c: Context, next: Next) => {
   }
 
   // Rate limiting
-  const clientIP =
-    c.req.header("cf-connecting-ip") ||
-    c.req.header("x-forwarded-for") ||
-    c.req.header("x-real-ip") ||
-    "unknown";
+  const clientIP = c.req.header('cf-connecting-ip')
+    || c.req.header('x-forwarded-for')
+    || c.req.header('x-real-ip')
+    || 'unknown';
 
   if (!rateLimiter.isAllowed(clientIP)) {
     return c.json(
       {
         success: false,
         error: {
-          code: "RATE_LIMITED",
-          message: "Too many requests",
+          code: 'RATE_LIMITED',
+          message: 'Too many requests',
         },
       },
       429,
@@ -99,23 +98,22 @@ export const securityMiddleware = async (c: Context, next: Next) => {
   }
 
   // Add rate limit headers
-  c.header("X-RateLimit-Limit", "100");
+  c.header('X-RateLimit-Limit', '100');
   c.header(
-    "X-RateLimit-Remaining",
+    'X-RateLimit-Remaining',
     rateLimiter.getRemainingRequests(clientIP).toString(),
   );
-  c.header("X-RateLimit-Reset", (Date.now() + 60 * 1000).toString());
+  c.header('X-RateLimit-Reset', (Date.now() + 60 * 1000).toString());
 
   await next();
 };
 
 // Authentication middleware with enhanced security
 export const authMiddleware = async (c: Context, next: Next) => {
-  const clientIP =
-    c.req.header("cf-connecting-ip") ||
-    c.req.header("x-forwarded-for") ||
-    c.req.header("x-real-ip") ||
-    "unknown";
+  const clientIP = c.req.header('cf-connecting-ip')
+    || c.req.header('x-forwarded-for')
+    || c.req.header('x-real-ip')
+    || 'unknown';
 
   // Apply stricter rate limiting for auth endpoints
   if (!authRateLimiter.isAllowed(clientIP)) {
@@ -123,23 +121,23 @@ export const authMiddleware = async (c: Context, next: Next) => {
       {
         success: false,
         error: {
-          code: "AUTH_RATE_LIMITED",
-          message: "Too many authentication attempts. Please try again later.",
+          code: 'AUTH_RATE_LIMITED',
+          message: 'Too many authentication attempts. Please try again later.',
         },
       },
       429,
     );
   }
 
-  const authHeader = c.req.header("authorization");
+  const authHeader = c.req.header('authorization');
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return c.json(
       {
         success: false,
         error: {
-          code: "MISSING_AUTH",
-          message: "Authorization header required",
+          code: 'MISSING_AUTH',
+          message: 'Authorization header required',
         },
       },
       401,
@@ -154,8 +152,8 @@ export const authMiddleware = async (c: Context, next: Next) => {
       {
         success: false,
         error: {
-          code: "INVALID_TOKEN",
-          message: "Invalid token format",
+          code: 'INVALID_TOKEN',
+          message: 'Invalid token format',
         },
       },
       401,
@@ -163,7 +161,7 @@ export const authMiddleware = async (c: Context, next: Next) => {
   }
 
   // Add token to context for validation in subsequent middleware
-  c.set("authToken", token);
+  c.set('authToken', token);
 
   await next();
 };
@@ -171,15 +169,15 @@ export const authMiddleware = async (c: Context, next: Next) => {
 // Input validation middleware
 export const inputValidationMiddleware = async (c: Context, next: Next) => {
   // Check request body size
-  const contentLength = c.req.header("content-length");
+  const contentLength = c.req.header('content-length');
   if (contentLength && parseInt(contentLength) > 10 * 1024 * 1024) {
     // 10MB
     return c.json(
       {
         success: false,
         error: {
-          code: "PAYLOAD_TOO_LARGE",
-          message: "Request body too large",
+          code: 'PAYLOAD_TOO_LARGE',
+          message: 'Request body too large',
         },
       },
       413,
@@ -187,14 +185,14 @@ export const inputValidationMiddleware = async (c: Context, next: Next) => {
   }
 
   // Validate content type
-  const contentType = c.req.header("content-type");
-  if (contentType && !contentType.includes("application/json")) {
+  const contentType = c.req.header('content-type');
+  if (contentType && !contentType.includes('application/json')) {
     return c.json(
       {
         success: false,
         error: {
-          code: "INVALID_CONTENT_TYPE",
-          message: "Content-Type must be application/json",
+          code: 'INVALID_CONTENT_TYPE',
+          message: 'Content-Type must be application/json',
         },
       },
       415,
@@ -202,16 +200,16 @@ export const inputValidationMiddleware = async (c: Context, next: Next) => {
   }
 
   // Sanitize headers
-  Object.keys(c.req.header()).forEach((key) => {
+  Object.keys(c.req.header()).forEach(key => {
     const value = c.req.header(key);
     if (value && SECURITY_CONFIG.sensitiveHeaders.includes(key.toLowerCase())) {
       // Don't log sensitive headers
-      c.set("sanitizedHeaders", {
-        ...c.get("sanitizedHeaders"),
-        [key]: "[REDACTED]",
+      c.set('sanitizedHeaders', {
+        ...c.get('sanitizedHeaders'),
+        [key]: '[REDACTED]',
       });
     } else if (value && !isSafeHeaderValue(value)) {
-      c.header(key, "");
+      c.header(key, '');
     }
   });
 
@@ -220,7 +218,7 @@ export const inputValidationMiddleware = async (c: Context, next: Next) => {
 
 // CORS middleware with security enhancements
 export const corsMiddleware = async (c: Context, next: Next) => {
-  const origin = c.req.header("origin");
+  const origin = c.req.header('origin');
 
   // Validate origin
   if (origin && SECURITY_CONFIG.allowedOrigins.length > 0) {
@@ -229,8 +227,8 @@ export const corsMiddleware = async (c: Context, next: Next) => {
         {
           success: false,
           error: {
-            code: "INVALID_ORIGIN",
-            message: "Origin not allowed",
+            code: 'INVALID_ORIGIN',
+            message: 'Origin not allowed',
           },
         },
         403,
@@ -240,18 +238,18 @@ export const corsMiddleware = async (c: Context, next: Next) => {
 
   // Set CORS headers
   if (origin) {
-    c.header("Access-Control-Allow-Origin", origin);
-    c.header("Access-Control-Allow-Credentials", "true");
-    c.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    c.header('Access-Control-Allow-Origin', origin);
+    c.header('Access-Control-Allow-Credentials', 'true');
+    c.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     c.header(
-      "Access-Control-Allow-Headers",
-      "Content-Type, Authorization, X-Requested-With",
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization, X-Requested-With',
     );
-    c.header("Access-Control-Max-Age", "86400");
+    c.header('Access-Control-Max-Age', '86400');
   }
 
   // Handle preflight requests
-  if (c.req.method === "OPTIONS") {
+  if (c.req.method === 'OPTIONS') {
     return c.body(null, 204);
   }
 
@@ -261,11 +259,10 @@ export const corsMiddleware = async (c: Context, next: Next) => {
 // Request logging middleware (security-focused)
 export const securityLoggingMiddleware = async (c: Context, next: Next) => {
   const startTime = Date.now();
-  const clientIP =
-    c.req.header("cf-connecting-ip") ||
-    c.req.header("x-forwarded-for") ||
-    c.req.header("x-real-ip") ||
-    "unknown";
+  const clientIP = c.req.header('cf-connecting-ip')
+    || c.req.header('x-forwarded-for')
+    || c.req.header('x-real-ip')
+    || 'unknown';
 
   try {
     await next();
@@ -274,7 +271,7 @@ export const securityLoggingMiddleware = async (c: Context, next: Next) => {
     const status = c.res.status;
 
     // Log security-relevant information
-    if (status >= 400 || c.req.path.startsWith("/api/auth")) {
+    if (status >= 400 || c.req.path.startsWith('/api/auth')) {
       console.log({
         timestamp: new Date().toISOString(),
         method: c.req.method,
@@ -282,9 +279,9 @@ export const securityLoggingMiddleware = async (c: Context, next: Next) => {
         status,
         duration,
         clientIP,
-        userAgent: c.req.header("user-agent"),
+        userAgent: c.req.header('user-agent'),
         // Don't log sensitive data
-        hasAuth: !!c.req.header("authorization"),
+        hasAuth: !!c.req.header('authorization'),
       });
     }
   } catch (error) {
@@ -295,11 +292,11 @@ export const securityLoggingMiddleware = async (c: Context, next: Next) => {
       timestamp: new Date().toISOString(),
       method: c.req.method,
       path: c.req.path,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : 'Unknown error',
       duration,
       clientIP,
-      userAgent: c.req.header("user-agent"),
-      hasAuth: !!c.req.header("authorization"),
+      userAgent: c.req.header('user-agent'),
+      hasAuth: !!c.req.header('authorization'),
     });
 
     throw error;
@@ -312,22 +309,22 @@ export const healthcareDataProtectionMiddleware = async (
   next: Next,
 ) => {
   // Check if this is a healthcare data endpoint
-  const isHealthcareEndpoint = SECURITY_CONFIG.sensitivePaths.some((path) =>
-    c.req.path.startsWith(path),
+  const isHealthcareEndpoint = SECURITY_CONFIG.sensitivePaths.some(path =>
+    c.req.path.startsWith(path)
   );
 
   if (isHealthcareEndpoint) {
     // Ensure HTTPS in production
     if (
-      process.env.NODE_ENV === "production" &&
-      c.req.header("x-forwarded-proto") !== "https"
+      process.env.NODE_ENV === 'production'
+      && c.req.header('x-forwarded-proto') !== 'https'
     ) {
       return c.json(
         {
           success: false,
           error: {
-            code: "HTTPS_REQUIRED",
-            message: "HTTPS is required for healthcare data",
+            code: 'HTTPS_REQUIRED',
+            message: 'HTTPS is required for healthcare data',
           },
         },
         403,
@@ -335,17 +332,17 @@ export const healthcareDataProtectionMiddleware = async (
     }
 
     // Add healthcare-specific headers
-    c.header("X-Healthcare-Data", "true");
-    c.header("X-LGPD-Compliant", "true");
+    c.header('X-Healthcare-Data', 'true');
+    c.header('X-LGPD-Compliant', 'true');
 
     // Log healthcare data access (compliance)
     console.log({
       timestamp: new Date().toISOString(),
-      eventType: "HEALTHCARE_DATA_ACCESS",
+      eventType: 'HEALTHCARE_DATA_ACCESS',
       path: c.req.path,
       method: c.req.method,
-      clientIP: c.req.header("cf-connecting-ip") || "unknown",
-      userId: c.get("userId") || "anonymous",
+      clientIP: c.req.header('cf-connecting-ip') || 'unknown',
+      userId: c.get('userId') || 'anonymous',
     });
   }
 
@@ -355,17 +352,17 @@ export const healthcareDataProtectionMiddleware = async (
 // CSRF protection middleware
 export const csrfMiddleware = async (c: Context, next: Next) => {
   // Only apply to state-changing methods
-  if (["POST", "PUT", "DELETE", "PATCH"].includes(c.req.method)) {
-    const csrfToken = c.req.header("x-csrf-token");
-    const sessionToken = c.get("sessionToken");
+  if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(c.req.method)) {
+    const csrfToken = c.req.header('x-csrf-token');
+    const sessionToken = c.get('sessionToken');
 
     if (!csrfToken || !sessionToken || csrfToken !== sessionToken) {
       return c.json(
         {
           success: false,
           error: {
-            code: "INVALID_CSRF",
-            message: "Invalid CSRF token",
+            code: 'INVALID_CSRF',
+            message: 'Invalid CSRF token',
           },
         },
         403,

@@ -3,8 +3,8 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import { AIModelCategory, AIProviderOpt } from "@neonpro/shared";
-import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from "./types";
+import { AIModelCategory, AIProviderOpt } from '@neonpro/shared';
+import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from './types';
 
 /**
  * Configuration utilities for AI providers
@@ -16,7 +16,7 @@ export class ProviderConfigManager {
    * Initialize providers from configuration array
    */
   initializeProviders(providerConfigs: ProviderConfig[]): void {
-    providerConfigs.forEach((config) => {
+    providerConfigs.forEach(config => {
       this.providers.set(config.provider, config);
     });
   }
@@ -75,11 +75,11 @@ export class ProviderConfigManager {
     this.addProviderConfig({
       provider: AIProviderOpt.OPENAI,
       enabled: true,
-      api_key: process.env.OPENAI_API_KEY || "",
+      api_key: process.env.OPENAI_API_KEY || '',
       models: [
         {
           provider: AIProviderOpt.OPENAI,
-          model_name: "gpt-4-turbo",
+          model_name: 'gpt-4-turbo',
           category: AIModelCategory.CHAT,
           cost_config: {
             input_cost_per_1k_tokens: 0.01,
@@ -123,11 +123,11 @@ export class ProviderConfigManager {
     this.addProviderConfig({
       provider: AIProviderOpt.ANTHROPIC,
       enabled: true,
-      api_key: process.env.ANTHROPIC_API_KEY || "",
+      api_key: process.env.ANTHROPIC_API_KEY || '',
       models: [
         {
           provider: AIProviderOpt.ANTHROPIC,
-          model_name: "claude-3-haiku",
+          model_name: 'claude-3-haiku',
           category: AIModelCategory.CHAT,
           cost_config: {
             input_cost_per_1k_tokens: 0.00025,
@@ -171,12 +171,12 @@ export class ProviderConfigManager {
     this.addProviderConfig({
       provider: AIProviderOpt.AZURE,
       enabled: true,
-      api_key: process.env.AZURE_OPENAI_API_KEY || "",
+      api_key: process.env.AZURE_OPENAI_API_KEY || '',
       base_url: process.env.AZURE_OPENAI_ENDPOINT,
       models: [
         {
           provider: AIProviderOpt.AZURE,
-          model_name: "gpt-4-turbo-azure",
+          model_name: 'gpt-4-turbo-azure',
           category: AIModelCategory.CHAT,
           cost_config: {
             input_cost_per_1k_tokens: 0.01,
@@ -220,12 +220,12 @@ export class ProviderConfigManager {
     this.addProviderConfig({
       provider: AIProviderOpt.AWS_BEDROCK,
       enabled: true,
-      api_key: process.env.AWS_ACCESS_KEY_ID || "",
+      api_key: process.env.AWS_ACCESS_KEY_ID || '',
       base_url: process.env.AWS_BEDROCK_ENDPOINT,
       models: [
         {
           provider: AIProviderOpt.AWS_BEDROCK,
-          model_name: "anthropic.claude-3-haiku-20240307-v1:0",
+          model_name: 'anthropic.claude-3-haiku-20240307-v1:0',
           category: AIModelCategory.CHAT,
           cost_config: {
             input_cost_per_1k_tokens: 0.00025,
@@ -285,7 +285,7 @@ export class ProviderConfigManager {
    * Get enabled providers only
    */
   getEnabledProviders(): ProviderConfig[] {
-    return this.getAllProviderConfigs().filter((config) => config.enabled);
+    return this.getAllProviderConfigs().filter(config => config.enabled);
   }
 
   /**
@@ -293,7 +293,7 @@ export class ProviderConfigManager {
    */
   getProviderByName(providerName: string): ProviderConfig | undefined {
     const provider = Object.values(AIProviderOpt).find(
-      (p) => p === providerName,
+      p => p === providerName,
     );
     return provider ? this.getProviderConfig(provider) : undefined;
   }

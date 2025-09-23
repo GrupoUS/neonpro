@@ -89,7 +89,7 @@ function main() {
 
       // Manual fix for the specific pattern in card.tsx
       const originalPattern =
-        />([\s\n]*\{[\s\S]*?\}[\s\n]*,[\s\n]*ref[\s\n]*,?[\s\n]*\)[\s\n]*=>/;
+        />([\s\n]*\{[\s\S]*?\}[\s\n]*,[\s\n]*ref[\s\n]*,?[\s\n]*\))(?!\s*\))/;
       const replacement =
         '>(({\n  className, magic = false, disableShine = false, enableShineBorder, shineDuration = 8, shineColor = "#AC9469", borderWidth = 1, children, ...props\n}, ref) =>';
 

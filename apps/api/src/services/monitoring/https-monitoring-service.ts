@@ -5,7 +5,7 @@
  * for healthcare applications.
  */
 
-import { logger } from "../../utils/secure-logger";
+import { logger } from '../../utils/secure-logger';
 
 export interface TLSHandshakeMetrics {
   handshakeTimeMs: number;
@@ -36,11 +36,11 @@ export interface HTTPSMonitoringConfig {
 export interface MonitoringAlert {
   id: string;
   type:
-    | "handshake_timeout"
-    | "degraded_performance"
-    | "protocol_deprecated"
-    | "cipher_weak";
-  severity: "low" | "medium" | "high" | "critical";
+    | 'handshake_timeout'
+    | 'degraded_performance'
+    | 'protocol_deprecated'
+    | 'cipher_weak';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   metrics: TLSHandshakeMetrics;
   timestamp: string;
@@ -58,13 +58,13 @@ export class HTTPSMonitoringService {
       maxHandshakeTimeMs: 300,
       warningThresholdMs: 200,
       sampleRate: 0.1, // 10% sampling
-      enabledProtocols: ["TLSv1.2", "TLSv1.3"],
+      enabledProtocols: ['TLSv1.2', 'TLSv1.3'],
       enabledCipherSuites: [
-        "TLS_AES_256_GCM_SHA384",
-        "TLS_CHACHA20_POLY1305_SHA256",
-        "TLS_AES_128_GCM_SHA256",
-        "ECDHE-ECDSA-AES256-GCM-SHA384",
-        "ECDHE-RSA-AES256-GCM-SHA384",
+        'TLS_AES_256_GCM_SHA384',
+        'TLS_CHACHA20_POLY1305_SHA256',
+        'TLS_AES_128_GCM_SHA256',
+        'ECDHE-ECDSA-AES256-GCM-SHA384',
+        'ECDHE-RSA-AES256-GCM-SHA384',
       ],
       monitoringInterval: 30000, // 30 seconds
       alertThreshold: 5, // 5 alerts before escalation
@@ -83,7 +83,7 @@ export class HTTPSMonitoringService {
       return;
     }
 
-    const serverName = metrics.serverName || "default";
+    const serverName = metrics.serverName || 'default';
     const existingMetrics = this.metrics.get(serverName) || [];
 
     // Keep only last 1000 metrics per server
@@ -95,8 +95,8 @@ export class HTTPSMonitoringService {
 
     // Log metrics
     logger.performance(
-      "https_handshake",
-      "TLS handshake completed",
+      'https_handshake',
+      'TLS handshake completed',
       {
         serverName,
         handshakeTimeMs: metrics.handshakeTimeMs,
@@ -119,9 +119,10 @@ export class HTTPSMonitoringService {
     if (metrics.handshakeTimeMs > this.config.maxHandshakeTimeMs) {
       await this.createAlert({
         id: `handshake_timeout_${Date.now()}`,
-        type: "handshake_timeout",
-        severity: metrics.handshakeTimeMs > 500 ? "critical" : "high",
-        message: `TLS handshake time (${metrics.handshakeTimeMs}ms) exceeds healthcare requirement of ${this.config.maxHandshakeTimeMs}ms`,
+        type: 'handshake_timeout',
+        severity: metrics.handshakeTimeMs > 500 ? 'critical' : 'high',
+        message:
+          `TLS handshake time (${metrics.handshakeTimeMs}ms) exceeds healthcare requirement of ${this.config.maxHandshakeTimeMs}ms`,
         metrics,
         timestamp: new Date().toISOString(),
         resolved: false,
@@ -132,9 +133,10 @@ export class HTTPSMonitoringService {
     if (metrics.handshakeTimeMs > this.config.warningThresholdMs) {
       await this.createAlert({
         id: `degraded_performance_${Date.now()}`,
-        type: "degraded_performance",
-        severity: "medium",
-        message: `TLS handshake time (${metrics.handshakeTimeMs}ms) is above warning threshold of ${this.config.warningThresholdMs}ms`,
+        type: 'degraded_performance',
+        severity: 'medium',
+        message:
+          `TLS handshake time (${metrics.handshakeTimeMs}ms) is above warning threshold of ${this.config.warningThresholdMs}ms`,
         metrics,
         timestamp: new Date().toISOString(),
         resolved: false,
@@ -145,8 +147,8 @@ export class HTTPSMonitoringService {
     if (!this.config.enabledProtocols.includes(metrics.tlsVersion)) {
       await this.createAlert({
         id: `protocol_deprecated_${Date.now()}`,
-        type: "protocol_deprecated",
-        severity: "high",
+        type: 'protocol_deprecated',
+        severity: 'high',
         message: `Deprecated TLS version detected: ${metrics.tlsVersion}`,
         metrics,
         timestamp: new Date().toISOString(),
@@ -158,8 +160,8 @@ export class HTTPSMonitoringService {
     if (!this.config.enabledCipherSuites.includes(metrics.cipherSuite)) {
       await this.createAlert({
         id: `cipher_weak_${Date.now()}`,
-        type: "cipher_weak",
-        severity: "high",
+        type: 'cipher_weak',
+        severity: 'high',
         message: `Weak cipher suite detected: ${metrics.cipherSuite}`,
         metrics,
         timestamp: new Date().toISOString(),
@@ -176,7 +178,7 @@ export class HTTPSMonitoringService {
 
     // Log alert
     logger.warning(
-      "https_monitoring_alert",
+      'https_monitoring_alert',
       alert.message,
       {
         alertId: alert.id,
@@ -190,10 +192,10 @@ export class HTTPSMonitoringService {
 
     // Check for escalation threshold
     const recentAlerts = this.alerts.filter(
-      (a) =>
-        !a.resolved &&
-        a.type === alert.type &&
-        Date.now() - new Date(a.timestamp).getTime() < 300000, // 5 minutes
+      a =>
+        !a.resolved
+        && a.type === alert.type
+        && Date.now() - new Date(a.timestamp).getTime() < 300000, // 5 minutes
     );
 
     if (recentAlerts.length >= this.config.alertThreshold) {
@@ -206,7 +208,7 @@ export class HTTPSMonitoringService {
    */
   private async escalateAlert(alert: MonitoringAlert): Promise<void> {
     logger.error(
-      "https_monitoring_escalation",
+      'https_monitoring_escalation',
       `Critical HTTPS monitoring alert: ${alert.message}`,
       {
         alertId: alert.id,
@@ -214,7 +216,7 @@ export class HTTPSMonitoringService {
         severity: alert.severity,
         serverName: alert.metrics.serverName,
         alertCount: this.alerts.filter(
-          (a) => !a.resolved && a.type === alert.type,
+          a => !a.resolved && a.type === alert.type,
         ).length,
       },
       alert.metrics,
@@ -254,9 +256,9 @@ export class HTTPSMonitoringService {
       };
     }
 
-    const handshakeTimes = allMetrics.map((m) => m.handshakeTimeMs);
+    const handshakeTimes = allMetrics.map(m => m.handshakeTimeMs);
     const compliantHandshakes = allMetrics.filter(
-      (m) => m.handshakeTimeMs <= this.config.maxHandshakeTimeMs,
+      m => m.handshakeTimeMs <= this.config.maxHandshakeTimeMs,
     );
 
     const protocolDistribution = allMetrics.reduce(
@@ -277,18 +279,15 @@ export class HTTPSMonitoringService {
 
     const recentAlerts = this.alerts
       .filter(
-        (a) =>
-          !a.resolved && Date.now() - new Date(a.timestamp).getTime() < 3600000,
+        a => !a.resolved && Date.now() - new Date(a.timestamp).getTime() < 3600000,
       )
       .sort(
-        (a, _b) =>
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+        (a, _b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       );
 
     return {
       totalHandshakes: allMetrics.length,
-      averageHandshakeTime:
-        handshakeTimes.reduce((a, _b) => a + b, 0) / handshakeTimes.length,
+      averageHandshakeTime: handshakeTimes.reduce((a, _b) => a + b, 0) / handshakeTimes.length,
       minHandshakeTime: Math.min(...handshakeTimes),
       maxHandshakeTime: Math.max(...handshakeTimes),
       complianceRate: (compliantHandshakes.length / allMetrics.length) * 100,
@@ -310,7 +309,7 @@ export class HTTPSMonitoringService {
       : Array.from(this.metrics.values()).flat();
 
     if (timeRange) {
-      metrics = metrics.filter((m) => {
+      metrics = metrics.filter(m => {
         const timestamp = new Date(m.clientHelloTime);
         return timestamp >= timeRange.start && timestamp <= timeRange.end;
       });
@@ -323,18 +322,18 @@ export class HTTPSMonitoringService {
    * Get active alerts
    */
   getActiveAlerts(): MonitoringAlert[] {
-    return this.alerts.filter((a) => !a.resolved);
+    return this.alerts.filter(a => !a.resolved);
   }
 
   /**
    * Resolve alert
    */
   resolveAlert(alertId: string): void {
-    const alert = this.alerts.find((a) => a.id === alertId);
+    const alert = this.alerts.find(a => a.id === alertId);
     if (alert) {
       alert.resolved = true;
       logger.info(
-        "https_monitoring_alert_resolved",
+        'https_monitoring_alert_resolved',
         `Alert resolved: ${alert.message}`,
         {
           alertId,
@@ -364,7 +363,7 @@ export class HTTPSMonitoringService {
 
       for (const [serverName, metrics] of this.metrics.entries()) {
         const filteredMetrics = metrics.filter(
-          (m) => m.clientHelloTime > cutoffTime,
+          m => m.clientHelloTime > cutoffTime,
         );
         if (filteredMetrics.length !== metrics.length) {
           this.metrics.set(serverName, filteredMetrics);
@@ -373,7 +372,7 @@ export class HTTPSMonitoringService {
       }
 
       if (cleanedMetrics > 0) {
-        logger.info("https_monitoring_cleanup", "Cleaned up stale metrics", {
+        logger.info('https_monitoring_cleanup', 'Cleaned up stale metrics', {
           cleanedMetrics,
         });
       }
@@ -382,8 +381,8 @@ export class HTTPSMonitoringService {
       const summary = this.getPerformanceSummary();
       if (summary.totalHandshakes > 0) {
         logger.healthcare(
-          "https_monitoring_health",
-          "HTTPS monitoring health check completed",
+          'https_monitoring_health',
+          'HTTPS monitoring health check completed',
           {
             totalHandshakes: summary.totalHandshakes,
             averageHandshakeTime: Math.round(summary.averageHandshakeTime),
@@ -394,7 +393,7 @@ export class HTTPSMonitoringService {
         );
       }
     } catch (error) {
-      logger.error("https_monitoring_health_check", "Health check failed", {
+      logger.error('https_monitoring_health_check', 'Health check failed', {
         error: (error as Error).message,
       });
     }
@@ -425,7 +424,7 @@ export class HTTPSMonitoringService {
       config: this.config,
       metricsCount: Array.from(this.metrics.values()).flat().length,
       alertsCount: this.alerts.length,
-      activeAlertsCount: this.alerts.filter((a) => !a.resolved).length,
+      activeAlertsCount: this.alerts.filter(a => !a.resolved).length,
     };
   }
 }

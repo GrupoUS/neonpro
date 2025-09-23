@@ -12,12 +12,12 @@
  * - Efficient querying with proper indexes
  */
 
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 export interface OperationStateData {
   operationId: string;
-  step: "intent" | "confirm" | "execute";
-  status: "pending" | "processing" | "completed" | "failed";
+  step: 'intent' | 'confirm' | 'execute';
+  status: 'pending' | 'processing' | 'completed' | 'failed';
   entity: string;
   operation: string;
   _userId: string;
@@ -33,8 +33,8 @@ export interface OperationStateData {
 export interface OperationState {
   id: string;
   operationId: string;
-  step: "intent" | "confirm" | "execute";
-  status: "pending" | "processing" | "completed" | "failed";
+  step: 'intent' | 'confirm' | 'execute';
+  status: 'pending' | 'processing' | 'completed' | 'failed';
   entity: string;
   operation: string;
   _userId: string;
@@ -93,7 +93,7 @@ export class OperationStateService {
         operation_id: operationId,
       },
       orderBy: {
-        created_at: "desc",
+        created_at: 'desc',
       },
     });
 
@@ -129,17 +129,16 @@ export class OperationStateService {
         ai_validation_result: updates.aiValidationResult,
         lgpd_compliance_result: updates.lgpdComplianceResult,
         updated_at: new Date(),
-        completed_at:
-          updates.status === "completed" || updates.status === "failed"
-            ? new Date()
-            : null,
+        completed_at: updates.status === 'completed' || updates.status === 'failed'
+          ? new Date()
+          : null,
       },
     });
 
     // Create audit entry for state change
     if (
-      currentState.step !== updates.step ||
-      currentState.status !== updates.status
+      currentState.step !== updates.step
+      || currentState.status !== updates.status
     ) {
       await this.prisma.operationStateAudit.create({
         data: {
@@ -173,12 +172,12 @@ export class OperationStateService {
         user_id: userId,
       },
       orderBy: {
-        created_at: "desc",
+        created_at: 'desc',
       },
       take: limit,
     });
 
-    return states.map((state) => this.mapToOperationState(state));
+    return states.map(state => this.mapToOperationState(state));
   }
 
   /**
@@ -193,12 +192,12 @@ export class OperationStateService {
         status: status,
       },
       orderBy: {
-        created_at: "desc",
+        created_at: 'desc',
       },
       take: limit,
     });
 
-    return states.map((state) => this.mapToOperationState(state));
+    return states.map(state => this.mapToOperationState(state));
   }
 
   /**
@@ -213,12 +212,12 @@ export class OperationStateService {
         step: step,
       },
       orderBy: {
-        created_at: "desc",
+        created_at: 'desc',
       },
       take: limit,
     });
 
-    return states.map((state) => this.mapToOperationState(state));
+    return states.map(state => this.mapToOperationState(state));
   }
 
   /**
@@ -234,7 +233,7 @@ export class OperationStateService {
           lt: cutoffDate,
         },
         status: {
-          in: ["completed", "failed"],
+          in: ['completed', 'failed'],
         },
       },
     });
@@ -254,19 +253,19 @@ export class OperationStateService {
     const [total, statusStats, stepStats, entityStats] = await Promise.all([
       this.prisma.operationState.count(),
       this.prisma.operationState.groupBy({
-        by: ["status"],
+        by: ['status'],
         _count: {
           status: true,
         },
       }),
       this.prisma.operationState.groupBy({
-        by: ["step"],
+        by: ['step'],
         _count: {
           step: true,
         },
       }),
       this.prisma.operationState.groupBy({
-        by: ["entity"],
+        by: ['entity'],
         _count: {
           entity: true,
         },

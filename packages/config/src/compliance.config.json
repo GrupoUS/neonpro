@@ -4,6 +4,73 @@
   "lastUpdated": "2025-09-10T00:00:00Z",
   "environment": "production",
 
+  "aestheticIndustry": {
+    "enabled": true,
+    "focus": "brazilian_aesthetic_clinics",
+    "regulations": {
+      "anvisa": {
+        "enabled": true,
+        "cosmetic_procedures": true,
+        "medical_devices": true,
+        "injectables": true,
+        "laser_treatments": true,
+        "safety_standards": true
+      },
+      "cfm_aesthetic": {
+        "enabled": true,
+        "scope": "aesthetic_medicine_procedures",
+        "requires_medical_supervision": true,
+        "informed_consent": true,
+        "post_treatment_care": true
+      },
+      "coren_aesthetic": {
+        "enabled": true,
+        "scope": "aesthetic_nursing_procedures",
+        "supervision_requirements": true,
+        "scope_of_practice": true
+      },
+      "cff_aesthetic": {
+        "enabled": true,
+        "scope": "cosmetic_pharmacy",
+        "compounding_regulations": true,
+        "product_safety": true
+      },
+      "cnep_standards": {
+        "enabled": true,
+        "scope": "aesthetic_technicians",
+        "training_requirements": true,
+        "supervision_rules": true
+      }
+    },
+    "procedure_safety": {
+      "pre_treatment_assessment": {
+        "mandatory": true,
+        "medical_history": true,
+        "allergy_screening": true,
+        "contraindications_check": true,
+        "informed_consent": true
+      },
+      "treatment_protocols": {
+        "standardized_procedures": true,
+        "emergency_protocols": true,
+        "adverse_event_reporting": true,
+        "quality_assurance": true
+      },
+      "post_treatment_care": {
+        "follow_up_required": true,
+        "monitoring_period": 30,
+        "adverse_reaction_management": true,
+        "patient_education": true
+      }
+    },
+    "data_categories": {
+      "aesthetic_procedures": ["botox", "fillers", "laser", "chemical_peels", "facial_harmonization"],
+      "patient_data": ["medical_history", "treatment_records", "before_after_photos", "consent_forms"],
+      "professional_data": ["licenses", "certifications", "specializations", "training_records"],
+      "business_data": ["appointment_records", "billing", "inventory", "compliance_records"]
+    }
+  },
+
   "hipaa": {
     "enabled": true,
     "version": "164.312",
@@ -193,7 +260,7 @@
   },
 
   "kpiConfiguration": {
-    "baselineSource": "ehr_integration",
+    "baselineSource": "aesthetic_clinic_integration",
     "measurementWindow": 365,
     "updateFrequency": "daily",
     "qualityThresholds": {
@@ -210,7 +277,33 @@
         "phase2Target": 97,
         "unit": "percentage",
         "direction": "higher_better"
+      },
+      "treatmentSatisfaction": {
+        "baseline": 0,
+        "phase1Target": 90,
+        "phase2Target": 95,
+        "unit": "percentage",
+        "direction": "higher_better"
+      },
+      "professionalUtilization": {
+        "baseline": 0,
+        "phase1Target": 80,
+        "phase2Target": 85,
+        "unit": "percentage",
+        "direction": "higher_better"
+      },
+      "revenuePerVisit": {
+        "baseline": "calculated",
+        "phase1Target": 20,
+        "phase2Target": 30,
+        "unit": "percentage_increase",
+        "direction": "higher_better"
       }
+    },
+    "aestheticMetrics": {
+      "procedureCategories": ["injectables", "laser", "facial_treatments", "body_contouring", "skin_rejuvenation"],
+      "professionalTypes": ["crm", "coren", "cff", "cnep"],
+      "trackingPeriods": ["daily", "weekly", "monthly", "quarterly"]
     }
   },
 
@@ -279,6 +372,9 @@
     "scheduledAudits": {
       "hipaaCompliance": "monthly",
       "lgpdCompliance": "monthly",
+      "aestheticIndustryCompliance": "weekly",
+      "anvisaRegulations": "monthly",
+      "professionalCouncilCompliance": "weekly",
       "performanceBudgets": "weekly",
       "aiGovernance": "weekly",
       "accessControls": "daily"
@@ -288,6 +384,13 @@
       "refreshInterval": "5m",
       "alertIntegration": true,
       "stakeholderNotifications": true
+    },
+    "aestheticSpecificChecks": {
+      "professionalLicenseValidation": true,
+      "procedureSafetyProtocols": true,
+      "informedConsentCompliance": true,
+      "adverseEventMonitoring": true,
+      "treatmentOutcomeTracking": true
     }
   }
 }

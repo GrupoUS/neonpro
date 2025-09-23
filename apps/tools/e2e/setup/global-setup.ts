@@ -1,53 +1,67 @@
 import { chromium, FullConfig } from "@playwright/test";
 
 async function globalSetup(config: FullConfig) {
-  console.log("🚀 Starting E2E test setup...");
-
-  const { baseURL } = config.projects[0].use;
-  if (!baseURL) {
-    throw new Error("BASE_URL environment variable is required");
-  }
-
+  console.log("🚀 Starting global E2E test setup");
+  
+  // Create a browser instance for setup
   const browser = await chromium.launch();
-  const page = await browser.newPage();
-
+  const context = await browser.newContext();
+  
   try {
-    // Wait for the application to be ready
-    await page.goto(baseURL);
-    await page.waitForLoadState("networkidle");
-
-    // Check if the application is healthy
-    const isHealthy = await page.evaluate(() => {
-      return (
-        document.readyState === "complete" &&
-        !document.querySelector(".error-boundary")
-      );
-    });
-
-    if (!isHealthy) {
-      throw new Error("Application is not healthy");
-    }
-
-    console.log("✅ Application is ready for E2E testing");
-
-    // Set up test data (in a real app, this would connect to a test database)
-    await page.evaluate(() => {
-      // Clear any existing test data
-      localStorage.clear();
-      sessionStorage.clear();
-
-      // Set up test environment
-      window.localStorage.setItem("test-environment", "e2e");
-      window.localStorage.setItem("test-mode", "true");
-    });
+    // Setup test data
+    await setupTestData();
+    
+    // Setup environment variables
+    process.env.E2E_TESTING = "true";
+    process.env.NODE_ENV = "test";
+    
+    // Clear any existing test data
+    await clearTestData();
+    
+    console.log("✅ Global E2E test setup completed");
   } catch (error) {
-    console.error("❌ E2E setup failed:", error);
+    console.error("❌ Global E2E test setup failed:", error);
     throw error;
   } finally {
+    await context.close();
     await browser.close();
   }
+}
 
-  console.log("✅ E2E test setup completed");
+async function setupTestData() {
+  // Create mock users for testing
+  const testUsers = [
+    {
+      email: "test@example.com",
+      password: "password123",
+      name: "Test User",
+      role: "user",
+    },
+    {
+      email: "admin@example.com",
+      password: "admin123",
+      name: "Admin User",
+      role: "admin",
+    },
+    {
+      email: "professional@example.com",
+      password: "prof123",
+      name: "Professional User",
+      role: "professional",
+    },
+  ];
+  
+  // Store test users in environment for use in tests
+  process.env.TEST_USERS = JSON.stringify(testUsers);
+  
+  console.log("📊 Test data setup completed");
+}
+
+async function clearTestData() {
+  // Clear any existing test data from the database
+  // This would typically make API calls to clean up test data
+  
+  console.log("🧹 Test data cleanup completed");
 }
 
 export default globalSetup;

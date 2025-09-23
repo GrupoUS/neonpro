@@ -16,21 +16,22 @@ if find . -maxdepth 1 -name "*.test.*" -o -name "*.spec.*" | grep -q .; then
     exit 1
 fi
 
-# Check for test files in web app (should be in dedicated test structure)
-if find apps/web/src -name "*.test.*" -o -name "*.spec.*" | grep -q .; then
-    echo "❌ Error: Test files found in web app source directory"
+# Check for test files in web app (should be in dedicated __tests__ structure)
+# Allow anything under any __tests__ subdirectory, block others
+if find apps/web/src -type f \( -name "*.test.*" -o -name "*.spec.*" \) -not -path "*/__tests__/*" | grep -q .; then
+    echo "❌ Error: Test files found in web app source directory outside __tests__"
     echo "ℹ️  Move test files to apps/web/src/__tests__ or use tools package"
     echo "Found files:"
-    find apps/web/src -name "*.test.*" -o -name "*.spec.*"
+    find apps/web/src -type f \( -name "*.test.*" -o -name "*.spec.*" \) -not -path "*/__tests__/*"
     exit 1
 fi
 
-# Check for page tests that should be in tools package
-if find apps/web/src -name "*.page.test.*" -o -name "*.page.spec.*" | grep -q .; then
+# Check for page tests that should be in tools package (never allowed under web src)
+if find apps/web/src -type f \( -name "*.page.test.*" -o -name "*.page.spec.*" \) | grep -q .; then
     echo "❌ Error: Page tests found in web app source"
     echo "ℹ️  Move page tests to apps/tools/e2e directory"
     echo "Found files:"
-    find apps/web/src -name "*.page.test.*" -o -name "*.page.spec.*"
+    find apps/web/src -type f \( -name "*.page.test.*" -o -name "*.page.spec.*" \)
     exit 1
 fi
 

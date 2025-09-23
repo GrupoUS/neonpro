@@ -75,7 +75,7 @@ describe("Client AI Workflow Integration", () => {
     onError: vi.fn(),
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },

@@ -5,17 +5,17 @@
  * automatic form completion, data validation, and intelligent suggestions.
  */
 
-import { createClient } from "@supabase/supabase-js";
-import { LGPDCompliantDataHandler } from "./lgpd-compliant-data-handler";
+import { createClient } from '@supabase/supabase-js';
 import {
   AguiClientRegistrationMessage,
-  AguiDocumentOCRMessage,
   AguiClientValidationMessage,
-  ValidationResult,
-  OCRResult,
-  AISuggestion,
+  AguiDocumentOCRMessage,
   AguiErrorCode,
-} from "./agui-protocol/types";
+  AISuggestion,
+  OCRResult,
+  ValidationResult,
+} from './agui-protocol/types';
+import { LGPDCompliantDataHandler } from './lgpd-compliant-data-handler';
 
 export interface RegistrationConfig {
   supabaseUrl: string;
@@ -58,15 +58,15 @@ export interface RegistrationFlow {
   id: string;
   clientId?: string;
   currentStep:
-    | "personal"
-    | "contact"
-    | "medical"
-    | "documents"
-    | "consent"
-    | "review"
-    | "completed";
+    | 'personal'
+    | 'contact'
+    | 'medical'
+    | 'documents'
+    | 'consent'
+    | 'review'
+    | 'completed';
   stepProgress: Record<string, number>; // 0-100 for each step
-  data: Partial<AguiClientRegistrationMessage["clientData"]>;
+  data: Partial<AguiClientRegistrationMessage['clientData']>;
   documents: Record<string, DocumentProcessingResult>;
   validations: RegistrationValidation;
   startTime: string;
@@ -96,14 +96,14 @@ export class IntelligentClientRegistrationService {
   // Start new registration flow
   async startRegistrationFlow(
     userId: string,
-    initialData?: Partial<AguiClientRegistrationMessage["clientData"]>,
+    initialData?: Partial<AguiClientRegistrationMessage['clientData']>,
   ): Promise<{ success: boolean; flowId?: string; error?: string }> {
     try {
       const flowId = `reg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
       const flow: RegistrationFlow = {
         id: flowId,
-        currentStep: "personal",
+        currentStep: 'personal',
         stepProgress: {
           personal: 0,
           contact: 0,
@@ -126,7 +126,7 @@ export class IntelligentClientRegistrationService {
 
       return { success: true, flowId };
     } catch (error) {
-      console.error("Error starting registration flow:", error);
+      console.error('Error starting registration flow:', error);
       return { success: false, error: error.message };
     }
   }
@@ -134,7 +134,7 @@ export class IntelligentClientRegistrationService {
   // Process registration step
   async processRegistrationStep(
     flowId: string,
-    step: RegistrationFlow["currentStep"],
+    step: RegistrationFlow['currentStep'],
     data: any,
     documents?: Record<string, File>,
   ): Promise<{ success: boolean; flow?: RegistrationFlow; errors: string[] }> {
@@ -143,7 +143,7 @@ export class IntelligentClientRegistrationService {
     try {
       const flow = this.activeFlows.get(flowId);
       if (!flow) {
-        errors.push("Fluxo de registro não encontrado");
+        errors.push('Fluxo de registro não encontrado');
         return { success: false, errors };
       }
 
@@ -191,7 +191,7 @@ export class IntelligentClientRegistrationService {
 
       return { success: true, flow, errors };
     } catch (error) {
-      console.error("Error processing registration step:", error);
+      console.error('Error processing registration step:', error);
       errors.push(`Erro no processamento: ${error.message}`);
       return { success: false, errors };
     }
@@ -207,16 +207,15 @@ export class IntelligentClientRegistrationService {
     try {
       // Upload to Supabase Storage
       const fileName = `${Date.now()}_${documentType}_${file.name}`;
-      const { data: uploadData, error: uploadError } =
-        await this.supabase.storage
-          .from("client-documents")
-          .upload(fileName, file);
+      const { data: uploadData, error: uploadError } = await this.supabase.storage
+        .from('client-documents')
+        .upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
       // Get public URL
       const { data: urlData } = this.supabase.storage
-        .from("client-documents")
+        .from('client-documents')
         .getPublicUrl(fileName);
 
       // Process OCR
@@ -258,10 +257,10 @@ export class IntelligentClientRegistrationService {
         processingTime,
       };
     } catch (error) {
-      console.error("Error processing document:", error);
+      console.error('Error processing document:', error);
       return {
         success: false,
-        documentId: "",
+        documentId: '',
         processingTime: Date.now() - startTime,
         error: error.message,
       };
@@ -278,9 +277,9 @@ export class IntelligentClientRegistrationService {
       const base64 = await this.fileToBase64(file);
 
       const response = await fetch(`${this.config.ocrServiceUrl}/extract`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           documentUrl,
@@ -289,8 +288,8 @@ export class IntelligentClientRegistrationService {
           fileName: file.name,
           options: {
             extractFields: this.getExpectedFieldsForDocumentType(documentType),
-            language: "por",
-            format: "structured",
+            language: 'por',
+            format: 'structured',
           },
         }),
       });
@@ -301,7 +300,7 @@ export class IntelligentClientRegistrationService {
 
       return await response.json();
     } catch (error) {
-      console.error("OCR service call failed:", error);
+      console.error('OCR service call failed:', error);
       throw error;
     }
   }
@@ -311,50 +310,48 @@ export class IntelligentClientRegistrationService {
     file: File,
   ): Promise<OCRResult> {
     // Simulate processing time
-    await new Promise((resolve) =>
-      setTimeout(resolve, 1000 + Math.random() * 2000),
-    );
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
 
     const mockResults: Record<string, OCRResult> = {
       idCard: {
-        documentId: "mock-doc-1",
+        documentId: 'mock-doc-1',
         extractedFields: {
-          fullName: "João Silva Santos",
-          cpf: "123.456.789-00",
-          dateOfBirth: "1990-05-15",
-          rg: "12.345.678-9",
-          issuingState: "SP",
-          issueDate: "2015-03-20",
-          motherName: "Maria Silva Santos",
-          fatherName: "José Silva Santos",
+          fullName: 'João Silva Santos',
+          cpf: '123.456.789-00',
+          dateOfBirth: '1990-05-15',
+          rg: '12.345.678-9',
+          issuingState: 'SP',
+          issueDate: '2015-03-20',
+          motherName: 'Maria Silva Santos',
+          fatherName: 'José Silva Santos',
         },
         confidence: 0.92,
         processingTime: 1500,
         errors: [],
       },
       medicalRecord: {
-        documentId: "mock-doc-2",
+        documentId: 'mock-doc-2',
         extractedFields: {
-          patientName: "João Silva Santos",
-          bloodType: "O+",
-          allergies: ["Penicilina", "Amoxicilina"],
-          medications: ["Losartana 50mg", "Atorvastatina 20mg"],
-          conditions: ["Hipertensão", "Dislipidemia"],
-          lastVisit: "2024-01-10",
-          nextAppointment: "2024-02-15",
+          patientName: 'João Silva Santos',
+          bloodType: 'O+',
+          allergies: ['Penicilina', 'Amoxicilina'],
+          medications: ['Losartana 50mg', 'Atorvastatina 20mg'],
+          conditions: ['Hipertensão', 'Dislipidemia'],
+          lastVisit: '2024-01-10',
+          nextAppointment: '2024-02-15',
         },
         confidence: 0.88,
         processingTime: 1800,
         errors: [],
       },
       consentForm: {
-        documentId: "mock-doc-3",
+        documentId: 'mock-doc-3',
         extractedFields: {
-          patientName: "João Silva Santos",
-          treatmentType: "Tratamento Dermatológico",
-          consentDate: "2024-01-13",
-          physicianName: "Dra. Ana Oliveira",
-          procedures: ["Peeling químico", "Preenchimento facial"],
+          patientName: 'João Silva Santos',
+          treatmentType: 'Tratamento Dermatológico',
+          consentDate: '2024-01-13',
+          physicianName: 'Dra. Ana Oliveira',
+          procedures: ['Peeling químico', 'Preenchimento facial'],
           risksAcknowledged: true,
           benefitsExplained: true,
         },
@@ -363,14 +360,14 @@ export class IntelligentClientRegistrationService {
         errors: [],
       },
       insuranceCard: {
-        documentId: "mock-doc-4",
+        documentId: 'mock-doc-4',
         extractedFields: {
-          fullName: "João Silva Santos",
-          planName: "Plano Saúde Premium",
-          cardNumber: "**** **** **** 1234",
-          validity: "12/2025",
-          coverageLevel: "Completo",
-          network: "Rede Nacional",
+          fullName: 'João Silva Santos',
+          planName: 'Plano Saúde Premium',
+          cardNumber: '**** **** **** 1234',
+          validity: '12/2025',
+          coverageLevel: 'Completo',
+          network: 'Rede Nacional',
         },
         confidence: 0.9,
         processingTime: 1300,
@@ -380,11 +377,11 @@ export class IntelligentClientRegistrationService {
 
     return (
       mockResults[documentType] || {
-        documentId: "mock-doc-default",
+        documentId: 'mock-doc-default',
         extractedFields: {},
         confidence: 0.75,
         processingTime: 1000,
-        errors: ["Document type not recognized"],
+        errors: ['Document type not recognized'],
       }
     );
   }
@@ -396,7 +393,7 @@ export class IntelligentClientRegistrationService {
     const data: Record<string, any> = {};
 
     switch (documentType) {
-      case "idCard":
+      case 'idCard':
         if (ocrResult.extractedFields.fullName) {
           data.personalInfo = { fullName: ocrResult.extractedFields.fullName };
         }
@@ -414,7 +411,7 @@ export class IntelligentClientRegistrationService {
         }
         break;
 
-      case "medicalRecord":
+      case 'medicalRecord':
         if (ocrResult.extractedFields.allergies) {
           data.medicalHistory = {
             allergies: ocrResult.extractedFields.allergies,
@@ -434,7 +431,7 @@ export class IntelligentClientRegistrationService {
         }
         break;
 
-      case "consentForm":
+      case 'consentForm':
         if (ocrResult.extractedFields.consentDate) {
           data.consent = {
             consentDate: ocrResult.extractedFields.consentDate,
@@ -454,37 +451,37 @@ export class IntelligentClientRegistrationService {
     const results: ValidationResult[] = [];
 
     switch (documentType) {
-      case "idCard":
+      case 'idCard':
         if (
-          data.personalInfo?.cpf &&
-          !this.validateCPF(data.personalInfo.cpf)
+          data.personalInfo?.cpf
+          && !this.validateCPF(data.personalInfo.cpf)
         ) {
           results.push({
-            field: "cpf",
+            field: 'cpf',
             isValid: false,
-            message: "CPF inválido",
-            severity: "error",
+            message: 'CPF inválido',
+            severity: 'error',
             suggestedValue: this.formatCPF(data.personalInfo.cpf),
           });
         }
 
         if (
-          data.personalInfo?.dateOfBirth &&
-          !this.validateDate(data.personalInfo.dateOfBirth)
+          data.personalInfo?.dateOfBirth
+          && !this.validateDate(data.personalInfo.dateOfBirth)
         ) {
           results.push({
-            field: "dateOfBirth",
+            field: 'dateOfBirth',
             isValid: false,
-            message: "Data de nascimento inválida",
-            severity: "error",
+            message: 'Data de nascimento inválida',
+            severity: 'error',
           });
         }
         break;
 
-      case "medicalRecord":
+      case 'medicalRecord':
         if (
-          data.medicalHistory?.allergies &&
-          Array.isArray(data.medicalHistory.allergies)
+          data.medicalHistory?.allergies
+          && Array.isArray(data.medicalHistory.allergies)
         ) {
           data.medicalHistory.allergies.forEach(
             (allergy: string, index: number) => {
@@ -492,8 +489,8 @@ export class IntelligentClientRegistrationService {
                 results.push({
                   field: `medicalHistory.allergies[${index}]`,
                   isValid: false,
-                  message: "Alergia muito curta ou inválida",
-                  severity: "warning",
+                  message: 'Alergia muito curta ou inválida',
+                  severity: 'warning',
                 });
               }
             },
@@ -512,45 +509,43 @@ export class IntelligentClientRegistrationService {
     const suggestions: AISuggestion[] = [];
 
     switch (documentType) {
-      case "idCard":
+      case 'idCard':
         if (data.personalInfo?.dateOfBirth) {
           const age = this.calculateAge(data.personalInfo.dateOfBirth);
           if (age < 18) {
             suggestions.push({
-              id: "sug-1",
-              type: "data_correction",
-              title: "Verificar responsável legal",
-              description:
-                "Paciente menor de idade, necessário incluir responsável legal",
+              id: 'sug-1',
+              type: 'data_correction',
+              title: 'Verificar responsável legal',
+              description: 'Paciente menor de idade, necessário incluir responsável legal',
               confidence: 0.95,
-              priority: "high",
+              priority: 'high',
               action: {
-                field: "emergencyContact",
+                field: 'emergencyContact',
                 value: {
-                  name: "Responsável Legal",
-                  relationship: "Responsável Legal",
+                  name: 'Responsável Legal',
+                  relationship: 'Responsável Legal',
                 },
-                reason: "Menor de idade requer responsável legal",
+                reason: 'Menor de idade requer responsável legal',
               },
             });
           }
         }
         break;
 
-      case "medicalRecord":
+      case 'medicalRecord':
         if (
-          data.medicalHistory?.allergies &&
-          data.medicalHistory.allergies.length > 0
+          data.medicalHistory?.allergies
+          && data.medicalHistory.allergies.length > 0
         ) {
           suggestions.push({
-            id: "sug-2",
-            type: "process_optimization",
-            title: "Alerta de alergia importante",
-            description:
-              "Paciente possui alergias que requerem atenção especial",
+            id: 'sug-2',
+            type: 'process_optimization',
+            title: 'Alerta de alergia importante',
+            description: 'Paciente possui alergias que requerem atenção especial',
             confidence: 0.9,
-            priority: "high",
-            estimatedImpact: "Segurança do paciente aumentada",
+            priority: 'high',
+            estimatedImpact: 'Segurança do paciente aumentada',
           });
         }
         break;
@@ -568,11 +563,11 @@ export class IntelligentClientRegistrationService {
 
     // Update step progress based on new data
     flow.stepProgress.personal = this.calculateStepProgress(
-      "personal",
+      'personal',
       flow.data,
     );
     flow.stepProgress.medical = this.calculateStepProgress(
-      "medical",
+      'medical',
       flow.data,
     );
 
@@ -582,7 +577,7 @@ export class IntelligentClientRegistrationService {
 
   // Validation Methods
   private async validateRegistrationData(
-    data: Partial<AguiClientRegistrationMessage["clientData"]>,
+    data: Partial<AguiClientRegistrationMessage['clientData']>,
   ): Promise<RegistrationValidation> {
     const errors: ValidationResult[] = [];
     const warnings: ValidationResult[] = [];
@@ -591,38 +586,38 @@ export class IntelligentClientRegistrationService {
     // Personal info validation
     if (!data.personalInfo?.fullName) {
       errors.push({
-        field: "personalInfo.fullName",
+        field: 'personalInfo.fullName',
         isValid: false,
-        message: "Nome completo é obrigatório",
-        severity: "error",
+        message: 'Nome completo é obrigatório',
+        severity: 'error',
       });
     }
 
     if (data.personalInfo?.cpf && !this.validateCPF(data.personalInfo.cpf)) {
       errors.push({
-        field: "personalInfo.cpf",
+        field: 'personalInfo.cpf',
         isValid: false,
-        message: "CPF inválido",
-        severity: "error",
+        message: 'CPF inválido',
+        severity: 'error',
         suggestedValue: this.formatCPF(data.personalInfo.cpf),
       });
     }
 
     if (
-      data.personalInfo?.email &&
-      !this.validateEmail(data.personalInfo.email)
+      data.personalInfo?.email
+      && !this.validateEmail(data.personalInfo.email)
     ) {
       warnings.push({
-        field: "personalInfo.email",
+        field: 'personalInfo.email',
         isValid: false,
-        message: "Email inválido",
-        severity: "warning",
+        message: 'Email inválido',
+        severity: 'warning',
       });
     }
 
     // Generate AI suggestions
     if (this.config.enableAISuggestions) {
-      const aiSuggestions = await this.generateAISuggestions("personal", data);
+      const aiSuggestions = await this.generateAISuggestions('personal', data);
       suggestions.push(...aiSuggestions);
     }
 
@@ -646,8 +641,8 @@ export class IntelligentClientRegistrationService {
   }
 
   private async validateRegistrationStep(
-    step: RegistrationFlow["currentStep"],
-    data: Partial<AguiClientRegistrationMessage["clientData"]>,
+    step: RegistrationFlow['currentStep'],
+    data: Partial<AguiClientRegistrationMessage['clientData']>,
   ): Promise<RegistrationValidation> {
     // Focus validation on current step
     const stepData = this.getStepData(step, data);
@@ -656,21 +651,21 @@ export class IntelligentClientRegistrationService {
 
   private getStepData(step: string, fullData: any): any {
     switch (step) {
-      case "personal":
+      case 'personal':
         return { personalInfo: fullData.personalInfo };
-      case "contact":
+      case 'contact':
         return {
           personalInfo: fullData.personalInfo,
           address: fullData.address,
         };
-      case "medical":
+      case 'medical':
         return {
           medicalHistory: fullData.medicalHistory,
           emergencyContact: fullData.emergencyContact,
         };
-      case "documents":
+      case 'documents':
         return { documents: fullData.documents };
-      case "consent":
+      case 'consent':
         return { consent: fullData.consent };
       default:
         return fullData;
@@ -688,54 +683,51 @@ export class IntelligentClientRegistrationService {
       // This would call an AI service in production
       // For now, we'll generate rule-based suggestions
 
-      if (step === "personal" && data.personalInfo?.dateOfBirth) {
+      if (step === 'personal' && data.personalInfo?.dateOfBirth) {
         const age = this.calculateAge(data.personalInfo.dateOfBirth);
 
         if (age > 65) {
           suggestions.push({
-            id: "sug-age-1",
-            type: "personalization",
-            title: "Atendimento especial para idosos",
-            description:
-              "Paciente acima de 65 anos pode necessitar de cuidados especiais",
+            id: 'sug-age-1',
+            type: 'personalization',
+            title: 'Atendimento especial para idosos',
+            description: 'Paciente acima de 65 anos pode necessitar de cuidados especiais',
             confidence: 0.85,
-            priority: "medium",
-            estimatedImpact: "Melhoria na experiência do paciente",
+            priority: 'medium',
+            estimatedImpact: 'Melhoria na experiência do paciente',
           });
         }
 
         if (age < 18) {
           suggestions.push({
-            id: "sug-age-2",
-            type: "process_optimization",
-            title: "Verificar documentos do responsável",
-            description:
-              "Menor de idade requer documentação do responsável legal",
+            id: 'sug-age-2',
+            type: 'process_optimization',
+            title: 'Verificar documentos do responsável',
+            description: 'Menor de idade requer documentação do responsável legal',
             confidence: 0.95,
-            priority: "high",
-            estimatedImpact: "Conformidade legal e segurança",
+            priority: 'high',
+            estimatedImpact: 'Conformidade legal e segurança',
           });
         }
       }
 
       if (
-        step === "contact" &&
-        data.personalInfo?.email &&
-        data.personalInfo?.phone
+        step === 'contact'
+        && data.personalInfo?.email
+        && data.personalInfo?.phone
       ) {
         suggestions.push({
-          id: "sug-contact-1",
-          type: "process_optimization",
-          title: "Preferência de contato",
-          description:
-            "Ambos email e telefone fornecidos - oferecer múltiplos canais",
+          id: 'sug-contact-1',
+          type: 'process_optimization',
+          title: 'Preferência de contato',
+          description: 'Ambos email e telefone fornecidos - oferecer múltiplos canais',
           confidence: 0.75,
-          priority: "low",
-          estimatedImpact: "Melhoria na taxa de resposta",
+          priority: 'low',
+          estimatedImpact: 'Melhoria na taxa de resposta',
         });
       }
     } catch (error) {
-      console.error("Error generating AI suggestions:", error);
+      console.error('Error generating AI suggestions:', error);
     }
 
     return suggestions;
@@ -744,9 +736,9 @@ export class IntelligentClientRegistrationService {
   // Utility Methods
   private calculateStepProgress(step: string, data: any): number {
     const requiredFields = this.getRequiredFieldsForStep(step);
-    const completedFields = requiredFields.filter((field) => {
+    const completedFields = requiredFields.filter(field => {
       const value = this.getNestedValue(data, field);
-      return value !== undefined && value !== null && value !== "";
+      return value !== undefined && value !== null && value !== '';
     });
 
     return Math.round((completedFields.length / requiredFields.length) * 100);
@@ -754,16 +746,16 @@ export class IntelligentClientRegistrationService {
 
   private getRequiredFieldsForStep(step: string): string[] {
     const fieldMap: Record<string, string[]> = {
-      personal: ["personalInfo.fullName", "personalInfo.dateOfBirth"],
+      personal: ['personalInfo.fullName', 'personalInfo.dateOfBirth'],
       contact: [
-        "address.street",
-        "address.number",
-        "address.city",
-        "address.state",
+        'address.street',
+        'address.number',
+        'address.city',
+        'address.state',
       ],
       medical: [],
       documents: [],
-      consent: ["consent.treatmentConsent", "consent.dataSharingConsent"],
+      consent: ['consent.treatmentConsent', 'consent.dataSharingConsent'],
       review: [],
     };
 
@@ -772,26 +764,26 @@ export class IntelligentClientRegistrationService {
 
   private calculateCompleteness(
     data: any,
-  ): RegistrationValidation["completeness"] {
+  ): RegistrationValidation['completeness'] {
     const personalFields = [
-      "personalInfo.fullName",
-      "personalInfo.dateOfBirth",
+      'personalInfo.fullName',
+      'personalInfo.dateOfBirth',
     ];
     const contactFields = [
-      "address.street",
-      "address.number",
-      "address.city",
-      "address.state",
+      'address.street',
+      'address.number',
+      'address.city',
+      'address.state',
     ];
     const medicalFields = [
-      "medicalHistory.allergies",
-      "medicalHistory.medications",
+      'medicalHistory.allergies',
+      'medicalHistory.medications',
     ];
 
     const calculatePercentage = (fields: string[]) => {
-      const completed = fields.filter((field) => {
+      const completed = fields.filter(field => {
         const value = this.getNestedValue(data, field);
-        return value !== undefined && value !== null && value !== "";
+        return value !== undefined && value !== null && value !== '';
       });
       return Math.round((completed.length / fields.length) * 100);
     };
@@ -802,25 +794,25 @@ export class IntelligentClientRegistrationService {
       medical: calculatePercentage(medicalFields),
       documents: data.documents ? 100 : 0,
       overall: Math.round(
-        calculatePercentage(personalFields) * 0.3 +
-          calculatePercentage(contactFields) * 0.3 +
-          calculatePercentage(medicalFields) * 0.2 +
-          (data.documents ? 100 : 0) * 0.2,
+        calculatePercentage(personalFields) * 0.3
+          + calculatePercentage(contactFields) * 0.3
+          + calculatePercentage(medicalFields) * 0.2
+          + (data.documents ? 100 : 0) * 0.2,
       ),
     };
   }
 
   private getNextStep(
-    currentStep: RegistrationFlow["currentStep"],
-  ): RegistrationFlow["currentStep"] {
-    const stepOrder: RegistrationFlow["currentStep"][] = [
-      "personal",
-      "contact",
-      "medical",
-      "documents",
-      "consent",
-      "review",
-      "completed",
+    currentStep: RegistrationFlow['currentStep'],
+  ): RegistrationFlow['currentStep'] {
+    const stepOrder: RegistrationFlow['currentStep'][] = [
+      'personal',
+      'contact',
+      'medical',
+      'documents',
+      'consent',
+      'review',
+      'completed',
     ];
 
     const currentIndex = stepOrder.indexOf(currentStep);
@@ -851,7 +843,7 @@ export class IntelligentClientRegistrationService {
 
   // Validation utility methods
   private validateCPF(cpf: string): boolean {
-    const clean = cpf.replace(/\D/g, "");
+    const clean = cpf.replace(/\D/g, '');
     if (clean.length !== 11) return false;
 
     // Basic CPF validation algorithm
@@ -885,9 +877,11 @@ export class IntelligentClientRegistrationService {
   }
 
   private formatCPF(cpf: string): string {
-    const clean = cpf.replace(/\D/g, "");
+    const clean = cpf.replace(/\D/g, '');
     if (clean.length === 11) {
-      return `${clean.substring(0, 3)}.${clean.substring(3, 6)}.${clean.substring(6, 9)}-${clean.substring(9, 11)}`;
+      return `${clean.substring(0, 3)}.${clean.substring(3, 6)}.${clean.substring(6, 9)}-${
+        clean.substring(9, 11)
+      }`;
     }
     return cpf;
   }
@@ -899,8 +893,8 @@ export class IntelligentClientRegistrationService {
     const monthDiff = today.getMonth() - birth.getMonth();
 
     if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
+      monthDiff < 0
+      || (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--;
     }
@@ -909,14 +903,14 @@ export class IntelligentClientRegistrationService {
   }
 
   private getNestedValue(obj: any, path: string): any {
-    return path.split(".").reduce((current, key) => current?.[key], obj);
+    return path.split('.').reduce((current, key) => current?.[key], obj);
   }
 
   private mergeData(target: any, source: any): any {
     const result = { ...target };
 
-    Object.keys(source).forEach((key) => {
-      if (typeof source[key] === "object" && source[key] !== null) {
+    Object.keys(source).forEach(key => {
+      if (typeof source[key] === 'object' && source[key] !== null) {
         result[key] = this.mergeData(result[key] || {}, source[key]);
       } else {
         result[key] = source[key];
@@ -931,21 +925,21 @@ export class IntelligentClientRegistrationService {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
+      reader.onerror = error => reject(error);
     });
   }
 
   private getExpectedFieldsForDocumentType(documentType: string): string[] {
     const fieldMap: Record<string, string[]> = {
-      idCard: ["fullName", "cpf", "dateOfBirth", "rg"],
-      medicalRecord: ["patientName", "bloodType", "allergies", "medications"],
+      idCard: ['fullName', 'cpf', 'dateOfBirth', 'rg'],
+      medicalRecord: ['patientName', 'bloodType', 'allergies', 'medications'],
       consentForm: [
-        "patientName",
-        "treatmentType",
-        "consentDate",
-        "physicianName",
+        'patientName',
+        'treatmentType',
+        'consentDate',
+        'physicianName',
       ],
-      insuranceCard: ["fullName", "planName", "cardNumber", "validity"],
+      insuranceCard: ['fullName', 'planName', 'cardNumber', 'validity'],
     };
 
     return fieldMap[documentType] || [];
@@ -968,22 +962,22 @@ export class IntelligentClientRegistrationService {
     try {
       const flow = this.activeFlows.get(flowId);
       if (!flow) {
-        errors.push("Fluxo de registro não encontrado");
+        errors.push('Fluxo de registro não encontrado');
         return { success: false, errors };
       }
 
       // Final validation
       if (!flow.validations.isValid) {
-        errors.push("Dados incompletos ou inválidos");
+        errors.push('Dados incompletos ou inválidos');
         return { success: false, errors };
       }
 
       // Process with LGPD handler
       const registrationMessage: AguiClientRegistrationMessage = {
         clientData: flow.data as any,
-        documents: Object.values(flow.documents).map((d) => ({
+        documents: Object.values(flow.documents).map(d => ({
           id: d.documentId,
-          type: "id_card" as any,
+          type: 'id_card' as any,
           fileName: d.documentId,
           fileUrl: `https://storage.url/${d.documentId}`,
           uploadedAt: new Date().toISOString(),
@@ -991,19 +985,18 @@ export class IntelligentClientRegistrationService {
         consent: flow.data.consent,
       };
 
-      const result =
-        await this.lgpdHandler.processClientRegistrationWithCompliance(
-          registrationMessage,
-          {
-            userId: "system", // Would be actual user ID
-            ipAddress: "127.0.0.1",
-            userAgent: "IntelligentRegistrationService",
-          },
-        );
+      const result = await this.lgpdHandler.processClientRegistrationWithCompliance(
+        registrationMessage,
+        {
+          userId: 'system', // Would be actual user ID
+          ipAddress: '127.0.0.1',
+          userAgent: 'IntelligentRegistrationService',
+        },
+      );
 
       if (result.success) {
         // Update flow status
-        flow.currentStep = "completed";
+        flow.currentStep = 'completed';
         flow.clientId = result.clientId;
         flow.lastActivity = new Date().toISOString();
 
@@ -1016,7 +1009,7 @@ export class IntelligentClientRegistrationService {
         return { success: false, errors };
       }
     } catch (error) {
-      console.error("Error completing registration:", error);
+      console.error('Error completing registration:', error);
       errors.push(`Erro na conclusão do registro: ${error.message}`);
       return { success: false, errors };
     }
@@ -1024,7 +1017,7 @@ export class IntelligentClientRegistrationService {
 
   // Health Check
   async healthCheck(): Promise<{
-    status: "healthy" | "degraded" | "unhealthy";
+    status: 'healthy' | 'degraded' | 'unhealthy';
     details: any;
   }> {
     try {
@@ -1035,17 +1028,16 @@ export class IntelligentClientRegistrationService {
       ]);
 
       const passedChecks = checks.filter(
-        (check) => check.status === "fulfilled" && check.value,
+        check => check.status === 'fulfilled' && check.value,
       ).length;
       const totalChecks = checks.length;
 
       return {
-        status:
-          passedChecks === totalChecks
-            ? "healthy"
-            : passedChecks > 0
-              ? "degraded"
-              : "unhealthy",
+        status: passedChecks === totalChecks
+          ? 'healthy'
+          : passedChecks > 0
+          ? 'degraded'
+          : 'unhealthy',
         details: {
           totalChecks,
           passedChecks,
@@ -1057,7 +1049,7 @@ export class IntelligentClientRegistrationService {
       };
     } catch (error) {
       return {
-        status: "unhealthy",
+        status: 'unhealthy',
         details: { error: error.message },
       };
     }
@@ -1066,8 +1058,8 @@ export class IntelligentClientRegistrationService {
   private async checkDatabaseConnection(): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
-        .from("patients")
-        .select("count")
+        .from('patients')
+        .select('count')
         .limit(1);
 
       return !error;
@@ -1081,7 +1073,7 @@ export class IntelligentClientRegistrationService {
 
     try {
       const response = await fetch(`${this.config.ocrServiceUrl}/health`, {
-        method: "GET",
+        method: 'GET',
         timeout: 5000,
       });
       return response.ok;
@@ -1093,7 +1085,7 @@ export class IntelligentClientRegistrationService {
   private async checkLgpdService(): Promise<boolean> {
     try {
       const health = await this.lgpdHandler.healthCheck();
-      return health.status === "healthy";
+      return health.status === 'healthy';
     } catch {
       return false;
     }

@@ -5,9 +5,9 @@
  * Provides types, protocol implementation, and service integration.
  */
 
-export * from "./protocol";
-export * from "./service";
-export * from "./types";
+export * from './protocol';
+export * from './service';
+export * from './types';
 
 // Re-export commonly used types and classes
 export {
@@ -21,13 +21,13 @@ export {
   QueryContext,
   QueryResult,
   ServiceMetrics,
-} from "./types";
+} from './types';
 
 // Default configuration
 export const DEFAULT_AGUI_CONFIG = {
-  version: "1.0.0",
-  supportedVersions: ["1.0.0"],
-  jwtSecret: process.env.JWT_SECRET || "your-secret-key",
+  version: '1.0.0',
+  supportedVersions: ['1.0.0'],
+  jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
   rateLimit: {
     requestsPerMinute: 60,
     requestsPerHour: 1000,
@@ -35,7 +35,7 @@ export const DEFAULT_AGUI_CONFIG = {
   maxMessageAge: 300000, // 5 minutes
   connectionTimeout: 300000, // 5 minutes
   cleanupInterval: 60000, // 1 minute
-  ragAgentEndpoint: process.env.RAG_AGENT_ENDPOINT || "http://localhost:8080",
+  ragAgentEndpoint: process.env.RAG_AGENT_ENDPOINT || 'http://localhost:8080',
   enableMetrics: true,
   metricsInterval: 30000, // 30 seconds
 };

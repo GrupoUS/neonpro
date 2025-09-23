@@ -14,18 +14,14 @@ import {
   CacheDataSensitivity,
   CacheEntry,
   CacheTier,
-} from "@neonpro/shared/src/services/cache-management";
+} from '@neonpro/shared/src/services/cache-management';
 import {
   createRedisCacheBackend,
   RedisCacheBackend,
-} from "@neonpro/shared/src/services/redis-cache-backend";
-import {
-  PermissionContext,
-  QueryIntent,
-  QueryParameters,
-} from "@neonpro/types";
-import { createHash } from "crypto";
-import { AIDataService } from "./ai-data-service";
+} from '@neonpro/shared/src/services/redis-cache-backend';
+import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types';
+import { createHash } from 'crypto';
+import { AIDataService } from './ai-data-service';
 
 /**
  * Cache configuration for AI data queries
@@ -77,7 +73,7 @@ export class EnhancedAIDataService extends AIDataService {
       parameters: this.sanitizeParameters(parameters),
     };
 
-    return createHash("sha256").update(JSON.stringify(keyData)).digest("hex");
+    return createHash('sha256').update(JSON.stringify(keyData)).digest('hex');
   }
 
   /**
@@ -91,9 +87,9 @@ export class EnhancedAIDataService extends AIDataService {
 
     // Normalize date ranges
     if (sanitized.dateRanges) {
-      sanitized.dateRanges = sanitized.dateRanges.map((range) => ({
-        start: range.start.toISOString().split("T")[0],
-        end: range.end.toISOString().split("T")[0],
+      sanitized.dateRanges = sanitized.dateRanges.map(range => ({
+        start: range.start.toISOString().split('T')[0],
+        end: range.end.toISOString().split('T')[0],
       }));
     }
 
@@ -174,11 +170,11 @@ export class EnhancedAIDataService extends AIDataService {
    */
   private getCacheTTL(intent: QueryIntent): number {
     switch (intent) {
-      case "client_data":
+      case 'client_data':
         return 600; // 10 minutes - client data changes less frequently
-      case "appointments":
+      case 'appointments':
         return 300; // 5 minutes - appointments change more frequently
-      case "financial":
+      case 'financial':
         return 900; // 15 minutes - financial data is relatively stable
       default:
         return AIDATA_CACHE_CONFIG.defaultTTL;
@@ -190,11 +186,11 @@ export class EnhancedAIDataService extends AIDataService {
    */
   private getDataSensitivity(intent: QueryIntent): CacheDataSensitivity {
     switch (intent) {
-      case "financial":
+      case 'financial':
         return CacheDataSensitivity.HIGH;
-      case "client_data":
+      case 'client_data':
         return CacheDataSensitivity.HIGH;
-      case "appointments":
+      case 'appointments':
         return CacheDataSensitivity.MEDIUM;
       default:
         return CacheDataSensitivity.MEDIUM;
@@ -212,7 +208,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get clients by name with caching
    */
   async getClientsByName(parameters: QueryParameters): Promise<any[]> {
-    return this.getWithCache("client_data", parameters, async () => {
+    return this.getWithCache('client_data', parameters, async () => {
       return super.getClientsByName(parameters);
     });
   }
@@ -221,7 +217,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get appointments by date range with caching
    */
   async getAppointmentsByDate(parameters: QueryParameters): Promise<any[]> {
-    return this.getWithCache("appointments", parameters, async () => {
+    return this.getWithCache('appointments', parameters, async () => {
       return super.getAppointmentsByDate(parameters);
     });
   }
@@ -230,7 +226,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get financial summary with caching
    */
   async getFinancialSummary(parameters: QueryParameters): Promise<any> {
-    return this.getWithCache("financial", parameters, async () => {
+    return this.getWithCache('financial', parameters, async () => {
       return super.getFinancialSummary(parameters);
     });
   }
@@ -241,8 +237,7 @@ export class EnhancedAIDataService extends AIDataService {
   async getCacheStats() {
     const redisStats = await this.cache.getStats();
     const totalRequests = this.cacheStats.hits + this.cacheStats.misses;
-    const hitRate =
-      totalRequests > 0 ? this.cacheStats.hits / totalRequests : 0;
+    const hitRate = totalRequests > 0 ? this.cacheStats.hits / totalRequests : 0;
 
     return {
       ...redisStats,
@@ -255,23 +250,20 @@ export class EnhancedAIDataService extends AIDataService {
         totalRequests,
       },
       performance: {
-        cacheEfficiency:
-          hitRate > 0.7
-            ? "excellent"
-            : hitRate > 0.5
-              ? "good"
-              : "needs_improvement",
-        avgResponseTime:
-          hitRate * this.cacheStats.avgCacheTime +
-          (1 - hitRate) * this.cacheStats.avgDbTime,
-        speedImprovement:
-          this.cacheStats.avgDbTime > 0
-            ? ((this.cacheStats.avgDbTime -
-                (hitRate * this.cacheStats.avgCacheTime +
-                  (1 - hitRate) * this.cacheStats.avgDbTime)) /
-                this.cacheStats.avgDbTime) *
-              100
-            : 0,
+        cacheEfficiency: hitRate > 0.7
+          ? 'excellent'
+          : hitRate > 0.5
+          ? 'good'
+          : 'needs_improvement',
+        avgResponseTime: hitRate * this.cacheStats.avgCacheTime
+          + (1 - hitRate) * this.cacheStats.avgDbTime,
+        speedImprovement: this.cacheStats.avgDbTime > 0
+          ? ((this.cacheStats.avgDbTime
+            - (hitRate * this.cacheStats.avgCacheTime
+              + (1 - hitRate) * this.cacheStats.avgDbTime))
+            / this.cacheStats.avgDbTime)
+            * 100
+          : 0,
       },
     };
   }
@@ -321,7 +313,7 @@ export class EnhancedAIDataService extends AIDataService {
   }> {
     try {
       // Test cache with a simple get/set operation
-      const testKey = "health_check_test";
+      const testKey = 'health_check_test';
       const testData = { test: true, timestamp: Date.now() };
 
       const testEntry: CacheEntry = {
@@ -341,7 +333,7 @@ export class EnhancedAIDataService extends AIDataService {
       await this.cache.delete(testKey);
 
       if (!retrieved || retrieved.data.test !== true) {
-        return { healthy: false, message: "Cache read/write test failed" };
+        return { healthy: false, message: 'Cache read/write test failed' };
       }
 
       return { healthy: true };
@@ -349,7 +341,7 @@ export class EnhancedAIDataService extends AIDataService {
       return {
         healthy: false,
         message: `Cache health check failed: ${
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : 'Unknown error'
         }`,
       };
     }
@@ -364,8 +356,8 @@ export class EnhancedAIDataService extends AIDataService {
   }> {
     try {
       const { data: data, error } = await this.supabase
-        .from("clients")
-        .select("count", { count: "exact", head: true })
+        .from('clients')
+        .select('count', { count: 'exact', head: true })
         .limit(1);
 
       if (error) {
@@ -380,7 +372,7 @@ export class EnhancedAIDataService extends AIDataService {
       return {
         healthy: false,
         message: `Database health check failed: ${
-          error instanceof Error ? error.message : "Unknown error"
+          error instanceof Error ? error.message : 'Unknown error'
         }`,
       };
     }

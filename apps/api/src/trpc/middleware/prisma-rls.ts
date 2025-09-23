@@ -11,14 +11,14 @@
  * @performance <200ms RLS overhead target
  */
 
-import { TRPCError } from "@trpc/server";
+import { TRPCError } from '@trpc/server';
 
 // RLS Policy Types
 type RLSPolicy =
-  | "clinic_isolation"
-  | "user_context"
-  | "professional_access"
-  | "emergency_override";
+  | 'clinic_isolation'
+  | 'user_context'
+  | 'professional_access'
+  | 'emergency_override';
 
 interface RLSContext {
   _userId: string;
@@ -26,7 +26,7 @@ interface RLSContext {
   userRole: string;
   professionalId?: string;
   isEmergency?: boolean;
-  accessLevel: "read" | "write" | "admin" | "emergency";
+  accessLevel: 'read' | 'write' | 'admin' | 'emergency';
 }
 
 interface RLSPolicyResult {
@@ -49,8 +49,8 @@ const RLS_POLICIES = {
     if (!ctx.clinicId) {
       return {
         allowed: false,
-        errorMessage: "Clinic context required for data access",
-        fallbackPolicy: "emergency_override",
+        errorMessage: 'Clinic context required for data access',
+        fallbackPolicy: 'emergency_override',
       };
     }
 
@@ -72,23 +72,23 @@ const RLS_POLICIES = {
     if (!ctx._userId) {
       return {
         allowed: false,
-        errorMessage: "User authentication required",
+        errorMessage: 'User authentication required',
       };
     }
 
     // Different access patterns based on user role
     switch (ctx.userRole) {
-      case "admin":
-      case "owner":
+      case 'admin':
+      case 'owner':
         // Admins have full access within their clinic
         return {
           allowed: true,
           whereClause: { clinicId: ctx.clinicId },
         };
 
-      case "professional":
+      case 'professional':
         // Professionals can access their patients and appointments
-        if (model === "Patient" || model === "Appointment") {
+        if (model === 'Patient' || model === 'Appointment') {
           return {
             allowed: true,
             whereClause: {
@@ -106,15 +106,15 @@ const RLS_POLICIES = {
         }
         break;
 
-      case "receptionist":
+      case 'receptionist':
         // Receptionists can view but not modify patient data
-        if (operation === "read") {
+        if (operation === 'read') {
           return {
             allowed: true,
             whereClause: { clinicId: ctx.clinicId },
           };
         }
-        if (model === "Appointment") {
+        if (model === 'Appointment') {
           return {
             allowed: true,
             whereClause: { clinicId: ctx.clinicId },
@@ -122,7 +122,7 @@ const RLS_POLICIES = {
         }
         break;
 
-      case "patient":
+      case 'patient':
         // Patients can only access their own data
         return {
           allowed: true,
@@ -135,7 +135,7 @@ const RLS_POLICIES = {
     return {
       allowed: false,
       errorMessage: `Insufficient permissions for ${operation} on ${model}`,
-      fallbackPolicy: "emergency_override",
+      fallbackPolicy: 'emergency_override',
     };
   }, // Professional access control - ensures professionals only access authorized data
   professional_access: (
@@ -143,20 +143,20 @@ const RLS_POLICIES = {
     model: string,
     operation: string,
   ): RLSPolicyResult => {
-    if (ctx.userRole !== "professional" || !ctx.professionalId) {
+    if (ctx.userRole !== 'professional' || !ctx.professionalId) {
       return {
         allowed: false,
-        errorMessage: "Professional authorization required",
+        errorMessage: 'Professional authorization required',
       };
     }
 
     // Professionals have specific access patterns
     const allowedModels = [
-      "Patient",
-      "Appointment",
-      "MedicalRecord",
-      "Prescription",
-      "TelemedicineSession",
+      'Patient',
+      'Appointment',
+      'MedicalRecord',
+      'Prescription',
+      'TelemedicineSession',
     ];
 
     if (!allowedModels.includes(model)) {
@@ -186,7 +186,7 @@ const RLS_POLICIES = {
     if (!ctx.isEmergency) {
       return {
         allowed: false,
-        errorMessage: "Emergency authorization required",
+        errorMessage: 'Emergency authorization required',
       };
     }
 
@@ -204,33 +204,33 @@ const RLS_POLICIES = {
  */
 const MODEL_RLS_CONFIG = {
   Patient: {
-    policies: ["clinic_isolation", "user_context"],
-    sensitiveFields: ["cpf", "rg", "medicalHistory", "bloodType", "allergies"],
+    policies: ['clinic_isolation', 'user_context'],
+    sensitiveFields: ['cpf', 'rg', 'medicalHistory', 'bloodType', 'allergies'],
     emergencyAccess: true,
   },
   Appointment: {
-    policies: ["clinic_isolation", "professional_access"],
-    sensitiveFields: ["notes", "diagnosis", "prescription"],
+    policies: ['clinic_isolation', 'professional_access'],
+    sensitiveFields: ['notes', 'diagnosis', 'prescription'],
     emergencyAccess: true,
   },
   MedicalRecord: {
-    policies: ["clinic_isolation", "professional_access"],
-    sensitiveFields: ["diagnosis", "treatment", "notes"],
+    policies: ['clinic_isolation', 'professional_access'],
+    sensitiveFields: ['diagnosis', 'treatment', 'notes'],
     emergencyAccess: true,
   },
   AuditTrail: {
-    policies: ["clinic_isolation"],
-    sensitiveFields: ["additionalInfo"],
+    policies: ['clinic_isolation'],
+    sensitiveFields: ['additionalInfo'],
     emergencyAccess: false,
   },
   User: {
-    policies: ["user_context"],
-    sensitiveFields: ["passwordHash", "personalInfo"],
+    policies: ['user_context'],
+    sensitiveFields: ['passwordHash', 'personalInfo'],
     emergencyAccess: false,
   },
   LGPDConsent: {
-    policies: ["clinic_isolation", "user_context"],
-    sensitiveFields: ["consentHash", "digitalSignature"],
+    policies: ['clinic_isolation', 'user_context'],
+    sensitiveFields: ['consentHash', 'digitalSignature'],
     emergencyAccess: false,
   },
 } as const;
@@ -240,20 +240,20 @@ const MODEL_RLS_CONFIG = {
  */
 
 function extractOperationType(path: string, type: string): string {
-  if (type === "query") {
-    if (path.includes("list") || path.includes("findMany")) return "read";
-    if (path.includes("get") || path.includes("findUnique")) return "read";
-    return "read";
+  if (type === 'query') {
+    if (path.includes('list') || path.includes('findMany')) return 'read';
+    if (path.includes('get') || path.includes('findUnique')) return 'read';
+    return 'read';
   }
 
-  if (type === "mutation") {
-    if (path.includes("create")) return "create";
-    if (path.includes("update")) return "update";
-    if (path.includes("delete")) return "delete";
-    return "write";
+  if (type === 'mutation') {
+    if (path.includes('create')) return 'create';
+    if (path.includes('update')) return 'update';
+    if (path.includes('delete')) return 'delete';
+    return 'write';
   }
 
-  return "read";
+  return 'read';
 }
 
 /**
@@ -263,7 +263,7 @@ function createRLSContext(ctx: any): RLSContext {
   return {
     _userId: ctx.userId,
     clinicId: ctx.clinicId,
-    userRole: ctx.userRole || "user",
+    userRole: ctx.userRole || 'user',
     professionalId: ctx.professionalId,
     isEmergency: ctx.isEmergency || false,
     accessLevel: determineAccessLevel(ctx),
@@ -272,11 +272,11 @@ function createRLSContext(ctx: any): RLSContext {
 
 function determineAccessLevel(
   ctx: any,
-): "read" | "write" | "admin" | "emergency" {
-  if (ctx.isEmergency) return "emergency";
-  if (ctx.userRole === "admin" || ctx.userRole === "owner") return "admin";
-  if (ctx.userRole === "professional") return "write";
-  return "read";
+): 'read' | 'write' | 'admin' | 'emergency' {
+  if (ctx.isEmergency) return 'emergency';
+  if (ctx.userRole === 'admin' || ctx.userRole === 'owner') return 'admin';
+  if (ctx.userRole === 'professional') return 'write';
+  return 'read';
 }
 
 /**
@@ -314,9 +314,9 @@ function applyRLSPolicies(
     if (!result.allowed) {
       // If any policy fails, check for fallback
       if (
-        result.fallbackPolicy &&
-        modelConfig.emergencyAccess &&
-        rlsContext.isEmergency
+        result.fallbackPolicy
+        && modelConfig.emergencyAccess
+        && rlsContext.isEmergency
       ) {
         const fallbackPolicy = RLS_POLICIES[result.fallbackPolicy];
         const fallbackResult = fallbackPolicy(rlsContext, model, operation);
@@ -330,7 +330,7 @@ function applyRLSPolicies(
       return {
         where: {},
         allowed: false,
-        errorMessage: result.errorMessage || "Access denied by RLS policy",
+        errorMessage: result.errorMessage || 'Access denied by RLS policy',
       };
     }
 
@@ -338,13 +338,13 @@ function applyRLSPolicies(
     if (result.whereClause) {
       combinedWhere = combinedWhere.AND
         ? {
-            AND: [
-              ...(Array.isArray(combinedWhere.AND)
-                ? combinedWhere.AND
-                : [combinedWhere.AND]),
-              result.whereClause,
-            ],
-          }
+          AND: [
+            ...(Array.isArray(combinedWhere.AND)
+              ? combinedWhere.AND
+              : [combinedWhere.AND]),
+            result.whereClause,
+          ],
+        }
         : { AND: [combinedWhere, result.whereClause] };
     }
   }
@@ -368,24 +368,23 @@ function createRLSEnforcedPrisma(
 
       // If it's a model delegate (like prisma.patient, prisma.appointment)
       if (
-        typeof originalValue === "object" &&
-        originalValue !== null &&
-        typeof prop === "string" &&
-        prop !== "constructor"
+        typeof originalValue === 'object'
+        && originalValue !== null
+        && typeof prop === 'string'
+        && prop !== 'constructor'
       ) {
         return new Proxy(originalValue, {
           get(modelTarget, modelProp) {
             const originalMethod = modelTarget[modelProp];
 
-            if (typeof originalMethod === "function") {
-              return function (...args: any[]) {
+            if (typeof originalMethod === 'function') {
+              return function(...args: any[]) {
                 const operation = String(modelProp);
-                const model =
-                  String(prop).charAt(0).toUpperCase() + String(prop).slice(1);
+                const model = String(prop).charAt(0).toUpperCase() + String(prop).slice(1);
 
                 // Extract and enhance the query arguments
                 const [queryArgs] = args;
-                const operationType = extractOperationType(operation, "query");
+                const operationType = extractOperationType(operation, 'query');
 
                 // Apply RLS policies
                 const rlsResult = applyRLSPolicies(
@@ -397,10 +396,9 @@ function createRLSEnforcedPrisma(
 
                 if (!rlsResult.allowed) {
                   throw new TRPCError({
-                    code: "FORBIDDEN",
-                    message:
-                      rlsResult.errorMessage ||
-                      "Access denied by Row Level Security policy",
+                    code: 'FORBIDDEN',
+                    message: rlsResult.errorMessage
+                      || 'Access denied by Row Level Security policy',
                   });
                 }
 
@@ -411,7 +409,7 @@ function createRLSEnforcedPrisma(
                 };
 
                 // Log RLS enforcement for audit
-                if (process.env.NODE_ENV === "development") {
+                if (process.env.NODE_ENV === 'development') {
                   console.log(`RLS: ${model}.${operation}`, {
                     originalWhere: queryArgs?.where,
                     rlsWhere: rlsResult.where,
@@ -454,7 +452,7 @@ export const prismaRLSMiddleware = async ({
 
   try {
     // Skip RLS for public operations and health checks
-    if (path === "health" || path.startsWith("public.") || !ctx._userId) {
+    if (path === 'health' || path.startsWith('public.') || !ctx._userId) {
       return next();
     }
 
@@ -464,9 +462,8 @@ export const prismaRLSMiddleware = async ({
     // Validate basic RLS requirements
     if (!rlsContext.clinicId && !rlsContext.isEmergency) {
       throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message:
-          "Clinic context required for data access. Please ensure proper authentication.",
+        code: 'UNAUTHORIZED',
+        message: 'Clinic context required for data access. Please ensure proper authentication.',
       });
     }
 
@@ -504,17 +501,17 @@ export const prismaRLSMiddleware = async ({
         data: {
           _userId: ctx.userId,
           clinicId: ctx.clinicId,
-          action: "VIEW",
+          action: 'VIEW',
           resource: path,
-          resourceType: "SYSTEM_CONFIG",
+          resourceType: 'SYSTEM_CONFIG',
           ipAddress: ctx.auditMeta.ipAddress,
           userAgent: ctx.auditMeta.userAgent,
           sessionId: ctx.auditMeta.sessionId,
-          status: "FAILED",
-          riskLevel: "HIGH",
+          status: 'FAILED',
+          riskLevel: 'HIGH',
           additionalInfo: JSON.stringify({
-            errorType: "RLS_ENFORCEMENT_FAILURE",
-            error: error instanceof Error ? error.message : "Unknown RLS error",
+            errorType: 'RLS_ENFORCEMENT_FAILURE',
+            error: error instanceof Error ? error.message : 'Unknown RLS error',
             duration,
             path,
             rlsContext: createRLSContext(ctx),

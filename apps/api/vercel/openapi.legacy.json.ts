@@ -1,23 +1,23 @@
 export default function handler(req: any, res: any) {
-  res.setHeader("Content-Type", "application/json");
+  res.setHeader('Content-Type', 'application/json');
 
   const baseUrl = (() => {
     const fromEnv = process.env.API_URL as string | undefined;
     if (fromEnv) {
-      return fromEnv.startsWith("http")
+      return fromEnv.startsWith('http')
         ? `${fromEnv}/api`
         : `https://${fromEnv}/api`;
     }
-    const host = req.headers?.host ?? "localhost:3000";
-    const proto = (req.headers?.["x-forwarded-proto"] as string) || "https";
+    const host = req.headers?.host ?? 'localhost:3000';
+    const proto = (req.headers?.['x-forwarded-proto'] as string) || 'https';
     return `${proto}://${host}/api`;
   })();
 
   const doc = {
-    openapi: "3.0.0",
+    openapi: '3.0.0',
     info: {
-      title: "NeonPro Healthcare API",
-      version: "2.1.0",
+      title: 'NeonPro Healthcare API',
+      version: '2.1.0',
       description: `
 ## NeonPro Healthcare Platform API
 
@@ -40,350 +40,349 @@ Standardized error responses with LGPD-compliant error messages.
 All data modifications are automatically logged for compliance.
       `,
       contact: {
-        name: "NeonPro Support",
-        email: "support@neonpro.com.br",
-        url: "https://neonpro.com.br/docs",
+        name: 'NeonPro Support',
+        email: 'support@neonpro.com.br',
+        url: 'https://neonpro.com.br/docs',
       },
       license: {
-        name: "Proprietary",
-        url: "https://neonpro.com.br/license",
+        name: 'Proprietary',
+        url: 'https://neonpro.com.br/license',
       },
     },
-    servers: [{ url: baseUrl, description: "API Server" }],
+    servers: [{ url: baseUrl, description: 'API Server' }],
     components: {
       securitySchemes: {
         bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
         },
       },
       schemas: {
         // Base schemas
         UUID: {
-          type: "string",
-          format: "uuid",
-          example: "123e4567-e89b-12d3-a456-426614174000",
+          type: 'string',
+          format: 'uuid',
+          example: '123e4567-e89b-12d3-a456-426614174000',
         },
         DateTime: {
-          type: "string",
-          format: "date-time",
-          example: "2024-01-15T10:30:00Z",
+          type: 'string',
+          format: 'date-time',
+          example: '2024-01-15T10:30:00Z',
         },
         CPF: {
-          type: "string",
-          pattern: "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$",
-          example: "123.456.789-00",
+          type: 'string',
+          pattern: '^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$',
+          example: '123.456.789-00',
         },
         CID10Code: {
-          type: "string",
-          pattern: "^[A-Z][0-9]{2}(\\.[0-9]+)?$",
-          example: "Z00.0",
+          type: 'string',
+          pattern: '^[A-Z][0-9]{2}(\\.[0-9]+)?$',
+          example: 'Z00.0',
         },
         CBHPMCode: {
-          type: "string",
-          pattern: "^\\d{8}$",
-          example: "10101012",
+          type: 'string',
+          pattern: '^\\d{8}$',
+          example: '10101012',
         },
 
         // Medical Records schemas
         MedicalRecord: {
-          type: "object",
+          type: 'object',
           required: [
-            "id",
-            "patientId",
-            "professionalId",
-            "clinicId",
-            "recordType",
-            "title",
+            'id',
+            'patientId',
+            'professionalId',
+            'clinicId',
+            'recordType',
+            'title',
           ],
           properties: {
-            id: { $ref: "#/components/schemas/UUID" },
-            patientId: { $ref: "#/components/schemas/UUID" },
-            professionalId: { $ref: "#/components/schemas/UUID" },
-            clinicId: { $ref: "#/components/schemas/UUID" },
+            id: { $ref: '#/components/schemas/UUID' },
+            patientId: { $ref: '#/components/schemas/UUID' },
+            professionalId: { $ref: '#/components/schemas/UUID' },
+            clinicId: { $ref: '#/components/schemas/UUID' },
             recordType: {
-              type: "string",
+              type: 'string',
               enum: [
-                "consultation",
-                "exam",
-                "procedure",
-                "prescription",
-                "evolution",
-                "discharge",
+                'consultation',
+                'exam',
+                'procedure',
+                'prescription',
+                'evolution',
+                'discharge',
               ],
-              description: "Type of medical record",
+              description: 'Type of medical record',
             },
             title: {
-              type: "string",
+              type: 'string',
               minLength: 3,
               maxLength: 200,
-              example: "Consulta de rotina",
+              example: 'Consulta de rotina',
             },
             content: {
-              type: "string",
-              description: "Medical record content (encrypted)",
-              example: "Paciente apresenta bom estado geral...",
+              type: 'string',
+              description: 'Medical record content (encrypted)',
+              example: 'Paciente apresenta bom estado geral...',
             },
             diagnoses: {
-              type: "array",
-              items: { $ref: "#/components/schemas/Diagnosis" },
+              type: 'array',
+              items: { $ref: '#/components/schemas/Diagnosis' },
             },
             prescriptions: {
-              type: "array",
-              items: { $ref: "#/components/schemas/Prescription" },
+              type: 'array',
+              items: { $ref: '#/components/schemas/Prescription' },
             },
             attachments: {
-              type: "array",
-              items: { $ref: "#/components/schemas/Attachment" },
+              type: 'array',
+              items: { $ref: '#/components/schemas/Attachment' },
             },
             lgpdCompliant: {
-              type: "boolean",
+              type: 'boolean',
               default: true,
-              description: "LGPD compliance flag",
+              description: 'LGPD compliance flag',
             },
             consentGiven: {
-              type: "boolean",
-              description: "Patient consent for data processing",
+              type: 'boolean',
+              description: 'Patient consent for data processing',
             },
-            createdAt: { $ref: "#/components/schemas/DateTime" },
-            updatedAt: { $ref: "#/components/schemas/DateTime" },
+            createdAt: { $ref: '#/components/schemas/DateTime' },
+            updatedAt: { $ref: '#/components/schemas/DateTime' },
             auditTrail: {
-              type: "array",
-              items: { $ref: "#/components/schemas/AuditEntry" },
+              type: 'array',
+              items: { $ref: '#/components/schemas/AuditEntry' },
             },
           },
         },
 
         Diagnosis: {
-          type: "object",
-          required: ["cid10Code", "description"],
+          type: 'object',
+          required: ['cid10Code', 'description'],
           properties: {
-            cid10Code: { $ref: "#/components/schemas/CID10Code" },
+            cid10Code: { $ref: '#/components/schemas/CID10Code' },
             description: {
-              type: "string",
-              example: "Exame médico geral",
+              type: 'string',
+              example: 'Exame médico geral',
             },
             primary: {
-              type: "boolean",
+              type: 'boolean',
               default: false,
-              description: "Primary diagnosis indicator",
+              description: 'Primary diagnosis indicator',
             },
             confirmed: {
-              type: "boolean",
+              type: 'boolean',
               default: true,
-              description: "Diagnosis confirmation status",
+              description: 'Diagnosis confirmation status',
             },
             notes: {
-              type: "string",
-              description: "Additional diagnosis notes",
+              type: 'string',
+              description: 'Additional diagnosis notes',
             },
           },
         },
 
         Prescription: {
-          type: "object",
-          required: ["medication", "dosage", "instructions"],
+          type: 'object',
+          required: ['medication', 'dosage', 'instructions'],
           properties: {
             medication: {
-              type: "string",
-              example: "Paracetamol 500mg",
+              type: 'string',
+              example: 'Paracetamol 500mg',
             },
             dosage: {
-              type: "string",
-              example: "1 comprimido",
+              type: 'string',
+              example: '1 comprimido',
             },
             frequency: {
-              type: "string",
-              example: "8/8 horas",
+              type: 'string',
+              example: '8/8 horas',
             },
             duration: {
-              type: "string",
-              example: "7 dias",
+              type: 'string',
+              example: '7 dias',
             },
             instructions: {
-              type: "string",
-              example: "Tomar após as refeições",
+              type: 'string',
+              example: 'Tomar após as refeições',
             },
           },
         },
 
         // Billing schemas
         Billing: {
-          type: "object",
+          type: 'object',
           required: [
-            "id",
-            "patientId",
-            "clinicId",
-            "professionalId",
-            "items",
-            "total",
+            'id',
+            'patientId',
+            'clinicId',
+            'professionalId',
+            'items',
+            'total',
           ],
           properties: {
-            id: { $ref: "#/components/schemas/UUID" },
+            id: { $ref: '#/components/schemas/UUID' },
             invoiceNumber: {
-              type: "string",
-              example: "INV-2025-001234",
+              type: 'string',
+              example: 'INV-2025-001234',
             },
-            patientId: { $ref: "#/components/schemas/UUID" },
-            clinicId: { $ref: "#/components/schemas/UUID" },
-            professionalId: { $ref: "#/components/schemas/UUID" },
-            appointmentId: { $ref: "#/components/schemas/UUID" },
+            patientId: { $ref: '#/components/schemas/UUID' },
+            clinicId: { $ref: '#/components/schemas/UUID' },
+            professionalId: { $ref: '#/components/schemas/UUID' },
+            appointmentId: { $ref: '#/components/schemas/UUID' },
             billingType: {
-              type: "string",
-              enum: ["sus", "health_plan", "private", "mixed"],
-              description:
-                "Type of billing according to Brazilian healthcare system",
+              type: 'string',
+              enum: ['sus', 'health_plan', 'private', 'mixed'],
+              description: 'Type of billing according to Brazilian healthcare system',
             },
             items: {
-              type: "array",
-              items: { $ref: "#/components/schemas/BillingItem" },
+              type: 'array',
+              items: { $ref: '#/components/schemas/BillingItem' },
             },
             subtotal: {
-              type: "number",
-              format: "float",
+              type: 'number',
+              format: 'float',
               minimum: 0,
               example: 150.0,
             },
             discounts: {
-              type: "number",
-              format: "float",
+              type: 'number',
+              format: 'float',
               minimum: 0,
               default: 0,
               example: 10.0,
             },
             taxes: {
-              type: "number",
-              format: "float",
+              type: 'number',
+              format: 'float',
               minimum: 0,
-              description: "Brazilian taxes (ISS, PIS, COFINS)",
+              description: 'Brazilian taxes (ISS, PIS, COFINS)',
               example: 7.5,
             },
             total: {
-              type: "number",
-              format: "float",
+              type: 'number',
+              format: 'float',
               minimum: 0,
               example: 147.5,
             },
             paymentStatus: {
-              type: "string",
+              type: 'string',
               enum: [
-                "pending",
-                "authorized",
-                "paid",
-                "cancelled",
-                "refunded",
-                "partially_paid",
-                "overdue",
+                'pending',
+                'authorized',
+                'paid',
+                'cancelled',
+                'refunded',
+                'partially_paid',
+                'overdue',
               ],
-              default: "pending",
+              default: 'pending',
             },
             paymentMethod: {
-              type: "string",
+              type: 'string',
               enum: [
-                "cash",
-                "debit_card",
-                "credit_card",
-                "pix",
-                "bank_transfer",
-                "health_plan",
-                "sus",
-                "installment",
+                'cash',
+                'debit_card',
+                'credit_card',
+                'pix',
+                'bank_transfer',
+                'health_plan',
+                'sus',
+                'installment',
               ],
             },
-            dueDate: { $ref: "#/components/schemas/DateTime" },
-            healthPlan: { $ref: "#/components/schemas/HealthPlan" },
-            taxInfo: { $ref: "#/components/schemas/TaxInfo" },
-            createdAt: { $ref: "#/components/schemas/DateTime" },
-            updatedAt: { $ref: "#/components/schemas/DateTime" },
+            dueDate: { $ref: '#/components/schemas/DateTime' },
+            healthPlan: { $ref: '#/components/schemas/HealthPlan' },
+            taxInfo: { $ref: '#/components/schemas/TaxInfo' },
+            createdAt: { $ref: '#/components/schemas/DateTime' },
+            updatedAt: { $ref: '#/components/schemas/DateTime' },
           },
         },
 
         BillingItem: {
-          type: "object",
+          type: 'object',
           required: [
-            "id",
-            "procedureCode",
-            "quantity",
-            "unitValue",
-            "totalValue",
+            'id',
+            'procedureCode',
+            'quantity',
+            'unitValue',
+            'totalValue',
           ],
           properties: {
-            id: { $ref: "#/components/schemas/UUID" },
-            procedureCode: { $ref: "#/components/schemas/ProcedureCode" },
+            id: { $ref: '#/components/schemas/UUID' },
+            procedureCode: { $ref: '#/components/schemas/ProcedureCode' },
             quantity: {
-              type: "number",
+              type: 'number',
               minimum: 1,
               default: 1,
             },
             unitValue: {
-              type: "number",
-              format: "float",
+              type: 'number',
+              format: 'float',
               minimum: 0,
               example: 150.0,
             },
             totalValue: {
-              type: "number",
-              format: "float",
+              type: 'number',
+              format: 'float',
               minimum: 0,
               example: 150.0,
             },
             discount: {
-              type: "number",
-              format: "float",
+              type: 'number',
+              format: 'float',
               minimum: 0,
               default: 0,
             },
-            date: { $ref: "#/components/schemas/DateTime" },
+            date: { $ref: '#/components/schemas/DateTime' },
           },
         },
 
         ProcedureCode: {
-          type: "object",
-          required: ["cbhpmCode", "description", "value", "category"],
+          type: 'object',
+          required: ['cbhpmCode', 'description', 'value', 'category'],
           properties: {
-            cbhpmCode: { $ref: "#/components/schemas/CBHPMCode" },
+            cbhpmCode: { $ref: '#/components/schemas/CBHPMCode' },
             description: {
-              type: "string",
-              example: "Consulta médica em consultório",
+              type: 'string',
+              example: 'Consulta médica em consultório',
             },
             value: {
-              type: "number",
-              format: "float",
+              type: 'number',
+              format: 'float',
               minimum: 0,
               example: 150.0,
             },
             category: {
-              type: "string",
-              example: "Consultas",
+              type: 'string',
+              example: 'Consultas',
             },
             specialtyRequired: {
-              type: "string",
-              example: "Medicina Geral",
+              type: 'string',
+              example: 'Medicina Geral',
             },
           },
         },
 
         HealthPlan: {
-          type: "object",
-          required: ["planId", "planName", "ansNumber", "cardNumber"],
+          type: 'object',
+          required: ['planId', 'planName', 'ansNumber', 'cardNumber'],
           properties: {
-            planId: { type: "string" },
-            planName: { type: "string", example: "UNIMED Premium" },
+            planId: { type: 'string' },
+            planName: { type: 'string', example: 'UNIMED Premium' },
             ansNumber: {
-              type: "string",
-              pattern: "^\\d{6}$",
-              description: "ANS registration number",
-              example: "123456",
+              type: 'string',
+              pattern: '^\\d{6}$',
+              description: 'ANS registration number',
+              example: '123456',
             },
-            cardNumber: { type: "string", example: "1234567890123456" },
-            validUntil: { $ref: "#/components/schemas/DateTime" },
+            cardNumber: { type: 'string', example: '1234567890123456' },
+            validUntil: { $ref: '#/components/schemas/DateTime' },
             coverageType: {
-              type: "string",
-              enum: ["partial", "full"],
+              type: 'string',
+              enum: ['partial', 'full'],
             },
             coveragePercentage: {
-              type: "number",
+              type: 'number',
               minimum: 0,
               maximum: 100,
               example: 80,
@@ -392,82 +391,81 @@ All data modifications are automatically logged for compliance.
         },
 
         TaxInfo: {
-          type: "object",
+          type: 'object',
           properties: {
             issAliquot: {
-              type: "number",
+              type: 'number',
               minimum: 0,
               maximum: 1,
-              description: "ISS tax rate",
+              description: 'ISS tax rate',
               example: 0.05,
             },
-            issRetention: { type: "number", minimum: 0, maximum: 1 },
-            pisRetention: { type: "number", minimum: 0, maximum: 1 },
-            cofinsFRetention: { type: "number", minimum: 0, maximum: 1 },
+            issRetention: { type: 'number', minimum: 0, maximum: 1 },
+            pisRetention: { type: 'number', minimum: 0, maximum: 1 },
+            cofinsFRetention: { type: 'number', minimum: 0, maximum: 1 },
             nfseNumber: {
-              type: "string",
-              description: "Electronic service invoice number",
+              type: 'string',
+              description: 'Electronic service invoice number',
             },
-            municipalInscription: { type: "string" },
+            municipalInscription: { type: 'string' },
           },
         },
 
         // Common schemas
         Attachment: {
-          type: "object",
-          required: ["id", "fileName", "fileType", "url"],
+          type: 'object',
+          required: ['id', 'fileName', 'fileType', 'url'],
           properties: {
-            id: { $ref: "#/components/schemas/UUID" },
-            fileName: { type: "string", example: "exam_result.pdf" },
-            fileType: { type: "string", example: "application/pdf" },
+            id: { $ref: '#/components/schemas/UUID' },
+            fileName: { type: 'string', example: 'exam_result.pdf' },
+            fileType: { type: 'string', example: 'application/pdf' },
             url: {
-              type: "string",
-              format: "uri",
-              example: "https://storage.example.com/files/exam.pdf",
+              type: 'string',
+              format: 'uri',
+              example: 'https://storage.example.com/files/exam.pdf',
             },
-            uploadedAt: { $ref: "#/components/schemas/DateTime" },
+            uploadedAt: { $ref: '#/components/schemas/DateTime' },
           },
         },
 
         AuditEntry: {
-          type: "object",
-          required: ["action", "performedBy", "timestamp"],
+          type: 'object',
+          required: ['action', 'performedBy', 'timestamp'],
           properties: {
             action: {
-              type: "string",
-              example: "create",
-              description:
-                "Action performed (create, update, delete, access, etc.)",
+              type: 'string',
+              example: 'create',
+              description: 'Action performed (create, update, delete, access, etc.)',
             },
-            performedBy: { $ref: "#/components/schemas/UUID" },
-            timestamp: { $ref: "#/components/schemas/DateTime" },
+            performedBy: { $ref: '#/components/schemas/UUID' },
+            timestamp: { $ref: '#/components/schemas/DateTime' },
             details: {
-              type: "string",
-              description: "Additional action details",
+              type: 'string',
+              description: 'Additional action details',
             },
-            ipAddress: { type: "string", format: "ipv4" },
-            userAgent: { type: "string" },
+            ipAddress: { type: 'string', format: 'ipv4' },
+            userAgent: { type: 'string' },
           },
         },
 
         // Response schemas
         ErrorResponse: {
-          type: "object",
-          required: ["success", "error"],
+          type: 'object',
+          required: ['success', 'error'],
           properties: {
-            success: { type: "boolean", example: false },
-            error: { type: "string", example: "Invalid request data" },
+            success: { type: 'boolean', example: false },
+            error: { type: 'string', example: 'Invalid request data' },
             errors: {
-              type: "array",
+              type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
-                  field: { type: "string", example: "patientId" },
+                  field: { type: 'string', example: 'patientId' },
                   message: {
-                    type: "string",
-                    example: "Required field missing",
+                    type: 'string',
+                    example: 'Required field missing',
                   },
-                  code: { type: "string", example: "VALIDATION_ERROR" },
+                  code: { type: 'string', example: 'VALIDATION_ERROR' },
                 },
               },
             },
@@ -475,35 +473,35 @@ All data modifications are automatically logged for compliance.
         },
 
         PaginationInfo: {
-          type: "object",
+          type: 'object',
           properties: {
-            page: { type: "integer", minimum: 1, example: 1 },
-            limit: { type: "integer", minimum: 1, maximum: 100, example: 20 },
-            total: { type: "integer", minimum: 0, example: 150 },
-            totalPages: { type: "integer", minimum: 1, example: 8 },
+            page: { type: 'integer', minimum: 1, example: 1 },
+            limit: { type: 'integer', minimum: 1, maximum: 100, example: 20 },
+            total: { type: 'integer', minimum: 0, example: 150 },
+            totalPages: { type: 'integer', minimum: 1, example: 8 },
           },
         },
       },
     },
     security: [{ bearerAuth: [] }],
     paths: {
-      "/health": {
+      '/health': {
         get: {
-          summary: "Health check",
-          description: "Check API health status",
+          summary: 'Health check',
+          description: 'Check API health status',
           security: [],
           responses: {
-            "200": {
-              description: "OK",
+            '200': {
+              description: 'OK',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      ok: { type: "boolean" },
-                      status: { type: "string" },
-                      ts: { type: "string", format: "date-time" },
-                      path: { type: "string" },
+                      ok: { type: 'boolean' },
+                      status: { type: 'string' },
+                      ts: { type: 'string', format: 'date-time' },
+                      path: { type: 'string' },
                     },
                   },
                 },
@@ -512,101 +510,100 @@ All data modifications are automatically logged for compliance.
           },
         },
       },
-      "/v1/health": {
+      '/v1/health': {
         get: {
-          summary: "v1 Health check",
-          description: "Check API v1 health status",
+          summary: 'v1 Health check',
+          description: 'Check API v1 health status',
           security: [],
-          responses: { "200": { description: "OK" } },
+          responses: { '200': { description: 'OK' } },
         },
       },
 
       // Medical Records endpoints
-      "/v1/medical-records": {
+      '/v1/medical-records': {
         get: {
-          summary: "List medical records",
-          description:
-            "Get a paginated list of medical records with optional filtering",
-          tags: ["Medical Records"],
+          summary: 'List medical records',
+          description: 'Get a paginated list of medical records with optional filtering',
+          tags: ['Medical Records'],
           parameters: [
             {
-              name: "patientId",
-              in: "query",
-              schema: { $ref: "#/components/schemas/UUID" },
-              description: "Filter by patient ID",
+              name: 'patientId',
+              in: 'query',
+              schema: { $ref: '#/components/schemas/UUID' },
+              description: 'Filter by patient ID',
             },
             {
-              name: "professionalId",
-              in: "query",
-              schema: { $ref: "#/components/schemas/UUID" },
-              description: "Filter by professional ID",
+              name: 'professionalId',
+              in: 'query',
+              schema: { $ref: '#/components/schemas/UUID' },
+              description: 'Filter by professional ID',
             },
             {
-              name: "recordType",
-              in: "query",
+              name: 'recordType',
+              in: 'query',
               schema: {
-                type: "string",
+                type: 'string',
                 enum: [
-                  "consultation",
-                  "exam",
-                  "procedure",
-                  "prescription",
-                  "evolution",
-                  "discharge",
+                  'consultation',
+                  'exam',
+                  'procedure',
+                  'prescription',
+                  'evolution',
+                  'discharge',
                 ],
               },
-              description: "Filter by record type",
+              description: 'Filter by record type',
             },
             {
-              name: "dateFrom",
-              in: "query",
-              schema: { type: "string", format: "date" },
-              description: "Filter records from this date",
+              name: 'dateFrom',
+              in: 'query',
+              schema: { type: 'string', format: 'date' },
+              description: 'Filter records from this date',
             },
             {
-              name: "dateTo",
-              in: "query",
-              schema: { type: "string", format: "date" },
-              description: "Filter records until this date",
+              name: 'dateTo',
+              in: 'query',
+              schema: { type: 'string', format: 'date' },
+              description: 'Filter records until this date',
             },
             {
-              name: "page",
-              in: "query",
-              schema: { type: "integer", minimum: 1, default: 1 },
-              description: "Page number for pagination",
+              name: 'page',
+              in: 'query',
+              schema: { type: 'integer', minimum: 1, default: 1 },
+              description: 'Page number for pagination',
             },
             {
-              name: "limit",
-              in: "query",
+              name: 'limit',
+              in: 'query',
               schema: {
-                type: "integer",
+                type: 'integer',
                 minimum: 1,
                 maximum: 100,
                 default: 20,
               },
-              description: "Number of records per page",
+              description: 'Number of records per page',
             },
           ],
           responses: {
-            "200": {
-              description: "List of medical records",
+            '200': {
+              description: 'List of medical records',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
+                      success: { type: 'boolean', example: true },
                       data: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           records: {
-                            type: "array",
+                            type: 'array',
                             items: {
-                              $ref: "#/components/schemas/MedicalRecord",
+                              $ref: '#/components/schemas/MedicalRecord',
                             },
                           },
                           pagination: {
-                            $ref: "#/components/schemas/PaginationInfo",
+                            $ref: '#/components/schemas/PaginationInfo',
                           },
                         },
                       },
@@ -615,27 +612,27 @@ All data modifications are automatically logged for compliance.
                 },
               },
             },
-            "400": {
-              description: "Invalid request parameters",
+            '400': {
+              description: 'Invalid request parameters',
               content: {
-                "application/json": {
-                  schema: { $ref: "#/components/schemas/ErrorResponse" },
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
                 },
               },
             },
-            "401": {
-              description: "Unauthorized - Invalid or missing authentication",
+            '401': {
+              description: 'Unauthorized - Invalid or missing authentication',
               content: {
-                "application/json": {
-                  schema: { $ref: "#/components/schemas/ErrorResponse" },
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
                 },
               },
             },
-            "403": {
-              description: "Forbidden - Insufficient permissions",
+            '403': {
+              description: 'Forbidden - Insufficient permissions',
               content: {
-                "application/json": {
-                  schema: { $ref: "#/components/schemas/ErrorResponse" },
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
                 },
               },
             },
@@ -643,158 +640,156 @@ All data modifications are automatically logged for compliance.
         },
 
         post: {
-          summary: "Create medical record",
-          description:
-            "Create a new medical record with LGPD compliance and audit trail",
-          tags: ["Medical Records"],
+          summary: 'Create medical record',
+          description: 'Create a new medical record with LGPD compliance and audit trail',
+          tags: ['Medical Records'],
           requestBody: {
             required: true,
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   required: [
-                    "patientId",
-                    "professionalId",
-                    "clinicId",
-                    "recordType",
-                    "title",
+                    'patientId',
+                    'professionalId',
+                    'clinicId',
+                    'recordType',
+                    'title',
                   ],
                   properties: {
-                    patientId: { $ref: "#/components/schemas/UUID" },
-                    professionalId: { $ref: "#/components/schemas/UUID" },
-                    clinicId: { $ref: "#/components/schemas/UUID" },
+                    patientId: { $ref: '#/components/schemas/UUID' },
+                    professionalId: { $ref: '#/components/schemas/UUID' },
+                    clinicId: { $ref: '#/components/schemas/UUID' },
                     recordType: {
-                      type: "string",
+                      type: 'string',
                       enum: [
-                        "consultation",
-                        "exam",
-                        "procedure",
-                        "prescription",
-                        "evolution",
-                        "discharge",
+                        'consultation',
+                        'exam',
+                        'procedure',
+                        'prescription',
+                        'evolution',
+                        'discharge',
                       ],
                     },
-                    title: { type: "string", minLength: 3, maxLength: 200 },
-                    content: { type: "string" },
+                    title: { type: 'string', minLength: 3, maxLength: 200 },
+                    content: { type: 'string' },
                     diagnoses: {
-                      type: "array",
-                      items: { $ref: "#/components/schemas/Diagnosis" },
+                      type: 'array',
+                      items: { $ref: '#/components/schemas/Diagnosis' },
                     },
                     prescriptions: {
-                      type: "array",
-                      items: { $ref: "#/components/schemas/Prescription" },
+                      type: 'array',
+                      items: { $ref: '#/components/schemas/Prescription' },
                     },
-                    consentGiven: { type: "boolean", default: true },
+                    consentGiven: { type: 'boolean', default: true },
                   },
                 },
               },
             },
           },
           responses: {
-            "201": {
-              description: "Medical record created successfully",
+            '201': {
+              description: 'Medical record created successfully',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
-                      data: { $ref: "#/components/schemas/MedicalRecord" },
+                      success: { type: 'boolean', example: true },
+                      data: { $ref: '#/components/schemas/MedicalRecord' },
                       message: {
-                        type: "string",
-                        example: "Prontuário criado com sucesso",
+                        type: 'string',
+                        example: 'Prontuário criado com sucesso',
                       },
                     },
                   },
                 },
               },
             },
-            "400": {
-              description: "Validation error or missing required fields",
+            '400': {
+              description: 'Validation error or missing required fields',
               content: {
-                "application/json": {
-                  schema: { $ref: "#/components/schemas/ErrorResponse" },
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
                 },
               },
             },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
       },
 
-      "/v1/medical-records/{recordId}": {
+      '/v1/medical-records/{recordId}': {
         get: {
-          summary: "Get medical record by ID",
-          description:
-            "Retrieve a specific medical record with LGPD access control",
-          tags: ["Medical Records"],
+          summary: 'Get medical record by ID',
+          description: 'Retrieve a specific medical record with LGPD access control',
+          tags: ['Medical Records'],
           parameters: [
             {
-              name: "recordId",
-              in: "path",
+              name: 'recordId',
+              in: 'path',
               required: true,
-              schema: { $ref: "#/components/schemas/UUID" },
-              description: "Medical record ID",
+              schema: { $ref: '#/components/schemas/UUID' },
+              description: 'Medical record ID',
             },
           ],
           responses: {
-            "200": {
-              description: "Medical record details",
+            '200': {
+              description: 'Medical record details',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
-                      data: { $ref: "#/components/schemas/MedicalRecord" },
+                      success: { type: 'boolean', example: true },
+                      data: { $ref: '#/components/schemas/MedicalRecord' },
                     },
                   },
                 },
               },
             },
-            "404": {
-              description: "Medical record not found",
+            '404': {
+              description: 'Medical record not found',
               content: {
-                "application/json": {
-                  schema: { $ref: "#/components/schemas/ErrorResponse" },
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ErrorResponse' },
                 },
               },
             },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
 
         put: {
-          summary: "Update medical record",
-          description: "Update an existing medical record with audit trail",
-          tags: ["Medical Records"],
+          summary: 'Update medical record',
+          description: 'Update an existing medical record with audit trail',
+          tags: ['Medical Records'],
           parameters: [
             {
-              name: "recordId",
-              in: "path",
+              name: 'recordId',
+              in: 'path',
               required: true,
-              schema: { $ref: "#/components/schemas/UUID" },
+              schema: { $ref: '#/components/schemas/UUID' },
             },
           ],
           requestBody: {
             required: true,
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    title: { type: "string", minLength: 3, maxLength: 200 },
-                    content: { type: "string" },
+                    title: { type: 'string', minLength: 3, maxLength: 200 },
+                    content: { type: 'string' },
                     diagnoses: {
-                      type: "array",
-                      items: { $ref: "#/components/schemas/Diagnosis" },
+                      type: 'array',
+                      items: { $ref: '#/components/schemas/Diagnosis' },
                     },
                     prescriptions: {
-                      type: "array",
-                      items: { $ref: "#/components/schemas/Prescription" },
+                      type: 'array',
+                      items: { $ref: '#/components/schemas/Prescription' },
                     },
                   },
                 },
@@ -802,142 +797,142 @@ All data modifications are automatically logged for compliance.
             },
           },
           responses: {
-            "200": {
-              description: "Medical record updated successfully",
+            '200': {
+              description: 'Medical record updated successfully',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
-                      data: { $ref: "#/components/schemas/MedicalRecord" },
+                      success: { type: 'boolean', example: true },
+                      data: { $ref: '#/components/schemas/MedicalRecord' },
                       message: {
-                        type: "string",
-                        example: "Prontuário atualizado com sucesso",
+                        type: 'string',
+                        example: 'Prontuário atualizado com sucesso',
                       },
                     },
                   },
                 },
               },
             },
-            "400": { description: "Validation error" },
-            "404": { description: "Medical record not found" },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '400': { description: 'Validation error' },
+            '404': { description: 'Medical record not found' },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
 
         delete: {
-          summary: "Delete medical record",
-          description: "Soft delete a medical record (LGPD compliant)",
-          tags: ["Medical Records"],
+          summary: 'Delete medical record',
+          description: 'Soft delete a medical record (LGPD compliant)',
+          tags: ['Medical Records'],
           parameters: [
             {
-              name: "recordId",
-              in: "path",
+              name: 'recordId',
+              in: 'path',
               required: true,
-              schema: { $ref: "#/components/schemas/UUID" },
+              schema: { $ref: '#/components/schemas/UUID' },
             },
           ],
           responses: {
-            "200": {
-              description: "Medical record deleted successfully",
+            '200': {
+              description: 'Medical record deleted successfully',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
+                      success: { type: 'boolean', example: true },
                       message: {
-                        type: "string",
-                        example: "Prontuário removido com sucesso",
+                        type: 'string',
+                        example: 'Prontuário removido com sucesso',
                       },
                     },
                   },
                 },
               },
             },
-            "404": { description: "Medical record not found" },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '404': { description: 'Medical record not found' },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
       },
 
       // Billing endpoints
-      "/v1/billing": {
+      '/v1/billing': {
         get: {
-          summary: "List billing records",
+          summary: 'List billing records',
           description:
-            "Get a paginated list of billing records with Brazilian healthcare compliance",
-          tags: ["Billing"],
+            'Get a paginated list of billing records with Brazilian healthcare compliance',
+          tags: ['Billing'],
           parameters: [
             {
-              name: "patientId",
-              in: "query",
-              schema: { $ref: "#/components/schemas/UUID" },
-              description: "Filter by patient ID",
+              name: 'patientId',
+              in: 'query',
+              schema: { $ref: '#/components/schemas/UUID' },
+              description: 'Filter by patient ID',
             },
             {
-              name: "clinicId",
-              in: "query",
-              schema: { $ref: "#/components/schemas/UUID" },
-              description: "Filter by clinic ID",
+              name: 'clinicId',
+              in: 'query',
+              schema: { $ref: '#/components/schemas/UUID' },
+              description: 'Filter by clinic ID',
             },
             {
-              name: "professionalId",
-              in: "query",
-              schema: { $ref: "#/components/schemas/UUID" },
-              description: "Filter by professional ID",
+              name: 'professionalId',
+              in: 'query',
+              schema: { $ref: '#/components/schemas/UUID' },
+              description: 'Filter by professional ID',
             },
             {
-              name: "billingType",
-              in: "query",
+              name: 'billingType',
+              in: 'query',
               schema: {
-                type: "string",
-                enum: ["sus", "health_plan", "private", "mixed"],
+                type: 'string',
+                enum: ['sus', 'health_plan', 'private', 'mixed'],
               },
-              description: "Filter by billing type",
+              description: 'Filter by billing type',
             },
             {
-              name: "paymentStatus",
-              in: "query",
+              name: 'paymentStatus',
+              in: 'query',
               schema: {
-                type: "string",
+                type: 'string',
                 enum: [
-                  "pending",
-                  "authorized",
-                  "paid",
-                  "cancelled",
-                  "refunded",
-                  "partially_paid",
-                  "overdue",
+                  'pending',
+                  'authorized',
+                  'paid',
+                  'cancelled',
+                  'refunded',
+                  'partially_paid',
+                  'overdue',
                 ],
               },
-              description: "Filter by payment status",
+              description: 'Filter by payment status',
             },
             {
-              name: "dateFrom",
-              in: "query",
-              schema: { type: "string", format: "date" },
-              description: "Filter billings from this date",
+              name: 'dateFrom',
+              in: 'query',
+              schema: { type: 'string', format: 'date' },
+              description: 'Filter billings from this date',
             },
             {
-              name: "dateTo",
-              in: "query",
-              schema: { type: "string", format: "date" },
-              description: "Filter billings until this date",
+              name: 'dateTo',
+              in: 'query',
+              schema: { type: 'string', format: 'date' },
+              description: 'Filter billings until this date',
             },
             {
-              name: "page",
-              in: "query",
-              schema: { type: "integer", minimum: 1, default: 1 },
+              name: 'page',
+              in: 'query',
+              schema: { type: 'integer', minimum: 1, default: 1 },
             },
             {
-              name: "limit",
-              in: "query",
+              name: 'limit',
+              in: 'query',
               schema: {
-                type: "integer",
+                type: 'integer',
                 minimum: 1,
                 maximum: 100,
                 default: 20,
@@ -945,23 +940,23 @@ All data modifications are automatically logged for compliance.
             },
           ],
           responses: {
-            "200": {
-              description: "List of billing records",
+            '200': {
+              description: 'List of billing records',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
+                      success: { type: 'boolean', example: true },
                       data: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           billings: {
-                            type: "array",
-                            items: { $ref: "#/components/schemas/Billing" },
+                            type: 'array',
+                            items: { $ref: '#/components/schemas/Billing' },
                           },
                           pagination: {
-                            $ref: "#/components/schemas/PaginationInfo",
+                            $ref: '#/components/schemas/PaginationInfo',
                           },
                         },
                       },
@@ -970,175 +965,173 @@ All data modifications are automatically logged for compliance.
                 },
               },
             },
-            "400": { description: "Invalid request parameters" },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '400': { description: 'Invalid request parameters' },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
 
         post: {
-          summary: "Create billing record",
-          description:
-            "Create a new billing record with Brazilian tax calculations and compliance",
-          tags: ["Billing"],
+          summary: 'Create billing record',
+          description: 'Create a new billing record with Brazilian tax calculations and compliance',
+          tags: ['Billing'],
           requestBody: {
             required: true,
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
+                  type: 'object',
                   required: [
-                    "patientId",
-                    "clinicId",
-                    "professionalId",
-                    "items",
+                    'patientId',
+                    'clinicId',
+                    'professionalId',
+                    'items',
                   ],
                   properties: {
-                    patientId: { $ref: "#/components/schemas/UUID" },
-                    clinicId: { $ref: "#/components/schemas/UUID" },
-                    professionalId: { $ref: "#/components/schemas/UUID" },
-                    appointmentId: { $ref: "#/components/schemas/UUID" },
+                    patientId: { $ref: '#/components/schemas/UUID' },
+                    clinicId: { $ref: '#/components/schemas/UUID' },
+                    professionalId: { $ref: '#/components/schemas/UUID' },
+                    appointmentId: { $ref: '#/components/schemas/UUID' },
                     billingType: {
-                      type: "string",
-                      enum: ["sus", "health_plan", "private", "mixed"],
-                      default: "private",
+                      type: 'string',
+                      enum: ['sus', 'health_plan', 'private', 'mixed'],
+                      default: 'private',
                     },
                     items: {
-                      type: "array",
+                      type: 'array',
                       minItems: 1,
                       items: {
-                        type: "object",
-                        required: ["procedureCode", "quantity", "unitValue"],
+                        type: 'object',
+                        required: ['procedureCode', 'quantity', 'unitValue'],
                         properties: {
                           procedureCode: {
-                            $ref: "#/components/schemas/ProcedureCode",
+                            $ref: '#/components/schemas/ProcedureCode',
                           },
-                          quantity: { type: "number", minimum: 1 },
-                          unitValue: { type: "number", minimum: 0 },
-                          discount: { type: "number", minimum: 0, default: 0 },
+                          quantity: { type: 'number', minimum: 1 },
+                          unitValue: { type: 'number', minimum: 0 },
+                          discount: { type: 'number', minimum: 0, default: 0 },
                         },
                       },
                     },
-                    healthPlan: { $ref: "#/components/schemas/HealthPlan" },
-                    discounts: { type: "number", minimum: 0, default: 0 },
-                    notes: { type: "string" },
+                    healthPlan: { $ref: '#/components/schemas/HealthPlan' },
+                    discounts: { type: 'number', minimum: 0, default: 0 },
+                    notes: { type: 'string' },
                   },
                 },
               },
             },
           },
           responses: {
-            "201": {
-              description: "Billing record created successfully",
+            '201': {
+              description: 'Billing record created successfully',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
-                      data: { $ref: "#/components/schemas/Billing" },
+                      success: { type: 'boolean', example: true },
+                      data: { $ref: '#/components/schemas/Billing' },
                       message: {
-                        type: "string",
-                        example: "Cobrança criada com sucesso",
+                        type: 'string',
+                        example: 'Cobrança criada com sucesso',
                       },
                     },
                   },
                 },
               },
             },
-            "400": { description: "Validation error" },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '400': { description: 'Validation error' },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
       },
 
-      "/v1/billing/{billingId}": {
+      '/v1/billing/{billingId}': {
         get: {
-          summary: "Get billing record by ID",
-          description: "Retrieve a specific billing record",
-          tags: ["Billing"],
+          summary: 'Get billing record by ID',
+          description: 'Retrieve a specific billing record',
+          tags: ['Billing'],
           parameters: [
             {
-              name: "billingId",
-              in: "path",
+              name: 'billingId',
+              in: 'path',
               required: true,
-              schema: { $ref: "#/components/schemas/UUID" },
+              schema: { $ref: '#/components/schemas/UUID' },
             },
           ],
           responses: {
-            "200": {
-              description: "Billing record details",
+            '200': {
+              description: 'Billing record details',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
-                      data: { $ref: "#/components/schemas/Billing" },
+                      success: { type: 'boolean', example: true },
+                      data: { $ref: '#/components/schemas/Billing' },
                     },
                   },
                 },
               },
             },
-            "404": { description: "Billing record not found" },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '404': { description: 'Billing record not found' },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
       },
 
-      "/v1/billing/{billingId}/payment": {
+      '/v1/billing/{billingId}/payment': {
         post: {
-          summary: "Process payment",
-          description:
-            "Process payment for a billing record with Brazilian payment methods",
-          tags: ["Billing"],
+          summary: 'Process payment',
+          description: 'Process payment for a billing record with Brazilian payment methods',
+          tags: ['Billing'],
           parameters: [
             {
-              name: "billingId",
-              in: "path",
+              name: 'billingId',
+              in: 'path',
               required: true,
-              schema: { $ref: "#/components/schemas/UUID" },
+              schema: { $ref: '#/components/schemas/UUID' },
             },
           ],
           requestBody: {
             required: true,
             content: {
-              "application/json": {
+              'application/json': {
                 schema: {
-                  type: "object",
-                  required: ["paymentMethod", "amount"],
+                  type: 'object',
+                  required: ['paymentMethod', 'amount'],
                   properties: {
                     paymentMethod: {
-                      type: "string",
+                      type: 'string',
                       enum: [
-                        "cash",
-                        "debit_card",
-                        "credit_card",
-                        "pix",
-                        "bank_transfer",
-                        "health_plan",
-                        "sus",
-                        "installment",
+                        'cash',
+                        'debit_card',
+                        'credit_card',
+                        'pix',
+                        'bank_transfer',
+                        'health_plan',
+                        'sus',
+                        'installment',
                       ],
                     },
-                    amount: { type: "number", minimum: 0 },
-                    installments: { type: "integer", minimum: 1, maximum: 24 },
+                    amount: { type: 'number', minimum: 0 },
+                    installments: { type: 'integer', minimum: 1, maximum: 24 },
                     cardToken: {
-                      type: "string",
-                      description: "Tokenized card data for security",
+                      type: 'string',
+                      description: 'Tokenized card data for security',
                     },
                     pixKey: {
-                      type: "string",
-                      description: "PIX key for PIX payments",
+                      type: 'string',
+                      description: 'PIX key for PIX payments',
                     },
                     bankAccount: {
-                      type: "object",
+                      type: 'object',
                       properties: {
-                        bank: { type: "string" },
-                        agency: { type: "string" },
-                        account: { type: "string" },
+                        bank: { type: 'string' },
+                        agency: { type: 'string' },
+                        account: { type: 'string' },
                       },
                     },
                   },
@@ -1147,120 +1140,119 @@ All data modifications are automatically logged for compliance.
             },
           },
           responses: {
-            "200": {
-              description: "Payment processed successfully",
+            '200': {
+              description: 'Payment processed successfully',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
+                      success: { type: 'boolean', example: true },
                       data: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          paymentId: { $ref: "#/components/schemas/UUID" },
+                          paymentId: { $ref: '#/components/schemas/UUID' },
                           status: {
-                            type: "string",
+                            type: 'string',
                             enum: [
-                              "pending",
-                              "authorized",
-                              "paid",
-                              "cancelled",
-                              "refunded",
+                              'pending',
+                              'authorized',
+                              'paid',
+                              'cancelled',
+                              'refunded',
                             ],
                           },
                         },
                       },
                       message: {
-                        type: "string",
-                        example: "Pagamento processado com sucesso",
+                        type: 'string',
+                        example: 'Pagamento processado com sucesso',
                       },
                     },
                   },
                 },
               },
             },
-            "400": { description: "Invalid payment data" },
-            "404": { description: "Billing record not found" },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '400': { description: 'Invalid payment data' },
+            '404': { description: 'Billing record not found' },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
       },
 
-      "/v1/billing/financial-summary": {
+      '/v1/billing/financial-summary': {
         get: {
-          summary: "Get financial summary",
-          description:
-            "Generate financial summary and reports for Brazilian healthcare billing",
-          tags: ["Billing"],
+          summary: 'Get financial summary',
+          description: 'Generate financial summary and reports for Brazilian healthcare billing',
+          tags: ['Billing'],
           parameters: [
             {
-              name: "clinicId",
-              in: "query",
-              schema: { $ref: "#/components/schemas/UUID" },
-              description: "Filter by clinic ID",
+              name: 'clinicId',
+              in: 'query',
+              schema: { $ref: '#/components/schemas/UUID' },
+              description: 'Filter by clinic ID',
             },
             {
-              name: "dateFrom",
-              in: "query",
-              schema: { type: "string", format: "date" },
-              description: "Summary from this date",
+              name: 'dateFrom',
+              in: 'query',
+              schema: { type: 'string', format: 'date' },
+              description: 'Summary from this date',
             },
             {
-              name: "dateTo",
-              in: "query",
-              schema: { type: "string", format: "date" },
-              description: "Summary until this date",
+              name: 'dateTo',
+              in: 'query',
+              schema: { type: 'string', format: 'date' },
+              description: 'Summary until this date',
             },
           ],
           responses: {
-            "200": {
-              description: "Financial summary",
+            '200': {
+              description: 'Financial summary',
               content: {
-                "application/json": {
+                'application/json': {
                   schema: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      success: { type: "boolean", example: true },
+                      success: { type: 'boolean', example: true },
                       data: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          totalRevenue: { type: "number", example: 15000.0 },
-                          totalPending: { type: "number", example: 3000.0 },
-                          totalPaid: { type: "number", example: 12000.0 },
-                          totalOverdue: { type: "number", example: 500.0 },
-                          averageTicket: { type: "number", example: 150.0 },
+                          totalRevenue: { type: 'number', example: 15000.0 },
+                          totalPending: { type: 'number', example: 3000.0 },
+                          totalPaid: { type: 'number', example: 12000.0 },
+                          totalOverdue: { type: 'number', example: 500.0 },
+                          averageTicket: { type: 'number', example: 150.0 },
                           revenueByType: {
-                            type: "object",
+                            type: 'object',
                             properties: {
-                              sus: { type: "number" },
-                              health_plan: { type: "number" },
-                              private: { type: "number" },
-                              mixed: { type: "number" },
+                              sus: { type: 'number' },
+                              health_plan: { type: 'number' },
+                              private: { type: 'number' },
+                              mixed: { type: 'number' },
                             },
                           },
                           revenueByMonth: {
-                            type: "array",
+                            type: 'array',
                             items: {
-                              type: "object",
+                              type: 'object',
                               properties: {
-                                month: { type: "string", example: "2024-01" },
-                                revenue: { type: "number", example: 5000.0 },
+                                month: { type: 'string', example: '2024-01' },
+                                revenue: { type: 'number', example: 5000.0 },
                               },
                             },
                           },
                           topProcedures: {
-                            type: "array",
+                            type: 'array',
                             items: {
-                              type: "object",
+                              type: 'object',
                               properties: {
                                 procedure: {
-                                  type: "string",
-                                  example: "Consulta médica",
+                                  type: 'string',
+                                  example: 'Consulta médica',
                                 },
-                                count: { type: "integer", example: 50 },
-                                revenue: { type: "number", example: 7500.0 },
+                                count: { type: 'integer', example: 50 },
+                                revenue: { type: 'number', example: 7500.0 },
                               },
                             },
                           },
@@ -1271,22 +1263,20 @@ All data modifications are automatically logged for compliance.
                 },
               },
             },
-            "401": { description: "Unauthorized" },
-            "403": { description: "Forbidden" },
+            '401': { description: 'Unauthorized' },
+            '403': { description: 'Forbidden' },
           },
         },
       },
     },
     tags: [
       {
-        name: "Medical Records",
-        description:
-          "Electronic medical records management with LGPD compliance",
+        name: 'Medical Records',
+        description: 'Electronic medical records management with LGPD compliance',
       },
       {
-        name: "Billing",
-        description:
-          "Healthcare billing and payment processing for Brazilian market",
+        name: 'Billing',
+        description: 'Healthcare billing and payment processing for Brazilian market',
       },
     ],
   } as const;

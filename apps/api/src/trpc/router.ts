@@ -3,18 +3,19 @@
  * Combines all domain routers with healthcare compliance
  */
 
-import { agentRouter } from "./routers/agent";
-import { aiRouter } from "./routers/ai";
-import { appointmentsRouter } from "./routers/appointments";
-import { crudRouter } from "./routers/crud";
-import { healthcareServicesRouter } from "./routers/healthcare-services";
-import { patientsRouter } from "./routers/patients";
-import { realtimeTelemedicineRouter } from "./routers/realtime-telemedicine";
-import { telemedicineRouter } from "./routers/telemedicine";
-import { router } from "./trpc";
+import { agentRouter } from './routers/agent';
+import { aiRouter } from './routers/ai';
+import { appointmentsRouter } from './routers/appointments';
+import { crudRouter } from './routers/crud';
+import { financialAgentRouter } from './routers/financial-agent';
+import { healthcareServicesRouter } from './routers/healthcare-services';
+import { patientsRouter } from './routers/patients';
+import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
+import { telemedicineRouter } from './routers/telemedicine';
+import { router } from './trpc';
 
 // Import comprehensive API contracts from T016
-import { apiRouter } from "./contracts";
+import { apiRouter } from './contracts';
 
 /**
  * App Router - Main tRPC router for the healthcare platform
@@ -23,6 +24,12 @@ import { apiRouter } from "./contracts";
  * - Patients router with LGPD compliance
  * - Appointments router with CFM validation and no-show prediction
  * - AI router with Portuguese healthcare support
+ * - Financial Agent router with AG-UI Protocol extensions:
+ *   - Intelligent billing automation and payment processing
+ *   - Predictive financial analytics and trend analysis
+ *   - Automated anomaly detection and fraud prevention
+ *   - LGPD-compliant financial data handling
+ *   - Brazilian payment systems integration (PIX, credit cards, installments)
  * - Healthcare Services router with enhanced T027-T029 services:
  *   - LGPD data lifecycle management
  *   - AI-powered no-show prediction
@@ -46,6 +53,7 @@ export const appRouter = router({
   ai: aiRouter,
   agents: agentRouter,
   crud: crudRouter,
+  financialAgent: financialAgentRouter,
   healthcareServices: healthcareServicesRouter,
   realtimeTelemedicine: realtimeTelemedicineRouter,
   telemedicine: telemedicineRouter,

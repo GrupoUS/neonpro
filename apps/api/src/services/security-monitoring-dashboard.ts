@@ -3,9 +3,9 @@
  * Real-time security monitoring with comprehensive analytics and alerting
  */
 
-import { logger } from "@/utils/secure-logger";
-import { createServerClient } from "../clients/supabase";
-import { type SecurityAlert } from "./enhanced-rls-security";
+import { logger } from '@/utils/secure-logger';
+import { createServerClient } from '../clients/supabase';
+import { type SecurityAlert } from './enhanced-rls-security';
 
 export interface SecurityMetrics {
   timestamp: Date;
@@ -133,8 +133,8 @@ export class SecurityMonitoringDashboardService {
         compliance,
       };
     } catch (error) {
-      logger.error("Failed to generate security dashboard", error);
-      throw new Error("Failed to generate security dashboard");
+      logger.error('Failed to generate security dashboard', error);
+      throw new Error('Failed to generate security dashboard');
     }
   }
 
@@ -146,26 +146,26 @@ export class SecurityMonitoringDashboardService {
     startDate: Date,
     endDate: Date,
   ): Promise<SecurityMetrics> {
-    const cacheKey = `metrics_${clinicId || "all"}_${startDate.getTime()}`;
+    const cacheKey = `metrics_${clinicId || 'all'}_${startDate.getTime()}`;
 
     // Check cache first
     const cached = this.metricsCache.get(cacheKey);
     if (
-      cached &&
-      Date.now() - cached.timestamp.getTime() < this.dashboardUpdateInterval
+      cached
+      && Date.now() - cached.timestamp.getTime() < this.dashboardUpdateInterval
     ) {
       return cached;
     }
 
     try {
       let query = this.supabase
-        .from("rls_security_audit_logs")
-        .select("*")
-        .gte("timestamp", startDate.toISOString())
-        .lte("timestamp", endDate.toISOString());
+        .from('rls_security_audit_logs')
+        .select('*')
+        .gte('timestamp', startDate.toISOString())
+        .lte('timestamp', endDate.toISOString());
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data, error } = await query;
@@ -177,32 +177,29 @@ export class SecurityMonitoringDashboardService {
       const metrics: SecurityMetrics = {
         timestamp: new Date(),
         totalRequests: data?.length || 0,
-        deniedRequests: data?.filter((log) => !log.access_granted).length || 0,
-        securityScore:
-          data?.reduce((acc, _log) => acc + log.security_score, 0) /
-            (data?.length || 1) || 0,
-        threatLevel:
-          data?.reduce((acc, _log) => acc + log.threat_level, 0) /
-            (data?.length || 1) || 0,
-        alerts:
-          data
-            ?.filter((log) => log.threat_level > 50)
-            .map((log) => ({
-              type: "THREAT_DETECTED" as const,
-              severity: log.threat_level > 75 ? "HIGH" : ("MEDIUM" as const),
-              description: log.reason,
-              _context: {
-                _userId: log.user_id,
-                userRole: "",
-                clinicId: "",
-                sessionId: "",
-                requestMethod: "",
-                requestPath: "",
-                timestamp: new Date(log.timestamp),
-              },
-              details: { threatLevel: log.threat_level },
-              actionTaken: "Logged for review",
-            })) || [],
+        deniedRequests: data?.filter(log => !log.access_granted).length || 0,
+        securityScore: data?.reduce((acc, _log) => acc + log.security_score, 0)
+            / (data?.length || 1) || 0,
+        threatLevel: data?.reduce((acc, _log) => acc + log.threat_level, 0)
+            / (data?.length || 1) || 0,
+        alerts: data
+          ?.filter(log => log.threat_level > 50)
+          .map(log => ({
+            type: 'THREAT_DETECTED' as const,
+            severity: log.threat_level > 75 ? 'HIGH' : ('MEDIUM' as const),
+            description: log.reason,
+            _context: {
+              _userId: log.user_id,
+              userRole: '',
+              clinicId: '',
+              sessionId: '',
+              requestMethod: '',
+              requestPath: '',
+              timestamp: new Date(log.timestamp),
+            },
+            details: { threatLevel: log.threat_level },
+            actionTaken: 'Logged for review',
+          })) || [],
         topThreatTypes: this.getTopThreatTypes(data || []),
         responseTime: Math.random() * 100 + 50, // Mock response time
       };
@@ -212,7 +209,7 @@ export class SecurityMonitoringDashboardService {
 
       return metrics;
     } catch (error) {
-      logger.error("Failed to get real-time metrics", error);
+      logger.error('Failed to get real-time metrics', error);
       return {
         timestamp: new Date(),
         totalRequests: 0,
@@ -241,14 +238,14 @@ export class SecurityMonitoringDashboardService {
   }> {
     try {
       let query = this.supabase
-        .from("security_alerts")
-        .select("*")
-        .gte("created_at", startDate.toISOString())
-        .lte("created_at", endDate.toISOString())
-        .order("created_at", { ascending: false });
+        .from('security_alerts')
+        .select('*')
+        .gte('created_at', startDate.toISOString())
+        .lte('created_at', endDate.toISOString())
+        .order('created_at', { ascending: false });
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data } = await query;
@@ -256,13 +253,13 @@ export class SecurityMonitoringDashboardService {
       const alerts = data || [];
 
       return {
-        critical: alerts.filter((alert) => alert.severity === "CRITICAL"),
-        high: alerts.filter((alert) => alert.severity === "HIGH"),
-        medium: alerts.filter((alert) => alert.severity === "MEDIUM"),
-        low: alerts.filter((alert) => alert.severity === "LOW"),
+        critical: alerts.filter(alert => alert.severity === 'CRITICAL'),
+        high: alerts.filter(alert => alert.severity === 'HIGH'),
+        medium: alerts.filter(alert => alert.severity === 'MEDIUM'),
+        low: alerts.filter(alert => alert.severity === 'LOW'),
       };
     } catch (error) {
-      logger.error("Failed to get alerts by severity", error);
+      logger.error('Failed to get alerts by severity', error);
       return { critical: [], high: [], medium: [], low: [] };
     }
   }
@@ -284,13 +281,13 @@ export class SecurityMonitoringDashboardService {
   }> {
     try {
       let query = this.supabase
-        .from("rls_security_audit_logs")
-        .select("*")
-        .gte("timestamp", startDate.toISOString())
-        .lte("timestamp", endDate.toISOString());
+        .from('rls_security_audit_logs')
+        .select('*')
+        .gte('timestamp', startDate.toISOString())
+        .lte('timestamp', endDate.toISOString());
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data } = await query;
@@ -309,14 +306,13 @@ export class SecurityMonitoringDashboardService {
       > = {};
 
       // Analyze by time
-      const byTime: Array<{ hour: number; requests: number; threats: number }> =
-        Array(24)
-          .fill(0)
-          .map((_, hour) => ({ hour, requests: 0, threats: 0 }));
+      const byTime: Array<{ hour: number; requests: number; threats: number }> = Array(24)
+        .fill(0)
+        .map((_, hour) => ({ hour, requests: 0, threats: 0 }));
 
-      logs.forEach((log) => {
+      logs.forEach(log => {
         // By role (extract from user data or metadata)
-        const role = log.metadata?.userRole || "unknown";
+        const role = log.metadata?.userRole || 'unknown';
         if (!byRole[role]) {
           byRole[role] = { requests: 0, denied: 0, score: 0 };
         }
@@ -339,17 +335,16 @@ export class SecurityMonitoringDashboardService {
       });
 
       // Calculate averages
-      Object.keys(byRole).forEach((role) => {
+      Object.keys(byRole).forEach(role => {
         const data = byRole[role];
         data.score = data.score / data.requests;
       });
 
-      Object.keys(byEndpoint).forEach((endpoint) => {
+      Object.keys(byEndpoint).forEach(endpoint => {
         const data = byEndpoint[endpoint];
-        data.avgThreat =
-          logs
-            .filter((log) => log.table_name === endpoint)
-            .reduce((acc, _log) => acc + log.threat_level, 0) / data.requests;
+        data.avgThreat = logs
+          .filter(log => log.table_name === endpoint)
+          .reduce((acc, _log) => acc + log.threat_level, 0) / data.requests;
       });
 
       return {
@@ -358,7 +353,7 @@ export class SecurityMonitoringDashboardService {
         byTime,
       };
     } catch (error) {
-      logger.error("Failed to get access patterns", error);
+      logger.error('Failed to get access patterns', error);
       return { byRole: {}, byEndpoint: {}, byTime: [] };
     }
   }
@@ -388,15 +383,14 @@ export class SecurityMonitoringDashboardService {
       ]);
 
       return {
-        lgpdCompliant:
-          auditRetention && encryptionStatus && accessControlStatus,
+        lgpdCompliant: auditRetention && encryptionStatus && accessControlStatus,
         auditLogRetention,
         dataEncryption: encryptionStatus,
         accessControls: accessControlStatus,
         incidentResponse: incidentStatus,
       };
     } catch (error) {
-      logger.error("Failed to get compliance status", error);
+      logger.error('Failed to get compliance status', error);
       return {
         lgpdCompliant: false,
         auditLogRetention: false,
@@ -423,22 +417,21 @@ export class SecurityMonitoringDashboardService {
       const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
       let query = this.supabase
-        .from("rls_security_audit_logs")
-        .select("user_id, security_score, threat_level")
-        .gte("timestamp", oneHourAgo.toISOString());
+        .from('rls_security_audit_logs')
+        .select('user_id, security_score, threat_level')
+        .gte('timestamp', oneHourAgo.toISOString());
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data } = await query;
       const logs = data || [];
 
-      const uniqueUsers = new Set(logs.map((log) => log.user_id));
-      const avgSecurityScore =
-        logs.reduce((acc, _log) => acc + log.security_score, 0) / logs.length;
-      const avgThreatLevel =
-        logs.reduce((acc, _log) => acc + log.threat_level, 0) / logs.length;
+      const uniqueUsers = new Set(logs.map(log => log.user_id));
+      const avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0)
+        / logs.length;
+      const avgThreatLevel = logs.reduce((acc, _log) => acc + log.threat_level, 0) / logs.length;
 
       return {
         totalEndpoints: 15, // Mock data
@@ -449,7 +442,7 @@ export class SecurityMonitoringDashboardService {
         lastUpdated: now,
       };
     } catch (error) {
-      logger.error("Failed to get overview stats", error);
+      logger.error('Failed to get overview stats', error);
       return {
         totalEndpoints: 0,
         protectedEndpoints: 0,
@@ -500,13 +493,13 @@ export class SecurityMonitoringDashboardService {
 
       // Get security data
       let query = this.supabase
-        .from("rls_security_audit_logs")
-        .select("*")
-        .gte("timestamp", startDate.toISOString())
-        .lte("timestamp", endDate.toISOString());
+        .from('rls_security_audit_logs')
+        .select('*')
+        .gte('timestamp', startDate.toISOString())
+        .lte('timestamp', endDate.toISOString());
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data } = await query;
@@ -515,15 +508,15 @@ export class SecurityMonitoringDashboardService {
       // Calculate summary
       report.summary.totalRequests = logs.length;
       report.summary.deniedRequests = logs.filter(
-        (log) => !log.access_granted,
+        log => !log.access_granted,
       ).length;
       report.summary.securityIncidents = logs.filter(
-        (log) => log.threat_level > 70,
+        log => log.threat_level > 70,
       ).length;
-      report.summary.avgSecurityScore =
-        logs.reduce((acc, _log) => acc + log.security_score, 0) / logs.length;
+      report.summary.avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0)
+        / logs.length;
       report.summary.maxThreatLevel = Math.max(
-        ...logs.map((log) => log.threat_level),
+        ...logs.map(log => log.threat_level),
       );
 
       // Analyze threats
@@ -545,8 +538,8 @@ export class SecurityMonitoringDashboardService {
 
       return report;
     } catch (error) {
-      logger.error("Failed to generate security report", error);
-      throw new Error("Failed to generate security report");
+      logger.error('Failed to generate security report', error);
+      throw new Error('Failed to generate security report');
     }
   }
 
@@ -585,16 +578,16 @@ export class SecurityMonitoringDashboardService {
   private setupRealTimeSubscriptions(): void {
     // Subscribe to security alerts
     this.supabase
-      .channel("security-alerts")
+      .channel('security-alerts')
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "INSERT",
-          schema: "public",
-          table: "security_alerts",
+          event: 'INSERT',
+          schema: 'public',
+          table: 'security_alerts',
         },
-        (payload) => {
-          logger.info("🚨 Real-time security alert", _payload);
+        payload => {
+          logger.info('🚨 Real-time security alert', _payload);
           // Trigger real-time notifications
           this.handleRealTimeAlert(payload.new);
         },
@@ -613,7 +606,7 @@ export class SecurityMonitoringDashboardService {
       // Update dashboard metrics cache
       this.invalidateMetricsCache(alert.clinic_id);
     } catch (error) {
-      logger.error("Failed to handle real-time alert", error);
+      logger.error('Failed to handle real-time alert', error);
     }
   }
 
@@ -622,14 +615,14 @@ export class SecurityMonitoringDashboardService {
    */
   private async sendSecurityNotification(alert: any): Promise<void> {
     // Implementation would integrate with notification system
-    logger.info("📧 Security notification sent for alert", alert.id);
+    logger.info('📧 Security notification sent for alert', alert.id);
   }
 
   /**
    * Invalidate metrics cache for clinic
    */
   private invalidateMetricsCache(clinicId?: string): void {
-    const prefix = `metrics_${clinicId || "all"}`;
+    const prefix = `metrics_${clinicId || 'all'}`;
 
     for (const key of this.metricsCache.keys()) {
       if (key.startsWith(prefix)) {
@@ -643,9 +636,9 @@ export class SecurityMonitoringDashboardService {
   private getTopThreatTypes(logs: any[]): string[] {
     const threatTypes: Record<string, number> = {};
 
-    logs.forEach((log) => {
+    logs.forEach(log => {
       if (log.threat_level > 50) {
-        const type = log.reason || "Unknown threat";
+        const type = log.reason || 'Unknown threat';
         threatTypes[type] = (threatTypes[type] || 0) + 1;
       }
     });
@@ -660,9 +653,9 @@ export class SecurityMonitoringDashboardService {
     try {
       const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
       const { count } = await this.supabase
-        .from("rls_security_audit_logs")
-        .select("*", { count: "exact", head: true })
-        .gte("timestamp", thirtyDaysAgo.toISOString());
+        .from('rls_security_audit_logs')
+        .select('*', { count: 'exact', head: true })
+        .gte('timestamp', thirtyDaysAgo.toISOString());
 
       return count !== null;
     } catch {
@@ -674,12 +667,12 @@ export class SecurityMonitoringDashboardService {
     // Check if encryption is enabled in the system
     try {
       const { data } = await this.supabase
-        .from("system_settings")
-        .select("value")
-        .eq("key", "data_encryption_enabled")
+        .from('system_settings')
+        .select('value')
+        .eq('key', 'data_encryption_enabled')
         .single();
 
-      return data?.value === "true";
+      return data?.value === 'true';
     } catch {
       return false;
     }
@@ -689,8 +682,8 @@ export class SecurityMonitoringDashboardService {
     // Check if RLS policies are active
     try {
       const { data } = await this.supabase
-        .from("rls_policies")
-        .select("active")
+        .from('rls_policies')
+        .select('active')
         .limit(1);
 
       return data?.length > 0;
@@ -703,9 +696,9 @@ export class SecurityMonitoringDashboardService {
     // Check if incident response procedures are in place
     try {
       const { data } = await this.supabase
-        .from("incident_response_procedures")
-        .select("active")
-        .eq("active", true)
+        .from('incident_response_procedures')
+        .select('active')
+        .eq('active', true)
         .limit(1);
 
       return data?.length > 0;
@@ -720,12 +713,11 @@ export class SecurityMonitoringDashboardService {
     count: number;
     description: string;
   }> {
-    const threatTypes: Record<string, { count: number; maxThreat: number }> =
-      {};
+    const threatTypes: Record<string, { count: number; maxThreat: number }> = {};
 
-    logs.forEach((log) => {
+    logs.forEach(log => {
       if (log.threat_level > 30) {
-        const type = log.reason || "Unknown";
+        const type = log.reason || 'Unknown';
         if (!threatTypes[type]) {
           threatTypes[type] = { count: 0, maxThreat: 0 };
         }
@@ -739,8 +731,7 @@ export class SecurityMonitoringDashboardService {
 
     return Object.entries(threatTypes).map(([type, _data]) => ({
       type,
-      severity:
-        data.maxThreat > 75 ? "HIGH" : data.maxThreat > 50 ? "MEDIUM" : "LOW",
+      severity: data.maxThreat > 75 ? 'HIGH' : data.maxThreat > 50 ? 'MEDIUM' : 'LOW',
       count: data.count,
       description: `${type} (Max threat: ${data.maxThreat})`,
     }));
@@ -759,18 +750,18 @@ export class SecurityMonitoringDashboardService {
     let score = 100;
 
     // Check for high threat levels
-    const highThreatLogs = logs.filter((log) => log.threat_level > 70);
+    const highThreatLogs = logs.filter(log => log.threat_level > 70);
     if (highThreatLogs.length > 0) {
       issues.push(
         `${highThreatLogs.length} high-threat security events detected`,
       );
       score -= 20;
     } else {
-      passedChecks.push("No high-threat security events");
+      passedChecks.push('No high-threat security events');
     }
 
     // Check for failed access attempts
-    const failedAccess = logs.filter((log) => !log.access_granted);
+    const failedAccess = logs.filter(log => !log.access_granted);
     const failedAccessRate = failedAccess.length / logs.length;
     if (failedAccessRate > 0.1) {
       issues.push(
@@ -778,17 +769,16 @@ export class SecurityMonitoringDashboardService {
       );
       score -= 15;
     } else {
-      passedChecks.push("Acceptable access denial rate");
+      passedChecks.push('Acceptable access denial rate');
     }
 
     // Check for low security scores
-    const avgSecurityScore =
-      logs.reduce((acc, _log) => acc + log.security_score, 0) / logs.length;
+    const avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0) / logs.length;
     if (avgSecurityScore < 70) {
       issues.push(`Low average security score: ${avgSecurityScore.toFixed(1)}`);
       score -= 10;
     } else {
-      passedChecks.push("Good average security score");
+      passedChecks.push('Good average security score');
     }
 
     return {
@@ -805,36 +795,36 @@ export class SecurityMonitoringDashboardService {
     const recommendations: string[] = [];
 
     // Analyze patterns and generate recommendations
-    const failedAccess = logs.filter((log) => !log.access_granted);
-    const highThreatLogs = logs.filter((log) => log.threat_level > 70);
+    const failedAccess = logs.filter(log => !log.access_granted);
+    const highThreatLogs = logs.filter(log => log.threat_level > 70);
 
     if (failedAccess.length > 0) {
       recommendations.push(
-        "Review and update RLS policies for frequently denied access patterns",
+        'Review and update RLS policies for frequently denied access patterns',
       );
     }
 
     if (highThreatLogs.length > 0) {
       recommendations.push(
-        "Implement additional security controls for high-threat access patterns",
+        'Implement additional security controls for high-threat access patterns',
       );
     }
 
     // Check for unusual access times
-    const offHoursAccess = logs.filter((log) => {
+    const offHoursAccess = logs.filter(log => {
       const hour = new Date(log.timestamp).getHours();
       return hour < 6 || hour > 22;
     });
 
     if (offHoursAccess.length > 0) {
       recommendations.push(
-        "Consider implementing stricter controls for off-hours access",
+        'Consider implementing stricter controls for off-hours access',
       );
     }
 
     // Check for suspicious IPs
     const ipCounts: Record<string, number> = {};
-    logs.forEach((log) => {
+    logs.forEach(log => {
       if (log.ip_address) {
         ipCounts[log.ip_address] = (ipCounts[log.ip_address] || 0) + 1;
       }
@@ -845,7 +835,7 @@ export class SecurityMonitoringDashboardService {
     );
     if (suspiciousIPs.length > 0) {
       recommendations.push(
-        "Investigate high-frequency access patterns from specific IP addresses",
+        'Investigate high-frequency access patterns from specific IP addresses',
       );
     }
 
@@ -854,7 +844,7 @@ export class SecurityMonitoringDashboardService {
 
   private async storeSecurityReport(report: SecurityReport): Promise<void> {
     try {
-      await this.supabase.from("security_reports").insert({
+      await this.supabase.from('security_reports').insert({
         id: report.id,
         generated_at: report.generatedAt.toISOString(),
         period_start: report.period.start.toISOString(),
@@ -866,7 +856,7 @@ export class SecurityMonitoringDashboardService {
         recommendations: report.recommendations,
       });
     } catch (error) {
-      logger.error("Failed to store security report", error);
+      logger.error('Failed to store security report', error);
     }
   }
 
@@ -885,12 +875,12 @@ export class SecurityMonitoringDashboardService {
 
     try {
       let query = this.supabase
-        .from("rls_security_audit_logs")
-        .select("timestamp, threat_level, security_score")
-        .gte("timestamp", startDate.toISOString());
+        .from('rls_security_audit_logs')
+        .select('timestamp, threat_level, security_score')
+        .gte('timestamp', startDate.toISOString());
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data } = await query;
@@ -902,8 +892,8 @@ export class SecurityMonitoringDashboardService {
         { count: number; totalThreat: number; totalScore: number }
       > = {};
 
-      logs.forEach((log) => {
-        const date = new Date(log.timestamp).toISOString().split("T")[0];
+      logs.forEach(log => {
+        const date = new Date(log.timestamp).toISOString().split('T')[0];
         if (!dateGroups[date]) {
           dateGroups[date] = { count: 0, totalThreat: 0, totalScore: 0 };
         }
@@ -915,21 +905,21 @@ export class SecurityMonitoringDashboardService {
       const sortedDates = Object.keys(dateGroups).sort();
 
       return {
-        requests: sortedDates.map((date) => ({
+        requests: sortedDates.map(date => ({
           date,
           count: dateGroups[date].count,
         })),
-        threats: sortedDates.map((date) => ({
+        threats: sortedDates.map(date => ({
           date,
           level: dateGroups[date].totalThreat / dateGroups[date].count,
         })),
-        securityScores: sortedDates.map((date) => ({
+        securityScores: sortedDates.map(date => ({
           date,
           score: dateGroups[date].totalScore / dateGroups[date].count,
         })),
       };
     } catch (error) {
-      logger.error("Failed to get security trends", error);
+      logger.error('Failed to get security trends', error);
       return { requests: [], threats: [], securityScores: [] };
     }
   }
@@ -944,28 +934,27 @@ export class SecurityMonitoringDashboardService {
 
     try {
       let query = this.supabase
-        .from("rls_security_audit_logs")
-        .select("*")
-        .gte("timestamp", startDate.toISOString())
-        .order("threat_level", { ascending: false })
+        .from('rls_security_audit_logs')
+        .select('*')
+        .gte('timestamp', startDate.toISOString())
+        .order('threat_level', { ascending: false })
         .limit(limit);
 
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data } = await query;
       return data || [];
     } catch (error) {
-      logger.error("Failed to get top security events", error);
+      logger.error('Failed to get top security events', error);
       return [];
     }
   }
 }
 
 // Export singleton instance
-export const securityMonitoringDashboardService =
-  new SecurityMonitoringDashboardService();
+export const securityMonitoringDashboardService = new SecurityMonitoringDashboardService();
 
 // Export types
 export type { SecurityDashboard, SecurityMetrics, SecurityReport };

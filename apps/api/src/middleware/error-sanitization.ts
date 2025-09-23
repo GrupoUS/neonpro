@@ -1,5 +1,5 @@
-import { Context, Next } from "hono";
-import { logger } from "../lib/logger";
+import { Context, Next } from 'hono';
+import { logger } from '../lib/logger';
 
 /**
  * List of sensitive field patterns to redact from error messages
@@ -54,10 +54,10 @@ const SENSITIVE_PATTERNS = [
 function sanitizeString(str: string): string {
   let sanitized = str;
 
-  SENSITIVE_PATTERNS.forEach((pattern) => {
+  SENSITIVE_PATTERNS.forEach(pattern => {
     sanitized = sanitized.replace(
-      new RegExp(`(${pattern.source})\\s*[:=]\\s*[^\\s,}]+`, "gi"),
-      "$1: [REDACTED]",
+      new RegExp(`(${pattern.source})\\s*[:=]\\s*[^\\s,}]+`, 'gi'),
+      '$1: [REDACTED]',
     );
   });
 
@@ -66,17 +66,17 @@ function sanitizeString(str: string): string {
     // Email addresses
     .replace(
       /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-      "[EMAIL_REDACTED]",
+      '[EMAIL_REDACTED]',
     )
     // CPF (XXX.XXX.XXX-XX)
-    .replace(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g, "[CPF_REDACTED]")
+    .replace(/\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g, '[CPF_REDACTED]')
     // Phone numbers (various Brazilian formats)
     .replace(
       /\b(?:\+55\s?)?\(?\d{2}\)?\s?\d{4,5}-?\d{4}\b/g,
-      "[PHONE_REDACTED]",
+      '[PHONE_REDACTED]',
     )
     // Credit card numbers (any sequence of 13-19 digits)
-    .replace(/\b\d{4}\s?\d{4}\s?\d{4}\s?\d{3,4}\b/g, "[CARD_REDACTED]");
+    .replace(/\b\d{4}\s?\d{4}\s?\d{4}\s?\d{3,4}\b/g, '[CARD_REDACTED]');
 
   return sanitized;
 }
@@ -89,25 +89,23 @@ function sanitizeObject(obj: any): any {
     return obj;
   }
 
-  if (typeof obj === "string") {
+  if (typeof obj === 'string') {
     return sanitizeString(obj);
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => sanitizeObject(item));
+    return obj.map(item => sanitizeObject(item));
   }
 
-  if (typeof obj === "object") {
+  if (typeof obj === 'object') {
     const sanitized: any = {};
 
     for (const [key, value] of Object.entries(obj)) {
       // Check if the key itself is sensitive
-      const isSensitiveKey = SENSITIVE_PATTERNS.some((pattern) =>
-        pattern.test(key),
-      );
+      const isSensitiveKey = SENSITIVE_PATTERNS.some(pattern => pattern.test(key));
 
       if (isSensitiveKey) {
-        sanitized[key] = "[REDACTED]";
+        sanitized[key] = '[REDACTED]';
       } else {
         sanitized[key] = sanitizeObject(value);
       }
@@ -131,15 +129,15 @@ export function errorSanitizationMiddleware() {
       const sanitizedError = sanitizeObject({
         message: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
-        name: error instanceof Error ? error.name : "Unknown",
+        name: error instanceof Error ? error.name : 'Unknown',
       });
 
       // Log the sanitized error
-      logger.error("Sanitized error caught by middleware", {
+      logger.error('Sanitized error caught by middleware', {
         sanitizedError,
         path: c.req.path,
         method: c.req.method,
-        userAgent: c.req.header("user-agent"),
+        userAgent: c.req.header('user-agent'),
       });
 
       // Re-throw the original error for other error handlers to process

@@ -12,31 +12,31 @@ export const TLS_CONSTANTS = {
   // Cipher suites organized by TLS version
   CIPHERS: {
     TLS_1_3: [
-      "TLS_AES_256_GCM_SHA384",
-      "TLS_CHACHA20_POLY1305_SHA256",
-      "TLS_AES_128_GCM_SHA256",
-      "TLS_AES_256_CCM_8_SHA384",
-      "TLS_AES_128_CCM_SHA256",
+      'TLS_AES_256_GCM_SHA384',
+      'TLS_CHACHA20_POLY1305_SHA256',
+      'TLS_AES_128_GCM_SHA256',
+      'TLS_AES_256_CCM_8_SHA384',
+      'TLS_AES_128_CCM_SHA256',
     ] as const,
 
     TLS_1_2: [
-      "ECDHE-ECDSA-AES256-GCM-SHA384",
-      "ECDHE-RSA-AES256-GCM-SHA384",
-      "ECDHE-ECDSA-CHACHA20-POLY1305",
-      "ECDHE-RSA-CHACHA20-POLY1305",
-      "ECDHE-ECDSA-AES128-GCM-SHA256",
-      "ECDHE-RSA-AES128-GCM-SHA256",
-      "ECDHE-ECDSA-AES256-SHA384",
-      "ECDHE-RSA-AES256-SHA384",
+      'ECDHE-ECDSA-AES256-GCM-SHA384',
+      'ECDHE-RSA-AES256-GCM-SHA384',
+      'ECDHE-ECDSA-CHACHA20-POLY1305',
+      'ECDHE-RSA-CHACHA20-POLY1305',
+      'ECDHE-ECDSA-AES128-GCM-SHA256',
+      'ECDHE-RSA-AES128-GCM-SHA256',
+      'ECDHE-ECDSA-AES256-SHA384',
+      'ECDHE-RSA-AES256-SHA384',
     ] as const,
   },
 
   // Weak ciphers to detect and reject
-  WEAK_CIPHERS: ["MD5", "SHA1", "RC4", "DES", "3DES", "NULL"] as const,
+  WEAK_CIPHERS: ['MD5', 'SHA1', 'RC4', 'DES', '3DES', 'NULL'] as const,
 
   // Security configuration values
   SECURITY: {
-    MIN_TLS_VERSION: "TLSv1.3" as const,
+    MIN_TLS_VERSION: 'TLSv1.3' as const,
     HONOR_CIPHER_ORDER: true,
     SESSION_ID_TIMEOUT: 300, // 5 minutes in seconds
     SESSION_TIMEOUT: 3600, // 1 hour in seconds
@@ -47,8 +47,8 @@ export const TLS_CONSTANTS = {
   // Certificate validation defaults
   CERTIFICATE: {
     DEFAULT_VALIDITY_DAYS: 365,
-    ISSUER_PLACEHOLDER: "Certificate Authority Placeholder",
-    SUBJECT_PLACEHOLDER: "NeonPro Healthcare API",
+    ISSUER_PLACEHOLDER: 'Certificate Authority Placeholder',
+    SUBJECT_PLACEHOLDER: 'NeonPro Healthcare API',
   },
 } as const;
 
@@ -58,7 +58,7 @@ export const HTTPS_CONSTANTS = {
   SERVER: {
     DEFAULT_PORT: 443,
     DEFAULT_HTTP_PORT: 80,
-    DEFAULT_HOST: "0.0.0.0",
+    DEFAULT_HOST: '0.0.0.0',
     MAX_CONNECTIONS: 1000,
     TIMEOUT: 120000, // 2 minutes in milliseconds
     KEEP_ALIVE_TIMEOUT: 65000, // 65 seconds in milliseconds
@@ -87,11 +87,11 @@ export const HTTPS_CONSTANTS = {
   // Security headers
   SECURITY_HEADERS: {
     CONTENT_SECURITY_POLICY:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
-    X_FRAME_OPTIONS: "DENY",
-    X_CONTENT_TYPE_OPTIONS: "nosniff",
-    X_XSS_PROTECTION: "1; mode=block",
-    REFERRER_POLICY: "strict-origin-when-cross-origin",
+      'default-src \'self\'; script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'; style-src \'self\' \'unsafe-inline\';',
+    X_FRAME_OPTIONS: 'DENY',
+    X_CONTENT_TYPE_OPTIONS: 'nosniff',
+    X_XSS_PROTECTION: '1; mode=block',
+    REFERRER_POLICY: 'strict-origin-when-cross-origin',
   } as const,
 } as const;
 
@@ -99,28 +99,27 @@ export const HTTPS_CONSTANTS = {
 export const ERROR_CONSTANTS = {
   // Error types
   TYPES: {
-    CONFIGURATION_ERROR: "ConfigurationError",
-    CERTIFICATE_ERROR: "CertificateError",
-    TLS_ERROR: "TLSError",
-    SERVER_ERROR: "ServerError",
+    CONFIGURATION_ERROR: 'ConfigurationError',
+    CERTIFICATE_ERROR: 'CertificateError',
+    TLS_ERROR: 'TLSError',
+    SERVER_ERROR: 'ServerError',
   } as const,
 
   // Error messages
   MESSAGES: {
-    TLS_NOT_INITIALIZED:
-      "TLS configuration not initialized. Call initialize() first.",
-    CERTIFICATE_LOAD_FAILED: "Failed to load TLS certificates",
-    CERTIFICATE_NOT_FOUND: "Certificate file not found",
-    SERVER_NOT_CREATED: "HTTPS server not created. Call createServer() first.",
-    INVALID_CONFIGURATION: "Invalid configuration provided",
+    TLS_NOT_INITIALIZED: 'TLS configuration not initialized. Call initialize() first.',
+    CERTIFICATE_LOAD_FAILED: 'Failed to load TLS certificates',
+    CERTIFICATE_NOT_FOUND: 'Certificate file not found',
+    SERVER_NOT_CREATED: 'HTTPS server not created. Call createServer() first.',
+    INVALID_CONFIGURATION: 'Invalid configuration provided',
   } as const,
 
   // Error codes
   CODES: {
-    CONFIGURATION_INVALID: "E_CONFIG_INVALID",
-    CERTIFICATE_MISSING: "E_CERT_MISSING",
-    TLS_INIT_FAILED: "E_TLS_INIT_FAILED",
-    SERVER_START_FAILED: "E_SERVER_START_FAILED",
+    CONFIGURATION_INVALID: 'E_CONFIG_INVALID',
+    CERTIFICATE_MISSING: 'E_CERT_MISSING',
+    TLS_INIT_FAILED: 'E_TLS_INIT_FAILED',
+    SERVER_START_FAILED: 'E_SERVER_START_FAILED',
   } as const,
 } as const;
 
@@ -128,26 +127,26 @@ export const ERROR_CONSTANTS = {
 export const LOGGING_CONSTANTS = {
   // Event types
   EVENTS: {
-    TLS_INITIALIZED: "tls_configuration_initialized",
-    TLS_VALIDATION_WARNING: "tls_configuration_warnings",
-    TLS_CONNECTION: "tls_connection_established",
-    HTTPS_SERVER_CREATED: "https_server_created",
-    HTTPS_SERVER_STARTED: "https_server_started",
-    HTTPS_SERVER_STOPPED: "https_server_stopped",
-    HTTP_REDIRECT: "http_to_https_redirect",
-    SERVER_ERROR: "https_server_error",
-    CLIENT_ERROR: "https_client_error",
-    CONNECTION_TIMEOUT: "connection_timeout",
-    SESSION_TICKETS_ROTATED: "session_tickets_rotated",
-    GRACEFUL_SHUTDOWN: "server_shutdown_initiated",
+    TLS_INITIALIZED: 'tls_configuration_initialized',
+    TLS_VALIDATION_WARNING: 'tls_configuration_warnings',
+    TLS_CONNECTION: 'tls_connection_established',
+    HTTPS_SERVER_CREATED: 'https_server_created',
+    HTTPS_SERVER_STARTED: 'https_server_started',
+    HTTPS_SERVER_STOPPED: 'https_server_stopped',
+    HTTP_REDIRECT: 'http_to_https_redirect',
+    SERVER_ERROR: 'https_server_error',
+    CLIENT_ERROR: 'https_client_error',
+    CONNECTION_TIMEOUT: 'connection_timeout',
+    SESSION_TICKETS_ROTATED: 'session_tickets_rotated',
+    GRACEFUL_SHUTDOWN: 'server_shutdown_initiated',
   } as const,
 
   // Log levels
   LEVELS: {
-    ERROR: "error",
-    WARNING: "warning",
-    INFO: "info",
-    DEBUG: "debug",
+    ERROR: 'error',
+    WARNING: 'warning',
+    INFO: 'info',
+    DEBUG: 'debug',
   } as const,
 } as const;
 
@@ -156,10 +155,8 @@ export type TLSCipherSuite =
   | (typeof TLS_CONSTANTS.CIPHERS.TLS_1_3)[number]
   | (typeof TLS_CONSTANTS.CIPHERS.TLS_1_2)[number];
 export type WeakCipher = (typeof TLS_CONSTANTS.WEAK_CIPHERS)[number];
-export type ErrorType =
-  (typeof ERROR_CONSTANTS.TYPES)[keyof typeof ERROR_CONSTANTS.TYPES];
-export type LogEventType =
-  (typeof LOGGING_CONSTANTS.EVENTS)[keyof typeof LOGGING_CONSTANTS.EVENTS];
+export type ErrorType = (typeof ERROR_CONSTANTS.TYPES)[keyof typeof ERROR_CONSTANTS.TYPES];
+export type LogEventType = (typeof LOGGING_CONSTANTS.EVENTS)[keyof typeof LOGGING_CONSTANTS.EVENTS];
 
 // Utility functions for constants
 export const getAllCiphers = (): TLSCipherSuite[] => [
@@ -168,10 +165,8 @@ export const getAllCiphers = (): TLSCipherSuite[] => [
 ];
 
 export const isWeakCipher = (cipher: string): cipher is WeakCipher =>
-  TLS_CONSTANTS.WEAK_CIPHERS.some((weak) => cipher.includes(weak));
+  TLS_CONSTANTS.WEAK_CIPHERS.some(weak => cipher.includes(weak));
 
-export const getDefaultTLSVersion = () =>
-  TLS_CONSTANTS.SECURITY.MIN_TLS_VERSION;
+export const getDefaultTLSVersion = () => TLS_CONSTANTS.SECURITY.MIN_TLS_VERSION;
 
-export const formatCipherList = (ciphers: TLSCipherSuite[]): string =>
-  ciphers.join(":");
+export const formatCipherList = (ciphers: TLSCipherSuite[]): string => ciphers.join(':');

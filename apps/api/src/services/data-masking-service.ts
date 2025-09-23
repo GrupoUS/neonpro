@@ -4,7 +4,7 @@
  * Implements LGPD Articles 7º, 11º, 18º with healthcare-specific data protection
  */
 
-import { LGPDDataCategory } from "../middleware/lgpd-compliance";
+import { LGPDDataCategory } from '../middleware/lgpd-compliance';
 
 // ============================================================================
 // Data Masking Configuration
@@ -14,15 +14,15 @@ export interface MaskingRule {
   id: string;
   fieldName: string;
   dataCategory: LGPDDataCategory;
-  maskingType: "full" | "partial" | "hash" | "tokenize" | "redact";
+  maskingType: 'full' | 'partial' | 'hash' | 'tokenize' | 'redact';
   pattern?: RegExp;
   replacementPattern?: string;
   _context:
-    | "list_view"
-    | "detail_view"
-    | "export"
-    | "api_response"
-    | "audit_log";
+    | 'list_view'
+    | 'detail_view'
+    | 'export'
+    | 'api_response'
+    | 'audit_log';
   conditions?: {
     userRole?: string[];
     purpose?: string[];
@@ -39,8 +39,8 @@ export interface MaskingContext {
   hasExplicitConsent: boolean;
   isEmergencyAccess: boolean;
   isHealthcareProfessional: boolean;
-  viewContext: "list" | "detail" | "export" | "audit";
-  requestScope: "self" | "patient" | "clinic" | "system";
+  viewContext: 'list' | 'detail' | 'export' | 'audit';
+  requestScope: 'self' | 'patient' | 'clinic' | 'system';
 }
 
 export interface MaskingResult {
@@ -50,10 +50,10 @@ export interface MaskingResult {
   rulesApplied: string[];
   dataCategoriesMasked: LGPDDataCategory[];
   confidentialityLevel:
-    | "public"
-    | "restricted"
-    | "confidential"
-    | "highly_confidential";
+    | 'public'
+    | 'restricted'
+    | 'confidential'
+    | 'highly_confidential';
   auditLog?: {
     maskingEvent: string;
     _userId: string;
@@ -70,125 +70,125 @@ export interface MaskingResult {
 const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
   // Personal Identification
   {
-    id: "cpf_masking",
-    fieldName: "cpf",
+    id: 'cpf_masking',
+    fieldName: 'cpf',
     dataCategory: LGPDDataCategory.PERSONAL,
-    maskingType: "partial",
+    maskingType: 'partial',
     pattern: /\b(\d{3})\.?(\d{3})\.?(\d{3})-?(\d{2})\b/g,
-    replacementPattern: "$1.***.***-$4",
-    _context: "list_view",
+    replacementPattern: '$1.***.***-$4',
+    _context: 'list_view',
     priority: 100,
   },
   {
-    id: "cpf_full_mask",
-    fieldName: "cpf",
+    id: 'cpf_full_mask',
+    fieldName: 'cpf',
     dataCategory: LGPDDataCategory.PERSONAL,
-    maskingType: "full",
-    _context: "export",
+    maskingType: 'full',
+    _context: 'export',
     priority: 95,
   },
   {
-    id: "phone_masking",
-    fieldName: ["phone", "telefone", "celular"],
+    id: 'phone_masking',
+    fieldName: ['phone', 'telefone', 'celular'],
     dataCategory: LGPDDataCategory.PERSONAL,
-    maskingType: "partial",
+    maskingType: 'partial',
     pattern: /\b(?:\+55\s?)?\(?(\d{2})\)?\s?9?(\d{4})-?(\d{4})\b/g,
-    replacementPattern: "($1) *****-$3",
-    _context: "list_view",
+    replacementPattern: '($1) *****-$3',
+    _context: 'list_view',
     priority: 90,
   },
   {
-    id: "email_masking",
-    fieldName: ["email", "email_address"],
+    id: 'email_masking',
+    fieldName: ['email', 'email_address'],
     dataCategory: LGPDDataCategory.PERSONAL,
-    maskingType: "partial",
+    maskingType: 'partial',
     pattern: /\b([A-Za-z0-9._%+-]+)@([A-Za-z0-9.-]+\.[A-Z|a-z]{2,})\b/g,
-    replacementPattern: "***@$2",
-    _context: "list_view",
+    replacementPattern: '***@$2',
+    _context: 'list_view',
     priority: 85,
   },
 
   // Medical Data
   {
-    id: "medical_record_masking",
-    fieldName: ["medical_record", "prontuario", "patient_record"],
+    id: 'medical_record_masking',
+    fieldName: ['medical_record', 'prontuario', 'patient_record'],
     dataCategory: LGPDDataCategory.MEDICAL,
-    maskingType: "hash",
-    _context: "list_view",
+    maskingType: 'hash',
+    _context: 'list_view',
     priority: 150,
   },
   {
-    id: "diagnosis_masking_list",
-    fieldName: ["diagnosis", "diagnostico", "cid_code"],
+    id: 'diagnosis_masking_list',
+    fieldName: ['diagnosis', 'diagnostico', 'cid_code'],
     dataCategory: LGPDDataCategory.MEDICAL,
-    maskingType: "redact",
-    _context: "list_view",
+    maskingType: 'redact',
+    _context: 'list_view',
     priority: 140,
     conditions: {
-      userRole: ["receptionist", "admin"],
+      userRole: ['receptionist', 'admin'],
     },
   },
   {
-    id: "medication_masking",
-    fieldName: ["medication", "medicamento", "prescription"],
+    id: 'medication_masking',
+    fieldName: ['medication', 'medicamento', 'prescription'],
     dataCategory: LGPDDataCategory.MEDICAL,
-    maskingType: "partial",
-    _context: "list_view",
+    maskingType: 'partial',
+    _context: 'list_view',
     priority: 130,
   },
 
   // Financial Data
   {
-    id: "credit_card_masking",
-    fieldName: ["credit_card", "card_number", "numero_cartao"],
+    id: 'credit_card_masking',
+    fieldName: ['credit_card', 'card_number', 'numero_cartao'],
     dataCategory: LGPDDataCategory.FINANCIAL,
-    maskingType: "full",
+    maskingType: 'full',
     pattern: /\b(\d{4})[\s-]?(\d{4})[\s-]?(\d{4})[\s-]?(\d{4})\b/g,
-    replacementPattern: "****-****-****-$4",
-    _context: "all",
+    replacementPattern: '****-****-****-$4',
+    _context: 'all',
     priority: 200,
   },
   {
-    id: "financial_data_masking",
-    fieldName: ["bank_account", "agency", "conta_bancaria"],
+    id: 'financial_data_masking',
+    fieldName: ['bank_account', 'agency', 'conta_bancaria'],
     dataCategory: LGPDDataCategory.FINANCIAL,
-    maskingType: "partial",
-    _context: "list_view",
+    maskingType: 'partial',
+    _context: 'list_view',
     priority: 110,
   },
 
   // Biometric Data
   {
-    id: "biometric_full_mask",
+    id: 'biometric_full_mask',
     fieldName: [
-      "fingerprint",
-      "facial_recognition",
-      "iris_scan",
-      "biometric_data",
+      'fingerprint',
+      'facial_recognition',
+      'iris_scan',
+      'biometric_data',
     ],
     dataCategory: LGPDDataCategory.BIOMETRIC,
-    maskingType: "redact",
-    _context: "all",
+    maskingType: 'redact',
+    _context: 'all',
     priority: 300,
   },
 
   // Address Information
   {
-    id: "address_masking",
-    fieldName: ["address", "endereco", "street_address"],
+    id: 'address_masking',
+    fieldName: ['address', 'endereco', 'street_address'],
     dataCategory: LGPDDataCategory.PERSONAL,
-    maskingType: "partial",
-    _context: "list_view",
+    maskingType: 'partial',
+    _context: 'list_view',
     priority: 80,
   },
   {
-    id: "postal_code_masking",
-    fieldName: ["postal_code", "cep", "zip_code"],
+    id: 'postal_code_masking',
+    fieldName: ['postal_code', 'cep', 'zip_code'],
     dataCategory: LGPDDataCategory.PERSONAL,
-    maskingType: "partial",
+    maskingType: 'partial',
     pattern: /\b(\d{5})-?(\d{3})\b/g,
-    replacementPattern: "$1-***",
-    _context: "list_view",
+    replacementPattern: '$1-***',
+    _context: 'list_view',
     priority: 75,
   },
 ];
@@ -259,8 +259,8 @@ export class DataMaskingService {
 
       return result;
     } catch (error) {
-      console.error("Error in maskData:", error);
-      throw new Error("Failed to apply data masking");
+      console.error('Error in maskData:', error);
+      throw new Error('Failed to apply data masking');
     }
   }
 
@@ -269,9 +269,9 @@ export class DataMaskingService {
    */
   private getApplicableRules(_context: MaskingContext): MaskingRule[] {
     return this.maskingRules
-      .filter((rule) => {
+      .filter(rule => {
         // Check context applicability
-        if (rule.context !== "all" && rule.context !== context.viewContext) {
+        if (rule.context !== 'all' && rule.context !== context.viewContext) {
           return false;
         }
 
@@ -279,16 +279,16 @@ export class DataMaskingService {
         if (rule.conditions) {
           // Check user role conditions
           if (
-            rule.conditions.userRole &&
-            !rule.conditions.userRole.includes(context.userRole)
+            rule.conditions.userRole
+            && !rule.conditions.userRole.includes(context.userRole)
           ) {
             return false;
           }
 
           // Check purpose conditions
           if (
-            rule.conditions.purpose &&
-            !rule.conditions.purpose.some((p) => context.purpose.includes(p))
+            rule.conditions.purpose
+            && !rule.conditions.purpose.some(p => context.purpose.includes(p))
           ) {
             return false;
           }
@@ -301,8 +301,8 @@ export class DataMaskingService {
 
         // Emergency access override for critical healthcare data
         if (
-          context.isEmergencyAccess &&
-          rule.dataCategory === LGPDDataCategory.MEDICAL
+          context.isEmergencyAccess
+          && rule.dataCategory === LGPDDataCategory.MEDICAL
         ) {
           return false; // Don't mask medical data during emergency access
         }
@@ -324,26 +324,24 @@ export class DataMaskingService {
       dataCategoriesMasked: Set<LGPDDataCategory>;
       fieldsMasked: string[];
     },
-    path: string = "",
+    path: string = '',
   ): void {
-    if (typeof data !== "object" || data === null) {
+    if (typeof data !== 'object' || data === null) {
       return;
     }
 
-    Object.keys(data).forEach((key) => {
+    Object.keys(data).forEach(key => {
       const currentPath = path ? `${path}.${key}` : key;
       const value = data[key];
 
       // Apply rules to this field
-      const applicableRules = rules.filter((rule) => {
+      const applicableRules = rules.filter(rule => {
         const fieldNames = Array.isArray(rule.fieldName)
           ? rule.fieldName
           : [rule.fieldName];
         return (
-          fieldNames.includes(key) ||
-          fieldNames.some((fieldName) =>
-            key.toLowerCase().includes(fieldName.toLowerCase()),
-          )
+          fieldNames.includes(key)
+          || fieldNames.some(fieldName => key.toLowerCase().includes(fieldName.toLowerCase()))
         );
       });
 
@@ -360,10 +358,10 @@ export class DataMaskingService {
       }
 
       // Recursively process nested objects and arrays
-      if (typeof value === "object" && value !== null) {
+      if (typeof value === 'object' && value !== null) {
         if (Array.isArray(value)) {
           value.forEach((item, _index) => {
-            if (typeof item === "object" && item !== null) {
+            if (typeof item === 'object' && item !== null) {
               this.applyMaskingRules(
                 item,
                 rules,
@@ -388,33 +386,33 @@ export class DataMaskingService {
     rule: MaskingRule,
     _context: MaskingContext,
   ): any {
-    if (typeof value !== "string") {
+    if (typeof value !== 'string') {
       return value;
     }
 
     switch (rule.maskingType) {
-      case "full":
-        return "***";
+      case 'full':
+        return '***';
 
-      case "partial":
+      case 'partial':
         if (rule.pattern && rule.replacementPattern) {
           return value.replace(rule.pattern, rule.replacementPattern);
         }
         // Default partial masking
-        if (value.length <= 4) return "***";
+        if (value.length <= 4) return '***';
         const start = value.substring(0, 2);
         const end = value.substring(value.length - 2);
-        const middle = "*".repeat(Math.max(1, value.length - 4));
+        const middle = '*'.repeat(Math.max(1, value.length - 4));
         return `${start}${middle}${end}`;
 
-      case "hash":
+      case 'hash':
         return this.hashValue(value);
 
-      case "tokenize":
+      case 'tokenize':
         return this.tokenizeValue(value, _context);
 
-      case "redact":
-        return "[REDACTED]";
+      case 'redact':
+        return '[REDACTED]';
 
       default:
         return value;
@@ -440,7 +438,7 @@ export class DataMaskingService {
    */
   private tokenizeValue(value: string, _context: MaskingContext): string {
     // In production, this would integrate with a tokenization service
-    return `token_${Buffer.from(value).toString("base64").substring(0, 8)}`;
+    return `token_${Buffer.from(value).toString('base64').substring(0, 8)}`;
   }
 
   /**
@@ -449,22 +447,22 @@ export class DataMaskingService {
   private determineConfidentialityLevel(
     dataCategories: LGPDDataCategory[],
     rulesAppliedCount: number,
-  ): "public" | "restricted" | "confidential" | "highly_confidential" {
+  ): 'public' | 'restricted' | 'confidential' | 'highly_confidential' {
     if (
-      dataCategories.includes(LGPDDataCategory.MEDICAL) ||
-      dataCategories.includes(LGPDDataCategory.BIOMETRIC)
+      dataCategories.includes(LGPDDataCategory.MEDICAL)
+      || dataCategories.includes(LGPDDataCategory.BIOMETRIC)
     ) {
-      return rulesAppliedCount > 0 ? "highly_confidential" : "confidential";
+      return rulesAppliedCount > 0 ? 'highly_confidential' : 'confidential';
     }
 
     if (
-      dataCategories.includes(LGPDDataCategory.FINANCIAL) ||
-      dataCategories.includes(LGPDDataCategory.SENSITIVE)
+      dataCategories.includes(LGPDDataCategory.FINANCIAL)
+      || dataCategories.includes(LGPDDataCategory.SENSITIVE)
     ) {
-      return rulesAppliedCount > 0 ? "confidential" : "restricted";
+      return rulesAppliedCount > 0 ? 'confidential' : 'restricted';
     }
 
-    return rulesAppliedCount > 0 ? "restricted" : "public";
+    return rulesAppliedCount > 0 ? 'restricted' : 'public';
   }
 
   /**
@@ -476,7 +474,7 @@ export class DataMaskingService {
     rulesApplied: string[],
   ) {
     return {
-      maskingEvent: "data_masking_applied",
+      maskingEvent: 'data_masking_applied',
       _userId: context.userId,
       timestamp: new Date(),
       fieldsMasked,
@@ -495,8 +493,8 @@ export class DataMaskingService {
       const logEntry = {
         id: crypto.randomUUID(),
         timestamp: new Date(),
-        _userId: "system", // Would be actual user in real implementation
-        action: "data_masking",
+        _userId: 'system', // Would be actual user in real implementation
+        action: 'data_masking',
         details: {
           processingTime,
           rulesApplied: result.rulesApplied.length,
@@ -508,9 +506,9 @@ export class DataMaskingService {
 
       // In production, this would write to your audit log system
       this.auditLog.push(logEntry);
-      console.log("[Data Masking Audit]", JSON.stringify(logEntry, null, 2));
+      console.log('[Data Masking Audit]', JSON.stringify(logEntry, null, 2));
     } catch (error) {
-      console.error("Error logging masking activity:", error);
+      console.error('Error logging masking activity:', error);
     }
   }
 
@@ -528,7 +526,7 @@ export class DataMaskingService {
    */
   removeRule(ruleId: string): boolean {
     const initialLength = this.maskingRules.length;
-    this.maskingRules = this.maskingRules.filter((rule) => rule.id !== ruleId);
+    this.maskingRules = this.maskingRules.filter(rule => rule.id !== ruleId);
     return this.maskingRules.length < initialLength;
   }
 
@@ -537,7 +535,7 @@ export class DataMaskingService {
    */
   getRulesForCategory(dataCategory: LGPDDataCategory): MaskingRule[] {
     return this.maskingRules.filter(
-      (rule) => rule.dataCategory === dataCategory,
+      rule => rule.dataCategory === dataCategory,
     );
   }
 
@@ -555,7 +553,7 @@ export class DataMaskingService {
   }> {
     const result = await this.maskData(data, {
       ...context,
-      viewContext: "detail",
+      viewContext: 'detail',
     });
 
     return {
@@ -577,13 +575,12 @@ export class DataMaskingService {
   } {
     const rulesByCategory = {} as Record<LGPDDataCategory, number>;
 
-    this.maskingRules.forEach((rule) => {
-      rulesByCategory[rule.dataCategory] =
-        (rulesByCategory[rule.dataCategory] || 0) + 1;
+    this.maskingRules.forEach(rule => {
+      rulesByCategory[rule.dataCategory] = (rulesByCategory[rule.dataCategory] || 0) + 1;
     });
 
     const recentActivity = this.auditLog.filter(
-      (entry) => Date.now() - entry.timestamp.getTime() < 24 * 60 * 60 * 1000,
+      entry => Date.now() - entry.timestamp.getTime() < 24 * 60 * 60 * 1000,
     ).length;
 
     return {
@@ -607,7 +604,7 @@ export function createHealthcareMaskingContext(
   userRole: string,
   purpose: string[],
   patientId?: string,
-  viewContext: MaskingContext["viewContext"] = "list",
+  viewContext: MaskingContext['viewContext'] = 'list',
 ): MaskingContext {
   return {
     userId,
@@ -616,11 +613,11 @@ export function createHealthcareMaskingContext(
     patientId,
     hasExplicitConsent: false, // Would be validated separately
     isEmergencyAccess: false,
-    isHealthcareProfessional: ["doctor", "nurse", "specialist"].includes(
+    isHealthcareProfessional: ['doctor', 'nurse', 'specialist'].includes(
       userRole,
     ),
     viewContext,
-    requestScope: patientId ? "patient" : "clinic",
+    requestScope: patientId ? 'patient' : 'clinic',
   };
 }
 
@@ -631,24 +628,22 @@ export function requiresLGPDMasking(
   fieldName: string,
   dataCategory: LGPDDataCategory,
   userRole: string,
-  _context: MaskingContext["viewContext"] = "list",
+  _context: MaskingContext['viewContext'] = 'list',
 ): boolean {
-  const healthcareContext = createHealthcareMaskingContext("system", userRole, [
-    "check",
+  const healthcareContext = createHealthcareMaskingContext('system', userRole, [
+    'check',
   ]);
   const service = new DataMaskingService();
   const rules = service.getApplicableRules(healthcareContext);
 
-  return rules.some((rule) => {
+  return rules.some(rule => {
     const fieldNames = Array.isArray(rule.fieldName)
       ? rule.fieldName
       : [rule.fieldName];
     return (
-      rule.dataCategory === dataCategory &&
-      (rule.context === "all" || rule.context === _context) &&
-      fieldNames.some((name) =>
-        fieldName.toLowerCase().includes(name.toLowerCase()),
-      )
+      rule.dataCategory === dataCategory
+      && (rule.context === 'all' || rule.context === _context)
+      && fieldNames.some(name => fieldName.toLowerCase().includes(name.toLowerCase()))
     );
   });
 }

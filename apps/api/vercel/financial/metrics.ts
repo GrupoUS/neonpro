@@ -1,9 +1,9 @@
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
-    const type = url.searchParams.get("type") || "all";
-    const timeframe = url.searchParams.get("timeframe") || "30d";
-    const category = url.searchParams.get("category");
+    const type = url.searchParams.get('type') || 'all';
+    const timeframe = url.searchParams.get('timeframe') || '30d';
+    const category = url.searchParams.get('category');
 
     // Mock financial metrics data
     const allMetrics = {
@@ -61,19 +61,19 @@ export async function GET(request: Request) {
     let responseData;
 
     switch (type) {
-      case "revenue":
+      case 'revenue':
         responseData = { revenue: allMetrics.revenue };
         break;
-      case "expenses":
+      case 'expenses':
         responseData = { expenses: allMetrics.expenses };
         break;
-      case "profitability":
+      case 'profitability':
         responseData = { profitability: allMetrics.profitability };
         break;
-      case "cashflow":
+      case 'cashflow':
         responseData = { cashFlow: allMetrics.cashFlow };
         break;
-      case "performance":
+      case 'performance':
         responseData = { performance: allMetrics.performance };
         break;
       default:
@@ -87,7 +87,7 @@ export async function GET(request: Request) {
         timeframe,
         category,
         lastUpdated: new Date().toISOString(),
-        currency: "BRL",
+        currency: 'BRL',
         period: {
           start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
           end: new Date().toISOString(),
@@ -98,22 +98,22 @@ export async function GET(request: Request) {
     return new Response(JSON.stringify(finalData), {
       status: 200,
       headers: {
-        "Content-Type": "application/json",
-        "Cache-Control": "public, max-age=180",
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=180',
       },
     });
   } catch (error) {
-    console.error("Financial metrics API error:", error);
+    console.error('Financial metrics API error:', error);
 
     return new Response(
       JSON.stringify({
-        error: "Internal server error",
-        message: "Failed to fetch financial metrics data",
+        error: 'Internal server error',
+        message: 'Failed to fetch financial metrics data',
       }),
       {
         status: 500,
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       },
     );

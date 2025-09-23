@@ -1,93 +1,62 @@
-export * from "./aesthetic-data";
+// Types Package Index Exports
+// This file exports all types from the packages/types directory
 
-// AI Agent types (primary)
+// Core AI types
+// AI Agent types (avoiding conflicts with ai-chat)
 export type {
-  UserQuery,
-  QueryIntent,
-  QueryParameters,
-  DateRange,
-  QueryStatus,
-  ResponseMetadata,
-  AgentResponse,
-  ResponseType,
-  ResponseContent,
-  TableColumn,
-  ChartConfig,
-  ChartDataPoint,
-  ChartAxis,
-  InteractiveAction,
-  SessionStatus,
-  SessionContext,
-  UserRole,
-  PermissionContext,
-  Permission,
-  DataScope,
-  AgentQueryRequest,
-  AgentAction,
-} from "./ai-agent.ts";
+  QueryEntities, ResponseData, ChartMetadata, ActionParameters, UserPreferences,
+  CachedData, MessageData, MessageMetadata, ActionPayload, UserQuery, QueryIntent,
+  QueryParameters, DateRange, QueryStatus, ResponseMetadata, AgentResponse, ResponseType,
+  ResponseContent, TableColumn, ChartConfig, ChartDataPoint, ChartAxis, InteractiveAction,
+  ChatSession as AgentChatSession, ChatMessage as AgentChatMessage, SessionStatus,
+  SessionContext, UserRole, PermissionContext, Permission, DataScope, AgentQueryRequest,
+  AgentAction
+} from './ai-agent';
 
-// AI Agent Chat types (with prefixes to avoid conflicts)
+// AI Chat types (avoiding conflicts with ai-agent)
 export type {
-  ChatSession as AgentChatSession,
-  ChatMessage as AgentChatMessage,
-} from "./ai-agent";
+  ChatSessionMetadata, ChatRole, ChatSessionStatus, ChatSession, ChatMessage,
+  AuditOutcome, ConsentStatus, AuditEvent
+} from './ai-chat';
 
-// AI Chat types (legacy, with prefixes)
+// AI Enhanced types (conflicting types handled selectively)
 export type {
-  ChatRole,
-  ChatSessionStatus,
-  ChatSession as LegacyChatSession,
-  ChatMessage as LegacyChatMessage,
-  // Direct exports for backward compatibility
-  ChatSession,
-  ChatMessage,
-  AuditOutcome,
-  ConsentStatus,
-  AuditEvent,
-} from "./ai-chat.ts";
+  AIEnhancedMetadata, EnhancedAIModel, MedicalSpecialty, SubscriptionTier,
+  CFMComplianceLevel, SubscriptionPlan, PlanFeatures, AIUsageRecord, QuotaStatus,
+  BillingMetrics, AuditTrail, EnhancedAIRequest, EnhancedAIResponse, UserSubscription,
+  Plan, PlanData, UsageCounter, UsageCounterData, UsageAggregation, Recommendation,
+  RecommendationType, RecommendationCategory, RecommendationPriority, RecommendationStatus,
+  ImplementationEffort, ComplianceImpact, CostImpact, DomainDescriptor, DataSensitivityLevel,
+  PerformanceBenchmarks, AIAnalyzeRequest, AICrudRequest, AIUsageRequest, AIRecommendationsRequest,
+  AIAnalyzeResponse, AICrudResponse, AIUsageResponse, AIRecommendationsResponse, AIModelsResponse,
+  AIEnhancedError, AIEnhancedErrorCode
+} from './ai-enhanced';
 
-export * from "./ai-provider.ts";
-export * from "./api/contracts.ts";
-export * from "./enhanced-ai.ts";
-export * from "./governance.types.ts";
-export * from "./healthcare-governance.types.ts";
-export * from "./webrtc.ts";
+// AI Provider types
+export * from './ai-provider';
 
-// Export specific types from ai-enhanced to avoid conflicts
-export type {
-  AIAnalyzeRequest,
-  AIAnalyzeResponse,
-  AICrudRequest,
-  AICrudResponse,
-  AIEnhancedError,
-  AIEnhancedErrorCode,
-  AIModelsResponse,
-  AIRecommendationsRequest,
-  AIRecommendationsResponse,
-  AIUsageRequest,
-  AIUsageResponse,
-  DataSensitivityLevel,
-  DomainDescriptor,
-  ImplementationEffort,
-  PerformanceBenchmarks,
-  Plan,
-  PlanData,
-  Recommendation,
-  RecommendationCategory,
-  RecommendationPriority,
-  RecommendationStatus,
-  RecommendationType,
-  UsageAggregation,
-  UsageCounter,
-  UsageCounterData,
-} from "./ai-enhanced";
+// Database and governance types
+export * from './database-records';
+export * from './governance.types';
+export * from './healthcare-governance.types';
 
-// Valibot Validation Schemas for Brazilian Healthcare
-export * from "./appointment.valibot.ts";
-export * from "./lgpd.valibot.ts";
-export * from "./patient.valibot.ts";
-export * from "./prescription.valibot.ts";
-// Healthcare types
+// Healthcare validation schemas
+export * from './appointment.valibot';
+export * from './lgpd.valibot';
+export * from './patient.valibot';
+export * from './prescription.valibot';
+
+// Utility types
+export * from './aesthetic-data';
+
+// Enhanced AI types (exporting all since ai-enhanced handles the conflicts)
+export * from './enhanced-ai';
+export * from './webrtc';
+
+// API contracts
+export * from './api/contracts';
+
+// Re-export commonly used types for convenience
 export interface Patient {
   id: string;
   clinicId: string;
@@ -171,18 +140,18 @@ export interface Appointment {
 }
 
 // Database types - properly typed with generics for healthcare compliance
-export interface Database {
+export interface Database<TRow = Record<string, any>, TInsert = TRow, TUpdate = Partial<TInsert>> {
   public: {
     Tables: {
       [key: string]: {
-        Row: DatabaseRow;
-        Insert: DatabaseInsert;
-        Update: DatabaseUpdate;
+        Row: TRow;
+        Insert: TInsert;
+        Update: TUpdate;
       };
     };
     Views: {
       [key: string]: {
-        Row: DatabaseRow;
+        Row: TRow;
       };
     };
     Functions: {

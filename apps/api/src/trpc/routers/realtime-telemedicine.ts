@@ -10,27 +10,27 @@
  * - Emergency protocol integration
  */
 
-import { TRPCError } from "@trpc/server";
+import { TRPCError } from '@trpc/server';
 import EnhancedTelemedicineRealtime, {
   PresenceState,
-} from "../../services/enhanced-realtime-telemedicine";
-import { protectedProcedure, router, telemedicineProcedure } from "../trpc";
+} from '../../services/enhanced-realtime-telemedicine';
+import { protectedProcedure, router, telemedicineProcedure } from '../trpc';
 
 // Input validation schemas
 const CreateSessionSchema = z.object({
   sessionId: z.string().uuid(),
   participants: z.array(z.string().uuid()).min(1).max(10),
   sessionType: z.enum([
-    "consultation",
-    "emergency",
-    "follow_up",
-    "group_session",
+    'consultation',
+    'emergency',
+    'follow_up',
+    'group_session',
   ]),
   metadata: z
     .object({
       appointmentId: z.string().uuid().optional(),
       specialtyCode: z.string().optional(),
-      emergencyLevel: z.enum(["low", "medium", "high", "critical"]).optional(),
+      emergencyLevel: z.enum(['low', 'medium', 'high', 'critical']).optional(),
       recordingConsent: z.boolean().default(false),
       lgpdConsentVerified: z.boolean().default(true),
     })
@@ -40,10 +40,10 @@ const CreateSessionSchema = z.object({
 const SendMessageSchema = z.object({
   sessionId: z.string().uuid(),
   senderId: z.string().uuid(),
-  senderRole: z.enum(["patient", "doctor", "nurse", "technician"]),
-  messageType: z.enum(["text", "file", "image", "system", "emergency"]),
+  senderRole: z.enum(['patient', 'doctor', 'nurse', 'technician']),
+  messageType: z.enum(['text', 'file', 'image', 'system', 'emergency']),
   content: z.string().min(1).max(5000),
-  priority: z.enum(["low", "normal", "high", "critical"]).default("normal"),
+  priority: z.enum(['low', 'normal', 'high', 'critical']).default('normal'),
   requiresAcknowledgment: z.boolean().default(false),
   metadata: z.record(z.any()).optional(),
 });
@@ -51,8 +51,8 @@ const SendMessageSchema = z.object({
 const UpdatePresenceSchema = z.object({
   sessionId: z.string().uuid(),
   _userId: z.string().uuid(),
-  userRole: z.enum(["patient", "doctor", "nurse", "technician", "admin"]),
-  status: z.enum(["online", "away", "busy", "offline", "in_consultation"]),
+  userRole: z.enum(['patient', 'doctor', 'nurse', 'technician', 'admin']),
+  status: z.enum(['online', 'away', 'busy', 'offline', 'in_consultation']),
   connectionQuality: z
     .object({
       latency: z.number().min(0).max(5000),
@@ -63,7 +63,7 @@ const UpdatePresenceSchema = z.object({
     .optional(),
   deviceInfo: z
     .object({
-      type: z.enum(["desktop", "mobile", "tablet"]),
+      type: z.enum(['desktop', 'mobile', 'tablet']),
       browser: z.string().optional(),
       os: z.string().optional(),
       capabilities: z.object({
@@ -97,14 +97,14 @@ async function initializeRealtimeService() {
     const supabaseKey = process.env.SUPABASE_ANON_KEY;
 
     if (!supabaseUrl || !supabaseKey) {
-      throw new Error("Supabase configuration not found");
+      throw new Error('Supabase configuration not found');
     }
 
     realtimeService = new EnhancedTelemedicineRealtime(
       supabaseUrl,
       supabaseKey,
     );
-    console.log("✅ Enhanced Telemedicine Realtime service initialized");
+    console.log('✅ Enhanced Telemedicine Realtime service initialized');
   }
   return realtimeService;
 }
@@ -123,16 +123,16 @@ export const realtimeTelemedicineRouter = router({
         const userId = ctx.user?.id;
         if (!_userId) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "User authentication required for telemedicine sessions",
+            code: 'UNAUTHORIZED',
+            message: 'User authentication required for telemedicine sessions',
           });
         }
 
         // Verify participants are valid and accessible
         if (!input.participants.includes(userId)) {
           throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "User must be a participant in the telemedicine session",
+            code: 'FORBIDDEN',
+            message: 'User must be a participant in the telemedicine session',
           });
         }
 
@@ -169,10 +169,10 @@ export const realtimeTelemedicineRouter = router({
           },
         };
       } catch (_error: any) {
-        console.error("❌ Failed to create telemedicine session:", error);
+        console.error('❌ Failed to create telemedicine session:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to create telemedicine session",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error.message || 'Failed to create telemedicine session',
         });
       }
     }),
@@ -189,8 +189,8 @@ export const realtimeTelemedicineRouter = router({
         const userId = ctx.user?.id;
         if (!userId || userId !== input.senderId) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "User can only send messages as themselves",
+            code: 'UNAUTHORIZED',
+            message: 'User can only send messages as themselves',
           });
         }
 
@@ -208,8 +208,8 @@ export const realtimeTelemedicineRouter = router({
 
         if (!success) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to send encrypted message",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to send encrypted message',
           });
         }
 
@@ -222,10 +222,10 @@ export const realtimeTelemedicineRouter = router({
           requiresAcknowledgment: input.requiresAcknowledgment,
         };
       } catch (_error: any) {
-        console.error("❌ Failed to send message:", error);
+        console.error('❌ Failed to send message:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to send message",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error.message || 'Failed to send message',
         });
       }
     }),
@@ -242,24 +242,24 @@ export const realtimeTelemedicineRouter = router({
         const userId = ctx.user?.id;
         if (!userId || userId !== input._userId) {
           throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "User can only update their own presence",
+            code: 'UNAUTHORIZED',
+            message: 'User can only update their own presence',
           });
         }
 
         // Calculate connection quality if metrics provided
-        let quality: "excellent" | "good" | "fair" | "poor" = "good";
+        let quality: 'excellent' | 'good' | 'fair' | 'poor' = 'good';
         if (input.connectionQuality) {
           const { latency, packetLoss, jitter } = input.connectionQuality;
 
           if (latency <= 50 && packetLoss <= 1 && jitter <= 20) {
-            quality = "excellent";
+            quality = 'excellent';
           } else if (latency <= 150 && packetLoss <= 3 && jitter <= 50) {
-            quality = "good";
+            quality = 'good';
           } else if (latency <= 300 && packetLoss <= 5 && jitter <= 100) {
-            quality = "fair";
+            quality = 'fair';
           } else {
-            quality = "poor";
+            quality = 'poor';
           }
         }
 
@@ -270,13 +270,13 @@ export const realtimeTelemedicineRouter = router({
           status: input.status,
           connectionQuality: input.connectionQuality
             ? {
-                ...input.connectionQuality,
-                quality,
-              }
+              ...input.connectionQuality,
+              quality,
+            }
             : undefined,
           deviceInfo: input.deviceInfo,
           location: {
-            timezone: "America/Sao_Paulo",
+            timezone: 'America/Sao_Paulo',
           },
         };
 
@@ -287,8 +287,8 @@ export const realtimeTelemedicineRouter = router({
 
         if (!success) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Failed to update presence",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Failed to update presence',
           });
         }
 
@@ -298,14 +298,13 @@ export const realtimeTelemedicineRouter = router({
           status: input.status,
           connectionQuality: quality,
           updated: new Date().toISOString(),
-          alertsTriggered:
-            quality === "poor" ? ["poor_connection_quality"] : [],
+          alertsTriggered: quality === 'poor' ? ['poor_connection_quality'] : [],
         };
       } catch (_error: any) {
-        console.error("❌ Failed to update presence:", error);
+        console.error('❌ Failed to update presence:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to update presence",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error.message || 'Failed to update presence',
         });
       }
     }),
@@ -338,14 +337,14 @@ export const realtimeTelemedicineRouter = router({
 
         // Add concerns and recommendations
         if (stats.averageLatency > thresholds.maxLatency) {
-          qualityAssessment.concerns.push("High latency detected");
-          qualityAssessment.recommendations.push("Check network connection");
+          qualityAssessment.concerns.push('High latency detected');
+          qualityAssessment.recommendations.push('Check network connection');
         }
 
-        if (stats.connectionQuality === "poor") {
-          qualityAssessment.concerns.push("Poor overall connection quality");
+        if (stats.connectionQuality === 'poor') {
+          qualityAssessment.concerns.push('Poor overall connection quality');
           qualityAssessment.recommendations.push(
-            "Consider switching to better network",
+            'Consider switching to better network',
           );
         }
 
@@ -359,15 +358,15 @@ export const realtimeTelemedicineRouter = router({
           lastUpdated: new Date().toISOString(),
           complianceStatus: {
             cfmCompliant: stats.averageLatency < 300, // CFM requires stable connection
-            suitable_for_consultation: stats.connectionQuality !== "poor",
+            suitable_for_consultation: stats.connectionQuality !== 'poor',
             emergency_protocol_ready: true,
           },
         };
       } catch (_error: any) {
-        console.error("❌ Failed to monitor quality:", error);
+        console.error('❌ Failed to monitor quality:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to monitor connection quality",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error.message || 'Failed to monitor connection quality',
         });
       }
     }),
@@ -395,7 +394,7 @@ export const realtimeTelemedicineRouter = router({
           connectionQuality: stats.connectionQuality,
           messageCount: stats.messageCount,
           emergencyAlerts: stats.emergencyAlerts,
-          status: "active",
+          status: 'active',
           created: new Date().toISOString(), // Would come from session storage
           lastActivity: new Date().toISOString(),
           complianceInfo: {
@@ -406,10 +405,10 @@ export const realtimeTelemedicineRouter = router({
           },
         };
       } catch (_error: any) {
-        console.error("❌ Failed to get session info:", error);
+        console.error('❌ Failed to get session info:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Session not found or inactive",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error.message || 'Session not found or inactive',
         });
       }
     }),
@@ -423,10 +422,10 @@ export const realtimeTelemedicineRouter = router({
         sessionId: z.string().uuid(),
         reason: z
           .enum([
-            "completed",
-            "emergency_ended",
-            "technical_issues",
-            "cancelled",
+            'completed',
+            'emergency_ended',
+            'technical_issues',
+            'cancelled',
           ])
           .optional(),
         summary: z.string().max(1000).optional(),
@@ -455,7 +454,7 @@ export const realtimeTelemedicineRouter = router({
           success: true,
           sessionId: input.sessionId,
           endedAt: new Date().toISOString(),
-          reason: input.reason || "completed",
+          reason: input.reason || 'completed',
           finalStatistics: finalStats,
           summary: input.summary,
           complianceReport: {
@@ -467,10 +466,10 @@ export const realtimeTelemedicineRouter = router({
           },
         };
       } catch (_error: any) {
-        console.error("❌ Failed to end session:", error);
+        console.error('❌ Failed to end session:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to end telemedicine session",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error.message || 'Failed to end telemedicine session',
         });
       }
     }),
@@ -484,19 +483,19 @@ export const realtimeTelemedicineRouter = router({
       const service = await initializeRealtimeService();
 
       return {
-        status: "healthy",
+        status: 'healthy',
         timestamp: new Date().toISOString(),
         services: {
-          supabase_realtime: "connected",
-          encryption_service: "active",
-          connection_monitoring: "active",
-          emergency_protocols: "ready",
+          supabase_realtime: 'connected',
+          encryption_service: 'active',
+          connection_monitoring: 'active',
+          emergency_protocols: 'ready',
         },
         performance: {
-          average_latency_target: "< 50ms",
-          encryption_overhead: "< 10ms",
-          presence_update_frequency: "5s",
-          quality_monitoring_interval: "5s",
+          average_latency_target: '< 50ms',
+          encryption_overhead: '< 10ms',
+          presence_update_frequency: '5s',
+          quality_monitoring_interval: '5s',
         },
         compliance: {
           lgpd_encryption: true,
@@ -506,9 +505,9 @@ export const realtimeTelemedicineRouter = router({
         },
       };
     } catch (_error: any) {
-      console.error("❌ Realtime service health check failed:", error);
+      console.error('❌ Realtime service health check failed:', error);
       return {
-        status: "unhealthy",
+        status: 'unhealthy',
         error: error.message,
         timestamp: new Date().toISOString(),
       };
@@ -523,12 +522,12 @@ export const realtimeTelemedicineRouter = router({
       z.object({
         sessionId: z.string().uuid(),
         alertType: z.enum([
-          "medical_emergency",
-          "technical_failure",
-          "security_breach",
-          "connectivity_loss",
+          'medical_emergency',
+          'technical_failure',
+          'security_breach',
+          'connectivity_loss',
         ]),
-        severity: z.enum(["low", "medium", "high", "critical"]),
+        severity: z.enum(['low', 'medium', 'high', 'critical']),
         description: z.string().max(500),
         requiredActions: z.array(z.string()).optional(),
       }),
@@ -560,19 +559,18 @@ export const realtimeTelemedicineRouter = router({
           severity: input.severity,
           triggered: new Date().toISOString(),
           protocolsActivated: [
-            "participant_notification",
-            "supervisor_alert",
-            "emergency_escalation",
-            "audit_logging",
+            'participant_notification',
+            'supervisor_alert',
+            'emergency_escalation',
+            'audit_logging',
           ],
-          estimatedResponseTime:
-            input.severity === "critical" ? "< 30 seconds" : "< 2 minutes",
+          estimatedResponseTime: input.severity === 'critical' ? '< 30 seconds' : '< 2 minutes',
         };
       } catch (_error: any) {
-        console.error("❌ Failed to send emergency alert:", error);
+        console.error('❌ Failed to send emergency alert:', error);
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: error.message || "Failed to send emergency alert",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: error.message || 'Failed to send emergency alert',
         });
       }
     }),

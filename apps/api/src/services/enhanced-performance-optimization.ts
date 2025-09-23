@@ -3,18 +3,18 @@
  * Advanced caching strategies, pagination improvements, and performance monitoring for healthcare platform
  */
 
-import { createHash } from "crypto";
-import { type HealthcarePrismaClient } from "../clients/prisma";
+import { createHash } from 'crypto';
+import { type HealthcarePrismaClient } from '../clients/prisma';
 import {
   HealthcareQueryOptimizer,
   type PerformanceMetrics,
-} from "../utils/healthcare-performance.js";
+} from '../utils/healthcare-performance.js';
 
 export interface PaginationParams {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
   cursor?: string;
   includeCursor?: boolean;
 }
@@ -87,7 +87,7 @@ export class EnhancedPerformanceOptimizationService {
       queryTimeoutMs: 10000, // 10 seconds
       maxPageSize: 100,
       defaultPageSize: 20,
-      enableQueryLogging: process.env.NODE_ENV === "development",
+      enableQueryLogging: process.env.NODE_ENV === 'development',
       enablePerformanceMonitoring: true,
       slowQueryThresholdMs: 1000,
       cacheWarmerEnabled: true,
@@ -124,8 +124,8 @@ export class EnhancedPerformanceOptimizationService {
         params.limit || this.config.defaultPageSize,
         this.config.maxPageSize,
       ),
-      sortBy = "updatedAt",
-      sortOrder = "desc",
+      sortBy = 'updatedAt',
+      sortOrder = 'desc',
       cursor,
       includeCursor = false,
     } = params;
@@ -249,7 +249,7 @@ export class EnhancedPerformanceOptimizationService {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: "asc" | "desc";
+      sortOrder?: 'asc' | 'desc';
       filters?: {
         status?: string[];
         gender?: string[];
@@ -264,7 +264,7 @@ export class EnhancedPerformanceOptimizationService {
   ): Promise<PaginatedResult<any>> {
     return this.executePaginatedQuery(
       `patients_search:${clinicId}`,
-      async (params) => {
+      async params => {
         const { page, limit, sortBy, sortOrder } = params;
         const { query, filters, includeInactive = false } = searchParams;
 
@@ -277,8 +277,8 @@ export class EnhancedPerformanceOptimizationService {
         // Add search conditions
         if (query?.trim()) {
           whereClause.OR = [
-            { fullName: { contains: query, mode: "insensitive" } },
-            { email: { contains: query, mode: "insensitive" } },
+            { fullName: { contains: query, mode: 'insensitive' } },
+            { email: { contains: query, mode: 'insensitive' } },
             { phonePrimary: { contains: query } },
             { phoneSecondary: { contains: query } },
             { medicalRecordNumber: { contains: query } },
@@ -351,7 +351,7 @@ export class EnhancedPerformanceOptimizationService {
       {
         key: `patients_search:${clinicId}`,
         ttl: 180, // 3 minutes for patient search (frequent updates)
-        tags: ["patients", "search", `clinic:${clinicId}`],
+        tags: ['patients', 'search', `clinic:${clinicId}`],
       },
     );
   }
@@ -368,7 +368,7 @@ export class EnhancedPerformanceOptimizationService {
       status?: string[];
       includeCancelled?: boolean;
       includePatientDetails?: boolean;
-      groupBy?: "day" | "week" | "professional";
+      groupBy?: 'day' | 'week' | 'professional';
     },
   ): Promise<{
     appointments: any[];
@@ -418,7 +418,7 @@ export class EnhancedPerformanceOptimizationService {
       const whereClause: any = {
         clinicId,
         startTime: { gte: startDate, lte: endDate },
-        status: includeCancelled ? undefined : { not: "cancelled" },
+        status: includeCancelled ? undefined : { not: 'cancelled' },
       };
 
       if (professionalId) whereClause.professionalId = professionalId;
@@ -428,7 +428,7 @@ export class EnhancedPerformanceOptimizationService {
         this.prisma.appointment.findMany({
           where: whereClause,
           include: this.getAppointmentInclude(includePatientDetails),
-          orderBy: { startTime: "asc" },
+          orderBy: { startTime: 'asc' },
         }),
         this.prisma.appointment.count({ where: whereClause }),
       ]);
@@ -449,15 +449,15 @@ export class EnhancedPerformanceOptimizationService {
       // Cache with shorter TTL for calendar data (frequent updates)
       if (this.config.cacheEnabled) {
         await this.setCache(cacheKey, result, 60, [
-          "appointments",
-          "calendar",
+          'appointments',
+          'calendar',
           `clinic:${clinicId}`,
         ]);
       }
 
       return result;
     } catch (error) {
-      throw this.handleQueryError(error, "appointments_calendar");
+      throw this.handleQueryError(error, 'appointments_calendar');
     }
   }
 
@@ -499,8 +499,9 @@ export class EnhancedPerformanceOptimizationService {
 
     try {
       // Get current metrics using the existing optimizer
-      const { metrics: currentMetrics } =
-        await this.queryOptimizer.getDashboardMetricsOptimized(clinicId);
+      const { metrics: currentMetrics } = await this.queryOptimizer.getDashboardMetricsOptimized(
+        clinicId,
+      );
 
       let historical, projections;
 
@@ -526,14 +527,14 @@ export class EnhancedPerformanceOptimizationService {
       // Cache dashboard metrics for 5 minutes
       if (this.config.cacheEnabled) {
         await this.setCache(cacheKey, result, 300, [
-          "dashboard",
+          'dashboard',
           `clinic:${clinicId}`,
         ]);
       }
 
       return result;
     } catch (error) {
-      throw this.handleQueryError(error, "dashboard_metrics");
+      throw this.handleQueryError(error, 'dashboard_metrics');
     }
   }
 
@@ -564,8 +565,7 @@ export class EnhancedPerformanceOptimizationService {
     };
   }> {
     const startTime = performance.now();
-    const batchSize =
-      options?.batchSize || Math.min(this.config.maxPageSize, 50);
+    const batchSize = options?.batchSize || Math.min(this.config.maxPageSize, 50);
     const continueOnError = options?.continueOnError || false;
     const results: any[] = [];
     const errors: Array<{ index: number; error: string; item: T }> = [];
@@ -592,8 +592,7 @@ export class EnhancedPerformanceOptimizationService {
               return { success: true, result, index: actualIndex };
             } catch (error) {
               failed++;
-              const errorMessage =
-                error instanceof Error ? error.message : "Unknown error";
+              const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
               if (!continueOnError) {
                 throw error;
@@ -610,8 +609,8 @@ export class EnhancedPerformanceOptimizationService {
         );
 
         // Process batch results
-        batchResults.forEach((batchResult) => {
-          if (batchResult.status === "fulfilled") {
+        batchResults.forEach(batchResult => {
+          if (batchResult.status === 'fulfilled') {
             const result = batchResult.value;
             if (result.success) {
               results.push(result.result);
@@ -626,7 +625,7 @@ export class EnhancedPerformanceOptimizationService {
             failed++;
             errors.push({
               index: -1,
-              error: batchResult.reason?.message || "Batch processing failed",
+              error: batchResult.reason?.message || 'Batch processing failed',
               item: items[i],
             });
           }
@@ -655,8 +654,7 @@ export class EnhancedPerformanceOptimizationService {
           ...errors,
           {
             index: -1,
-            error:
-              error instanceof Error ? error.message : "Batch operation failed",
+            error: error instanceof Error ? error.message : 'Batch operation failed',
             item: items[0],
           },
         ],
@@ -684,9 +682,9 @@ export class EnhancedPerformanceOptimizationService {
       await this.searchPatientsEnhanced(clinicId, {
         page: 1,
         limit: 20,
-        sortBy: "lastVisitDate",
-        sortOrder: "desc",
-        filters: { status: ["active"] },
+        sortBy: 'lastVisitDate',
+        sortOrder: 'desc',
+        filters: { status: ['active'] },
       });
 
       // Warm up today's appointments
@@ -702,7 +700,7 @@ export class EnhancedPerformanceOptimizationService {
 
       console.log(`Cache warming completed for clinic ${clinicId}`);
     } catch (error) {
-      console.error("Cache warming failed:", error);
+      console.error('Cache warming failed:', error);
     }
   }
 
@@ -763,9 +761,9 @@ export class EnhancedPerformanceOptimizationService {
     };
 
     const keyString = JSON.stringify(keyData);
-    return createHash("sha256")
+    return createHash('sha256')
       .update(keyString)
-      .digest("hex")
+      .digest('hex')
       .substring(0, 32);
   }
 
@@ -779,11 +777,11 @@ export class EnhancedPerformanceOptimizationService {
       }, timeoutMs);
 
       fn()
-        .then((result) => {
+        .then(result => {
           clearTimeout(timer);
           resolve(result);
         })
-        .catch((error) => {
+        .catch(error => {
           clearTimeout(timer);
           reject(error);
         });
@@ -802,7 +800,7 @@ export class EnhancedPerformanceOptimizationService {
   }
 
   private generateCursor(item: any, _reverse = false): string {
-    if (!item) return "";
+    if (!item) return '';
 
     // Simple cursor implementation using ID and timestamp
     const cursorData = {
@@ -810,7 +808,7 @@ export class EnhancedPerformanceOptimizationService {
       updatedAt: item.updatedAt || new Date().toISOString(),
     };
 
-    return Buffer.from(JSON.stringify(cursorData)).toString("base64");
+    return Buffer.from(JSON.stringify(cursorData)).toString('base64');
   }
 
   private getPatientSelectFields() {
@@ -873,12 +871,12 @@ export class EnhancedPerformanceOptimizationService {
     return include;
   }
 
-  private buildOrderBy(sortBy: string, sortOrder: "asc" | "desc"): any {
+  private buildOrderBy(sortBy: string, sortOrder: 'asc' | 'desc'): any {
     const orderBy: any = {};
 
     // Handle complex sort fields
-    if (sortBy.includes(".")) {
-      const [relation, field] = sortBy.split(".");
+    if (sortBy.includes('.')) {
+      const [relation, field] = sortBy.split('.');
       orderBy[relation] = { [field]: sortOrder };
     } else {
       orderBy[sortBy] = sortOrder;
@@ -895,7 +893,7 @@ export class EnhancedPerformanceOptimizationService {
     > = {};
     let revenue = 0;
 
-    appointments.forEach((apt) => {
+    appointments.forEach(apt => {
       // Count by status
       byStatus[apt.status] = (byStatus[apt.status] || 0) + 1;
 
@@ -905,18 +903,18 @@ export class EnhancedPerformanceOptimizationService {
         byProfessional[profId] = { total: 0, completed: 0, cancelled: 0 };
       }
       byProfessional[profId].total++;
-      if (apt.status === "completed") byProfessional[profId].completed++;
-      if (apt.status === "cancelled") byProfessional[profId].cancelled++;
+      if (apt.status === 'completed') byProfessional[profId].completed++;
+      if (apt.status === 'cancelled') byProfessional[profId].cancelled++;
 
       // Calculate revenue
-      if (apt.status === "completed" && apt.serviceType?.price) {
+      if (apt.status === 'completed' && apt.serviceType?.price) {
         revenue += apt.serviceType.price;
       }
     });
 
     // Calculate occupancy (simplified)
     const totalSlots = appointments.length;
-    const completedSlots = byStatus["completed"] || 0;
+    const completedSlots = byStatus['completed'] || 0;
     const occupancy = totalSlots > 0 ? (completedSlots / totalSlots) * 100 : 0;
 
     return {
@@ -949,7 +947,7 @@ export class EnhancedPerformanceOptimizationService {
       const cache = (this.queryOptimizer as any).cache;
       return cache ? await cache.get(key) : null;
     } catch (error) {
-      console.warn("Cache get failed:", error);
+      console.warn('Cache get failed:', error);
       return null;
     }
   }
@@ -967,7 +965,7 @@ export class EnhancedPerformanceOptimizationService {
         await cache.set(key, value, ttl);
       }
     } catch (error) {
-      console.warn("Cache set failed:", error);
+      console.warn('Cache set failed:', error);
     }
   }
 
@@ -1019,14 +1017,13 @@ export class EnhancedPerformanceOptimizationService {
   }
 
   private handleQueryError(error: any, queryKey: string): Error {
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown query error";
+    const errorMessage = error instanceof Error ? error.message : 'Unknown query error';
 
     if (this.config.enableQueryLogging) {
       console.error(`Query error for ${queryKey}:`, errorMessage);
     }
 
-    if (errorMessage.includes("timeout")) {
+    if (errorMessage.includes('timeout')) {
       return new Error(
         `Query timeout for ${queryKey}. Please try again or refine your search criteria.`,
       );
@@ -1065,28 +1062,28 @@ export class EnhancedPerformanceOptimizationService {
     // Cache recommendations
     if (summary.cacheHitRate < 50) {
       recommendations.push(
-        "Consider increasing cache TTL or adding more cacheable endpoints",
+        'Consider increasing cache TTL or adding more cacheable endpoints',
       );
     }
 
     // Query performance recommendations
     if (summary.averageQueryTime > this.config.slowQueryThresholdMs) {
       recommendations.push(
-        "Average query time is high - consider query optimization or indexing",
+        'Average query time is high - consider query optimization or indexing',
       );
     }
 
     // Slow query recommendations
     if (summary.slowQueryCount > 10) {
       recommendations.push(
-        "Multiple slow queries detected - review and optimize database queries",
+        'Multiple slow queries detected - review and optimize database queries',
       );
     }
 
     // Memory usage recommendations
     if (metrics.memoryUsage.heapUsed / metrics.memoryUsage.heapTotal > 0.8) {
       recommendations.push(
-        "High memory usage detected - consider implementing memory optimization",
+        'High memory usage detected - consider implementing memory optimization',
       );
     }
 
@@ -1114,16 +1111,10 @@ export class EnhancedPerformanceOptimizationService {
 }
 
 // Export singleton instance
-export const enhancedPerformanceOptimizationService =
-  new EnhancedPerformanceOptimizationService(
-    // Prisma client would be injected from the application context
-    {} as HealthcarePrismaClient,
-  );
+export const enhancedPerformanceOptimizationService = new EnhancedPerformanceOptimizationService(
+  // Prisma client would be injected from the application context
+  {} as HealthcarePrismaClient,
+);
 
 // Export types
-export type {
-  CacheStrategy,
-  PaginatedResult,
-  PaginationParams,
-  PerformanceConfig,
-};
+export type { CacheStrategy, PaginatedResult, PaginationParams, PerformanceConfig };

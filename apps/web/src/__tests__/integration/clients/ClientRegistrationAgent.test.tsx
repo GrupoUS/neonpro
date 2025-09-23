@@ -654,7 +654,7 @@ describe("ClientRegistrationAgent", () => {
   });
 
   describe("Integration with External Services", () => {
-    it("should integrate with CopilotKit agent properly", () => {
+    it("should integrate with CopilotKit agent properly", async () => {
       const { useCoAgent } = await import("@copilotkit/react-core");
 
       renderComponent();

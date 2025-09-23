@@ -451,7 +451,7 @@ model TelemedicineSession {
   @@map("telemedicine_sessions")
 }
 
-// Professional model matching database structure
+// Enhanced Professional model for aesthetic health professionals
 model Professional {
   id                   String    @id @default(uuid())
   clinicId             String    @map("clinic_id")
@@ -474,6 +474,23 @@ model Professional {
   updatedAt            DateTime? @default(now()) @map("updated_at")
   createdBy            String?   @map("created_by")
   updatedBy            String?   @map("updated_by")
+
+  // Aesthetic professional license validation
+  councilType           String?   @map("council_type") // CRM, COREN, CFF, CNEP
+  councilLicense        String?   @map("council_license") // Full license number
+  councilState          String?   @map("council_state") // Brazilian state code
+  councilValidation     String?   @default("pending") @map("council_validation") // pending, validated, rejected
+  licenseExpiryDate    DateTime? @map("license_expiry_date") @db.Date
+  
+  // Aesthetic medicine specializations
+  aestheticSpecializations String[] @map("aesthetic_specializations") // ["botox", "fillers", "laser", "chemical_peels", "facial_harmonization"]
+  certificationLevels    Json?     @map("certification_levels") // Certification details for different procedures
+  trainingHistory        Json?     @map("training_history") // Aesthetic procedure training records
+  
+  // Professional availability and preferences
+  preferredProcedures   String[]  @map("preferred_procedures") // Procedures this professional prefers
+  maxDailyAppointments  Int?      @default(20) @map("max_daily_appointments")
+  appointmentBuffer     Int?      @default(15) @map("appointment_buffer") // Minutes between appointments
 
   appointments         Appointment[]
 

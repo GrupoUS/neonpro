@@ -9,6 +9,37 @@
  * - CFM (Conselho Federal de Medicina) - Telemedicine regulations
  */
 
+// WebRTC ambient type declarations for browser compatibility
+declare global {
+  interface RTCIceServer {
+    urls: string | string[];
+    username?: string;
+    credential?: string;
+    credentialType?: "password";
+  }
+
+  interface RTCCertificate {
+    expires: number;
+    getFingerprints(): RTCFingerprint[];
+  }
+
+  type RTCBundlePolicy = "balanced" | "max-compat" | "max-bundle";
+
+  type RTCIceConnectionState =
+    | "new"
+    | "checking"
+    | "connected"
+    | "completed"
+    | "failed"
+    | "disconnected"
+    | "closed";
+
+  interface RTCFingerprint {
+    algorithm: string;
+    value: string;
+  }
+}
+
 // ============================================================================
 // Core WebRTC Connection Types
 // ============================================================================

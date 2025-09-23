@@ -20,23 +20,23 @@ import ANVISAComplianceService, {
   ANVISA_DEVICE_CLASSES,
   ANVISA_SOFTWARE_CATEGORIES,
   type ANVISAComplianceReport,
-} from "./anvisa-compliance";
+} from './anvisa-compliance';
 import CFMComplianceService, {
   CFM_COMPLIANCE_LEVELS,
   type CFMComplianceReport,
-} from "./cfm-compliance";
+} from './cfm-compliance';
 import LGPDComplianceService, {
   LGPD_COMPLIANCE_LEVELS,
   type LGPDComplianceReport,
-} from "./lgpd-compliance";
+} from './lgpd-compliance';
 
 // Brazilian Compliance Levels
 export const BRAZILIAN_COMPLIANCE_LEVELS = {
-  FULLY_COMPLIANT: "fully_compliant",
-  MOSTLY_COMPLIANT: "mostly_compliant",
-  PARTIALLY_COMPLIANT: "partially_compliant",
-  NON_COMPLIANT: "non_compliant",
-  UNDER_REVIEW: "under_review",
+  FULLY_COMPLIANT: 'fully_compliant',
+  MOSTLY_COMPLIANT: 'mostly_compliant',
+  PARTIALLY_COMPLIANT: 'partially_compliant',
+  NON_COMPLIANT: 'non_compliant',
+  UNDER_REVIEW: 'under_review',
 } as const;
 
 export type BrazilianComplianceLevel =
@@ -44,10 +44,10 @@ export type BrazilianComplianceLevel =
 
 // Healthcare Data Security Levels
 export const HEALTHCARE_SECURITY_LEVELS = {
-  HIGH: "high",
-  MEDIUM: "medium",
-  LOW: "low",
-  CRITICAL: "critical",
+  HIGH: 'high',
+  MEDIUM: 'medium',
+  LOW: 'low',
+  CRITICAL: 'critical',
 } as const;
 
 export type HealthcareSecurityLevel =
@@ -57,17 +57,17 @@ export type HealthcareSecurityLevel =
 export const BrazilianComplianceConfigSchema = z.object({
   organizationName: z.string(),
   organizationType: z.enum([
-    "clinic",
-    "hospital",
-    "telemedicine",
-    "health_tech",
+    'clinic',
+    'hospital',
+    'telemedicine',
+    'health_tech',
   ]),
   anvisaDeviceClass: z.nativeEnum(ANVISA_DEVICE_CLASSES),
   anvisaSoftwareCategory: z.nativeEnum(ANVISA_SOFTWARE_CATEGORIES),
-  patientDataVolume: z.enum(["low", "medium", "high", "very_high"]),
+  patientDataVolume: z.enum(['low', 'medium', 'high', 'very_high']),
   telemedicineEnabled: z.boolean(),
   internationalOperations: z.boolean(),
-  auditFrequency: z.enum(["monthly", "quarterly", "semi_annual", "annual"]),
+  auditFrequency: z.enum(['monthly', 'quarterly', 'semi_annual', 'annual']),
   complianceOfficer: z.string(),
   ethicsCommittee: z.boolean(),
 });
@@ -99,7 +99,7 @@ export interface BrazilianComplianceReport {
     incidentResponseCompliance: boolean;
     issues: Array<{
       id: string;
-      severity: "critical" | "high" | "medium" | "low";
+      severity: 'critical' | 'high' | 'medium' | 'low';
       title: string;
       description: string;
       recommendation: string;
@@ -115,7 +115,7 @@ export interface BrazilianComplianceReport {
     dataExchangeCompliance: boolean;
     issues: Array<{
       id: string;
-      severity: "critical" | "high" | "medium" | "low";
+      severity: 'critical' | 'high' | 'medium' | 'low';
       title: string;
       description: string;
       recommendation: string;
@@ -135,14 +135,14 @@ export interface BrazilianComplianceReport {
     lowPriorityIssues: number;
     compliancePercentage: number;
     estimatedRemediationTime: string;
-    estimatedRemediationCost: "low" | "medium" | "high" | "very_high";
+    estimatedRemediationCost: 'low' | 'medium' | 'high' | 'very_high';
   };
 
   // Regulatory status
   regulatoryStatus: {
-    lgpdStatus: "compliant" | "non_compliant" | "partial";
-    anvisaStatus: "compliant" | "non_compliant" | "partial";
-    cfmStatus: "compliant" | "non_compliant" | "partial";
+    lgpdStatus: 'compliant' | 'non_compliant' | 'partial';
+    anvisaStatus: 'compliant' | 'non_compliant' | 'partial';
+    cfmStatus: 'compliant' | 'non_compliant' | 'partial';
     ethicsCommitteeReviewRequired: boolean;
     regulatoryFilingRequired: boolean;
     auditRecommended: boolean;
@@ -186,8 +186,7 @@ export class BrazilianComplianceService {
     const healthcareDataSecurity = await this.validateHealthcareDataSecurity();
 
     // Validate Brazilian healthcare interoperability
-    const interoperabilityCompliance =
-      await this.validateInteroperabilityCompliance();
+    const interoperabilityCompliance = await this.validateInteroperabilityCompliance();
 
     // Calculate overall compliance
     const overallCompliance = this.calculateOverallCompliance(
@@ -205,8 +204,8 @@ export class BrazilianComplianceService {
     const securityLevel = this.determineSecurityLevel(healthcareDataSecurity);
 
     // Generate consolidated recommendations
-    const { priorityRecommendations, allRecommendations } =
-      this.generateConsolidatedRecommendations(
+    const { priorityRecommendations, allRecommendations } = this
+      .generateConsolidatedRecommendations(
         lgpdCompliance,
         anvisaCompliance,
         cfmCompliance,
@@ -263,23 +262,21 @@ export class BrazilianComplianceService {
 
     if (!incidentResponseCompliance) {
       issues.push({
-        id: "missing-incident-response",
-        severity: "high" as const,
-        title: "Plano de resposta a incidentes ausente",
-        description:
-          "Sistema não possui plano de resposta a incidentes de segurança",
-        recommendation:
-          "Implementar plano de resposta a incidentes de segurança de dados de saúde",
+        id: 'missing-incident-response',
+        severity: 'high' as const,
+        title: 'Plano de resposta a incidentes ausente',
+        description: 'Sistema não possui plano de resposta a incidentes de segurança',
+        recommendation: 'Implementar plano de resposta a incidentes de segurança de dados de saúde',
       });
     }
 
-    const level = issues.some((i) => i.severity === "critical")
+    const level = issues.some(i => i.severity === 'critical')
       ? HEALTHCARE_SECURITY_LEVELS.CRITICAL
-      : issues.some((i) => i.severity === "high")
-        ? HEALTHCARE_SECURITY_LEVELS.MEDIUM
-        : issues.length > 0
-          ? HEALTHCARE_SECURITY_LEVELS.LOW
-          : HEALTHCARE_SECURITY_LEVELS.HIGH;
+      : issues.some(i => i.severity === 'high')
+      ? HEALTHCARE_SECURITY_LEVELS.MEDIUM
+      : issues.length > 0
+      ? HEALTHCARE_SECURITY_LEVELS.LOW
+      : HEALTHCARE_SECURITY_LEVELS.HIGH;
 
     return {
       level,
@@ -306,21 +303,19 @@ export class BrazilianComplianceService {
 
     if (!susIntegrationCompliance) {
       issues.push({
-        id: "missing-sus-integration",
-        severity: "medium" as const,
-        title: "Integração com SUS ausente",
-        description:
-          "Sistema não possui integração com o Sistema Único de Saúde (SUS)",
-        recommendation:
-          "Implementar integração com sistemas SUS conforme padrões nacionais",
+        id: 'missing-sus-integration',
+        severity: 'medium' as const,
+        title: 'Integração com SUS ausente',
+        description: 'Sistema não possui integração com o Sistema Único de Saúde (SUS)',
+        recommendation: 'Implementar integração com sistemas SUS conforme padrões nacionais',
       });
     }
 
-    const level = issues.some((i) => i.severity === "critical")
+    const level = issues.some(i => i.severity === 'critical')
       ? BRAZILIAN_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-        ? BRAZILIAN_COMPLIANCE_LEVELS.PARTIALLY_COMPLIANT
-        : BRAZILIAN_COMPLIANCE_LEVELS.FULLY_COMPLIANT;
+      ? BRAZILIAN_COMPLIANCE_LEVELS.PARTIALLY_COMPLIANT
+      : BRAZILIAN_COMPLIANCE_LEVELS.FULLY_COMPLIANT;
 
     return {
       level,
@@ -405,10 +400,10 @@ export class BrazilianComplianceService {
 
     // Priority recommendations (critical and high severity issues)
     const priorityRecommendations = allRecommendations.filter(
-      (rec) =>
-        rec.includes("urgentemente") ||
-        rec.includes("crítico") ||
-        rec.includes("alta prioridade"),
+      rec =>
+        rec.includes('urgentemente')
+        || rec.includes('crítico')
+        || rec.includes('alta prioridade'),
     );
 
     return { priorityRecommendations, allRecommendations };
@@ -434,39 +429,37 @@ export class BrazilianComplianceService {
 
     const totalIssues = allIssues.length;
     const criticalIssues = allIssues.filter(
-      (i) => i.severity === "critical",
+      i => i.severity === 'critical',
     ).length;
     const highPriorityIssues = allIssues.filter(
-      (i) => i.severity === "high",
+      i => i.severity === 'high',
     ).length;
     const mediumPriorityIssues = allIssues.filter(
-      (i) => i.severity === "medium",
+      i => i.severity === 'medium',
     ).length;
     const lowPriorityIssues = allIssues.filter(
-      (i) => i.severity === "low",
+      i => i.severity === 'low',
     ).length;
 
     const compliancePercentage = Math.round(
       (lgpd.score + anvisa.score + cfm.score) / 3,
     );
 
-    const estimatedRemediationTime =
-      criticalIssues > 0
-        ? "30-60 dias"
-        : highPriorityIssues > 0
-          ? "60-90 dias"
-          : mediumPriorityIssues > 0
-            ? "90-120 dias"
-            : "30 dias";
+    const estimatedRemediationTime = criticalIssues > 0
+      ? '30-60 dias'
+      : highPriorityIssues > 0
+      ? '60-90 dias'
+      : mediumPriorityIssues > 0
+      ? '90-120 dias'
+      : '30 dias';
 
-    const estimatedRemediationCost =
-      criticalIssues > 0
-        ? "very_high"
-        : highPriorityIssues > 0
-          ? "high"
-          : mediumPriorityIssues > 0
-            ? "medium"
-            : "low";
+    const estimatedRemediationCost = criticalIssues > 0
+      ? 'very_high'
+      : highPriorityIssues > 0
+      ? 'high'
+      : mediumPriorityIssues > 0
+      ? 'medium'
+      : 'low';
 
     return {
       totalIssues,
@@ -477,10 +470,10 @@ export class BrazilianComplianceService {
       compliancePercentage,
       estimatedRemediationTime,
       estimatedRemediationCost: estimatedRemediationCost as
-        | "low"
-        | "medium"
-        | "high"
-        | "very_high",
+        | 'low'
+        | 'medium'
+        | 'high'
+        | 'very_high',
     };
   }
 
@@ -493,26 +486,23 @@ export class BrazilianComplianceService {
     cfm: CFMComplianceReport,
   ) {
     return {
-      lgpdStatus:
-        lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.COMPLIANT
-          ? "compliant"
-          : lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.PARTIAL
-            ? "partial"
-            : "non_compliant",
-      anvisaStatus:
-        anvisa.overallCompliance === ANVISA_COMPLIANCE_LEVELS.COMPLIANT
-          ? "compliant"
-          : anvisa.overallCompliance === ANVISA_COMPLIANCE_LEVELS.PARTIAL
-            ? "partial"
-            : "non_compliant",
-      cfmStatus:
-        cfm.overallCompliance === CFM_COMPLIANCE_LEVELS.COMPLIANT
-          ? "compliant"
-          : cfm.overallCompliance === CFM_COMPLIANCE_LEVELS.PARTIAL
-            ? "partial"
-            : "non_compliant",
+      lgpdStatus: lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.COMPLIANT
+        ? 'compliant'
+        : lgpd.overallCompliance === LGPD_COMPLIANCE_LEVELS.PARTIAL
+        ? 'partial'
+        : 'non_compliant',
+      anvisaStatus: anvisa.overallCompliance === ANVISA_COMPLIANCE_LEVELS.COMPLIANT
+        ? 'compliant'
+        : anvisa.overallCompliance === ANVISA_COMPLIANCE_LEVELS.PARTIAL
+        ? 'partial'
+        : 'non_compliant',
+      cfmStatus: cfm.overallCompliance === CFM_COMPLIANCE_LEVELS.COMPLIANT
+        ? 'compliant'
+        : cfm.overallCompliance === CFM_COMPLIANCE_LEVELS.PARTIAL
+        ? 'partial'
+        : 'non_compliant',
       ethicsCommitteeReviewRequired: cfm.ethicsCommitteeReview,
-      regulatoryFilingRequired: anvisa.registrationStatus === "required",
+      regulatoryFilingRequired: anvisa.registrationStatus === 'required',
       auditRecommended: lgpd.score < 90 || anvisa.score < 90 || cfm.score < 90,
     } as const;
   }
@@ -523,13 +513,13 @@ export class BrazilianComplianceService {
   private calculateNextAuditDate(frequency: string): Date {
     const now = new Date();
     switch (frequency) {
-      case "monthly":
+      case 'monthly':
         return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-      case "quarterly":
+      case 'quarterly':
         return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
-      case "semi_annual":
+      case 'semi_annual':
         return new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000);
-      case "annual":
+      case 'annual':
         return new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
       default:
         return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
@@ -544,7 +534,7 @@ export class BrazilianComplianceService {
 
     // Extract issues from different compliance areas
     Object.values(report).forEach((value: any) => {
-      if (value && typeof value === "object" && Array.isArray(value.issues)) {
+      if (value && typeof value === 'object' && Array.isArray(value.issues)) {
         issues.push(...value.issues);
       }
     });

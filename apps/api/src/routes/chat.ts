@@ -1,8 +1,8 @@
-import { zValidator } from "@hono/zod-validator";
-import { supabase } from "@neonpro/database";
-import { Hono } from "hono";
-import { z } from "zod";
-import { DEFAULT_PRIMARY, streamWithFailover } from "../config/ai";
+import { zValidator } from '@hono/zod-validator';
+import { supabase } from '@neonpro/database';
+import { Hono } from 'hono';
+import { z } from 'zod';
+import { DEFAULT_PRIMARY, streamWithFailover } from '../config/ai';
 
 // OpenAPI contract reference (specs/002-phase-1-ai/contracts/chat-query.openapi.json)
 // POST /api/v1/chat/query → 200 SSE | 400 | 403 | 429
@@ -25,10 +25,9 @@ const rateState = new Map<string, { w5m: number[]; w1h: number[] }>();
 
 function isRateLimited(userKey: string, now = Date.now()) {
   const entry = rateState.get(userKey) || { w5m: [], w1h: [] };
-  entry.w5m = entry.w5m.filter((ts) => now - ts <= WINDOW_5M_MS);
-  entry.w1h = entry.w1h.filter((ts) => now - ts <= WINDOW_1H_MS);
-  const limited =
-    entry.w5m.length >= RATE_LIMIT_5M || entry.w1h.length >= RATE_LIMIT_1H;
+  entry.w5m = entry.w5m.filter(ts => now - ts <= WINDOW_5M_MS);
+  entry.w1h = entry.w1h.filter(ts => now - ts <= WINDOW_1H_MS);
+  const limited = entry.w5m.length >= RATE_LIMIT_5M || entry.w1h.length >= RATE_LIMIT_1H;
   if (!limited) {
     entry.w5m.push(now);
     entry.w1h.push(now);
@@ -40,40 +39,38 @@ function isRateLimited(userKey: string, now = Date.now()) {
 // (removed unused placeholder redactPII)
 
 // Consent/role gate (stub): require role and consent header
-import { auditLogMiddleware } from "../middleware/audit-log";
-import { chatRateLimit } from "../middleware/rate-limit";
+import { auditLogMiddleware } from '../middleware/audit-log';
+import { chatRateLimit } from '../middleware/rate-limit';
 import {
   sseHeaders as sseHeadersBase,
   sseStreamFromChunks as sseStreamFromChunksHelper,
-} from "../middleware/streaming";
+} from '../middleware/streaming';
 const ALLOWED_ROLES = new Set([
-  "ADMIN",
-  "CLINICAL_STAFF",
-  "FINANCE_STAFF",
-  "SUPPORT_READONLY",
+  'ADMIN',
+  'CLINICAL_STAFF',
+  'FINANCE_STAFF',
+  'SUPPORT_READONLY',
 ]);
 function checkConsentAndRole(req: Request) {
-  const role = req.headers.get("x-role") || "ANONYMOUS";
-  const consent = (req.headers.get("x-consent") || "").toLowerCase();
+  const role = req.headers.get('x-role') || 'ANONYMOUS';
+  const consent = (req.headers.get('x-consent') || '').toLowerCase();
   const hasRole = ALLOWED_ROLES.has(role);
-  const consentStatus =
-    consent === "true" || consent === "valid" ? "valid" : "missing";
-  return { ok: hasRole && consentStatus === "valid", consentStatus, role };
+  const consentStatus = consent === 'true' || consent === 'valid' ? 'valid' : 'missing';
+  return { ok: hasRole && consentStatus === 'valid', consentStatus, role };
 }
 
 function classifyQueryType(
   q: string,
-): "treatment" | "finance" | "mixed" | "other" {
+): 'treatment' | 'finance' | 'mixed' | 'other' {
   const lower = q.toLowerCase();
   const isTreat = /(tratamento|procedimento|botox|preenchimento|limpeza)/.test(
     lower,
   );
-  const isFin =
-    /(saldo|financeiro|pagamento|fatura|atraso|overdue|balance)/.test(lower);
-  if (isTreat && isFin) return "mixed";
-  if (isTreat) return "treatment";
-  if (isFin) return "finance";
-  return "other";
+  const isFin = /(saldo|financeiro|pagamento|fatura|atraso|overdue|balance)/.test(lower);
+  if (isTreat && isFin) return 'mixed';
+  if (isTreat) return 'treatment';
+  if (isFin) return 'finance';
+  return 'other';
 }
 
 function sseStreamFromChunks(chunks: string[]): ReadableStream<Uint8Array> {
@@ -82,51 +79,51 @@ function sseStreamFromChunks(chunks: string[]): ReadableStream<Uint8Array> {
 
 function mockAnswer(question: string): {
   chunks: string[];
-  outcome: "success" | "refusal" | "limit";
+  outcome: 'success' | 'refusal' | 'limit';
 } {
   const q = question.toLowerCase();
-  if (q.includes("mock:balance")) {
+  if (q.includes('mock:balance')) {
     return {
       chunks: [
-        "Saldo atual: R$ 320,00. ",
-        "2 faturas em atraso. ",
-        "Último pagamento há 12 dias.",
+        'Saldo atual: R$ 320,00. ',
+        '2 faturas em atraso. ',
+        'Último pagamento há 12 dias.',
       ],
-      outcome: "success",
+      outcome: 'success',
     };
   }
-  if (q.includes("mock:clinical")) {
+  if (q.includes('mock:clinical')) {
     return {
       chunks: [
-        "Tratamentos recentes: ",
-        "limpeza de pele (10/08), ",
-        "botox (25/08).",
+        'Tratamentos recentes: ',
+        'limpeza de pele (10/08), ',
+        'botox (25/08).',
       ],
-      outcome: "success",
+      outcome: 'success',
     };
   }
-  if (q.includes("mock:overdue")) {
+  if (q.includes('mock:overdue')) {
     return {
-      chunks: ["Resumo: ", "3 parcelas em atraso, ", "total R$ 780,00."],
-      outcome: "success",
+      chunks: ['Resumo: ', '3 parcelas em atraso, ', 'total R$ 780,00.'],
+      outcome: 'success',
     };
   }
-  if (q.includes("mock:ambiguous")) {
+  if (q.includes('mock:ambiguous')) {
     return {
-      chunks: ["Qual paciente você se refere? ", "Forneça um identificador."],
-      outcome: "refusal",
+      chunks: ['Qual paciente você se refere? ', 'Forneça um identificador.'],
+      outcome: 'refusal',
     };
   }
-  if (q.includes("mock:refusal")) {
+  if (q.includes('mock:refusal')) {
     return {
-      chunks: ["Não posso responder sem consentimento válido."],
-      outcome: "refusal",
+      chunks: ['Não posso responder sem consentimento válido.'],
+      outcome: 'refusal',
     };
   }
   // Default deterministic
   return {
-    chunks: ["Olá! ", "Sou o assistente da NeonPro. ", "Como posso ajudar?"],
-    outcome: "success",
+    chunks: ['Olá! ', 'Sou o assistente da NeonPro. ', 'Como posso ajudar?'],
+    outcome: 'success',
   };
 }
 
@@ -138,15 +135,15 @@ function sseHeaders(extra?: Record<string, string>): Record<string, string> {
 }
 
 app.post(
-  "/query",
+  '/query',
   chatRateLimit(),
   auditLogMiddleware(),
-  zValidator("json", ChatQuerySchema),
-  async (c) => {
+  zValidator('json', ChatQuerySchema),
+  async c => {
     const t0 = Date.now();
-    const { question, sessionId } = c.req.valid("json");
-    const userId = c.req.header("x-user-id") || "anonymous";
-    const clinicId = c.req.header("x-clinic-id") || "unknown";
+    const { question, sessionId } = c.req.valid('json');
+    const userId = c.req.header('x-user-id') || 'anonymous';
+    const clinicId = c.req.header('x-clinic-id') || 'unknown';
 
     // Rate limit first
     if (isRateLimited(userId)) {
@@ -156,18 +153,18 @@ app.post(
         userId,
         clinicId,
         timestampUTC: new Date().toISOString(),
-        actionType: "query",
-        consentStatus: "n/a",
+        actionType: 'query',
+        consentStatus: 'n/a',
         queryType: classifyQueryType(question),
         redactionApplied: false,
-        outcome: "limit",
+        outcome: 'limit',
         latencyMs: Date.now() - t0,
         sessionId: sessionId || null,
       };
 
-      if (process.env.AI_AUDIT_DB === "true") {
+      if (process.env.AI_AUDIT_DB === 'true') {
         try {
-          await supabase.from("ai_audit_events").insert({
+          await supabase.from('ai_audit_events').insert({
             clinic_id: auditEvent.clinicId,
             user_id: auditEvent.userId,
             session_id: auditEvent.sessionId,
@@ -179,105 +176,104 @@ app.post(
             latency_ms: auditEvent.latencyMs,
           });
         } catch (e) {
-          console.warn("Audit DB insert failed", e);
+          console.warn('Audit DB insert failed', e);
         }
       } else {
-        console.log("AuditEvent", auditEvent);
+        console.log('AuditEvent', auditEvent);
       }
-      return c.json({ message: "Please retry shortly" }, 429);
+      return c.json({ message: 'Please retry shortly' }, 429);
     }
 
     // Consent + role gate
     const { ok, consentStatus } = checkConsentAndRole(c.req.raw);
-    if (!ok && !question.toLowerCase().includes("mock")) {
-      console.log("AuditEvent", {
+    if (!ok && !question.toLowerCase().includes('mock')) {
+      console.log('AuditEvent', {
         eventId: crypto.randomUUID(),
         userId,
         clinicId,
         timestampUTC: new Date().toISOString(),
-        actionType: "query",
+        actionType: 'query',
         consentStatus,
         queryType: classifyQueryType(question),
         redactionApplied: false,
-        outcome: "refusal",
+        outcome: 'refusal',
         latencyMs: Date.now() - t0,
         sessionId: sessionId || null,
       });
-      if (process.env.AI_AUDIT_DB === "true") {
+      if (process.env.AI_AUDIT_DB === 'true') {
         try {
-          await supabase.from("ai_audit_events").insert({
+          await supabase.from('ai_audit_events').insert({
             clinic_id: clinicId,
             user_id: userId,
             session_id: sessionId || null,
-            action_type: "query",
+            action_type: 'query',
             consent_status: consentStatus,
             query_type: classifyQueryType(question),
             redaction_applied: false,
-            outcome: "refusal",
+            outcome: 'refusal',
             latency_ms: Date.now() - t0,
           });
         } catch (e) {
-          console.warn("Audit DB insert failed", e);
+          console.warn('Audit DB insert failed', e);
         }
       } else {
-        console.log("AuditEvent", {
+        console.log('AuditEvent', {
           eventId: crypto.randomUUID(),
           userId,
           clinicId,
           timestampUTC: new Date().toISOString(),
-          actionType: "query",
+          actionType: 'query',
           consentStatus,
           queryType: classifyQueryType(question),
           redactionApplied: false,
-          outcome: "refusal",
+          outcome: 'refusal',
           latencyMs: Date.now() - t0,
           sessionId: sessionId || null,
         });
       }
-      return c.json({ message: "Consent required or insufficient role" }, 403);
+      return c.json({ message: 'Consent required or insufficient role' }, 403);
     }
 
     const url = new URL(c.req.url);
-    const mock =
-      url.searchParams.get("mock") === "true" ||
-      process.env.MOCK_MODE === "true" ||
-      process.env.AI_MOCK === "true";
+    const mock = url.searchParams.get('mock') === 'true'
+      || process.env.MOCK_MODE === 'true'
+      || process.env.AI_MOCK === 'true';
 
     try {
       if (mock) {
         const { chunks, outcome } = mockAnswer(question);
         const stream = sseStreamFromChunks(chunks);
         const headers = sseHeaders({
-          "X-Chat-Model": "mock:model",
-          "X-Data-Freshness": "as-of-now",
+          'X-Chat-Model': 'mock:model',
+          'X-Data-Freshness': 'as-of-now',
         });
         const resp = new Response(stream, { headers });
 
         // Audit (mock path)
-        if (process.env.AI_AUDIT_DB === "true") {
+        if (process.env.AI_AUDIT_DB === 'true') {
           try {
-            await supabase.from("ai_audit_events").insert({
+            await supabase.from('ai_audit_events').insert({
               clinic_id: clinicId,
               user_id: userId,
               session_id: sessionId || null,
-              action_type: "query",
-              consent_status: ok ? "valid" : (consentStatus as string),
+              action_type: 'query',
+              consent_status: ok ? 'valid' : (consentStatus as string),
               query_type: classifyQueryType(question),
               redaction_applied: true,
               outcome,
               latency_ms: Date.now() - t0,
             });
           } catch (e) {
-            console.warn("Audit DB insert failed", e);
+            console.warn('Audit DB insert failed', e);
           }
         } else {
-          console.log("AuditEvent", {
+          console.log('AuditEvent', {
             eventId: crypto.randomUUID(),
             userId,
             clinicId,
             timestampUTC: new Date().toISOString(),
-            actionType: "query",
-            consentStatus: ok ? "valid" : consentStatus,
+            actionType: 'query',
+            consentStatus: ok ? 'valid' : consentStatus,
             queryType: classifyQueryType(question),
             redactionApplied: true,
             outcome,
@@ -291,11 +287,10 @@ app.post(
       // Real path: call AI with failover, then bridge to SSE
       const messages = [
         {
-          _role: "system" as const,
-          content:
-            "Você é um assistente de clínica estética. Responda de forma segura e empática.",
+          _role: 'system' as const,
+          content: 'Você é um assistente de clínica estética. Responda de forma segura e empática.',
         },
-        { _role: "user" as const, content: question },
+        { _role: 'user' as const, content: question },
       ];
 
       const aiResp = await streamWithFailover({
@@ -319,13 +314,13 @@ app.post(
               if (text) {
                 controller.enqueue(
                   enc.encode(
-                    `data: ${JSON.stringify({ type: "text", delta: text })}\n\n`,
+                    `data: ${JSON.stringify({ type: 'text', delta: text })}\n\n`,
                   ),
                 );
               }
             }
             controller.enqueue(
-              enc.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`),
+              enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`),
             );
             controller.close();
           } catch (e) {
@@ -335,37 +330,37 @@ app.post(
       });
 
       const headers = sseHeaders({
-        "X-Chat-Model": aiResp.headers.get("X-Chat-Model") || "unknown",
+        'X-Chat-Model': aiResp.headers.get('X-Chat-Model') || 'unknown',
       });
 
       // Audit (success)
-      if (process.env.AI_AUDIT_DB === "true") {
+      if (process.env.AI_AUDIT_DB === 'true') {
         try {
-          await supabase.from("ai_audit_events").insert({
+          await supabase.from('ai_audit_events').insert({
             clinic_id: clinicId,
             user_id: userId,
             session_id: sessionId || null,
-            action_type: "query",
-            consent_status: ok ? "valid" : (consentStatus as string),
+            action_type: 'query',
+            consent_status: ok ? 'valid' : (consentStatus as string),
             query_type: classifyQueryType(question),
             redaction_applied: true,
-            outcome: "success",
+            outcome: 'success',
             latency_ms: Date.now() - t0,
           });
         } catch (e) {
-          console.warn("Audit DB insert failed", e);
+          console.warn('Audit DB insert failed', e);
         }
       } else {
-        console.log("AuditEvent", {
+        console.log('AuditEvent', {
           eventId: crypto.randomUUID(),
           userId,
           clinicId,
           timestampUTC: new Date().toISOString(),
-          actionType: "query",
-          consentStatus: ok ? "valid" : consentStatus,
+          actionType: 'query',
+          consentStatus: ok ? 'valid' : consentStatus,
           queryType: classifyQueryType(question),
           redactionApplied: true,
-          outcome: "success",
+          outcome: 'success',
           latencyMs: Date.now() - t0,
           sessionId: sessionId || null,
         });
@@ -373,61 +368,60 @@ app.post(
 
       return new Response(stream, { headers });
     } catch (err) {
-      console.error("Chat query error:", err);
-      if (process.env.AI_AUDIT_DB === "true") {
+      console.error('Chat query error:', err);
+      if (process.env.AI_AUDIT_DB === 'true') {
         try {
-          await supabase.from("ai_audit_events").insert({
+          await supabase.from('ai_audit_events').insert({
             clinic_id: clinicId,
             user_id: userId,
             session_id: sessionId || null,
-            action_type: "query",
-            consent_status: ok ? "valid" : (consentStatus as string),
+            action_type: 'query',
+            consent_status: ok ? 'valid' : (consentStatus as string),
             query_type: classifyQueryType(question),
             redaction_applied: true,
-            outcome: "error",
+            outcome: 'error',
             latency_ms: Date.now() - t0,
           });
         } catch (e) {
-          console.warn("Audit DB insert failed", e);
+          console.warn('Audit DB insert failed', e);
         }
       } else {
-        console.log("AuditEvent", {
+        console.log('AuditEvent', {
           eventId: crypto.randomUUID(),
           userId,
           clinicId,
           timestampUTC: new Date().toISOString(),
-          actionType: "query",
-          consentStatus: ok ? "valid" : consentStatus,
+          actionType: 'query',
+          consentStatus: ok ? 'valid' : consentStatus,
           queryType: classifyQueryType(question),
           redactionApplied: true,
-          outcome: "error",
+          outcome: 'error',
           latencyMs: Date.now() - t0,
           sessionId: sessionId || null,
         });
       }
-      return c.json({ message: "Service temporarily unavailable" }, 500);
+      return c.json({ message: 'Service temporarily unavailable' }, 500);
     }
   },
 );
 
 // GET /session/:id — returns session info (mock fallback)
-app.get("/session/:id", async (c) => {
-  const id = c.req.param("id");
-  const userId = c.req.header("x-user-id") || "anonymous";
-  const clinicId = c.req.header("x-clinic-id") || "unknown";
+app.get('/session/:id', async c => {
+  const id = c.req.param('id');
+  const userId = c.req.header('x-user-id') || 'anonymous';
+  const clinicId = c.req.header('x-clinic-id') || 'unknown';
   const url = new URL(c.req.url);
-  const mock =
-    url.searchParams.get("mock") === "true" ||
-    process.env.MOCK_MODE === "true" ||
-    process.env.AI_MOCK === "true";
+  const mock = url.searchParams.get('mock') === 'true'
+    || process.env.MOCK_MODE === 'true'
+    || process.env.AI_MOCK === 'true';
 
   // In real mode, attempt to fetch from DB; fallback to mock if table not available
-  if (!mock && process.env.AI_AUDIT_DB === "true") {
+  if (!mock && process.env.AI_AUDIT_DB === 'true') {
     try {
       const { data, error } = await supabase
-        .from("ai_chat_sessions")
-        .select("id, user_id, clinic_id, started_at, last_activity_at, locale")
-        .eq("id", id)
+        .from('ai_chat_sessions')
+        .select('id, user_id, clinic_id, started_at, last_activity_at, locale')
+        .eq('id', id)
         .maybeSingle();
       if (error) throw error;
       if (data) {
@@ -436,10 +430,9 @@ app.get("/session/:id", async (c) => {
             id: data.id,
             _userId: data.user_id,
             clinicId: data.clinic_id,
-            locale:
-              data.locale ||
-              (c.req.header("x-locale") as "pt-BR" | "en-US") ||
-              "pt-BR",
+            locale: data.locale
+              || (c.req.header('x-locale') as 'pt-BR' | 'en-US')
+              || 'pt-BR',
             startedAt: data.started_at,
             lastActivityAt: data.last_activity_at,
           },
@@ -448,9 +441,9 @@ app.get("/session/:id", async (c) => {
       }
       // create minimal session row if not found
       const now = new Date().toISOString();
-      const locale = (c.req.header("x-locale") as "pt-BR" | "en-US") || "pt-BR";
+      const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
       const ins = await supabase
-        .from("ai_chat_sessions")
+        .from('ai_chat_sessions')
         .insert({
           id,
           user_id: userId,
@@ -459,7 +452,7 @@ app.get("/session/:id", async (c) => {
           last_activity_at: now,
           locale,
         })
-        .select("id, user_id, clinic_id, started_at, last_activity_at, locale")
+        .select('id, user_id, clinic_id, started_at, last_activity_at, locale')
         .single();
       if (ins.error) throw ins.error;
       return c.json(
@@ -474,12 +467,12 @@ app.get("/session/:id", async (c) => {
         200,
       );
     } catch (e) {
-      console.warn("Session DB operation failed, falling back to mock:", e);
+      console.warn('Session DB operation failed, falling back to mock:', e);
     }
   }
 
   // Mock fallback
-  const locale = (c.req.header("x-locale") as "pt-BR" | "en-US") || "pt-BR";
+  const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
   const now = new Date().toISOString();
   return c.json(
     { id, userId, locale, startedAt: now, lastActivityAt: now },
@@ -488,13 +481,12 @@ app.get("/session/:id", async (c) => {
 });
 
 // POST /explanation — returns concise explanation with LGPD safeguards
-app.post("/explanation", async (c) => {
+app.post('/explanation', async c => {
   const t0 = Date.now();
   const url = new URL(c.req.url);
-  const mock =
-    url.searchParams.get("mock") === "true" ||
-    process.env.MOCK_MODE === "true" ||
-    process.env.AI_MOCK === "true";
+  const mock = url.searchParams.get('mock') === 'true'
+    || process.env.MOCK_MODE === 'true'
+    || process.env.AI_MOCK === 'true';
 
   // Parse and validate payload
   let _payload: any = {};
@@ -503,10 +495,10 @@ app.post("/explanation", async (c) => {
   } catch {}
   const BodySchema = z.object({
     text: z.string().min(1).max(8000),
-    locale: z.string().default("pt-BR"),
+    locale: z.string().default('pt-BR'),
   });
   const parsed = BodySchema.safeParse(_payload);
-  if (!parsed.success) return c.json({ message: "Invalid payload" }, 422);
+  if (!parsed.success) return c.json({ message: 'Invalid payload' }, 422);
   const { text, locale } = parsed.data;
 
   // Consent + role gate
@@ -515,22 +507,21 @@ app.post("/explanation", async (c) => {
     // Refusal without processing text
     return c.json(
       {
-        message:
-          locale === "en-US"
-            ? "Cannot answer without valid consent."
-            : "Não é possível responder sem consentimento válido.",
+        message: locale === 'en-US'
+          ? 'Cannot answer without valid consent.'
+          : 'Não é possível responder sem consentimento válido.',
       },
       403,
     );
   }
 
   // Minimal LGPD redaction on input prior to model usage/logging
-  const { redact } = await import("@neonpro/utils");
+  const { redact } = await import('@neonpro/utils');
   const redactedInput = redact(String(text));
 
   try {
     if (mock) {
-      const prefix = locale === "en-US" ? "Explanation: " : "Explicação: ";
+      const prefix = locale === 'en-US' ? 'Explanation: ' : 'Explicação: ';
       const snippet = redactedInput.slice(0, 160);
       const explanation = `${prefix}${snippet}`;
       const traceId = crypto.randomUUID();
@@ -538,11 +529,10 @@ app.post("/explanation", async (c) => {
     }
 
     // Non-streaming generation with failover
-    const { generateWithFailover } = await import("../config/ai");
-    const prompt =
-      locale === "en-US"
-        ? `Explain concisely and safely for a patient: ${redactedInput}`
-        : `Explique de forma concisa e segura para um paciente: ${redactedInput}`;
+    const { generateWithFailover } = await import('../config/ai');
+    const prompt = locale === 'en-US'
+      ? `Explain concisely and safely for a patient: ${redactedInput}`
+      : `Explique de forma concisa e segura para um paciente: ${redactedInput}`;
 
     const result = await generateWithFailover({
       model: DEFAULT_PRIMARY,
@@ -554,35 +544,34 @@ app.post("/explanation", async (c) => {
     const traceId = crypto.randomUUID();
 
     // Optional DB audit
-    const userId = c.req.header("x-user-id") || "anonymous";
-    const clinicId = c.req.header("x-clinic-id") || "unknown";
-    if (process.env.AI_AUDIT_DB === "true") {
+    const userId = c.req.header('x-user-id') || 'anonymous';
+    const clinicId = c.req.header('x-clinic-id') || 'unknown';
+    if (process.env.AI_AUDIT_DB === 'true') {
       try {
-        await supabase.from("ai_audit_events").insert({
+        await supabase.from('ai_audit_events').insert({
           clinic_id: clinicId,
           user_id: userId,
           session_id: null,
-          action_type: "explanation",
-          consent_status: ok ? "valid" : (consentStatus as string),
-          query_type: "other",
+          action_type: 'explanation',
+          consent_status: ok ? 'valid' : (consentStatus as string),
+          query_type: 'other',
           redaction_applied: true,
-          outcome: "success",
+          outcome: 'success',
           latency_ms: Date.now() - t0,
         });
       } catch (e) {
-        console.warn("Audit DB insert failed", e);
+        console.warn('Audit DB insert failed', e);
       }
     }
 
     return c.json({ explanation, traceId }, 200);
   } catch (err) {
-    console.error("Explanation error:", err);
+    console.error('Explanation error:', err);
     return c.json(
       {
-        message:
-          locale === "en-US"
-            ? "Service temporarily unavailable"
-            : "Serviço temporariamente indisponível",
+        message: locale === 'en-US'
+          ? 'Service temporarily unavailable'
+          : 'Serviço temporariamente indisponível',
       },
       500,
     );
@@ -590,25 +579,25 @@ app.post("/explanation", async (c) => {
 });
 
 // GET /suggestions — returns curated suggestions based on locale and optional session
-app.get("/suggestions", async (c) => {
-  const locale = (c.req.header("x-locale") as "pt-BR" | "en-US") || "pt-BR";
-  const sessionId = c.req.query("sessionId") || null;
+app.get('/suggestions', async c => {
+  const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
+  const sessionId = c.req.query('sessionId') || null;
 
   const suggestionsPT = [
-    "Quais foram os últimos tratamentos do paciente?",
-    "Resumo financeiro do paciente",
-    "Agendar retorno para avaliação clínica",
+    'Quais foram os últimos tratamentos do paciente?',
+    'Resumo financeiro do paciente',
+    'Agendar retorno para avaliação clínica',
   ];
   const suggestionsEN = [
-    "What were the patient's most recent treatments?",
-    "Patient financial summary",
-    "Schedule a follow-up appointment",
+    'What were the patient\'s most recent treatments?',
+    'Patient financial summary',
+    'Schedule a follow-up appointment',
   ];
-  const items = locale === "en-US" ? suggestionsEN : suggestionsPT;
+  const items = locale === 'en-US' ? suggestionsEN : suggestionsPT;
 
   return c.json({ suggestions: items, sessionId }, 200);
 });
 
-app.get("/health", (c) => c.json({ status: "ok", route: "chat.query" }));
+app.get('/health', c => c.json({ status: 'ok', route: 'chat.query' }));
 
 export default app;

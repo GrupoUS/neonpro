@@ -5,7 +5,7 @@
  * T057: Add audit logging for all data access attempts
  */
 
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 interface AuditLogEntry {
   action: string;
@@ -15,7 +15,7 @@ interface AuditLogEntry {
   session_id?: string;
   clinic_id?: string;
   patient_id?: string;
-  result: "granted" | "denied" | "error";
+  result: 'granted' | 'denied' | 'error';
   reason?: string;
   ip_address?: string;
   user_agent?: string;
@@ -28,7 +28,7 @@ interface DataAccessLog {
   resource_type: string;
   resource_id?: string;
   patient_id?: string;
-  result: "granted" | "denied";
+  result: 'granted' | 'denied';
   reason?: string;
   session_id?: string;
   details?: any;
@@ -68,8 +68,8 @@ export class HealthcareLogger {
         },
         global: {
           headers: {
-            "X-Healthcare-App": "NeonPro-Logger",
-            "X-LGPD-Compliance": "true",
+            'X-Healthcare-App': 'NeonPro-Logger',
+            'X-LGPD-Compliance': 'true',
           },
         },
       });
@@ -97,8 +97,8 @@ export class HealthcareLogger {
     this.auditBuffer = [];
 
     try {
-      const { error } = await this.supabase.from("audit_logs").insert(
-        logsToFlush.map((log) => ({
+      const { error } = await this.supabase.from('audit_logs').insert(
+        logsToFlush.map(log => ({
           action: log.action,
           resource_type: log.resource_type,
           resource_id: log.resource_id,
@@ -118,12 +118,12 @@ export class HealthcareLogger {
       );
 
       if (error) {
-        console.error("Failed to flush audit logs to database:", error);
+        console.error('Failed to flush audit logs to database:', error);
         // Re-add logs to buffer for retry
         this.auditBuffer.unshift(...logsToFlush);
       }
     } catch (error) {
-      console.error("Error flushing audit buffer:", error);
+      console.error('Error flushing audit buffer:', error);
       // Re-add logs to buffer for retry
       this.auditBuffer.unshift(...logsToFlush);
     }
@@ -141,8 +141,8 @@ export class HealthcareLogger {
     console.log(`[INFO] ${message}`, {
       ...sanitizedMetadata,
       timestamp: new Date().toISOString(),
-      component: "healthcare-logger",
-      level: "info",
+      component: 'healthcare-logger',
+      level: 'info',
     });
   }
 
@@ -158,8 +158,8 @@ export class HealthcareLogger {
     console.warn(`[WARN] ${message}`, {
       ...sanitizedMetadata,
       timestamp: new Date().toISOString(),
-      component: "healthcare-logger",
-      level: "warn",
+      component: 'healthcare-logger',
+      level: 'warn',
     });
   }
 
@@ -180,15 +180,15 @@ export class HealthcareLogger {
         name: error.name,
       },
       timestamp: new Date().toISOString(),
-      component: "healthcare-logger",
-      level: "error",
+      component: 'healthcare-logger',
+      level: 'error',
     });
 
     // Also log critical errors to audit trail
     this.logAuditEvent({
-      action: "system_error",
-      resource_type: "system",
-      result: "error",
+      action: 'system_error',
+      resource_type: 'system',
+      result: 'error',
       reason: error.message,
       metadata: sanitizedMetadata,
       timestamp: new Date().toISOString(),
@@ -199,7 +199,7 @@ export class HealthcareLogger {
    * Log debug message (development only)
    */
   public debug(message: string, metadata: any = {}): void {
-    if (process.env.NODE_ENV !== "production") {
+    if (process.env.NODE_ENV !== 'production') {
       this.stats.total_logs++;
       this.stats.debug_logs++;
 
@@ -208,8 +208,8 @@ export class HealthcareLogger {
       console.debug(`[DEBUG] ${message}`, {
         ...sanitizedMetadata,
         timestamp: new Date().toISOString(),
-        component: "healthcare-logger",
-        level: "debug",
+        component: 'healthcare-logger',
+        level: 'debug',
       });
     }
   }
@@ -225,8 +225,8 @@ export class HealthcareLogger {
 
     console.log(`[AUDIT] ${event.action}`, {
       ...sanitizedEvent,
-      component: "healthcare-logger",
-      level: "audit",
+      component: 'healthcare-logger',
+      level: 'audit',
     });
 
     // Buffer for database insertion
@@ -266,11 +266,11 @@ export class HealthcareLogger {
       timestamp: new Date().toISOString(),
     });
 
-    this.info("Data access logged", {
+    this.info('Data access logged', {
       user_id: userId,
       clinic_id: clinicId,
       access: sanitizedAccess,
-      type: "data_access_audit",
+      type: 'data_access_audit',
     });
   }
 
@@ -291,14 +291,14 @@ export class HealthcareLogger {
     const sanitizedResponse = this.sanitizeQuery(params.response);
 
     this.logAuditEvent({
-      action: "ai_interaction",
-      resource_type: "ai_session",
+      action: 'ai_interaction',
+      resource_type: 'ai_session',
       resource_id: params.sessionId,
       user_id: params.userId,
       clinic_id: params.clinicId,
       patient_id: params.patientId,
       session_id: params.sessionId,
-      result: "granted",
+      result: 'granted',
       metadata: {
         _query: sanitizedQuery,
         response: sanitizedResponse,
@@ -317,17 +317,17 @@ export class HealthcareLogger {
     sessionId: string,
     _userId: string,
     clinicId: string,
-    event: "start" | "end" | "timeout" | "error",
+    event: 'start' | 'end' | 'timeout' | 'error',
     details?: any,
   ): void {
     this.logAuditEvent({
       action: `session_${event}`,
-      resource_type: "session",
+      resource_type: 'session',
       resource_id: sessionId,
       user_id: userId,
       clinic_id: clinicId,
       session_id: sessionId,
-      result: event === "error" ? "error" : "granted",
+      result: event === 'error' ? 'error' : 'granted',
       metadata: this.sanitizeData(details || {}),
       timestamp: new Date().toISOString(),
     });
@@ -338,14 +338,14 @@ export class HealthcareLogger {
    */
   public logAuthEvent(
     _userId: string,
-    event: "login" | "logout" | "failed_login" | "token_refresh",
+    event: 'login' | 'logout' | 'failed_login' | 'token_refresh',
     details?: any,
   ): void {
     this.logAuditEvent({
       action: `auth_${event}`,
-      resource_type: "authentication",
+      resource_type: 'authentication',
       user_id: userId,
-      result: event === "failed_login" ? "denied" : "granted",
+      result: event === 'failed_login' ? 'denied' : 'granted',
       ip_address: details?.ip_address,
       user_agent: details?.user_agent,
       metadata: this.sanitizeData(details || {}),
@@ -358,20 +358,20 @@ export class HealthcareLogger {
    */
   private classifyDataSensitivity(
     resourceType: string,
-  ): "public" | "sensitive" | "confidential" {
+  ): 'public' | 'sensitive' | 'confidential' {
     const classifications: Record<
       string,
-      "public" | "sensitive" | "confidential"
+      'public' | 'sensitive' | 'confidential'
     > = {
-      patient: "confidential",
-      medical_record: "confidential",
-      appointment: "sensitive",
-      clinic: "public",
-      professional: "sensitive",
-      ai_log: "sensitive",
+      patient: 'confidential',
+      medical_record: 'confidential',
+      appointment: 'sensitive',
+      clinic: 'public',
+      professional: 'sensitive',
+      ai_log: 'sensitive',
     };
 
-    return classifications[resourceType] || "sensitive";
+    return classifications[resourceType] || 'sensitive';
   }
 
   /**
@@ -385,25 +385,25 @@ export class HealthcareLogger {
     // Remove CPF patterns
     sanitized = sanitized.replace(
       /\d{3}\.\d{3}\.\d{3}-\d{2}/g,
-      "[CPF_REMOVED]",
+      '[CPF_REMOVED]',
     );
 
     // Remove phone patterns
     sanitized = sanitized.replace(
       /\(\d{2}\)\s*\d{4,5}-\d{4}/g,
-      "[PHONE_REMOVED]",
+      '[PHONE_REMOVED]',
     );
 
     // Remove email patterns
     sanitized = sanitized.replace(
       /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g,
-      "[EMAIL_REMOVED]",
+      '[EMAIL_REMOVED]',
     );
 
     // Remove potential names (sequences of 2+ capitalized words)
     sanitized = sanitized.replace(
       /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\b/g,
-      "[NAME_REMOVED]",
+      '[NAME_REMOVED]',
     );
 
     return sanitized;
@@ -413,44 +413,44 @@ export class HealthcareLogger {
    * Sanitize data to remove PII
    */
   private sanitizeData(data: any): any {
-    if (typeof data !== "object" || data === null) {
+    if (typeof data !== 'object' || data === null) {
       return data;
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.sanitizeData(item));
+      return data.map(item => this.sanitizeData(item));
     }
 
     const sanitized = { ...data };
 
     // Remove/mask common PII fields
     const piiFields = [
-      "cpf",
-      "email",
-      "phone",
-      "address",
-      "full_name",
-      "password",
-      "token",
+      'cpf',
+      'email',
+      'phone',
+      'address',
+      'full_name',
+      'password',
+      'token',
     ];
 
     for (const field of piiFields) {
       if (sanitized[field]) {
-        if (field === "email") {
+        if (field === 'email') {
           sanitized[field] = this.maskEmail(sanitized[field]);
-        } else if (field === "phone") {
+        } else if (field === 'phone') {
           sanitized[field] = this.maskPhone(sanitized[field]);
-        } else if (field === "cpf") {
+        } else if (field === 'cpf') {
           sanitized[field] = this.maskCPF(sanitized[field]);
         } else {
-          sanitized[field] = "[REDACTED]";
+          sanitized[field] = '[REDACTED]';
         }
       }
     }
 
     // Recursively sanitize nested objects
     for (const key in sanitized) {
-      if (typeof sanitized[key] === "object" && sanitized[key] !== null) {
+      if (typeof sanitized[key] === 'object' && sanitized[key] !== null) {
         sanitized[key] = this.sanitizeData(sanitized[key]);
       }
     }
@@ -462,15 +462,14 @@ export class HealthcareLogger {
    * Mask email while preserving domain for analysis
    */
   private maskEmail(email: string): string {
-    const [username, domain] = email.split("@");
-    if (!domain) return "[INVALID_EMAIL]";
+    const [username, domain] = email.split('@');
+    if (!domain) return '[INVALID_EMAIL]';
 
-    const maskedUsername =
-      username.length > 2
-        ? username[0] +
-          "*".repeat(username.length - 2) +
-          username[username.length - 1]
-        : "***";
+    const maskedUsername = username.length > 2
+      ? username[0]
+        + '*'.repeat(username.length - 2)
+        + username[username.length - 1]
+      : '***';
 
     return `${maskedUsername}@${domain}`;
   }
@@ -484,7 +483,7 @@ export class HealthcareLogger {
       if (index < 2 || index >= phone.length - 2) {
         return match;
       }
-      return "*";
+      return '*';
     });
   }
 
@@ -497,7 +496,7 @@ export class HealthcareLogger {
       if (index === 0 || index === cpf.length - 1) {
         return match;
       }
-      return "*";
+      return '*';
     });
   }
 
@@ -526,7 +525,7 @@ export class HealthcareLogger {
     // Final flush
     await this.flushAuditBuffer();
 
-    this.info("Healthcare logger shutdown completed", {
+    this.info('Healthcare logger shutdown completed', {
       final_stats: this.getStats(),
     });
   }

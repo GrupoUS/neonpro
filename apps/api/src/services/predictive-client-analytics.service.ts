@@ -6,15 +6,15 @@
  * for healthcare clinics.
  */
 
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
 import {
-  AguiClientRetentionPredictionMessage,
   AguiClientAnalyticsMessage,
-  RetentionFeatures,
-  RetentionRecommendation,
+  AguiClientRetentionPredictionMessage,
   AISuggestion,
   AnalyticsData,
-} from "./agui-protocol/types";
+  RetentionFeatures,
+  RetentionRecommendation,
+} from './agui-protocol/types';
 
 export interface AnalyticsConfig {
   supabaseUrl: string;
@@ -28,19 +28,19 @@ export interface AnalyticsConfig {
 
 export interface RetentionPrediction {
   clientId: string;
-  riskLevel: "low" | "medium" | "high";
+  riskLevel: 'low' | 'medium' | 'high';
   riskScore: number; // 0-1
   confidence: number; // 0-1
   factors: Array<{
     factor: string;
-    impact: "positive" | "negative";
+    impact: 'positive' | 'negative';
     weight: number;
     description: string;
     value: any;
     threshold?: number;
   }>;
-  trend: "improving" | "stable" | "declining";
-  predictedOutcome: "retain" | "at_risk" | "likely_to_churn";
+  trend: 'improving' | 'stable' | 'declining';
+  predictedOutcome: 'retain' | 'at_risk' | 'likely_to_churn';
   timeframe: string; // e.g., "30 days", "90 days"
   recommendations: RetentionRecommendation[];
   lastUpdated: string;
@@ -55,11 +55,11 @@ export interface ClientEngagementMetrics {
   rescheduleRate: number; // 0-1
   responseRate: number; // 0-1
   averageResponseTime: number; // hours
-  communicationPreference: "whatsapp" | "sms" | "email" | "phone";
+  communicationPreference: 'whatsapp' | 'sms' | 'email' | 'phone';
   lastAppointmentDate?: string;
   nextAppointmentDate?: string;
   engagementScore: number; // 0-100
-  trend: "increasing" | "stable" | "decreasing";
+  trend: 'increasing' | 'stable' | 'decreasing';
 }
 
 export interface FinancialBehavior {
@@ -72,8 +72,8 @@ export interface FinancialBehavior {
   paymentConsistency: number; // 0-1
   preferredPaymentMethod: string;
   lastPaymentDate?: string;
-  financialRisk: "low" | "medium" | "high";
-  spendingTrend: "increasing" | "stable" | "decreasing";
+  financialRisk: 'low' | 'medium' | 'high';
+  spendingTrend: 'increasing' | 'stable' | 'decreasing';
 }
 
 export interface TreatmentProgress {
@@ -143,13 +143,12 @@ export class PredictiveClientAnalyticsService {
       // Gather client data
       const clientData = await this.gatherClientData(message.clientId);
       if (!clientData) {
-        return { success: false, error: "Cliente não encontrado" };
+        return { success: false, error: 'Cliente não encontrado' };
       }
 
       // Extract features
-      const features =
-        message.features ||
-        (await this.extractFeatures(message.clientId, clientData));
+      const features = message.features
+        || (await this.extractFeatures(message.clientId, clientData));
 
       // Generate prediction
       const prediction = await this.generateRetentionPrediction(
@@ -162,7 +161,7 @@ export class PredictiveClientAnalyticsService {
 
       return { success: true, prediction };
     } catch (error) {
-      console.error("Error predicting client retention:", error);
+      console.error('Error predicting client retention:', error);
       return { success: false, error: error.message };
     }
   }
@@ -185,7 +184,7 @@ export class PredictiveClientAnalyticsService {
       ]);
 
       if (!retention.prediction) {
-        return { success: false, error: "Não foi possível gerar análises" };
+        return { success: false, error: 'Não foi possível gerar análises' };
       }
 
       // Generate insights
@@ -215,9 +214,9 @@ export class PredictiveClientAnalyticsService {
         },
         trends: [
           {
-            date: new Date().toISOString().split("T")[0],
+            date: new Date().toISOString().split('T')[0],
             value: retention.prediction.riskScore,
-            label: "Risk Score",
+            label: 'Risk Score',
           },
         ],
         comparisons: {
@@ -230,7 +229,7 @@ export class PredictiveClientAnalyticsService {
 
       return { success: true, analytics };
     } catch (error) {
-      console.error("Error generating client analytics:", error);
+      console.error('Error generating client analytics:', error);
       return { success: false, error: error.message };
     }
   }
@@ -244,9 +243,9 @@ export class PredictiveClientAnalyticsService {
     try {
       // Get all clients
       const { data: clients, error } = await this.supabase
-        .from("patients")
-        .select("id")
-        .eq("lgpd_consent_given", true);
+        .from('patients')
+        .select('id')
+        .eq('lgpd_consent_given', true);
 
       if (error) throw error;
 
@@ -258,7 +257,7 @@ export class PredictiveClientAnalyticsService {
       for (let i = 0; i < clients.length; i += batchSize) {
         const batch = clients.slice(i, i + batchSize);
 
-        const batchPromises = batch.map(async (client) => {
+        const batchPromises = batch.map(async client => {
           try {
             const result = await this.predictClientRetention({
               clientId: client.id,
@@ -281,7 +280,7 @@ export class PredictiveClientAnalyticsService {
 
       return { success: true, summary, errors };
     } catch (error) {
-      console.error("Error generating batch analytics:", error);
+      console.error('Error generating batch analytics:', error);
       return { success: false, errors: [error.message] };
     }
   }
@@ -291,28 +290,28 @@ export class PredictiveClientAnalyticsService {
     try {
       // Get client basic info
       const { data: client, error } = await this.supabase
-        .from("patients")
-        .select("*")
-        .eq("id", clientId)
+        .from('patients')
+        .select('*')
+        .eq('id', clientId)
         .single();
 
       if (error || !client) return null;
 
       // Get appointments
       const { data: appointments, error: aptError } = await this.supabase
-        .from("appointments")
-        .select("*")
-        .eq("patient_id", clientId)
-        .order("scheduled_date", { ascending: false })
+        .from('appointments')
+        .select('*')
+        .eq('patient_id', clientId)
+        .order('scheduled_date', { ascending: false })
         .limit(100);
 
       if (aptError) throw aptError;
 
       // Get consents
       const { data: consents, error: consentError } = await this.supabase
-        .from("lgpd_consents")
-        .select("*")
-        .eq("patient_id", clientId);
+        .from('lgpd_consents')
+        .select('*')
+        .eq('patient_id', clientId);
 
       if (consentError) throw consentError;
 
@@ -322,7 +321,7 @@ export class PredictiveClientAnalyticsService {
         consents: consents || [],
       };
     } catch (error) {
-      console.error("Error gathering client data:", error);
+      console.error('Error gathering client data:', error);
       return null;
     }
   }
@@ -337,15 +336,13 @@ export class PredictiveClientAnalyticsService {
     const appointmentHistory = this.calculateAppointmentHistory(appointments);
 
     // Calculate communication features
-    const communicationHistory =
-      await this.calculateCommunicationHistory(clientId);
+    const communicationHistory = await this.calculateCommunicationHistory(clientId);
 
     // Calculate financial features
     const paymentHistory = await this.calculatePaymentHistory(clientId);
 
     // Calculate treatment progress
-    const treatmentProgress =
-      this.calculateTreatmentProgressFromAppointments(appointments);
+    const treatmentProgress = this.calculateTreatmentProgressFromAppointments(appointments);
 
     // Calculate demographic features
     const demographics = this.calculateDemographics(client);
@@ -361,25 +358,25 @@ export class PredictiveClientAnalyticsService {
 
   private calculateAppointmentHistory(
     appointments: any[],
-  ): RetentionFeatures["AppointmentHistory"] {
+  ): RetentionFeatures['AppointmentHistory'] {
     const totalAppointments = appointments.length;
     const noShowCount = appointments.filter(
-      (apt) => apt.status === "NO_SHOW",
+      apt => apt.status === 'NO_SHOW',
     ).length;
     const cancellationCount = appointments.filter(
-      (apt) => apt.status === "CANCELLED",
+      apt => apt.status === 'CANCELLED',
     ).length;
     const rescheduleCount = appointments.filter(
-      (apt) => apt.status === "RESCHEDULED",
+      apt => apt.status === 'RESCHEDULED',
     ).length;
 
     // Calculate time between appointments
     const sortedAppointments = appointments
-      .filter((apt) => apt.status === "COMPLETED")
+      .filter(apt => apt.status === 'COMPLETED')
       .sort(
         (a, b) =>
-          new Date(a.scheduled_date).getTime() -
-          new Date(b.scheduled_date).getTime(),
+          new Date(a.scheduled_date).getTime()
+          - new Date(b.scheduled_date).getTime(),
       );
 
     let timeBetweenAppointments = 0;
@@ -387,22 +384,21 @@ export class PredictiveClientAnalyticsService {
       const intervals = [];
       for (let i = 1; i < sortedAppointments.length; i++) {
         const days = Math.abs(
-          (new Date(sortedAppointments[i].scheduled_date).getTime() -
-            new Date(sortedAppointments[i - 1].scheduled_date).getTime()) /
-            (1000 * 60 * 60 * 24),
+          (new Date(sortedAppointments[i].scheduled_date).getTime()
+            - new Date(sortedAppointments[i - 1].scheduled_date).getTime())
+            / (1000 * 60 * 60 * 24),
         );
         intervals.push(days);
       }
-      timeBetweenAppointments =
-        intervals.reduce((sum, interval) => sum + interval, 0) /
-        intervals.length;
+      timeBetweenAppointments = intervals.reduce((sum, interval) => sum + interval, 0)
+        / intervals.length;
     }
 
     const lastAppointment = sortedAppointments[sortedAppointments.length - 1];
     const nextAppointment = appointments.find(
-      (apt) =>
-        new Date(apt.scheduled_date) > new Date() &&
-        ["SCHEDULED", "CONFIRMED"].includes(apt.status),
+      apt =>
+        new Date(apt.scheduled_date) > new Date()
+        && ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
     );
 
     return {
@@ -418,14 +414,14 @@ export class PredictiveClientAnalyticsService {
 
   private async calculateCommunicationHistory(
     clientId: string,
-  ): Promise<RetentionFeatures["CommunicationHistory"]> {
+  ): Promise<RetentionFeatures['CommunicationHistory']> {
     // This would integrate with communication logs
     // For now, we'll simulate based on appointment patterns
     const { data: appointments } = await this.supabase
-      .from("appointments")
-      .select("scheduled_date, status")
-      .eq("patient_id", clientId)
-      .order("scheduled_date", { ascending: false })
+      .from('appointments')
+      .select('scheduled_date, status')
+      .eq('patient_id', clientId)
+      .order('scheduled_date', { ascending: false })
       .limit(50);
 
     const totalMessages = (appointments?.length || 0) * 2; // Assume 2 messages per appointment
@@ -436,21 +432,21 @@ export class PredictiveClientAnalyticsService {
       totalMessages,
       responseRate,
       averageResponseTime,
-      preferredChannel: "whatsapp",
+      preferredChannel: 'whatsapp',
       lastCommunicationDate: appointments?.[0]?.scheduled_date,
     };
   }
 
   private async calculatePaymentHistory(
     clientId: string,
-  ): Promise<RetentionFeatures["PaymentHistory"]> {
+  ): Promise<RetentionFeatures['PaymentHistory']> {
     // This would integrate with payment systems
     // For now, we'll simulate based on appointment completion
     const { data: appointments } = await this.supabase
-      .from("appointments")
-      .select("status, scheduled_date")
-      .eq("patient_id", clientId)
-      .eq("status", "COMPLETED");
+      .from('appointments')
+      .select('status, scheduled_date')
+      .eq('patient_id', clientId)
+      .eq('status', 'COMPLETED');
 
     const totalPayments = appointments?.length || 0;
     const missedPayments = Math.floor(totalPayments * 0.05); // 5% missed payment rate
@@ -468,36 +464,34 @@ export class PredictiveClientAnalyticsService {
 
   private calculateTreatmentProgressFromAppointments(
     appointments: any[],
-  ): RetentionFeatures["TreatmentProgress"] {
+  ): RetentionFeatures['TreatmentProgress'] {
     const completedTreatments = appointments.filter(
-      (apt) => apt.status === "COMPLETED",
+      apt => apt.status === 'COMPLETED',
     ).length;
-    const scheduledTreatments = appointments.filter((apt) =>
-      ["SCHEDULED", "CONFIRMED"].includes(apt.status),
-    ).length;
+    const scheduledTreatments =
+      appointments.filter(apt => ['SCHEDULED', 'CONFIRMED'].includes(apt.status)).length;
 
-    const treatmentPlanAdherence =
-      completedTreatments /
-      Math.max(1, completedTreatments + scheduledTreatments);
+    const treatmentPlanAdherence = completedTreatments
+      / Math.max(1, completedTreatments + scheduledTreatments);
 
     return {
       completedTreatments,
       scheduledTreatments,
       treatmentPlanAdherence,
-      lastTreatmentDate: appointments.find((apt) => apt.status === "COMPLETED")
+      lastTreatmentDate: appointments.find(apt => apt.status === 'COMPLETED')
         ?.scheduled_date,
     };
   }
 
   private calculateDemographics(
     client: any,
-  ): RetentionFeatures["ClientDemographics"] {
+  ): RetentionFeatures['ClientDemographics'] {
     const age = this.calculateAge(client.date_of_birth);
     return {
       age,
-      gender: "unknown", // Would be extracted from data
-      location: client.address?.city || "unknown",
-      socioeconomicIndicator: "medium", // Would be calculated from address and other factors
+      gender: 'unknown', // Would be extracted from data
+      location: client.address?.city || 'unknown',
+      socioeconomicIndicator: 'medium', // Would be calculated from address and other factors
     };
   }
 
@@ -530,29 +524,28 @@ export class PredictiveClientAnalyticsService {
       demographic: 0.1,
     };
 
-    const riskScore =
-      appointmentRisk.score * weights.appointment +
-      communicationRisk.score * weights.communication +
-      paymentRisk.score * weights.payment +
-      treatmentRisk.score * weights.treatment +
-      demographicRisk.score * weights.demographic;
+    const riskScore = appointmentRisk.score * weights.appointment
+      + communicationRisk.score * weights.communication
+      + paymentRisk.score * weights.payment
+      + treatmentRisk.score * weights.treatment
+      + demographicRisk.score * weights.demographic;
 
     // Determine risk level
-    let riskLevel: "low" | "medium" | "high";
-    if (riskScore < 0.3) riskLevel = "low";
-    else if (riskScore < 0.7) riskLevel = "medium";
-    else riskLevel = "high";
+    let riskLevel: 'low' | 'medium' | 'high';
+    if (riskScore < 0.3) riskLevel = 'low';
+    else if (riskScore < 0.7) riskLevel = 'medium';
+    else riskLevel = 'high';
 
     // Calculate confidence based on data quality
     const confidence = this.calculatePredictionConfidence(features);
 
     // Generate factors
     const factors = [
-      { ...appointmentRisk, factor: "appointment_history" },
-      { ...communicationRisk, factor: "communication_engagement" },
-      { ...paymentRisk, factor: "payment_behavior" },
-      { ...treatmentRisk, factor: "treatment_adherence" },
-      { ...demographicRisk, factor: "demographic_profile" },
+      { ...appointmentRisk, factor: 'appointment_history' },
+      { ...communicationRisk, factor: 'communication_engagement' },
+      { ...paymentRisk, factor: 'payment_behavior' },
+      { ...treatmentRisk, factor: 'treatment_adherence' },
+      { ...demographicRisk, factor: 'demographic_profile' },
     ];
 
     // Determine trend
@@ -575,7 +568,7 @@ export class PredictiveClientAnalyticsService {
       factors,
       trend,
       predictedOutcome,
-      timeframe: "90 days",
+      timeframe: '90 days',
       recommendations,
       lastUpdated: new Date().toISOString(),
       modelVersion: this.config.modelVersion,
@@ -583,16 +576,14 @@ export class PredictiveClientAnalyticsService {
   }
 
   private calculateAppointmentRisk(
-    history: RetentionFeatures["AppointmentHistory"],
+    history: RetentionFeatures['AppointmentHistory'],
   ): any {
-    const noShowRate =
-      history.totalAppointments > 0
-        ? history.noShowCount / history.totalAppointments
-        : 0;
-    const cancellationRate =
-      history.totalAppointments > 0
-        ? history.cancellationCount / history.totalAppointments
-        : 0;
+    const noShowRate = history.totalAppointments > 0
+      ? history.noShowCount / history.totalAppointments
+      : 0;
+    const cancellationRate = history.totalAppointments > 0
+      ? history.cancellationCount / history.totalAppointments
+      : 0;
 
     let score = 0;
     if (noShowRate > 0.2) score += 0.3;
@@ -601,7 +592,7 @@ export class PredictiveClientAnalyticsService {
     if (!history.nextAppointmentDate) score += 0.2;
 
     return {
-      impact: score > 0.3 ? "negative" : "positive",
+      impact: score > 0.3 ? 'negative' : 'positive',
       weight: 0.3,
       description: `Taxa de não comparecimento: ${(noShowRate * 100).toFixed(1)}%`,
       value: { noShowRate, cancellationRate },
@@ -611,7 +602,7 @@ export class PredictiveClientAnalyticsService {
   }
 
   private calculateCommunicationRisk(
-    communication: RetentionFeatures["CommunicationHistory"],
+    communication: RetentionFeatures['CommunicationHistory'],
   ): any {
     const responseScore = 1 - communication.responseRate;
     const timeScore = Math.min(communication.averageResponseTime / 24, 1); // Normalize to 24h
@@ -619,7 +610,7 @@ export class PredictiveClientAnalyticsService {
     const score = responseScore * 0.7 + timeScore * 0.3;
 
     return {
-      impact: score > 0.4 ? "negative" : "positive",
+      impact: score > 0.4 ? 'negative' : 'positive',
       weight: 0.25,
       description: `Taxa de resposta: ${(communication.responseRate * 100).toFixed(1)}%`,
       value: {
@@ -632,19 +623,18 @@ export class PredictiveClientAnalyticsService {
   }
 
   private calculatePaymentRisk(
-    payment: RetentionFeatures["PaymentHistory"],
+    payment: RetentionFeatures['PaymentHistory'],
   ): any {
-    const missedRate =
-      payment.totalPayments > 0
-        ? payment.missedPayments / payment.totalPayments
-        : 0;
+    const missedRate = payment.totalPayments > 0
+      ? payment.missedPayments / payment.totalPayments
+      : 0;
     const hasOutstandingBalance = payment.outstandingBalance > 0;
 
     let score = missedRate;
     if (hasOutstandingBalance) score += 0.2;
 
     return {
-      impact: score > 0.1 ? "negative" : "positive",
+      impact: score > 0.1 ? 'negative' : 'positive',
       weight: 0.2,
       description: `Pagamentos pendentes: ${payment.missedPayments}`,
       value: { missedRate, outstandingBalance: payment.outstandingBalance },
@@ -654,7 +644,7 @@ export class PredictiveClientAnalyticsService {
   }
 
   private calculateTreatmentRisk(
-    treatment: RetentionFeatures["TreatmentProgress"],
+    treatment: RetentionFeatures['TreatmentProgress'],
   ): any {
     const adherenceRisk = 1 - treatment.treatmentPlanAdherence;
     const hasScheduledTreatments = treatment.scheduledTreatments > 0;
@@ -663,7 +653,7 @@ export class PredictiveClientAnalyticsService {
     if (!hasScheduledTreatments) score += 0.3;
 
     return {
-      impact: score > 0.3 ? "negative" : "positive",
+      impact: score > 0.3 ? 'negative' : 'positive',
       weight: 0.15,
       description: `Adesão ao tratamento: ${(treatment.treatmentPlanAdherence * 100).toFixed(1)}%`,
       value: {
@@ -676,7 +666,7 @@ export class PredictiveClientAnalyticsService {
   }
 
   private calculateDemographicRisk(
-    demographics: RetentionFeatures["ClientDemographics"],
+    demographics: RetentionFeatures['ClientDemographics'],
   ): any {
     let score = 0;
 
@@ -686,14 +676,14 @@ export class PredictiveClientAnalyticsService {
     }
 
     // Location-based risk (would use actual location data)
-    if (demographics.location === "unknown") {
+    if (demographics.location === 'unknown') {
       score += 0.05;
     }
 
     return {
-      impact: score > 0.1 ? "negative" : "positive",
+      impact: score > 0.1 ? 'negative' : 'positive',
       weight: 0.1,
-      description: `Perfil demográfico: ${demographics.age || "unknown"} anos`,
+      description: `Perfil demográfico: ${demographics.age || 'unknown'} anos`,
       value: demographics,
       threshold: 0.15,
       score,
@@ -705,17 +695,18 @@ export class PredictiveClientAnalyticsService {
 
     // More appointments = higher confidence
     if (features.appointmentHistory.totalAppointments > 10) confidence += 0.2;
-    else if (features.appointmentHistory.totalAppointments > 5)
+    else if (features.appointmentHistory.totalAppointments > 5) {
       confidence += 0.1;
-    else if (features.appointmentHistory.totalAppointments > 0)
+    } else if (features.appointmentHistory.totalAppointments > 0) {
       confidence += 0.05;
+    }
 
     // Recent activity = higher confidence
     if (features.appointmentHistory.lastAppointmentDate) {
       const daysSinceLastAppointment = Math.abs(
-        (new Date().getTime() -
-          new Date(features.appointmentHistory.lastAppointmentDate).getTime()) /
-          (1000 * 60 * 60 * 24),
+        (new Date().getTime()
+          - new Date(features.appointmentHistory.lastAppointmentDate).getTime())
+          / (1000 * 60 * 60 * 24),
       );
       if (daysSinceLastAppointment < 30) confidence += 0.2;
       else if (daysSinceLastAppointment < 90) confidence += 0.1;
@@ -726,122 +717,120 @@ export class PredictiveClientAnalyticsService {
 
   private calculateTrend(
     features: RetentionFeatures,
-  ): "improving" | "stable" | "declining" {
+  ): 'improving' | 'stable' | 'declining' {
     // This would analyze historical patterns
     // For now, we'll use simple heuristics
-    const hasRecentAppointment =
-      features.appointmentHistory.lastAppointmentDate &&
-      Math.abs(
-        (new Date().getTime() -
-          new Date(features.appointmentHistory.lastAppointmentDate).getTime()) /
-          (1000 * 60 * 60 * 24),
-      ) < 30;
+    const hasRecentAppointment = features.appointmentHistory.lastAppointmentDate
+      && Math.abs(
+          (new Date().getTime()
+            - new Date(features.appointmentHistory.lastAppointmentDate).getTime())
+            / (1000 * 60 * 60 * 24),
+        ) < 30;
 
-    const hasUpcomingAppointment =
-      !!features.appointmentHistory.nextAppointmentDate;
+    const hasUpcomingAppointment = !!features.appointmentHistory.nextAppointmentDate;
     const goodCommunication = features.communicationHistory.responseRate > 0.7;
 
     if (hasRecentAppointment && hasUpcomingAppointment && goodCommunication) {
-      return "improving";
+      return 'improving';
     } else if (!hasRecentAppointment && !hasUpcomingAppointment) {
-      return "declining";
+      return 'declining';
     } else {
-      return "stable";
+      return 'stable';
     }
   }
 
   private predictOutcome(
     riskScore: number,
-    trend: "improving" | "stable" | "declining",
-  ): "retain" | "at_risk" | "likely_to_churn" {
-    if (riskScore < 0.3) return "retain";
+    trend: 'improving' | 'stable' | 'declining',
+  ): 'retain' | 'at_risk' | 'likely_to_churn' {
+    if (riskScore < 0.3) return 'retain';
     if (riskScore < 0.7) {
-      return trend === "declining" ? "at_risk" : "retain";
+      return trend === 'declining' ? 'at_risk' : 'retain';
     }
-    return trend === "improving" ? "at_risk" : "likely_to_churn";
+    return trend === 'improving' ? 'at_risk' : 'likely_to_churn';
   }
 
   private async generateRiskBasedRecommendations(
-    riskLevel: "low" | "medium" | "high",
+    riskLevel: 'low' | 'medium' | 'high',
     factors: any[],
   ): Promise<RetentionRecommendation[]> {
     const recommendations: RetentionRecommendation[] = [];
 
     // High-risk recommendations
-    if (riskLevel === "high") {
+    if (riskLevel === 'high') {
       recommendations.push({
-        id: "rec-high-1",
-        type: "intervention",
-        priority: "high",
-        title: "Intervenção Imediata",
-        description: "Contato pessoal para entender razões do desengajamento",
+        id: 'rec-high-1',
+        type: 'intervention',
+        priority: 'high',
+        title: 'Intervenção Imediata',
+        description: 'Contato pessoal para entender razões do desengajamento',
         actionItems: [
-          "Ligar para cliente em 24 horas",
-          "Agendar reunião de feedback",
-          "Oferecer incentivos para retorno",
-          "Revisar plano de tratamento",
+          'Ligar para cliente em 24 horas',
+          'Agendar reunião de feedback',
+          'Oferecer incentivos para retorno',
+          'Revisar plano de tratamento',
         ],
-        expectedImpact: "Redução significativa no risco de churn",
-        timeline: "1-3 dias",
+        expectedImpact: 'Redução significativa no risco de churn',
+        timeline: '1-3 dias',
       });
 
       const appointmentFactor = factors.find(
-        (f) => f.factor === "appointment_history",
+        f => f.factor === 'appointment_history',
       );
-      if (appointmentFactor && appointmentFactor.impact === "negative") {
+      if (appointmentFactor && appointmentFactor.impact === 'negative') {
         recommendations.push({
-          id: "rec-high-2",
-          type: "communication",
-          priority: "high",
-          title: "Melhorar Comunicação",
-          description: "Implementar lembretes personalizados e confirmações",
+          id: 'rec-high-2',
+          type: 'communication',
+          priority: 'high',
+          title: 'Melhorar Comunicação',
+          description: 'Implementar lembretes personalizados e confirmações',
           actionItems: [
-            "Configurar lembretes via WhatsApp",
-            "Enviar confirmações de agendamento",
-            "Oferecer re-agendamento flexível",
-            "Personalizar comunicações",
+            'Configurar lembretes via WhatsApp',
+            'Enviar confirmações de agendamento',
+            'Oferecer re-agendamento flexível',
+            'Personalizar comunicações',
           ],
-          expectedImpact: "Redução de 40% em não comparecimentos",
-          timeline: "Implementar em 1 semana",
+          expectedImpact: 'Redução de 40% em não comparecimentos',
+          timeline: 'Implementar em 1 semana',
         });
       }
     }
 
     // Medium-risk recommendations
-    if (riskLevel === "medium") {
+    if (riskLevel === 'medium') {
       recommendations.push({
-        id: "rec-medium-1",
-        type: "follow_up",
-        priority: "medium",
-        title: "Follow-up Proativo",
-        description: "Contato regular para manter engajamento",
+        id: 'rec-medium-1',
+        type: 'follow_up',
+        priority: 'medium',
+        title: 'Follow-up Proativo',
+        description: 'Contato regular para manter engajamento',
         actionItems: [
-          "Agendar contato mensal",
-          "Enviar atualizações de tratamento",
-          "Coletar feedback regular",
-          "Oferecer benefícios exclusivos",
+          'Agendar contato mensal',
+          'Enviar atualizações de tratamento',
+          'Coletar feedback regular',
+          'Oferecer benefícios exclusivos',
         ],
-        expectedImpact: "Melhoria de 25% na retenção",
-        timeline: "Contato em 7 dias",
+        expectedImpact: 'Melhoria de 25% na retenção',
+        timeline: 'Contato em 7 dias',
       });
     }
 
     // Low-risk recommendations (preventive)
-    if (riskLevel === "low") {
+    if (riskLevel === 'low') {
       recommendations.push({
-        id: "rec-low-1",
-        type: "incentive",
-        priority: "low",
-        title: "Programa de Fidelidade",
-        description: "Recompensar engajamento contínuo",
+        id: 'rec-low-1',
+        type: 'incentive',
+        priority: 'low',
+        title: 'Programa de Fidelidade',
+        description: 'Recompensar engajamento contínuo',
         actionItems: [
-          "Criar programa de pontos",
-          "Oferecer descontos progressivos",
-          "Eventos exclusivos",
-          "Benefícios VIP",
+          'Criar programa de pontos',
+          'Oferecer descontos progressivos',
+          'Eventos exclusivos',
+          'Benefícios VIP',
         ],
-        expectedImpact: "Aumento de 15% na lealdade",
-        timeline: "Implementar em 30 dias",
+        expectedImpact: 'Aumento de 15% na lealdade',
+        timeline: 'Implementar em 30 dias',
       });
     }
 
@@ -853,10 +842,10 @@ export class PredictiveClientAnalyticsService {
     clientId: string,
   ): Promise<ClientEngagementMetrics> {
     const { data: appointments } = await this.supabase
-      .from("appointments")
-      .select("*")
-      .eq("patient_id", clientId)
-      .order("scheduled_date", { ascending: false });
+      .from('appointments')
+      .select('*')
+      .eq('patient_id', clientId)
+      .order('scheduled_date', { ascending: false });
 
     if (!appointments || appointments.length === 0) {
       return {
@@ -867,21 +856,21 @@ export class PredictiveClientAnalyticsService {
         rescheduleRate: 0,
         responseRate: 0,
         averageResponseTime: 0,
-        communicationPreference: "whatsapp",
+        communicationPreference: 'whatsapp',
         engagementScore: 0,
-        trend: "stable",
+        trend: 'stable',
       };
     }
 
     const totalAppointments = appointments.length;
     const noShowCount = appointments.filter(
-      (apt) => apt.status === "NO_SHOW",
+      apt => apt.status === 'NO_SHOW',
     ).length;
     const cancellationCount = appointments.filter(
-      (apt) => apt.status === "CANCELLED",
+      apt => apt.status === 'CANCELLED',
     ).length;
     const rescheduleCount = appointments.filter(
-      (apt) => apt.status === "RESCHEDULED",
+      apt => apt.status === 'RESCHEDULED',
     ).length;
 
     // Calculate frequency (appointments per month)
@@ -891,8 +880,8 @@ export class PredictiveClientAnalyticsService {
     const lastAppointment = new Date(appointments[0].scheduled_date);
     const monthsDiff = Math.max(
       1,
-      (lastAppointment.getTime() - firstAppointment.getTime()) /
-        (1000 * 60 * 60 * 24 * 30),
+      (lastAppointment.getTime() - firstAppointment.getTime())
+        / (1000 * 60 * 60 * 24 * 30),
     );
     const appointmentFrequency = totalAppointments / monthsDiff;
 
@@ -904,20 +893,20 @@ export class PredictiveClientAnalyticsService {
       rescheduleRate: rescheduleCount / totalAppointments,
       responseRate: 0.73, // Simulated
       averageResponseTime: 2.4, // Simulated
-      communicationPreference: "whatsapp",
+      communicationPreference: 'whatsapp',
       lastAppointmentDate: appointments.find(
-        (apt) => apt.status === "COMPLETED",
+        apt => apt.status === 'COMPLETED',
       )?.scheduled_date,
       nextAppointmentDate: appointments.find(
-        (apt) =>
-          new Date(apt.scheduled_date) > new Date() &&
-          ["SCHEDULED", "CONFIRMED"].includes(apt.status),
+        apt =>
+          new Date(apt.scheduled_date) > new Date()
+          && ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
       )?.scheduled_date,
       engagementScore: Math.max(
         0,
         100 - (noShowRate * 100 + cancellationRate * 50),
       ),
-      trend: "stable",
+      trend: 'stable',
     };
   }
 
@@ -933,12 +922,12 @@ export class PredictiveClientAnalyticsService {
       paymentDelayDays: 3,
       outstandingBalance: 0,
       paymentConsistency: 0.92,
-      preferredPaymentMethod: "credit_card",
+      preferredPaymentMethod: 'credit_card',
       lastPaymentDate: new Date(
         Date.now() - 15 * 24 * 60 * 60 * 1000,
       ).toISOString(),
-      financialRisk: "low",
-      spendingTrend: "stable",
+      financialRisk: 'low',
+      spendingTrend: 'stable',
     };
   }
 
@@ -946,9 +935,9 @@ export class PredictiveClientAnalyticsService {
     clientId: string,
   ): Promise<TreatmentProgress> {
     const { data: appointments } = await this.supabase
-      .from("appointments")
-      .select("*")
-      .eq("patient_id", clientId);
+      .from('appointments')
+      .select('*')
+      .eq('patient_id', clientId);
 
     if (!appointments || appointments.length === 0) {
       return {
@@ -965,11 +954,10 @@ export class PredictiveClientAnalyticsService {
     }
 
     const completedSessions = appointments.filter(
-      (apt) => apt.status === "COMPLETED",
+      apt => apt.status === 'COMPLETED',
     ).length;
-    const scheduledSessions = appointments.filter((apt) =>
-      ["SCHEDULED", "CONFIRMED"].includes(apt.status),
-    ).length;
+    const scheduledSessions =
+      appointments.filter(apt => ['SCHEDULED', 'CONFIRMED'].includes(apt.status)).length;
     const totalSessions = appointments.length;
 
     return {
@@ -982,12 +970,12 @@ export class PredictiveClientAnalyticsService {
       progressScore: (completedSessions / Math.max(1, totalSessions)) * 100,
       treatmentEfficacy: 0.85, // Simulated
       riskFactors: [],
-      lastTreatmentDate: appointments.find((apt) => apt.status === "COMPLETED")
+      lastTreatmentDate: appointments.find(apt => apt.status === 'COMPLETED')
         ?.scheduled_date,
       nextTreatmentDate: appointments.find(
-        (apt) =>
-          new Date(apt.scheduled_date) > new Date() &&
-          ["SCHEDULED", "CONFIRMED"].includes(apt.status),
+        apt =>
+          new Date(apt.scheduled_date) > new Date()
+          && ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
       )?.scheduled_date,
       dropoutRisk: 0.15, // Simulated
     };
@@ -998,22 +986,22 @@ export class PredictiveClientAnalyticsService {
 
     // Engagement insights
     if (data.engagement.engagementScore < 50) {
-      insights.push("Baixo engajamento detectado - considerar intervenção");
+      insights.push('Baixo engajamento detectado - considerar intervenção');
     }
 
     // Financial insights
-    if (data.financial.financialRisk === "high") {
-      insights.push("Risco financeiro elevado - revisar opções de pagamento");
+    if (data.financial.financialRisk === 'high') {
+      insights.push('Risco financeiro elevado - revisar opções de pagamento');
     }
 
     // Treatment insights
     if (data.treatment.adherenceRate < 0.7) {
-      insights.push("Baixa adesão ao tratamento - investigar causas");
+      insights.push('Baixa adesão ao tratamento - investigar causas');
     }
 
     // Retention insights
-    if (data.retention.riskLevel === "high") {
-      insights.push("Alto risco de churn - ação imediata recomendada");
+    if (data.retention.riskLevel === 'high') {
+      insights.push('Alto risco de churn - ação imediata recomendada');
     }
 
     return insights;
@@ -1030,17 +1018,16 @@ export class PredictiveClientAnalyticsService {
   ): AnalyticsSummary {
     const totalClients = predictions.length;
     const highRiskClients = predictions.filter(
-      (p) => p.riskLevel === "high",
+      p => p.riskLevel === 'high',
     ).length;
     const mediumRiskClients = predictions.filter(
-      (p) => p.riskLevel === "medium",
+      p => p.riskLevel === 'medium',
     ).length;
     const lowRiskClients = predictions.filter(
-      (p) => p.riskLevel === "low",
+      p => p.riskLevel === 'low',
     ).length;
 
-    const averageRiskScore =
-      predictions.reduce((sum, p) => sum + p.riskScore, 0) / totalClients;
+    const averageRiskScore = predictions.reduce((sum, p) => sum + p.riskScore, 0) / totalClients;
     const churnRate = highRiskClients / totalClients;
     const retentionRate = 1 - churnRate;
 
@@ -1049,9 +1036,9 @@ export class PredictiveClientAnalyticsService {
       string,
       { count: number; totalImpact: number }
     >();
-    predictions.forEach((prediction) => {
-      prediction.factors.forEach((factor) => {
-        if (factor.impact === "negative") {
+    predictions.forEach(prediction => {
+      prediction.factors.forEach(factor => {
+        if (factor.impact === 'negative') {
           const current = factorFrequency.get(factor.factor) || {
             count: 0,
             totalImpact: 0,
@@ -1102,58 +1089,57 @@ export class PredictiveClientAnalyticsService {
 
     keyRiskFactors.slice(0, 3).forEach((factor, index) => {
       switch (factor.factor) {
-        case "appointment_history":
+        case 'appointment_history':
           recommendations.push({
             id: `rec-summary-${index}`,
-            type: "communication",
-            priority: "high",
-            title: "Otimizar Sistema de Agendamento",
-            description:
-              "Implementar lembretes inteligentes e confirmações automáticas",
+            type: 'communication',
+            priority: 'high',
+            title: 'Otimizar Sistema de Agendamento',
+            description: 'Implementar lembretes inteligentes e confirmações automáticas',
             actionItems: [
-              "Configurar notificações via WhatsApp",
-              "Implementar sistema de confirmação dupla",
-              "Oferecer re-agendamento fácil",
-              "Monitorar taxas de não comparecimento",
+              'Configurar notificações via WhatsApp',
+              'Implementar sistema de confirmação dupla',
+              'Oferecer re-agendamento fácil',
+              'Monitorar taxas de não comparecimento',
             ],
-            expectedImpact: "Redução de 30% em não comparecimentos",
-            timeline: "Implementar em 2 semanas",
+            expectedImpact: 'Redução de 30% em não comparecimentos',
+            timeline: 'Implementar em 2 semanas',
           });
           break;
 
-        case "communication_engagement":
+        case 'communication_engagement':
           recommendations.push({
             id: `rec-summary-${index}`,
-            type: "communication",
-            priority: "medium",
-            title: "Melhorar Engajamento",
-            description: "Personalizar comunicação e aumentar taxa de resposta",
+            type: 'communication',
+            priority: 'medium',
+            title: 'Melhorar Engajamento',
+            description: 'Personalizar comunicação e aumentar taxa de resposta',
             actionItems: [
-              "Segmentar clientes por preferência",
-              "Personalizar mensagens",
-              "Testar diferentes canais",
-              "Monitorar métricas de engajamento",
+              'Segmentar clientes por preferência',
+              'Personalizar mensagens',
+              'Testar diferentes canais',
+              'Monitorar métricas de engajamento',
             ],
-            expectedImpact: "Aumento de 25% na taxa de resposta",
-            timeline: "Implementar em 1 mês",
+            expectedImpact: 'Aumento de 25% na taxa de resposta',
+            timeline: 'Implementar em 1 mês',
           });
           break;
 
-        case "payment_behavior":
+        case 'payment_behavior':
           recommendations.push({
             id: `rec-summary-${index}`,
-            type: "incentive",
-            priority: "medium",
-            title: "Otimizar Pagamentos",
-            description: "Reduzir inadimplência com opções flexíveis",
+            type: 'incentive',
+            priority: 'medium',
+            title: 'Otimizar Pagamentos',
+            description: 'Reduzir inadimplência com opções flexíveis',
             actionItems: [
-              "Oferecer planos de pagamento",
-              "Enviar lembretes automáticos",
-              "Implementar multas descontos",
-              "Diversificar formas de pagamento",
+              'Oferecer planos de pagamento',
+              'Enviar lembretes automáticos',
+              'Implementar multas descontos',
+              'Diversificar formas de pagamento',
             ],
-            expectedImpact: "Redução de 40% em pagamentos atrasados",
-            timeline: "Implementar em 3 semanas",
+            expectedImpact: 'Redução de 40% em pagamentos atrasados',
+            timeline: 'Implementar em 3 semanas',
           });
           break;
       }
@@ -1170,8 +1156,8 @@ export class PredictiveClientAnalyticsService {
     const monthDiff = today.getMonth() - birth.getMonth();
 
     if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
+      monthDiff < 0
+      || (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--;
     }
@@ -1187,7 +1173,7 @@ export class PredictiveClientAnalyticsService {
 
   // Health check
   async healthCheck(): Promise<{
-    status: "healthy" | "degraded" | "unhealthy";
+    status: 'healthy' | 'degraded' | 'unhealthy';
     details: any;
   }> {
     try {
@@ -1198,17 +1184,16 @@ export class PredictiveClientAnalyticsService {
       ]);
 
       const passedChecks = checks.filter(
-        (check) => check.status === "fulfilled" && check.value,
+        check => check.status === 'fulfilled' && check.value,
       ).length;
       const totalChecks = checks.length;
 
       return {
-        status:
-          passedChecks === totalChecks
-            ? "healthy"
-            : passedChecks > 0
-              ? "degraded"
-              : "unhealthy",
+        status: passedChecks === totalChecks
+          ? 'healthy'
+          : passedChecks > 0
+          ? 'degraded'
+          : 'unhealthy',
         details: {
           totalChecks,
           passedChecks,
@@ -1220,7 +1205,7 @@ export class PredictiveClientAnalyticsService {
       };
     } catch (error) {
       return {
-        status: "unhealthy",
+        status: 'unhealthy',
         details: { error: error.message },
       };
     }
@@ -1229,8 +1214,8 @@ export class PredictiveClientAnalyticsService {
   private async checkDatabaseConnection(): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
-        .from("patients")
-        .select("count")
+        .from('patients')
+        .select('count')
         .limit(1);
 
       return !error;
@@ -1245,7 +1230,7 @@ export class PredictiveClientAnalyticsService {
 
     try {
       const response = await fetch(`${this.config.aiServiceUrl}/health`, {
-        method: "GET",
+        method: 'GET',
         timeout: 5000,
       });
       return response.ok;

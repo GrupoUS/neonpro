@@ -9,10 +9,10 @@
  * - Performance monitoring
  */
 
-import { logger } from "../utils/secure-logger";
+import { logger } from '../utils/secure-logger';
 
 interface SQLOperation {
-  type: "SELECT" | "INSERT" | "UPDATE" | "DELETE";
+  type: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE';
   table: string;
   columns?: string[];
   conditions?: Record<string, any>;
@@ -25,12 +25,12 @@ interface SQLValidationResult {
   sanitizedQuery?: string;
   errors: string[];
   warnings: string[];
-  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 }
 
 interface TableConfig {
   name: string;
-  allowedOperations: SQLOperation["type"][];
+  allowedOperations: SQLOperation['type'][];
   sensitiveColumns: string[];
   requiresPatientConsent: boolean;
   lgpdProtected: boolean;
@@ -52,61 +52,61 @@ class SQLSanitizer {
 
   private static readonly ALLOWED_TABLES: TableConfig[] = [
     {
-      name: "patients",
-      allowedOperations: ["SELECT", "INSERT", "UPDATE"],
+      name: 'patients',
+      allowedOperations: ['SELECT', 'INSERT', 'UPDATE'],
       sensitiveColumns: [
-        "cpf",
-        "rg",
-        "medical_record_number",
-        "phone",
-        "email",
+        'cpf',
+        'rg',
+        'medical_record_number',
+        'phone',
+        'email',
       ],
       requiresPatientConsent: true,
       lgpdProtected: true,
       auditRequired: true,
     },
     {
-      name: "appointments",
-      allowedOperations: ["SELECT", "INSERT", "UPDATE", "DELETE"],
-      sensitiveColumns: ["patient_id", "notes", "diagnosis"],
+      name: 'appointments',
+      allowedOperations: ['SELECT', 'INSERT', 'UPDATE', 'DELETE'],
+      sensitiveColumns: ['patient_id', 'notes', 'diagnosis'],
       requiresPatientConsent: true,
       lgpdProtected: true,
       auditRequired: true,
     },
     {
-      name: "medical_records",
-      allowedOperations: ["SELECT", "INSERT", "UPDATE"],
+      name: 'medical_records',
+      allowedOperations: ['SELECT', 'INSERT', 'UPDATE'],
       sensitiveColumns: [
-        "patient_id",
-        "diagnosis",
-        "treatment",
-        "notes",
-        "attachments",
+        'patient_id',
+        'diagnosis',
+        'treatment',
+        'notes',
+        'attachments',
       ],
       requiresPatientConsent: true,
       lgpdProtected: true,
       auditRequired: true,
     },
     {
-      name: "users",
-      allowedOperations: ["SELECT", "INSERT", "UPDATE"],
-      sensitiveColumns: ["email", "password_hash", "phone"],
+      name: 'users',
+      allowedOperations: ['SELECT', 'INSERT', 'UPDATE'],
+      sensitiveColumns: ['email', 'password_hash', 'phone'],
       requiresPatientConsent: false,
       lgpdProtected: true,
       auditRequired: true,
     },
     {
-      name: "audit_logs",
-      allowedOperations: ["SELECT", "INSERT"],
-      sensitiveColumns: ["user_data", "patient_data"],
+      name: 'audit_logs',
+      allowedOperations: ['SELECT', 'INSERT'],
+      sensitiveColumns: ['user_data', 'patient_data'],
       requiresPatientConsent: false,
       lgpdProtected: true,
       auditRequired: false,
     },
     {
-      name: "system_config",
-      allowedOperations: ["SELECT", "UPDATE"],
-      sensitiveColumns: ["api_keys", "secrets"],
+      name: 'system_config',
+      allowedOperations: ['SELECT', 'UPDATE'],
+      sensitiveColumns: ['api_keys', 'secrets'],
       requiresPatientConsent: false,
       lgpdProtected: false,
       auditRequired: true,
@@ -114,24 +114,24 @@ class SQLSanitizer {
   ];
 
   private static readonly ALLOWED_FUNCTIONS = [
-    "COUNT",
-    "SUM",
-    "AVG",
-    "MIN",
-    "MAX",
-    "COALESCE",
-    "NULLIF",
-    "UPPER",
-    "LOWER",
-    "TRIM",
-    "LENGTH",
-    "SUBSTRING",
-    "NOW",
-    "CURRENT_TIMESTAMP",
-    "DATE",
-    "TIME",
-    "CAST",
-    "CONVERT",
+    'COUNT',
+    'SUM',
+    'AVG',
+    'MIN',
+    'MAX',
+    'COALESCE',
+    'NULLIF',
+    'UPPER',
+    'LOWER',
+    'TRIM',
+    'LENGTH',
+    'SUBSTRING',
+    'NOW',
+    'CURRENT_TIMESTAMP',
+    'DATE',
+    'TIME',
+    'CAST',
+    'CONVERT',
   ];
 
   /**
@@ -142,7 +142,7 @@ class SQLSanitizer {
       isValid: false,
       errors: [],
       warnings: [],
-      riskLevel: "LOW",
+      riskLevel: 'LOW',
     };
 
     try {
@@ -150,7 +150,7 @@ class SQLSanitizer {
       const tableValidation = this.validateTableAccess(operation);
       if (!tableValidation.isValid) {
         result.errors.push(...tableValidation.errors);
-        result.riskLevel = "CRITICAL";
+        result.riskLevel = 'CRITICAL';
         return result;
       }
 
@@ -158,7 +158,7 @@ class SQLSanitizer {
       const operationValidation = this.validateOperationType(operation);
       if (!operationValidation.isValid) {
         result.errors.push(...operationValidation.errors);
-        result.riskLevel = "HIGH";
+        result.riskLevel = 'HIGH';
         return result;
       }
 
@@ -177,7 +177,7 @@ class SQLSanitizer {
       const conditionValidation = this.validateConditions(operation);
       if (!conditionValidation.isValid) {
         result.errors.push(...conditionValidation.errors);
-        result.riskLevel = "HIGH";
+        result.riskLevel = 'HIGH';
         return result;
       }
 
@@ -186,7 +186,7 @@ class SQLSanitizer {
       if (!lgpdValidation.isValid) {
         result.errors.push(...lgpdValidation.errors);
         result.warnings.push(...lgpdValidation.warnings);
-        result.riskLevel = "HIGH";
+        result.riskLevel = 'HIGH';
       }
 
       // If we get here, operation is valid
@@ -198,14 +198,14 @@ class SQLSanitizer {
 
       return result;
     } catch (error) {
-      logger.error("SQL validation failed", error as Error, {
+      logger.error('SQL validation failed', error as Error, {
         operation: operation.type,
         table: operation.table,
         _userId: operation.userId,
       });
 
-      result.errors.push("Internal validation error");
-      result.riskLevel = "CRITICAL";
+      result.errors.push('Internal validation error');
+      result.riskLevel = 'CRITICAL';
       return result;
     }
   }
@@ -217,18 +217,18 @@ class SQLSanitizer {
       isValid: false,
       errors: [],
       warnings: [],
-      riskLevel: "LOW",
+      riskLevel: 'LOW',
     };
 
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     );
 
     if (!tableConfig) {
       result.errors.push(
         `Table '${operation.table}' is not in the allowed tables list`,
       );
-      result.riskLevel = "CRITICAL";
+      result.riskLevel = 'CRITICAL';
       return result;
     }
 
@@ -243,18 +243,18 @@ class SQLSanitizer {
       isValid: false,
       errors: [],
       warnings: [],
-      riskLevel: "LOW",
+      riskLevel: 'LOW',
     };
 
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )!;
 
     if (!tableConfig.allowedOperations.includes(operation.type)) {
       result.errors.push(
         `Operation '${operation.type}' is not allowed on table '${operation.table}'`,
       );
-      result.riskLevel = "HIGH";
+      result.riskLevel = 'HIGH';
       return result;
     }
 
@@ -267,7 +267,7 @@ class SQLSanitizer {
       isValid: true,
       errors: [],
       warnings: [],
-      riskLevel: "LOW",
+      riskLevel: 'LOW',
     };
 
     if (!operation.columns || operation.columns.length === 0) {
@@ -275,14 +275,14 @@ class SQLSanitizer {
     }
 
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )!;
 
-    operation.columns.forEach((column) => {
+    operation.columns.forEach(column => {
       // Check for dangerous patterns in column names
       if (this.containsDangerousPatterns(column)) {
         result.errors.push(`Column '${column}' contains dangerous patterns`);
-        result.riskLevel = "CRITICAL";
+        result.riskLevel = 'CRITICAL';
         result.isValid = false;
       }
 
@@ -291,7 +291,7 @@ class SQLSanitizer {
         result.warnings.push(
           `Accessing sensitive column '${column}' - ensure LGPD compliance`,
         );
-        result.riskLevel = "MEDIUM";
+        result.riskLevel = 'MEDIUM';
       }
     });
 
@@ -305,7 +305,7 @@ class SQLSanitizer {
       isValid: true,
       errors: [],
       warnings: [],
-      riskLevel: "LOW",
+      riskLevel: 'LOW',
     };
 
     if (!operation.conditions) {
@@ -318,16 +318,16 @@ class SQLSanitizer {
         result.errors.push(
           `Condition key '${key}' contains dangerous patterns`,
         );
-        result.riskLevel = "CRITICAL";
+        result.riskLevel = 'CRITICAL';
         result.isValid = false;
       }
 
       // Validate condition values
-      if (typeof value === "string" && this.containsDangerousPatterns(value)) {
+      if (typeof value === 'string' && this.containsDangerousPatterns(value)) {
         result.errors.push(
           `Condition value for '${key}' contains dangerous patterns`,
         );
-        result.riskLevel = "CRITICAL";
+        result.riskLevel = 'CRITICAL';
         result.isValid = false;
       }
     });
@@ -342,27 +342,27 @@ class SQLSanitizer {
       isValid: true,
       errors: [],
       warnings: [],
-      riskLevel: "LOW",
+      riskLevel: 'LOW',
     };
 
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )!;
 
     // Check if operation requires patient consent
     if (tableConfig.requiresPatientConsent && !operation.patientId) {
       result.warnings.push(
-        "Operation on LGPD-protected data without patient ID - ensure consent validation",
+        'Operation on LGPD-protected data without patient ID - ensure consent validation',
       );
-      result.riskLevel = "MEDIUM";
+      result.riskLevel = 'MEDIUM';
     }
 
     // Check if user is authorized
     if (tableConfig.lgpdProtected && !operation._userId) {
       result.errors.push(
-        "Operations on LGPD-protected data require user identification",
+        'Operations on LGPD-protected data require user identification',
       );
-      result.riskLevel = "HIGH";
+      result.riskLevel = 'HIGH';
       result.isValid = false;
     }
 
@@ -370,7 +370,7 @@ class SQLSanitizer {
   }
 
   private static containsDangerousPatterns(input: string): boolean {
-    return this.DANGEROUS_PATTERNS.some((pattern) => pattern.test(input));
+    return this.DANGEROUS_PATTERNS.some(pattern => pattern.test(input));
   }
 
   private static buildSanitizedQuery(operation: SQLOperation): string {
@@ -378,58 +378,57 @@ class SQLSanitizer {
     const { type, table, columns, conditions } = operation;
 
     switch (type) {
-      case "SELECT":
-        const selectColumns =
-          columns && columns.length > 0 ? columns.join(", ") : "*";
+      case 'SELECT':
+        const selectColumns = columns && columns.length > 0 ? columns.join(', ') : '*';
         let query = `SELECT ${selectColumns} FROM ${table}`;
 
         if (conditions && Object.keys(conditions).length > 0) {
           const whereClause = Object.keys(conditions)
-            .map((key) => `${key} = $${key}`)
-            .join(" AND ");
+            .map(key => `${key} = $${key}`)
+            .join(' AND ');
           query += ` WHERE ${whereClause}`;
         }
 
         return query;
 
-      case "INSERT":
+      case 'INSERT':
         if (!columns || columns.length === 0) {
-          throw new Error("INSERT operations require columns specification");
+          throw new Error('INSERT operations require columns specification');
         }
 
-        const insertColumns = columns.join(", ");
+        const insertColumns = columns.join(', ');
         const placeholders = columns
           .map((_, index) => `$${index + 1}`)
-          .join(", ");
+          .join(', ');
         return `INSERT INTO ${table} (${insertColumns}) VALUES (${placeholders})`;
 
-      case "UPDATE":
+      case 'UPDATE':
         if (!columns || columns.length === 0) {
-          throw new Error("UPDATE operations require columns specification");
+          throw new Error('UPDATE operations require columns specification');
         }
 
-        const setClause = columns.map((col) => `${col} = $${col}`).join(", ");
+        const setClause = columns.map(col => `${col} = $${col}`).join(', ');
         let updateQuery = `UPDATE ${table} SET ${setClause}`;
 
         if (conditions && Object.keys(conditions).length > 0) {
           const whereClause = Object.keys(conditions)
-            .map((key) => `${key} = $${key}`)
-            .join(" AND ");
+            .map(key => `${key} = $${key}`)
+            .join(' AND ');
           updateQuery += ` WHERE ${whereClause}`;
         }
 
         return updateQuery;
 
-      case "DELETE":
+      case 'DELETE':
         let deleteQuery = `DELETE FROM ${table}`;
 
         if (conditions && Object.keys(conditions).length > 0) {
           const whereClause = Object.keys(conditions)
-            .map((key) => `${key} = $${key}`)
-            .join(" AND ");
+            .map(key => `${key} = $${key}`)
+            .join(' AND ');
           deleteQuery += ` WHERE ${whereClause}`;
         } else {
-          throw new Error("DELETE operations require WHERE conditions");
+          throw new Error('DELETE operations require WHERE conditions');
         }
 
         return deleteQuery;
@@ -444,7 +443,7 @@ class SQLSanitizer {
     result: SQLValidationResult,
   ): void {
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )!;
 
     if (!tableConfig.auditRequired) {
@@ -452,17 +451,17 @@ class SQLSanitizer {
     }
 
     logger.auditDataAccess({
-      _userId: operation.userId || "unknown",
+      _userId: operation.userId || 'unknown',
       patientId: operation.patientId,
       operation: `SQL_${operation.type}`,
       dataType: operation.table,
-      endpoint: "sql-sanitizer",
-      ip: "internal",
-      userAgent: "sql-sanitizer",
+      endpoint: 'sql-sanitizer',
+      ip: 'internal',
+      userAgent: 'sql-sanitizer',
     });
 
     // Log validation result
-    logger.info("SQL operation validated", {
+    logger.info('SQL operation validated', {
       operation: operation.type,
       table: operation.table,
       isValid: result.isValid,
@@ -478,11 +477,11 @@ class SQLSanitizer {
    * Quick validation for simple operations
    */
   static isOperationAllowed(operationType: string, tableName: string): boolean {
-    const tableConfig = this.ALLOWED_TABLES.find((t) => t.name === tableName);
+    const tableConfig = this.ALLOWED_TABLES.find(t => t.name === tableName);
     if (!tableConfig) return false;
 
     return tableConfig.allowedOperations.includes(
-      operationType as SQLOperation["type"],
+      operationType as SQLOperation['type'],
     );
   }
 
@@ -490,7 +489,7 @@ class SQLSanitizer {
    * Get table configuration
    */
   static getTableConfig(tableName: string): TableConfig | undefined {
-    return this.ALLOWED_TABLES.find((t) => t.name === tableName);
+    return this.ALLOWED_TABLES.find(t => t.name === tableName);
   }
 
   /**
@@ -510,9 +509,4 @@ class SQLSanitizer {
   }
 }
 
-export {
-  type SQLOperation,
-  SQLSanitizer,
-  type SQLValidationResult,
-  type TableConfig,
-};
+export { type SQLOperation, SQLSanitizer, type SQLValidationResult, type TableConfig };

@@ -10,47 +10,42 @@
  * @performance <200ms audit overhead target
  */
 
-import {
-  AuditAction,
-  AuditStatus,
-  ResourceType,
-  RiskLevel,
-} from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import { createHash, createHmac } from "crypto";
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
+import { createHash, createHmac } from 'crypto';
 
 // LGPD Data Categories for audit classification
 const LGPD_DATA_CATEGORIES = {
-  PERSONAL: "personal_data",
-  SENSITIVE: "sensitive_data",
-  HEALTH: "health_data",
-  BIOMETRIC: "biometric_data",
-  LOCATION: "location_data",
-  BEHAVIORAL: "behavioral_data",
-  FINANCIAL: "financial_data",
+  PERSONAL: 'personal_data',
+  SENSITIVE: 'sensitive_data',
+  HEALTH: 'health_data',
+  BIOMETRIC: 'biometric_data',
+  LOCATION: 'location_data',
+  BEHAVIORAL: 'behavioral_data',
+  FINANCIAL: 'financial_data',
 } as const;
 
 // Data minimization field mappings per operation type
 const DATA_MINIMIZATION_RULES = {
-  list: ["id", "fullName", "phone", "email", "status"],
-  summary: ["id", "fullName", "lastVisitDate", "nextAppointmentDate"],
+  list: ['id', 'fullName', 'phone', 'email', 'status'],
+  summary: ['id', 'fullName', 'lastVisitDate', 'nextAppointmentDate'],
   appointment: [
-    "id",
-    "fullName",
-    "phone",
-    "email",
-    "emergencyContactName",
-    "emergencyContactPhone",
+    'id',
+    'fullName',
+    'phone',
+    'email',
+    'emergencyContactName',
+    'emergencyContactPhone',
   ],
   emergency: [
-    "id",
-    "fullName",
-    "phone",
-    "bloodType",
-    "allergies",
-    "emergencyContactName",
-    "emergencyContactPhone",
-    "currentMedications",
+    'id',
+    'fullName',
+    'phone',
+    'bloodType',
+    'allergies',
+    'emergencyContactName',
+    'emergencyContactPhone',
+    'currentMedications',
   ],
 } as const;
 
@@ -71,21 +66,21 @@ function generateCryptographicProof(
   const combinedData = `${dataString}:${userId}:${timestamp.toISOString()}`;
 
   // SHA-256 hash for data integrity
-  const hash = createHash("sha256").update(combinedData).digest("hex");
+  const hash = createHash('sha256').update(combinedData).digest('hex');
 
   // HMAC signature using secret (in production, use proper key management)
-  const secret = process.env.LGPD_AUDIT_SECRET || "lgpd-default-secret-key";
-  const signature = createHmac("sha256", secret).update(hash).digest("hex");
+  const secret = process.env.LGPD_AUDIT_SECRET || 'lgpd-default-secret-key';
+  const signature = createHmac('sha256', secret).update(hash).digest('hex');
 
   // Timestamp token for chronological proof
-  const timestampToken = createHash("sha256")
+  const timestampToken = createHash('sha256')
     .update(`${timestamp.getTime()}:${hash}`)
-    .digest("hex");
+    .digest('hex');
 
   // Integrity checksum for verification
-  const integrityChecksum = createHash("md5")
+  const integrityChecksum = createHash('md5')
     .update(`${hash}:${signature}:${timestampToken}`)
-    .digest("hex");
+    .digest('hex');
 
   return {
     hash,
@@ -98,12 +93,12 @@ function generateCryptographicProof(
  */
 
 function classifyDataCategory(path: string, input: any): string {
-  if (path.includes("patient")) {
+  if (path.includes('patient')) {
     if (
-      input?.bloodType ||
-      input?.allergies ||
-      input?.chronicConditions ||
-      input?.currentMedications
+      input?.bloodType
+      || input?.allergies
+      || input?.chronicConditions
+      || input?.currentMedications
     ) {
       return LGPD_DATA_CATEGORIES.HEALTH;
     }
@@ -113,11 +108,11 @@ function classifyDataCategory(path: string, input: any): string {
     return LGPD_DATA_CATEGORIES.PERSONAL;
   }
 
-  if (path.includes("appointment") || path.includes("telemedicine")) {
+  if (path.includes('appointment') || path.includes('telemedicine')) {
     return LGPD_DATA_CATEGORIES.HEALTH;
   }
 
-  if (path.includes("ai") || path.includes("prediction")) {
+  if (path.includes('ai') || path.includes('prediction')) {
     return LGPD_DATA_CATEGORIES.BEHAVIORAL;
   }
 
@@ -132,24 +127,23 @@ function applyDataMinimization(
   operationType: string,
   userRole?: string,
 ): any {
-  if (!data || typeof data !== "object") return data;
+  if (!data || typeof data !== 'object') return data;
 
   // Admin users bypass minimization
-  if (userRole === "admin" || userRole === "owner") {
+  if (userRole === 'admin' || userRole === 'owner') {
     return data;
   }
 
   // Apply minimization rules
-  const allowedFields =
-    DATA_MINIMIZATION_RULES[
-      operationType as keyof typeof DATA_MINIMIZATION_RULES
-    ] || DATA_MINIMIZATION_RULES.summary;
+  const allowedFields = DATA_MINIMIZATION_RULES[
+    operationType as keyof typeof DATA_MINIMIZATION_RULES
+  ] || DATA_MINIMIZATION_RULES.summary;
 
   if (Array.isArray(data)) {
-    return data.map((item) => {
-      if (typeof item === "object" && item !== null) {
+    return data.map(item => {
+      if (typeof item === 'object' && item !== null) {
         const minimized: any = {};
-        allowedFields.forEach((field) => {
+        allowedFields.forEach(field => {
           if (item[field] !== undefined) {
             minimized[field] = item[field];
           }
@@ -161,7 +155,7 @@ function applyDataMinimization(
   }
 
   const minimized: any = {};
-  allowedFields.forEach((field) => {
+  allowedFields.forEach(field => {
     if (data[field] !== undefined) {
       minimized[field] = data[field];
     }
@@ -187,16 +181,14 @@ export const lgpdAuditMiddleware = async ({
 
   try {
     // Skip audit for health checks and non-sensitive operations
-    if (path === "health" || path.startsWith("public.")) {
+    if (path === 'health' || path.startsWith('public.')) {
       return next();
     }
 
     const dataCategory = classifyDataCategory(path, input);
-    const isPatientData =
-      path.includes("patient") || path.includes("appointment");
-    const isSensitiveData =
-      dataCategory === LGPD_DATA_CATEGORIES.HEALTH ||
-      dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE;
+    const isPatientData = path.includes('patient') || path.includes('appointment');
+    const isSensitiveData = dataCategory === LGPD_DATA_CATEGORIES.HEALTH
+      || dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE;
 
     // Generate cryptographic proof for sensitive operations
     let cryptographicProof = null;
@@ -213,7 +205,7 @@ export const lgpdAuditMiddleware = async ({
       auditEntry = {
         _userId: ctx.userId,
         clinicId: ctx.clinicId,
-        action: type === "query" ? AuditAction.VIEW : AuditAction.CREATE,
+        action: type === 'query' ? AuditAction.VIEW : AuditAction.CREATE,
         resource: path,
         resourceType: getResourceType(path),
         resourceId: extractResourceId(input),
@@ -270,9 +262,9 @@ export const lgpdAuditMiddleware = async ({
       auditEntry.status = AuditStatus.FAILED;
       auditEntry.riskLevel = RiskLevel.HIGH;
       auditEntry.additionalInfo = JSON.stringify({
-        ...JSON.parse(auditEntry.additionalInfo || "{}"),
-        error: error instanceof Error ? error.message : "Unknown error",
-        errorType: error instanceof TRPCError ? error.code : "INTERNAL_ERROR",
+        ...JSON.parse(auditEntry.additionalInfo || '{}'),
+        error: error instanceof Error ? error.message : 'Unknown error',
+        errorType: error instanceof TRPCError ? error.code : 'INTERNAL_ERROR',
         duration,
         performanceCompliant: duration < 200,
       });
@@ -289,16 +281,16 @@ export const lgpdAuditMiddleware = async ({
  */
 
 function getResourceType(path: string): ResourceType {
-  if (path.includes("patient")) return ResourceType.PATIENT_RECORD;
-  if (path.includes("report")) return ResourceType.REPORT;
-  if (path.includes("user") || path.includes("auth")) {
+  if (path.includes('patient')) return ResourceType.PATIENT_RECORD;
+  if (path.includes('report')) return ResourceType.REPORT;
+  if (path.includes('user') || path.includes('auth')) {
     return ResourceType.USER_ACCOUNT;
   }
   return ResourceType.SYSTEM_CONFIG;
 }
 
 function extractResourceId(input: any): string | null {
-  if (!input || typeof input !== "object") return null;
+  if (!input || typeof input !== 'object') return null;
   return (
     input.id || input.patientId || input.appointmentId || input.userId || null
   );
@@ -310,13 +302,13 @@ function calculateRiskLevel(
   dataCategory: string,
 ): RiskLevel {
   if (
-    dataCategory === LGPD_DATA_CATEGORIES.HEALTH ||
-    dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
+    dataCategory === LGPD_DATA_CATEGORIES.HEALTH
+    || dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
   ) {
-    return type === "mutation" ? RiskLevel.HIGH : RiskLevel.MEDIUM;
+    return type === 'mutation' ? RiskLevel.HIGH : RiskLevel.MEDIUM;
   }
 
-  if (path.includes("export") || path.includes("delete")) {
+  if (path.includes('export') || path.includes('delete')) {
     return RiskLevel.HIGH;
   }
 
@@ -328,11 +320,11 @@ function calculateRiskLevel(
 }
 
 function determineOperationType(path: string, type: string): string {
-  if (path.includes("list") || path.includes("search")) return "list";
-  if (path.includes("summary") || path.includes("overview")) return "summary";
-  if (path.includes("appointment") || path.includes("schedule")) {
-    return "appointment";
+  if (path.includes('list') || path.includes('search')) return 'list';
+  if (path.includes('summary') || path.includes('overview')) return 'summary';
+  if (path.includes('appointment') || path.includes('schedule')) {
+    return 'appointment';
   }
-  if (path.includes("emergency") || path.includes("urgent")) return "emergency";
-  return type === "query" ? "summary" : "list";
+  if (path.includes('emergency') || path.includes('urgent')) return 'emergency';
+  return type === 'query' ? 'summary' : 'list';
 }

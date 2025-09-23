@@ -1,12 +1,12 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-import { SupabaseConnector } from "../database/supabase-connector";
-import { HealthcareLogger } from "../logging/healthcare-logger";
-import { SessionManager } from "../session/session-manager";
+import { SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseConnector } from '../database/supabase-connector';
+import { HealthcareLogger } from '../logging/healthcare-logger';
+import { SessionManager } from '../session/session-manager';
 import {
   ConversationContext,
   ConversationContextManager,
   ConversationMessage,
-} from "./conversation-context";
+} from './conversation-context';
 
 export interface ConversationRequest {
   sessionId: string;
@@ -21,7 +21,7 @@ export interface ConversationRequest {
 export interface ConversationResponse {
   conversationId: string;
   message: string;
-  _role: "assistant" | "system";
+  _role: 'assistant' | 'system';
   _context: any;
   citations?: any[];
   confidence?: number;
@@ -34,7 +34,7 @@ export interface ConversationHistoryParams {
   patientId?: string;
   limit?: number;
   offset?: number;
-  status?: "active" | "archived";
+  status?: 'active' | 'archived';
 }
 
 export class ConversationService {
@@ -81,15 +81,14 @@ export class ConversationService {
           _userId: request.userId,
           clinicId: request.clinicId,
           patientId: request.patientId,
-          title:
-            request.title || this.generateConversationTitle(request.message),
+          title: request.title || this.generateConversationTitle(request.message),
           initialContext: request.context || {},
         });
       }
 
       // Add user message
       await this.contextManager.addMessage(conversation.id, request.userId, {
-        _role: "user",
+        _role: 'user',
         content: request.message,
         metadata: {
           intent: await this.analyzeIntent(request.message),
@@ -105,7 +104,7 @@ export class ConversationService {
 
       // Add assistant response to conversation
       await this.contextManager.addMessage(conversation.id, request.userId, {
-        _role: "assistant",
+        _role: 'assistant',
         content: agentResponse.message,
         metadata: {
           confidence: agentResponse.confidence,
@@ -123,8 +122,8 @@ export class ConversationService {
       });
 
       await this.logger.logDataAccess(request.userId, request.clinicId, {
-        action: "start_conversation",
-        resource: "ai_conversation_contexts",
+        action: 'start_conversation',
+        resource: 'ai_conversation_contexts',
         conversationId: conversation.id,
         patientId: request.patientId,
         messageLength: request.message.length,
@@ -134,15 +133,15 @@ export class ConversationService {
       return {
         conversationId: conversation.id,
         message: agentResponse.message,
-        _role: "assistant",
+        _role: 'assistant',
         _context: agentResponse.context,
         citations: agentResponse.citations,
         confidence: agentResponse.confidence,
         followUpQuestions: agentResponse.followUpQuestions,
       };
     } catch (error) {
-      await this.logger.logError("conversation_start_error", {
-        error: error instanceof Error ? error.message : "Unknown error",
+      await this.logger.logError('conversation_start_error', {
+        error: error instanceof Error ? error.message : 'Unknown error',
         _request: {
           _userId: request.userId,
           clinicId: request.clinicId,
@@ -168,7 +167,7 @@ export class ConversationService {
         _userId,
       );
       if (!conversation) {
-        throw new Error("Conversation not found");
+        throw new Error('Conversation not found');
       }
 
       // Validate permissions
@@ -176,7 +175,7 @@ export class ConversationService {
 
       // Add user message
       await this.contextManager.addMessage(conversationId, userId, {
-        _role: "user",
+        _role: 'user',
         content: message,
         metadata: {
           intent: await this.analyzeIntent(message),
@@ -197,7 +196,7 @@ export class ConversationService {
 
       // Add assistant response
       await this.contextManager.addMessage(conversationId, userId, {
-        _role: "assistant",
+        _role: 'assistant',
         content: agentResponse.message,
         metadata: {
           confidence: agentResponse.confidence,
@@ -216,8 +215,8 @@ export class ConversationService {
       });
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
-        action: "continue_conversation",
-        resource: "ai_conversation_contexts",
+        action: 'continue_conversation',
+        resource: 'ai_conversation_contexts',
         conversationId,
         messageLength: message.length,
         success: true,
@@ -226,15 +225,15 @@ export class ConversationService {
       return {
         conversationId,
         message: agentResponse.message,
-        _role: "assistant",
+        _role: 'assistant',
         _context: agentResponse.context,
         citations: agentResponse.citations,
         confidence: agentResponse.confidence,
         followUpQuestions: agentResponse.followUpQuestions,
       };
     } catch (error) {
-      await this.logger.logError("conversation_continue_error", {
-        error: error instanceof Error ? error.message : "Unknown error",
+      await this.logger.logError('conversation_continue_error', {
+        error: error instanceof Error ? error.message : 'Unknown error',
         conversationId,
         userId,
         messageLength: message.length,
@@ -259,12 +258,12 @@ export class ConversationService {
       let filteredConversations = conversations;
       if (params.patientId) {
         filteredConversations = filteredConversations.filter(
-          (conv) => conv.patientId === params.patientId,
+          conv => conv.patientId === params.patientId,
         );
       }
       if (params.status) {
         filteredConversations = filteredConversations.filter(
-          (conv) => conv.status === params.status,
+          conv => conv.status === params.status,
         );
       }
 
@@ -277,8 +276,8 @@ export class ConversationService {
       );
 
       await this.logger.logDataAccess(params.userId, params.clinicId, {
-        action: "get_conversation_history",
-        resource: "ai_conversation_contexts",
+        action: 'get_conversation_history',
+        resource: 'ai_conversation_contexts',
         filters: params,
         returnedCount: paginatedConversations.length,
         totalCount: filteredConversations.length,
@@ -290,8 +289,8 @@ export class ConversationService {
         total: filteredConversations.length,
       };
     } catch (error) {
-      await this.logger.logError("conversation_history_error", {
-        error: error instanceof Error ? error.message : "Unknown error",
+      await this.logger.logError('conversation_history_error', {
+        error: error instanceof Error ? error.message : 'Unknown error',
         params,
         timestamp: new Date().toISOString(),
       });
@@ -315,8 +314,8 @@ export class ConversationService {
       await this.validateUserAccess(userId, conversation.clinicId);
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
-        action: "get_conversation_details",
-        resource: "ai_conversation_contexts",
+        action: 'get_conversation_details',
+        resource: 'ai_conversation_contexts',
         conversationId,
         messageCount: conversation.messages.length,
         success: true,
@@ -324,8 +323,8 @@ export class ConversationService {
 
       return conversation;
     } catch (error) {
-      await this.logger.logError("conversation_details_error", {
-        error: error instanceof Error ? error.message : "Unknown error",
+      await this.logger.logError('conversation_details_error', {
+        error: error instanceof Error ? error.message : 'Unknown error',
         conversationId,
         userId,
         timestamp: new Date().toISOString(),
@@ -344,7 +343,7 @@ export class ConversationService {
         _userId,
       );
       if (!conversation) {
-        throw new Error("Conversation not found");
+        throw new Error('Conversation not found');
       }
 
       await this.validateUserAccess(userId, conversation.clinicId);
@@ -352,15 +351,15 @@ export class ConversationService {
       await this.contextManager.deleteConversation(conversationId, _userId);
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
-        action: "delete_conversation",
-        resource: "ai_conversation_contexts",
+        action: 'delete_conversation',
+        resource: 'ai_conversation_contexts',
         conversationId,
         messageCount: conversation.messages.length,
         success: true,
       });
     } catch (error) {
-      await this.logger.logError("conversation_delete_error", {
-        error: error instanceof Error ? error.message : "Unknown error",
+      await this.logger.logError('conversation_delete_error', {
+        error: error instanceof Error ? error.message : 'Unknown error',
         conversationId,
         userId,
         timestamp: new Date().toISOString(),
@@ -377,7 +376,7 @@ export class ConversationService {
       patientId?: string;
       dateFrom?: Date;
       dateTo?: Date;
-      status?: "active" | "archived";
+      status?: 'active' | 'archived';
     },
   ): Promise<ConversationContext[]> {
     try {
@@ -389,10 +388,10 @@ export class ConversationService {
       );
 
       // Filter by search query and additional filters
-      const filteredConversations = conversations.filter((conv) => {
+      const filteredConversations = conversations.filter(conv => {
         // Search in title and messages
-        const searchText =
-          `${conv.title} ${conv.messages.map((m) => m.content).join(" ")}`.toLowerCase();
+        const searchText = `${conv.title} ${conv.messages.map(m => m.content).join(' ')}`
+          .toLowerCase();
         const matchesQuery = searchText.includes(query.toLowerCase());
 
         // Apply additional filters
@@ -413,8 +412,8 @@ export class ConversationService {
       });
 
       await this.logger.logDataAccess(userId, clinicId, {
-        action: "search_conversations",
-        resource: "ai_conversation_contexts",
+        action: 'search_conversations',
+        resource: 'ai_conversation_contexts',
         query,
         filters,
         resultCount: filteredConversations.length,
@@ -423,8 +422,8 @@ export class ConversationService {
 
       return filteredConversations;
     } catch (error) {
-      await this.logger.logError("conversation_search_error", {
-        error: error instanceof Error ? error.message : "Unknown error",
+      await this.logger.logError('conversation_search_error', {
+        error: error instanceof Error ? error.message : 'Unknown error',
         userId,
         clinicId,
         query,
@@ -441,18 +440,18 @@ export class ConversationService {
     const hasAccess = await this.supabaseConnector.validateDataAccess({
       _userId: request.userId,
       clinicId: request.clinicId,
-      action: "read",
-      resource: "ai_conversation_contexts",
+      action: 'read',
+      resource: 'ai_conversation_contexts',
     });
 
     if (!hasAccess) {
-      throw new Error("Insufficient permissions to start conversation");
+      throw new Error('Insufficient permissions to start conversation');
     }
 
     // Validate session
     const session = await this.sessionManager.getSession(request.sessionId);
     if (!session || session.userId !== request._userId) {
-      throw new Error("Invalid session");
+      throw new Error('Invalid session');
     }
   }
 
@@ -463,12 +462,12 @@ export class ConversationService {
     const hasAccess = await this.supabaseConnector.validateDataAccess({
       userId,
       clinicId,
-      action: "read",
-      resource: "ai_conversation_contexts",
+      action: 'read',
+      resource: 'ai_conversation_contexts',
     });
 
     if (!hasAccess) {
-      throw new Error("Insufficient permissions to access conversations");
+      throw new Error('Insufficient permissions to access conversations');
     }
   }
 
@@ -483,19 +482,19 @@ export class ConversationService {
 
     return (
       conversations.find(
-        (conv) =>
-          conv.sessionId === request.sessionId &&
-          conv.status === "active" &&
-          conv.patientId === request.patientId,
+        conv =>
+          conv.sessionId === request.sessionId
+          && conv.status === 'active'
+          && conv.patientId === request.patientId,
       ) || null
     );
   }
 
   private generateConversationTitle(message: string): string {
     // Simple title generation based on first few words
-    const words = message.split(" ").slice(0, 5);
+    const words = message.split(' ').slice(0, 5);
     return (
-      words.join(" ") + (words.length < message.split(" ").length ? "..." : "")
+      words.join(' ') + (words.length < message.split(' ').length ? '...' : '')
     );
   }
 
@@ -503,25 +502,25 @@ export class ConversationService {
     // Placeholder for intent analysis - in real implementation, this would use NLP
     const lowerMessage = message.toLowerCase();
 
-    if (lowerMessage.includes("help") || lowerMessage.includes("how to")) {
-      return "help_request";
+    if (lowerMessage.includes('help') || lowerMessage.includes('how to')) {
+      return 'help_request';
     } else if (
-      lowerMessage.includes("appointment") ||
-      lowerMessage.includes("schedule")
+      lowerMessage.includes('appointment')
+      || lowerMessage.includes('schedule')
     ) {
-      return "appointment_related";
+      return 'appointment_related';
     } else if (
-      lowerMessage.includes("patient") ||
-      lowerMessage.includes("medical")
+      lowerMessage.includes('patient')
+      || lowerMessage.includes('medical')
     ) {
-      return "patient_inquiry";
+      return 'patient_inquiry';
     } else if (
-      lowerMessage.includes("billing") ||
-      lowerMessage.includes("payment")
+      lowerMessage.includes('billing')
+      || lowerMessage.includes('payment')
     ) {
-      return "billing_inquiry";
+      return 'billing_inquiry';
     } else {
-      return "general_inquiry";
+      return 'general_inquiry';
     }
   }
 
@@ -533,13 +532,13 @@ export class ConversationService {
     const datePattern = /\b(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})\b/g;
     const dates = message.match(datePattern);
     if (dates) {
-      entities.push({ type: "date", value: dates[0] });
+      entities.push({ type: 'date', value: dates[0] });
     }
 
     const phonePattern = /\b(\d{10,11})\b/g;
     const phones = message.match(phonePattern);
     if (phones) {
-      entities.push({ type: "phone", value: phones[0] });
+      entities.push({ type: 'phone', value: phones[0] });
     }
 
     return entities;
@@ -573,29 +572,29 @@ export class ConversationService {
       ...additionalContext,
       patientId: conversation.patientId,
       clinicId: conversation.clinicId,
-      messageHistory:
-        history?.map((m) => ({ _role: m.role, content: m.content })) || [],
+      messageHistory: history?.map(m => ({ _role: m.role, content: m.content })) || [],
     };
 
     return {
-      message: `I understand you're asking about: "${message}". As an AI assistant, I'm here to help you with healthcare-related inquiries. This is a placeholder response - in the full implementation, I would provide relevant information based on your clinic's data and policies.`,
+      message:
+        `I understand you're asking about: "${message}". As an AI assistant, I'm here to help you with healthcare-related inquiries. This is a placeholder response - in the full implementation, I would provide relevant information based on your clinic's data and policies.`,
       intent: await this.analyzeIntent(message),
       context,
       confidence: 0.85,
       citations: [
         {
-          type: "policy",
-          title: "Healthcare AI Assistant Guidelines",
-          url: "/docs/ai-guidelines",
+          type: 'policy',
+          title: 'Healthcare AI Assistant Guidelines',
+          url: '/docs/ai-guidelines',
         },
       ],
       tool_calls: [],
       patientContext: context.patientContext,
       topic: this.generateConversationTitle(message),
       followUpQuestions: [
-        "Would you like me to help you schedule an appointment?",
-        "Do you need information about specific medical services?",
-        "Is there anything else I can help you with?",
+        'Would you like me to help you schedule an appointment?',
+        'Do you need information about specific medical services?',
+        'Is there anything else I can help you with?',
       ],
     };
   }

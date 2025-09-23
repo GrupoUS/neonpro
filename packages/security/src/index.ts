@@ -4,7 +4,7 @@
  */
 
 // Version export
-export const SECURITY_VERSION = ''1.0.0'
+export const SECURITY_VERSION = '1.0.0';
 
 // Core encryption and key management
 export { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption';

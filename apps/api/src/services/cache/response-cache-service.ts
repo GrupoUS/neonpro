@@ -3,13 +3,9 @@
  * Implements intelligent caching for frequently accessed healthcare data
  */
 
-import { createHash } from "crypto";
-import { Redis } from "ioredis";
-import {
-  AguiQueryMessage,
-  AguiResponseMessage,
-  AguiSource,
-} from "../agui-protocol/types";
+import { createHash } from 'crypto';
+import { Redis } from 'ioredis';
+import { AguiQueryMessage, AguiResponseMessage, AguiSource } from '../agui-protocol/types';
 
 // Input validation schemas
 const CacheKeySchema = z.string().min(1).max(500);
@@ -60,15 +56,14 @@ export class ResponseCacheService {
   private connectionRetries = 0;
   private maxRetries = 3;
   private securityKey: string;
-  private rateLimits: Map<string, { count: number; resetTime: number }> =
-    new Map();
+  private rateLimits: Map<string, { count: number; resetTime: number }> = new Map();
 
   constructor(config: CacheConfig) {
     // Validate configuration
     this.validateConfig(config);
 
     this.config = config;
-    this.securityKey = process.env.CACHE_SECURITY_KEY || "default_security_key";
+    this.securityKey = process.env.CACHE_SECURITY_KEY || 'default_security_key';
     this.localCache = new Map();
     this.stats = {
       totalHits: 0,
@@ -101,13 +96,12 @@ export class ResponseCacheService {
         _userId: query.context?.userId
           ? this.sanitizeString(query.context._userId)
           : undefined,
-        previousTopics:
-          query.context?.previousTopics?.map((t) => this.sanitizeString(t)) ||
-          [],
+        previousTopics: query.context?.previousTopics?.map(t => this.sanitizeString(t))
+          || [],
       },
       options: {
         maxResults: Math.min(query.options?.maxResults || 10, 100), // Limit max results
-        model: this.sanitizeString(query.options?.model || "default"),
+        model: this.sanitizeString(query.options?.model || 'default'),
         temperature: Math.max(
           0,
           Math.min(1, query.options?.temperature || 0.7),
@@ -115,9 +109,9 @@ export class ResponseCacheService {
       },
     };
 
-    const hash = createHash("sha256")
+    const hash = createHash('sha256')
       .update(JSON.stringify(queryData) + this.securityKey)
-      .digest("hex");
+      .digest('hex');
 
     return `agent_response:${validatedUserId}:${hash}`;
   }
@@ -129,36 +123,36 @@ export class ResponseCacheService {
     const categories: string[] = [];
 
     if (response.sources) {
-      response.sources.forEach((source) => {
+      response.sources.forEach(source => {
         switch (source.type) {
-          case "patient_data":
-            categories.push("patient_records");
+          case 'patient_data':
+            categories.push('patient_records');
             break;
-          case "appointment":
-            categories.push("appointments");
+          case 'appointment':
+            categories.push('appointments');
             break;
-          case "financial":
-            categories.push("financial_data");
+          case 'financial':
+            categories.push('financial_data');
             break;
-          case "document":
-            categories.push("documents");
+          case 'document':
+            categories.push('documents');
             break;
-          case "medical_knowledge":
-            categories.push("medical_knowledge");
+          case 'medical_knowledge':
+            categories.push('medical_knowledge');
             break;
         }
       });
     }
 
     // Add content-based categories
-    if (response.content.toLowerCase().includes("agendamento")) {
-      categories.push("appointments");
+    if (response.content.toLowerCase().includes('agendamento')) {
+      categories.push('appointments');
     }
-    if (response.content.toLowerCase().includes("paciente")) {
-      categories.push("patient_data");
+    if (response.content.toLowerCase().includes('paciente')) {
+      categories.push('patient_data');
     }
-    if (response.content.toLowerCase().includes("financeiro")) {
-      categories.push("financial_data");
+    if (response.content.toLowerCase().includes('financeiro')) {
+      categories.push('financial_data');
     }
 
     return [...new Set(categories)];
@@ -227,9 +221,7 @@ export class ResponseCacheService {
 
       // Check Redis cache if connected
       if (this.isConnected && this.redis) {
-        const redisData = await this.safeRedisOperation(() =>
-          this.redis.get(cacheKey),
-        );
+        const redisData = await this.safeRedisOperation(() => this.redis.get(cacheKey));
         if (redisData) {
           const entry: CacheEntry = JSON.parse(redisData);
 
@@ -261,7 +253,7 @@ export class ResponseCacheService {
       this.updateHitRate();
       return null;
     } catch (error) {
-      console.error("[Cache] Error retrieving cached response:", error);
+      console.error('[Cache] Error retrieving cached response:', error);
       this.stats.totalMisses++;
       this.updateHitRate();
       return null;
@@ -294,7 +286,7 @@ export class ResponseCacheService {
       // Validate response before caching
       const validatedResponse = this.validateResponseForCaching(response);
       if (!validatedResponse) {
-        console.warn("[Cache] Response validation failed, not caching");
+        console.warn('[Cache] Response validation failed, not caching');
         return;
       }
 
@@ -311,7 +303,7 @@ export class ResponseCacheService {
         ttl: validatedTTL,
         hitCount: 1,
         metadata: {
-          queryHash: this.sanitizeHash(cacheKey.split(":").pop()!),
+          queryHash: this.sanitizeHash(cacheKey.split(':').pop()!),
           _userId: validatedUserId,
           patientId,
           dataCategories: this.extractDataCategories(validatedResponse),
@@ -319,21 +311,20 @@ export class ResponseCacheService {
             0,
             Math.min(1, validatedResponse.confidence || 0),
           ),
-          sources:
-            validatedResponse.sources?.map((s) => this.validateSource(s)) || [],
+          sources: validatedResponse.sources?.map(s => this.validateSource(s)) || [],
         },
       };
 
       // Validate entry structure
       if (!this.validateCacheEntry(entry)) {
-        console.warn("[Cache] Cache entry validation failed, not caching");
+        console.warn('[Cache] Cache entry validation failed, not caching');
         return;
       }
 
       // Store in Redis if connected
       if (this.isConnected && this.redis) {
         await this.safeRedisOperation(() =>
-          this.redis.setex(cacheKey, validatedTTL, JSON.stringify(entry)),
+          this.redis.setex(cacheKey, validatedTTL, JSON.stringify(entry))
         );
       }
 
@@ -345,7 +336,7 @@ export class ResponseCacheService {
 
       this.stats.cacheSize++;
     } catch (error) {
-      console.error("[Cache] Error caching response:", error);
+      console.error('[Cache] Error caching response:', error);
     }
   }
 
@@ -400,9 +391,7 @@ export class ResponseCacheService {
 
       // Clear Redis cache if connected
       if (this.isConnected && this.redis) {
-        const keys = await this.safeRedisOperation(() =>
-          this.redis.keys(sanitizedPattern),
-        );
+        const keys = await this.safeRedisOperation(() => this.redis.keys(sanitizedPattern));
         if (keys.length > 0) {
           // Limit batch size to prevent Redis overload
           const batchSize = 100;
@@ -425,7 +414,7 @@ export class ResponseCacheService {
       this.stats.evictionCount += invalidatedCount;
       return invalidatedCount;
     } catch (error) {
-      console.error("[Cache] Error invalidating cache:", error);
+      console.error('[Cache] Error invalidating cache:', error);
       return 0;
     }
   }
@@ -436,7 +425,7 @@ export class ResponseCacheService {
   async getStats(): Promise<CacheStats> {
     try {
       // Get Redis info
-      const redisInfo = await this.redis.info("memory");
+      const redisInfo = await this.redis.info('memory');
       const memoryMatch = redisInfo.match(/used_memory_human:([^\r\n]+)/);
       this.stats.memoryUsage = memoryMatch ? parseFloat(memoryMatch[1]) : 0;
 
@@ -444,7 +433,7 @@ export class ResponseCacheService {
       const cacheSize = await this.redis.dbsize();
       this.stats.cacheSize = cacheSize;
     } catch (error) {
-      console.error("[Cache] Error getting cache stats:", error);
+      console.error('[Cache] Error getting cache stats:', error);
     }
 
     return { ...this.stats };
@@ -466,7 +455,7 @@ export class ResponseCacheService {
         }
       }
     } catch (error) {
-      console.error("[Cache] Health check failed:", error);
+      console.error('[Cache] Health check failed:', error);
     }
   }
 
@@ -500,14 +489,14 @@ export function createHealthcareCacheConfig(): CacheConfig {
   // Validate environment variables
   const redisUrl = process.env.REDIS_URL;
   if (!redisUrl) {
-    throw new Error("REDIS_URL environment variable is required");
+    throw new Error('REDIS_URL environment variable is required');
   }
 
   // Validate Redis URL format
   try {
     new URL(redisUrl);
   } catch {
-    throw new Error("Invalid REDIS_URL format");
+    throw new Error('Invalid REDIS_URL format');
   }
 
   return {
@@ -527,34 +516,34 @@ export const CacheStrategies = {
   patientData: {
     ttl: 7200, // 2 hours
     compress: true,
-    priority: "high",
+    priority: 'high',
   },
 
   // Appointments - shorter TTL, medium priority
   appointments: {
     ttl: 1800, // 30 minutes
     compress: true,
-    priority: "medium",
+    priority: 'medium',
   },
 
   // Financial data - medium TTL, high priority
   financial: {
     ttl: 3600, // 1 hour
     compress: true,
-    priority: "high",
+    priority: 'high',
   },
 
   // Medical knowledge - long TTL, low priority
   medicalKnowledge: {
     ttl: 86400, // 24 hours
     compress: true,
-    priority: "low",
+    priority: 'low',
   },
 
   // Real-time queries - very short TTL, no cache
   realtime: {
     ttl: 60, // 1 minute
     compress: false,
-    priority: "low",
+    priority: 'low',
   },
 };

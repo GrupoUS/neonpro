@@ -337,7 +337,7 @@ export function maskPatientData(
       }
       break;
 
-    case 'full_anonymization_:
+    case 'full_anonymization':
       // Remove all identifiable information
       if (result.name) {
         result.name = 'ANONIMIZADO';

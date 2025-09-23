@@ -11,10 +11,10 @@
  */
 
 export enum AuditSeverity {
-  INFO = "info",
-  WARNING = "warning",
-  ERROR = "error",
-  CRITICAL = "critical",
+  INFO = 'info',
+  WARNING = 'warning',
+  ERROR = 'error',
+  CRITICAL = 'critical',
 }
 
 export interface AuditEventData {
@@ -23,7 +23,7 @@ export interface AuditEventData {
   category: string;
   source: string;
   action: string;
-  result: "success" | "failure" | "blocked" | "alert";
+  result: 'success' | 'failure' | 'blocked' | 'alert';
   message: string;
   _userId?: string;
   sessionId?: string;
@@ -57,7 +57,7 @@ export class AuditEvent {
   userAgent?: string;
   resource?: string;
   action: string;
-  result: "success" | "failure" | "blocked" | "alert";
+  result: 'success' | 'failure' | 'blocked' | 'alert';
   message: string;
   details?: Record<string, any>;
   compliance?: AuditCompliance;
@@ -95,7 +95,7 @@ export interface AuditLogData {
   userAgent?: string;
   resource?: string;
   action: string;
-  result: "success" | "failure" | "blocked" | "alert";
+  result: 'success' | 'failure' | 'blocked' | 'alert';
   message: string;
   details?: Record<string, any>;
   compliance?: AuditCompliance;
@@ -117,7 +117,7 @@ export class AuditLog {
   userAgent?: string;
   resource?: string;
   action: string;
-  result: "success" | "failure" | "blocked" | "alert";
+  result: 'success' | 'failure' | 'blocked' | 'alert';
   message: string;
   details?: Record<string, any>;
   compliance?: AuditCompliance;
@@ -206,19 +206,18 @@ export const HealthcareAuditEvents = {
     _userId: string;
     patientId: string;
     action: string;
-    result: "success" | "failure" | "blocked";
+    result: 'success' | 'failure' | 'blocked';
     resource: string;
   }) =>
     createAuditTrail({
-      eventType: "patient_data_access",
-      severity:
-        data.result === "blocked" ? AuditSeverity.WARNING : AuditSeverity.INFO,
-      category: "healthcare",
-      source: "patient-service",
+      eventType: 'patient_data_access',
+      severity: data.result === 'blocked' ? AuditSeverity.WARNING : AuditSeverity.INFO,
+      category: 'healthcare',
+      source: 'patient-service',
       _userId: data.userId,
       action: data.action,
       result: data.result,
-      message: `Patient data ${data.action} ${data.result === "success" ? "successful" : "failed"}`,
+      message: `Patient data ${data.action} ${data.result === 'success' ? 'successful' : 'failed'}`,
       resource: data.resource,
       details: { patientId: data.patientId },
       compliance: { lgpd: true, anvisa: true, cfm: true },
@@ -231,14 +230,14 @@ export const HealthcareAuditEvents = {
     changes: string[];
   }) =>
     createAuditTrail({
-      eventType: "medical_record_update",
+      eventType: 'medical_record_update',
       severity: AuditSeverity.INFO,
-      category: "healthcare",
-      source: "medical-records-service",
+      category: 'healthcare',
+      source: 'medical-records-service',
       _userId: data.userId,
-      action: "update",
-      result: "success",
-      message: "Medical record updated",
+      action: 'update',
+      result: 'success',
+      message: 'Medical record updated',
       resource: `/api/patients/${data.patientId}/records`,
       details: {
         patientId: data.patientId,
@@ -254,15 +253,15 @@ export const HealthcareAuditEvents = {
     userAgent?: string;
   }) =>
     logSecurityEvent({
-      eventType: "unauthorized_access_attempt",
+      eventType: 'unauthorized_access_attempt',
       severity: AuditSeverity.CRITICAL,
-      category: "security",
-      source: "security-service",
+      category: 'security',
+      source: 'security-service',
       ipAddress: data.ipAddress,
       userAgent: data.userAgent,
-      action: "access",
-      result: "blocked",
-      message: "Unauthorized access attempt blocked",
+      action: 'access',
+      result: 'blocked',
+      message: 'Unauthorized access attempt blocked',
       resource: data.resource,
       details: { riskScore: 95 },
       compliance: { lgpd: true, anvisa: true, cfm: true },
@@ -279,17 +278,17 @@ export class ComprehensiveAuditService {
     action: string;
     resource?: string;
     details?: Record<string, any>;
-    result?: "success" | "failure" | "blocked" | "alert";
+    result?: 'success' | 'failure' | 'blocked' | 'alert';
     severity?: AuditSeverity;
   }): Promise<void> {
     await createAuditTrail({
       eventType: data.action,
       severity: data.severity || AuditSeverity.INFO,
-      category: "ai",
-      source: "ai-service",
+      category: 'ai',
+      source: 'ai-service',
       _userId: data.userId,
       action: data.action,
-      result: data.result || "success",
+      result: data.result || 'success',
       message: `AI activity: ${data.action}`,
       resource: data.resource,
       details: data.details,

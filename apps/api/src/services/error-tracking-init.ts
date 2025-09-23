@@ -5,13 +5,13 @@
  * compliance and LGPD data protection.
  */
 
-import { NodeSDK } from "@opentelemetry/sdk-node";
+import { NodeSDK } from '@opentelemetry/sdk-node';
 import {
   errorTrackingConfig,
   initializeOpenTelemetry,
   initializeSentry,
-} from "../config/error-tracking";
-import { setupGlobalErrorHandlers } from "../middleware/error-tracking";
+} from '../config/error-tracking';
+import { setupGlobalErrorHandlers } from '../middleware/error-tracking';
 
 let telemetrySDK: NodeSDK | null = null;
 let isInitialized = false;
@@ -21,55 +21,55 @@ let isInitialized = false;
  */
 export async function initializeErrorTracking(): Promise<void> {
   if (isInitialized) {
-    console.warn("Error tracking already initialized");
+    console.warn('Error tracking already initialized');
     return;
   }
 
   try {
-    console.log("Initializing error tracking systems...");
+    console.log('Initializing error tracking systems...');
 
     // Initialize Sentry first
     if (errorTrackingConfig.sentry.enabled) {
-      console.log("Initializing Sentry error tracking...");
+      console.log('Initializing Sentry error tracking...');
       initializeSentry();
-      console.log("✅ Sentry initialized successfully");
+      console.log('✅ Sentry initialized successfully');
     } else {
-      console.warn("⚠️ Sentry not configured - using fallback error handling");
+      console.warn('⚠️ Sentry not configured - using fallback error handling');
     }
 
     // Initialize OpenTelemetry
     if (errorTrackingConfig.openTelemetry.enabled) {
-      console.log("Initializing OpenTelemetry...");
+      console.log('Initializing OpenTelemetry...');
       telemetrySDK = initializeOpenTelemetry();
       telemetrySDK.start();
-      console.log("✅ OpenTelemetry initialized successfully");
+      console.log('✅ OpenTelemetry initialized successfully');
     }
 
     // Setup global error handlers
     setupGlobalErrorHandlers();
-    console.log("✅ Global error handlers configured");
+    console.log('✅ Global error handlers configured');
 
     // Mark as initialized
     isInitialized = true;
 
-    console.log("🚀 Error tracking initialization complete");
-    console.log("📊 Configuration:", {
+    console.log('🚀 Error tracking initialization complete');
+    console.log('📊 Configuration:', {
       sentry: errorTrackingConfig.sentry.enabled,
       openTelemetry: errorTrackingConfig.openTelemetry.enabled,
       environment: errorTrackingConfig.sentry.environment,
       healthcare: errorTrackingConfig.healthcare,
     });
   } catch (error) {
-    console.error("❌ Failed to initialize error tracking:", error);
+    console.error('❌ Failed to initialize error tracking:', error);
 
     // Even if initialization fails, we should continue with the application
     // but log the failure for monitoring
     if (
-      typeof process !== "undefined" &&
-      process.env.NODE_ENV === "production"
+      typeof process !== 'undefined'
+      && process.env.NODE_ENV === 'production'
     ) {
       console.error(
-        "Error tracking initialization failure in production - this should be investigated",
+        'Error tracking initialization failure in production - this should be investigated',
       );
     }
 
@@ -86,24 +86,24 @@ export async function shutdownErrorTracking(): Promise<void> {
   }
 
   try {
-    console.log("Shutting down error tracking systems...");
+    console.log('Shutting down error tracking systems...');
 
     // Shutdown OpenTelemetry
     if (telemetrySDK) {
       await telemetrySDK.shutdown();
       telemetrySDK = null;
-      console.log("✅ OpenTelemetry shutdown complete");
+      console.log('✅ OpenTelemetry shutdown complete');
     }
 
     // Sentry doesn't require explicit shutdown, but we can flush remaining events
-    const { close: sentryClose } = await import("@sentry/node");
+    const { close: sentryClose } = await import('@sentry/node');
     await sentryClose(2000); // Wait up to 2 seconds for events to be sent
-    console.log("✅ Sentry shutdown complete");
+    console.log('✅ Sentry shutdown complete');
 
     isInitialized = false;
-    console.log("🏁 Error tracking shutdown complete");
+    console.log('🏁 Error tracking shutdown complete');
   } catch (error) {
-    console.error("❌ Error during error tracking shutdown:", error);
+    console.error('❌ Error during error tracking shutdown:', error);
   }
 }
 
@@ -111,22 +111,22 @@ export async function shutdownErrorTracking(): Promise<void> {
  * Health check for error tracking systems
  */
 export function getErrorTrackingHealth(): {
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy';
   systems: {
-    sentry: "enabled" | "disabled" | "error";
-    openTelemetry: "enabled" | "disabled" | "error";
-    globalHandlers: "enabled" | "disabled";
+    sentry: 'enabled' | 'disabled' | 'error';
+    openTelemetry: 'enabled' | 'disabled' | 'error';
+    globalHandlers: 'enabled' | 'disabled';
   };
   config: typeof errorTrackingConfig;
 } {
   return {
-    status: isInitialized ? "healthy" : "unhealthy",
+    status: isInitialized ? 'healthy' : 'unhealthy',
     systems: {
-      sentry: errorTrackingConfig.sentry.enabled ? "enabled" : "disabled",
+      sentry: errorTrackingConfig.sentry.enabled ? 'enabled' : 'disabled',
       openTelemetry: errorTrackingConfig.openTelemetry.enabled
-        ? "enabled"
-        : "disabled",
-      globalHandlers: isInitialized ? "enabled" : "disabled",
+        ? 'enabled'
+        : 'disabled',
+      globalHandlers: isInitialized ? 'enabled' : 'disabled',
     },
     config: errorTrackingConfig,
   };
@@ -168,17 +168,17 @@ export async function testErrorTracking(): Promise<{
   try {
     // Test Sentry
     if (errorTrackingConfig.sentry.enabled) {
-      const { captureMessage } = await import("@sentry/node");
-      captureMessage("Error tracking test - Sentry", "info");
+      const { captureMessage } = await import('@sentry/node');
+      captureMessage('Error tracking test - Sentry', 'info');
       results.sentry = true;
     }
 
     // Test OpenTelemetry
     if (errorTrackingConfig.openTelemetry.enabled && telemetrySDK) {
-      const { trace } = await import("@opentelemetry/api");
-      const tracer = trace.getTracer("neonpro-api-test");
-      const span = tracer.startSpan("error-tracking-test");
-      span.setAttributes({ "test.type": "error-tracking" });
+      const { trace } = await import('@opentelemetry/api');
+      const tracer = trace.getTracer('neonpro-api-test');
+      const span = tracer.startSpan('error-tracking-test');
+      span.setAttributes({ 'test.type': 'error-tracking' });
       span.end();
       results.openTelemetry = true;
     }
@@ -186,7 +186,7 @@ export async function testErrorTracking(): Promise<{
     // Global handlers are always available once initialized
     results.globalHandlers = isInitialized;
   } catch (error) {
-    console.error("Error tracking test failed:", error);
+    console.error('Error tracking test failed:', error);
   }
 
   return results;
@@ -197,14 +197,14 @@ export async function testErrorTracking(): Promise<{
  */
 export async function forceErrorTracking(
   message: string,
-  severity: "low" | "medium" | "high" | "critical" = "low",
+  severity: 'low' | 'medium' | 'high' | 'critical' = 'low',
 ): Promise<void> {
   if (!isInitialized) {
-    throw new Error("Error tracking not initialized");
+    throw new Error('Error tracking not initialized');
   }
 
   const testError = new Error(`Test Error: ${message}`);
-  testError.name = "TestError";
+  testError.name = 'TestError';
 
   // Send to Sentry
   if (errorTrackingConfig.sentry.enabled) {
@@ -212,24 +212,24 @@ export async function forceErrorTracking(
       withScope,
       captureException,
       setLevel: setLevel,
-    } = await import("@sentry/node");
-    withScope((scope) => {
-      scope.setTag("test", true);
-      scope.setTag("severity", severity);
-      scope.setLevel(severity === "critical" ? "fatal" : (severity as any));
+    } = await import('@sentry/node');
+    withScope(scope => {
+      scope.setTag('test', true);
+      scope.setTag('severity', severity);
+      scope.setLevel(severity === 'critical' ? 'fatal' : (severity as any));
       captureException(testError);
     });
   }
 
   // Send to OpenTelemetry
   if (errorTrackingConfig.openTelemetry.enabled) {
-    const { trace } = await import("@opentelemetry/api");
-    const tracer = trace.getTracer("neonpro-api-test");
-    const span = tracer.startSpan("test-error");
+    const { trace } = await import('@opentelemetry/api');
+    const tracer = trace.getTracer('neonpro-api-test');
+    const span = tracer.startSpan('test-error');
     span.recordException(testError);
     span.setAttributes({
-      "test.forced": true,
-      "test.severity": severity,
+      'test.forced': true,
+      'test.severity': severity,
     });
     span.end();
   }

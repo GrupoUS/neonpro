@@ -3,7 +3,7 @@
  * Implementation of k-anonymity, l-diversity, differential privacy, and other privacy techniques
  */
 
-import { createHash, pbkdf2Sync, randomBytes } from "crypto";
+import { createHash, pbkdf2Sync, randomBytes } from 'crypto';
 
 export interface AnonymizationConfig {
   k: number; // k-anonymity parameter
@@ -119,8 +119,8 @@ export class PrivacyAlgorithms {
         },
       };
     } catch (error) {
-      console.error("Error applying k-anonymity:", error);
-      throw new Error("Failed to apply k-anonymity");
+      console.error('Error applying k-anonymity:', error);
+      throw new Error('Failed to apply k-anonymity');
     }
   }
 
@@ -180,15 +180,14 @@ export class PrivacyAlgorithms {
         metadata: {
           ...kAnonymousData.metadata,
           anonymizedCount: validRecords.length,
-          suppressedCount:
-            kAnonymousData.metadata.suppressedCount + suppressedRecords.length,
+          suppressedCount: kAnonymousData.metadata.suppressedCount + suppressedRecords.length,
           lDiversity: l,
           privacyMetrics,
         },
       };
     } catch (error) {
-      console.error("Error applying l-diversity:", error);
-      throw new Error("Failed to apply l-diversity");
+      console.error('Error applying l-diversity:', error);
+      throw new Error('Failed to apply l-diversity');
     }
   }
 
@@ -199,10 +198,10 @@ export class PrivacyAlgorithms {
     value: number,
     epsilon: number,
     sensitivity: number = 1,
-    mechanism: "laplace" | "gaussian" = "laplace",
+    mechanism: 'laplace' | 'gaussian' = 'laplace',
   ): number {
     try {
-      if (mechanism === "laplace") {
+      if (mechanism === 'laplace') {
         const scale = sensitivity / epsilon;
         const noise = this.generateLaplaceNoise(scale);
         return value + noise;
@@ -212,7 +211,7 @@ export class PrivacyAlgorithms {
         return value + noise;
       }
     } catch (error) {
-      console.error("Error adding differential privacy:", error);
+      console.error('Error adding differential privacy:', error);
       return value;
     }
   }
@@ -222,7 +221,7 @@ export class PrivacyAlgorithms {
    */
   async applyDifferentialPrivacyToQuery(
     queryResult: number,
-    queryType: "count" | "sum" | "average" | "max" | "min",
+    queryType: 'count' | 'sum' | 'average' | 'max' | 'min',
     epsilon: number,
     dataRange?: { min: number; max: number },
   ): Promise<number> {
@@ -230,17 +229,17 @@ export class PrivacyAlgorithms {
       let sensitivity: number;
 
       switch (queryType) {
-        case "count":
+        case 'count':
           sensitivity = 1;
           break;
-        case "sum":
+        case 'sum':
           sensitivity = dataRange ? dataRange.max - dataRange.min : 1;
           break;
-        case "average":
+        case 'average':
           sensitivity = dataRange ? dataRange.max - dataRange.min : 1;
           break;
-        case "max":
-        case "min":
+        case 'max':
+        case 'min':
           sensitivity = dataRange ? dataRange.max - dataRange.min : 1;
           break;
         default:
@@ -249,7 +248,7 @@ export class PrivacyAlgorithms {
 
       return this.addDifferentialPrivacy(queryResult, epsilon, sensitivity);
     } catch (error) {
-      console.error("Error applying differential privacy to _query:", error);
+      console.error('Error applying differential privacy to _query:', error);
       return queryResult;
     }
   }
@@ -263,13 +262,13 @@ export class PrivacyAlgorithms {
     expirationDays?: number,
   ): Promise<PseudonymizationResult> {
     try {
-      const salt = randomBytes(32).toString("hex");
+      const salt = randomBytes(32).toString('hex');
       const purposeKey = this.derivePurposeKey(purpose, salt);
 
       // Create HMAC-based pseudonym
-      const pseudonym = createHash("sha256")
+      const pseudonym = createHash('sha256')
         .update(identifier + purposeKey + salt)
-        .digest("hex");
+        .digest('hex');
 
       // Store mapping for reversibility (in production, use secure key management)
       await this.storePseudonymMapping(
@@ -283,12 +282,12 @@ export class PrivacyAlgorithms {
       return {
         pseudonym,
         salt,
-        algorithm: "HMAC-SHA256",
+        algorithm: 'HMAC-SHA256',
         reversible: true,
       };
     } catch (error) {
-      console.error("Error creating reversible pseudonym:", error);
-      throw new Error("Failed to create reversible pseudonym");
+      console.error('Error creating reversible pseudonym:', error);
+      throw new Error('Failed to create reversible pseudonym');
     }
   }
 
@@ -300,7 +299,7 @@ export class PrivacyAlgorithms {
     purpose: string,
   ): PseudonymizationResult {
     try {
-      const salt = randomBytes(32).toString("hex");
+      const salt = randomBytes(32).toString('hex');
       const purposeKey = this.derivePurposeKey(purpose, salt);
 
       // Use one-way hash function
@@ -309,18 +308,18 @@ export class PrivacyAlgorithms {
         purposeKey + salt,
         100000,
         32,
-        "sha512",
-      ).toString("hex");
+        'sha512',
+      ).toString('hex');
 
       return {
         pseudonym,
         salt,
-        algorithm: "PBKDF2-SHA512",
+        algorithm: 'PBKDF2-SHA512',
         reversible: false,
       };
     } catch (error) {
-      console.error("Error creating irreversible pseudonym:", error);
-      throw new Error("Failed to create irreversible pseudonym");
+      console.error('Error creating irreversible pseudonym:', error);
+      throw new Error('Failed to create irreversible pseudonym');
     }
   }
 
@@ -335,7 +334,7 @@ export class PrivacyAlgorithms {
     try {
       // Validate authorization (implement proper authorization check)
       if (!this.validateReversalAuthorization(authorization, purpose)) {
-        throw new Error("Unauthorized reversal attempt");
+        throw new Error('Unauthorized reversal attempt');
       }
 
       // Retrieve original identifier from secure storage
@@ -353,7 +352,7 @@ export class PrivacyAlgorithms {
 
       return originalIdentifier;
     } catch (error) {
-      console.error("Error reversing pseudonym:", error);
+      console.error('Error reversing pseudonym:', error);
       return null;
     }
   }
@@ -364,31 +363,29 @@ export class PrivacyAlgorithms {
   anonymizeGeographicData(
     latitude: number,
     longitude: number,
-    precisionLevel: "city" | "region" | "country" = "city",
+    precisionLevel: 'city' | 'region' | 'country' = 'city',
   ): { latitude: number; longitude: number; precision: string } {
     try {
       let precision: number;
 
       switch (precisionLevel) {
-        case "city":
+        case 'city':
           precision = 2; // ~1.1 km precision
           break;
-        case "region":
+        case 'region':
           precision = 1; // ~11 km precision
           break;
-        case "country":
+        case 'country':
           precision = 0; // ~111 km precision
           break;
         default:
           precision = 2;
       }
 
-      const anonymizedLat =
-        Math.round(latitude * Math.pow(10, precision)) /
-        Math.pow(10, precision);
-      const anonymizedLng =
-        Math.round(longitude * Math.pow(10, precision)) /
-        Math.pow(10, precision);
+      const anonymizedLat = Math.round(latitude * Math.pow(10, precision))
+        / Math.pow(10, precision);
+      const anonymizedLng = Math.round(longitude * Math.pow(10, precision))
+        / Math.pow(10, precision);
 
       return {
         latitude: anonymizedLat,
@@ -396,8 +393,8 @@ export class PrivacyAlgorithms {
         precision: precisionLevel,
       };
     } catch (error) {
-      console.error("Error anonymizing geographic data:", error);
-      return { latitude, longitude, precision: "original" };
+      console.error('Error anonymizing geographic data:', error);
+      return { latitude, longitude, precision: 'original' };
     }
   }
 
@@ -406,25 +403,25 @@ export class PrivacyAlgorithms {
    */
   anonymizeDate(
     date: Date,
-    granularity: "year" | "month" | "week" | "day" = "month",
+    granularity: 'year' | 'month' | 'week' | 'day' = 'month',
   ): { date: Date; granularity: string } {
     try {
       let anonymizedDate: Date;
 
       switch (granularity) {
-        case "year":
+        case 'year':
           anonymizedDate = new Date(date.getFullYear(), 0, 1);
           break;
-        case "month":
+        case 'month':
           anonymizedDate = new Date(date.getFullYear(), date.getMonth(), 1);
           break;
-        case "week":
+        case 'week':
           const dayOfWeek = date.getDay();
           anonymizedDate = new Date(date);
           anonymizedDate.setDate(date.getDate() - dayOfWeek);
           anonymizedDate.setHours(0, 0, 0, 0);
           break;
-        case "day":
+        case 'day':
           anonymizedDate = new Date(
             date.getFullYear(),
             date.getMonth(),
@@ -440,8 +437,8 @@ export class PrivacyAlgorithms {
         granularity,
       };
     } catch (error) {
-      console.error("Error anonymizing date:", error);
-      return { date, granularity: "original" };
+      console.error('Error anonymizing date:', error);
+      return { date, granularity: 'original' };
     }
   }
 
@@ -462,15 +459,15 @@ export class PrivacyAlgorithms {
         midpoint,
       };
     } catch (error) {
-      console.error("Error anonymizing age:", error);
-      return { ageRange: "unknown", midpoint: age };
+      console.error('Error anonymizing age:', error);
+      return { ageRange: 'unknown', midpoint: age };
     }
   }
 
   // Private helper methods
 
   private generateMasterKey(): string {
-    return randomBytes(32).toString("hex");
+    return randomBytes(32).toString('hex');
   }
 
   private groupByQuasiIdentifiers(
@@ -480,7 +477,7 @@ export class PrivacyAlgorithms {
     const groups: Map<string, DataRecord[]> = new Map();
 
     for (const record of records) {
-      const key = quasiIdentifiers.map((qi) => record[qi]).join("|");
+      const key = quasiIdentifiers.map(qi => record[qi]).join('|');
       if (!groups.has(key)) {
         groups.set(key, []);
       }
@@ -495,10 +492,10 @@ export class PrivacyAlgorithms {
     quasiIdentifiers: string[],
   ): { records: DataRecord[]; generalizedFields: string[] } {
     const generalizedFields: string[] = [];
-    const generalizedRecords = group.map((record) => ({ ...record }));
+    const generalizedRecords = group.map(record => ({ ...record }));
 
     for (const qi of quasiIdentifiers) {
-      const values = group.map((r) => r[qi]);
+      const values = group.map(r => r[qi]);
       const generalizedValue = this.generalizeValues(values, qi);
 
       if (generalizedValue !== values[0]) {
@@ -515,22 +512,22 @@ export class PrivacyAlgorithms {
 
   private generalizeValues(values: any[], fieldName: string): any {
     // Simple generalization strategies
-    if (typeof values[0] === "number") {
+    if (typeof values[0] === 'number') {
       const min = Math.min(...values);
       const max = Math.max(...values);
       return `${min}-${max}`;
     }
 
-    if (typeof values[0] === "string") {
+    if (typeof values[0] === 'string') {
       // For strings, use common prefix or category
       const uniqueValues = [...new Set(values)];
       if (uniqueValues.length === 1) {
         return uniqueValues[0];
       }
-      return "*"; // Generalized to wildcard
+      return '*'; // Generalized to wildcard
     }
 
-    return "*";
+    return '*';
   }
 
   private groupByGeneralizedValues(
@@ -542,9 +539,9 @@ export class PrivacyAlgorithms {
     for (const record of records) {
       // Group by all attributes except sensitive ones
       const nonSensitiveKeys = Object.keys(record).filter(
-        (k) => !sensitiveAttributes.includes(k),
+        k => !sensitiveAttributes.includes(k),
       );
-      const key = nonSensitiveKeys.map((k) => record[k]).join("|");
+      const key = nonSensitiveKeys.map(k => record[k]).join('|');
 
       if (!groups.has(key)) {
         groups.set(key, []);
@@ -561,7 +558,7 @@ export class PrivacyAlgorithms {
     l: number,
   ): boolean {
     for (const attr of sensitiveAttributes) {
-      const values = group.map((r) => r[attr]);
+      const values = group.map(r => r[attr]);
       const uniqueValues = new Set(values);
       if (uniqueValues.size < l) {
         return false;
@@ -575,11 +572,11 @@ export class PrivacyAlgorithms {
     sensitiveAttributes: string[],
   ): DataRecord[] {
     // Simple further generalization - in practice, this would be more sophisticated
-    return group.map((record) => {
+    return group.map(record => {
       const generalized = { ...record };
       for (const attr of sensitiveAttributes) {
-        if (typeof generalized[attr] === "string") {
-          generalized[attr] = generalized[attr].substring(0, 1) + "*";
+        if (typeof generalized[attr] === 'string') {
+          generalized[attr] = generalized[attr].substring(0, 1) + '*';
         }
       }
       return generalized;
@@ -593,8 +590,7 @@ export class PrivacyAlgorithms {
     sensitiveAttributes: string[],
   ): { informationLoss: number; dataUtility: number; privacyLevel: number } {
     // Simplified metrics calculation
-    const informationLoss =
-      1 - anonymizedRecords.length / originalRecords.length;
+    const informationLoss = 1 - anonymizedRecords.length / originalRecords.length;
     const dataUtility = anonymizedRecords.length > 0 ? 0.8 : 0; // Simplified
     const privacyLevel = Math.min(informationLoss + 0.5, 1);
 
@@ -618,9 +614,9 @@ export class PrivacyAlgorithms {
   }
 
   private derivePurposeKey(purpose: string, salt: string): string {
-    return createHash("sha256")
+    return createHash('sha256')
       .update(this.masterKey + purpose + salt)
-      .digest("hex");
+      .digest('hex');
   }
 
   private async storePseudonymMapping(
@@ -653,8 +649,8 @@ export class PrivacyAlgorithms {
   ): boolean {
     // In production, implement proper authorization validation
     return (
-      authorization === "authorized_researcher" &&
-      purpose === "medical_research"
+      authorization === 'authorized_researcher'
+      && purpose === 'medical_research'
     );
   }
 }

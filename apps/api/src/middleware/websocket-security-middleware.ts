@@ -5,7 +5,7 @@
  * authentication, DDoS protection, and healthcare compliance features.
  */
 
-import { logger } from "../lib/logger";
+import { logger } from '../lib/logger';
 
 export interface WebSocketSecurityConfig {
   maxConnectionsPerIP: number;
@@ -36,12 +36,12 @@ export interface WebSocketConnectionInfo {
 export interface SecurityEvent {
   id: string;
   type:
-    | "connection_attempt"
-    | "authentication"
-    | "rate_limit"
-    | "ddos"
-    | "suspicious_activity";
-  severity: "low" | "medium" | "high" | "critical";
+    | 'connection_attempt'
+    | 'authentication'
+    | 'rate_limit'
+    | 'ddos'
+    | 'suspicious_activity';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   ip: string;
   _userId?: string;
@@ -85,67 +85,67 @@ export class WebSocketSecurityMiddleware {
     connectionInfo?: WebSocketConnectionInfo;
   }> {
     const ip = this.getClientIP(request);
-    const userAgent = request.headers["user-agent"] || "";
-    const origin = request.headers.origin || "";
+    const userAgent = request.headers['user-agent'] || '';
+    const origin = request.headers.origin || '';
     const connectionId = this.generateConnectionId();
 
     // Check if IP is blocked
     if (this.config.blockedIPs.includes(ip)) {
       this.logSecurityEvent({
-        type: "connection_attempt",
-        severity: "high",
-        message: "Connection attempt from blocked IP",
+        type: 'connection_attempt',
+        severity: 'high',
+        message: 'Connection attempt from blocked IP',
         ip,
         details: { userAgent, origin, blocked: true },
       });
-      return { allowed: false, reason: "IP address blocked" };
+      return { allowed: false, reason: 'IP address blocked' };
     }
 
     // Check origin restrictions
     if (
-      this.config.allowedOrigins.length > 0 &&
-      !this.config.allowedOrigins.includes(origin)
+      this.config.allowedOrigins.length > 0
+      && !this.config.allowedOrigins.includes(origin)
     ) {
       this.logSecurityEvent({
-        type: "connection_attempt",
-        severity: "medium",
-        message: "Connection attempt from disallowed origin",
+        type: 'connection_attempt',
+        severity: 'medium',
+        message: 'Connection attempt from disallowed origin',
         ip,
         details: { userAgent, origin, disallowed: true },
       });
-      return { allowed: false, reason: "Origin not allowed" };
+      return { allowed: false, reason: 'Origin not allowed' };
     }
 
     // Check DDoS protection
     if (this.config.enableDDoSProtection && (await this.isDDoSAttack(ip))) {
       this.logSecurityEvent({
-        type: "ddos",
-        severity: "critical",
-        message: "DDoS attack detected",
+        type: 'ddos',
+        severity: 'critical',
+        message: 'DDoS attack detected',
         ip,
         details: { userAgent, origin, ddosDetected: true },
       });
-      return { allowed: false, reason: "DDoS protection activated" };
+      return { allowed: false, reason: 'DDoS protection activated' };
     }
 
     // Check connection limits per IP
     if (this.config.enableRateLimiting && !this.checkConnectionLimits(ip)) {
       this.logSecurityEvent({
-        type: "rate_limit",
-        severity: "high",
-        message: "Connection limit exceeded for IP",
+        type: 'rate_limit',
+        severity: 'high',
+        message: 'Connection limit exceeded for IP',
         ip,
         details: { userAgent, origin, connectionLimitExceeded: true },
       });
-      return { allowed: false, reason: "Connection limit exceeded" };
+      return { allowed: false, reason: 'Connection limit exceeded' };
     }
 
     // Check for suspicious user agent
     if (this.isSuspiciousUserAgent(userAgent)) {
       this.logSecurityEvent({
-        type: "suspicious_activity",
-        severity: "medium",
-        message: "Suspicious user agent detected",
+        type: 'suspicious_activity',
+        severity: 'medium',
+        message: 'Suspicious user agent detected',
         ip,
         details: { userAgent, origin, suspicious: true },
       });
@@ -167,9 +167,9 @@ export class WebSocketSecurityMiddleware {
     this.trackConnection(connectionInfo);
 
     this.logSecurityEvent({
-      type: "connection_attempt",
-      severity: "low",
-      message: "WebSocket connection validated",
+      type: 'connection_attempt',
+      severity: 'low',
+      message: 'WebSocket connection validated',
       ip,
       details: { userAgent, origin, connectionId, allowed: true },
     });
@@ -189,7 +189,7 @@ export class WebSocketSecurityMiddleware {
   }> {
     const connection = this.connections.get(connectionId);
     if (!connection) {
-      return { allowed: false, reason: "Connection not found" };
+      return { allowed: false, reason: 'Connection not found' };
     }
 
     // Update activity
@@ -200,9 +200,9 @@ export class WebSocketSecurityMiddleware {
     const messageSize = JSON.stringify(message).length;
     if (messageSize > this.config.maxMessageSize) {
       this.logSecurityEvent({
-        type: "suspicious_activity",
-        severity: "medium",
-        message: "Message size exceeded",
+        type: 'suspicious_activity',
+        severity: 'medium',
+        message: 'Message size exceeded',
         ip: connection.ip,
         _userId: connection.userId,
         details: {
@@ -211,36 +211,36 @@ export class WebSocketSecurityMiddleware {
           maxSize: this.config.maxMessageSize,
         },
       });
-      return { allowed: false, reason: "Message too large" };
+      return { allowed: false, reason: 'Message too large' };
     }
 
     // Check rate limiting
     if (
-      this.config.enableRateLimiting &&
-      !this.checkMessageRate(connectionId)
+      this.config.enableRateLimiting
+      && !this.checkMessageRate(connectionId)
     ) {
       this.logSecurityEvent({
-        type: "rate_limit",
-        severity: "high",
-        message: "Message rate limit exceeded",
+        type: 'rate_limit',
+        severity: 'high',
+        message: 'Message rate limit exceeded',
         ip: connection.ip,
         _userId: connection.userId,
         details: { connectionId, messageCount: connection.messageCount },
       });
-      return { allowed: false, reason: "Rate limit exceeded" };
+      return { allowed: false, reason: 'Rate limit exceeded' };
     }
 
     // Validate message structure
     if (!this.validateMessageStructure(message)) {
       this.logSecurityEvent({
-        type: "suspicious_activity",
-        severity: "medium",
-        message: "Invalid message structure",
+        type: 'suspicious_activity',
+        severity: 'medium',
+        message: 'Invalid message structure',
         ip: connection.ip,
         _userId: connection.userId,
         details: { connectionId, message: typeof message },
       });
-      return { allowed: false, reason: "Invalid message structure" };
+      return { allowed: false, reason: 'Invalid message structure' };
     }
 
     return { allowed: true };
@@ -259,18 +259,18 @@ export class WebSocketSecurityMiddleware {
   }> {
     const connection = this.connections.get(connectionId);
     if (!connection) {
-      return { success: false, reason: "Connection not found" };
+      return { success: false, reason: 'Connection not found' };
     }
 
     // Check if user already has too many connections
     if (
-      this.config.enableRateLimiting &&
-      !this.checkUserConnectionLimits(userId)
+      this.config.enableRateLimiting
+      && !this.checkUserConnectionLimits(userId)
     ) {
       this.logSecurityEvent({
-        type: "rate_limit",
-        severity: "high",
-        message: "User connection limit exceeded",
+        type: 'rate_limit',
+        severity: 'high',
+        message: 'User connection limit exceeded',
         ip: connection.ip,
         userId,
         details: {
@@ -278,7 +278,7 @@ export class WebSocketSecurityMiddleware {
           currentConnections: this.userConnections.get(userId)?.size || 0,
         },
       });
-      return { success: false, reason: "Connection limit exceeded" };
+      return { success: false, reason: 'Connection limit exceeded' };
     }
 
     // Validate authentication token (simplified)
@@ -286,14 +286,14 @@ export class WebSocketSecurityMiddleware {
       const isValid = await this.validateAuthToken(token, _userId);
       if (!isValid) {
         this.logSecurityEvent({
-          type: "authentication",
-          severity: "high",
-          message: "Authentication failed",
+          type: 'authentication',
+          severity: 'high',
+          message: 'Authentication failed',
           ip: connection.ip,
           userId,
           details: { connectionId, tokenPresent: true },
         });
-        return { success: false, reason: "Authentication failed" };
+        return { success: false, reason: 'Authentication failed' };
       }
     }
 
@@ -306,9 +306,9 @@ export class WebSocketSecurityMiddleware {
     this.trackUserConnection(userId, connectionId);
 
     this.logSecurityEvent({
-      type: "authentication",
-      severity: "low",
-      message: "WebSocket connection authenticated",
+      type: 'authentication',
+      severity: 'low',
+      message: 'WebSocket connection authenticated',
       ip: connection.ip,
       userId,
       details: { connectionId, success: true },
@@ -328,9 +328,9 @@ export class WebSocketSecurityMiddleware {
     this.untrackConnection(connectionId);
 
     this.logSecurityEvent({
-      type: "connection_attempt",
-      severity: "low",
-      message: "WebSocket connection disconnected",
+      type: 'connection_attempt',
+      severity: 'low',
+      message: 'WebSocket connection disconnected',
       ip: connection.ip,
       _userId: connection.userId,
       details: { connectionId, duration: Date.now() - connection.connectedAt },
@@ -342,14 +342,14 @@ export class WebSocketSecurityMiddleware {
    */
   private getClientIP(_request: any): string {
     return (
-      request.headers["x-forwarded-for"] ||
-      request.headers["x-real-ip"] ||
-      request.connection.remoteAddress ||
-      request.socket.remoteAddress ||
-      request.info.remoteAddress ||
-      "unknown"
+      request.headers['x-forwarded-for']
+      || request.headers['x-real-ip']
+      || request.connection.remoteAddress
+      || request.socket.remoteAddress
+      || request.info.remoteAddress
+      || 'unknown'
     )
-      .split(",")[0]
+      .split(',')[0]
       .trim();
   }
 
@@ -432,8 +432,8 @@ export class WebSocketSecurityMiddleware {
   private checkUserConnectionLimits(_userId: string): boolean {
     const userConnections = this.userConnections.get(userId);
     return (
-      !userConnections ||
-      userConnections.size < this.config.maxConnectionsPerUser
+      !userConnections
+      || userConnections.size < this.config.maxConnectionsPerUser
     );
   }
 
@@ -452,7 +452,7 @@ export class WebSocketSecurityMiddleware {
 
     // Clean old timestamps
     const validTimestamps = timestamps.filter(
-      (timestamp) => now - timestamp < windowMs,
+      timestamp => now - timestamp < windowMs,
     );
     this.messageTimestamps.set(connectionId, validTimestamps);
 
@@ -473,7 +473,7 @@ export class WebSocketSecurityMiddleware {
    */
   private validateMessageStructure(message: any): boolean {
     // Basic validation - check if message is an object and not null
-    if (typeof message !== "object" || message === null) {
+    if (typeof message !== 'object' || message === null) {
       return false;
     }
 
@@ -487,7 +487,7 @@ export class WebSocketSecurityMiddleware {
       /onerror=/i,
     ];
 
-    return !dangerousPatterns.some((pattern) => pattern.test(messageStr));
+    return !dangerousPatterns.some(pattern => pattern.test(messageStr));
   }
 
   /**
@@ -498,7 +498,7 @@ export class WebSocketSecurityMiddleware {
     if (!connections) return false;
 
     // Check for rapid connection attempts
-    const recentConnections = Array.from(connections).filter((connectionId) => {
+    const recentConnections = Array.from(connections).filter(connectionId => {
       const connection = this.connections.get(connectionId);
       return connection && Date.now() - connection.connectedAt < 60000; // Last minute
     });
@@ -520,7 +520,7 @@ export class WebSocketSecurityMiddleware {
       /^$/, // Empty user agent
     ];
 
-    return suspiciousPatterns.some((pattern) => pattern.test(userAgent));
+    return suspiciousPatterns.some(pattern => pattern.test(userAgent));
   }
 
   /**
@@ -539,7 +539,7 @@ export class WebSocketSecurityMiddleware {
    * Log security event
    */
   private logSecurityEvent(
-    event: Omit<SecurityEvent, "id" | "timestamp">,
+    event: Omit<SecurityEvent, 'id' | 'timestamp'>,
   ): void {
     const securityEvent: SecurityEvent = {
       ...event,
@@ -557,7 +557,7 @@ export class WebSocketSecurityMiddleware {
     // Log to system logger
     const logMethod = this.getLogMethod(event.severity);
     logMethod(
-      "websocket_security",
+      'websocket_security',
       event.message,
       {
         eventId: securityEvent.id,
@@ -575,13 +575,13 @@ export class WebSocketSecurityMiddleware {
    */
   private getLogMethod(severity: string) {
     switch (severity) {
-      case "critical":
+      case 'critical':
         return logger.error;
-      case "high":
+      case 'high':
         return logger.warning;
-      case "medium":
+      case 'medium':
         return logger.warning;
-      case "low":
+      case 'low':
       default:
         return logger.info;
     }
@@ -614,8 +614,8 @@ export class WebSocketSecurityMiddleware {
 
     if (cleanedCount > 0) {
       logger.info(
-        "websocket_security_cleanup",
-        "Cleaned up inactive connections",
+        'websocket_security_cleanup',
+        'Cleaned up inactive connections',
         {
           cleanedCount,
         },
@@ -635,13 +635,13 @@ export class WebSocketSecurityMiddleware {
     connectionDistribution: Record<string, number>;
   } {
     const recentEvents = this.securityEvents.filter(
-      (event) => Date.now() - event.timestamp < 3600000, // Last hour
+      event => Date.now() - event.timestamp < 3600000, // Last hour
     );
 
     const connectionDistribution = recentEvents.reduce(
       (acc, _event) => {
-        if (event.type === "connection_attempt") {
-          acc[event.details.allowed ? "allowed" : "blocked"]++;
+        if (event.type === 'connection_attempt') {
+          acc[event.details.allowed ? 'allowed' : 'blocked']++;
         }
         return acc;
       },
@@ -665,9 +665,9 @@ export class WebSocketSecurityMiddleware {
     if (!this.config.blockedIPs.includes(ip)) {
       this.config.blockedIPs.push(ip);
       this.logSecurityEvent({
-        type: "suspicious_activity",
-        severity: "high",
-        message: "IP address blocked",
+        type: 'suspicious_activity',
+        severity: 'high',
+        message: 'IP address blocked',
         ip,
         details: { blocked: true },
       });
@@ -675,7 +675,7 @@ export class WebSocketSecurityMiddleware {
       // Disconnect all connections from this IP
       const ipConnections = this.ipConnections.get(ip);
       if (ipConnections) {
-        ipConnections.forEach((connectionId) => {
+        ipConnections.forEach(connectionId => {
           this.untrackConnection(connectionId);
         });
       }
@@ -690,9 +690,9 @@ export class WebSocketSecurityMiddleware {
     if (index > -1) {
       this.config.blockedIPs.splice(index, 1);
       this.logSecurityEvent({
-        type: "suspicious_activity",
-        severity: "low",
-        message: "IP address unblocked",
+        type: 'suspicious_activity',
+        severity: 'low',
+        message: 'IP address unblocked',
         ip,
         details: { unblocked: true },
       });

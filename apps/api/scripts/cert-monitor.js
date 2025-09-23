@@ -5,12 +5,12 @@
  * Runs periodic certificate checks and sends alerts
  */
 
-const path = require("path");
-const { certificateMonitor } = require("../dist/services/certificate-monitor");
+const path = require('path');
+const { certificateMonitor } = require('../dist/services/certificate-monitor');
 
 // Configuration
 const CHECK_INTERVAL = process.env.CERT_CHECK_INTERVAL || 6 * 60 * 60 * 1000; // 6 hours
-const RUN_ONCE = process.argv.includes("--once");
+const RUN_ONCE = process.argv.includes('--once');
 
 async function runCertificateCheck() {
   console.log(
@@ -28,18 +28,17 @@ async function runCertificateCheck() {
     console.log(`  Overall Status: ${healthStatus.status}`);
     console.log(`  Certificates Checked: ${healthStatus.certificates.length}`);
 
-    healthStatus.certificates.forEach((cert) => {
-      const daysText =
-        cert.daysRemaining !== undefined
-          ? ` (${cert.daysRemaining} days remaining)`
-          : "";
+    healthStatus.certificates.forEach(cert => {
+      const daysText = cert.daysRemaining !== undefined
+        ? ` (${cert.daysRemaining} days remaining)`
+        : '';
       console.log(`    ${cert.domain}: ${cert.status}${daysText}`);
     });
 
     // Exit with appropriate code for cron monitoring
-    if (healthStatus.status === "critical") {
+    if (healthStatus.status === 'critical') {
       process.exit(2);
-    } else if (healthStatus.status === "warning") {
+    } else if (healthStatus.status === 'warning') {
       process.exit(1);
     } else {
       process.exit(0);
@@ -80,14 +79,14 @@ async function startMonitoring() {
     }, CHECK_INTERVAL);
 
     // Keep the process running
-    process.on("SIGTERM", () => {
+    process.on('SIGTERM', () => {
       console.log(
         `[${new Date().toISOString()}] Received SIGTERM, shutting down gracefully`,
       );
       process.exit(0);
     });
 
-    process.on("SIGINT", () => {
+    process.on('SIGINT', () => {
       console.log(
         `[${new Date().toISOString()}] Received SIGINT, shutting down gracefully`,
       );
@@ -97,23 +96,23 @@ async function startMonitoring() {
 }
 
 // Handle uncaught errors
-process.on("uncaughtException", (error) => {
+process.on('uncaughtException', error => {
   console.error(`[${new Date().toISOString()}] Uncaught exception:`, error);
   process.exit(4);
 });
 
-process.on("unhandledRejection", (reason, promise) => {
+process.on('unhandledRejection', (reason, promise) => {
   console.error(
     `[${new Date().toISOString()}] Unhandled rejection at:`,
     promise,
-    "reason:",
+    'reason:',
     reason,
   );
   process.exit(5);
 });
 
 // Start monitoring
-startMonitoring().catch((error) => {
+startMonitoring().catch(error => {
   console.error(
     `[${new Date().toISOString()}] Failed to start monitoring:`,
     error.message,

@@ -20,18 +20,27 @@ import { ClientManagementDashboard } from "../ClientManagementDashboard";
 import {
   AguiClientSearchResponse,
   AguiClientAnalyticsResponse,
+  useQuery,
+  useMutation,
+  useCoAgent,
+  useCopilotAction,
 } from "@neonpro/agui-protocol";
 
-// Mock dependencies
-vi.mock("@copilotkit/react-core", async () => {
-  const actual = await vi.importActual("@copilotkit/react-core");
-  return {
-    ...actual,
-    useCoAgent: vi.fn(),
-    useCopilotAction: vi.fn(),
-    useCopilotReadable: vi.fn(),
-  };
-});
+// Replace the async vi.mock for @copilotkit/react-core with synchronous
+vi.mock("@copilotkit/react-core", () => ({
+  ...jest.requireActual("@copilotkit/react-core"),
+  useCoAgent: vi.fn(),
+  useCopilotAction: vi.fn(),
+  useCopilotReadable: vi.fn(),
+}));
+
+// Replace the async vi.mock for @tanstack/react-query with synchronous
+vi.mock("@tanstack/react-query", () => ({
+  ...jest.requireActual("@tanstack/react-query"),
+  useQuery: vi.fn(),
+  useMutation: vi.fn(),
+  useInfiniteQuery: vi.fn(),
+}));
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: vi.fn(() => ({
@@ -43,16 +52,6 @@ vi.mock("@supabase/supabase-js", () => ({
     })),
   })),
 }));
-
-vi.mock("@tanstack/react-query", async () => {
-  const actual = await vi.importActual("@tanstack/react-query");
-  return {
-    ...actual,
-    useQuery: vi.fn(),
-    useMutation: vi.fn(),
-    useInfiniteQuery: vi.fn(),
-  };
-});
 
 // Mock data
 const mockClients = [
@@ -149,29 +148,26 @@ describe("ClientManagementDashboard", () => {
       setState: vi.fn(),
     };
 
-    // Mock React Query hooks
-    const { useQuery, useMutation } = await import("@tanstack/react-query");
-    vi.mocked(useQuery).mockReturnValue({
+    // Set mock implementations synchronously
+    const rqModule = require("@tanstack/react-query");
+    vi.mocked(rqModule.useQuery).mockReturnValue({
       data: mockClients,
       isLoading: false,
       error: null,
       refetch: vi.fn(),
     });
 
-    vi.mocked(useMutation).mockReturnValue({
+    vi.mocked(rqModule.useMutation).mockReturnValue({
       mutate: vi.fn(),
       isLoading: false,
       error: null,
     });
 
-    // Mock CopilotKit hooks
-    const { useCoAgent, useCopilotAction } = await import(
-      "@copilotkit/react-core"
-    );
-    vi.mocked(useCoAgent).mockReturnValue([mockAgent, vi.fn()]);
+    const copilotModule = require("@copilotkit/react-core");
+    vi.mocked(copilotModule.useCoAgent).mockReturnValue([mockAgent, vi.fn()]);
 
     mockAction = vi.fn();
-    vi.mocked(useCopilotAction).mockReturnValue({
+    vi.mocked(copilotModule.useCopilotAction).mockReturnValue({
       invoke: mockAction,
       result: null,
     });
@@ -837,7 +833,7 @@ describe("ClientManagementDashboard", () => {
 
   describe("Integration with External Systems", () => {
     it("should integrate with CopilotKit agent properly", () => {
-      const { useCoAgent } = await import("@copilotkit/react-core");
+      const { useCoAgent } = require("@copilotkit/react-core");
 
       renderComponent();
 
@@ -845,7 +841,7 @@ describe("ClientManagementDashboard", () => {
     });
 
     it("should use React Query for data management", () => {
-      const { useQuery } = await import("@tanstack/react-query");
+      const { useQuery } = require("@tanstack/react-query");
 
       renderComponent();
 

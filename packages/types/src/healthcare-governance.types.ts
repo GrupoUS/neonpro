@@ -1,10 +1,9 @@
 // Healthcare Governance Types for CFM/ANVISA Compliance
 // Extends the base governance system with healthcare-specific metrics and policies
 
-import type {
+import {
   GovernanceService,
   AuditTrailEntry,
-  CreateAuditTrailEntry,
   PolicyManagement,
 } from "./governance.types";
 
@@ -154,12 +153,12 @@ export interface HealthcareAlert {
 }
 
 // Integration Layer Types
-export interface HealthcareAuditEvent extends CreateAuditTrailEntry {
+export interface HealthcareAuditEvent {
   action?: string;
   resource?: string;
   resourceType?: string;
   resourceId?: string;
-  userId?: string;
+  userId: string;
   clinicId?: string;
   patientId?: string;
   ipAddress?: string;

@@ -42,7 +42,7 @@ export interface PriorityScoreFactors {
 export const scorePriority = ({
   impact,
   effort,
-  _riskReduction,
+  riskReduction,
   strategicFit,
 }: PriorityScoreFactors) => {
   const base = impact * 2 + riskReduction * 1.5 + strategicFit * 1.2 - effort;

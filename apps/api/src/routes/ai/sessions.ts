@@ -1,30 +1,25 @@
-import {
-  ChatMessage,
-  ChatSession,
-  SessionResponse,
-  UserRole,
-} from "@neonpro/types";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { jwt } from "hono/jwt";
-import { handle } from "hono/vercel";
+import { ChatMessage, ChatSession, SessionResponse, UserRole } from '@neonpro/types';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { jwt } from 'hono/jwt';
+import { handle } from 'hono/vercel';
 
 // Create Hono app for Vercel deployment
-const app = new Hono().basePath("/api");
+const app = new Hono().basePath('/api');
 
 // Enable CORS for frontend integration
 app.use(
-  "*",
+  '*',
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
-    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
     maxAge: 86400, // 24 hours
   }),
 );
 
 // JWT middleware for authentication
-app.use("*", async (c, next) => {
+app.use('*', async (c, next) => {
   const jwtMiddleware = jwt({
     secret: process.env.JWT_SECRET!,
   });
@@ -42,24 +37,24 @@ function validateUserSession(
   sessionId: string,
 ): { valid: boolean; error?: string } {
   if (!payload.sub) {
-    return { valid: false, error: "Invalid user token" };
+    return { valid: false, error: 'Invalid user token' };
   }
 
   if (!sessionId) {
-    return { valid: false, error: "Session ID is required" };
+    return { valid: false, error: 'Session ID is required' };
   }
 
   const session = sessionStore.get(sessionId);
   if (!session) {
-    return { valid: false, error: "Session not found" };
+    return { valid: false, error: 'Session not found' };
   }
 
   if (session.userId !== payload.sub) {
-    return { valid: false, error: "Session does not belong to current user" };
+    return { valid: false, error: 'Session does not belong to current user' };
   }
 
-  if (session.status === "terminated") {
-    return { valid: false, error: "Session has been terminated" };
+  if (session.status === 'terminated') {
+    return { valid: false, error: 'Session has been terminated' };
   }
 
   // Check session expiration (30 minutes of inactivity)
@@ -69,9 +64,9 @@ function validateUserSession(
 
   if (inactiveTime > 30 * 60 * 1000) {
     // 30 minutes
-    session.status = "expired";
+    session.status = 'expired';
     sessionStore.set(sessionId, session);
-    return { valid: false, error: "Session has expired" };
+    return { valid: false, error: 'Session has expired' };
   }
 
   return { valid: true };
@@ -81,10 +76,10 @@ function validateUserSession(
  * GET /api/ai/sessions/:sessionId
  * Retrieve conversation session data
  */
-app.get("/ai/sessions/:sessionId", async (c) => {
+app.get('/ai/sessions/:sessionId', async c => {
   try {
-    const sessionId = c.req.param("sessionId");
-    const payload = c.get("jwtPayload");
+    const sessionId = c.req.param('sessionId');
+    const payload = c.get('jwtPayload');
 
     // Validate session access
     const validation = validateUserSession(payload, sessionId);
@@ -92,11 +87,11 @@ app.get("/ai/sessions/:sessionId", async (c) => {
       return c.json(
         {
           error: {
-            code: "SESSION_INVALID",
-            message: validation.error || "Invalid session",
+            code: 'SESSION_INVALID',
+            message: validation.error || 'Invalid session',
           },
         },
-        validation.error?.includes("not found") ? 404 : 401,
+        validation.error?.includes('not found') ? 404 : 401,
       );
     }
 
@@ -119,13 +114,13 @@ app.get("/ai/sessions/:sessionId", async (c) => {
 
     return c.json(response, 200);
   } catch (error) {
-    console.error("Session endpoint error:", error);
+    console.error('Session endpoint error:', error);
 
     return c.json(
       {
         error: {
-          code: "INTERNAL_ERROR",
-          message: "Failed to retrieve session data",
+          code: 'INTERNAL_ERROR',
+          message: 'Failed to retrieve session data',
         },
       },
       500,
@@ -147,7 +142,7 @@ export function createSession(
   const session: ChatSession = {
     id: sessionId,
     userId,
-    status: "active",
+    status: 'active',
     createdAt: now,
     lastActivity: now,
     _context: {
@@ -169,7 +164,7 @@ export function createSession(
  */
 export function addMessageToSession(
   sessionId: string,
-  message: Omit<ChatMessage, "id" | "timestamp">,
+  message: Omit<ChatMessage, 'id' | 'timestamp'>,
 ): ChatMessage | null {
   const session = sessionStore.get(sessionId);
   if (!session) {
@@ -205,7 +200,7 @@ export function addMessageToSession(
  */
 export function updateSessionContext(
   sessionId: string,
-  _context: Partial<ChatSession["context"]>,
+  _context: Partial<ChatSession['context']>,
 ): boolean {
   const session = sessionStore.get(sessionId);
   if (!session) {
@@ -231,7 +226,7 @@ export function terminateSession(sessionId: string): boolean {
     return false;
   }
 
-  session.status = "terminated";
+  session.status = 'terminated';
   session.lastActivity = new Date();
   sessionStore.set(sessionId, session);
   return true;
@@ -249,7 +244,7 @@ export function cleanupExpiredSessions(): void {
     const inactiveTime = now.getTime() - lastActivity.getTime();
 
     if (inactiveTime > expirationThreshold) {
-      session.status = "expired";
+      session.status = 'expired';
       sessionStore.set(sessionId, session);
     }
   }
@@ -258,24 +253,24 @@ export function cleanupExpiredSessions(): void {
 /**
  * Health check endpoint
  */
-app.get("/ai/sessions/health", async (c) => {
+app.get('/ai/sessions/health', async c => {
   try {
     const activeSessions = Array.from(sessionStore.values()).filter(
-      (s) => s.status === "active",
+      s => s.status === 'active',
     ).length;
 
     const totalSessions = sessionStore.size;
 
     return c.json(
       {
-        status: "healthy",
+        status: 'healthy',
         timestamp: new Date().toISOString(),
         sessions: {
           active: activeSessions,
           total: totalSessions,
         },
         store: {
-          type: "memory",
+          type: 'memory',
           entries: totalSessions,
         },
       },
@@ -284,9 +279,9 @@ app.get("/ai/sessions/health", async (c) => {
   } catch (error) {
     return c.json(
       {
-        status: "unhealthy",
+        status: 'unhealthy',
         timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : "Unknown error",
+        error: error instanceof Error ? error.message : 'Unknown error',
       },
       500,
     );

@@ -253,7 +253,7 @@ describe('Healthcare Security Headers', () => {
   it('should enforce Content Security Policy for healthcare applications', () => {
     // RED: CSP prevents XSS attacks in medical interfaces
     const securityHeaders = {
-      'Content-Security-Policy': ',
+      'Content-Security-Policy': '',
       'X-Content-Type-Options': 'nosniff',
       'X-Frame-Options': 'DENY',
       'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',

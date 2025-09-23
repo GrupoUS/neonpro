@@ -1,5 +1,5 @@
-import { Context, Next } from "hono";
-import { logger } from "../lib/logger";
+import { Context, Next } from 'hono';
+import { logger } from '../lib/logger';
 
 /**
  * Audit log entry interface
@@ -29,23 +29,23 @@ interface AuditLogConfig {
   includeRequestBody?: boolean;
   includeResponseBody?: boolean;
   sensitiveFields?: string[];
-  logLevel?: "debug" | "info" | "warn" | "error";
+  logLevel?: 'debug' | 'info' | 'warn' | 'error';
 }
 
 /**
  * Default sensitive fields to redact from audit logs
  */
 const DEFAULT_SENSITIVE_FIELDS = [
-  "password",
-  "token",
-  "secret",
-  "key",
-  "authorization",
-  "cpf",
-  "rg",
-  "ssn",
-  "credit_card",
-  "medical_record",
+  'password',
+  'token',
+  'secret',
+  'key',
+  'authorization',
+  'cpf',
+  'rg',
+  'ssn',
+  'credit_card',
+  'medical_record',
 ];
 
 /**
@@ -55,24 +55,24 @@ function sanitizeData(
   data: any,
   sensitiveFields: string[] = DEFAULT_SENSITIVE_FIELDS,
 ): any {
-  if (!data || typeof data !== "object") {
+  if (!data || typeof data !== 'object') {
     return data;
   }
 
   if (Array.isArray(data)) {
-    return data.map((item) => sanitizeData(item, sensitiveFields));
+    return data.map(item => sanitizeData(item, sensitiveFields));
   }
 
   const sanitized: any = {};
 
   for (const [key, value] of Object.entries(data)) {
-    const isSensitive = sensitiveFields.some((field) =>
-      key.toLowerCase().includes(field.toLowerCase()),
+    const isSensitive = sensitiveFields.some(field =>
+      key.toLowerCase().includes(field.toLowerCase())
     );
 
     if (isSensitive) {
-      sanitized[key] = "[REDACTED]";
-    } else if (typeof value === "object" && value !== null) {
+      sanitized[key] = '[REDACTED]';
+    } else if (typeof value === 'object' && value !== null) {
       sanitized[key] = sanitizeData(value, sensitiveFields);
     } else {
       sanitized[key] = value;
@@ -91,17 +91,17 @@ function extractActionAndResource(
 ): { action: string; resource: string } {
   // Extract resource from path
   const pathParts = path
-    .split("/")
-    .filter((part) => part && !part.match(/^v\d+$/));
-  const resource = pathParts[0] || "unknown";
+    .split('/')
+    .filter(part => part && !part.match(/^v\d+$/));
+  const resource = pathParts[0] || 'unknown';
 
   // Map HTTP methods to actions
   const actionMap: Record<string, string> = {
-    GET: "read",
-    POST: "create",
-    PUT: "update",
-    PATCH: "update",
-    DELETE: "delete",
+    GET: 'read',
+    POST: 'create',
+    PUT: 'update',
+    PATCH: 'update',
+    DELETE: 'delete',
   };
 
   const action = actionMap[method.toUpperCase()] || method.toLowerCase();
@@ -116,7 +116,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
   const {
     includeRequestBody = false,
     sensitiveFields = DEFAULT_SENSITIVE_FIELDS,
-    logLevel = "info",
+    logLevel = 'info',
   } = config;
 
   return async (c: Context, next: Next) => {
@@ -125,29 +125,27 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
     // Extract request information
     const method = c.req.method;
     const path = c.req.path;
-    const ip =
-      c.req.header("x-forwarded-for") ||
-      c.req.header("x-real-ip") ||
-      c.req.header("cf-connecting-ip") ||
-      "unknown";
-    const userAgent = c.req.header("user-agent") || "unknown";
-    const requestId = c.get("requestId") || "unknown";
+    const ip = c.req.header('x-forwarded-for')
+      || c.req.header('x-real-ip')
+      || c.req.header('cf-connecting-ip')
+      || 'unknown';
+    const userAgent = c.req.header('user-agent') || 'unknown';
+    const requestId = c.get('requestId') || 'unknown';
 
     // Extract user information if available
-    const user = c.get("user");
-    const userId = user?.id || c.get("userId");
-    const clinicId = user?.clinicId || c.get("clinicId");
-    const sessionId = c.get("sessionId") || c.req.header("x-session-id");
+    const user = c.get('user');
+    const userId = user?.id || c.get('userId');
+    const clinicId = user?.clinicId || c.get('clinicId');
+    const sessionId = c.get('sessionId') || c.req.header('x-session-id');
 
     // Extract action and resource
     const { action, resource } = extractActionAndResource(method, path);
 
     // Extract resource ID from path or query params
-    const resourceId =
-      c.req.param("id") ||
-      c.req.param("patientId") ||
-      c.req.param("appointmentId") ||
-      c.req.query("id");
+    const resourceId = c.req.param('id')
+      || c.req.param('patientId')
+      || c.req.param('appointmentId')
+      || c.req.query('id');
 
     // Prepare base audit entry
     const baseAuditEntry: Partial<AuditLogEntry> = {
@@ -167,7 +165,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
 
     // Get request body if configured
     let requestBody: any;
-    if (includeRequestBody && ["POST", "PUT", "PATCH"].includes(method)) {
+    if (includeRequestBody && ['POST', 'PUT', 'PATCH'].includes(method)) {
       try {
         // Clone the request to read the body without consuming it
         // Note: HonoRequest may not have clone method, so we try to access body directly
@@ -176,7 +174,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
         } catch (bodyError) {
           // If we can't read the body, continue without it
           console.warn(
-            "Could not read request body for audit logging:",
+            'Could not read request body for audit logging:',
             bodyError,
           );
         }
@@ -219,7 +217,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
           success: false,
           error: {
             message: err instanceof Error ? err.message : String(err),
-            name: err instanceof Error ? err.name : "Unknown",
+            name: err instanceof Error ? err.name : 'Unknown',
           },
         },
       } as AuditLogEntry;
@@ -229,23 +227,23 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
     const logMessage = `${action.toUpperCase()} ${resource}`;
     const logContext = {
       audit: auditEntry,
-      type: "audit",
+      type: 'audit',
     };
 
     if (error) {
       logger.error(logMessage, logContext);
     } else {
       switch (logLevel) {
-        case "debug":
+        case 'debug':
           logger.debug(logMessage, logContext);
           break;
-        case "warn":
+        case 'warn':
           logger.warn(logMessage, logContext);
           break;
-        case "error":
+        case 'error':
           logger.error(logMessage, logContext);
           break;
-        case "info":
+        case 'info':
         default:
           logger.info(logMessage, logContext);
           break;
@@ -253,7 +251,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
     }
 
     // Store audit entry in context for potential use by other middleware
-    c.set("auditEntry", auditEntry);
+    c.set('auditEntry', auditEntry);
 
     // Re-throw error if one occurred
     if (error) {
@@ -271,17 +269,17 @@ export function healthcareAuditMiddleware() {
     includeResponseBody: false, // Don't include response body to avoid logging sensitive data
     sensitiveFields: [
       ...DEFAULT_SENSITIVE_FIELDS,
-      "cpf",
-      "rg",
-      "cns", // Cartão Nacional de Saúde
-      "medical_record",
-      "diagnosis",
-      "medication",
-      "treatment",
-      "patient_data",
-      "health_data",
+      'cpf',
+      'rg',
+      'cns', // Cartão Nacional de Saúde
+      'medical_record',
+      'diagnosis',
+      'medication',
+      'treatment',
+      'patient_data',
+      'health_data',
     ],
-    logLevel: "info",
+    logLevel: 'info',
   });
 }
 
@@ -294,16 +292,16 @@ export function financialAuditMiddleware() {
     includeResponseBody: false,
     sensitiveFields: [
       ...DEFAULT_SENSITIVE_FIELDS,
-      "credit_card",
-      "debit_card",
-      "bank_account",
-      "pix_key",
-      "payment_method",
-      "card_number",
-      "cvv",
-      "expiry",
+      'credit_card',
+      'debit_card',
+      'bank_account',
+      'pix_key',
+      'payment_method',
+      'card_number',
+      'cvv',
+      'expiry',
     ],
-    logLevel: "info",
+    logLevel: 'info',
   });
 }
 
@@ -316,12 +314,12 @@ export function authAuditMiddleware() {
     includeResponseBody: false,
     sensitiveFields: [
       ...DEFAULT_SENSITIVE_FIELDS,
-      "password",
-      "old_password",
-      "new_password",
-      "confirm_password",
+      'password',
+      'old_password',
+      'new_password',
+      'confirm_password',
     ],
-    logLevel: "info",
+    logLevel: 'info',
   });
 }
 

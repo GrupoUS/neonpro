@@ -21,13 +21,13 @@ export class TempPatientDocumentService {
     documentId: string,
     _userId: string,
   ): Promise<PatientDocument | null> {
-    console.log("getDocument called with:", documentId, _userId);
+    console.log('getDocument called with:', documentId, _userId);
     return null;
   }
 
   async getFileContent(storagePath: string): Promise<ArrayBuffer> {
-    console.log("getFileContent called with:", storagePath);
+    console.log('getFileContent called with:', storagePath);
     const encoder = new TextEncoder();
-    return encoder.encode("Mock content").buffer;
+    return encoder.encode('Mock content').buffer;
   }
 }

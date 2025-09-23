@@ -31,6 +31,7 @@ import type {
   EnhancedAIRequest,
   EnhancedAIResponse,
   UserSubscription,
+  AIFeatureCode,
 } from "./enhanced-ai";
 
 // Re-export the imported types
@@ -48,6 +49,7 @@ export type {
   EnhancedAIRequest,
   EnhancedAIResponse,
   UserSubscription,
+  AIFeatureCode,
 };
 
 // ================================================
@@ -337,16 +339,16 @@ export interface PerformanceBenchmarks {
 }
 
 /**
- * AI feature codes for plan features
+ * AI feature codes for plan features (re-exported from enhanced-ai.ts)
  */
-export type AIFeatureCode =
-  | "ai_chat_basic"
-  | "ai_chat_advanced"
-  | "ai_analytics"
-  | "ai_insights"
-  | "ai_predictions"
-  | "custom_models"
-  | "priority_support";
+// export type AIFeatureCode = // Removed duplicate - now imported from enhanced-ai.ts
+//   | "ai_chat_basic"
+//   | "ai_chat_advanced"
+//   | "ai_analytics"
+//   | "ai_insights"
+//   | "ai_predictions"
+//   | "custom_models"
+//   | "priority_support";
 
 // ================================================
 // REQUEST AND RESPONSE TYPES

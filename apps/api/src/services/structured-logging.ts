@@ -5,10 +5,10 @@
 
 // Define log levels that match common logging standards
 export enum LogLevel {
-  DEBUG = "debug",
-  INFO = "info",
-  WARN = "warn",
-  ERROR = "error",
+  DEBUG = 'debug',
+  INFO = 'info',
+  WARN = 'warn',
+  ERROR = 'error',
 }
 
 // Define structured log entry interface
@@ -36,8 +36,7 @@ const HEALTHCARE_PATTERNS: Record<string, RegExp> = {
   cpf: /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g,
   cns: /\b\d{3}\s\d{4}\s\d{4}\s\d{4}\b/g,
   crm: /\bCRM\s*\d{4,6}\b/gi,
-  patientName:
-    /\b(patient\s+name|nome\s+do\s+paciente):\s*[A-Z][a-z]+\s+[A-Z][a-z]+\b/gi,
+  patientName: /\b(patient\s+name|nome\s+do\s+paciente):\s*[A-Z][a-z]+\s+[A-Z][a-z]+\b/gi,
   medicalRecord: /\b(medical\s+record|prontuário):\s*[A-Z0-9-]+\b/gi,
   diagnosis: /\b(diagnosis|diagnóstico):\s*[^.,]+/gi,
   treatment: /\b(treatment|tratamento):\s*[^.,]+/gi,
@@ -73,10 +72,10 @@ function redactMetadata(metadata: Record<string, any>): Record<string, any> {
   const redacted: Record<string, any> = {};
 
   Object.entries(metadata).forEach(([key, _value]) => {
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       const { redacted: redactedValue } = redactSensitiveData(value);
       redacted[key] = redactedValue;
-    } else if (typeof value === "object" && value !== null) {
+    } else if (typeof value === 'object' && value !== null) {
       redacted[key] = redactMetadata(value);
     } else {
       redacted[key] = value;
@@ -104,8 +103,7 @@ function createLogEntry(
   } = {},
 ): LogEntry {
   // Redact sensitive data from message
-  const { redacted: redactedMessage, fields: redactedFields } =
-    redactSensitiveData(message);
+  const { redacted: redactedMessage, fields: redactedFields } = redactSensitiveData(message);
 
   // Process metadata if provided
   const processedMetadata = context.metadata
@@ -151,8 +149,8 @@ class StructuredLogger {
   private serviceVersion: string;
 
   private constructor(
-    serviceName: string = "api",
-    serviceVersion: string = "1.0.0",
+    serviceName: string = 'api',
+    serviceVersion: string = '1.0.0',
   ) {
     this.serviceName = serviceName;
     this.serviceVersion = serviceVersion;
@@ -262,8 +260,8 @@ class StructuredLogger {
 
 // Export singleton instance
 export const structuredLogger = StructuredLogger.getInstance(
-  "neonpro-api",
-  "1.0.0",
+  'neonpro-api',
+  '1.0.0',
 );
 
 // Export types and utilities for external use

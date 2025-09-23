@@ -5,36 +5,36 @@
  * with LGPD compliance and healthcare security requirements.
  */
 
-import { createClient } from "@supabase/supabase-js";
-import { createHash } from "crypto";
-import { z } from "zod";
-import { Database } from "../../../../packages/types/src/database";
+import { createClient } from '@supabase/supabase-js';
+import { createHash } from 'crypto';
+import { z } from 'zod';
+import { Database } from '../../../../packages/types/src/database';
 // Input validation schemas
 const PermissionContextSchema = z.object({
-  _userId: z.string().min(1, "User ID is required").max(255),
+  _userId: z.string().min(1, 'User ID is required').max(255),
   sessionId: z.string().max(255).optional(),
   patientId: z.string().max(255).optional(),
-  action: z.enum(["read", "write", "delete", "admin"], {
-    errorMap: () => ({ message: "Invalid action type" }),
+  action: z.enum(['read', 'write', 'delete', 'admin'], {
+    errorMap: () => ({ message: 'Invalid action type' }),
   }),
   resource: z.enum(
     [
-      "agent_sessions",
-      "agent_messages",
-      "agent_context",
-      "agent_audit",
-      "patient_data",
-      "financial_data",
+      'agent_sessions',
+      'agent_messages',
+      'agent_context',
+      'agent_audit',
+      'patient_data',
+      'financial_data',
     ],
     {
-      errorMap: () => ({ message: "Invalid resource type" }),
+      errorMap: () => ({ message: 'Invalid resource type' }),
     },
   ),
   metadata: z.record(z.any()).optional(),
 });
 
-const UserIdSchema = z.string().min(1, "User ID is required").max(255);
-const SessionIdSchema = z.string().min(1, "Session ID is required").max(255);
+const UserIdSchema = z.string().min(1, 'User ID is required').max(255);
+const SessionIdSchema = z.string().min(1, 'Session ID is required').max(255);
 
 export type ValidatedPermissionContext = z.infer<
   typeof PermissionContextSchema
@@ -44,14 +44,14 @@ export interface PermissionContext {
   _userId: string;
   sessionId?: string;
   patientId?: string;
-  action: "read" | "write" | "delete" | "admin";
+  action: 'read' | 'write' | 'delete' | 'admin';
   resource:
-    | "agent_sessions"
-    | "agent_messages"
-    | "agent_context"
-    | "agent_audit"
-    | "patient_data"
-    | "financial_data";
+    | 'agent_sessions'
+    | 'agent_messages'
+    | 'agent_context'
+    | 'agent_audit'
+    | 'patient_data'
+    | 'financial_data';
   metadata?: Record<string, any>;
 }
 
@@ -69,7 +69,7 @@ export interface PermissionResult {
 
 export interface UserRole {
   id: string;
-  _role: "admin" | "clinic_admin" | "professional" | "staff" | "patient";
+  _role: 'admin' | 'clinic_admin' | 'professional' | 'staff' | 'patient';
   clinicId?: string;
   permissions: string[];
   scopes: string[];
@@ -91,7 +91,7 @@ export class AgentPermissionService {
   constructor(supabaseUrl: string, supabaseServiceKey: string) {
     // Validate configuration
     if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error("Supabase configuration is required");
+      throw new Error('Supabase configuration is required');
     }
 
     this.supabase = createClient<Database>(supabaseUrl, supabaseServiceKey);
@@ -115,14 +115,14 @@ export class AgentPermissionService {
       if (!(await this.checkRateLimit(validatedContext._userId))) {
         return {
           granted: false,
-          reason: "Rate limit exceeded",
+          reason: 'Rate limit exceeded',
           auditLog: {
             action: validatedContext.action,
             resource: validatedContext.resource,
             _userId: validatedContext._userId,
             details: {
               denied: true,
-              reason: "rate_limit_exceeded",
+              reason: 'rate_limit_exceeded',
               processingTime: Date.now() - startTime,
             },
           },
@@ -151,14 +151,14 @@ export class AgentPermissionService {
       // No role has permission
       const denialResult: PermissionResult = {
         granted: false,
-        reason: "Insufficient permissions",
+        reason: 'Insufficient permissions',
         auditLog: {
           action: validatedContext.action,
           resource: validatedContext.resource,
           _userId: validatedContext._userId,
           details: {
             denied: true,
-            reason: "no_sufficient_role",
+            reason: 'no_sufficient_role',
             processingTime: Date.now() - startTime,
           },
         },
@@ -172,23 +172,22 @@ export class AgentPermissionService {
 
       return denialResult;
     } catch (error) {
-      console.error("Permission check error:", error);
+      console.error('Permission check error:', error);
 
       // Fail secure - deny permission on error
       const errorResult: PermissionResult = {
         granted: false,
         reason: this.failSecureMode
-          ? "Permission system error"
-          : "System unavailable",
+          ? 'Permission system error'
+          : 'System unavailable',
         auditLog: {
           action: validatedContext.action,
           resource: validatedContext.resource,
           _userId: validatedContext._userId,
           details: {
-            error:
-              error instanceof Error
-                ? this.sanitizeError(error)
-                : "Unknown error",
+            error: error instanceof Error
+              ? this.sanitizeError(error)
+              : 'Unknown error',
             processingTime: Date.now() - startTime,
             failSecure: this.failSecureMode,
           },
@@ -199,8 +198,7 @@ export class AgentPermissionService {
         ...validatedContext,
         granted: false,
         processingTime: Date.now() - startTime,
-        error:
-          error instanceof Error ? this.sanitizeError(error) : "Unknown error",
+        error: error instanceof Error ? this.sanitizeError(error) : 'Unknown error',
       });
 
       return errorResult;
@@ -218,9 +216,9 @@ export class AgentPermissionService {
     // Check cache first
     const cached = this.cache.get(cacheKey);
     if (
-      cached &&
-      cached.expires > Date.now() &&
-      cached.version === this.cacheVersion
+      cached
+      && cached.expires > Date.now()
+      && cached.version === this.cacheVersion
     ) {
       return [cached.permissions];
     }
@@ -228,7 +226,7 @@ export class AgentPermissionService {
     try {
       // Get user roles from database with validation
       const { data, error } = await this.supabase
-        .from("user_roles")
+        .from('user_roles')
         .select(
           `
           *,
@@ -238,29 +236,23 @@ export class AgentPermissionService {
           )
         `,
         )
-        .eq("user_id", validatedUserId)
-        .eq("active", true);
+        .eq('user_id', validatedUserId)
+        .eq('active', true);
 
       if (error) {
         throw error;
       }
 
-      const roles: UserRole[] =
-        data?.map((role) => ({
-          id: this.sanitizeString(role.id),
-          _role: this.validateRoleType(role._role),
-          clinicId: role.clinic_id
-            ? this.sanitizeString(role.clinic_id)
-            : undefined,
-          permissions:
-            role.role_permissions?.map((rp) =>
-              this.sanitizePermissionString(rp.permission),
-            ) || [],
-          scopes:
-            role.role_permissions?.map((rp) =>
-              this.sanitizeScopeString(rp.scope),
-            ) || [],
-        })) || [];
+      const roles: UserRole[] = data?.map(role => ({
+        id: this.sanitizeString(role.id),
+        _role: this.validateRoleType(role._role),
+        clinicId: role.clinic_id
+          ? this.sanitizeString(role.clinic_id)
+          : undefined,
+        permissions: role.role_permissions?.map(rp => this.sanitizePermissionString(rp.permission))
+          || [],
+        scopes: role.role_permissions?.map(rp => this.sanitizeScopeString(rp.scope)) || [],
+      })) || [];
 
       // Cache the result with size limit
       if (roles.length > 0 && this.cache.size < this.maxCacheSize) {
@@ -273,7 +265,7 @@ export class AgentPermissionService {
 
       return roles;
     } catch (error) {
-      console.error("Error fetching user roles:", error);
+      console.error('Error fetching user roles:', error);
       // Return empty array on error - fail secure
       return [];
     }
@@ -290,31 +282,31 @@ export class AgentPermissionService {
 
     // Check if role has the base permission
     if (
-      !role.permissions.includes(basePermission) &&
-      !role.permissions.includes("*:*")
+      !role.permissions.includes(basePermission)
+      && !role.permissions.includes('*:*')
     ) {
-      return { granted: false, reason: "Role lacks required permission" };
+      return { granted: false, reason: 'Role lacks required permission' };
     }
 
     // Role-specific permission logic
     switch (role._role) {
-      case "admin":
+      case 'admin':
         return this.checkAdminPermission(role, _context);
 
-      case "clinic_admin":
+      case 'clinic_admin':
         return this.checkClinicAdminPermission(role, _context);
 
-      case "professional":
+      case 'professional':
         return this.checkProfessionalPermission(role, _context);
 
-      case "staff":
+      case 'staff':
         return this.checkStaffPermission(role, _context);
 
-      case "patient":
+      case 'patient':
         return this.checkPatientPermission(role, _context);
 
       default:
-        return { granted: false, reason: "Unknown role type" };
+        return { granted: false, reason: 'Unknown role type' };
     }
   }
 
@@ -328,8 +320,8 @@ export class AgentPermissionService {
     return {
       granted: true,
       conditions: {
-        _role: "admin",
-        scope: "global",
+        _role: 'admin',
+        scope: 'global',
       },
     };
   }
@@ -342,17 +334,17 @@ export class AgentPermissionService {
     _context: PermissionContext,
   ): Promise<PermissionResult> {
     // For patient data access, verify patient belongs to clinic
-    if (context.resource === "patient_data" && context.patientId) {
+    if (context.resource === 'patient_data' && context.patientId) {
       const { data: patient } = await this.supabase
-        .from("patients")
-        .select("clinic_id")
-        .eq("id", context.patientId)
+        .from('patients')
+        .select('clinic_id')
+        .eq('id', context.patientId)
         .single();
 
       if (!patient || patient.clinic_id !== role.clinicId) {
         return {
           granted: false,
-          reason: "Patient not in clinic scope",
+          reason: 'Patient not in clinic scope',
         };
       }
     }
@@ -360,8 +352,8 @@ export class AgentPermissionService {
     return {
       granted: true,
       conditions: {
-        _role: "clinic_admin",
-        scope: "clinic",
+        _role: 'clinic_admin',
+        scope: 'clinic',
         clinicId: role.clinicId,
       },
     };
@@ -375,29 +367,29 @@ export class AgentPermissionService {
     _context: PermissionContext,
   ): Promise<PermissionResult> {
     // For patient data access, verify professional has access to patient
-    if (context.resource === "patient_data" && context.patientId) {
+    if (context.resource === 'patient_data' && context.patientId) {
       const { data: assignment } = await this.supabase
-        .from("professional_patient_assignments")
-        .select("id")
-        .eq("professional_id", context._userId)
-        .eq("patient_id", context.patientId)
-        .eq("active", true)
+        .from('professional_patient_assignments')
+        .select('id')
+        .eq('professional_id', context._userId)
+        .eq('patient_id', context.patientId)
+        .eq('active', true)
         .single();
 
       if (!assignment) {
         return {
           granted: false,
-          reason: "No professional-patient assignment",
+          reason: 'No professional-patient assignment',
         };
       }
     }
 
     // For financial data, check if professional has billing permissions
-    if (context.resource === "financial_data") {
-      if (!role.permissions.includes("write:financial_data")) {
+    if (context.resource === 'financial_data') {
+      if (!role.permissions.includes('write:financial_data')) {
         return {
           granted: false,
-          reason: "Professional lacks financial write permissions",
+          reason: 'Professional lacks financial write permissions',
         };
       }
     }
@@ -405,8 +397,8 @@ export class AgentPermissionService {
     return {
       granted: true,
       conditions: {
-        _role: "professional",
-        scope: "assigned_patients",
+        _role: 'professional',
+        scope: 'assigned_patients',
         clinicId: role.clinicId,
       },
     };
@@ -420,42 +412,42 @@ export class AgentPermissionService {
     _context: PermissionContext,
   ): Promise<PermissionResult> {
     // Staff cannot access financial data
-    if (context.resource === "financial_data") {
+    if (context.resource === 'financial_data') {
       return {
         granted: false,
-        reason: "Staff cannot access financial data",
+        reason: 'Staff cannot access financial data',
       };
     }
 
     // For patient data, verify clinic membership
-    if (context.resource === "patient_data" && context.patientId) {
+    if (context.resource === 'patient_data' && context.patientId) {
       const { data: patient } = await this.supabase
-        .from("patients")
-        .select("clinic_id")
-        .eq("id", context.patientId)
+        .from('patients')
+        .select('clinic_id')
+        .eq('id', context.patientId)
         .single();
 
       if (!patient || patient.clinic_id !== role.clinicId) {
         return {
           granted: false,
-          reason: "Patient not in clinic scope",
+          reason: 'Patient not in clinic scope',
         };
       }
     }
 
     // Staff can only read agent data, not write/delete
-    if (context.resource.startsWith("agent") && context.action !== "read") {
+    if (context.resource.startsWith('agent') && context.action !== 'read') {
       return {
         granted: false,
-        reason: "Staff can only read agent data",
+        reason: 'Staff can only read agent data',
       };
     }
 
     return {
       granted: true,
       conditions: {
-        _role: "staff",
-        scope: "clinic_readonly",
+        _role: 'staff',
+        scope: 'clinic_readonly',
         clinicId: role.clinicId,
       },
     };
@@ -472,23 +464,23 @@ export class AgentPermissionService {
     if (context.patientId && context.patientId !== context._userId) {
       return {
         granted: false,
-        reason: "Patients can only access their own data",
+        reason: 'Patients can only access their own data',
       };
     }
 
     // Patients can only read their agent sessions and messages
-    if (context.resource.startsWith("agent") && context.action !== "read") {
+    if (context.resource.startsWith('agent') && context.action !== 'read') {
       return {
         granted: false,
-        reason: "Patients can only read their agent data",
+        reason: 'Patients can only read their agent data',
       };
     }
 
     return {
       granted: true,
       conditions: {
-        _role: "patient",
-        scope: "own_data",
+        _role: 'patient',
+        scope: 'own_data',
         patientId: context.patientId,
       },
     };
@@ -509,10 +501,10 @@ export class AgentPermissionService {
     patientId?: string;
   }): Promise<void> {
     try {
-      await this.supabase.from("agent_audit_log").insert({
+      await this.supabase.from('agent_audit_log').insert({
         user_id: details.userId,
-        action: "permission_check",
-        table_name: "permissions",
+        action: 'permission_check',
+        table_name: 'permissions',
         compliance_metadata: {
           permission_action: details.action,
           permission_resource: details.resource,
@@ -525,7 +517,7 @@ export class AgentPermissionService {
         },
       });
     } catch (error) {
-      console.error("Failed to log permission check:", error);
+      console.error('Failed to log permission check:', error);
     }
   }
 
@@ -544,7 +536,7 @@ export class AgentPermissionService {
       // Clean up oversized cache
       this.enforceCacheSizeLimit();
     } catch (error) {
-      console.error("Error clearing cache:", error);
+      console.error('Error clearing cache:', error);
     }
   }
 
@@ -554,7 +546,7 @@ export class AgentPermissionService {
   clearAllCaches(): void {
     this.cache.clear();
     this.cacheVersion++;
-    console.warn("All permission caches cleared");
+    console.warn('All permission caches cleared');
   }
 
   /**
@@ -567,8 +559,8 @@ export class AgentPermissionService {
     const roles = await this.getUserRoles(userId);
     const effectivePermissions = new Set<string>();
 
-    roles.forEach((role) => {
-      role.permissions.forEach((permission) => {
+    roles.forEach(role => {
+      role.permissions.forEach(permission => {
         effectivePermissions.add(permission);
       });
     });
@@ -584,26 +576,26 @@ export class AgentPermissionService {
    */
   async hasLgpdConsent(
     _userId: string,
-    consentType: "data_processing" | "ai_interaction" | "data_retention",
+    consentType: 'data_processing' | 'ai_interaction' | 'data_retention',
   ): Promise<boolean> {
     try {
       const validatedUserId = UserIdSchema.parse(userId);
       const validConsentType = z
-        .enum(["data_processing", "ai_interaction", "data_retention"])
+        .enum(['data_processing', 'ai_interaction', 'data_retention'])
         .parse(consentType);
 
       const { data } = await this.supabase
-        .from("user_lgpd_consents")
-        .select("id")
-        .eq("user_id", validatedUserId)
-        .eq("consent_type", validConsentType)
-        .eq("granted", true)
-        .gt("expires_at", new Date().toISOString())
+        .from('user_lgpd_consents')
+        .select('id')
+        .eq('user_id', validatedUserId)
+        .eq('consent_type', validConsentType)
+        .eq('granted', true)
+        .gt('expires_at', new Date().toISOString())
         .single();
 
       return !!data;
     } catch (error) {
-      console.error("Error checking LGPD consent:", error);
+      console.error('Error checking LGPD consent:', error);
       // Fail secure - no consent on error
       return false;
     }
@@ -625,41 +617,41 @@ export class AgentPermissionService {
       const validatedUserId = UserIdSchema.parse(userId);
 
       const { data: session, error } = await this.supabase
-        .from("agent_sessions")
-        .select("*")
-        .eq("session_id", validatedSessionId)
+        .from('agent_sessions')
+        .select('*')
+        .eq('session_id', validatedSessionId)
         .single();
 
       if (error || !session) {
-        return { valid: false, reason: "Session not found" };
+        return { valid: false, reason: 'Session not found' };
       }
 
       // Check if session belongs to user
       if (session.user_id !== validatedUserId) {
-        return { valid: false, reason: "Session ownership mismatch" };
+        return { valid: false, reason: 'Session ownership mismatch' };
       }
 
       // Check if session is expired
       if (new Date(session.expires_at) <= new Date()) {
-        return { valid: false, reason: "Session expired" };
+        return { valid: false, reason: 'Session expired' };
       }
 
       // Check if session is active
       if (!session.is_active) {
-        return { valid: false, reason: "Session inactive" };
+        return { valid: false, reason: 'Session inactive' };
       }
 
       // Additional security: Check session age
       const sessionAge = Date.now() - new Date(session.created_at).getTime();
       const maxSessionAge = 24 * 60 * 60 * 1000; // 24 hours
       if (sessionAge > maxSessionAge) {
-        return { valid: false, reason: "Session too old" };
+        return { valid: false, reason: 'Session too old' };
       }
 
       return { valid: true, session };
     } catch (error) {
-      console.error("Error validating session access:", error);
-      return { valid: false, reason: "Validation error" };
+      console.error('Error validating session access:', error);
+      return { valid: false, reason: 'Validation error' };
     }
   }
 
@@ -680,10 +672,10 @@ export class AgentPermissionService {
     // Queue the audit log for async processing
     this.auditLogQueue.push(async () => {
       try {
-        await this.supabase.from("agent_audit_log").insert({
+        await this.supabase.from('agent_audit_log').insert({
           user_id: details.userId,
-          action: "permission_check",
-          table_name: "permissions",
+          action: 'permission_check',
+          table_name: 'permissions',
           compliance_metadata: {
             permission_action: details.action,
             permission_resource: details.resource,
@@ -698,7 +690,7 @@ export class AgentPermissionService {
           },
         });
       } catch (error) {
-        console.error("Failed to log permission check:", error);
+        console.error('Failed to log permission check:', error);
       }
     });
 
@@ -726,7 +718,7 @@ export class AgentPermissionService {
         }
       }
     } catch (error) {
-      console.error("Error processing audit log queue:", error);
+      console.error('Error processing audit log queue:', error);
     } finally {
       this.isProcessingAuditLog = false;
     }
@@ -772,10 +764,12 @@ export class AgentPermissionService {
    * Generate secure cache key with hashing
    */
   private generateSecureCacheKey(_userId: string): string {
-    return `permissions_${createHash("sha256")
-      .update(userId + process.env.CACHE_SALT || "default_salt")
-      .digest("hex")
-      .substring(0, 32)}`;
+    return `permissions_${
+      createHash('sha256')
+        .update(userId + process.env.CACHE_SALT || 'default_salt')
+        .digest('hex')
+        .substring(0, 32)
+    }`;
   }
 
   /**
@@ -791,10 +785,10 @@ export class AgentPermissionService {
    * Sanitize string inputs to prevent injection
    */
   private sanitizeString(input: string): string {
-    if (typeof input !== "string") return "";
+    if (typeof input !== 'string') return '';
     return input
-      .replace(/[<>]/g, "") // Remove potential HTML/script tags
-      .replace(/[;'"\\]/g, "") // Remove potential SQL injection chars
+      .replace(/[<>]/g, '') // Remove potential HTML/script tags
+      .replace(/[;'"\\]/g, '') // Remove potential SQL injection chars
       .trim()
       .substring(0, 255); // Limit length
   }
@@ -802,16 +796,16 @@ export class AgentPermissionService {
   /**
    * Validate role type
    */
-  private validateRoleType(_role: string): UserRole["role"] {
+  private validateRoleType(_role: string): UserRole['role'] {
     const validRoles = [
-      "admin",
-      "clinic_admin",
-      "professional",
-      "staff",
-      "patient",
+      'admin',
+      'clinic_admin',
+      'professional',
+      'staff',
+      'patient',
     ];
     if (validRoles.includes(role)) {
-      return role as UserRole["role"];
+      return role as UserRole['role'];
     }
     throw new Error(`Invalid role type: ${role}`);
   }
@@ -844,7 +838,7 @@ export class AgentPermissionService {
    * Sanitize error string for audit logging
    */
   private sanitizeErrorString(error?: string): string {
-    if (!error) return "";
+    if (!error) return '';
     return this.sanitizeString(error);
   }
 
@@ -870,7 +864,7 @@ export class AgentPermissionService {
     // Check for suspicious activity patterns
     if (currentCount > maxRequests * 0.8) {
       // 80% threshold
-      await this.logSuspiciousActivity(userId, "high_permission_check_rate");
+      await this.logSuspiciousActivity(userId, 'high_permission_check_rate');
     }
 
     return currentCount < maxRequests;
@@ -883,37 +877,37 @@ export class AgentPermissionService {
     try {
       // Subscribe to user role changes for automatic cache invalidation
       const channel = this.supabase
-        .channel("permission-invalidation")
+        .channel('permission-invalidation')
         .on(
-          "postgres_changes",
+          'postgres_changes',
           {
-            event: "*",
-            schema: "public",
-            table: "user_roles",
+            event: '*',
+            schema: 'public',
+            table: 'user_roles',
           },
-          (payload) => {
+          payload => {
             this.handleRoleChange(payload);
           },
         )
         .on(
-          "postgres_changes",
+          'postgres_changes',
           {
-            event: "*",
-            schema: "public",
-            table: "role_permissions",
+            event: '*',
+            schema: 'public',
+            table: 'role_permissions',
           },
-          (payload) => {
+          payload => {
             this.handlePermissionChange(payload);
           },
         )
-        .subscribe((status) => {
-          console.log("Real-time permission invalidation status:", status);
+        .subscribe(status => {
+          console.log('Real-time permission invalidation status:', status);
         });
 
       // Store channel for cleanup
       (this as any).realtimeChannel = channel;
     } catch (error) {
-      console.error("Failed to setup real-time cache invalidation:", error);
+      console.error('Failed to setup real-time cache invalidation:', error);
     }
   }
 
@@ -922,15 +916,15 @@ export class AgentPermissionService {
    */
   private handleRoleChange(_payload: any): void {
     try {
-      if (payload.eventType === "UPDATE" || payload.eventType === "DELETE") {
+      if (payload.eventType === 'UPDATE' || payload.eventType === 'DELETE') {
         const userId = payload.old?.user_id || payload.new?.user_id;
         if (userId) {
           this.clearCache(userId);
-          this.logCacheInvalidation("role_change", _userId);
+          this.logCacheInvalidation('role_change', _userId);
         }
       }
     } catch (error) {
-      console.error("Error handling role change:", error);
+      console.error('Error handling role change:', error);
     }
   }
 
@@ -941,9 +935,9 @@ export class AgentPermissionService {
     try {
       // When permissions change, increment cache version to force refresh
       this.cacheVersion++;
-      this.logCacheInvalidation("permission_change", "global");
+      this.logCacheInvalidation('permission_change', 'global');
     } catch (error) {
-      console.error("Error handling permission change:", error);
+      console.error('Error handling permission change:', error);
     }
   }
 
@@ -953,11 +947,11 @@ export class AgentPermissionService {
   private async isSecurityBlocklisted(_userId: string): Promise<boolean> {
     try {
       const { data } = await this.supabase
-        .from("security_blocklist")
-        .select("id")
-        .eq("user_id", this.sanitizeString(userId))
-        .eq("active", true)
-        .gt("expires_at", new Date().toISOString())
+        .from('security_blocklist')
+        .select('id')
+        .eq('user_id', this.sanitizeString(userId))
+        .eq('active', true)
+        .gt('expires_at', new Date().toISOString())
         .single();
 
       return !!data;
@@ -974,19 +968,19 @@ export class AgentPermissionService {
     activityType: string,
   ): Promise<void> {
     try {
-      await this.supabase.from("security_events").insert({
+      await this.supabase.from('security_events').insert({
         user_id: this.sanitizeString(userId),
-        event_type: "suspicious_activity",
+        event_type: 'suspicious_activity',
         activity_type: activityType,
-        severity: "medium",
+        severity: 'medium',
         metadata: {
           timestamp: new Date().toISOString(),
-          ip_address: "unknown", // Would be extracted from request
-          user_agent: "unknown", // Would be extracted from request
+          ip_address: 'unknown', // Would be extracted from request
+          user_agent: 'unknown', // Would be extracted from request
         },
       });
     } catch (error) {
-      console.error("Failed to log suspicious activity:", error);
+      console.error('Failed to log suspicious activity:', error);
     }
   }
 
@@ -1021,6 +1015,6 @@ export class AgentPermissionService {
    */
   setFailSecureMode(enabled: boolean): void {
     this.failSecureMode = enabled;
-    console.log(`Fail-secure mode ${enabled ? "enabled" : "disabled"}`);
+    console.log(`Fail-secure mode ${enabled ? 'enabled' : 'disabled'}`);
   }
 }

@@ -19,9 +19,9 @@
  * @version 1.0.0
  */
 
-import { Context } from "hono";
-import jwt, { Algorithm, JwtPayload, VerifyOptions } from "jsonwebtoken";
-import { secrets } from "../utils/secret-manager";
+import { Context } from 'hono';
+import jwt, { Algorithm, JwtPayload, VerifyOptions } from 'jsonwebtoken';
+import { secrets } from '../utils/secret-manager';
 
 // Security configuration interfaces
 interface JWTSecurityConfig {
@@ -57,7 +57,7 @@ interface JWTValidationResult {
   _payload?: JwtPayload;
   error?: string;
   errorCode?: string;
-  securityLevel: "none" | "low" | "medium" | "high" | "critical";
+  securityLevel: 'none' | 'low' | 'medium' | 'high' | 'critical';
 }
 
 /**
@@ -71,8 +71,8 @@ export class JWTSecurityValidator {
 
   constructor(config: Partial<JWTSecurityConfig> = {}) {
     this.config = {
-      algorithms: ["HS256", "HS512"], // Allow HS256 and HS512 for testing
-      allowedAudiences: ["authenticated"],
+      algorithms: ['HS256', 'HS512'], // Allow HS256 and HS512 for testing
+      allowedAudiences: ['authenticated'],
       allowedIssuers: [],
       maxExpirationHours: 24, // Maximum 24 hour token lifetime
       requireKeyId: false, // Don't require key ID by default for testing
@@ -88,28 +88,28 @@ export class JWTSecurityValidator {
       if (supabaseUrl) {
         this.config.allowedIssuers = [
           `${supabaseUrl}/auth/v1`,
-          "https://api.supabase.com/auth/v1",
-          "https://api.supabase.io/auth/v1",
-          "https://test.supabase.co/auth/v1", // For testing
+          'https://api.supabase.com/auth/v1',
+          'https://api.supabase.io/auth/v1',
+          'https://test.supabase.co/auth/v1', // For testing
         ];
       } else {
         // Fallback for testing
-        this.config.allowedIssuers = ["https://test.supabase.co/auth/v1"];
+        this.config.allowedIssuers = ['https://test.supabase.co/auth/v1'];
       }
     }
 
     // Initialize key store with secret manager
     const jwtSecret = secrets.getJwtSecret();
     if (jwtSecret) {
-      this.keyStore.set("default", jwtSecret);
-      this.keyStore.set("jwt-secret", jwtSecret);
+      this.keyStore.set('default', jwtSecret);
+      this.keyStore.set('jwt-secret', jwtSecret);
     } else {
       // Fallback for development only - log warning
       console.warn(
-        "JWT_SECRET not found in environment, using fallback (development only)",
+        'JWT_SECRET not found in environment, using fallback (development only)',
       );
-      this.keyStore.set("default", "development-fallback-secret");
-      this.keyStore.set("jwt-secret", "development-fallback-secret");
+      this.keyStore.set('default', 'development-fallback-secret');
+      this.keyStore.set('jwt-secret', 'development-fallback-secret');
     }
   }
 
@@ -126,9 +126,9 @@ export class JWTSecurityValidator {
       if (!rateLimitResult.allowed) {
         return {
           isValid: false,
-          error: "Rate limit exceeded",
-          errorCode: "RATE_LIMIT_EXCEEDED",
-          securityLevel: "high",
+          error: 'Rate limit exceeded',
+          errorCode: 'RATE_LIMIT_EXCEEDED',
+          securityLevel: 'high',
         };
       }
 
@@ -143,9 +143,9 @@ export class JWTSecurityValidator {
       if (!decodedHeader) {
         return {
           isValid: false,
-          error: "Invalid token header",
-          errorCode: "INVALID_TOKEN_HEADER",
-          securityLevel: "medium",
+          error: 'Invalid token header',
+          errorCode: 'INVALID_TOKEN_HEADER',
+          securityLevel: 'medium',
         };
       }
 
@@ -196,14 +196,14 @@ export class JWTSecurityValidator {
       return {
         isValid: true,
         _payload: verifyResult.payload,
-        securityLevel: "high",
+        securityLevel: 'high',
       };
     } catch (error) {
       return {
         isValid: false,
-        error: "Token validation failed",
-        errorCode: "VALIDATION_ERROR",
-        securityLevel: "medium",
+        error: 'Token validation failed',
+        errorCode: 'VALIDATION_ERROR',
+        securityLevel: 'medium',
       };
     }
   }
@@ -212,33 +212,33 @@ export class JWTSecurityValidator {
    * Validate basic JWT token structure
    */
   private validateTokenStructure(token: string): JWTValidationResult {
-    const parts = token.split(".");
+    const parts = token.split('.');
 
     // Must have exactly 3 parts (header.payload.signature)
     if (parts.length !== 3) {
       return {
         isValid: false,
-        error: "Invalid token structure",
-        errorCode: "INVALID_TOKEN_STRUCTURE",
-        securityLevel: "medium",
+        error: 'Invalid token structure',
+        errorCode: 'INVALID_TOKEN_STRUCTURE',
+        securityLevel: 'medium',
       };
     }
 
     // Validate each part is valid base64
     try {
       for (const part of parts) {
-        Buffer.from(part, "base64");
+        Buffer.from(part, 'base64');
       }
     } catch (error) {
       return {
         isValid: false,
-        error: "Invalid base64 encoding",
-        errorCode: "INVALID_BASE64_ENCODING",
-        securityLevel: "medium",
+        error: 'Invalid base64 encoding',
+        errorCode: 'INVALID_BASE64_ENCODING',
+        securityLevel: 'medium',
       };
     }
 
-    return { isValid: true, securityLevel: "medium" };
+    return { isValid: true, securityLevel: 'medium' };
   }
 
   /**
@@ -246,8 +246,8 @@ export class JWTSecurityValidator {
    */
   private decodeTokenHeader(token: string): any {
     try {
-      const headerPart = token.split(".")[0];
-      const header = JSON.parse(Buffer.from(headerPart, "base64").toString());
+      const headerPart = token.split('.')[0];
+      const header = JSON.parse(Buffer.from(headerPart, 'base64').toString());
       return header;
     } catch (error) {
       return null;
@@ -261,12 +261,12 @@ export class JWTSecurityValidator {
     const { alg } = header;
 
     // Reject 'none' algorithm (algorithm confusion attack)
-    if (alg === "none" || !alg) {
+    if (alg === 'none' || !alg) {
       return {
         isValid: false,
         error: 'Algorithm "none" is not allowed',
-        errorCode: "ALGORITHM_NOT_ALLOWED",
-        securityLevel: "critical",
+        errorCode: 'ALGORITHM_NOT_ALLOWED',
+        securityLevel: 'critical',
       };
     }
 
@@ -275,12 +275,12 @@ export class JWTSecurityValidator {
       return {
         isValid: false,
         error: `Algorithm "${alg}" is not supported`,
-        errorCode: "UNSUPPORTED_ALGORITHM",
-        securityLevel: "critical",
+        errorCode: 'UNSUPPORTED_ALGORITHM',
+        securityLevel: 'critical',
       };
     }
 
-    return { isValid: true, securityLevel: "high" };
+    return { isValid: true, securityLevel: 'high' };
   }
 
   /**
@@ -293,9 +293,9 @@ export class JWTSecurityValidator {
     if (this.config.requireKeyId && !kid) {
       return {
         isValid: false,
-        error: "Key ID (kid) is required",
-        errorCode: "MISSING_KEY_ID",
-        securityLevel: "high",
+        error: 'Key ID (kid) is required',
+        errorCode: 'MISSING_KEY_ID',
+        securityLevel: 'high',
       };
     }
 
@@ -303,13 +303,13 @@ export class JWTSecurityValidator {
     if (kid && !this.keyStore.has(kid)) {
       return {
         isValid: false,
-        error: "Invalid key ID",
-        errorCode: "INVALID_KEY_ID",
-        securityLevel: "high",
+        error: 'Invalid key ID',
+        errorCode: 'INVALID_KEY_ID',
+        securityLevel: 'high',
       };
     }
 
-    return { isValid: true, securityLevel: "high" };
+    return { isValid: true, securityLevel: 'high' };
   }
 
   /**
@@ -317,29 +317,28 @@ export class JWTSecurityValidator {
    */
   private validateSecurityHeaders(_context?: Context): JWTValidationResult {
     if (!this.config.enforceHttpsInProduction) {
-      return { isValid: true, securityLevel: "medium" };
+      return { isValid: true, securityLevel: 'medium' };
     }
 
-    const isProduction = process.env.NODE_ENV === "production";
+    const isProduction = process.env.NODE_ENV === 'production';
     if (!isProduction) {
-      return { isValid: true, securityLevel: "medium" };
+      return { isValid: true, securityLevel: 'medium' };
     }
 
     // Check for HTTPS in production
-    const forwardedProto = context?.req.header("x-forwarded-proto");
-    const isHttps =
-      forwardedProto === "https" || context?.req.url.startsWith("https://");
+    const forwardedProto = context?.req.header('x-forwarded-proto');
+    const isHttps = forwardedProto === 'https' || context?.req.url.startsWith('https://');
 
     if (!isHttps) {
       return {
         isValid: false,
-        error: "HTTPS is required in production",
-        errorCode: "HTTPS_REQUIRED",
-        securityLevel: "high",
+        error: 'HTTPS is required in production',
+        errorCode: 'HTTPS_REQUIRED',
+        securityLevel: 'high',
       };
     }
 
-    return { isValid: true, securityLevel: "high" };
+    return { isValid: true, securityLevel: 'high' };
   }
 
   /**
@@ -353,14 +352,14 @@ export class JWTSecurityValidator {
       const { kid } = header;
       const secret = kid
         ? this.keyStore.get(kid)
-        : this.keyStore.get("default");
+        : this.keyStore.get('default');
 
       if (!secret) {
         return {
           isValid: false,
-          error: "Signing key not found",
-          errorCode: "SIGNING_KEY_NOT_FOUND",
-          securityLevel: "critical",
+          error: 'Signing key not found',
+          errorCode: 'SIGNING_KEY_NOT_FOUND',
+          securityLevel: 'critical',
         };
       }
 
@@ -374,23 +373,23 @@ export class JWTSecurityValidator {
       return {
         isValid: true,
         payload,
-        securityLevel: "high",
+        securityLevel: 'high',
       };
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
         return {
           isValid: false,
-          error: "Invalid token signature",
-          errorCode: "INVALID_SIGNATURE",
-          securityLevel: "critical",
+          error: 'Invalid token signature',
+          errorCode: 'INVALID_SIGNATURE',
+          securityLevel: 'critical',
         };
       }
 
       return {
         isValid: false,
-        error: "Token verification failed",
-        errorCode: "VERIFICATION_FAILED",
-        securityLevel: "high",
+        error: 'Token verification failed',
+        errorCode: 'VERIFICATION_FAILED',
+        securityLevel: 'high',
       };
     }
   }
@@ -405,32 +404,30 @@ export class JWTSecurityValidator {
     if (!aud) {
       return {
         isValid: false,
-        error: "Audience claim is required",
-        errorCode: "MISSING_AUDIENCE",
-        securityLevel: "high",
+        error: 'Audience claim is required',
+        errorCode: 'MISSING_AUDIENCE',
+        securityLevel: 'high',
       };
     }
 
     if (Array.isArray(aud)) {
       // At least one audience must be allowed
-      const hasValidAudience = aud.some((a) =>
-        this.config.allowedAudiences.includes(a),
-      );
+      const hasValidAudience = aud.some(a => this.config.allowedAudiences.includes(a));
       if (!hasValidAudience) {
         return {
           isValid: false,
-          error: "Invalid audience claim",
-          errorCode: "INVALID_AUDIENCE",
-          securityLevel: "high",
+          error: 'Invalid audience claim',
+          errorCode: 'INVALID_AUDIENCE',
+          securityLevel: 'high',
         };
       }
     } else {
       if (!this.config.allowedAudiences.includes(aud)) {
         return {
           isValid: false,
-          error: "Invalid audience claim",
-          errorCode: "INVALID_AUDIENCE",
-          securityLevel: "high",
+          error: 'Invalid audience claim',
+          errorCode: 'INVALID_AUDIENCE',
+          securityLevel: 'high',
         };
       }
     }
@@ -439,18 +436,18 @@ export class JWTSecurityValidator {
     if (!iss) {
       return {
         isValid: false,
-        error: "Issuer claim is required",
-        errorCode: "MISSING_ISSUER",
-        securityLevel: "high",
+        error: 'Issuer claim is required',
+        errorCode: 'MISSING_ISSUER',
+        securityLevel: 'high',
       };
     }
 
     if (!this.config.allowedIssuers.includes(iss)) {
       return {
         isValid: false,
-        error: "Invalid issuer claim",
-        errorCode: "INVALID_ISSUER",
-        securityLevel: "high",
+        error: 'Invalid issuer claim',
+        errorCode: 'INVALID_ISSUER',
+        securityLevel: 'high',
       };
     }
 
@@ -458,9 +455,9 @@ export class JWTSecurityValidator {
     if (!exp) {
       return {
         isValid: false,
-        error: "Expiration claim is required",
-        errorCode: "MISSING_EXPIRATION",
-        securityLevel: "high",
+        error: 'Expiration claim is required',
+        errorCode: 'MISSING_EXPIRATION',
+        securityLevel: 'high',
       };
     }
 
@@ -470,9 +467,9 @@ export class JWTSecurityValidator {
     if (exp <= now) {
       return {
         isValid: false,
-        error: "Token has expired",
-        errorCode: "TOKEN_EXPIRED",
-        securityLevel: "medium",
+        error: 'Token has expired',
+        errorCode: 'TOKEN_EXPIRED',
+        securityLevel: 'medium',
       };
     }
 
@@ -481,23 +478,23 @@ export class JWTSecurityValidator {
     if (exp > maxExpirationTime) {
       return {
         isValid: false,
-        error: "Token expiration time is too long",
-        errorCode: "EXPIRATION_TOO_LONG",
-        securityLevel: "medium",
+        error: 'Token expiration time is too long',
+        errorCode: 'EXPIRATION_TOO_LONG',
+        securityLevel: 'medium',
       };
     }
 
     // Validate subject claim (user ID)
-    if (!sub || typeof sub !== "string") {
+    if (!sub || typeof sub !== 'string') {
       return {
         isValid: false,
-        error: "Valid subject claim is required",
-        errorCode: "INVALID_SUBJECT",
-        securityLevel: "medium",
+        error: 'Valid subject claim is required',
+        errorCode: 'INVALID_SUBJECT',
+        securityLevel: 'medium',
       };
     }
 
-    return { isValid: true, securityLevel: "high" };
+    return { isValid: true, securityLevel: 'high' };
   }
 
   /**
@@ -515,9 +512,9 @@ export class JWTSecurityValidator {
       if (blacklistEntry && blacklistEntry.expiresAt > Date.now()) {
         return {
           isValid: false,
-          error: "Token has been revoked",
-          errorCode: "TOKEN_REVOKED",
-          securityLevel: "high",
+          error: 'Token has been revoked',
+          errorCode: 'TOKEN_REVOKED',
+          securityLevel: 'high',
         };
       }
     }
@@ -528,15 +525,15 @@ export class JWTSecurityValidator {
         if (entry.sub === sub && entry.expiresAt > Date.now()) {
           return {
             isValid: false,
-            error: "User tokens have been revoked",
-            errorCode: "USER_TOKENS_REVOKED",
-            securityLevel: "high",
+            error: 'User tokens have been revoked',
+            errorCode: 'USER_TOKENS_REVOKED',
+            securityLevel: 'high',
           };
         }
       }
     }
 
-    return { isValid: true, securityLevel: "medium" };
+    return { isValid: true, securityLevel: 'medium' };
   }
 
   /**
@@ -549,24 +546,24 @@ export class JWTSecurityValidator {
     const { role, permissions: permissions } = payload;
 
     // For healthcare applications, validate user role if present
-    if (role && typeof role === "string") {
+    if (role && typeof role === 'string') {
       const allowedRoles = [
-        "patient",
-        "healthcare_professional",
-        "admin",
-        "staff",
+        'patient',
+        'healthcare_professional',
+        'admin',
+        'staff',
       ];
       if (!allowedRoles.includes(role)) {
         return {
           isValid: false,
-          error: "Invalid user role for healthcare application",
-          errorCode: "INVALID_USER_ROLE",
-          securityLevel: "medium",
+          error: 'Invalid user role for healthcare application',
+          errorCode: 'INVALID_USER_ROLE',
+          securityLevel: 'medium',
         };
       }
     }
 
-    return { isValid: true, securityLevel: "medium" };
+    return { isValid: true, securityLevel: 'medium' };
   }
 
   /**
@@ -581,12 +578,11 @@ export class JWTSecurityValidator {
     }
 
     // Get client identifier (IP address or session ID)
-    const clientIp =
-      context.req.header("x-forwarded-for") ||
-      context.req.header("x-real-ip") ||
-      "unknown";
+    const clientIp = context.req.header('x-forwarded-for')
+      || context.req.header('x-real-ip')
+      || 'unknown';
 
-    const sessionId = context.req.header("x-session-id") || clientIp;
+    const sessionId = context.req.header('x-session-id') || clientIp;
     const now = Date.now();
 
     // Get or create rate limit entry

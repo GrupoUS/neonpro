@@ -13,9 +13,9 @@
     "dev": "bun x tsc -w -p tsconfig.json",
     "lint": "oxlint src --fix",
     "type-check": "bun x tsc --noEmit",
-    "test": "vitest --run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest --run --coverage"
+    "test": "bun test --run",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

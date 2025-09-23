@@ -15,36 +15,36 @@ export interface AguiMessage {
 }
 
 export type AguiMessageType =
-  | "hello"
-  | "query"
-  | "response"
-  | "error"
-  | "status"
-  | "ping"
-  | "pong"
-  | "session_update"
-  | "feedback"
-  | "context_update"
-  | "streaming_start"
-  | "streaming_chunk"
-  | "streaming_end"
+  | 'hello'
+  | 'query'
+  | 'response'
+  | 'error'
+  | 'status'
+  | 'ping'
+  | 'pong'
+  | 'session_update'
+  | 'feedback'
+  | 'context_update'
+  | 'streaming_start'
+  | 'streaming_chunk'
+  | 'streaming_end'
   // Client-specific message types
-  | "client_registration"
-  | "client_profile_update"
-  | "client_search"
-  | "client_analytics"
-  | "client_retention_prediction"
-  | "client_communication"
-  | "document_ocr"
-  | "consent_management"
-  | "client_validation";
+  | 'client_registration'
+  | 'client_profile_update'
+  | 'client_search'
+  | 'client_analytics'
+  | 'client_retention_prediction'
+  | 'client_communication'
+  | 'document_ocr'
+  | 'consent_management'
+  | 'client_validation';
 
 export interface AguiMessageMetadata {
   _userId: string;
   patientId?: string;
   requestId?: string;
   version: string;
-  compression?: "gzip" | "none";
+  compression?: 'gzip' | 'none';
   encryption?: boolean;
 }
 
@@ -62,7 +62,7 @@ export interface AguiCapability {
 
 export interface AguiAuthentication {
   token: string;
-  type: "jwt" | "bearer";
+  type: 'jwt' | 'bearer';
 }
 
 export interface AguiQueryMessage {
@@ -90,7 +90,7 @@ export interface AguiQueryOptions {
 
 export interface AguiResponseMessage {
   content: string;
-  type: "text" | "structured" | "error";
+  type: 'text' | 'structured' | 'error';
   sources?: AguiSource[];
   confidence?: number;
   usage?: AguiUsageStats;
@@ -100,16 +100,16 @@ export interface AguiResponseMessage {
 export interface AguiSource {
   id: string;
   type:
-    | "patient_data"
-    | "medical_knowledge"
-    | "appointment"
-    | "financial"
-    | "document"
-    | "client_profile"
-    | "consent_record"
-    | "treatment_history"
-    | "communication_log"
-    | "analytics_data";
+    | 'patient_data'
+    | 'medical_knowledge'
+    | 'appointment'
+    | 'financial'
+    | 'document'
+    | 'client_profile'
+    | 'consent_record'
+    | 'treatment_history'
+    | 'communication_log'
+    | 'analytics_data';
   title: string;
   snippet?: string;
   relevanceScore?: number;
@@ -128,10 +128,10 @@ export interface AguiUsageStats {
 export interface AguiAction {
   id: string;
   type:
-    | "schedule_appointment"
-    | "view_patient"
-    | "generate_report"
-    | "update_record";
+    | 'schedule_appointment'
+    | 'view_patient'
+    | 'generate_report'
+    | 'update_record';
   label: string;
   description?: string;
   _payload: Record<string, any>;
@@ -146,19 +146,19 @@ export interface AguiErrorMessage {
 }
 
 export type AguiErrorCode =
-  | "AUTHENTICATION_FAILED"
-  | "AUTHORIZATION_FAILED"
-  | "INVALID_MESSAGE"
-  | "TIMEOUT"
-  | "RATE_LIMITED"
-  | "INTERNAL_ERROR"
-  | "SESSION_EXPIRED"
-  | "PATIENT_NOT_FOUND"
-  | "DATABASE_ERROR"
-  | "AI_SERVICE_ERROR";
+  | 'AUTHENTICATION_FAILED'
+  | 'AUTHORIZATION_FAILED'
+  | 'INVALID_MESSAGE'
+  | 'TIMEOUT'
+  | 'RATE_LIMITED'
+  | 'INTERNAL_ERROR'
+  | 'SESSION_EXPIRED'
+  | 'PATIENT_NOT_FOUND'
+  | 'DATABASE_ERROR'
+  | 'AI_SERVICE_ERROR';
 
 export interface AguiStatusMessage {
-  status: "ready" | "busy" | "error" | "maintenance";
+  status: 'ready' | 'busy' | 'error' | 'maintenance';
   uptime: number;
   activeSessions: number;
   queueSize?: number;
@@ -187,13 +187,13 @@ export interface AguiFeedbackMessage {
   messageId: string;
   rating: number; // 1-5
   feedback?: string;
-  category?: "accuracy" | "helpfulness" | "clarity" | "completeness";
+  category?: 'accuracy' | 'helpfulness' | 'clarity' | 'completeness';
 }
 
 export interface AguiContextUpdate {
   sessionId: string;
   _context: Record<string, any>;
-  source: "user" | "system" | "ai";
+  source: 'user' | 'system' | 'ai';
 }
 
 export interface AguiStreamingChunk {
@@ -220,7 +220,7 @@ export interface AguiSession {
 
 export interface AguiSessionMessage {
   id: string;
-  _role: "user" | "assistant" | "system";
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
   metadata?: Record<string, any>;
@@ -228,12 +228,12 @@ export interface AguiSessionMessage {
 
 // Health check types
 export interface AguiHealthStatus {
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy';
   components: {
-    database: "healthy" | "unhealthy";
-    ai_service: "healthy" | "degraded" | "unhealthy";
-    vector_store: "healthy" | "unhealthy";
-    websocket_server: "healthy" | "unhealthy";
+    database: 'healthy' | 'unhealthy';
+    ai_service: 'healthy' | 'degraded' | 'unhealthy';
+    vector_store: 'healthy' | 'unhealthy';
+    websocket_server: 'healthy' | 'unhealthy';
   };
   metrics: AguiPerformanceMetrics;
   lastCheck: string;
@@ -257,14 +257,14 @@ export interface AguiRateLimitInfo {
 export interface AguiProtocolInfo {
   version: string;
   supportedVersions: string[];
-  compatibility: "full" | "partial" | "none";
+  compatibility: 'full' | 'partial' | 'none';
   features: string[];
 }
 
 // CopilotKit specific types for frontend integration
 export interface CopilotRequest {
   id: string;
-  type: "query" | "command" | "feedback";
+  type: 'query' | 'command' | 'feedback';
   content: string;
   sessionId: string;
   _userId: string;
@@ -273,7 +273,7 @@ export interface CopilotRequest {
 
 export interface CopilotResponse {
   id: string;
-  type: "response" | "error" | "status";
+  type: 'response' | 'error' | 'status';
   content: string;
   sessionId: string;
   _userId: string;
@@ -334,8 +334,8 @@ export interface ClientMedicalHistory {
 }
 
 export interface ClientPreferences {
-  communicationChannel: "whatsapp" | "sms" | "email";
-  language: "pt-BR" | "en-US";
+  communicationChannel: 'whatsapp' | 'sms' | 'email';
+  language: 'pt-BR' | 'en-US';
   timezone: string;
   notificationPreferences: {
     appointments: boolean;
@@ -347,11 +347,11 @@ export interface ClientPreferences {
 export interface ClientDocument {
   id: string;
   type:
-    | "id_card"
-    | "medical_record"
-    | "consent_form"
-    | "insurance_card"
-    | "other";
+    | 'id_card'
+    | 'medical_record'
+    | 'consent_form'
+    | 'insurance_card'
+    | 'other';
   fileName: string;
   fileUrl: string;
   uploadedAt: string;
@@ -406,24 +406,24 @@ export interface ClientSearchFilters {
   hasPastDuePayments?: boolean;
   highRetentionRisk?: boolean;
   treatmentTypes?: string[];
-  consentStatus?: "active" | "expired" | "revoked";
+  consentStatus?: 'active' | 'expired' | 'revoked';
 }
 
 export interface PaginationOptions {
   page: number;
   limit: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 }
 
 export interface AguiClientAnalyticsMessage {
   clientId?: string;
   analyticsType:
-    | "retention_risk"
-    | "engagement"
-    | "treatment_history"
-    | "financial"
-    | "communication";
+    | 'retention_risk'
+    | 'engagement'
+    | 'treatment_history'
+    | 'financial'
+    | 'communication';
   timeRange?: {
     start: string;
     end: string;
@@ -459,7 +459,7 @@ export interface CommunicationHistory {
   totalMessages: number;
   responseRate: number;
   averageResponseTime: number; // in hours
-  preferredChannel: "whatsapp" | "sms" | "email";
+  preferredChannel: 'whatsapp' | 'sms' | 'email';
   lastCommunicationDate?: string;
 }
 
@@ -489,15 +489,15 @@ export interface ClientDemographics {
 export interface AguiClientCommunicationMessage {
   clientId: string;
   communicationType:
-    | "appointment_reminder"
-    | "follow_up"
-    | "promotional"
-    | "emergency"
-    | "retention";
-  channel: "whatsapp" | "sms" | "email";
+    | 'appointment_reminder'
+    | 'follow_up'
+    | 'promotional'
+    | 'emergency'
+    | 'retention';
+  channel: 'whatsapp' | 'sms' | 'email';
   content: string;
   scheduledFor?: string;
-  priority: "low" | "medium" | "high" | "urgent";
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   personalization?: CommunicationPersonalization;
 }
 
@@ -512,11 +512,11 @@ export interface CommunicationPersonalization {
 export interface AguiDocumentOCRMessage {
   documentId: string;
   documentType:
-    | "id_card"
-    | "medical_record"
-    | "consent_form"
-    | "insurance_card"
-    | "prescription";
+    | 'id_card'
+    | 'medical_record'
+    | 'consent_form'
+    | 'insurance_card'
+    | 'prescription';
   documentUrl: string;
   extractionFields?: string[];
   validationRules?: ValidationRule[];
@@ -524,20 +524,20 @@ export interface AguiDocumentOCRMessage {
 
 export interface ValidationRule {
   field: string;
-  type: "required" | "format" | "length" | "custom";
+  type: 'required' | 'format' | 'length' | 'custom';
   rule: string;
   errorMessage: string;
 }
 
 export interface AguiConsentManagementMessage {
   clientId: string;
-  consentAction: "grant" | "revoke" | "update" | "expire";
+  consentAction: 'grant' | 'revoke' | 'update' | 'expire';
   consentType:
-    | "treatment"
-    | "data_sharing"
-    | "marketing"
-    | "emergency_contact"
-    | "research";
+    | 'treatment'
+    | 'data_sharing'
+    | 'marketing'
+    | 'emergency_contact'
+    | 'research';
   consentData?: ClientConsentData;
   reason?: string;
   effectiveDate?: string;
@@ -545,7 +545,7 @@ export interface AguiConsentManagementMessage {
 
 export interface AguiClientValidationMessage {
   clientId?: string;
-  validationType: "registration" | "profile_update" | "document" | "consent";
+  validationType: 'registration' | 'profile_update' | 'document' | 'consent';
   data: Record<string, any>;
   validationRules: ValidationRule[];
 }
@@ -554,7 +554,7 @@ export interface ValidationResult {
   field: string;
   isValid: boolean;
   message?: string;
-  severity: "error" | "warning" | "info";
+  severity: 'error' | 'warning' | 'info';
   suggestedValue?: any;
 }
 
@@ -564,7 +564,7 @@ export interface ValidationResult {
 
 export interface AguiClientRegistrationResponse {
   clientId: string;
-  status: "success" | "partial_success" | "failed";
+  status: 'success' | 'partial_success' | 'failed';
   validationResults: ValidationResult[];
   createdDocuments?: ClientDocument[];
   consentRecords?: string[];
@@ -611,8 +611,8 @@ export interface ClientSearchResult {
   registrationDate: string;
   lastActivity: string;
   appointmentCount: number;
-  retentionRisk?: "low" | "medium" | "high";
-  status: "active" | "inactive" | "archived";
+  retentionRisk?: 'low' | 'medium' | 'high';
+  status: 'active' | 'inactive' | 'archived';
 }
 
 export interface AguiClientAnalyticsResponse {
@@ -649,12 +649,12 @@ export interface AnalyticsData {
 export interface AguiClientRetentionPredictionResponse {
   clientId: string;
   prediction: {
-    riskLevel: "low" | "medium" | "high";
+    riskLevel: 'low' | 'medium' | 'high';
     riskScore: number; // 0-1
     confidence: number; // 0-1
     factors: Array<{
       factor: string;
-      impact: "positive" | "negative";
+      impact: 'positive' | 'negative';
       weight: number;
       description: string;
     }>;
@@ -667,8 +667,8 @@ export interface AguiClientRetentionPredictionResponse {
 
 export interface RetentionRecommendation {
   id: string;
-  type: "communication" | "incentive" | "intervention" | "follow_up";
-  priority: "low" | "medium" | "high";
+  type: 'communication' | 'incentive' | 'intervention' | 'follow_up';
+  priority: 'low' | 'medium' | 'high';
   title: string;
   description: string;
   actionItems: string[];
@@ -679,7 +679,7 @@ export interface RetentionRecommendation {
 export interface AguiClientCommunicationResponse {
   communicationId: string;
   clientId: string;
-  status: "sent" | "delivered" | "read" | "failed" | "scheduled";
+  status: 'sent' | 'delivered' | 'read' | 'failed' | 'scheduled';
   channel: string;
   content: string;
   scheduledFor?: string;
@@ -704,7 +704,7 @@ export interface AguiConsentManagementResponse {
   clientId: string;
   action: string;
   consentType: string;
-  status: "success" | "failed" | "pending";
+  status: 'success' | 'failed' | 'pending';
   effectiveDate?: string;
   expiryDate?: string;
   confirmationNumber?: string;
@@ -732,14 +732,14 @@ export interface AguiClientValidationResponse {
 export interface AISuggestion {
   id: string;
   type:
-    | "data_correction"
-    | "process_optimization"
-    | "risk_mitigation"
-    | "personalization";
+    | 'data_correction'
+    | 'process_optimization'
+    | 'risk_mitigation'
+    | 'personalization';
   title: string;
   description: string;
   confidence: number;
-  priority: "low" | "medium" | "high";
+  priority: 'low' | 'medium' | 'high';
   action?: {
     field: string;
     value: any;
@@ -754,16 +754,16 @@ export interface AISuggestion {
 
 export interface AguiClientAction extends AguiAction {
   type:
-    | "schedule_appointment"
-    | "view_patient"
-    | "generate_report"
-    | "update_record"
-    | "register_client"
-    | "update_client_profile"
-    | "send_communication"
-    | "validate_documents"
-    | "manage_consent"
-    | "run_retention_analysis"
-    | "create_treatment_plan"
-    | "upload_document";
+    | 'schedule_appointment'
+    | 'view_patient'
+    | 'generate_report'
+    | 'update_record'
+    | 'register_client'
+    | 'update_client_profile'
+    | 'send_communication'
+    | 'validate_documents'
+    | 'manage_consent'
+    | 'run_retention_analysis'
+    | 'create_treatment_plan'
+    | 'upload_document';
 }

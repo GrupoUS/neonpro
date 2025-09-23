@@ -21,15 +21,8 @@ import {
   HealthcarePolicyFilters,
   HealthcareAlertFilters,
   ComplianceReportFilters,
-  AuditTrailEntry,
+  AuditTrail,
 } from "@neonpro/types";
-import {
-  HealthcareMetricRecord,
-  PatientSafetyKPIRecord,
-  HealthcarePolicyRecord,
-  HealthcareAlertRecord,
-  ComplianceReportRecord,
-} from "@neonpro/types/database-records";
 
 export class HealthcareGovernanceService
   extends SupabaseGovernanceService
@@ -622,7 +615,7 @@ export class HealthcareGovernanceService
   // Integration with Audit System
   async createHealthcareAuditEntry(
     entry: HealthcareAuditEvent,
-  ): Promise<AuditTrailEntry> {
+  ): Promise<AuditTrail> {
     try {
       // Create the base audit entry
       const auditEntry = await this.createAuditEntry({
@@ -914,7 +907,7 @@ export class HealthcareGovernanceService
       return Math.min(performance * 100, 100);
     });
 
-    return scores.reduce((sum, _score) => sum + score, 0) / scores.length;
+    return scores.reduce((sum, currentScore) => sum + currentScore, 0) / scores.length;
   }
 
   private calculatePatientSafetyScore(metrics: HealthcareMetric[]): number {

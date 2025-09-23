@@ -11,16 +11,11 @@
  * - CFM compliance for medical data operations
  */
 
-import {
-  AuditAction,
-  AuditStatus,
-  ResourceType,
-  RiskLevel,
-} from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import * as v from "valibot";
-import { logger } from "../../lib/logger";
-import { GlobalErrorHandler } from "../../middleware/error-handler";
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
+import * as v from 'valibot';
+import { logger } from '../../lib/logger';
+import { GlobalErrorHandler } from '../../middleware/error-handler';
 import {
   AppointmentSchema,
   getEntitySchema,
@@ -28,10 +23,10 @@ import {
   PatientSchema,
   PrescriptionSchema,
   ProfessionalSchema,
-} from "../../schemas/healthcare-validation-schemas";
-import { HealthcareValidationService } from "../../services/healthcare-validation-service";
-import { createOperationStateService } from "../../services/operation-state-service";
-import { healthcareProcedure, protectedProcedure, router } from "../trpc";
+} from '../../schemas/healthcare-validation-schemas';
+import { HealthcareValidationService } from '../../services/healthcare-validation-service';
+import { createOperationStateService } from '../../services/operation-state-service';
+import { healthcareProcedure, protectedProcedure, router } from '../trpc';
 
 // =====================================
 // TYPE DEFINITIONS & SCHEMAS
@@ -41,14 +36,14 @@ import { healthcareProcedure, protectedProcedure, router } from "../trpc";
  * Supported CRUD entities
  */
 const SUPPORTED_ENTITIES = [
-  "patients",
-  "appointments",
-  "treatments",
-  "medical_records",
-  "prescriptions",
-  "healthcare_professionals",
-  "clinics",
-  "consent_records",
+  'patients',
+  'appointments',
+  'treatments',
+  'medical_records',
+  'prescriptions',
+  'healthcare_professionals',
+  'clinics',
+  'consent_records',
 ] as const;
 
 type CrudEntity = (typeof SUPPORTED_ENTITIES)[number];
@@ -56,7 +51,7 @@ type CrudEntity = (typeof SUPPORTED_ENTITIES)[number];
 /**
  * CRUD operation types
  */
-const CRUD_OPERATIONS = ["create", "read", "update", "delete"] as const;
+const CRUD_OPERATIONS = ['create', 'read', 'update', 'delete'] as const;
 
 type CrudOperation = (typeof CRUD_OPERATIONS)[number];
 
@@ -64,7 +59,7 @@ type CrudOperation = (typeof CRUD_OPERATIONS)[number];
  * AI CRUD Request Schema - Intent Step
  */
 const crudIntentSchema = v.object({
-  step: v.literal("intent"),
+  step: v.literal('intent'),
   operation: v.string([v.picklist(CRUD_OPERATIONS)]),
   entity: v.string([v.picklist(SUPPORTED_ENTITIES)]),
   data: v.custom((data, _ctx) => {
@@ -80,7 +75,7 @@ const crudIntentSchema = v.object({
       prescriptions: PrescriptionSchema,
     };
     // For read/delete, only id is required
-    if (operation === "read" || operation === "delete") {
+    if (operation === 'read' || operation === 'delete') {
       const idSchema = v.object({ id: v.string() });
       return idSchema._parse(data, ctx);
     }
@@ -90,7 +85,7 @@ const crudIntentSchema = v.object({
       return {
         issues: [
           {
-            type: "custom",
+            type: 'custom',
             _context: ctx,
             message: `Unsupported entity: ${entity}`,
           },
@@ -110,7 +105,7 @@ const crudIntentSchema = v.object({
   metadata: v.optional(
     v.object({
       source: v.optional(v.string()),
-      priority: v.optional(v.string([v.picklist(["low", "normal", "high"])])),
+      priority: v.optional(v.string([v.picklist(['low', 'normal', 'high'])])),
       patientId: v.optional(v.string()),
       sessionId: v.optional(v.string()),
     }),
@@ -121,8 +116,8 @@ const crudIntentSchema = v.object({
  * AI CRUD Request Schema - Confirm Step
  */
 const crudConfirmSchema = v.object({
-  step: v.literal("confirm"),
-  intentId: v.string([v.uuid("Invalid intent ID")]),
+  step: v.literal('confirm'),
+  intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmed: v.boolean(),
   modifications: v.optional(
     _v.lazy(() =>
@@ -132,17 +127,17 @@ const crudConfirmSchema = v.object({
         professionalData: v.optional(ProfessionalSchema.partial()),
         medicalRecordData: v.optional(MedicalRecordSchema.partial()),
         prescriptionData: v.optional(PrescriptionSchema.partial()),
-        operation: v.optional(v.enum(["create", "update", "delete"])),
+        operation: v.optional(v.enum(['create', 'update', 'delete'])),
         entity: v.optional(
           v.enum([
-            "patients",
-            "appointments",
-            "professionals",
-            "medical_records",
-            "prescriptions",
+            'patients',
+            'appointments',
+            'professionals',
+            'medical_records',
+            'prescriptions',
           ]),
         ),
-      }),
+      })
     ),
   ), // Optional modifications before execution
   reason: v.optional(v.string()),
@@ -152,9 +147,9 @@ const crudConfirmSchema = v.object({
  * AI CRUD Request Schema - Execute Step
  */
 const crudExecuteSchema = v.object({
-  step: v.literal("execute"),
-  intentId: v.string([v.uuid("Invalid intent ID")]),
-  confirmationId: v.string([v.uuid("Invalid confirmation ID")]),
+  step: v.literal('execute'),
+  intentId: v.string([v.uuid('Invalid intent ID')]),
+  confirmationId: v.string([v.uuid('Invalid confirmation ID')]),
   finalData: v.optional(
     _v.lazy(() =>
       v.object({
@@ -163,17 +158,17 @@ const crudExecuteSchema = v.object({
         professionalData: v.optional(ProfessionalSchema.partial()),
         medicalRecordData: v.optional(MedicalRecordSchema.partial()),
         prescriptionData: v.optional(PrescriptionSchema.partial()),
-        operation: v.optional(v.enum(["create", "update", "delete"])),
+        operation: v.optional(v.enum(['create', 'update', 'delete'])),
         entity: v.optional(
           v.enum([
-            "patients",
-            "appointments",
-            "professionals",
-            "medical_records",
-            "prescriptions",
+            'patients',
+            'appointments',
+            'professionals',
+            'medical_records',
+            'prescriptions',
           ]),
         ),
-      }),
+      })
     ),
   ), // Final data with validated modifications
 });
@@ -192,9 +187,9 @@ const crudRequestSchema = v.union([
  */
 const crudIntentResponseSchema = v.object({
   intentId: v.string(),
-  step: v.literal("intent"),
+  step: v.literal('intent'),
   status: v.string([
-    v.picklist(["pending_confirmation", "validated", "requires_input"]),
+    v.picklist(['pending_confirmation', 'validated', 'requires_input']),
   ]),
   validation: v.object({
     isValid: v.boolean(),
@@ -204,13 +199,13 @@ const crudIntentResponseSchema = v.object({
   }),
   preview: v.optional(
     v.object({
-      operation: v.enum(["create", "read", "update", "delete"]),
+      operation: v.enum(['create', 'read', 'update', 'delete']),
       entity: v.enum([
-        "patients",
-        "appointments",
-        "professionals",
-        "medical_records",
-        "prescriptions",
+        'patients',
+        'appointments',
+        'professionals',
+        'medical_records',
+        'prescriptions',
       ]),
       summary: v.string(),
       affectedRecords: v.number(),
@@ -252,9 +247,9 @@ const crudIntentResponseSchema = v.object({
 const crudConfirmResponseSchema = v.object({
   confirmationId: v.string(),
   intentId: v.string(),
-  step: v.literal("confirm"),
+  step: v.literal('confirm'),
   status: v.string([
-    v.picklist(["confirmed", "rejected", "requires_modification"]),
+    v.picklist(['confirmed', 'rejected', 'requires_modification']),
   ]),
   readyToExecute: v.boolean(),
   finalData: v.optional(
@@ -264,14 +259,14 @@ const crudConfirmResponseSchema = v.object({
       professionalData: v.optional(ProfessionalSchema.partial()),
       medicalRecordData: v.optional(MedicalRecordSchema.partial()),
       prescriptionData: v.optional(PrescriptionSchema.partial()),
-      operation: v.optional(v.enum(["create", "update", "delete"])),
+      operation: v.optional(v.enum(['create', 'update', 'delete'])),
       entity: v.optional(
         v.enum([
-          "patients",
-          "appointments",
-          "professionals",
-          "medical_records",
-          "prescriptions",
+          'patients',
+          'appointments',
+          'professionals',
+          'medical_records',
+          'prescriptions',
         ]),
       ),
     }),
@@ -292,8 +287,8 @@ const crudExecuteResponseSchema = v.object({
   executionId: v.string(),
   intentId: v.string(),
   confirmationId: v.string(),
-  step: v.literal("execute"),
-  status: v.string([v.picklist(["completed", "failed", "partial"])]),
+  step: v.literal('execute'),
+  status: v.string([v.picklist(['completed', 'failed', 'partial'])]),
   result: v.optional(
     v.union([
       PatientSchema,
@@ -373,7 +368,7 @@ async function validateWithAI(
   } catch (error) {
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
-      "VALIDATION_ERROR",
+      'VALIDATION_ERROR',
       {
         operation,
         entity,
@@ -386,7 +381,7 @@ async function validateWithAI(
     return {
       isValid: false,
       errors: [appError.message],
-      warnings: ["Operação bloqueada por falha de validação de segurança"],
+      warnings: ['Operação bloqueada por falha de validação de segurança'],
       aiScore: 0,
     };
   }
@@ -410,18 +405,18 @@ async function generatePreview(
       affectedRecords: 1,
       changes: [],
       complianceChecks: [
-        "LGPD - Proteção de dados",
-        "CFM - Registro médico",
-        "Validação de formato",
+        'LGPD - Proteção de dados',
+        'CFM - Registro médico',
+        'Validação de formato',
       ],
     };
 
-    if (operation === "update" && data.id) {
+    if (operation === 'update' && data.id) {
       // Show current vs new values (with sensitive data sanitization)
       const current = await getCurrentData(entity, data.id, ctx);
       if (current) {
         preview.changes = Object.entries(data)
-          .filter(([key, _value]) => key !== "id" && current[key] !== value)
+          .filter(([key, _value]) => key !== 'id' && current[key] !== value)
           .map(([key, _value]) => ({
             field: key,
             oldValue: this.sanitizePreviewValue(current[key], key),
@@ -434,7 +429,7 @@ async function generatePreview(
   } catch (error) {
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
-      "INTERNAL_ERROR",
+      'INTERNAL_ERROR',
       {
         operation,
         entity,
@@ -445,7 +440,7 @@ async function generatePreview(
     );
 
     // Log sanitized error for debugging
-    logger.warn("Preview generation failed", {
+    logger.warn('Preview generation failed', {
       error: appError.message,
       operation,
       entity,
@@ -466,11 +461,11 @@ async function getCurrentData(
 ): Promise<any> {
   try {
     switch (entity) {
-      case "patients":
+      case 'patients':
         return await ctx.prisma.patient.findUnique({
           where: { id },
         });
-      case "appointments":
+      case 'appointments':
         return await ctx.prisma.appointment.findUnique({
           where: { id },
         });
@@ -480,17 +475,17 @@ async function getCurrentData(
   } catch (error) {
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
-      "INTERNAL_ERROR",
+      'INTERNAL_ERROR',
       {
         entity,
-        operation: "read",
+        operation: 'read',
         currentDataFailed: true,
       },
       ctx.user?.id,
     );
 
     // Log sanitized error for debugging
-    logger.warn("Failed to get current data", {
+    logger.warn('Failed to get current data', {
       error: appError.message,
       entity,
       id,
@@ -515,20 +510,20 @@ export const crudRouter = router({
     .mutation(async ({ ctx, _input }) => {
       try {
         switch (input.step) {
-          case "intent":
+          case 'intent':
             return await handleIntentStep(ctx, input);
-          case "confirm":
+          case 'confirm':
             return await handleConfirmStep(ctx, input);
-          case "execute":
+          case 'execute':
             return await handleExecuteStep(ctx, input);
           default:
             throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Invalid step specified",
+              code: 'BAD_REQUEST',
+              message: 'Invalid step specified',
             });
         }
       } catch (error) {
-        console.error("CRUD operation error:", error);
+        console.error('CRUD operation error:', error);
 
         // Create error audit trail
         await ctx.prisma.auditTrail.create({
@@ -536,7 +531,7 @@ export const crudRouter = router({
             _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.CREATE,
-            resource: "ai_crud_operation",
+            resource: 'ai_crud_operation',
             resourceType: ResourceType.SYSTEM_CONFIG,
             ipAddress: ctx.auditMeta.ipAddress,
             userAgent: ctx.auditMeta.userAgent,
@@ -545,9 +540,9 @@ export const crudRouter = router({
             riskLevel: RiskLevel.MEDIUM,
             additionalInfo: JSON.stringify({
               step: input.step,
-              operation: "step" in input ? input.operation : "unknown",
-              entity: "step" in input ? input.entity : "unknown",
-              error: error instanceof Error ? error.message : "Unknown error",
+              operation: 'step' in input ? input.operation : 'unknown',
+              entity: 'step' in input ? input.entity : 'unknown',
+              error: error instanceof Error ? error.message : 'Unknown error',
             }),
           },
         });
@@ -557,8 +552,8 @@ export const crudRouter = router({
         }
 
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to process CRUD operation",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to process CRUD operation',
           cause: error,
         });
       }
@@ -578,13 +573,12 @@ export const crudRouter = router({
       try {
         // Use proper operation state management instead of audit trail
         const operationStateService = createOperationStateService(ctx.prisma);
-        const operationState =
-          await operationStateService.getStateByOperationId(input.operationId);
+        const operationState = await operationStateService.getStateByOperationId(input.operationId);
 
         if (!operationState) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Operation not found",
+            code: 'NOT_FOUND',
+            message: 'Operation not found',
           });
         }
 
@@ -595,7 +589,7 @@ export const crudRouter = router({
           entity: operationState.entity,
           operation: operationState.operation,
           completedAt: operationState.completedAt,
-          success: operationState.status === "completed",
+          success: operationState.status === 'completed',
           error: operationState.errorMessage,
           metadata: operationState.metadata,
         };
@@ -605,8 +599,8 @@ export const crudRouter = router({
         }
 
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to get operation status",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to get operation status',
           cause: error,
         });
       }
@@ -618,20 +612,20 @@ export const crudRouter = router({
    */
   getSupportedEntities: protectedProcedure.query(() => {
     return {
-      entities: SUPPORTED_ENTITIES.map((entity) => ({
+      entities: SUPPORTED_ENTITIES.map(entity => ({
         name: entity,
         operations: CRUD_OPERATIONS,
         description: getEntityDescription(entity),
         requiredFields: getRequiredFields(entity),
       })),
-      operations: CRUD_OPERATIONS.map((op) => ({
+      operations: CRUD_OPERATIONS.map(op => ({
         name: op,
         description: getOperationDescription(op),
       })),
       compliance: {
         lgpdCompliant: true,
         auditRequired: true,
-        consentRequired: ["patients", "medical_records", "prescriptions"],
+        consentRequired: ['patients', 'medical_records', 'prescriptions'],
       },
     };
   }),
@@ -660,12 +654,12 @@ async function handleIntentStep(
 
   if (!schemaValidation.success) {
     const errors = schemaValidation.error.errors.map(
-      (err) => `Campo ${err.path.join(".")}: ${err.message}`,
+      err => `Campo ${err.path.join('.')}: ${err.message}`,
     );
 
     // Create sanitized error without exposing internal validation details
     const appError = GlobalErrorHandler.createError(
-      "VALIDATION_ERROR",
+      'VALIDATION_ERROR',
       {
         entity: input.entity,
         operation: input.operation,
@@ -676,7 +670,7 @@ async function handleIntentStep(
     );
 
     throw new TRPCError({
-      code: "BAD_REQUEST",
+      code: 'BAD_REQUEST',
       message: appError.message,
       cause: {
         sanitizedErrors: errors.length > 3 ? errors.slice(0, 3) : errors,
@@ -704,15 +698,14 @@ async function handleIntentStep(
   );
 
   // Check if confirmation is required
-  const confirmationRequired =
-    !input.options?.skipConfirmation &&
-    ["create", "update", "delete"].includes(input.operation);
+  const confirmationRequired = !input.options?.skipConfirmation
+    && ['create', 'update', 'delete'].includes(input.operation);
 
   // Determine if consent is required
   const consentRequired = [
-    "patients",
-    "medical_records",
-    "prescriptions",
+    'patients',
+    'medical_records',
+    'prescriptions',
   ].includes(input.entity);
 
   // Create audit trail
@@ -722,7 +715,7 @@ async function handleIntentStep(
       clinicId: ctx.clinicId,
       patientId: input.metadata?.patientId,
       action: AuditAction.READ,
-      resource: "ai_crud_intent",
+      resource: 'ai_crud_intent',
       resourceType: ResourceType.SYSTEM_CONFIG,
       ipAddress: ctx.auditMeta.ipAddress,
       userAgent: ctx.auditMeta.userAgent,
@@ -730,7 +723,7 @@ async function handleIntentStep(
       status: validation.isValid ? AuditStatus.SUCCESS : AuditStatus.FAILED,
       riskLevel: RiskLevel.MEDIUM,
       additionalInfo: JSON.stringify({
-        step: "intent",
+        step: 'intent',
         operationId: intentId,
         operation: input.operation,
         entity: input.entity,
@@ -746,8 +739,8 @@ async function handleIntentStep(
 
   return {
     intentId,
-    step: "intent" as const,
-    status: validation.isValid ? "pending_confirmation" : "requires_input",
+    step: 'intent' as const,
+    status: validation.isValid ? 'pending_confirmation' : 'requires_input',
     validation: {
       isValid: validation.isValid,
       errors: validation.errors,
@@ -763,7 +756,7 @@ async function handleIntentStep(
     },
     compliance: {
       lgpdCompliant: input.options?.lgpdCompliance !== false,
-      cfmCompliant: ["patients", "medical_records", "prescriptions"].includes(
+      cfmCompliant: ['patients', 'medical_records', 'prescriptions'].includes(
         input.entity,
       ),
       auditRequired: true,
@@ -793,8 +786,8 @@ async function handleConfirmStep(
 
   if (!intentState) {
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "Intent not found or expired",
+      code: 'NOT_FOUND',
+      message: 'Intent not found or expired',
     });
   }
 
@@ -807,7 +800,7 @@ async function handleConfirmStep(
         _userId: ctx.userId,
         clinicId: ctx.clinicId,
         action: AuditAction.UPDATE,
-        resource: "ai_crud_confirmation",
+        resource: 'ai_crud_confirmation',
         resourceType: ResourceType.SYSTEM_CONFIG,
         ipAddress: ctx.auditMeta.ipAddress,
         userAgent: ctx.auditMeta.userAgent,
@@ -815,10 +808,10 @@ async function handleConfirmStep(
         status: AuditStatus.SUCCESS,
         riskLevel: RiskLevel.LOW,
         additionalInfo: JSON.stringify({
-          step: "confirm",
+          step: 'confirm',
           intentId: input.intentId,
           confirmationId,
-          status: "rejected",
+          status: 'rejected',
           reason: input.reason,
         }),
       },
@@ -827,8 +820,8 @@ async function handleConfirmStep(
     return {
       confirmationId,
       intentId: input.intentId,
-      step: "confirm" as const,
-      status: "rejected" as const,
+      step: 'confirm' as const,
+      status: 'rejected' as const,
       readyToExecute: false,
     };
   }
@@ -836,13 +829,13 @@ async function handleConfirmStep(
   // Create execution plan
   const executionPlan = {
     steps: [
-      "Validar permissões e consentimento",
-      "Executar operação no banco de dados",
-      "Criar registro de auditoria",
-      "Notificar sistemas interessados",
+      'Validar permissões e consentimento',
+      'Executar operação no banco de dados',
+      'Criar registro de auditoria',
+      'Notificar sistemas interessados',
     ],
     estimatedTimeMs: 500,
-    rollbackAvailable: ["create", "update"].includes(intentData.operation),
+    rollbackAvailable: ['create', 'update'].includes(intentData.operation),
   };
 
   // Create audit trail
@@ -851,7 +844,7 @@ async function handleConfirmStep(
       _userId: ctx.userId,
       clinicId: ctx.clinicId,
       action: AuditAction.UPDATE,
-      resource: "ai_crud_confirmation",
+      resource: 'ai_crud_confirmation',
       resourceType: ResourceType.SYSTEM_CONFIG,
       ipAddress: ctx.auditMeta.ipAddress,
       userAgent: ctx.auditMeta.userAgent,
@@ -859,10 +852,10 @@ async function handleConfirmStep(
       status: AuditStatus.SUCCESS,
       riskLevel: RiskLevel.MEDIUM,
       additionalInfo: JSON.stringify({
-        step: "confirm",
+        step: 'confirm',
         intentId: input.intentId,
         confirmationId,
-        status: "confirmed",
+        status: 'confirmed',
         executionPlan,
         modifications: input.modifications,
         reason: input.reason,
@@ -873,8 +866,8 @@ async function handleConfirmStep(
   return {
     confirmationId,
     intentId: input.intentId,
-    step: "confirm" as const,
-    status: "confirmed" as const,
+    step: 'confirm' as const,
+    status: 'confirmed' as const,
     readyToExecute: true,
     finalData: input.modifications,
     executionPlan,
@@ -905,8 +898,8 @@ async function handleExecuteStep(
 
   if (!intentState || !confirmState) {
     throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "Intent or confirmation not found",
+      code: 'NOT_FOUND',
+      message: 'Intent or confirmation not found',
     });
   }
 
@@ -917,8 +910,8 @@ async function handleExecuteStep(
   const executionData = input.finalData;
   if (!executionData) {
     throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Missing required finalData for execution step",
+      code: 'BAD_REQUEST',
+      message: 'Missing required finalData for execution step',
     });
   }
 
@@ -929,30 +922,30 @@ async function handleExecuteStep(
   try {
     // Execute the CRUD operation
     switch (intentData.operation) {
-      case "create":
+      case 'create':
         result = await executeCreate(intentData.entity, executionData, ctx);
         recordsAffected = 1;
         break;
-      case "read":
+      case 'read':
         result = await executeRead(intentData.entity, executionData, ctx);
         recordsAffected = Array.isArray(result)
           ? result.length
           : result
-            ? 1
-            : 0;
+          ? 1
+          : 0;
         break;
-      case "update":
+      case 'update':
         result = await executeUpdate(intentData.entity, executionData, ctx);
         recordsAffected = 1;
         break;
-      case "delete":
+      case 'delete':
         result = await executeDelete(intentData.entity, executionData, ctx);
         recordsAffected = 1;
         break;
       default:
         throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Unsupported operation",
+          code: 'BAD_REQUEST',
+          message: 'Unsupported operation',
         });
     }
 
@@ -972,7 +965,7 @@ async function handleExecuteStep(
         status: AuditStatus.SUCCESS,
         riskLevel: RiskLevel.MEDIUM,
         additionalInfo: JSON.stringify({
-          step: "execute",
+          step: 'execute',
           executionId,
           intentId: input.intentId,
           confirmationId: input.confirmationId,
@@ -988,8 +981,8 @@ async function handleExecuteStep(
       executionId,
       intentId: input.intentId,
       confirmationId: input.confirmationId,
-      step: "execute" as const,
-      status: "completed" as const,
+      step: 'execute' as const,
+      status: 'completed' as const,
       result,
       metrics: {
         executionTimeMs: Date.now() - startTime,
@@ -1004,19 +997,18 @@ async function handleExecuteStep(
     };
   } catch (executionError) {
     // Sanitize error message to prevent information disclosure
-    const appError =
-      executionError instanceof Error
-        ? GlobalErrorHandler.createError(
-            "INTERNAL_ERROR",
-            {
-              operation: intentData.operation,
-              entity: intentData.entity,
-              executionStep: "execute",
-            },
-            ctx.userId,
-            intentData.patientId || input.finalData?.patientData?.id,
-          )
-        : GlobalErrorHandler.createError("INTERNAL_ERROR");
+    const appError = executionError instanceof Error
+      ? GlobalErrorHandler.createError(
+        'INTERNAL_ERROR',
+        {
+          operation: intentData.operation,
+          entity: intentData.entity,
+          executionStep: 'execute',
+        },
+        ctx.userId,
+        intentData.patientId || input.finalData?.patientData?.id,
+      )
+      : GlobalErrorHandler.createError('INTERNAL_ERROR');
 
     error = appError.message;
 
@@ -1034,7 +1026,7 @@ async function handleExecuteStep(
         status: AuditStatus.FAILED,
         riskLevel: RiskLevel.HIGH,
         additionalInfo: JSON.stringify({
-          step: "execute",
+          step: 'execute',
           executionId,
           intentId: input.intentId,
           confirmationId: input.confirmationId,
@@ -1050,8 +1042,8 @@ async function handleExecuteStep(
       executionId,
       intentId: input.intentId,
       confirmationId: input.confirmationId,
-      step: "execute" as const,
-      status: "failed" as const,
+      step: 'execute' as const,
+      status: 'failed' as const,
       result: null,
       metrics: {
         executionTimeMs: Date.now() - startTime,
@@ -1080,7 +1072,7 @@ async function executeCreate(
   ctx: any,
 ): Promise<any> {
   switch (entity) {
-    case "patients":
+    case 'patients':
       return await ctx.prisma.patient.create({
         data: {
           ...data,
@@ -1088,7 +1080,7 @@ async function executeCreate(
           createdBy: ctx.userId,
         },
       });
-    case "appointments":
+    case 'appointments':
       return await ctx.prisma.appointment.create({
         data: {
           ...data,
@@ -1098,7 +1090,7 @@ async function executeCreate(
       });
     default:
       throw new TRPCError({
-        code: "NOT_IMPLEMENTED",
+        code: 'NOT_IMPLEMENTED',
         message: `Create operation not implemented for entity: ${entity}`,
       });
   }
@@ -1113,14 +1105,14 @@ async function executeRead(
   ctx: any,
 ): Promise<any> {
   switch (entity) {
-    case "patients":
+    case 'patients':
       return await ctx.prisma.patient.findMany({
         where: {
           clinicId: ctx.clinicId,
           ...data,
         },
       });
-    case "appointments":
+    case 'appointments':
       return await ctx.prisma.appointment.findMany({
         where: {
           clinicId: ctx.clinicId,
@@ -1129,7 +1121,7 @@ async function executeRead(
       });
     default:
       throw new TRPCError({
-        code: "NOT_IMPLEMENTED",
+        code: 'NOT_IMPLEMENTED',
         message: `Read operation not implemented for entity: ${entity}`,
       });
   }
@@ -1146,7 +1138,7 @@ async function executeUpdate(
   const { id, ...updateData } = data;
 
   switch (entity) {
-    case "patients":
+    case 'patients':
       return await ctx.prisma.patient.update({
         where: { id },
         data: {
@@ -1155,7 +1147,7 @@ async function executeUpdate(
           updatedBy: ctx.userId,
         },
       });
-    case "appointments":
+    case 'appointments':
       return await ctx.prisma.appointment.update({
         where: { id },
         data: {
@@ -1166,7 +1158,7 @@ async function executeUpdate(
       });
     default:
       throw new TRPCError({
-        code: "NOT_IMPLEMENTED",
+        code: 'NOT_IMPLEMENTED',
         message: `Update operation not implemented for entity: ${entity}`,
       });
   }
@@ -1181,17 +1173,17 @@ async function executeDelete(
   ctx: any,
 ): Promise<any> {
   switch (entity) {
-    case "patients":
+    case 'patients':
       return await ctx.prisma.patient.delete({
         where: { id: data.id },
       });
-    case "appointments":
+    case 'appointments':
       return await ctx.prisma.appointment.delete({
         where: { id: data.id },
       });
     default:
       throw new TRPCError({
-        code: "NOT_IMPLEMENTED",
+        code: 'NOT_IMPLEMENTED',
         message: `Delete operation not implemented for entity: ${entity}`,
       });
   }
@@ -1206,13 +1198,13 @@ async function executeDelete(
  */
 function mapOperationToAuditAction(operation: CrudOperation): AuditAction {
   switch (operation) {
-    case "create":
+    case 'create':
       return AuditAction.CREATE;
-    case "read":
+    case 'read':
       return AuditAction.READ;
-    case "update":
+    case 'update':
       return AuditAction.UPDATE;
-    case "delete":
+    case 'delete':
       return AuditAction.DELETE;
     default:
       return AuditAction.READ;
@@ -1224,15 +1216,15 @@ function mapOperationToAuditAction(operation: CrudOperation): AuditAction {
  */
 function mapEntityToResourceType(entity: CrudEntity): ResourceType {
   switch (entity) {
-    case "patients":
+    case 'patients':
       return ResourceType.PATIENT_DATA;
-    case "appointments":
+    case 'appointments':
       return ResourceType.APPOINTMENT;
-    case "medical_records":
+    case 'medical_records':
       return ResourceType.MEDICAL_RECORD;
-    case "prescriptions":
+    case 'prescriptions':
       return ResourceType.PRESCRIPTION;
-    case "healthcare_professionals":
+    case 'healthcare_professionals':
       return ResourceType.PROFESSIONAL;
     default:
       return ResourceType.SYSTEM_CONFIG;
@@ -1244,14 +1236,14 @@ function mapEntityToResourceType(entity: CrudEntity): ResourceType {
  */
 function getEntityDescription(entity: CrudEntity): string {
   const descriptions = {
-    patients: "Dados de pacientes com conformidade LGPD",
-    appointments: "Agendamentos de consultas médicas",
-    treatments: "Tratamentos e procedimentos médicos",
-    medical_records: "Prontuários médicos eletrônicos",
-    prescriptions: "Prescrições médicas e medicamentos",
-    healthcare_professionals: "Profissionais de saúde cadastrados",
-    clinics: "Clínicas e estabelecimentos de saúde",
-    consent_records: "Registros de consentimento LGPD",
+    patients: 'Dados de pacientes com conformidade LGPD',
+    appointments: 'Agendamentos de consultas médicas',
+    treatments: 'Tratamentos e procedimentos médicos',
+    medical_records: 'Prontuários médicos eletrônicos',
+    prescriptions: 'Prescrições médicas e medicamentos',
+    healthcare_professionals: 'Profissionais de saúde cadastrados',
+    clinics: 'Clínicas e estabelecimentos de saúde',
+    consent_records: 'Registros de consentimento LGPD',
   };
   return descriptions[entity] || `Entidade: ${entity}`;
 }
@@ -1261,14 +1253,14 @@ function getEntityDescription(entity: CrudEntity): string {
  */
 function getRequiredFields(entity: CrudEntity): string[] {
   const requiredFields = {
-    patients: ["fullName", "birthDate"],
-    appointments: ["startTime", "endTime", "patientId"],
-    treatments: ["name", "patientId"],
-    medical_records: ["patientId", "recordType"],
-    prescriptions: ["patientId", "medication", "dosage"],
-    healthcare_professionals: ["fullName", "specialty"],
-    clinics: ["name", "address"],
-    consent_records: ["patientId", "consentType"],
+    patients: ['fullName', 'birthDate'],
+    appointments: ['startTime', 'endTime', 'patientId'],
+    treatments: ['name', 'patientId'],
+    medical_records: ['patientId', 'recordType'],
+    prescriptions: ['patientId', 'medication', 'dosage'],
+    healthcare_professionals: ['fullName', 'specialty'],
+    clinics: ['name', 'address'],
+    consent_records: ['patientId', 'consentType'],
   };
   return requiredFields[entity] || [];
 }
@@ -1278,10 +1270,10 @@ function getRequiredFields(entity: CrudEntity): string[] {
  */
 function getOperationDescription(operation: CrudOperation): string {
   const descriptions = {
-    create: "Criar novo registro",
-    read: "Consultar registros existentes",
-    update: "Atualizar registros existentes",
-    delete: "Excluir registros",
+    create: 'Criar novo registro',
+    read: 'Consultar registros existentes',
+    update: 'Atualizar registros existentes',
+    delete: 'Excluir registros',
   };
   return descriptions[operation] || `Operação: ${operation}`;
 }

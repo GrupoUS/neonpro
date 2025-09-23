@@ -3,14 +3,14 @@
  * Ensures all data access complies with Brazilian data protection laws
  */
 
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 export interface LGPDComplianceContext {
   _userId: string;
   clinicId?: string;
   patientId?: string;
-  action: "read" | "write" | "delete";
-  resourceType: "patient" | "appointment" | "financial" | "medical_record";
+  action: 'read' | 'write' | 'delete';
+  resourceType: 'patient' | 'appointment' | 'financial' | 'medical_record';
   justification?: string;
 }
 
@@ -44,48 +44,48 @@ export class LGPDComplianceService {
     try {
       // Check if user has valid professional credentials
       const { data: professional, error } = await this.supabase
-        .from("professionals")
-        .select("id, clinic_id, is_active")
-        .eq("user_id", context._userId)
+        .from('professionals')
+        .select('id, clinic_id, is_active')
+        .eq('user_id', context._userId)
         .single();
 
       if (error || !professional?.is_active) {
-        await this.logViolation(context, "Unauthorized access attempt");
+        await this.logViolation(context, 'Unauthorized access attempt');
         return false;
       }
 
       // Validate clinic access for multi-tenant setup
       if (context.clinicId && professional.clinic_id !== context.clinicId) {
-        await this.logViolation(context, "Cross-clinic access attempt");
+        await this.logViolation(context, 'Cross-clinic access attempt');
         return false;
       }
 
       // For patient data, check LGPD consent
-      if (context.resourceType === "patient" && context.patientId) {
+      if (context.resourceType === 'patient' && context.patientId) {
         const { data: patient, error } = await this.supabase
-          .from("patients")
-          .select("lgpd_consent_given, data_retention_until")
-          .eq("id", context.patientId)
+          .from('patients')
+          .select('lgpd_consent_given, data_retention_until')
+          .eq('id', context.patientId)
           .single();
 
         if (error || !patient?.lgpd_consent_given) {
-          await this.logViolation(context, "Access without LGPD consent");
+          await this.logViolation(context, 'Access without LGPD consent');
           return false;
         }
 
         // Check data retention policy
         if (
-          patient.data_retention_until &&
-          new Date() > new Date(patient.data_retention_until)
+          patient.data_retention_until
+          && new Date() > new Date(patient.data_retention_until)
         ) {
-          await this.logViolation(context, "Access beyond retention period");
+          await this.logViolation(context, 'Access beyond retention period');
           return false;
         }
       }
 
       return true;
     } catch (error) {
-      console.error("LGPD validation error:", error);
+      console.error('LGPD validation error:', error);
       await this.logViolation(context, `Validation error: ${error}`);
       return false;
     }
@@ -99,7 +99,7 @@ export class LGPDComplianceService {
     success: boolean,
     metadata?: Record<string, any>,
   ): Promise<void> {
-    const auditEntry: Omit<AuditLogEntry, "id" | "timestamp"> = {
+    const auditEntry: Omit<AuditLogEntry, 'id' | 'timestamp'> = {
       _userId: context.userId,
       action: `${context.action}_${context.resourceType}`,
       resourceType: context.resourceType,
@@ -110,15 +110,14 @@ export class LGPDComplianceService {
         justification: context.justification,
         success,
       },
-      phiAccessed:
-        context.resourceType === "patient" ||
-        context.resourceType === "medical_record",
+      phiAccessed: context.resourceType === 'patient'
+        || context.resourceType === 'medical_record',
     };
 
     try {
-      await this.supabase.from("audit_logs").insert([auditEntry]);
+      await this.supabase.from('audit_logs').insert([auditEntry]);
     } catch (error) {
-      console.error("Failed to log audit entry:", error);
+      console.error('Failed to log audit entry:', error);
     }
   }
 
@@ -130,23 +129,23 @@ export class LGPDComplianceService {
     reason: string,
   ): Promise<void> {
     try {
-      await this.supabase.from("audit_logs").insert([
+      await this.supabase.from('audit_logs').insert([
         {
           _userId: context.userId,
-          action: "lgpd_violation",
+          action: 'lgpd_violation',
           resourceType: context.resourceType,
           resourceId: context.patientId,
           metadata: {
             violationReason: reason,
             clinicId: context.clinicId,
             action: context.action,
-            severity: "high",
+            severity: 'high',
           },
           phiAccessed: true,
         },
       ]);
     } catch (error) {
-      console.error("Failed to log LGPD violation:", error);
+      console.error('Failed to log LGPD violation:', error);
     }
   }
 
@@ -170,8 +169,8 @@ export class LGPDComplianceService {
 
     let sanitized = text;
 
-    phiPatterns.forEach((pattern) => {
-      sanitized = sanitized.replace(pattern, "[REDACTED]");
+    phiPatterns.forEach(pattern => {
+      sanitized = sanitized.replace(pattern, '[REDACTED]');
     });
 
     return sanitized;
@@ -184,9 +183,9 @@ export class LGPDComplianceService {
     try {
       // Find patients past retention period
       const { data: expiredPatients } = await this.supabase
-        .from("patients")
-        .select("id, clinic_id")
-        .lt("data_retention_until", new Date().toISOString());
+        .from('patients')
+        .select('id, clinic_id')
+        .lt('data_retention_until', new Date().toISOString());
 
       if (expiredPatients) {
         console.log(
@@ -198,19 +197,19 @@ export class LGPDComplianceService {
         for (const patient of expiredPatients) {
           await this.logDataAccess(
             {
-              _userId: "system",
+              _userId: 'system',
               clinicId: patient.clinic_id,
               patientId: patient.id,
-              action: "delete",
-              resourceType: "patient",
-              justification: "Retention policy expired",
+              action: 'delete',
+              resourceType: 'patient',
+              justification: 'Retention policy expired',
             },
             true,
           );
         }
       }
     } catch (error) {
-      console.error("Retention check error:", error);
+      console.error('Retention check error:', error);
     }
   }
 
@@ -219,17 +218,17 @@ export class LGPDComplianceService {
    */
   async createAccessRequest(
     patientId: string,
-    requestType: "access" | "deletion" | "portability",
+    requestType: 'access' | 'deletion' | 'portability',
     justification: string,
   ): Promise<string> {
     try {
       const { data, error } = await this.supabase
-        .from("consent_records")
+        .from('consent_records')
         .insert([
           {
             patient_id: patientId,
             purpose: `lgpd_${requestType}`,
-            status: "pending",
+            status: 'pending',
             justification,
           },
         ])
@@ -242,7 +241,7 @@ export class LGPDComplianceService {
 
       return data.id;
     } catch (error) {
-      console.error("Failed to create access _request:", error);
+      console.error('Failed to create access _request:', error);
       throw error;
     }
   }
