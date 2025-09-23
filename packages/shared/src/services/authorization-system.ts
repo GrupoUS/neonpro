@@ -22,7 +22,10 @@ import type {
   HealthcarePermission,
   AuthSession,
 } from "./authentication-middleware";
-import { logHealthcareError, authorizationLogger } from '../logging/healthcare-logger';
+import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
+
+// Create authorization logger from audit logger
+const authorizationLogger = auditLogger.child({ component: 'authorization' });
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -618,8 +621,8 @@ export class HealthcareAuthorizationRules {
 
     // Patient-owned data access
     if (
-      resource.owner?.userId === subject.userId &&
-      subject.role === "patient"
+      resource.owner?._userId === subject._userId &&
+      subject._role === "patient"
     ) {
       decision = "permit";
       reasons.push("Patient accessing own data");
@@ -628,7 +631,7 @@ export class HealthcareAuthorizationRules {
     // Healthcare provider access to assigned patients
     if (["doctor", "nurse", "specialist"].includes(subject._role)) {
       if (
-        resource.attributes.assignedProvider === subject.userId ||
+        resource.attributes.assignedProvider === subject._userId ||
         resource.attributes.careTeam?.includes(subject._userId)
       ) {
         decision = "permit";
@@ -705,7 +708,7 @@ export class HealthcareAuthorizationRules {
     }
 
     // Pharmacy access
-    if (subject.role === "pharmacist") {
+    if (subject._role === "pharmacist") {
       decision = "permit";
       reasons.push("Pharmacist access to medication records");
     }
@@ -725,7 +728,7 @@ export class HealthcareAuthorizationRules {
 
     // Lab technician can write results
     if (
-      subject.role === "lab_technician" &&
+      subject._role === "lab_technician" &&
       ["write", "create", "update"].includes(action.operation)
     ) {
       decision = "permit";
@@ -742,7 +745,7 @@ export class HealthcareAuthorizationRules {
     }
 
     // Patients can read their own results
-    if (subject.role === "patient" && action.operation === "read") {
+    if (subject._role === "patient" && action.operation === "read") {
       decision = "permit";
       reasons.push("Patient access to own laboratory results");
     }
@@ -762,7 +765,7 @@ export class HealthcareAuthorizationRules {
     let decision: "permit" | "deny" = "deny";
 
     // System administration
-    if (subject.role === "system_admin") {
+    if (subject._role === "system_admin") {
       decision = "permit";
       reasons.push("System administrator access");
 
@@ -776,7 +779,7 @@ export class HealthcareAuthorizationRules {
     }
 
     // Compliance officer access
-    if (subject.role === "compliance_officer") {
+    if (subject._role === "compliance_officer") {
       if (["read", "export"].includes(action.operation)) {
         decision = "permit";
         reasons.push("Compliance officer audit access");
@@ -784,7 +787,7 @@ export class HealthcareAuthorizationRules {
     }
 
     // Department head access
-    if (subject.role === "department_head") {
+    if (subject._role === "department_head") {
       if (action.scope === "basic" || action.scope === "full") {
         decision = "permit";
         reasons.push("Department head management access");
@@ -807,7 +810,7 @@ export class HealthcareAuthorizationRules {
     let decision: "permit" | "deny" = "deny";
 
     // Emergency responder access
-    if (subject.role === "emergency_responder") {
+    if (subject._role === "emergency_responder") {
       decision = "permit";
       reasons.push("Emergency responder access authorization");
       obligations.push({
@@ -889,7 +892,7 @@ export class HealthcareAuthorizationRules {
     }
 
     // Right to erasure
-    if (action.operation === "delete" && subject.role === "patient") {
+    if (action.operation === "delete" && subject._role === "patient") {
       decision = "permit";
       reasons.push("Patient right to erasure under LGPD");
       obligations.push({
@@ -967,7 +970,7 @@ export class HealthcareAuthorizationEngine {
         { component: 'authorization-system', timestamp: new Date().toISOString() },
       );
     } catch (error) {
-      logHealthcareError('authorization-system', error, { method: 'initialize' });
+      logHealthcareError('authorization-system', error instanceof Error ? error : new Error(String(error)), { method: 'initialize' });
     }
   }
 
@@ -1080,31 +1083,31 @@ export class HealthcareAuthorizationEngine {
     try {
       // Check cache first
       if (this.config.decisionEngine.enableCaching) {
-        const cached = this.getCachedDecision(context);
+        const cached = this.getCachedDecision(_context);
         if (cached) {
           return cached;
         }
       }
 
       // Evaluate authorization
-      const decision = await this.evaluateAuthorization(context, contextId);
+      const decision = await this.evaluateAuthorization(_context, contextId);
 
       // Cache decision
       if (
         this.config.decisionEngine.enableCaching &&
         decision.decision !== "indeterminate"
       ) {
-        this.cacheDecision(context, decision);
+        this.cacheDecision(_context, decision);
       }
 
       // Log decision
       if (this.config.audit.enableDecisionLogging) {
-        await this.logAuthorizationDecision(context, decision, startTime);
+        await this.logAuthorizationDecision(_context, decision, startTime);
       }
 
       return decision;
     } catch (error) {
-      logHealthcareError('authorization-system', error, { method: 'evaluateAuthorization' });
+      logHealthcareError('authorization-system', error instanceof Error ? error : new Error(String(error)), { method: 'evaluateAuthorization' });
 
       return {
         decision: "indeterminate",
@@ -1154,10 +1157,10 @@ export class HealthcareAuthorizationEngine {
     const conditions: AuthorizationDecision["conditions"] = [];
 
     // Risk assessment
-    const riskScore = await this.assessRisk(context);
+    const riskScore = await this.assessRisk(_context);
 
     // Evaluate resource-specific rules
-    const resourceDecision = await this.evaluateResourceSpecificRules(context);
+    const resourceDecision = await this.evaluateResourceSpecificRules(_context);
     if (resourceDecision.decision) {
       finalDecision = resourceDecision.decision;
       allReasons.push(...(resourceDecision.reasons || []));
@@ -1171,7 +1174,7 @@ export class HealthcareAuthorizationEngine {
       finalDecision !== "permit"
     ) {
       const lgpdDecision =
-        HealthcareAuthorizationRules.evaluateLGPDCompliance(context);
+        HealthcareAuthorizationRules.evaluateLGPDCompliance(_context);
       if (lgpdDecision.decision === "deny") {
         finalDecision = "deny";
       }
@@ -1181,9 +1184,9 @@ export class HealthcareAuthorizationEngine {
     }
 
     // Emergency access evaluation
-    if (context.environment.workflow?.emergencyFlag) {
+    if (_context.environment.workflow?.emergencyFlag) {
       const emergencyDecision =
-        HealthcareAuthorizationRules.evaluateEmergencyAccess(context);
+        HealthcareAuthorizationRules.evaluateEmergencyAccess(_context);
       if (emergencyDecision.decision === "permit") {
         finalDecision = "permit";
       }
@@ -1217,14 +1220,14 @@ export class HealthcareAuthorizationEngine {
     const monitoring = {
       auditRequired:
         this.config.audit.enableComplianceAudit ||
-        context.resource.sensitivity === "restricted" ||
-        context.resource.sensitivity === "top_secret",
+        _context.resource.sensitivity === "restricted" ||
+        _context.resource.sensitivity === "top_secret",
       alertRequired:
         riskScore > this.config.security.riskThreshold ||
         finalDecision === "deny",
       notificationRequired:
-        context.environment.workflow?.emergencyFlag || false,
-      complianceTracking: context.compliance.auditRequired,
+        _context.environment.workflow?.emergencyFlag || false,
+      complianceTracking: _context.compliance.auditRequired,
     };
 
     return {
@@ -1248,7 +1251,7 @@ export class HealthcareAuthorizationEngine {
   private async evaluateResourceSpecificRules(
     _context: AuthorizationContext,
   ): Promise<Partial<AuthorizationDecision>> {
-    const resourceType = context.resource.type;
+    const resourceType = _context.resource.type;
 
     switch (resourceType) {
       case "patient_profile":
@@ -1262,20 +1265,20 @@ export class HealthcareAuthorizationEngine {
       case "vital_signs":
       case "progress_note":
       case "allergy_record":
-        return HealthcareAuthorizationRules.evaluatePatientDataAccess(context);
+        return HealthcareAuthorizationRules.evaluatePatientDataAccess(_context);
 
       case "prescription":
       case "medication_order":
       case "medication_administration":
       case "medication_reconciliation":
       case "pharmacy_order":
-        return HealthcareAuthorizationRules.evaluateMedicationAccess(context);
+        return HealthcareAuthorizationRules.evaluateMedicationAccess(_context);
 
       case "lab_order":
       case "lab_result":
       case "lab_report":
       case "specimen":
-        return HealthcareAuthorizationRules.evaluateLabDataAccess(context);
+        return HealthcareAuthorizationRules.evaluateLabDataAccess(_context);
 
       case "user_account":
       case "role_assignment":
@@ -1284,13 +1287,13 @@ export class HealthcareAuthorizationEngine {
       case "system_config":
       case "backup_data":
       case "compliance_report":
-        return HealthcareAuthorizationRules.evaluateAdminAccess(context);
+        return HealthcareAuthorizationRules.evaluateAdminAccess(_context);
 
       case "emergency_contact":
       case "emergency_procedure":
       case "emergency_alert":
       case "disaster_plan":
-        return HealthcareAuthorizationRules.evaluateEmergencyAccess(context);
+        return HealthcareAuthorizationRules.evaluateEmergencyAccess(_context);
 
       default:
         return {
@@ -1318,7 +1321,7 @@ export class HealthcareAuthorizationEngine {
       restricted: 5,
       top_secret: 7,
     };
-    riskScore += sensitivityRisk[context.resource.sensitivity] || 0;
+    riskScore += sensitivityRisk[_context.resource.sensitivity] || 0;
 
     // Action risk
     const actionRisk = {
@@ -1331,7 +1334,7 @@ export class HealthcareAuthorizationEngine {
       export: 4,
       share: 5,
     };
-    riskScore += actionRisk[context.action.operation] || 0;
+    riskScore += actionRisk[_context.action.operation] || 0;
 
     // Time-based risk
     const currentHour = new Date().getHours();
@@ -1340,15 +1343,15 @@ export class HealthcareAuthorizationEngine {
     }
 
     // Geographic risk (if available)
-    if (context.environment.location?.country) {
+    if (_context.environment.location?.country) {
       const higherRiskCountries = ["unknown", "restricted"];
-      if (higherRiskCountries.includes(context.environment.location.country)) {
+      if (higherRiskCountries.includes(_context.environment.location.country)) {
         riskScore += 2;
       }
     }
 
     // Emergency mode risk adjustment
-    if (context.subject.emergencyMode) {
+    if (_context.subject.emergencyMode) {
       riskScore += 2; // Emergency access is inherently riskier
     }
 
@@ -1387,8 +1390,8 @@ export class HealthcareAuthorizationEngine {
       correlationId,
 
       subject: {
-        _userId: authSession.userId,
-        _role: authSession.userProfile.role,
+        _userId: authSession._userId,
+        _role: authSession.userProfile._role,
         permissions: authSession.userProfile.permissions,
         attributes: {
           facilityId: authSession.userProfile.facilityId,
@@ -1595,7 +1598,7 @@ export class HealthcareAuthorizationEngine {
 
     // Determine category from resource type
     const resourceCategory = resourceType.split("_")[0];
-    return retentionMap[resourceCategory] || 365; // Default 1 year
+    return retentionMap[resourceCategory as keyof typeof retentionMap] || 365; // Default 1 year
   }
 
   /**
@@ -1604,7 +1607,7 @@ export class HealthcareAuthorizationEngine {
   private getCachedDecision(
     _context: AuthorizationContext,
   ): AuthorizationDecision | null {
-    const cacheKey = this.generateCacheKey(context);
+    const cacheKey = this.generateCacheKey(_context);
     const cached = this.decisionCache.get(cacheKey);
 
     if (cached && cached.expiry > Date.now()) {
@@ -1621,7 +1624,7 @@ export class HealthcareAuthorizationEngine {
     _context: AuthorizationContext,
     decision: AuthorizationDecision,
   ): void {
-    const cacheKey = this.generateCacheKey(context);
+    const cacheKey = this.generateCacheKey(_context);
     const expiry = Date.now() + this.config.decisionEngine.cacheTimeout * 1000;
 
     this.decisionCache.set(cacheKey, { decision, expiry });
@@ -1631,7 +1634,7 @@ export class HealthcareAuthorizationEngine {
    * Generate cache key for context
    */
   private generateCacheKey(_context: AuthorizationContext): string {
-    const key = `${context.subject.userId}:${context.subject.role}:${context.resource.type}:${context.resource.id}:${context.action.operation}:${context.action.scope}`;
+    const key = `${_context.subject._userId}:${_context.subject._role}:${_context.resource.type}:${_context.resource.id}:${_context.action.operation}:${_context.action.scope}`;
     return Buffer.from(key).toString("base64");
   }
 
@@ -1684,13 +1687,13 @@ export class HealthcareAuthorizationEngine {
   ): Promise<void> {
     const decisionLog = {
       contextId: decision.contextId,
-      requestId: context.requestId,
-      sessionId: context.sessionId,
-      _userId: context.subject.userId,
-      _role: context.subject.role,
-      resourceType: context.resource.type,
-      resourceId: context.resource.id,
-      operation: context.action.operation,
+      requestId: _context.requestId,
+      sessionId: _context.sessionId,
+      _userId: _context.subject._userId,
+      _role: _context.subject._role,
+      resourceType: _context.resource.type,
+      resourceId: _context.resource.id,
+      operation: _context.action.operation,
       decision: decision.decision,
       reasons: decision.reasons,
       riskScore: decision.riskScore,

@@ -10,6 +10,9 @@ import {
   ComplianceLevel,
   HealthcareOperationType,
 } from "./types";
+import { auditLogger } from '../logging/healthcare-logger';
+
+const telemetryMiddlewareLogger = auditLogger.child({ component: 'telemetry-middleware' });
 
 // Extract healthcare context from request
 function extractHealthcareContext(
@@ -89,7 +92,7 @@ function extractFeatureFromUrl(url: string): string {
     admin: "administration",
   };
 
-  return featureMap[segments[0]] || segments[0] || 'unknown';
+  return featureMap[segments[0]!] || segments[0]! || 'unknown';
 }
 
 // Healthcare-aware telemetry middleware
@@ -195,7 +198,12 @@ function recordApiMetrics(
     }
   } catch (error) {
     // Silently fail metric recording to not impact application
-    console.warn("Failed to record telemetry metrics:", error);
+    telemetryMiddlewareLogger.warn("Failed to record telemetry metrics", {
+      component: 'telemetry-middleware',
+      action: 'metrics_recording_error',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
   }
 }
 
@@ -224,7 +232,12 @@ function recordApiError(
 
     errorTotal.add(1, labels);
   } catch (metricError) {
-    console.warn("Failed to record error metrics:", metricError);
+    telemetryMiddlewareLogger.warn("Failed to record error metrics", {
+      component: 'telemetry-middleware',
+      action: 'error_metrics_recording_error',
+      error: metricError instanceof Error ? metricError.message : 'Unknown error',
+      timestamp: new Date().toISOString()
+    });
   }
 }
 
@@ -252,7 +265,12 @@ export function complianceAuditMiddleware() {
       };
 
       // Log audit event (this would typically go to a secure audit log system)
-      console.log("[HEALTHCARE_AUDIT]", JSON.stringify(auditEvent));
+      telemetryMiddlewareLogger.info("[HEALTHCARE_AUDIT]", {
+        component: 'telemetry-middleware',
+        action: 'compliance_audit',
+        auditEvent,
+        timestamp: new Date().toISOString()
+      });
     }
 
     await next();

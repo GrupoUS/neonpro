@@ -10,7 +10,7 @@
  * - Compliance reporting
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
@@ -18,26 +18,18 @@ import { Alert, AlertDescription } from '../../ui/alert';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+// Removed unused Select imports
 import { 
   Shield, 
   Eye, 
   EyeOff, 
   FileText, 
   Download, 
-  Trash2, 
   CheckCircle,
-  AlertTriangle,
-  Clock,
   Lock,
   Unlock,
-  Database,
   Audit,
-  UserCheck,
-  Calendar,
-  Mail,
-  Phone,
-  IdCard
+  UserCheck
 } from 'lucide-react';
 
 // Types
@@ -139,9 +131,9 @@ const mockDataSubjects: DataSubject[] = [
 ];
 
 export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
-  clinicId,
+  clinicId: _clinicId,
   userId,
-  userRole,
+  userRole: _userRole,
   onComplianceAction
 }) => {
   const [showSensitiveData, setShowSensitiveData] = useState(false);
@@ -357,7 +349,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
   }, [showSensitiveData, userId, logAuditEvent]);
 
   // Handle data deletion
-  const handleDataDeletion = useCallback(async (subjectId: string) => {
+  const _handleDataDeletion = useCallback(async (subjectId: string) => {
     try {
       logAuditEvent('data_deletion_requested', 'patient_data', {
         patientId: subjectId,

@@ -18,10 +18,13 @@ export interface LogEntry {
 export class SimpleStructuredLogger {
   private config: LoggerConfig;
   private correlationId: string;
+  private logger: any; // Fallback logger
 
   constructor(config: LoggerConfig) {
     this.config = config;
     this.correlationId = this.generateCorrelationId();
+    // Initialize fallback logger
+    this.logger = console;
   }
 
   private generateCorrelationId(): string {
@@ -47,7 +50,7 @@ export class SimpleStructuredLogger {
       level,
       message,
       data,
-      context,
+      context: _context,
       correlationId: this.correlationId,
     };
   }
@@ -55,28 +58,32 @@ export class SimpleStructuredLogger {
   public debug(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
       const entry = this.createLogEntry("debug", message, data, _context);
-      console.log("[DEBUG]", entry);
+      // Fallback to console.log if structured logging is not available
+      this.logger.log("[DEBUG]", entry);
     }
   }
 
   public info(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
       const entry = this.createLogEntry("info", message, data, _context);
-      console.log("[INFO]", entry);
+      // Fallback to console.log if structured logging is not available
+      this.logger.log("[INFO]", entry);
     }
   }
 
   public warn(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
       const entry = this.createLogEntry("warn", message, data, _context);
-      console.warn("[WARN]", entry);
+      // Fallback to console.warn if structured logging is not available
+      this.logger.warn("[WARN]", entry);
     }
   }
 
   public error(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
       const entry = this.createLogEntry("error", message, data, _context);
-      console.error("[ERROR]", entry);
+      // Fallback to console.error if structured logging is not available
+      this.logger.error("[ERROR]", entry);
     }
   }
 

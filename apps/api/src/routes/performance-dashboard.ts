@@ -42,8 +42,8 @@ export const createPerformanceDashboardRoutes = (
             } : undefined
           ),
           statistics: {
-            application: this.calculateApplicationStatistics(metrics),
-            database: this.calculateDatabaseStatistics(dbMetrics),
+            application: calculateApplicationStatistics(metrics),
+            database: calculateDatabaseStatistics(dbMetrics),
             api: monitor.getStatistics(),
           },
           timestamp: new Date().toISOString(),
@@ -68,7 +68,7 @@ export const createPerformanceDashboardRoutes = (
    */
   router.get("/insights", async (req, res) => {
     try {
-      const insights = await this.generatePerformanceInsights(optimizer, monitor);
+      const insights = await generatePerformanceInsights(optimizer, monitor);
       
       res.json({
         success: true,
@@ -94,7 +94,7 @@ export const createPerformanceDashboardRoutes = (
    */
   router.get("/cache", async (req, res) => {
     try {
-      const cacheStats = this.getCacheStatistics(optimizer);
+      const cacheStats = getCacheStatistics(optimizer);
       
       res.json({
         success: true,
@@ -186,7 +186,7 @@ export const createPerformanceDashboardRoutes = (
       }
 
       const queryMetrics = optimizer.getPerformanceMetrics(timeRangeObj);
-      const queryStats = this.calculateQueryStatistics(queryMetrics);
+      const queryStats = calculateQueryStatistics(queryMetrics);
       
       res.json({
         success: true,
@@ -194,7 +194,7 @@ export const createPerformanceDashboardRoutes = (
           queries: queryMetrics,
           statistics: queryStats,
           slowQueries: queryStats.slowQueries,
-          recommendations: this.generateQueryRecommendations(queryStats),
+          recommendations: generateQueryRecommendations(queryStats),
         },
         timestamp: new Date().toISOString(),
       });
@@ -217,7 +217,7 @@ export const createPerformanceDashboardRoutes = (
    */
   router.get("/images", async (req, res) => {
     try {
-      const imageMetrics = this.getImageOptimizationMetrics(optimizer);
+      const imageMetrics = getImageOptimizationMetrics(optimizer);
       
       res.json({
         success: true,
@@ -290,7 +290,7 @@ export const createPerformanceDashboardRoutes = (
    */
   router.get("/health", async (req, res) => {
     try {
-      const health = await this.getPerformanceHealth(optimizer, monitor);
+      const health = await getPerformanceHealth(optimizer, monitor);
       
       const statusCode = health.status === "healthy" ? 200 : 
                         health.status === "degraded" ? 503 : 500;
@@ -342,7 +342,7 @@ export const createPerformanceDashboardRoutes = (
 
       switch (format) {
         case "csv":
-          exportData = this.exportToCsv(metrics, apiMetrics);
+          exportData = exportToCsv(metrics, apiMetrics);
           contentType = "text/csv";
           filename = `performance_metrics_${new Date().toISOString().split('T')[0]}.csv`;
           break;

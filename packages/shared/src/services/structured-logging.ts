@@ -434,7 +434,8 @@ export class StructuredLogger {
           this.config.healthcareCompliance.enablePIIRedaction,
       });
     } catch (error) {
-      console.error("Failed to initialize structured logging:", error);
+      // Use fallback logging since the structured logger failed to initialize
+      enhancedLogger.error("Failed to initialize structured logging", { error });
     }
   }
 
@@ -763,7 +764,8 @@ export class StructuredLogger {
         this.flush();
       }
     } catch (error) {
-      console.error("Failed to log message:", error);
+      // Use fallback logging since the structured logger failed to log
+      enhancedLogger.error("Failed to log message", { error, message, level });
     }
   }
 
@@ -1034,7 +1036,11 @@ export class StructuredLogger {
 
     // Check max buffer size
     if (this.logBuffer.length >= this.config.performance.maxBufferSize) {
-      console.warn("Log buffer overflow, dropping oldest entries");
+      enhancedLogger.warn("Log buffer overflow, dropping oldest entries", {
+        bufferSize: this.logBuffer.length,
+        maxBufferSize: this.config.performance.maxBufferSize,
+        batchSize: this.config.performance.batchSize
+      });
       this.logBuffer = this.logBuffer.slice(-this.config.performance.batchSize);
     }
   }
@@ -1057,10 +1063,13 @@ export class StructuredLogger {
     const emoji = levelEmojis[logEntry.level];
     const timestamp = new Date(logEntry.timestamp).toLocaleTimeString();
 
-    console.log(
-      `${emoji} [${timestamp}] [${logEntry.technicalContext.service}] ${logEntry.message}`,
-      logEntry.data ? logEntry.data : "",
-    );
+    // Forward to enhanced logger instead of direct console output
+    enhancedLogger.info(logEntry.message, {
+      ...logEntry.data,
+      level: logEntry.level,
+      service: logEntry.technicalContext.service,
+      timestamp: new Date(logEntry.timestamp).toISOString()
+    });
   }
 
   /**
@@ -1088,7 +1097,7 @@ export class StructuredLogger {
         await this.writeToFile(logsToFlush);
       }
     } catch (error) {
-      console.error("Failed to flush logs:", error);
+      enhancedLogger.error("Failed to flush logs", { error, logCount: logsToFlush.length });
       // Re-add logs to buffer for retry (keep only critical ones)
       const criticalLogs = logsToFlush.filter((log) =>
         ["critical", "alert", "emergency"].includes(log.level),
@@ -1102,9 +1111,7 @@ export class StructuredLogger {
    */
   private async sendToRemoteEndpoint(logs: LogEntry[]): Promise<void> {
     // TODO: Implement actual HTTP client
-    console.log(
-      `📤 [StructuredLogger] Sending ${logs.length} logs to remote endpoint`,
-    );
+    enhancedLogger.debug("Sending logs to remote endpoint", { logCount: logs.length });
   }
 
   /**
@@ -1112,9 +1119,7 @@ export class StructuredLogger {
    */
   private async sendToObservabilityPlatform(logs: LogEntry[]): Promise<void> {
     // TODO: Implement actual observability integration
-    console.log(
-      `📊 [StructuredLogger] Sending ${logs.length} logs to observability platform`,
-    );
+    enhancedLogger.debug("Sending logs to observability platform", { logCount: logs.length });
   }
 
   /**
@@ -1122,7 +1127,7 @@ export class StructuredLogger {
    */
   private async writeToFile(logs: LogEntry[]): Promise<void> {
     // TODO: Implement actual file writing
-    console.log(`📁 [StructuredLogger] Writing ${logs.length} logs to file`);
+    enhancedLogger.debug("Writing logs to file", { logCount: logs.length });
   }
 
   /**
@@ -1265,9 +1270,7 @@ export class StructuredLogger {
     this.logBuffer = [];
     this.isInitialized = false;
 
-    console.log(
-      "🔄 [StructuredLogger] Logger destroyed and resources cleaned up",
-    );
+    enhancedLogger.info("StructuredLogger destroyed and resources cleaned up");
   }
 }
 

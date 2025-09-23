@@ -284,7 +284,7 @@ export class AestheticComplianceService {
 
   // ANVISA Compliance
   async checkAnvisaCompliance(check: AnvisaComplianceCheck): Promise<AnvisaComplianceResult> {
-    const startTime = Date.now();
+    const _startTime = Date.now();
     const violations: any[] = [];
     let complianceScore = 100;
 
@@ -575,27 +575,27 @@ export class AestheticComplianceService {
   }
 
   // Helper Methods
-  private async validateTreatmentCompliance(treatmentId: string): Promise<{ violations: any[] }> {
+  private async validateTreatmentCompliance(_treatmentId: string): Promise<{ violations: any[] }> {
     // Mock validation - in real implementation, this would check against ANVISA database
     return { violations: [] };
   }
 
-  private async validateProductCompliance(product: any): Promise<{ violations: any[] }> {
+  private async validateProductCompliance(_product: any): Promise<{ violations: any[] }> {
     // Mock validation
     return { violations: [] };
   }
 
-  private async validateProcedureCompliance(procedure: any): Promise<{ violations: any[] }> {
+  private async validateProcedureCompliance(_procedure: any): Promise<{ violations: any[] }> {
     // Mock validation
     return { violations: [] };
   }
 
-  private async validateFacilityCompliance(facilityInfo: any): Promise<{ violations: any[] }> {
+  private async validateFacilityCompliance(_facilityInfo: any): Promise<{ violations: any[] }> {
     // Mock validation
     return { violations: [] };
   }
 
-  private async validateProfessionalLicense(license: any): Promise<{ violations: any[] }> {
+  private async validateProfessionalLicense(_license: any): Promise<{ violations: any[] }> {
     // Mock validation
     return { violations: [] };
   }
@@ -686,12 +686,12 @@ export class AestheticComplianceService {
     this.auditLog.set('consent_actions', logs);
   }
 
-  private async identifyContraindications(validation: TreatmentSafetyValidation): Promise<any[]> {
+  private async identifyContraindications(_validation: TreatmentSafetyValidation): Promise<any[]> {
     // Mock contraindication identification
     return [];
   }
 
-  private async generateSafetyWarnings(validation: TreatmentSafetyValidation): Promise<any[]> {
+  private async generateSafetyWarnings(_validation: TreatmentSafetyValidation): Promise<any[]> {
     // Mock warning generation
     return [];
   }
@@ -709,22 +709,22 @@ export class AestheticComplianceService {
     return 'low';
   }
 
-  private generateRequiredPrecautions(validation: TreatmentSafetyValidation, riskLevel: string): string[] {
+  private generateRequiredPrecautions(_validation: TreatmentSafetyValidation, _riskLevel: string): string[] {
     // Mock precaution generation
     return [];
   }
 
-  private generateEmergencyProtocol(riskLevel: string): string[] {
+  private generateEmergencyProtocol(_riskLevel: string): string[] {
     // Mock emergency protocol
     return ['Contact emergency services', 'Administer first aid if trained'];
   }
 
-  private getProfessionalRequirements(treatmentId: string): string[] {
+  private getProfessionalRequirements(_treatmentId: string): string[] {
     // Mock professional requirements
     return [];
   }
 
-  private getFacilityRequirements(treatmentId: string): string[] {
+  private getFacilityRequirements(_treatmentId: string): string[] {
     // Mock facility requirements
     return [];
   }
@@ -733,7 +733,7 @@ export class AestheticComplianceService {
     return `license_${licenseData.licenseNumber}_${licenseData.issuingCouncil}`;
   }
 
-  private async fetchLicenseFromCouncil(licenseData: Partial<ProfessionalLicense>): Promise<ProfessionalLicense | null> {
+  private async fetchLicenseFromCouncil(_licenseData: Partial<ProfessionalLicense>): Promise<ProfessionalLicense | null> {
     // Mock license fetch from council
     return null;
   }
@@ -755,7 +755,7 @@ export class AestheticComplianceService {
     return issues;
   }
 
-  private async identifyRenewalNeeds(license: ProfessionalLicense): Promise<any[]> {
+  private async identifyRenewalNeeds(_license: ProfessionalLicense): Promise<any[]> {
     // Mock renewal needs identification
     return [];
   }
@@ -764,7 +764,7 @@ export class AestheticComplianceService {
     return `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private async auditAnvisaCompliance(audit: ComplianceAudit): Promise<any> {
+  private async auditAnvisaCompliance(_audit: ComplianceAudit): Promise<any> {
     // Mock ANVISA audit
     return {
       category: 'ANVISA Compliance',
@@ -773,7 +773,7 @@ export class AestheticComplianceService {
     };
   }
 
-  private async auditLGPDCompliance(audit: ComplianceAudit): Promise<any> {
+  private async auditLGPDCompliance(_audit: ComplianceAudit): Promise<any> {
     // Mock LGPD audit
     return {
       category: 'LGPD Compliance',
@@ -782,7 +782,7 @@ export class AestheticComplianceService {
     };
   }
 
-  private async auditDocumentationCompliance(audit: ComplianceAudit): Promise<any> {
+  private async auditDocumentationCompliance(_audit: ComplianceAudit): Promise<any> {
     // Mock documentation audit
     return {
       category: 'Documentation',
@@ -791,7 +791,7 @@ export class AestheticComplianceService {
     };
   }
 
-  private async auditLicenseCompliance(audit: ComplianceAudit): Promise<any> {
+  private async auditLicenseCompliance(_audit: ComplianceAudit): Promise<any> {
     // Mock license audit
     return {
       category: 'Professional Licenses',
@@ -805,16 +805,16 @@ export class AestheticComplianceService {
     return Math.round(totalScore / categories.length);
   }
 
-  private generateAuditRecommendations(categories: any[]): any[] {
+  private generateAuditRecommendations(_categories: any[]): any[] {
     // Mock recommendation generation
     return [];
   }
 
-  private generateExecutiveSummary(categories: any[], overallScore: number): string {
+  private generateExecutiveSummary(_categories: any[], overallScore: number): string {
     return `Compliance audit completed with overall score of ${overallScore}%.`;
   }
 
-  private generateDetailedFindings(categories: any[]): string {
+  private generateDetailedFindings(_categories: any[]): string {
     return 'Detailed findings will be generated based on audit results.';
   }
 
@@ -872,7 +872,7 @@ export class AestheticComplianceService {
     return `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private generateCorrectiveTimeline(violations: any[]): any[] {
+  private generateCorrectiveTimeline(_violations: any[]): any[] {
     // Mock timeline generation
     return [];
   }

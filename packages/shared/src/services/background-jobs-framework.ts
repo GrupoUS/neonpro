@@ -505,7 +505,7 @@ export function validateHealthcareContext(
   // Emergency jobs must have emergency urgency
   if (
     jobType === HealthcareJobType.EMERGENCY_NOTIFICATION &&
-    context.urgencyLevel !== "emergency"
+    _context.urgencyLevel !== "emergency"
   ) {
     errors.push(
       "Emergency notification jobs must have emergency urgency level",
@@ -519,14 +519,14 @@ export function validateHealthcareContext(
     HealthcareJobType.LAB_RESULT_PROCESSING,
   ];
 
-  if (patientJobTypes.includes(jobType) && !context.patientId) {
+  if (patientJobTypes.includes(jobType) && !_context.patientId) {
     errors.push("Patient-related jobs require patientId in healthcare context");
   }
 
   // LGPD jobs must have consent ID
   if (
     jobType === HealthcareJobType.LGPD_DATA_PROCESSING &&
-    !context.lgpdConsentId
+    !_context.lgpdConsentId
   ) {
     errors.push("LGPD data processing jobs require lgpdConsentId");
   }
@@ -537,7 +537,7 @@ export function validateHealthcareContext(
     HealthcareJobType.ANVISA_REPORTING,
   ];
 
-  if (complianceJobTypes.includes(jobType) && !context.auditTrailId) {
+  if (complianceJobTypes.includes(jobType) && !_context.auditTrailId) {
     errors.push("Compliance jobs require auditTrailId");
   }
 
@@ -561,8 +561,8 @@ export function requiresEmergencyProcessing(
 
   // Jobs with emergency context
   if (
-    context?.urgencyLevel === "emergency" ||
-    context?.clinicalContext === "emergency"
+    _context?.urgencyLevel === "emergency" ||
+    _context?.clinicalContext === "emergency"
   ) {
     return true;
   }
@@ -716,7 +716,7 @@ export class InMemoryJobQueue implements JobQueue {
       const queue = this.priorityQueues.get(pri);
       if (queue && queue.length > 0) {
         // Sort by priority score
-        queue.sort((a, _b) => {
+        queue.sort((a, b) => {
           const jobA = this.jobs.get(a);
           const jobB = this.jobs.get(b);
           if (!jobA || !jobB) return 0;
@@ -892,7 +892,7 @@ export class InMemoryJobQueue implements JobQueue {
     if (completedJobs.length === 0) return 0;
 
     const totalTime = completedJobs.reduce(
-      (sum, _job) => sum + (job.executionTime || 0),
+      (sum, job) => sum + (job.executionTime || 0),
       0,
     );
     return totalTime / completedJobs.length;
@@ -960,7 +960,7 @@ export class JobScheduler {
         priority: jobTemplate.priority || JobPriority.MEDIUM,
         status: JobStatus.PENDING,
         progress: 0,
-        _payload: jobTemplate.payload,
+        _payload: jobTemplate._payload,
         createdAt: new Date(),
         attemptCount: 0,
         maxRetries: jobTemplate.config?.maxRetries || 3,
@@ -1017,8 +1017,8 @@ export class JobScheduler {
 
     if (parts.length >= 2) {
       const minutes = parts[0];
-      if (minutes.startsWith("*/")) {
-        const interval = parseInt(minutes.substring(2));
+      if (minutes?.startsWith("*/")) {
+        const interval = parseInt(minutes!.substring(2));
         return interval * 60 * 1000; // Convert to milliseconds
       }
     }

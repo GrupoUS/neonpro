@@ -1,7 +1,7 @@
 // Event logger utility for governance services observability
 // Console JSON logging for development; replace with structured logging in production
 
-import { governanceLogger } from '../../../../shared/src/logging/healthcare-logger';
+import healthcareLogger, { logHealthcareError } from '../../../../shared/src/logging/healthcare-logger';
 
 export interface GovernanceEvent {
   timestamp: Date;

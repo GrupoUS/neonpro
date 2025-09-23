@@ -64,7 +64,7 @@ const aestheticRepository = new AestheticRepository();
 async function validateLGPDCompliance(
   operation: string,
   clientId: string,
-  ctx: any
+  _ctx: any
 ): Promise<{
   compliant: boolean;
   warnings: string[];
@@ -123,7 +123,7 @@ async function validateLGPDCompliance(
 async function validateCFMCompliance(
   professionalId: string,
   procedureType: string,
-  ctx: any
+  _ctx: any
 ): Promise<{
   compliant: boolean;
   certifications: string[];
@@ -2021,7 +2021,7 @@ export const aestheticClinicRouter = router({
 // Helper function for ANVISA compliance validation
 async function validateANVISACompliance(
   treatment: any,
-  ctx: any
+  _ctx: any
 ): Promise<{
   compliant: boolean;
   warnings: string[];

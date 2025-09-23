@@ -28,6 +28,8 @@ import {
   validateHealthcareContext,
   WorkerConfig,
 } from "./background-jobs-framework";
+import { logHealthcareError } from '../logging/healthcare-logger';
+import healthcareLogger from '../logging/healthcare-logger';
 
 // ============================================================================
 // JOB MANAGER
@@ -59,10 +61,10 @@ export class JobManager {
    */
   async createJob(_request: CreateJobRequest): Promise<string> {
     // Validate healthcare context
-    if (request.healthcareContext) {
+    if (_request.healthcareContext) {
       const validation = validateHealthcareContext(
-        request.healthcareContext,
-        request.type,
+        _request.healthcareContext,
+        _request.type,
       );
       if (!validation.isValid) {
         throw new Error(
@@ -73,26 +75,26 @@ export class JobManager {
 
     // Get job configuration
     const config = {
-      ...getDefaultJobConfig(request.type, request.healthcareContext),
-      ...request.config,
+      ...getDefaultJobConfig(_request.type, _request.healthcareContext),
+      ..._request.config,
     };
 
     // Create job data
     const job: JobData = {
       jobId: generateJobId(),
-      type: request.type,
-      priority: request.priority || JobPriority.MEDIUM,
+      type: _request.type,
+      priority: _request.priority || JobPriority.MEDIUM,
       status: JobStatus.PENDING,
-      _payload: request.payload,
+      _payload: _request._payload,
       createdAt: new Date(),
-      scheduledAt: request.scheduledAt,
+      scheduledAt: _request.scheduledAt,
       attemptCount: 0,
       maxRetries: config.maxRetries,
-      healthcareContext: request.healthcareContext,
+      healthcareContext: _request.healthcareContext,
       config,
-      dependencies: request.dependencies,
-      tags: request.tags,
-      metadata: request.metadata,
+      dependencies: _request.dependencies,
+      tags: _request.tags,
+      metadata: _request.metadata,
       auditEvents: [],
       lgpdCompliant: true,
       dependents: [],
@@ -100,11 +102,11 @@ export class JobManager {
     };
 
     // Validate payload with handler if available
-    const handler = this.handlers.get(request.type);
+    const handler = this.handlers.get(_request.type);
     if (handler) {
-      const isValidPayload = await handler.validatePayload(request._payload);
+      const isValidPayload = await handler.validatePayload(_request._payload);
       if (!isValidPayload) {
-        throw new Error(`Invalid payload for job type: ${request.type}`);
+        throw new Error(`Invalid payload for job type: ${_request.type}`);
       }
     }
 
@@ -115,10 +117,10 @@ export class JobManager {
     await this.logAudit({
       action: "job_created",
       jobId: job.jobId,
-      jobType: request.type,
+      jobType: _request.type,
       priority: job.priority,
       timestamp: new Date(),
-      healthcareContext: request.healthcareContext,
+      healthcareContext: _request.healthcareContext,
     });
 
     return job.jobId;
@@ -133,7 +135,11 @@ export class JobManager {
     }
 
     this.isRunning = true;
-    console.log("Job Manager started");
+    healthcareLogger.auditLogger.info("Job Manager started successfully", {
+      component: 'job-manager',
+      action: 'start',
+      timestamp: new Date().toISOString()
+    });
 
     // Start processing loop
     this.processJobs();
@@ -154,7 +160,11 @@ export class JobManager {
       await worker.stop();
     }
 
-    console.log("Job Manager stopped");
+    healthcareLogger.auditLogger.info("Job Manager stopped successfully", {
+      component: 'job-manager',
+      action: 'stop',
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
@@ -271,7 +281,11 @@ export class JobManager {
         // Wait before next iteration
         await new Promise((resolve) => setTimeout(resolve, 5000));
       } catch (error) {
-        console.error("Error in job processing loop:", error);
+        logHealthcareError('job-manager', error, {
+          method: 'processJobs',
+          component: 'job-manager',
+          action: 'processing_loop'
+        });
         await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait longer on error
       }
     }
@@ -310,7 +324,13 @@ export class JobManager {
    */
   private async logAudit(event: any): Promise<void> {
     this.auditLog.push(event);
-    console.log("Job Audit:", JSON.stringify(event, null, 2));
+    healthcareLogger.auditLogger.info("Job Audit event recorded", {
+      component: 'job-manager',
+      action: 'audit',
+      eventType: event.action,
+      jobId: event.jobId,
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
@@ -364,7 +384,12 @@ export class Worker {
     this.isRunning = true;
     this.lastHeartbeat = new Date();
 
-    console.log(`Worker ${this.config.workerId} started`);
+    healthcareLogger.auditLogger.info(`Worker ${this.config.workerId} started successfully`, {
+      component: 'job-worker',
+      action: 'start',
+      workerId: this.config.workerId,
+      timestamp: new Date().toISOString()
+    });
 
     // Start processing loop
     this.processJobs();
@@ -384,7 +409,12 @@ export class Worker {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
-    console.log(`Worker ${this.config.workerId} stopped`);
+    healthcareLogger.auditLogger.info(`Worker ${this.config.workerId} stopped successfully`, {
+      component: 'job-worker',
+      action: 'stop',
+      workerId: this.config.workerId,
+      timestamp: new Date().toISOString()
+    });
   }
 
   /**
@@ -421,7 +451,12 @@ export class Worker {
           setTimeout(resolve, this.config.pollInterval),
         );
       } catch (error) {
-        console.error(`Worker ${this.config.workerId} error:`, error);
+        logHealthcareError('job-worker', error, {
+          method: 'processJobs',
+          component: 'job-worker',
+          workerId: this.config.workerId,
+          action: 'processing_loop'
+        });
         await new Promise((resolve) => setTimeout(resolve, 5000));
       }
     }
@@ -508,7 +543,14 @@ export class Worker {
         auditEvents: [...job.auditEvents, ...result.auditEvents],
       });
 
-      console.log(`Job ${job.jobId} completed in ${executionTime}ms`);
+      healthcareLogger.auditLogger.info(`Job ${job.jobId} completed successfully`, {
+        component: 'job-worker',
+        action: 'job_completed',
+        jobId: job.jobId,
+        executionTimeMs: executionTime,
+        workerId: this.config.workerId,
+        timestamp: new Date().toISOString()
+      });
     } catch (error) {
       const executionTime = Date.now() - startTime;
       const errorMessage =
@@ -534,7 +576,15 @@ export class Worker {
           executionTime,
         });
 
-        console.log(`Job ${job.jobId} failed, will retry at ${nextRetryAt}`);
+        healthcareLogger.auditLogger.warn(`Job ${job.jobId} failed, scheduled for retry`, {
+          component: 'job-worker',
+          action: 'job_failed_retry',
+          jobId: job.jobId,
+          attemptCount: job.attemptCount,
+          nextRetryAt: nextRetryAt.toISOString(),
+          workerId: this.config.workerId,
+          timestamp: new Date().toISOString()
+        });
       } else {
         // Move to dead letter queue
         await this.jobQueue.updateJob(job.jobId, {
@@ -544,9 +594,15 @@ export class Worker {
           executionTime,
         });
 
-        console.error(
-          `Job ${job.jobId} moved to dead letter queue after ${job.attemptCount} attempts`,
-        );
+        logHealthcareError('job-worker', error, {
+          method: 'executeJob',
+          component: 'job-worker',
+          workerId: this.config.workerId,
+          action: 'job_failed_dead_letter',
+          jobId: job.jobId,
+          attemptCount: job.attemptCount,
+          maxRetries: job.maxRetries
+        });
       }
     } finally {
       this.currentJobs.delete(job.jobId);
@@ -597,7 +653,7 @@ export abstract class BaseHealthcareJobHandler implements JobHandler {
 
   async validatePayload(_payload: Record<string, any>): Promise<boolean> {
     // Basic validation - override in specific handlers
-    return typeof payload === "object" && payload !== null;
+    return typeof _payload === "object" && _payload !== null;
   }
 
   async getEstimatedExecutionTime(
@@ -624,7 +680,7 @@ export class PatientDataSyncHandler extends BaseHealthcareJobHandler {
   protected override supportedTypes = [HealthcareJobType.PATIENT_DATA_SYNC];
 
   override async execute(job: JobData): Promise<JobExecutionResult> {
-    const { patientId, syncType } = job.payload;
+    const { patientId, syncType } = job._payload;
 
     if (!patientId) {
       throw new Error("Patient ID is required");
@@ -684,9 +740,9 @@ export class PatientDataSyncHandler extends BaseHealthcareJobHandler {
     _payload: Record<string, any>,
   ): Promise<boolean> {
     return !!(
-      payload.patientId &&
-      payload.sourceSystem &&
-      payload.targetSystem
+      _payload.patientId &&
+      _payload.sourceSystem &&
+      _payload.targetSystem
     );
   }
 
@@ -694,7 +750,7 @@ export class PatientDataSyncHandler extends BaseHealthcareJobHandler {
     _payload: Record<string, any>,
   ): Promise<number> {
     // Estimate based on data volume
-    const estimatedRecords = payload.estimatedRecords || 100;
+    const estimatedRecords = _payload.estimatedRecords || 100;
     return Math.max(5000, estimatedRecords * 50); // 50ms per record
   }
 }
@@ -708,7 +764,7 @@ export class EmergencyNotificationHandler extends BaseHealthcareJobHandler {
   ];
 
   async execute(job: JobData): Promise<JobExecutionResult> {
-    const { alertType, severity, message, recipients } = job.payload;
+    const { alertType, severity, message, recipients } = job._payload;
 
     if (!alertType || !message || !recipients) {
       throw new Error("Alert type, message, and recipients are required");
@@ -749,8 +805,8 @@ export class EmergencyNotificationHandler extends BaseHealthcareJobHandler {
       return {
         progress: 100,
         metadata: {
-          alertType: job.payload.alertType,
-          severity: job.payload.severity,
+          alertType: job._payload.alertType,
+          severity: job._payload.severity,
           recipientCount: recipients.length,
         },
         success: true,
@@ -782,16 +838,16 @@ export class EmergencyNotificationHandler extends BaseHealthcareJobHandler {
     _payload: Record<string, any>,
   ): Promise<boolean> {
     return !!(
-      payload.alertType &&
-      payload.message &&
-      Array.isArray(payload.recipients)
+      _payload.alertType &&
+      _payload.message &&
+      Array.isArray(_payload.recipients)
     );
   }
 
   override async getEstimatedExecutionTime(
     _payload: Record<string, any>,
   ): Promise<number> {
-    const recipients = payload.recipients || [];
+    const recipients = _payload.recipients || [];
     return Math.max(1000, recipients.length * 100); // 100ms per recipient
   }
 }
@@ -803,7 +859,7 @@ export class ComplianceAuditHandler extends BaseHealthcareJobHandler {
   protected override supportedTypes = [HealthcareJobType.COMPLIANCE_AUDIT];
 
   override async execute(job: JobData): Promise<JobExecutionResult> {
-    const { auditType, scope, dateRange } = job.payload;
+    const { auditType, scope, dateRange } = job._payload;
 
     if (!auditType || !scope) {
       throw new Error("Audit type and scope are required");
@@ -884,13 +940,13 @@ export class ComplianceAuditHandler extends BaseHealthcareJobHandler {
   override async validatePayload(
     _payload: Record<string, any>,
   ): Promise<boolean> {
-    return !!(payload.auditType && payload.scope);
+    return !!(_payload.auditType && _payload.scope);
   }
 
   override async getEstimatedExecutionTime(
     _payload: Record<string, any>,
   ): Promise<number> {
-    const scope = payload.scope || "facility";
+    const scope = _payload.scope || "facility";
     const baseTime =
       scope === "system" ? 60000 : scope === "facility" ? 30000 : 10000;
     return baseTime;
@@ -906,7 +962,7 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
   ];
 
   override async execute(job: JobData): Promise<JobExecutionResult> {
-    const { dataTypes, retentionPolicy, dryRun = true } = job.payload;
+    const { dataTypes, retentionPolicy, dryRun = true } = job._payload;
 
     if (!dataTypes || !retentionPolicy) {
       throw new Error("Data types and retention policy are required");
@@ -956,11 +1012,11 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
           cleanupId: job.jobId,
           cleanupResults,
           totalRecordsFound: cleanupResults.reduce(
-            (sum, _r) => sum + r.recordsFound,
+            (sum, _r) => sum + _r.recordsFound,
             0,
           ),
           totalRecordsProcessed: cleanupResults.reduce(
-            (sum, _r) => sum + r.recordsProcessed,
+            (sum, _r) => sum + _r.recordsProcessed,
             0,
           ),
           dryRun,
@@ -970,13 +1026,13 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
         metrics: {
           executionTime: dataTypes.length * 2000,
           bytesProcessed: cleanupResults.reduce(
-            (sum, _r) => sum + r.recordsProcessed * 1024,
+            (sum, _r) => sum + _r.recordsProcessed * 1024,
             0,
           ),
         },
         metadata: {
           totalRecordsProcessed: cleanupResults.reduce(
-            (sum, _r) => sum + r.recordsProcessed,
+            (sum, _r) => sum + _r.recordsProcessed,
             0,
           ),
         },
@@ -996,9 +1052,9 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
     _payload: Record<string, any>,
   ): Promise<boolean> {
     return !!(
-      payload.dataTypes &&
-      Array.isArray(payload.dataTypes) &&
-      payload.retentionPolicy
+      _payload.dataTypes &&
+      Array.isArray(_payload.dataTypes) &&
+      _payload.retentionPolicy
     );
   }
 

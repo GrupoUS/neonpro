@@ -12,13 +12,7 @@
  */
 
 import { prisma } from '../lib/prisma';
-import { 
-  Appointment, 
-  Patient, 
-  Professional, 
-  ServiceType,
-  Clinic 
-} from '@prisma/client';
+import { } from '@prisma/client';
 
 export interface NoShowPredictionFeatures {
   patientId: string;
@@ -325,8 +319,8 @@ export class AIAppointmentSchedulingService {
    */
   async getRealTimeAvailability(
     clinicId: string,
-    professionalId?: string,
-    dateRange: { start: Date; end: Date }
+    _dateRange: { start: Date; end: Date },
+    professionalId?: string
   ): Promise<{
     availableSlots: Array<{
       start: Date;

@@ -586,8 +586,8 @@ export class PrivacyAlgorithms {
   private calculatePrivacyMetrics(
     originalRecords: DataRecord[],
     anonymizedRecords: DataRecord[],
-    quasiIdentifiers: string[],
-    sensitiveAttributes: string[],
+    _quasiIdentifiers: string[],
+    _sensitiveAttributes: string[],
   ): { informationLoss: number; dataUtility: number; privacyLevel: number } {
     // Simplified metrics calculation
     const informationLoss = 1 - anonymizedRecords.length / originalRecords.length;
@@ -623,7 +623,7 @@ export class PrivacyAlgorithms {
     pseudonym: string,
     originalId: string,
     purpose: string,
-    salt: string,
+    _salt: string,
     _expirationDays?: number,
   ): Promise<void> {
     // In production, store in secure key-value store with proper encryption

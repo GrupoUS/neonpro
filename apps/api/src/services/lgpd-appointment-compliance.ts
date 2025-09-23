@@ -14,7 +14,6 @@
  */
 
 import { prisma } from '../lib/prisma';
-import { aguiAppointmentProtocol } from './ag-ui-appointment-protocol';
 
 export interface LGPDConsentRecord {
   id: string;

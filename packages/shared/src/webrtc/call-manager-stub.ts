@@ -13,6 +13,9 @@ import type {
   RTCError,
   RTCConnectionState,
 } from "@neonpro/types";
+import { auditLogger } from '../logging/healthcare-logger';
+
+const callManagerLogger = auditLogger.child({ component: 'webrtc-call-manager' });
 
 /**
  * WebRTC Call Manager stub implementation for development and testing
@@ -335,9 +338,12 @@ export class RTCCallManagerStub implements RTCCallManager {
 
   private log(message: string): void {
     if (this.options.enableLogging) {
-      console.log(
-        `[RTCCallManagerStub] ${new Date().toISOString()} - ${message}`,
-      );
+      callManagerLogger.info(`[RTCCallManagerStub] ${message}`, {
+        component: 'webrtc-call-manager',
+        action: 'debug_log',
+        message,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 }

@@ -24,6 +24,7 @@ import {
   CacheDataSensitivity,
   CacheTier,
 } from "./cache-management";
+import { logHealthcareError, cacheLogger } from '../logging/healthcare-logger';
 
 /**
  * Redis connection configuration with security options
@@ -99,9 +100,12 @@ export class RedisCacheBackend implements CacheBackend {
       // Parse and validate cache entry with safe JSON parsing
       const entry = this.safeJSONParse(result);
       if (!entry) {
-        console.warn(
-          `[Redis Cache] Invalid JSON or failed schema validation for key: ${secureKey}`,
-        );
+        cacheLogger.warn(`Invalid JSON or failed schema validation for key`, {
+          component: 'redis-cache',
+          action: 'validation_error',
+          secureKey,
+          operation: 'get'
+        });
         await this.delete(key);
         this.stats.missRate = this.updateRate(this.stats.missRate, false);
         return null;
@@ -109,9 +113,12 @@ export class RedisCacheBackend implements CacheBackend {
 
       // Validate entry structure
       if (!this.validateCacheEntry(entry)) {
-        console.warn(
-          `[Redis Cache] Invalid cache entry structure for key: ${secureKey}`,
-        );
+        cacheLogger.warn(`Invalid cache entry structure for key`, {
+          component: 'redis-cache',
+          action: 'structure_error',
+          secureKey,
+          operation: 'get'
+        });
         await this.delete(key);
         this.stats.missRate = this.updateRate(this.stats.missRate, false);
         return null;
@@ -143,7 +150,12 @@ export class RedisCacheBackend implements CacheBackend {
 
       return entry;
     } catch (error) {
-      console.error("[Redis Cache] Error getting cache entry:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'get',
+        component: 'redis-cache',
+        secureKey,
+        operation: 'cache_get'
+      });
       this.stats.missRate = this.updateRate(this.stats.missRate, false);
       throw error;
     }
@@ -176,7 +188,12 @@ export class RedisCacheBackend implements CacheBackend {
       // Update statistics
       this.stats.totalEntries = await this.getRedisSize();
     } catch (error) {
-      console.error("[Redis Cache] Error setting cache entry:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'set',
+        component: 'redis-cache',
+        key,
+        operation: 'cache_set'
+      });
       throw error;
     }
   }
@@ -198,7 +215,12 @@ export class RedisCacheBackend implements CacheBackend {
       this.stats.totalEntries = await this.getRedisSize();
       return result > 0;
     } catch (error) {
-      console.error("[Redis Cache] Error deleting cache entry:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'delete',
+        component: 'redis-cache',
+        key,
+        operation: 'cache_delete'
+      });
       return false;
     }
   }
@@ -225,7 +247,12 @@ export class RedisCacheBackend implements CacheBackend {
       const entry = await this.get(key);
       return entry !== null;
     } catch (error) {
-      console.error("[Redis Cache] Error checking cache entry:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'has',
+        component: 'redis-cache',
+        key,
+        operation: 'cache_has'
+      });
       return false;
     }
   }
@@ -257,7 +284,11 @@ export class RedisCacheBackend implements CacheBackend {
       // Reset statistics
       this.stats = this.initializeStats();
     } catch (error) {
-      console.error("[Redis Cache] Error clearing cache:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'clear',
+        component: 'redis-cache',
+        operation: 'cache_clear'
+      });
       throw error;
     }
   }
@@ -302,7 +333,11 @@ export class RedisCacheBackend implements CacheBackend {
 
       return { ...this.stats };
     } catch (error) {
-      console.error("[Redis Cache] Error getting statistics:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'getStats',
+        component: 'redis-cache',
+        operation: 'cache_stats'
+      });
       return this.stats;
     }
   }
@@ -329,7 +364,12 @@ export class RedisCacheBackend implements CacheBackend {
         key.startsWith(prefix) ? key.substring(prefix.length) : key,
       );
     } catch (error) {
-      console.error("[Redis Cache] Error getting keys:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'getKeys',
+        component: 'redis-cache',
+        pattern,
+        operation: 'cache_keys'
+      });
       return [];
     }
   }
@@ -357,10 +397,12 @@ export class RedisCacheBackend implements CacheBackend {
 
       return entries;
     } catch (error) {
-      console.error(
-        "[Redis Cache] Error getting entries by sensitivity:",
-        error,
-      );
+      logHealthcareError('redis-cache', error, {
+        method: 'getEntriesBySensitivity',
+        component: 'redis-cache',
+        sensitivity,
+        operation: 'cache_sensitivity'
+      });
       return [];
     }
   }
@@ -389,7 +431,11 @@ export class RedisCacheBackend implements CacheBackend {
       this.stats.totalEntries = await this.getRedisSize();
       return cleanedCount;
     } catch (error) {
-      console.error("[Redis Cache] Error during cleanup:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'cleanup',
+        component: 'redis-cache',
+        operation: 'cache_cleanup'
+      });
       return 0;
     }
   }
@@ -424,31 +470,55 @@ export class RedisCacheBackend implements CacheBackend {
       this.redis.on("connect", () => {
         this.isConnected = true;
         this.connectionRetries = 0;
-        console.log("[Redis Cache] Connected to Redis securely");
+        cacheLogger.info("Connected to Redis securely", {
+          component: 'redis-cache',
+          action: 'connect',
+          event: 'connected'
+        });
       });
 
       this.redis.on("error", (error) => {
-        console.error("[Redis Cache] Redis connection error:", error);
+        logHealthcareError('redis-cache', error, {
+          method: 'initializeRedis',
+          component: 'redis-cache',
+          event: 'connection_error'
+        });
         this.isConnected = false;
         this.handleConnectionError();
       });
 
       this.redis.on("close", () => {
         this.isConnected = false;
-        console.warn("[Redis Cache] Redis connection closed");
+        cacheLogger.warn("Redis connection closed", {
+          component: 'redis-cache',
+          action: 'connection',
+          event: 'closed'
+        });
       });
 
       this.redis.on("ready", () => {
-        console.log("[Redis Cache] Redis connection ready");
+        cacheLogger.info("Redis connection ready", {
+          component: 'redis-cache',
+          action: 'connection',
+          event: 'ready'
+        });
       });
 
       // Connect to Redis
       this.redis.connect().catch((error) => {
-        console.error("[Redis Cache] Failed to connect to Redis:", error);
+        logHealthcareError('redis-cache', error, {
+          method: 'initializeRedis',
+          component: 'redis-cache',
+          event: 'connection_failed'
+        });
         this.isConnected = false;
       });
     } catch (error) {
-      console.error("[Redis Cache] Redis initialization error:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'initializeRedis',
+        component: 'redis-cache',
+        event: 'initialization_error'
+      });
       this.isConnected = false;
     }
   }
@@ -462,15 +532,29 @@ export class RedisCacheBackend implements CacheBackend {
       const delay = Math.pow(2, this.connectionRetries) * 1000; // Exponential backoff
 
       setTimeout(() => {
-        console.log(
-          `[Redis Cache] Retrying connection (attempt ${this.connectionRetries}/${this.maxRetries})`,
-        );
+        cacheLogger.info(`Retrying connection`, {
+          component: 'redis-cache',
+          action: 'retry',
+          attempt: this.connectionRetries,
+          maxRetries: this.maxRetries,
+          event: 'connection_retry'
+        });
         this.redis.connect().catch((error) => {
-          console.error("[Redis Cache] Redis retry failed:", error);
+          logHealthcareError('redis-cache', error, {
+            method: 'handleConnectionError',
+            component: 'redis-cache',
+            attempt: this.connectionRetries,
+            event: 'retry_failed'
+          });
         });
       }, delay);
     } else {
-      console.error("[Redis Cache] Max connection retries reached");
+      cacheLogger.error("Max connection retries reached", {
+        component: 'redis-cache',
+        action: 'connection',
+        event: 'max_retries_reached',
+        maxRetries: this.maxRetries
+      });
     }
   }
 
@@ -493,7 +577,11 @@ export class RedisCacheBackend implements CacheBackend {
         await this.safeRedisOperation(() => this.redis.ping());
       }
     } catch (error) {
-      console.error("[Redis Cache] Health check failed:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'healthCheck',
+        component: 'redis-cache',
+        event: 'health_check_failed'
+      });
       this.isConnected = false;
     }
   }
@@ -514,7 +602,11 @@ export class RedisCacheBackend implements CacheBackend {
         ),
       ]);
     } catch (error) {
-      console.error("[Redis Cache] Redis operation failed:", error);
+      logHealthcareError('redis-cache', error, {
+        method: 'safeRedisOperation',
+        component: 'redis-cache',
+        event: 'operation_failed'
+      });
       this.isConnected = false;
       throw error;
     }
@@ -586,17 +678,24 @@ export class RedisCacheBackend implements CacheBackend {
       // Validate against Zod schema
       const validationResult = this.validateWithSchema(parsed);
       if (!validationResult.success) {
-        console.warn(
-          "[Redis Cache] Schema validation failed:",
-          validationResult.error,
-        );
+        cacheLogger.warn("Schema validation failed", {
+          component: 'redis-cache',
+          action: 'validation',
+          error: validationResult.error,
+          operation: 'safeJSONParse'
+        });
         return null;
       }
 
       // Convert date strings to Date objects
       return this.normalizeDates(validationResult.data);
     } catch (error) {
-      console.warn("[Redis Cache] JSON parsing failed:", error);
+      cacheLogger.warn("JSON parsing failed", {
+        component: 'redis-cache',
+        action: 'parsing',
+        error,
+        operation: 'safeJSONParse'
+      });
       return null;
     }
   }

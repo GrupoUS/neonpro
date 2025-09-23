@@ -13,6 +13,9 @@ import type {
   RTCSignalingMessage,
   MedicalDataClassification,
 } from "@neonpro/types";
+import { auditLogger } from '../logging/healthcare-logger';
+
+const webrtcLogger = auditLogger.child({ component: 'webrtc-signaling' });
 
 /**
  * WebRTC Signaling Server stub implementation for development and testing
@@ -356,9 +359,12 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   private log(message: string): void {
     if (this.options.enableLogging) {
-      console.log(
-        `[RTCSignalingStub] ${new Date().toISOString()} - ${message}`,
-      );
+      webrtcLogger.info(`[RTCSignalingStub] ${message}`, {
+        component: 'webrtc-signaling',
+        action: 'debug_log',
+        message,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 }

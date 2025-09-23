@@ -3,8 +3,7 @@
  * Optimized for healthcare applications with intelligent caching
  */
 
-import {
-  RealtimeManager,
+import { RealtimeManager,
   RealtimeSubscriptionOptions,
 } from "../realtime/realtime-manager";
 import {
@@ -13,6 +12,10 @@ import {
   UseQueryOptions,
 } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef } from "react";
+import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
+
+// Create realtime logger from audit logger
+const realtimeLogger = auditLogger.child({ component: 'realtime-query' });
 
 export interface UseRealtimeQueryOptions<T>
   extends Omit<UseQueryOptions<T[]>, "queryKey" | "queryFn"> {
@@ -62,15 +65,33 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
         optimisticUpdates: true,
         rateLimitMs: 100, // Healthcare-appropriate rate limiting
         onInsert: (payload: T) => {
-          console.log(`New ${options.tableName} inserted:`, payload);
+          realtimeLogger.info(`New ${options.tableName} inserted`, {
+            component: 'useRealtimeQuery',
+            action: 'insert',
+            tableName: options.tableName,
+            recordId: payload.id,
+            timestamp: new Date().toISOString()
+          });
           options.realtimeOptions?.onInsert?.(payload);
         },
         onUpdate: (payload: T) => {
-          console.log(`${options.tableName} updated:`, payload);
+          realtimeLogger.info(`${options.tableName} updated`, {
+            component: 'useRealtimeQuery',
+            action: 'update',
+            tableName: options.tableName,
+            recordId: payload.id,
+            timestamp: new Date().toISOString()
+          });
           options.realtimeOptions?.onUpdate?.(payload);
         },
         onDelete: (payload: { old: T }) => {
-          console.log(`${options.tableName} deleted:`, payload.old);
+          realtimeLogger.info(`${options.tableName} deleted`, {
+            component: 'useRealtimeQuery',
+            action: 'delete',
+            tableName: options.tableName,
+            recordId: payload.old.id,
+            timestamp: new Date().toISOString()
+          });
           options.realtimeOptions?.onDelete?.(payload);
         },
         ...options.realtimeOptions,

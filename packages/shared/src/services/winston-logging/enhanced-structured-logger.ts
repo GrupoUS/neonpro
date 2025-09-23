@@ -15,6 +15,7 @@
 
 import { nanoid } from "nanoid";
 import { z } from "zod";
+import * as winston from "winston";
 
 // Import types and services
 import { brazilianPIIRedactionService } from "./brazilian-pii-redaction";
@@ -446,7 +447,7 @@ export class EnhancedStructuredLogger {
     const match = size.match(/^(\d+)([bkm])$/i);
     if (!match) return 20 * 1024 * 1024; // Default 20MB
     return (
-parseInt(match[1]) * (units[match[2].toLowerCase() as keyof typeof units] || 1024)
+      parseInt(match[1]!) * (units[match[2]!.toLowerCase() as keyof typeof units] || 1024)
     );
   }
 
@@ -643,7 +644,7 @@ parseInt(match[1]) * (units[match[2].toLowerCase() as keyof typeof units] || 102
       severity,
       message,
       timestamp: new Date().toISOString(),
-      _service: this.config.serviceName,
+      _service: this.config._service,
       environment: this.config.environment,
       correlationId,
       requestId: requestContext.requestId,
@@ -665,8 +666,8 @@ parseInt(match[1]) * (units[match[2].toLowerCase() as keyof typeof units] || 102
         data,
         _context?.healthcare,
       ),
-      tags: [severity, this.config.serviceName, this.config.environment],
-      source: this.config.serviceName,
+      tags: [severity, this.config._service, this.config.environment],
+      source: this.config._service,
     };
 
     // Log with Winston
@@ -808,7 +809,7 @@ parseInt(match[1]) * (units[match[2].toLowerCase() as keyof typeof units] || 102
   logMedicationEvent(
     action: "prescribed" | "administered" | "verified" | "adverse_reaction",
     message: string,
-    severity: Severity,
+    severity: HealthcareSeverity,
     healthcareContext: BrazilianHealthcareContext,
     data?: any,
   ): void {

@@ -18,27 +18,22 @@ import { useNeonProChat } from '../NeonProChatProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Badge } from '../../ui/badge';
 import { Alert, AlertDescription } from '../../ui/alert';
-import { Input } from '../../ui/input';
-import { Label } from '../../ui/label';
-import { Textarea } from '../../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
+// Removed unused Input import
+// Removed unused Label import
+// Removed unused Textarea import
+// Removed unused Select imports
 import { 
   DollarSign, 
   CreditCard, 
   Receipt, 
   TrendingUp, 
   PieChart, 
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  FileText,
   Calculator,
   Shield,
   BarChart3,
-  Target,
-  Zap
+  Target
 } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 // Types
@@ -176,7 +171,7 @@ const mockTransactions: FinancialTransaction[] = [
 ];
 
 export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
-  clinicId,
+  clinicId: _clinicId,
   onTransactionComplete,
   onInvoiceGenerated,
   onError
@@ -509,9 +504,9 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
 
   // Generate financial analysis
   const generateFinancialAnalysis = (
-    transactions: FinancialTransaction[], 
-    period: string, 
-    focus: string
+    _transactions: FinancialTransaction[], 
+    _period: string, 
+    _focus: string
   ) => {
     const trends = [
       'Recreveita cresceu 15% em relação ao mês anterior',

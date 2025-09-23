@@ -6,26 +6,7 @@
 import { createTRPCRouter } from "@trpc/server";
 import { z } from "zod";
 import { ComplianceManagementService } from "@neonpro/core-services";
-import { 
-  ComplianceAssessmentInput,
-  DataConsentInput,
-  DataSubjectRequestInput,
-  DataBreachInput,
-  ComplianceAlertInput,
-  ComplianceReportInput,
-  type ComplianceCategory,
-  type ComplianceRequirement,
-  type ComplianceAssessment,
-  type DataConsentRecord,
-  type DataSubjectRequest,
-  type DataBreachIncident,
-  type AnvisaProductCompliance,
-  type ProfessionalLicenseCompliance,
-  type ComplianceReport,
-  type ComplianceAlert,
-  type RetentionPolicy,
-  type DataRetentionJob
-} from "@neonpro/types";
+// Removed unused @neonpro/types import
 
 // Input schemas
 const ComplianceAssessmentInputSchema = z.object({

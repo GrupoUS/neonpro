@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import {
   Users,
   Calendar,
@@ -8,25 +8,15 @@ import {
   Bell,
   Search,
   Plus,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
   Settings,
   ChevronRight,
   UserPlus,
   Video,
-  Phone,
-  Mail,
   Eye,
   Edit3,
-  Trash2,
-  Filter,
-  Download,
   BarChart3,
-  TrendingUp,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { api } from "~/utils/api";
 
 export const Route = createFileRoute("/coordination/")({
   component: CoordinationDashboard,

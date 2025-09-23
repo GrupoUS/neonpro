@@ -1436,15 +1436,10 @@ export class HealthcareMiddlewareService {
     if (metricsToReport.length > 0) {
       middlewareLogger.info("Metrics collected", {
         count: metricsToReport.length,
-        averageDuration: metricsToReport.reduce((sum, _m) => sum + (m.duration || 0), 0) / metricsToReport.length,
+        averageDuration: metricsToReport.reduce((sum, _m) => sum + (_m.duration || 0), 0) / metricsToReport.length,
+        errorRate: metricsToReport.filter((m) => m.errorOccurred).length / metricsToReport.length,
         component: 'healthcare-middleware',
         timestamp: new Date().toISOString()
-      });
-          metricsToReport.length,
-        errorRate:
-          metricsToReport.filter((m) => m.errorOccurred).length /
-          metricsToReport.length,
-        timestamp: new Date().toISOString(),
       });
 
       // TODO: Send metrics to observability platform

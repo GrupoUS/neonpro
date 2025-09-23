@@ -634,7 +634,7 @@ export class HealthcareValidationService {
     return sensitiveFields.some(field => data[field]);
   }
 
-  private thisContainsExcessiveData(data: any, entity: string): boolean {
+  private thisContainsExcessiveData(data: any, _entity: string): boolean {
     // Check if data contains fields not necessary for the entity
     // This is a simplified check
     return Object.keys(data).length > 20; // Arbitrary threshold

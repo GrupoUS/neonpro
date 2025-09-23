@@ -1066,7 +1066,7 @@ export class HealthcareAuthMiddleware {
           await this.logSessionActivity(c, authResult.session);
         }
       } catch (error) {
-        logHealthcareError('auth', error, {
+        logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
           method: 'authenticationMiddleware',
           component: 'HealthcareAuthMiddleware',
           severity: 'high',
@@ -1287,7 +1287,7 @@ export class HealthcareAuthMiddleware {
         riskScore,
       );
     } catch (error) {
-      logHealthcareError('auth', error, {
+      logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
         method: 'handleAuthentication',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
@@ -1380,7 +1380,7 @@ export class HealthcareAuthMiddleware {
 
       return jwtPayload;
     } catch (error) {
-      logHealthcareError('auth', error, {
+      logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
         method: 'validateToken',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
@@ -1399,7 +1399,7 @@ export class HealthcareAuthMiddleware {
   ): Promise<AuthSession | null> {
     try {
       // Check if session already exists
-      const existingSession = this.activeSessions.get(decoded.sessionId);
+      const existingSession = decoded.sessionId ? this.activeSessions.get(decoded.sessionId) : undefined;
 
       if (existingSession) {
         return existingSession;
@@ -1414,7 +1414,7 @@ export class HealthcareAuthMiddleware {
 
       return session;
     } catch (error) {
-      logHealthcareError('auth', error, {
+      logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
         method: 'createSession',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
@@ -1478,7 +1478,7 @@ export class HealthcareAuthMiddleware {
             Date.now() + this.config.session.absoluteTimeout * 1000,
           ).toISOString(),
           ipAddress: this.anonymizeIP(
-            c.req.header("x-forwarded-for")?.split(",")[0].trim() ||
+            c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
               c.req.header("x-real-ip") ||
               "unknown",
           ),
@@ -1513,7 +1513,7 @@ export class HealthcareAuthMiddleware {
 
       return session;
     } catch (error) {
-      logHealthcareError('auth', error, {
+      logHealthcareError('auth', error instanceof Error ? error : new Error(String(error)), {
         method: 'createNewSession',
         component: 'HealthcareAuthMiddleware',
         severity: 'high',
@@ -1909,14 +1909,14 @@ export class HealthcareAuthMiddleware {
     authResult: AuthResult,
   ): Promise<void> {
     const failureLog = {
-      endpoint: _c.req.path,
-      method: _c.req.method,
+      endpoint: c.req.path,
+      method: c.req.method,
       ipAddress: this.anonymizeIP(
-        _c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
-          _c.req.header("x-real-ip") ||
+        c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ||
+          c.req.header("x-real-ip") ||
           "unknown",
       ),
-      userAgent: _c.req.header("user-agent"),
+      userAgent: c.req.header("user-agent"),
       errorCode: authResult.errorCode,
       errorMessage: authResult.errorMessage,
       riskScore: authResult.riskScore,

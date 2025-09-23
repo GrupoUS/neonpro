@@ -9,6 +9,10 @@ import {
   RealtimePostgresChangesPayload,
 } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
+import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
+
+// Create realtime logger from audit logger
+const realtimeLogger = auditLogger.child({ component: 'realtime' });
 
 export interface RealtimeSubscriptionOptions<T = any> {
   onInsert?: (_payload: T) => void;
@@ -75,12 +79,30 @@ export class RealtimeManager {
         },
       )
       .subscribe((status) => {
-        console.log(`Realtime subscription ${channelName} status:`, status);
+        realtimeLogger.info(`Realtime subscription status updated`, {
+          component: 'realtime-manager',
+          action: 'subscription_status',
+          channelName,
+          status,
+          timestamp: new Date().toISOString()
+        });
 
         if (status === "SUBSCRIBED") {
-          console.log(`✅ Successfully subscribed to ${tableName} changes`);
+          realtimeLogger.info(`Successfully subscribed to table changes`, {
+            component: 'realtime-manager',
+            action: 'subscription_success',
+            tableName,
+            channelName,
+            timestamp: new Date().toISOString()
+          });
         } else if (status === "CHANNEL_ERROR") {
-          console.error(`❌ Error subscribing to ${tableName}`);
+          realtimeLogger.error(`Error subscribing to table changes`, {
+            component: 'realtime-manager',
+            action: 'subscription_error',
+            tableName,
+            channelName,
+            timestamp: new Date().toISOString()
+          });
           // Implement retry logic
           setTimeout(() => {
             this.retrySubscription(tableName, filter, options);
@@ -140,7 +162,12 @@ export class RealtimeManager {
         );
       }
     } catch (error) {
-      console.error("Error handling realtime event:", error);
+      logHealthcareError('realtime-manager', error instanceof Error ? error : new Error(String(error)), {
+        method: 'handleRealtimeEvent',
+        component: 'realtime-manager',
+        tableName,
+        eventType: _payload.eventType
+      });
     }
   }
   private async optimisticInsert<T extends { id: string }>(
@@ -202,13 +229,24 @@ export class RealtimeManager {
     const maxRetries = 3;
 
     if (retryCount >= maxRetries) {
-      console.error(`Max retries reached for ${tableName} subscription`);
+      realtimeLogger.error(`Max retries reached for subscription`, {
+        component: 'realtime-manager',
+        action: 'subscription_max_retries',
+        tableName,
+        retryCount,
+        maxRetries: 3,
+        timestamp: new Date().toISOString()
+      });
       return;
     }
 
-    console.log(
-      `Retrying subscription to ${tableName} (attempt ${retryCount + 1})`,
-    );
+    realtimeLogger.info(`Retrying subscription to table`, {
+      component: 'realtime-manager',
+      action: 'subscription_retry',
+      tableName,
+      attempt: retryCount + 1,
+      timestamp: new Date().toISOString()
+    });
 
     // Remove failed channel
     const channelName = `${tableName}-${filter || "all"}`;
@@ -242,13 +280,33 @@ export class RealtimeManager {
       .channel(channelName)
       .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
-        console.log("Presence sync:", state);
+        realtimeLogger.info(`Presence sync completed`, {
+          component: 'realtime-manager',
+          action: 'presence_sync',
+          channelName,
+          userCount: Object.keys(state).length,
+          timestamp: new Date().toISOString()
+        });
       })
       .on("presence", { event: "join" }, ({ key, newPresences }) => {
-        console.log("User joined:", key, newPresences);
+        realtimeLogger.info(`User joined presence channel`, {
+          component: 'realtime-manager',
+          action: 'presence_join',
+          channelName,
+          userKey: key,
+          presenceCount: newPresences.length,
+          timestamp: new Date().toISOString()
+        });
       })
       .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-        console.log("User left:", key, leftPresences);
+        realtimeLogger.info(`User left presence channel`, {
+          component: 'realtime-manager',
+          action: 'presence_leave',
+          channelName,
+          userKey: key,
+          presenceCount: leftPresences.length,
+          timestamp: new Date().toISOString()
+        });
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
@@ -269,7 +327,12 @@ export class RealtimeManager {
       this.supabase.removeChannel(channel);
       this.channels.delete(channelName);
       this.rateLimitMap.delete(channelName);
-      console.log(`Unsubscribed from ${channelName}`);
+      realtimeLogger.info(`Unsubscribed from channel`, {
+        component: 'realtime-manager',
+        action: 'unsubscribe',
+        channelName,
+        timestamp: new Date().toISOString()
+      });
     }
   }
 
@@ -279,7 +342,12 @@ export class RealtimeManager {
   unsubscribeAll() {
     this.channels.forEach((channel, name) => {
       this.supabase.removeChannel(channel);
-      console.log(`Unsubscribed from ${name}`);
+      realtimeLogger.info(`Unsubscribed from channel`, {
+        component: 'realtime-manager',
+        action: 'unsubscribe_all',
+        channelName: name,
+        timestamp: new Date().toISOString()
+      });
     });
     this.channels.clear();
     this.rateLimitMap.clear();

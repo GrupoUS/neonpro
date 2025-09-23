@@ -5,8 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { 
   TreatmentOutcomePrediction,
-  PredictionTimeline,
-  PatientAssessment 
+  PredictionTimeline
 } from '@/types/ai-clinical-support';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,22 +23,18 @@ import {
   Target,
   Award,
   Clock,
-  Zap,
   BarChart3,
   PieChart,
   Activity,
-  Heart,
   Smile,
   Frown,
   Meh,
   Star,
   ThumbsUp,
   ThumbsDown,
-  RefreshCw,
-  Download,
-  Share2
+  RefreshCw
 } from 'lucide-react';
-import { format, addDays, addWeeks, addMonths } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface TreatmentOutcomePredictorProps {
@@ -57,7 +52,7 @@ export function TreatmentOutcomePredictor({
 }: TreatmentOutcomePredictorProps) {
   const [timeHorizon, setTimeHorizon] = useState([6]); // months
   const [confidenceThreshold, setConfidenceThreshold] = useState([0.7]);
-  const [selectedMetric, setSelectedMetric] = useState('overall');
+  const [_selectedMetric, _setSelectedMetric] = useState('overall');
   const [activeTab, setActiveTab] = useState('predictions');
 
   // Fetch treatment outcome predictions
@@ -114,7 +109,7 @@ export function TreatmentOutcomePredictor({
     }
   };
 
-  const formatDate = (date: Date) => {
+  const _formatDate = (date: Date) => {
     return format(date, 'dd/MM/yyyy', { locale: ptBR });
   };
 

@@ -24,12 +24,6 @@ import {
 export {
   EnhancedStructuredLogger,
   brazilianPIIRedactionService,
-  // Types
-  EnhancedStructuredLoggingConfig,
-  BrazilianHealthcareContext,
-  WinstonLogEntry,
-  EnhancedLGPDCompliance,
-  HealthcareSeverity,
 };
 
 export type {
@@ -166,10 +160,11 @@ export const logger = {
   logMedicationEvent: (
     action: "prescribed" | "administered" | "verified" | "adverse_reaction",
     message: string,
+    severity: HealthcareSeverity,
     healthcareContext: BrazilianHealthcareContext,
     data?: any,
   ) =>
-    enhancedLogger.logMedicationEvent(action, message, healthcareContext, data),
+    enhancedLogger.logMedicationEvent(action, message, severity, healthcareContext, data),
 
   logEmergencyResponse: (
     action: string,
@@ -207,7 +202,7 @@ export function createHealthcareLogger(
   const mergedConfig = {
     ...defaultConfig,
     ...config,
-    _service: config.serviceName, // Ensure service is overridden
+    _service: config._service || defaultConfig._service, // Ensure service is overridden
   };
 
   return new EnhancedStructuredLogger(mergedConfig);

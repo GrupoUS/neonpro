@@ -16,7 +16,10 @@
 
 import { z } from "zod";
 // import { nanoid } from "nanoid";
-import { logHealthcareError, rateLimitLogger } from '../logging/healthcare-logger';
+import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
+
+// Create rate limit logger from audit logger
+const rateLimitLogger = auditLogger.child({ component: 'rate-limiting' });
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -567,7 +570,7 @@ export class APIRateLimitingService {
         { component: 'api-rate-limiting', timestamp: new Date().toISOString() },
       );
     } catch (error) {
-      logHealthcareError('api-rate-limiting', error, { method: 'initialize' });
+      logHealthcareError('api-rate-limiting', error instanceof Error ? error : new Error(String(error)), { method: 'initialize' });
     }
   }
 
@@ -750,7 +753,7 @@ export class APIRateLimitingService {
 
       return result;
     } catch (error) {
-      logHealthcareError('api-rate-limiting', error, { method: 'checkRateLimit' });
+      logHealthcareError('api-rate-limiting', error instanceof Error ? error : new Error(String(error)), { method: 'checkRateLimit' });
 
       // Default to allow in case of service failure (fail-open for healthcare)
       return {

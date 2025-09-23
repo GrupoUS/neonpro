@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { 
-  TreatmentProgress,
-  ProgressUpdate,
-  PatientAssessment 
+  ProgressUpdate
 } from '@/types/ai-clinical-support';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,31 +16,23 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { 
   TrendingUp, 
   TrendingDown,
   AlertTriangle, 
   CheckCircle,
-  Clock,
   Target,
-  Camera,
   MessageSquare,
-  FileText,
   Calendar,
   Star,
-  ThumbsUp,
-  ThumbsDown,
   Activity,
-  Zap,
   Award,
   RefreshCw,
   Plus,
   Edit,
-  Save,
   X
 } from 'lucide-react';
-import { format, parseISO, isAfter, isBefore, addDays } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface ProgressMonitoringProps {
@@ -54,9 +44,9 @@ interface ProgressMonitoringProps {
 export function ProgressMonitoring({ 
   patientId, 
   treatmentPlanId,
-  onUpdateProgress 
+  onUpdateProgress: _onUpdateProgress 
 }: ProgressMonitoringProps) {
-  const [selectedSession, setSelectedSession] = useState<string>('');
+  const [_selectedSession, _setSelectedSession] = useState<string>('');
   const [activeTab, setActiveTab] = useState('overview');
   const [isAddingUpdate, setIsAddingUpdate] = useState(false);
   const [newUpdate, setNewUpdate] = useState({

@@ -21,9 +21,7 @@ import {
   AestheticAnalytics,
   AestheticInventory,
   AestheticEmergency,
-  AestheticTraining,
   AestheticPhotoConsent,
-  AestheticCatalog,
   AestheticScheduleOptimization,
   AestheticRetentionAnalysis,
   AestheticComplianceAudit

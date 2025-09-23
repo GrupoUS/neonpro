@@ -52,7 +52,7 @@ exportRouter.post(
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
   async c => {
     try {
-      const userId = c.get('jwtPayload').sub;
+      const _userId = c.get('jwtPayload').sub;
       if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
@@ -129,7 +129,7 @@ exportRouter.get(
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
   async c => {
     try {
-      const userId = c.get('jwtPayload').sub;
+      const _userId = c.get('jwtPayload').sub;
       if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
@@ -176,7 +176,7 @@ exportRouter.delete(
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
   async c => {
     try {
-      const userId = c.get('jwtPayload').sub;
+      const _userId = c.get('jwtPayload').sub;
       if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
@@ -213,7 +213,7 @@ exportRouter.get(
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
   async c => {
     try {
-      const userId = c.get('jwtPayload').sub;
+      const _userId = c.get('jwtPayload').sub;
       if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
@@ -265,7 +265,7 @@ exportRouter.get(
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
   async c => {
     try {
-      const userId = c.get('jwtPayload').sub;
+      const _userId = c.get('jwtPayload').sub;
       if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
@@ -295,7 +295,7 @@ exportRouter.get(
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
   async c => {
     try {
-      const userId = c.get('jwtPayload').sub;
+      const _userId = c.get('jwtPayload').sub;
       if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }

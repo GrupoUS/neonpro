@@ -4,7 +4,8 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import { logHealthcareError, inventoryLogger } from '../../../shared/src/logging/healthcare-logger';
+import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
+import healthcareLogger from '../../../shared/src/logging/healthcare-logger';
 import type {
   InventoryCategory,
   Product,

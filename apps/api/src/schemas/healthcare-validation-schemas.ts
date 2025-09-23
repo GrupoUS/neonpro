@@ -139,7 +139,9 @@ export const AppointmentSchema = z
         'URGENCIA',
         'FOLLOW_UP',
       ],
-      'Tipo de consulta inválido',
+      {
+        errorMap: () => ({ message: 'Tipo de consulta inválido' }),
+      },
     ),
     status: z
       .enum([

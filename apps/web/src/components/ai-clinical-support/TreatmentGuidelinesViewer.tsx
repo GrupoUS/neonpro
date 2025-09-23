@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { 
   TreatmentGuideline,
-  GuidelineSection,
-  PatientAssessment 
+  GuidelineSection
 } from '@/types/ai-clinical-support';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -15,31 +14,20 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { 
   BookOpen, 
   Search, 
-  Filter,
   Download,
-  Share2,
   Star,
   Clock,
-  Users,
-  Shield,
   AlertTriangle,
-  CheckCircle,
   FileText,
   Image,
   Video,
   Link,
   ExternalLink,
   Bookmark,
-  BookmarkPlus,
-  Heart,
-  Activity,
-  Zap,
-  Award,
-  TrendingUp
+  BookmarkPlus
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -55,7 +43,7 @@ export function TreatmentGuidelinesViewer({
   procedureId,
   category,
   searchQuery,
-  onGuidelineSelect 
+  onGuidelineSelect: _onGuidelineSelect 
 }: TreatmentGuidelinesViewerProps) {
   const [selectedCategory, setSelectedCategory] = useState(category || 'all');
   const [searchTerm, setSearchTerm] = useState(searchQuery || '');

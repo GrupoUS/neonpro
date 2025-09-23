@@ -18,6 +18,10 @@ import {
   AlwaysOnSampler,
   AlwaysOffSampler,
 } from "@opentelemetry/sdk-trace-base";
+import { auditLogger } from '../logging/healthcare-logger';
+import { logHealthcareError } from '../logging/healthcare-logger';
+
+const telemetryLogger = auditLogger.child({ component: 'opentelemetry' });
 
 // Healthcare-specific telemetry configuration
 export interface HealthcareTelemetryConfig {
@@ -165,14 +169,19 @@ export class HealthcareTelemetryManager {
     try {
       await this.sdk.start();
       this.initialized = true;
-      console.info(
-        `[OpenTelemetry] Healthcare telemetry initialized for ${this.config.serviceName}`,
-      );
+      telemetryLogger.info(`Healthcare telemetry initialized for ${this.config.serviceName}`, {
+        component: 'opentelemetry',
+        action: 'initialize',
+        serviceName: this.config.serviceName,
+        timestamp: new Date().toISOString()
+      });
     } catch (error) {
-      console.error(
-        "[OpenTelemetry] Failed to initialize healthcare telemetry:",
-        error,
-      );
+      logHealthcareError('opentelemetry', error instanceof Error ? error : new Error(String(error)), {
+        method: 'initialize',
+        component: 'opentelemetry',
+        action: 'initialize_failure',
+        serviceName: this.config.serviceName
+      });
       throw error;
     }
   }
@@ -181,7 +190,11 @@ export class HealthcareTelemetryManager {
     if (this.sdk && this.initialized) {
       await this.sdk.shutdown();
       this.initialized = false;
-      console.info("[OpenTelemetry] Healthcare telemetry shutdown completed");
+      telemetryLogger.info("Healthcare telemetry shutdown completed", {
+        component: 'opentelemetry',
+        action: 'shutdown',
+        timestamp: new Date().toISOString()
+      });
     }
   }
 

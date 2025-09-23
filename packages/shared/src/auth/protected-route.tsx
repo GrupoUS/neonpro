@@ -11,6 +11,9 @@
 import type React from "react";
 import type { ReactNode } from "react";
 import { useAuth } from "./auth-provider";
+import { auditLogger } from '../logging/healthcare-logger';
+
+const authLogger = auditLogger.child({ component: 'protected-route' });
 
 export interface ProtectedRouteProps {
   children: ReactNode;
@@ -80,7 +83,12 @@ export function ProtectedRoute({
   if (!(isAuthenticated && user)) {
     // NOTE: Using TanStack Router for protected routes router
     // router.push(redirectTo,)
-    console.warn("User not authenticated, redirect to:", redirectTo);
+    authLogger.warn("User not authenticated, redirect to", {
+      component: 'protected-route',
+      action: 'authentication_redirect',
+      redirectTo,
+      timestamp: new Date().toISOString()
+    });
     return <>{fallback}</>;
   }
 

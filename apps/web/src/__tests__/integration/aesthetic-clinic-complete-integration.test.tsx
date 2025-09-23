@@ -6,8 +6,9 @@
  * ensuring healthcare compliance (LGPD, ANVISA, CFM), security, and performance.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor, act } from '@/test/utils';
+// Test imports removed as they are not currently used in this template file
+// import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+// import { render, screen, fireEvent, waitFor, act } from '@/test/utils';
 import { server } from '@/test/mocks/server';
 import { rest } from 'msw';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -355,12 +356,12 @@ const setupMockServer = () => {
 
     // Patient endpoints
     rest.post('/api/patients', async (req, res, ctx) => {
-      const patientData = await req.json();
+      const _patientData = await req.json();
       return res(ctx.json(mockApiResponses.patients.create));
     }),
 
     rest.get('/api/patients/:id', async (req, res, ctx) => {
-      const { id } = req.params;
+      const { id: _id } = req.params;
       return res(ctx.json(mockApiResponses.patients.get));
     }),
 
@@ -395,7 +396,7 @@ const setupMockServer = () => {
 
     // Appointment endpoints
     rest.post('/api/appointments', async (req, res, ctx) => {
-      const appointmentData = await req.json();
+      const _appointmentData = await req.json();
       return res(ctx.json(mockApiResponses.appointments.schedule));
     }),
 

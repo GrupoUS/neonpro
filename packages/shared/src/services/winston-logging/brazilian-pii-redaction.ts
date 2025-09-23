@@ -56,19 +56,19 @@ const BRAZILIAN_PATTERNS = {
 
       let sum = 0;
       for (let i = 0; i < 12; i++) {
-        sum += parseInt(digits[i]) * weights1[i];
+        sum += parseInt(digits[i]!) * weights1[i];
       }
       let remainder = sum % 11;
       const digit1 = remainder < 2 ? 0 : 11 - remainder;
 
       sum = 0;
       for (let i = 0; i < 13; i++) {
-        sum += parseInt(digits[i]) * weights2[i];
+        sum += parseInt(digits[i]!) * weights2[i];
       }
       remainder = sum % 11;
       const digit2 = remainder < 2 ? 0 : 11 - remainder;
 
-      return digit1 === parseInt(digits[12]) && digit2 === parseInt(digits[13]);
+      return digit1 === parseInt(digits[12]!) && digit2 === parseInt(digits[13]!);
     },
   },
 
@@ -91,7 +91,7 @@ const BRAZILIAN_PATTERNS = {
       if (digits.length !== 15) return false;
 
       // SUS validation algorithm
-      const sum = digits.split("").reduce((acc, digit, _index) => {
+      const sum = digits.split("").reduce((acc, digit, index) => {
         return acc + parseInt(digit) * (15 - index);
       }, 0);
 
@@ -235,11 +235,11 @@ export class BrazilianPIIRedactionService {
 
         // Validate if validation is enabled
         const isValid = this.enableValidation
-          ? config.validate(fullMatch)
+          ? _config.validate(fullMatch)
           : true;
 
         if (isValid) {
-          return config.mask;
+          return _config.mask;
         }
 
         return match; // Return original if invalid
@@ -247,7 +247,7 @@ export class BrazilianPIIRedactionService {
     });
 
     // Apply healthcare patterns
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([_type, _config]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(([type, config]) => {
       redactedText = redactedText.replace(config.pattern, config.mask);
     });
 
@@ -298,7 +298,7 @@ export class BrazilianPIIRedactionService {
   extractBrazilianIdentifiers(text: string): BrazilianIdentifier[] {
     const identifiers: BrazilianIdentifier[] = [];
 
-    Object.entries(BRAZILIAN_PATTERNS).forEach(([_type, _config]) => {
+    Object.entries(BRAZILIAN_PATTERNS).forEach(([type, config]) => {
       const matches = text.match(config.pattern);
 
       if (matches) {
@@ -407,13 +407,13 @@ export class BrazilianPIIRedactionService {
   getDetectedPIITypes(text: string): string[] {
     const types: string[] = [];
 
-    Object.entries(BRAZILIAN_PATTERNS).forEach(([_type, _config]) => {
+    Object.entries(BRAZILIAN_PATTERNS).forEach(([type, config]) => {
       if (config.pattern.test(text)) {
         types.push(type);
       }
     });
 
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([_type, _config]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(([type, config]) => {
       if (config.pattern.test(text)) {
         types.push(type);
       }
@@ -454,7 +454,7 @@ export class BrazilianPIIRedactionService {
     const totalIdentifiers = identifiers.length;
 
     const identifiersByType = identifiers.reduce(
-      (acc, _id) => {
+      (acc, id) => {
         acc[id.type] = (acc[id.type] || 0) + 1;
         return acc;
       },
