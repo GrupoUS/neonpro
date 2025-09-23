@@ -211,7 +211,7 @@ export async function forceErrorTracking(
     const {
       withScope,
       captureException,
-      setLevel: setLevel,
+      setLevel,
     } = await import('@sentry/node');
     withScope(scope => {
       scope.setTag('test', true);

@@ -2,10 +2,10 @@
 // Purpose: Test session lifecycle, timeouts, and cleanup for healthcare compliance
 // File: packages/utils/src/chat/__tests__/session-management.test.ts
 
-import { describe, expect, it, beforeEach, afterEach, vi, Mock } from "vitest";
+import { describe, expect, it, beforeEach, afterEach, vi } from "vitest";
 import type {
   ChatSession,
-  SessionStatus,
+
   SessionConfig,
 } from "@neonpro/types/ai-chat";
 
@@ -22,7 +22,7 @@ import {
 } from "../session-management";
 
 describe("T010: Session Management for AI Chat", () => {
-  let mockSessionStore: Map<string, ChatSession>;
+  let _mockSessionStore: Map<string, ChatSession>;
   let mockTimestamp: number;
 
   beforeEach(() => {
@@ -277,7 +277,7 @@ describe("T010: Session Management for AI Chat", () => {
   });
 
   describe("Session Cleanup", () => {
-    let activeSessions: ChatSession[];
+    let _activeSessions: ChatSession[];
     let expiredSessions: ChatSession[];
 
     beforeEach(async () => {

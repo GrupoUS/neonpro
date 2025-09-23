@@ -47,7 +47,16 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+### NeonPro Constitutional Compliance
+**MANDATORY Requirements**:
+- [ ] **Aesthetic Clinic Compliance**: Feature complies with LGPD, ANVISA, and relevant professional council regulations for aesthetic procedures
+- [ ] **AI-Powered Prevention**: Feature proactively prevents problems rather than reacting
+- [ ] **Brazilian Mobile-First**: Optimized for Brazilian aesthetic clinics and all aesthetic professionals using mobile devices
+- [ ] **Type Safety**: End-to-end TypeScript with strict mode and aesthetic clinic data validation
+- [ ] **Performance**: Meets <2s AI response, <500ms API response, 99.9% uptime requirements for aesthetic clinic workflows
+- [ ] **Privacy by Design**: Implements encryption, audit trails, and PII protection for aesthetic client data
+- [ ] **MCP Development**: Follows required MCP sequence (sequential-thinking → archon → serena → tools)
+- [ ] **Quality Gates**: Includes Vitest + Playwright testing with 90%+ coverage for critical components
 
 ## Project Structure
 

@@ -105,15 +105,6 @@ export default defineConfig({
       VITE_API_URL: 'http://localhost:3001',
     },
     
-    // Snapshot configuration
-    snapshotFormat: {
-      printBasicPrototype: false,
-      escapeString: true,
-    },
-    
-    // Global test variables
-    globalSetup: ['./src/test/global-setup.ts'],
-    globalTeardown: ['./src/test/global-teardown.ts'],
   },
   
   // Path aliases optimized for clinic app structure

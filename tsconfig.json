@@ -21,7 +21,6 @@
     }
   },
   "include": [
-    "apps/**/*",
     "packages/**/*",
     "src/**/*",
     "tools/tests/**/*",
@@ -38,16 +37,7 @@
     "**/*.test.tsx",
     "**/__tests__/**"
   ],
-  "references": [
-    { "path": "./packages/types" },
-    { "path": "./packages/utils" },
-    { "path": "./packages/shared" },
-    { "path": "./packages/database" },
-    { "path": "./packages/security" },
-    { "path": "./packages/ui" },
-    { "path": "./apps/api" },
-    { "path": "./apps/web" }
-  ],
+
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"

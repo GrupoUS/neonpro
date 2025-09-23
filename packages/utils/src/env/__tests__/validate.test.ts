@@ -7,11 +7,11 @@ describe("T007 validateEnv", () => {
     const original = { ...process.env };
     delete process.env.SUPABASE_URL;
     try {
-      expect(() => validateEnv()).toThrow(/SUPABASE_URL/
+      expect(() => validateEnv()).toThrow(/SUPABASE_URL/);
     } finally {
       process.env = original;
     }
-  }
+  });
 
   it("returns true when required vars present", () => {
     const original = { ...process.env };
@@ -21,5 +21,5 @@ describe("T007 validateEnv", () => {
     } finally {
       process.env = original;
     }
-  }
-}
+  });
+});

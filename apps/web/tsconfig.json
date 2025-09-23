@@ -13,6 +13,7 @@
       "@/*": ["./src/*"]
     },
     "composite": true,
+    "declaration": true,
     "tsBuildInfoFile": "./.tsbuildinfo",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,

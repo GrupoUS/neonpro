@@ -1249,8 +1249,639 @@ model OperationStateAudit {
   createdAt        DateTime @default(now()) @map("created_at")
   
   operationState   OperationState @relation(fields: [operationStateId], references: [id], onDelete: Cascade)
-  
+
   @@map("operation_state_audit")
   @@index([operationStateId])
+  @@index([createdAt])
+}
+
+// =====================================
+// AESTHETIC CLINIC MODELS
+// =====================================
+
+// Aesthetic Client Profile extending the base Patient model with specific aesthetic fields
+model AestheticClientProfile {
+  id                        String    @id @default(uuid())
+  patientId                 String    @unique @map("patient_id")
+  patient                   Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  clinicId                  String    @map("clinic_id")
+  clinic                    Clinic    @relation(fields: [clinicId], references: [id])
+
+  // Personal information specific to aesthetic clients
+  skinType                  String?   @map("skin_type") // oily, dry, combination, sensitive, normal
+  skinTone                  String?   @map("skin_tone") // fair, light, medium, olive, brown, dark
+  skinConcerns              String[]  @map("skin_concerns") // acne, aging, hyperpigmentation, etc.
+  beautyGoals               String[]  @map("beauty_goals") // rejuvenation, hydration, toning, etc.
+  aestheticHistory          Json?     @map("aesthetic_history") // Previous treatments and procedures
+
+  // Treatment preferences
+  preferredTreatments      String[]  @map("preferred_treatments")
+  treatmentFrequency       String?   @map("treatment_frequency") // weekly, monthly, quarterly, yearly
+  treatmentBudget           Decimal?  @map("treatment_budget") @db.Decimal(10, 2)
+  painTolerance            String?   @map("pain_tolerance") // low, medium, high
+  downtimeTolerance        String?   @map("downtime_tolerance") // none, minimal, moderate, high
+
+  // Contact and communication preferences
+  preferredCommunication    String    @default("whatsapp") @map("preferred_communication") // whatsapp, sms, email
+  marketingConsent         Boolean   @default(false) @map("marketing_consent")
+  photoUsageConsent        Boolean   @default(false) @map("photo_usage_consent")
+  testimonialConsent       Boolean   @default(false) @map("testimonial_consent")
+
+  // Financial information
+  paymentMethod            String?   @map("payment_method") // cash, credit, installment, membership
+  membershipStatus         String?   @default("none") @map("membership_status") // none, basic, premium, vip
+  membershipExpiry        DateTime? @map("membership_expiry")
+  loyaltyPoints            Int?      @default(0) @map("loyalty_points")
+  totalSpent               Decimal?  @default(0) @map("total_spent") @db.Decimal(10, 2)
+
+  // Retention and analytics
+  retentionRiskScore       Int?      @default(0) @map("retention_risk_score") // 0-100
+  lastVisitDate            DateTime? @map("last_visit_date")
+  nextAppointmentDate      DateTime? @map("next_appointment_date")
+  visitFrequency           Int?      @default(0) @map("visit_frequency") // visits per year
+  satisfactionScore        Int?      @default(0) @map("satisfaction_score") // 1-5
+  referralCount            Int?      @default(0) @map("referral_count")
+
+  // LGPD compliance specific to aesthetic data
+  aestheticDataConsent      Boolean   @default(false) @map("aesthetic_data_consent")
+  beforeAfterPhotosConsent Boolean   @default(false) @map("before_after_photos_consent")
+  treatmentDataConsent      Boolean   @default(false) @map("treatment_data_consent")
+  dataRetentionPeriod      Int?      @default(365) @map("data_retention_period") // days
+
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  createdBy                String    @map("created_by")
+  updatedBy                String?   @map("updated_by")
+
+  // Relations
+  aestheticSessions         AestheticSession[]
+  treatmentPlans           TreatmentPlan[]
+  photoAssessments         PhotoAssessment[]
+  financialTransactions     FinancialTransaction[]
+  retentionRecords          ClientRetentionRecord[]
+
+  @@map("aesthetic_client_profiles")
+  @@index([patientId])
+  @@index([clinicId])
+  @@index([retentionRiskScore])
+  @@index([membershipStatus])
+  @@index([createdAt])
+}
+
+// Treatment Catalog for aesthetic procedures
+model TreatmentCatalog {
+  id                        String    @id @default(uuid())
+  clinicId                  String    @map("clinic_id")
+  clinic                    Clinic    @relation(fields: [clinicId], references: [id])
+
+  // Basic treatment information
+  name                      String
+  description               String
+  category                  String    @map("treatment_category") // facial, body, injectable, laser, etc.
+  subcategory               String?   @map("treatment_subcategory")
+  treatmentType             String    @map("treatment_type") // medical, cosmetic, wellness
+
+  // ANVISA compliance
+  anvisaRegistrationNumber   String?   @map("anvisa_registration_number")
+  anvisaExpiryDate          DateTime? @map("anvisa_expiry_date")
+  anvisaComplianceStatus     String    @default("pending") @map("anvisa_compliance_status") // pending, approved, rejected, expired
+  anvisaApprovalDate        DateTime? @map("anvisa_approval_date")
+  anvisaCertificateUrl      String?   @map("anvisa_certificate_url")
+
+  // Treatment specifications
+  duration                  Int       @map("duration_minutes") // in minutes
+  sessionsRequired          Int?      @default(1) @map("sessions_required")
+  sessionInterval           Int?      @map("session_interval_days") // days between sessions
+  recoveryTime              Int?      @map("recovery_time_days") // recovery period in days
+  painLevel                 Int?      @default(1) @map("pain_level") // 1-10 scale
+  complexity                String    @default("low") @map("complexity") // low, medium, high
+
+  // Pricing and financial information
+  basePrice                 Decimal   @map("base_price") @db.Decimal(10, 2)
+  currency                  String    @default("BRL")
+  priceIncludes            String[]  @map("price_includes") // consultation, aftercare, etc.
+  additionalCosts           Json?     @map("additional_costs") // optional add-ons and their prices
+  discountAvailable        Boolean   @default(false) @map("discount_available")
+  membershipDiscount        Decimal?  @map("membership_discount") @db.Decimal(5, 2) // percentage
+
+  // Clinical information
+  indications               String[]  @map("indications") // recommended for
+  contraindications        String[]  @map("contraindications") // not recommended for
+  risks                     String[]  @map("risks")
+  sideEffects               String[]  @map("side_effects")
+  expectedResults           String[]  @map("expected_results")
+  maintenanceFrequency      String?   @map("maintenance_frequency") // how often to repeat
+
+  // Equipment and materials
+  equipmentUsed            String[]  @map("equipment_used")
+  materialsUsed             String[]  @map("materials_used")
+  brandNames                String[]  @map("brand_names")
+  productCodes              String[]  @map("product_codes")
+
+  // Professional requirements
+  requiredQualifications    String[]  @map("required_qualifications")
+  certificationRequired     Boolean   @default(false) @map("certification_required")
+  supervisionRequired       Boolean   @default(false) @map("supervision_required")
+
+  // Media and marketing
+  treatmentImages           String[]  @map("treatment_images") // URLs to treatment images
+  beforeAfterPhotos         String[]  @map("before_after_photos") // URLs to before/after photos
+  videoUrls                 String[]  @map("video_urls") // demonstration videos
+  descriptionVideoUrl       String?   @map("description_video_url")
+
+  // Availability and scheduling
+  isActive                  Boolean   @default(true) @map("is_active")
+  isNewTreatment            Boolean   @default(false) @map("is_new_treatment")
+  isPopular                 Boolean   @default(false) @map("is_popular")
+  seasonalAvailability     Json?     @map("seasonal_availability") // seasonal restrictions
+  maxSessionsPerDay         Int?      @map("max_sessions_per_day")
+
+  // Analytics and performance
+  timesPerformed            Int       @default(0) @map("times_performed")
+  satisfactionScore        Decimal?  @map("satisfaction_score") @db.Decimal(3, 2) // average rating
+  complicationRate          Decimal?  @map("complication_rate") @db.Decimal(5, 2) // percentage
+  revenueGenerated          Decimal?  @default(0) @map("revenue_generated") @db.Decimal(12, 2)
+
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  createdBy                String    @map("created_by")
+  updatedBy                String?   @map("updated_by")
+
+  // Relations
+  aestheticSessions         AestheticSession[]
+  treatmentPlanItems       TreatmentPlanItem[]
+
+  @@map("treatment_catalog")
+  @@index([clinicId])
+  @@index([category])
+  @@index([treatmentType])
+  @@index([anvisaComplianceStatus])
+  @@index([isActive])
+  @@index([basePrice])
+  @@index([createdAt])
+  @@unique([clinicId, name])
+}
+
+// Aesthetic Treatment Sessions
+model AestheticSession {
+  id                        String    @id @default(uuid())
+  appointmentId             String?   @unique @map("appointment_id")
+  appointment               Appointment? @relation(fields: [appointmentId], references: [id])
+  patientId                 String    @map("patient_id")
+  patient                   Patient   @relation(fields: [patientId], references: [id])
+  aestheticClientProfileId  String    @map("aesthetic_client_profile_id")
+  aestheticClientProfile    AestheticClientProfile @relation(fields: [aestheticClientProfileId], references: [id])
+  clinicId                  String    @map("clinic_id")
+  clinic                    Clinic    @relation(fields: [clinicId], references: [id])
+  professionalId            String    @map("professional_id")
+  professional              Professional @relation(fields: [professionalId], references: [id])
+  treatmentCatalogId        String    @map("treatment_catalog_id")
+  treatmentCatalog          TreatmentCatalog @relation(fields: [treatmentCatalogId], references: [id])
+
+  // Session details
+  sessionNumber             Int       @map("session_number") // session number in treatment series
+  totalSessions             Int?      @map("total_sessions") // total sessions in treatment plan
+  sessionType               String    @default("regular") @map("session_type") // regular, follow_up, touch_up, emergency
+
+  // Treatment parameters
+  treatmentAreas            String[]  @map("treatment_areas") // face, neck, hands, etc.
+  treatmentIntensity        String?   @map("treatment_intensity") // low, medium, high
+  productUsed               String[]  @map("product_used")
+  productBatch              String[]  @map("product_batch")
+  equipmentSettings        Json?     @map("equipment_settings") // specific machine settings
+  techniqueUsed             String?   @map("technique_used")
+
+  // Before and after assessment
+  beforeAssessment          Json?     @map("before_assessment") // pre-treatment evaluation
+  afterAssessment           Json?     @map("after_assessment") // post-treatment evaluation
+  immediateResults          String?   @map("immediate_results")
+  expectedResults           String[]  @map("expected_results")
+
+  // Clinical monitoring
+  preTreatmentPhotos        String[]  @map("pre_treatment_photos")
+  postTreatmentPhotos       String[]  @map("post_treatment_photos")
+  skinConditionBefore       Json?     @map("skin_condition_before")
+  skinConditionAfter       Json?     @map("skin_condition_after")
+  painLevelReported         Int?      @map("pain_level_reported") // 1-10 scale
+  sideEffectsExperienced    String[]  @map("side_effects_experienced")
+  complications             String[]  @map("complications")
+
+  // Session timeline
+  startTime                 DateTime  @map("start_time")
+  endTime                   DateTime  @map("end_time")
+  actualDuration            Int?      @map("actual_duration_minutes")
+  preparationTime           Int?      @map("preparation_time_minutes")
+  recoveryTime              Int?      @map("recovery_time_minutes")
+
+  // Follow-up and aftercare
+  aftercareInstructions     String[]  @map("aftercare_instructions")
+  followUpDate              DateTime? @map("follow_up_date")
+  nextSessionDate           DateTime? @map("next_session_date")
+  productsRecommended       String[]  @map("products_recommended")
+  homeCareInstructions      String[]  @map("home_care_instructions")
+
+  // Patient feedback
+  patientSatisfaction      Int?      @map("patient_satisfaction") // 1-5 scale
+  patientFeedback           String?   @map("patient_feedback")
+  resultsVisibility         Int?      @map("results_visibility") // 1-5 scale (how visible results are)
+  painToleranceReported    String?   @map("pain_tolerance_reported") // better/worse than expected
+
+  // Financial information
+  sessionPrice              Decimal   @map("session_price") @db.Decimal(10, 2)
+  discountApplied           Decimal?  @map("discount_applied") @db.Decimal(10, 2)
+  finalPrice                Decimal   @map("final_price") @db.Decimal(10, 2)
+  paymentStatus             String    @default("pending") @map("payment_status") // pending, paid, partial, refunded
+  paymentMethod             String?   @map("payment_method")
+
+  // Compliance and documentation
+  anvisaProtocolNumber      String?   @map("anvisa_protocol_number")
+  cfmCompliance             Boolean   @default(true) @map("cfm_compliance")
+  informedConsentSigned     Boolean   @default(false) @map("informed_consent_signed")
+  consentDocumentUrl        String?   @map("consent_document_url")
+
+  // Quality control
+  qualityAssessment         String?   @map("quality_assessment") // excellent, good, fair, poor
+  qualityNotes              String?   @map("quality_notes")
+  peerReviewRequired        Boolean   @default(false) @map("peer_review_required")
+  peerReviewCompleted       Boolean   @default(false) @map("peer_review_completed")
+  reviewedByProfessionalId  String?   @map("reviewed_by_professional_id")
+
+  // Status and tracking
+  status                    String    @default("scheduled") @map("status") // scheduled, in_progress, completed, cancelled, no_show
+  cancellationReason        String?   @map("cancellation_reason")
+  rescheduledFrom           DateTime? @map("rescheduled_from")
+  noShowReason             String?   @map("no_show_reason")
+
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  createdBy                String    @map("created_by")
+  updatedBy                String?   @map("updated_by")
+
+  // Relations
+  photoAssessments         PhotoAssessment[]
+
+  @@map("aesthetic_sessions")
+  @@index([appointmentId])
+  @@index([patientId])
+  @@index([aestheticClientProfileId])
+  @@index([clinicId])
+  @@index([professionalId])
+  @@index([treatmentCatalogId])
+  @@index([startTime])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Photo Assessment for aesthetic treatments
+model PhotoAssessment {
+  id                        String    @id @default(uuid())
+  aestheticSessionId        String    @map("aesthetic_session_id")
+  aestheticSession          AestheticSession @relation(fields: [aestheticSessionId], references: [id], onDelete: Cascade)
+  patientId                 String    @map("patient_id")
+  patient                   Patient   @relation(fields: [patientId], references: [id])
+  aestheticClientProfileId  String    @map("aesthetic_client_profile_id")
+  aestheticClientProfile    AestheticClientProfile @relation(fields: [aestheticClientProfileId], references: [id])
+  clinicId                  String    @map("clinic_id")
+  clinic                    Clinic    @relation(fields: [clinicId], references: [id])
+
+  // Photo information
+  photoType                 String    @map("photo_type") // before, after, progress, complication
+  photoCategory             String    @map("photo_category") // frontal, profile, close_up, etc.
+  photoUrl                  String    @map("photo_url")
+  thumbnailUrl              String?   @map("thumbnail_url")
+  originalFilename          String?   @map("original_filename")
+  fileSize                  Int?      @map("file_size_bytes")
+  dimensions                Json?     @map("dimensions") // width, height
+
+  // AI Analysis results
+  aiAnalysisResults         Json?     @map("ai_analysis_results") // AI-powered skin analysis
+  skinAnalysis              Json?     @map("skin_analysis") // detailed skin condition analysis
+  agingAnalysis             Json?     @map("aging_analysis") // aging indicators analysis
+  wrinkleAnalysis           Json?     @map("wrinkle_analysis") // wrinkle depth and pattern analysis
+  pigmentationAnalysis      Json?     @map("pigmentation_analysis") // pigmentation issues analysis
+  textureAnalysis           Json?     @map("texture_analysis") // skin texture analysis
+
+  // Assessment metrics
+  overallSkinScore          Int?      @map("overall_skin_score") // 1-100 scale
+  agingScore               Int?      @map("aging_score") // 1-100 scale
+  hydrationScore           Int?      @map("hydration_score") // 1-100 scale
+  elasticityScore          Int?      @map("elasticity_score") // 1-100 scale
+  pigmentationScore         Int?      @map("pigmentation_score") // 1-100 scale
+  textureScore             Int?      @map("texture_score") // 1-100 scale
+
+  // Treatment progress tracking
+  progressPercentage       Int?      @map("progress_percentage") // 0-100% improvement
+  treatmentEffectiveness    String?   @map("treatment_effectiveness") // poor, fair, good, excellent
+  areasOfImprovement       String[]  @map("areas_of_improvement")
+  areasOfConcern           String[]  @map("areas_of_concern")
+
+  // Professional assessment
+  professionalNotes         String?   @map("professional_notes")
+  assessmentDate           DateTime  @map("assessment_date")
+  assessedBy                String    @map("assessed_by") // professional ID
+  confidenceLevel           Int?      @map("confidence_level") // 1-10 scale in assessment
+
+  // LGPD compliance
+  photoConsentStatus        String    @default("pending") @map("photo_consent_status") // pending, granted, revoked
+  photoConsentDate          DateTime? @map("photo_consent_date")
+  photoConsentDocument      String?   @map("photo_consent_document")
+  usageConsent              String?   @map("usage_consent") // treatment, marketing, education
+  retentionPeriod           Int?      @default(365) @map("retention_period_days")
+
+  // Technical metadata
+  captureDevice             String?   @map("capture_device")
+  cameraSettings            Json?     @map("camera_settings")
+  lightingConditions        String?   @map("lighting_conditions")
+  photoEditing              Json?     @map("photo_editing") // editing history
+  qualityControl            Json?     @map("quality_control") // quality assessment
+
+  // Security and privacy
+  isEncrypted              Boolean   @default(false) @map("is_encrypted")
+  encryptionMethod         String?   @map("encryption_method")
+  accessLevel              String    @default("restricted") @map("access_level")
+  watermarkStatus          String    @default("none") @map("watermark_status") // none, added, required
+
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  createdBy                String    @map("created_by")
+  updatedBy                String?   @map("updated_by")
+
+  @@map("photo_assessments")
+  @@index([aestheticSessionId])
+  @@index([patientId])
+  @@index([aestheticClientProfileId])
+  @@index([clinicId])
+  @@index([photoType])
+  @@index([assessmentDate])
+  @@index([createdAt])
+}
+
+// Treatment Plan for aesthetic clients
+model TreatmentPlan {
+  id                        String    @id @default(uuid())
+  aestheticClientProfileId  String    @map("aesthetic_client_profile_id")
+  aestheticClientProfile    AestheticClientProfile @relation(fields: [aestheticClientProfileId], references: [id], onDelete: Cascade)
+  patientId                 String    @map("patient_id")
+  patient                   Patient   @relation(fields: [patientId], references: [id])
+  clinicId                  String    @map("clinic_id")
+  clinic                    Clinic    @relation(fields: [clinicId], references: [id])
+  professionalId            String    @map("professional_id")
+  professional              Professional @relation(fields: [professionalId], references: [id])
+
+  // Plan details
+  planName                  String    @map("plan_name")
+  planDescription           String    @map("plan_description")
+  primaryGoal               String    @map("primary_goal")
+  secondaryGoals            String[]  @map("secondary_goals")
+  treatmentCategory         String    @map("treatment_category")
+
+  // Timeline and duration
+  startDate                 DateTime  @map("start_date")
+  endDate                   DateTime?  @map("end_date")
+  estimatedDuration          Int       @map("estimated_duration_weeks")
+  totalSessions             Int       @map("total_sessions")
+  sessionsPerWeek           Int?      @map("sessions_per_week")
+
+  // Financial information
+  totalEstimatedCost        Decimal   @map("total_estimated_cost") @db.Decimal(12, 2)
+  totalActualCost           Decimal?  @map("total_actual_cost") @db.Decimal(12, 2)
+  paymentPlan               Json?     @map("payment_plan") // payment schedule details
+  paymentStatus             String    @default("pending") @map("payment_status")
+
+  // Plan status
+  status                    String    @default("draft") @map("status") // draft, active, paused, completed, cancelled
+  approvalStatus           String    @default("pending") @map("approval_status") // pending, approved, rejected
+  approvedBy                String?   @map("approved_by")
+  approvedAt                DateTime? @map("approved_at")
+
+  // Progress tracking
+  completedSessions         Int       @default(0) @map("completed_sessions")
+  progressPercentage        Int       @default(0) @map("progress_percentage")
+  overallSatisfaction       Int?      @map("overall_satisfaction") // 1-5 scale
+  patientCompliance         String?   @map("patient_compliance") // excellent, good, fair, poor
+
+  // Results tracking
+  expectedResults           String[]  @map("expected_results")
+  achievedResults           String[]  @map("achieved_results")
+  beforeAssessment          Json?     @map("before_assessment")
+  afterAssessment           Json?     @map("after_assessment")
+
+  // Notes and documentation
+  professionalNotes         String?   @map("professional_notes")
+  patientNotes              String?   @map("patient_notes")
+  recommendations            String[]  @map("recommendations")
+  contraindications         String[]  @map("contraindications")
+
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  createdBy                String    @map("created_by")
+  updatedBy                String?   @map("updated_by")
+
+  // Relations
+  treatmentPlanItems        TreatmentPlanItem[]
+
+  @@map("treatment_plans")
+  @@index([aestheticClientProfileId])
+  @@index([patientId])
+  @@index([clinicId])
+  @@index([professionalId])
+  @@index([status])
+  @@index([startDate])
+  @@index([createdAt])
+}
+
+// Treatment Plan Items
+model TreatmentPlanItem {
+  id                        String    @id @default(uuid())
+  treatmentPlanId           String    @map("treatment_plan_id")
+  treatmentPlan             TreatmentPlan @relation(fields: [treatmentPlanId], references: [id], onDelete: Cascade)
+  treatmentCatalogId        String    @map("treatment_catalog_id")
+  treatmentCatalog          TreatmentCatalog @relation(fields: [treatmentCatalogId], references: [id])
+
+  // Item details
+  itemName                  String    @map("item_name")
+  itemDescription           String?   @map("item_description")
+  treatmentArea             String?   @map("treatment_area")
+
+  // Schedule
+  sessionNumber             Int       @map("session_number")
+  scheduledDate             DateTime  @map("scheduled_date")
+  estimatedDuration         Int       @map("estimated_duration_minutes")
+
+  // Financial information
+  estimatedCost             Decimal   @map("estimated_cost") @db.Decimal(10, 2)
+  actualCost                Decimal?  @map("actual_cost") @db.Decimal(10, 2)
+  paymentStatus             String    @default("pending") @map("payment_status")
+
+  // Status
+  status                    String    @default("scheduled") @map("status") // scheduled, in_progress, completed, cancelled, skipped
+  completedAt               DateTime? @map("completed_at")
+  completedBy                String?   @map("completed_by")
+
+  // Results
+  resultsAchieved           String[]  @map("results_achieved")
+  patientFeedback           String?   @map("patient_feedback")
+  professionalNotes         String?   @map("professional_notes")
+
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+
+  @@map("treatment_plan_items")
+  @@index([treatmentPlanId])
+  @@index([treatmentCatalogId])
+  @@index([scheduledDate])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Financial Transactions for aesthetic clinic
+model FinancialTransaction {
+  id                        String    @id @default(uuid())
+  aestheticClientProfileId  String    @map("aesthetic_client_profile_id")
+  aestheticClientProfile    AestheticClientProfile @relation(fields: [aestheticClientProfileId], references: [id])
+  patientId                 String    @map("patient_id")
+  patient                   Patient   @relation(fields: [patientId], references: [id])
+  clinicId                  String    @map("clinic_id")
+  clinic                    Clinic    @relation(fields: [clinicId], references: [id])
+
+  // Transaction details
+  transactionType           String    @map("transaction_type") // payment, refund, credit, debit
+  transactionCategory       String    @map("transaction_category") // treatment, product, consultation, package
+  transactionSubcategory    String?   @map("transaction_subcategory")
+
+  // Amount information
+  amount                    Decimal   @map("amount") @db.Decimal(12, 2)
+  currency                  String    @default("BRL")
+  taxAmount                 Decimal?  @map("tax_amount") @db.Decimal(10, 2)
+  discountAmount            Decimal?  @map("discount_amount") @db.Decimal(10, 2)
+  netAmount                 Decimal   @map("net_amount") @db.Decimal(12, 2)
+
+  // Payment method
+  paymentMethod             String    @map("payment_method") // cash, credit_card, debit_card, pix, installment
+  paymentDetails            Json?     @map("payment_details") // payment method specific details
+  installmentInfo           Json?     @map("installment_info") // installment plan details
+
+  // Related items
+  relatedSessionId          String?   @map("related_session_id")
+  relatedAppointmentId      String?   @map("related_appointment_id")
+  relatedTreatmentId         String?   @map("related_treatment_id")
+  relatedProductId          String?   @map("related_product_id")
+
+  // Status and processing
+  status                    String    @default("pending") @map("status") // pending, processing, completed, failed, refunded
+  processor                 String?   @map("processor") // payment processor
+  transactionId             String?   @map("transaction_id") // external transaction ID
+  authorizationCode         String?   @map("authorization_code")
+  receiptNumber             String?   @map("receipt_number")
+
+  // Dates
+  transactionDate           DateTime  @map("transaction_date")
+  processedAt               DateTime? @map("processed_at")
+  refundedAt                DateTime?   @map("refunded_at")
+
+  // Notes and documentation
+  description               String?   @map("description")
+  notes                     String?   @map("notes")
+  invoiceNumber             String?   @map("invoice_number")
+  fiscalDocument            Json?     @map("fiscal_document") // Brazilian fiscal document
+
+  // Compliance
+  lgpdCompliant             Boolean   @default(true) @map("lgpd_compliant")
+  dataRetentionPolicy        String?   @map("data_retention_policy")
+
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  createdBy                String    @map("created_by")
+  updatedBy                String?   @map("updated_by")
+
+  @@map("financial_transactions")
+  @@index([aestheticClientProfileId])
+  @@index([patientId])
+  @@index([clinicId])
+  @@index([transactionType])
+  @@index([transactionDate])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Client Retention Records
+model ClientRetentionRecord {
+  id                        String    @id @default(uuid())
+  aestheticClientProfileId  String    @map("aesthetic_client_profile_id")
+  aestheticClientProfile    AestheticClientProfile @relation(fields: [aestheticClientProfileId], references: [id], onDelete: Cascade)
+  patientId                 String    @map("patient_id")
+  patient                   Patient   @relation(fields: [patientId], references: [id])
+  clinicId                  String    @map("clinic_id")
+  clinic                    Clinic    @relation(fields: [clinicId], references: [id])
+
+  // Retention metrics
+  retentionRiskScore        Int       @map("retention_risk_score") // 0-100 scale
+  retentionRiskLevel        String    @map("retention_risk_level") // low, medium, high
+  churnProbability          Decimal?  @map("churn_probability") @db.Decimal(5, 4) // 0.0-1.0
+
+  // Behavioral indicators
+  visitFrequency            Int?      @map("visit_frequency") // visits per month
+  averageSpendPerVisit      Decimal?  @map("average_spend_per_visit") @db.Decimal(10, 2)
+  lastVisitDate             DateTime?  @map("last_visit_date")
+  daysSinceLastVisit       Int?      @map("days_since_last_visit")
+  nextAppointmentDate       DateTime?  @map("next_appointment_date")
+  appointmentHistory        Json?     @map("appointment_history") // recent appointment patterns
+
+  // Engagement metrics
+  engagementScore           Int?      @map("engagement_score") // 1-100 scale
+  communicationResponseRate  Decimal?  @map("communication_response_rate") @db.Decimal(5, 2) // percentage
+  marketingInteractionCount Int?      @map("marketing_interaction_count")
+  lastMarketingInteraction  DateTime? @map("last_marketing_interaction")
+
+  // Satisfaction metrics
+  satisfactionScore         Int?      @map("satisfaction_score") // 1-5 scale
+  netPromoterScore          Int?      @map("net_promoter_score") // -100 to +100
+  likelihoodToRefer         Int?      @map("likelihood_to_refer") // 1-10 scale
+  lastFeedbackDate          DateTime?  @map("last_feedback_date")
+  feedbackSentiment         String?   @map("feedback_sentiment") // positive, neutral, negative
+
+  // Financial metrics
+  totalLifetimeValue        Decimal?  @map("total_lifetime_value") @db.Decimal(12, 2)
+  averageMonthlySpend       Decimal?  @map("average_monthly_spend") @db.Decimal(10, 2)
+  paymentHistory            Json?     @map("payment_history") // payment patterns and reliability
+  outstandingBalance        Decimal?  @map("outstanding_balance") @db.Decimal(10, 2)
+
+  // Treatment effectiveness
+  treatmentEffectiveness    String?   @map("treatment_effectiveness") // poor, fair, good, excellent
+  resultsAchievement        Int?      @map("results_achievement") // 1-100 scale
+  treatmentCompliance       String?   @map("treatment_compliance") // poor, fair, good, excellent
+
+  // Predictive factors
+  riskFactors               Json?     @map("risk_factors") // individual risk factors with weights
+  predictiveModelVersion    String?   @map("predictive_model_version")
+  predictionConfidence      Decimal?  @map("prediction_confidence") @db.Decimal(5, 4) // 0.0-1.0
+  lastPredictionDate        DateTime? @map("last_prediction_date")
+
+  // Intervention history
+  retentionInterventions    Json?     @map("retention_interventions") // interventions attempted
+  interventionEffectiveness Json?     @map("intervention_effectiveness") // effectiveness of interventions
+  lastInterventionDate      DateTime?  @map("last_intervention_date")
+
+  // Recommendations
+  retentionRecommendations  String[]  @map("retention_recommendations")
+  actionItems               String[]  @map("action_items")
+  followUpActions          String[]  @map("follow_up_actions")
+
+  // Status and tracking
+  status                    String    @default("active") @map("status") // active, lost, reactivated, dormant
+  reassessmentDate          DateTime?   @map("reassessment_date")
+
+  createdAt                DateTime  @default(now()) @map("created_at")
+  updatedAt                DateTime  @updatedAt @map("updated_at")
+  createdBy                String    @map("created_by")
+  updatedBy                String?   @map("updated_by")
+
+  @@map("client_retention_records")
+  @@index([aestheticClientProfileId])
+  @@index([patientId])
+  @@index([clinicId])
+  @@index([retentionRiskScore])
+  @@index([retentionRiskLevel])
+  @@index([lastVisitDate])
   @@index([createdAt])
 }

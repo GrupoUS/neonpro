@@ -141,6 +141,183 @@ export const ListAppointmentsSchema = v.object({
 });
 
 /**
+ * Aesthetic Scheduling Schema
+ * Comprehensive validation for aesthetic procedure scheduling with Brazilian healthcare compliance
+ */
+
+/**
+ * Aesthetic Procedure Scheduling Request Schema
+ */
+export const ScheduleAestheticProceduresSchema = v.object({
+  patientId: v.string([v.uuid('Invalid patient ID')]),
+  procedures: v.array(v.string([v.uuid('Invalid procedure ID')]), [
+    v.minLength(1, 'At least one procedure is required'),
+    v.maxLength(10, 'Maximum 10 procedures per request'),
+  ]),
+  preferredProfessionals: v.optional(v.array(v.string([v.uuid('Invalid professional ID')]))),
+  preferredDates: v.optional(v.array(v.date(), [
+    v.minLength(1, 'At least one preferred date required'),
+    v.maxLength(5, 'Maximum 5 preferred dates'),
+  ])),
+  specialRequirements: v.optional(v.array(v.string())),
+  medicalHistory: v.optional(v.object({
+    allergies: v.array(v.string()),
+    medications: v.array(v.string()),
+    previousProcedures: v.array(v.string()),
+    skinConditions: v.array(v.string()),
+    contraindications: v.array(v.string()),
+  })),
+  urgencyLevel: v.optional(v.picklist(['low', 'medium', 'high', 'immediate'])),
+  budgetRange: v.optional(v.object({
+    min: v.number([v.minValue(0, 'Minimum budget must be positive')]),
+    max: v.number([v.minValue(0, 'Maximum budget must be positive')]),
+  })),
+});
+
+/**
+ * Treatment Package Scheduling Schema
+ */
+export const ScheduleTreatmentPackageSchema = v.object({
+  packageId: v.string([v.uuid('Invalid package ID')]),
+  patientId: v.string([v.uuid('Invalid patient ID')]),
+  startDate: v.date(),
+  preferences: v.optional(v.object({
+    preferredProfessionals: v.array(v.string([v.uuid('Invalid professional ID')])),
+    timePreferences: v.optional(v.picklist(['morning', 'afternoon', 'evening'])),
+    dayPreferences: v.array(v.string()),
+  })),
+});
+
+/**
+ * Professional Certification Validation Schema
+ */
+export const ValidateProfessionalCertificationsSchema = v.object({
+  professionalId: v.string([v.uuid('Invalid professional ID')]),
+  procedureIds: v.array(v.string([v.uuid('Invalid procedure ID')]), [
+    v.minLength(1, 'At least one procedure is required'),
+  ]),
+});
+
+/**
+ * Room Allocation Optimization Schema
+ */
+export const OptimizeRoomAllocationSchema = v.object({
+  appointments: v.array(v.object({
+    id: v.string([v.uuid('Invalid appointment ID')]),
+    procedureId: v.string([v.uuid('Invalid procedure ID')]),
+    startTime: v.date(),
+    endTime: v.date(),
+    specialRequirements: v.array(v.string()),
+  })),
+});
+
+/**
+ * Contraindication Check Schema
+ */
+export const CheckContraindicationsSchema = v.object({
+  patientId: v.string([v.uuid('Invalid patient ID')]),
+  procedureIds: v.array(v.string([v.uuid('Invalid procedure ID')]), [
+    v.minLength(1, 'At least one procedure is required'),
+  ]),
+  medicalHistory: v.optional(v.object({
+    allergies: v.array(v.string()),
+    medications: v.array(v.string()),
+    previousProcedures: v.array(v.string()),
+    skinConditions: v.array(v.string()),
+    contraindications: v.array(v.string()),
+    pregnancyStatus: v.optional(v.picklist(['not_pregnant', 'pregnant', 'breastfeeding'])),
+  })),
+});
+
+/**
+ * Duration Variable Factor Schema
+ */
+export const DurationVariableFactorSchema = v.object({
+  factor: v.picklist(['area_size', 'complexity', 'patient_condition', 'combination_procedure']),
+  impact: v.picklist(['add_minutes', 'multiply_duration']),
+  value: v.number([v.minValue(0, 'Factor value must be positive')]),
+  description: v.string([v.minLength(1, 'Description is required')]),
+});
+
+/**
+ * Variable Duration Calculation Schema
+ */
+export const CalculateVariableDurationSchema = v.object({
+  baseDuration: v.number([v.minValue(1, 'Base duration must be positive')]),
+  factors: v.array(DurationVariableFactorSchema),
+});
+
+/**
+ * Get Aesthetic Procedures Schema
+ */
+export const GetAestheticProceduresSchema = v.object({
+  category: v.optional(v.string()),
+  procedureType: v.optional(v.picklist(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination'])),
+  search: v.optional(v.string()),
+  limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
+  offset: v.optional(v.number([v.integer(), v.minValue(0)])),
+});
+
+/**
+ * Get Treatment Packages Schema
+ */
+export const GetTreatmentPackagesSchema = v.object({
+  search: v.optional(v.string()),
+  category: v.optional(v.string()),
+  minPrice: v.optional(v.number([v.minValue(0)])),
+  maxPrice: v.optional(v.number([v.minValue(0)])),
+  limit: v.optional(v.number([v.integer(), v.minValue(1), v.maxValue(100)])),
+  offset: v.optional(v.number([v.integer(), v.minValue(0)])),
+});
+
+/**
+ * Aesthetic Procedure Details Schema
+ */
+export const AestheticProcedureDetailsSchema = v.object({
+  id: v.string([v.uuid('Invalid procedure ID')]),
+  name: v.string([v.minLength(1, 'Procedure name is required')]),
+  category: v.string([v.minLength(1, 'Category is required')]),
+  procedureType: v.picklist(['injectable', 'laser', 'facial', 'body', 'surgical', 'combination']),
+  baseDurationMinutes: v.number([v.minValue(1, 'Duration must be positive')]),
+  variableDurationFactors: v.array(DurationVariableFactorSchema),
+  requiredCertifications: v.array(v.string()),
+  minExperienceLevel: v.number([v.minValue(0, 'Experience level must be non-negative')]),
+  contraindications: v.array(v.string()),
+  aftercareInstructions: v.array(v.string()),
+  recoveryPeriodDays: v.number([v.minValue(0, 'Recovery period must be non-negative')]),
+  anestheticType: v.picklist(['none', 'topical', 'local', 'sedation']),
+  sessionCount: v.number([v.minValue(1, 'Session count must be positive')]),
+  intervalBetweenSessionsDays: v.number([v.minValue(0, 'Interval must be non-negative')]),
+  specialRequirements: v.array(v.string()),
+});
+
+/**
+ * Treatment Package Details Schema
+ */
+export const TreatmentPackageDetailsSchema = v.object({
+  id: v.string([v.uuid('Invalid package ID')]),
+  name: v.string([v.minLength(1, 'Package name is required')]),
+  description: v.string([v.minLength(1, 'Description is required')]),
+  procedures: v.array(AestheticProcedureDetailsSchema),
+  totalSessions: v.number([v.minValue(1, 'Total sessions must be positive')]),
+  totalDurationMinutes: v.number([v.minValue(1, 'Duration must be positive')]),
+  totalPrice: v.number([v.minValue(0, 'Price must be non-negative')]),
+  recoveryPeriodDays: v.number([v.minValue(0, 'Recovery period must be non-negative')]),
+  recommendedIntervalWeeks: v.number([v.minValue(0, 'Interval must be non-negative')]),
+  packageDiscount: v.number([v.minValue(0), v.maxValue(100, 'Discount must be between 0-100%')]),
+});
+
+// Type exports for use in routers
+export type ScheduleAestheticProceduresInput = v.Input<typeof ScheduleAestheticProceduresSchema>;
+export type ScheduleTreatmentPackageInput = v.Input<typeof ScheduleTreatmentPackageSchema>;
+export type ValidateProfessionalCertificationsInput = v.Input<typeof ValidateProfessionalCertificationsSchema>;
+export type OptimizeRoomAllocationInput = v.Input<typeof OptimizeRoomAllocationSchema>;
+export type CheckContraindicationsInput = v.Input<typeof CheckContraindicationsSchema>;
+export type CalculateVariableDurationInput = v.Input<typeof CalculateVariableDurationSchema>;
+export type GetAestheticProceduresInput = v.Input<typeof GetAestheticProceduresSchema>;
+export type GetTreatmentPackagesInput = v.Input<typeof GetTreatmentPackagesSchema>;
+
+/**
  * LGPD Consent Schema
  */
 export const CreateConsentSchema = v.object({

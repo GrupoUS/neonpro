@@ -97,7 +97,7 @@ export class HTTPSMonitoringMiddleware {
   /**
    * Extract TLS information from request and response
    */
-  private extractTLSInfo(req: any, res: any): TLSHandshakeInfo | null {
+  private extractTLSInfo(req: any, _res: any): TLSHandshakeInfo | null {
     try {
       // Try to get TLS information from various sources
       const socket = req.socket || req.connection;

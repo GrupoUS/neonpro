@@ -8,7 +8,7 @@
  * 4. Error message formatting issues
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 // Test 1: Missing zod import validation
 describe('Missing zod import in enhanced-query-cache.ts', () => {

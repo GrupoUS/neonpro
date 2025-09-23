@@ -212,15 +212,7 @@ export default defineConfig({
     ],
   },
 
-  // Test matching
-  testMatch: [
-    "**/*.e2e.ts",
-    "**/*.spec.ts",
-    "**/*.test.ts",
-    "**/flows/**/*.ts",
-    "**/clinic-**/*.ts",
-    "**/aesthetic/**/*.ts"
-  ],
+  // Test matching (duplicate removed)
   
   // Exclude patterns
   exclude: [

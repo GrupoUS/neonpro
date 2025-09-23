@@ -217,7 +217,7 @@ export class HTTPSServerManager {
         this.metrics.activeConnections--;
       });
 
-      this.httpsServer.on('request', (req, _res) => {
+      this.httpsServer.on('request', (req, res) => {
         this.metrics.httpsRequests++;
         const startTime = Date.now();
 

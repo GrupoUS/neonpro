@@ -127,26 +127,23 @@ export function initializeOpenTelemetry(): NodeSDK {
         // Disable instrumentations that might capture sensitive data
         '@opentelemetry/instrumentation-fs': {
           enabled: false,
-          _, // File system operations may contain sensitive paths
         },
         '@opentelemetry/instrumentation-dns': {
           enabled: false,
-          _, // DNS lookups not relevant for healthcare
         },
         '@opentelemetry/instrumentation-net': {
           enabled: false,
-          _, // Low-level network calls not needed
         },
 
         // Configure HTTP instrumentation to redact sensitive headers
         '@opentelemetry/instrumentation-http': {
           enabled: true,
-          requestHook: (span, _request) => {
+          requestHook: (_span, request: any) => {
             // Remove sensitive headers from tracing
-            if (request.headers) {
-              delete request.headers.authorization;
-              delete request.headers.cookie;
-              delete request.headers['x-api-key'];
+            if (request?.headers) {
+              delete (request.headers as any).authorization;
+              delete (request.headers as any).cookie;
+              delete (request.headers as any)['x-api-key'];
             }
           },
           responseHook: (span, response) => {
@@ -197,23 +194,23 @@ export interface HealthcareErrorContext {
  * Extract safe context from healthcare requests
  */
 export function extractHealthcareContext(
-  _request: any,
+  request: any,
   additionalContext?: Record<string, any>,
 ): HealthcareErrorContext {
-  const _context: HealthcareErrorContext = {
-    requestId: request.headers?.['x-request-id']
-      || request.headers?.['x-trace-id']
+  const context: HealthcareErrorContext = {
+    requestId: request?.headers?.['x-request-id']
+      || request?.headers?.['x-trace-id']
       || undefined,
-    endpoint: request.url ? sanitizeUrl(request.url) : undefined,
-    method: request.method,
+    endpoint: request?.url ? sanitizeUrl(request.url) : undefined,
+    method: request?.method,
     timestamp: new Date(),
     lgpdCompliant: true,
   };
 
   // Extract clinic context if available (from JWT or headers)
-  if (request.user) {
-    context.clinicId = request.user.clinicId;
-    context.userId = request.user.id;
+  if (request?.user) {
+    (context as any).clinicId = request.user.clinicId;
+    (context as any).userId = request.user.id;
     context.userRole = request.user.role;
   }
 

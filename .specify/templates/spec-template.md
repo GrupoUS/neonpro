@@ -42,13 +42,20 @@ When creating this spec from a user prompt:
 1. **Mark all ambiguities**: Use [NEEDS CLARIFICATION: specific question] for any assumption you'd need to make
 2. **Don't guess**: If the prompt doesn't specify something (e.g., "login system" without auth method), mark it
 3. **Think like a tester**: Every vague requirement should fail the "testable and unambiguous" checklist item
-4. **Common underspecified areas**:
-   - User types and permissions
-   - Data retention/deletion policies  
-   - Performance targets and scale
-   - Error handling behaviors
-   - Integration requirements
-   - Security/compliance needs
+4. **NeonPro Aesthetic Clinic Compliance**: Consider these mandatory requirements:
+   - Brazilian aesthetic clinic regulations (LGPD, ANVISA, relevant professional councils)
+   - Client data protection and privacy for aesthetic procedures
+   - AI-powered prevention capabilities for no-show reduction
+   - Mobile-first Brazilian experience for all aesthetic professionals
+   - Type safety and data integrity for clinic operations
+5. **Common underspecified areas**:
+   - User types and permissions (clinic owners, aesthetic professionals, coordinators)
+   - Data retention/deletion policies for client information
+   - Performance targets and scale for aesthetic clinic workflows
+   - Error handling behaviors specific to aesthetic procedures
+   - Integration requirements for aesthetic clinic management
+   - Security/compliance needs for cosmetic products and equipment
+   - Aesthetic clinic compliance requirements
 
 ---
 

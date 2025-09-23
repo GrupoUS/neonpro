@@ -26,7 +26,6 @@
     "tests/**/*",
     "tools/tests/**/*",
     "apps/api/tests/**/*",
-    "apps/web/**/__tests__/**/*",
     "packages/**/__tests__/**/*",
     "packages/**/tests/**/*"
   ],
@@ -37,8 +36,6 @@
     { "path": "./packages/shared" },
     { "path": "./packages/database" },
     { "path": "./packages/security" },
-    { "path": "./packages/ui" },
-    { "path": "./apps/api" },
-    { "path": "./apps/web" }
+    { "path": "./packages/ui" }
   ]
 }

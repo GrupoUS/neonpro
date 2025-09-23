@@ -21,8 +21,8 @@ describe("exitHelper", () => {
 
       validResults.forEach((result) => {
         expect(validateExitResult(result)).toBe(true);
-      }
-    }
+      });
+    });
 
     it("should reject invalid objects", () => {
       const invalidResults = [
@@ -39,9 +39,9 @@ describe("exitHelper", () => {
 
       invalidResults.forEach((result) => {
         expect(validateExitResult(result)).toBe(false);
-      }
-    }
-  }
+      });
+    });
+  });
 
   // Test JSON schema compliance without process mocking
   describe("JSON schema", () => {
@@ -59,11 +59,11 @@ describe("exitHelper", () => {
         message: "Failed",
       };
 
-      expect(okResult.status).toBe("ok"
-      expect(errorResult.status).toBe("error"
-      expect(typeof okResult.code).toBe("number"
-      expect(typeof errorResult.code).toBe("number"
-    }
+      expect(okResult.status).toBe("ok");
+      expect(errorResult.status).toBe("error");
+      expect(typeof okResult.code).toBe("number");
+      expect(typeof errorResult.code).toBe("number");
+    });
 
     it("should allow optional message and details", () => {
       const minimalOk: ExitResult = { status: "ok", code: 0 };
@@ -71,6 +71,6 @@ describe("exitHelper", () => {
 
       expect(validateExitResult(minimalOk)).toBe(true);
       expect(validateExitResult(minimalError)).toBe(true);
-    }
-  }
-}
+    });
+  });
+});

@@ -44,8 +44,12 @@ export {
   PatientRepository,
   ConsentRepository,
   AppointmentRepository,
+  AestheticRepository,
   RepositoryContainer,
 } from "./repositories";
+
+// Type exports for aesthetic clinic features
+export type * from "./types/aesthetic-types";
 
 // Utility functions
 export { checkDatabaseHealth, closeDatabaseConnections } from "./client";

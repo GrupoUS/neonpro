@@ -287,17 +287,17 @@ function sanitizeForAI(data: any): string {
   return JSON.stringify(data);
 }
 
-function validatePromptSecurity(prompt: string): boolean {
+function validatePromptSecurity(_prompt: string): boolean {
   // RED: Implementation missing
   return true;
 }
 
-function validateMedicalTerminology(term: string): boolean {
+function validateMedicalTerminology(_term: string): boolean {
   // RED: Implementation missing
   return true;
 }
 
-function validateAIOutputSafety(response: string): boolean {
+function validateAIOutputSafety(_response: string): boolean {
   // RED: Implementation missing
   return true;
 }

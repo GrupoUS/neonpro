@@ -6,6 +6,7 @@
 import { agentRouter } from './routers/agent';
 import { aiRouter } from './routers/ai';
 import { appointmentsRouter } from './routers/appointments';
+import { aestheticSchedulingRouter } from './routers/aesthetic-scheduling';
 import { crudRouter } from './routers/crud';
 import { financialAgentRouter } from './routers/financial-agent';
 import { healthcareServicesRouter } from './routers/healthcare-services';
@@ -44,6 +45,15 @@ import { apiRouter } from './contracts';
  *   - Patient identity verification and medical license validation
  *   - WebRTC session orchestration with compliance monitoring
  *   - LGPD-compliant consent management and audit trails
+ * - Enhanced Aesthetic Scheduling router with comprehensive features:
+ *   - Multi-session treatment scheduling with Brazilian healthcare compliance
+ *   - Professional certification validation for aesthetic procedures (CFM/ANVISA)
+ *   - Treatment package scheduling with optimized resource allocation
+ *   - Recovery period planning with follow-up appointments
+ *   - Aesthetic-specific resource optimization and room allocation
+ *   - Contraindication checking with pregnancy and age validation
+ *   - Variable duration calculation based on procedure factors
+ *   - ANVISA compliance for aesthetic medical devices and procedures
  * - Comprehensive audit logging for all operations
  */
 export const appRouter = router({
@@ -57,6 +67,9 @@ export const appRouter = router({
   healthcareServices: healthcareServicesRouter,
   realtimeTelemedicine: realtimeTelemedicineRouter,
   telemedicine: telemedicineRouter,
+  
+  // Enhanced aesthetic scheduling router with Brazilian healthcare compliance
+  aestheticScheduling: aestheticSchedulingRouter,
 
   // Comprehensive API contracts with tRPC v11 (T016)
   // New healthcare-compliant API contracts with enhanced features

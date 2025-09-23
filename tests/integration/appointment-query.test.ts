@@ -8,22 +8,22 @@ describe('Integration Test: Query Upcoming Appointments', () => {
   let baseUrl: string;
 
   beforeAll(async () => {
-    const app = createApp(
-    server = createServer(app
+    const app = createApp();
+    server = createServer(app);
     await new Promise<void>((resolve) => {
       server.listen(0, () => {
         const address = server.address() as AddressInfo;
         baseUrl = `http://localhost:${address.port}`;
-        resolve(
-      }
-    }
-  }
+        resolve();
+      });
+    });
+  });
 
   afterAll(() => {
     if (server) {
-      server.close(
+      server.close();
     }
-  }
+  });
 
   it('T015 should handle appointment queries with date ranges', async () => {
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
