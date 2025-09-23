@@ -12,13 +12,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
         {
           "--normal-bg": "var(--popover)",
           "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)"
+          "--normal-border": "var(--border)",
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
-          description: "text-muted-foreground!"
-        }
+          description: "text-muted-foreground!",
+        },
       }}
       {...props}
     />

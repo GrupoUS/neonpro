@@ -3,7 +3,7 @@
  * Selects optimal execution patterns for orchestration workflows
  */
 
-import type { FeatureContext } from './types';
+import type { FeatureContext } from "./types";
 
 export interface ExecutionPatternContext {
   feature: FeatureContext;
@@ -17,7 +17,11 @@ export interface ExecutionPatternContext {
 
 export interface PatternSelection {
   workflowType: "parallel" | "sequential" | "hierarchical" | "event-driven";
-  coordinationPattern: "parallel" | "sequential" | "hierarchical" | "event-driven";
+  coordinationPattern:
+    | "parallel"
+    | "sequential"
+    | "hierarchical"
+    | "event-driven";
   agentSelection: {
     primaryAgents: string[];
     secondaryAgents: string[];
@@ -41,10 +45,16 @@ export interface PatternSelection {
 }
 
 export class ExecutionPatternSelector {
-  async selectOptimalPattern(context: ExecutionPatternContext): Promise<PatternSelection> {
+  async selectOptimalPattern(
+    context: ExecutionPatternContext,
+  ): Promise<PatternSelection> {
     // Pattern selection logic based on complexity and requirements
-    let workflowType: "parallel" | "sequential" | "hierarchical" | "event-driven";
-    
+    let workflowType:
+      | "parallel"
+      | "sequential"
+      | "hierarchical"
+      | "event-driven";
+
     if (context.complexity === "high") {
       workflowType = "hierarchical";
     } else if (context.healthcareCompliance) {
@@ -59,28 +69,44 @@ export class ExecutionPatternSelector {
       workflowType,
       coordinationPattern: workflowType,
       agentSelection: {
-        primaryAgents: context.complexity === "high" || context.performanceRequired 
-          ? ["test-auditor", "architect-review"] 
-          : ["test", "code-reviewer"],
+        primaryAgents:
+          context.complexity === "high" || context.performanceRequired
+            ? ["test-auditor", "architect-review"]
+            : ["test", "code-reviewer"],
         secondaryAgents: ["code-reviewer"],
-        supportAgents: context.complexity !== "low" ? ["documentation", "quality-control"] : undefined,
-        parallelAgents: workflowType === "parallel" || (context.agentCount > 3 && context.complexity !== "low") 
-          ? ["test-auditor", "code-reviewer"] 
-          : undefined,
+        supportAgents:
+          context.complexity !== "low"
+            ? ["documentation", "quality-control"]
+            : undefined,
+        parallelAgents:
+          workflowType === "parallel" ||
+          (context.agentCount > 3 && context.complexity !== "low")
+            ? ["test-auditor", "code-reviewer"]
+            : undefined,
       },
       executionStrategy: {
-        parallel: workflowType === "parallel" || workflowType === "hierarchical",
+        parallel:
+          workflowType === "parallel" || workflowType === "hierarchical",
         timeout: context.estimatedDuration,
         retries: 2,
-        batchSize: context.agentCount > 3 ? Math.ceil(context.agentCount / 2) : undefined,
+        batchSize:
+          context.agentCount > 3
+            ? Math.ceil(context.agentCount / 2)
+            : undefined,
       },
       optimization: {
         performance: 0.8,
         compliance: context.healthcareCompliance ? 0.9 : 0.7,
         quality: 0.85,
       },
-      risks: context.criticality === "critical" ? ["Performance bottlenecks", "Compliance failures"] : undefined,
-      mitigations: context.criticality === "critical" ? ["Load balancing", "Compliance validation"] : undefined,
+      risks:
+        context.criticality === "critical"
+          ? ["Performance bottlenecks", "Compliance failures"]
+          : undefined,
+      mitigations:
+        context.criticality === "critical"
+          ? ["Load balancing", "Compliance validation"]
+          : undefined,
       justification: `Selected ${workflowType} pattern based on complexity: ${context.complexity}, criticality: ${context.criticality}`,
     };
 

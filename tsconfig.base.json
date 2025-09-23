@@ -40,7 +40,6 @@
     "sourceMap": true,
     "removeComments": false,
     "incremental": true,
-    "tsBuildInfoFile": ".tsbuildinfo",
 
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

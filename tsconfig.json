@@ -22,7 +22,7 @@
   },
   "include": [
     "apps/**/*",
-    "packages/**/*", 
+    "packages/**/*",
     "src/**/*",
     "tools/tests/**/*",
     "*.ts",

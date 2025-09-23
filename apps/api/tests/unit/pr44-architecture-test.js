@@ -1,14 +1,14 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
 // Test architecture fixes for PR #44
-describe('PR #44 Architecture Tests', () => {
-  it('should not have auditTrail misuse for state management', () => {
-    const fs = require('fs');
-    const path = require('path');
+describe("PR #44 Architecture Tests", () => {
+  it("should not have auditTrail misuse for state management", () => {
+    const fs = require("fs");
+    const path = require("path");
 
     // Read the crud.ts file
-    const crudPath = path.join(__dirname, '../../src/trpc/routers/crud.ts');
-    const content = fs.readFileSync(crudPath, 'utf8');
+    const crudPath = path.join(__dirname, "../../src/trpc/routers/crud.ts");
+    const content = fs.readFileSync(crudPath, "utf8");
 
     // Check that auditTrail is not used for state management
     const auditTrailStatePatterns = [
@@ -23,49 +23,52 @@ describe('PR #44 Architecture Tests', () => {
     }
   });
 
-  it('should use proper state management service', () => {
-    const fs = require('fs');
-    const path = require('path');
+  it("should use proper state management service", () => {
+    const fs = require("fs");
+    const path = require("path");
 
     // Read the crud.ts file
-    const crudPath = path.join(__dirname, '../../src/trpc/routers/crud.ts');
-    const content = fs.readFileSync(crudPath, 'utf8');
+    const crudPath = path.join(__dirname, "../../src/trpc/routers/crud.ts");
+    const content = fs.readFileSync(crudPath, "utf8");
 
     // Check that operation state service is used
-    expect(content).toContain('createOperationStateService');
-    expect(content).toContain('createAuditTrailCompatibility');
+    expect(content).toContain("createOperationStateService");
+    expect(content).toContain("createAuditTrailCompatibility");
   });
 
-  it('should have compatibility layer for auditTrail', () => {
-    const fs = require('fs');
-    const path = require('path');
+  it("should have compatibility layer for auditTrail", () => {
+    const fs = require("fs");
+    const path = require("path");
 
     // Check that compatibility service exists
     const compatibilityPath = path.join(
       __dirname,
-      '../../src/services/audit-trail-compatibility.ts',
+      "../../src/services/audit-trail-compatibility.ts",
     );
     const exists = fs.existsSync(compatibilityPath);
     expect(exists).toBe(true);
 
     if (exists) {
-      const content = fs.readFileSync(compatibilityPath, 'utf8');
-      expect(content).toContain('findFirstWithOperationId');
-      expect(content).toContain('findFirstWithConfirmationId');
+      const content = fs.readFileSync(compatibilityPath, "utf8");
+      expect(content).toContain("findFirstWithOperationId");
+      expect(content).toContain("findFirstWithConfirmationId");
     }
   });
 
-  it('should have proper operation state models', () => {
-    const fs = require('fs');
-    const path = require('path');
+  it("should have proper operation state models", () => {
+    const fs = require("fs");
+    const path = require("path");
 
     // Check schema for operation state models
-    const schemaPath = path.join(__dirname, '../../../database/prisma/schema.prisma');
-    const content = fs.readFileSync(schemaPath, 'utf8');
+    const schemaPath = path.join(
+      __dirname,
+      "../../../database/prisma/schema.prisma",
+    );
+    const content = fs.readFileSync(schemaPath, "utf8");
 
-    expect(content).toContain('model OperationState');
-    expect(content).toContain('operation_id');
-    expect(content).toContain('step');
-    expect(content).toContain('status');
+    expect(content).toContain("model OperationState");
+    expect(content).toContain("operation_id");
+    expect(content).toContain("step");
+    expect(content).toContain("status");
   });
 });

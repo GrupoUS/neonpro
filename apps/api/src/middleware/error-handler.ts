@@ -1,6 +1,6 @@
-import { Context, Next } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-import { logger } from '../lib/logger';
+import { Context, Next } from "hono";
+import { HTTPException } from "hono/http-exception";
+import { logger } from "../lib/logger";
 
 /**
  * Global error handler middleware for the API
@@ -10,7 +10,7 @@ export async function errorHandler(c: Context, next: Next) {
     await next();
   } catch (error) {
     // Log the error
-    logger.error('Unhandled error in API', {
+    logger.error("Unhandled error in API", {
       error: error instanceof Error ? error.message : String(error),
       stack: error instanceof Error ? error.stack : undefined,
       path: c.req.path,
@@ -31,7 +31,8 @@ export async function errorHandler(c: Context, next: Next) {
     }
 
     // Handle other errors
-    const message = error instanceof Error ? error.message : 'Internal Server Error';
+    const message =
+      error instanceof Error ? error.message : "Internal Server Error";
 
     return c.json(
       {

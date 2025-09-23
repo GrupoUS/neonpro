@@ -1499,7 +1499,8 @@ export class NotificationService {
   ): Promise<void> {
     const lastAttempt = notification.deliveryAttempts
       .filter((attempt) => attempt.channel === channel)
-      .sort((a,_b) =>
+      .sort(
+        (a, _b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )[0];
 

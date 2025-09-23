@@ -16,12 +16,12 @@ import { BigCalendar } from '@/components/big-calendar';
 
 ```typescript
 interface BigCalendarProps {
-  events?: CalendarEvent[];           // Array of calendar events to display
-  onEventUpdate?: (event: CalendarEvent) => void;  // Callback when event is updated
-  onEventDelete?: (eventId: string) => void;       // Callback when event is deleted
-  onEventCreate?: (event: CalendarEvent) => void;   // Callback when new event is created
-  className?: string;               // Additional CSS classes
-  initialView?: "day" | "week" | "month" | "agenda";  // Initial calendar view
+  events?: CalendarEvent[]; // Array of calendar events to display
+  onEventUpdate?: (event: CalendarEvent) => void; // Callback when event is updated
+  onEventDelete?: (eventId: string) => void; // Callback when event is deleted
+  onEventCreate?: (event: CalendarEvent) => void; // Callback when new event is created
+  className?: string; // Additional CSS classes
+  initialView?: "day" | "week" | "month" | "agenda"; // Initial calendar view
 }
 ```
 
@@ -29,27 +29,27 @@ interface BigCalendarProps {
 
 ```typescript
 interface CalendarEvent {
-  id: string;           // Unique event identifier
-  title: string;        // Event title
+  id: string; // Unique event identifier
+  title: string; // Event title
   description?: string; // Event description (optional)
-  start: Date;          // Event start time
-  end: Date;            // Event end time
-  allDay?: boolean;     // Is this an all-day event?
-  color?: EventColor;   // Event color for visual distinction
-  label?: string;       // Event label/category
-  location?: string;    // Event location (optional)
+  start: Date; // Event start time
+  end: Date; // Event end time
+  allDay?: boolean; // Is this an all-day event?
+  color?: EventColor; // Event color for visual distinction
+  label?: string; // Event label/category
+  location?: string; // Event location (optional)
 }
 ```
 
 ## EventColor Type
 
 ```typescript
-type EventColor = 
-  | "default" 
-  | "primary" 
-  | "secondary" 
-  | "success" 
-  | "warning" 
+type EventColor =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
   | "error";
 ```
 
@@ -90,7 +90,7 @@ function AppointmentsPage() {
   return (
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Appointments</h1>
-      <BigCalendar 
+      <BigCalendar
         events={sampleEvents}
         initialView="week"
         onEventCreate={handleEventCreate}
@@ -108,7 +108,7 @@ function AppointmentsPage() {
 function AppointmentsPage() {
   return (
     <div className="p-6">
-      <BigCalendar 
+      <BigCalendar
         events={events}
         className="bg-white rounded-lg shadow-lg border border-gray-200"
         initialView="month"
@@ -125,7 +125,7 @@ function AppointmentsPage() {
 function AgendaPage() {
   return (
     <div className="p-6">
-      <BigCalendar 
+      <BigCalendar
         events={todayEvents}
         initialView="agenda"
         className="max-h-96 overflow-y-auto"
@@ -146,7 +146,7 @@ const handleEventCreate = (event: CalendarEvent) => {
   // Save event to database
   await saveEvent(event);
   // Update local state
-  setEvents(prev => [...prev, event]);
+  setEvents((prev) => [...prev, event]);
 };
 ```
 
@@ -159,10 +159,8 @@ const handleEventUpdate = (updatedEvent: CalendarEvent) => {
   // Update event in database
   await updateEvent(updatedEvent.id, updatedEvent);
   // Update local state
-  setEvents(prev => 
-    prev.map(event => 
-      event.id === updatedEvent.id ? updatedEvent : event
-    )
+  setEvents((prev) =>
+    prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event)),
   );
 };
 ```
@@ -176,7 +174,7 @@ const handleEventDelete = (eventId: string) => {
   // Remove event from database
   await deleteEvent(eventId);
   // Update local state
-  setEvents(prev => prev.filter(event => event.id !== eventId));
+  setEvents((prev) => prev.filter((event) => event.id !== eventId));
 };
 ```
 
@@ -204,9 +202,7 @@ const memoizedEvents = useMemo(() => events, [events]);
 const visibleEvents = useMemo(() => {
   const start = getCurrentViewStart();
   const end = getCurrentViewEnd();
-  return events.filter(event => 
-    event.start >= start && event.end <= end
-  );
+  return events.filter((event) => event.start >= start && event.end <= end);
 }, [events, currentView]);
 ```
 
@@ -232,18 +228,18 @@ const handleEventCreate = (event: CalendarEvent) => {
   try {
     // Validate event data
     if (!event.title || !event.start || !event.end) {
-      throw new Error('Event must have title, start, and end times');
+      throw new Error("Event must have title, start, and end times");
     }
-    
+
     if (event.start >= event.end) {
-      throw new Error('Event end time must be after start time');
+      throw new Error("Event end time must be after start time");
     }
-    
+
     await saveEvent(event);
   } catch (error) {
-    console.error('Failed to create event:', error);
+    console.error("Failed to create event:", error);
     // Show user-friendly error message
-    showErrorToast('Failed to create event. Please check your input.');
+    showErrorToast("Failed to create event. Please check your input.");
   }
 };
 ```
@@ -256,30 +252,35 @@ const handleEventCreate = (event: CalendarEvent) => {
 // Service for calendar operations
 class CalendarService {
   async getEvents(start: Date, end: Date): Promise<CalendarEvent[]> {
-    const response = await fetch(`/api/events?start=${start.toISOString()}&end=${end.toISOString()}`);
+    const response = await fetch(
+      `/api/events?start=${start.toISOString()}&end=${end.toISOString()}`,
+    );
     return response.json();
   }
-  
-  async createEvent(event: Omit<CalendarEvent, 'id'>): Promise<CalendarEvent> {
-    const response = await fetch('/api/events', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event)
+
+  async createEvent(event: Omit<CalendarEvent, "id">): Promise<CalendarEvent> {
+    const response = await fetch("/api/events", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(event),
     });
     return response.json();
   }
-  
-  async updateEvent(id: string, event: Partial<CalendarEvent>): Promise<CalendarEvent> {
+
+  async updateEvent(
+    id: string,
+    event: Partial<CalendarEvent>,
+  ): Promise<CalendarEvent> {
     const response = await fetch(`/api/events/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(event)
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(event),
     });
     return response.json();
   }
-  
+
   async deleteEvent(id: string): Promise<void> {
-    await fetch(`/api/events/${id}`, { method: 'DELETE' });
+    await fetch(`/api/events/${id}`, { method: "DELETE" });
   }
 }
 ```
@@ -318,6 +319,7 @@ When contributing to the BigCalendar component:
 ## Changelog
 
 ### v1.0.0
+
 - Initial release with basic calendar functionality
 - Support for day, week, month, and agenda views
 - Event creation, update, and deletion capabilities

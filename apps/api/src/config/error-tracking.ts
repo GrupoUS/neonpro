@@ -5,22 +5,22 @@
  * with healthcare-specific data protection and LGPD compliance.
  */
 
-import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { Resource } from '@opentelemetry/resources';
-import { NodeSDK } from '@opentelemetry/sdk-node';
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { PrometheusExporter } from "@opentelemetry/exporter-prometheus";
+import { Resource } from "@opentelemetry/resources";
+import { NodeSDK } from "@opentelemetry/sdk-node";
 import {
   SEMRESATTRS_SERVICE_NAME,
   SEMRESATTRS_SERVICE_VERSION,
-} from '@opentelemetry/semantic-conventions';
-import * as Sentry from '@sentry/node';
+} from "@opentelemetry/semantic-conventions";
+import * as Sentry from "@sentry/node";
 
 // Environment configuration
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = process.env.NODE_ENV === "production";
 const sentryDsn = process.env.SENTRY_DSN;
 const openTelemetryEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT;
-const serviceName = 'neonpro-api';
-const serviceVersion = process.env.npm_package_version || '1.0.0';
+const serviceName = "neonpro-api";
+const serviceVersion = process.env.npm_package_version || "1.0.0";
 
 /**
  * Initialize Sentry with healthcare-specific configuration
@@ -28,14 +28,14 @@ const serviceVersion = process.env.npm_package_version || '1.0.0';
 export function initializeSentry(): void {
   if (!sentryDsn) {
     console.warn(
-      'SENTRY_DSN not configured - error tracking will use fallback methods',
+      "SENTRY_DSN not configured - error tracking will use fallback methods",
     );
     return;
   }
 
   Sentry.init({
     dsn: sentryDsn,
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env.NODE_ENV || "development",
     release: serviceVersion,
 
     // Sample rate configuration
@@ -55,11 +55,11 @@ export function initializeSentry(): void {
 
       if (event.contexts?.trace?.data) {
         const data = event.contexts.trace.data;
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach((key) => {
           if (
-            key.toLowerCase().includes('patient')
-            || key.toLowerCase().includes('cpf')
-            || key.toLowerCase().includes('health')
+            key.toLowerCase().includes("patient") ||
+            key.toLowerCase().includes("cpf") ||
+            key.toLowerCase().includes("health")
           ) {
             delete data[key];
           }
@@ -85,14 +85,14 @@ export function initializeSentry(): void {
     beforeBreadcrumb(breadcrumb) {
       // Filter out sensitive data from breadcrumbs
       if (breadcrumb.data) {
-        Object.keys(breadcrumb.data).forEach(key => {
+        Object.keys(breadcrumb.data).forEach((key) => {
           if (
-            key.toLowerCase().includes('password')
-            || key.toLowerCase().includes('token')
-            || key.toLowerCase().includes('cpf')
-            || key.toLowerCase().includes('patient')
+            key.toLowerCase().includes("password") ||
+            key.toLowerCase().includes("token") ||
+            key.toLowerCase().includes("cpf") ||
+            key.toLowerCase().includes("patient")
           ) {
-            breadcrumb.data![key] = '[Redacted]';
+            breadcrumb.data![key] = "[Redacted]";
           }
         });
       }
@@ -115,55 +115,55 @@ export function initializeOpenTelemetry(): NodeSDK {
     resource: new Resource({
       [SEMRESATTRS_SERVICE_NAME]: serviceName,
       [SEMRESATTRS_SERVICE_VERSION]: serviceVersion,
-      'service.namespace': 'neonpro',
-      'service.instance.id': process.env.HOSTNAME || 'unknown',
-      'deployment.environment': process.env.NODE_ENV || 'development',
-      'healthcare.compliance': 'lgpd-enabled',
-      'healthcare.region': 'brazil',
+      "service.namespace": "neonpro",
+      "service.instance.id": process.env.HOSTNAME || "unknown",
+      "deployment.environment": process.env.NODE_ENV || "development",
+      "healthcare.compliance": "lgpd-enabled",
+      "healthcare.region": "brazil",
     }),
 
     instrumentations: [
       getNodeAutoInstrumentations({
         // Disable instrumentations that might capture sensitive data
-        '@opentelemetry/instrumentation-fs': {
+        "@opentelemetry/instrumentation-fs": {
           enabled: false,
           _, // File system operations may contain sensitive paths
         },
-        '@opentelemetry/instrumentation-dns': {
+        "@opentelemetry/instrumentation-dns": {
           enabled: false,
           _, // DNS lookups not relevant for healthcare
         },
-        '@opentelemetry/instrumentation-net': {
+        "@opentelemetry/instrumentation-net": {
           enabled: false,
           _, // Low-level network calls not needed
         },
 
         // Configure HTTP instrumentation to redact sensitive headers
-        '@opentelemetry/instrumentation-http': {
+        "@opentelemetry/instrumentation-http": {
           enabled: true,
           requestHook: (span, _request) => {
             // Remove sensitive headers from tracing
             if (request.headers) {
               delete request.headers.authorization;
               delete request.headers.cookie;
-              delete request.headers['x-api-key'];
+              delete request.headers["x-api-key"];
             }
           },
           responseHook: (span, response) => {
             // Ensure no sensitive data in response headers
             if (response.headers) {
-              delete response.headers['set-cookie'];
+              delete response.headers["set-cookie"];
             }
           },
         },
 
         // Express instrumentation for route tracking
-        '@opentelemetry/instrumentation-express': {
+        "@opentelemetry/instrumentation-express": {
           enabled: true,
           ignoreLayers: [
             // Ignore middleware that might process sensitive data
-            'middleware - bodyParser',
-            'middleware - cookieParser',
+            "middleware - bodyParser",
+            "middleware - cookieParser",
           ],
         },
       }),
@@ -189,7 +189,7 @@ export interface HealthcareErrorContext {
   endpoint?: string;
   method?: string;
   timestamp?: Date;
-  severity?: 'low' | 'medium' | 'high' | 'critical';
+  severity?: "low" | "medium" | "high" | "critical";
   lgpdCompliant?: boolean;
 }
 
@@ -201,9 +201,10 @@ export function extractHealthcareContext(
   additionalContext?: Record<string, any>,
 ): HealthcareErrorContext {
   const _context: HealthcareErrorContext = {
-    requestId: request.headers?.['x-request-id']
-      || request.headers?.['x-trace-id']
-      || undefined,
+    requestId:
+      request.headers?.["x-request-id"] ||
+      request.headers?.["x-trace-id"] ||
+      undefined,
     endpoint: request.url ? sanitizeUrl(request.url) : undefined,
     method: request.method,
     timestamp: new Date(),
@@ -219,12 +220,12 @@ export function extractHealthcareContext(
 
   // Add additional non-sensitive context
   if (additionalContext) {
-    Object.keys(additionalContext).forEach(key => {
+    Object.keys(additionalContext).forEach((key) => {
       if (
-        !key.toLowerCase().includes('patient')
-        && !key.toLowerCase().includes('cpf')
-        && !key.toLowerCase().includes('password')
-        && !key.toLowerCase().includes('token')
+        !key.toLowerCase().includes("patient") &&
+        !key.toLowerCase().includes("cpf") &&
+        !key.toLowerCase().includes("password") &&
+        !key.toLowerCase().includes("token")
       ) {
         (context as any)[key] = additionalContext[key];
       }
@@ -239,24 +240,24 @@ export function extractHealthcareContext(
  */
 function sanitizeUrl(url: string): string {
   try {
-    const urlObj = new URL(url, 'http://localhost');
+    const urlObj = new URL(url, "http://localhost");
 
     // Remove sensitive query parameters
     const sensitiveParams = [
-      'token',
-      'cpf',
-      'patient_id',
-      'health_data',
-      'password',
+      "token",
+      "cpf",
+      "patient_id",
+      "health_data",
+      "password",
     ];
-    sensitiveParams.forEach(param => {
+    sensitiveParams.forEach((param) => {
       urlObj.searchParams.delete(param);
     });
 
-    return urlObj.pathname + (urlObj.search || '');
+    return urlObj.pathname + (urlObj.search || "");
   } catch {
     // If URL parsing fails, just return the path part
-    return url.split('?')[0];
+    return url.split("?")[0];
   }
 }
 
@@ -267,7 +268,7 @@ export const errorTrackingConfig = {
   sentry: {
     enabled: !!sentryDsn,
     dsn: sentryDsn,
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env.NODE_ENV || "development",
     release: serviceVersion,
   },
   openTelemetry: {
@@ -280,7 +281,7 @@ export const errorTrackingConfig = {
     lgpdCompliant: true,
     dataMasking: true,
     auditLogging: true,
-    region: 'brazil',
+    region: "brazil",
   },
   performance: {
     sampleRate: isProduction ? 0.1 : 1.0,

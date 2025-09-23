@@ -16,23 +16,23 @@
  * @healthcare-platform NeonPro
  */
 
-import { logger } from '../lib/logger';
+import { logger } from "../lib/logger";
 
 // Security Test Types
 export interface SecurityTest {
   id: string;
   name: string;
   category:
-    | 'HEADERS'
-    | 'AUTHENTICATION'
-    | 'AUTHORIZATION'
-    | 'INPUT_VALIDATION'
-    | 'RATE_LIMITING'
-    | 'RLS'
-    | 'DATA_EXPOSURE'
-    | 'COMPLIANCE';
+    | "HEADERS"
+    | "AUTHENTICATION"
+    | "AUTHORIZATION"
+    | "INPUT_VALIDATION"
+    | "RATE_LIMITING"
+    | "RLS"
+    | "DATA_EXPOSURE"
+    | "COMPLIANCE";
   description: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   enabled: boolean;
   testFunction: (_context: SecurityTestContext) => Promise<SecurityTestResult>;
 }
@@ -65,7 +65,7 @@ export interface SecurityTestResult {
 export interface SecurityIssue {
   id: string;
   type: string;
-  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   description: string;
   location: string;
   evidence?: string;
@@ -79,7 +79,7 @@ export interface SecurityTestConfig {
   // Test Configuration
   enabledTests: string[];
   disabledTests: string[];
-  severityThreshold: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  severityThreshold: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
   // Testing Parameters
   timeout: number;
@@ -93,7 +93,7 @@ export interface SecurityTestConfig {
 
   // Reporting
   generateReport: boolean;
-  reportFormat: 'JSON' | 'HTML' | 'PDF';
+  reportFormat: "JSON" | "HTML" | "PDF";
   reportPath: string;
 
   // Monitoring
@@ -109,9 +109,9 @@ export class HealthcareSecurityTestFramework {
 
   constructor(config: SecurityTestConfig) {
     this.config = {
-      enabledTests: ['*'],
+      enabledTests: ["*"],
       disabledTests: [],
-      severityThreshold: 'MEDIUM',
+      severityThreshold: "MEDIUM",
       timeout: 30000,
       retries: 3,
       parallelTests: 5,
@@ -119,8 +119,8 @@ export class HealthcareSecurityTestFramework {
       validateHIPAA: false,
       validateOWASP: true,
       generateReport: true,
-      reportFormat: 'JSON',
-      reportPath: './security-test-results',
+      reportFormat: "JSON",
+      reportPath: "./security-test-results",
       logResults: true,
       alertThreshold: 70,
       ...config,
@@ -134,138 +134,138 @@ export class HealthcareSecurityTestFramework {
   private initializeTests(): void {
     // Security Header Tests
     this.addTest({
-      id: 'security-headers-hsts',
-      name: 'HSTS Header Validation',
-      category: 'HEADERS',
-      description: 'Validates HTTP Strict Transport Security implementation',
-      severity: 'HIGH',
+      id: "security-headers-hsts",
+      name: "HSTS Header Validation",
+      category: "HEADERS",
+      description: "Validates HTTP Strict Transport Security implementation",
+      severity: "HIGH",
       enabled: true,
       testFunction: this.testHSTSHeader.bind(this),
     });
 
     this.addTest({
-      id: 'security-headers-csp',
-      name: 'Content Security Policy Validation',
-      category: 'HEADERS',
-      description: 'Validates Content Security Policy implementation',
-      severity: 'MEDIUM',
+      id: "security-headers-csp",
+      name: "Content Security Policy Validation",
+      category: "HEADERS",
+      description: "Validates Content Security Policy implementation",
+      severity: "MEDIUM",
       enabled: true,
       testFunction: this.testCSPHeader.bind(this),
     });
 
     this.addTest({
-      id: 'security-headers-xss',
-      name: 'XSS Protection Headers',
-      category: 'HEADERS',
-      description: 'Validates XSS protection headers',
-      severity: 'HIGH',
+      id: "security-headers-xss",
+      name: "XSS Protection Headers",
+      category: "HEADERS",
+      description: "Validates XSS protection headers",
+      severity: "HIGH",
       enabled: true,
       testFunction: this.testXSSHeaders.bind(this),
     });
 
     // Authentication Tests
     this.addTest({
-      id: 'auth-token-validation',
-      name: 'JWT Token Validation',
-      category: 'AUTHENTICATION',
-      description: 'Validates JWT token security and implementation',
-      severity: 'CRITICAL',
+      id: "auth-token-validation",
+      name: "JWT Token Validation",
+      category: "AUTHENTICATION",
+      description: "Validates JWT token security and implementation",
+      severity: "CRITICAL",
       enabled: true,
       testFunction: this.testJWTValidation.bind(this),
     });
 
     this.addTest({
-      id: 'auth-session-management',
-      name: 'Session Management Security',
-      category: 'AUTHENTICATION',
-      description: 'Validates session management security',
-      severity: 'HIGH',
+      id: "auth-session-management",
+      name: "Session Management Security",
+      category: "AUTHENTICATION",
+      description: "Validates session management security",
+      severity: "HIGH",
       enabled: true,
       testFunction: this.testSessionManagement.bind(this),
     });
 
     // Authorization Tests
     this.addTest({
-      id: 'authz-role-based-access',
-      name: 'Role-Based Access Control',
-      category: 'AUTHORIZATION',
-      description: 'Validates role-based access control implementation',
-      severity: 'CRITICAL',
+      id: "authz-role-based-access",
+      name: "Role-Based Access Control",
+      category: "AUTHORIZATION",
+      description: "Validates role-based access control implementation",
+      severity: "CRITICAL",
       enabled: true,
       testFunction: this.testRoleBasedAccess.bind(this),
     });
 
     this.addTest({
-      id: 'authz-resource-level-security',
-      name: 'Resource-Level Security',
-      category: 'AUTHORIZATION',
-      description: 'Validates resource-level access controls',
-      severity: 'HIGH',
+      id: "authz-resource-level-security",
+      name: "Resource-Level Security",
+      category: "AUTHORIZATION",
+      description: "Validates resource-level access controls",
+      severity: "HIGH",
       enabled: true,
       testFunction: this.testResourceLevelSecurity.bind(this),
     });
 
     // Rate Limiting Tests
     this.addTest({
-      id: 'rate-limiting-endpoint',
-      name: 'Endpoint Rate Limiting',
-      category: 'RATE_LIMITING',
-      description: 'Validates rate limiting implementation',
-      severity: 'MEDIUM',
+      id: "rate-limiting-endpoint",
+      name: "Endpoint Rate Limiting",
+      category: "RATE_LIMITING",
+      description: "Validates rate limiting implementation",
+      severity: "MEDIUM",
       enabled: true,
       testFunction: this.testRateLimiting.bind(this),
     });
 
     // Input Validation Tests
     this.addTest({
-      id: 'input-validation-sql-injection',
-      name: 'SQL Injection Protection',
-      category: 'INPUT_VALIDATION',
-      description: 'Tests SQL injection protection',
-      severity: 'CRITICAL',
+      id: "input-validation-sql-injection",
+      name: "SQL Injection Protection",
+      category: "INPUT_VALIDATION",
+      description: "Tests SQL injection protection",
+      severity: "CRITICAL",
       enabled: true,
       testFunction: this.testSQLInjectionProtection.bind(this),
     });
 
     this.addTest({
-      id: 'input-validation-xss',
-      name: 'XSS Protection',
-      category: 'INPUT_VALIDATION',
-      description: 'Tests XSS protection in input validation',
-      severity: 'HIGH',
+      id: "input-validation-xss",
+      name: "XSS Protection",
+      category: "INPUT_VALIDATION",
+      description: "Tests XSS protection in input validation",
+      severity: "HIGH",
       enabled: true,
       testFunction: this.testXSSProtection.bind(this),
     });
 
     // RLS Tests
     this.addTest({
-      id: 'rls-patient-data',
-      name: 'Patient Data RLS',
-      category: 'RLS',
-      description: 'Validates Row Level Security for patient data',
-      severity: 'CRITICAL',
+      id: "rls-patient-data",
+      name: "Patient Data RLS",
+      category: "RLS",
+      description: "Validates Row Level Security for patient data",
+      severity: "CRITICAL",
       enabled: true,
       testFunction: this.testPatientDataRLS.bind(this),
     });
 
     // Data Exposure Tests
     this.addTest({
-      id: 'data-exposure-sensitive-fields',
-      name: 'Sensitive Data Exposure',
-      category: 'DATA_EXPOSURE',
-      description: 'Tests for sensitive data exposure in API responses',
-      severity: 'HIGH',
+      id: "data-exposure-sensitive-fields",
+      name: "Sensitive Data Exposure",
+      category: "DATA_EXPOSURE",
+      description: "Tests for sensitive data exposure in API responses",
+      severity: "HIGH",
       enabled: true,
       testFunction: this.testSensitiveDataExposure.bind(this),
     });
 
     // Compliance Tests
     this.addTest({
-      id: 'compliance-lgpd',
-      name: 'LGPD Compliance',
-      category: 'COMPLIANCE',
-      description: 'Validates LGPD compliance requirements',
-      severity: 'CRITICAL',
+      id: "compliance-lgpd",
+      name: "LGPD Compliance",
+      category: "COMPLIANCE",
+      description: "Validates LGPD compliance requirements",
+      severity: "CRITICAL",
       enabled: this.config.validateLGPD,
       testFunction: this.testLGPDCompliance.bind(this),
     });
@@ -287,10 +287,10 @@ export class HealthcareSecurityTestFramework {
   ): Promise<SecurityTestResult[]> {
     this.results = [];
 
-    const enabledTests = Array.from(this.tests.values()).filter(test => {
+    const enabledTests = Array.from(this.tests.values()).filter((test) => {
       if (!test.enabled) return false;
       if (this.config.disabledTests.includes(test.id)) return false;
-      if (this.config.enabledTests.includes('*')) return true;
+      if (this.config.enabledTests.includes("*")) return true;
       return this.config.enabledTests.includes(test.id);
     });
 
@@ -300,11 +300,13 @@ export class HealthcareSecurityTestFramework {
     const batchSize = this.config.parallelTests;
     for (let i = 0; i < enabledTests.length; i += batchSize) {
       const batch = enabledTests.slice(i, i + batchSize);
-      const batchPromises = batch.map(test => this.runSingleTest(test, context));
+      const batchPromises = batch.map((test) =>
+        this.runSingleTest(test, context),
+      );
       const batchResults = await Promise.allSettled(batchPromises);
 
       batchResults.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
+        if (result.status === "fulfilled") {
           this.results.push(result.value);
         } else {
           logger.error(`Test ${batch[index].id} failed:`, result.reason);
@@ -333,7 +335,10 @@ export class HealthcareSecurityTestFramework {
       const result = await Promise.race([
         test.testFunction(context),
         new Promise<SecurityTestResult>((_, reject) =>
-          setTimeout(() => reject(new Error('Test timeout')), this.config.timeout)
+          setTimeout(
+            () => reject(new Error("Test timeout")),
+            this.config.timeout,
+          ),
         ),
       ]);
 
@@ -372,17 +377,17 @@ export class HealthcareSecurityTestFramework {
         score: 0,
         issues: [
           {
-            id: 'test-execution-error',
-            type: 'TEST_ERROR',
-            severity: 'HIGH',
+            id: "test-execution-error",
+            type: "TEST_ERROR",
+            severity: "HIGH",
             description: `Test execution failed: ${(error as Error).message}`,
             location: test.name,
-            remediation: 'Check test implementation and dependencies',
+            remediation: "Check test implementation and dependencies",
           },
         ],
         recommendations: [
-          'Fix test execution environment',
-          'Check test dependencies',
+          "Fix test execution environment",
+          "Check test dependencies",
         ],
         executionTime,
         timestamp: new Date().toISOString(),
@@ -402,62 +407,62 @@ export class HealthcareSecurityTestFramework {
 
     try {
       const response = await fetch(`${context.baseUrl}/health`);
-      const hstsHeader = response.headers.get('Strict-Transport-Security');
+      const hstsHeader = response.headers.get("Strict-Transport-Security");
 
       if (!hstsHeader) {
         issues.push({
-          id: 'missing-hsts',
-          type: 'MISSING_HEADER',
-          severity: 'HIGH',
-          description: 'HSTS header not found',
-          location: 'Response headers',
-          remediation: 'Implement HSTS header with appropriate max-age',
-          owaspId: 'A5-2017',
+          id: "missing-hsts",
+          type: "MISSING_HEADER",
+          severity: "HIGH",
+          description: "HSTS header not found",
+          location: "Response headers",
+          remediation: "Implement HSTS header with appropriate max-age",
+          owaspId: "A5-2017",
         });
-        recommendations.push('Implement HSTS header with max-age >= 31536000');
+        recommendations.push("Implement HSTS header with max-age >= 31536000");
       } else {
         // Validate HSTS configuration
-        const hasMaxAge = hstsHeader.includes('max-age=');
-        const hasIncludeSubDomains = hstsHeader.includes('includeSubDomains');
-        const hasPreload = hstsHeader.includes('preload');
+        const hasMaxAge = hstsHeader.includes("max-age=");
+        const hasIncludeSubDomains = hstsHeader.includes("includeSubDomains");
+        const hasPreload = hstsHeader.includes("preload");
 
         if (!hasMaxAge) {
           issues.push({
-            id: 'hsts-no-max-age',
-            type: 'INVALID_CONFIGURATION',
-            severity: 'MEDIUM',
-            description: 'HSTS header missing max-age directive',
-            location: 'HSTS header',
-            remediation: 'Add max-age directive to HSTS header',
+            id: "hsts-no-max-age",
+            type: "INVALID_CONFIGURATION",
+            severity: "MEDIUM",
+            description: "HSTS header missing max-age directive",
+            location: "HSTS header",
+            remediation: "Add max-age directive to HSTS header",
           });
         }
 
         if (!hasIncludeSubDomains) {
           recommendations.push(
-            'Consider adding includeSubDomains to HSTS header',
+            "Consider adding includeSubDomains to HSTS header",
           );
         }
 
         if (!hasPreload) {
           recommendations.push(
-            'Consider adding preload to HSTS header for enhanced security',
+            "Consider adding preload to HSTS header for enhanced security",
           );
         }
       }
     } catch (error) {
       issues.push({
-        id: 'hsts-test-error',
-        type: 'TEST_ERROR',
-        severity: 'MEDIUM',
+        id: "hsts-test-error",
+        type: "TEST_ERROR",
+        severity: "MEDIUM",
         description: `HSTS test failed: ${(error as Error).message}`,
-        location: 'HSTS test',
-        remediation: 'Check network connectivity and server response',
+        location: "HSTS test",
+        remediation: "Check network connectivity and server response",
       });
     }
 
     return {
-      testId: 'security-headers-hsts',
-      testName: 'HSTS Header Validation',
+      testId: "security-headers-hsts",
+      testName: "HSTS Header Validation",
       passed: issues.length === 0,
       score: Math.max(0, 100 - issues.length * 25),
       issues,
@@ -475,53 +480,53 @@ export class HealthcareSecurityTestFramework {
 
     try {
       const response = await fetch(`${context.baseUrl}/health`);
-      const cspHeader = response.headers.get('Content-Security-Policy');
+      const cspHeader = response.headers.get("Content-Security-Policy");
 
       if (!cspHeader) {
         issues.push({
-          id: 'missing-csp',
-          type: 'MISSING_HEADER',
-          severity: 'MEDIUM',
-          description: 'Content Security Policy header not found',
-          location: 'Response headers',
-          remediation: 'Implement Content Security Policy header',
-          owaspId: 'A6-2017',
+          id: "missing-csp",
+          type: "MISSING_HEADER",
+          severity: "MEDIUM",
+          description: "Content Security Policy header not found",
+          location: "Response headers",
+          remediation: "Implement Content Security Policy header",
+          owaspId: "A6-2017",
         });
-        recommendations.push('Implement Content Security Policy header');
+        recommendations.push("Implement Content Security Policy header");
       } else {
         // Validate CSP directives
-        const hasDefaultSrc = cspHeader.includes('default-src');
-        const hasScriptSrc = cspHeader.includes('script-src');
-        const hasObjectSrcNone = cspHeader.includes('object-src \'none\'');
+        const hasDefaultSrc = cspHeader.includes("default-src");
+        const hasScriptSrc = cspHeader.includes("script-src");
+        const hasObjectSrcNone = cspHeader.includes("object-src 'none'");
 
         if (!hasDefaultSrc) {
-          recommendations.push('Consider adding default-src directive to CSP');
+          recommendations.push("Consider adding default-src directive to CSP");
         }
 
         if (!hasScriptSrc) {
-          recommendations.push('Consider adding script-src directive to CSP');
+          recommendations.push("Consider adding script-src directive to CSP");
         }
 
         if (!hasObjectSrcNone) {
           recommendations.push(
-            'Add object-src \'none\' to prevent object/embed attacks',
+            "Add object-src 'none' to prevent object/embed attacks",
           );
         }
       }
     } catch (error) {
       issues.push({
-        id: 'csp-test-error',
-        type: 'TEST_ERROR',
-        severity: 'MEDIUM',
+        id: "csp-test-error",
+        type: "TEST_ERROR",
+        severity: "MEDIUM",
         description: `CSP test failed: ${(error as Error).message}`,
-        location: 'CSP test',
-        remediation: 'Check network connectivity and server response',
+        location: "CSP test",
+        remediation: "Check network connectivity and server response",
       });
     }
 
     return {
-      testId: 'security-headers-csp',
-      testName: 'Content Security Policy Validation',
+      testId: "security-headers-csp",
+      testName: "Content Security Policy Validation",
       passed: issues.length === 0,
       score: Math.max(0, 100 - issues.length * 20),
       issues,
@@ -539,58 +544,58 @@ export class HealthcareSecurityTestFramework {
 
     try {
       const response = await fetch(`${context.baseUrl}/health`);
-      const xssHeader = response.headers.get('X-XSS-Protection');
-      const contentTypeHeader = response.headers.get('X-Content-Type-Options');
-      const frameOptionsHeader = response.headers.get('X-Frame-Options');
+      const xssHeader = response.headers.get("X-XSS-Protection");
+      const contentTypeHeader = response.headers.get("X-Content-Type-Options");
+      const frameOptionsHeader = response.headers.get("X-Frame-Options");
 
       if (!xssHeader) {
         issues.push({
-          id: 'missing-xss-header',
-          type: 'MISSING_HEADER',
-          severity: 'MEDIUM',
-          description: 'X-XSS-Protection header not found',
-          location: 'Response headers',
-          remediation: 'Add X-XSS-Protection: 1; mode=block header',
-          owaspId: 'A7-2017',
+          id: "missing-xss-header",
+          type: "MISSING_HEADER",
+          severity: "MEDIUM",
+          description: "X-XSS-Protection header not found",
+          location: "Response headers",
+          remediation: "Add X-XSS-Protection: 1; mode=block header",
+          owaspId: "A7-2017",
         });
       }
 
       if (!contentTypeHeader) {
         issues.push({
-          id: 'missing-content-type-header',
-          type: 'MISSING_HEADER',
-          severity: 'MEDIUM',
-          description: 'X-Content-Type-Options header not found',
-          location: 'Response headers',
-          remediation: 'Add X-Content-Type-Options: nosniff header',
+          id: "missing-content-type-header",
+          type: "MISSING_HEADER",
+          severity: "MEDIUM",
+          description: "X-Content-Type-Options header not found",
+          location: "Response headers",
+          remediation: "Add X-Content-Type-Options: nosniff header",
         });
       }
 
       if (!frameOptionsHeader) {
         issues.push({
-          id: 'missing-frame-options',
-          type: 'MISSING_HEADER',
-          severity: 'MEDIUM',
-          description: 'X-Frame-Options header not found',
-          location: 'Response headers',
-          remediation: 'Add X-Frame-Options: DENY header',
-          owaspId: 'A8-2017',
+          id: "missing-frame-options",
+          type: "MISSING_HEADER",
+          severity: "MEDIUM",
+          description: "X-Frame-Options header not found",
+          location: "Response headers",
+          remediation: "Add X-Frame-Options: DENY header",
+          owaspId: "A8-2017",
         });
       }
     } catch (error) {
       issues.push({
-        id: 'xss-test-error',
-        type: 'TEST_ERROR',
-        severity: 'MEDIUM',
+        id: "xss-test-error",
+        type: "TEST_ERROR",
+        severity: "MEDIUM",
         description: `XSS headers test failed: ${(error as Error).message}`,
-        location: 'XSS test',
-        remediation: 'Check network connectivity and server response',
+        location: "XSS test",
+        remediation: "Check network connectivity and server response",
       });
     }
 
     return {
-      testId: 'security-headers-xss',
-      testName: 'XSS Protection Headers',
+      testId: "security-headers-xss",
+      testName: "XSS Protection Headers",
       passed: issues.length === 0,
       score: Math.max(0, 100 - issues.length * 15),
       issues,
@@ -605,13 +610,13 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'auth-token-validation',
-      testName: 'JWT Token Validation',
+      testId: "auth-token-validation",
+      testName: "JWT Token Validation",
       passed: true,
       score: 85,
       issues: [],
       recommendations: [
-        'Implement JWT token validation with proper signing and expiration',
+        "Implement JWT token validation with proper signing and expiration",
       ],
       executionTime: 0,
       timestamp: new Date().toISOString(),
@@ -622,13 +627,13 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'auth-session-management',
-      testName: 'Session Management Security',
+      testId: "auth-session-management",
+      testName: "Session Management Security",
       passed: true,
       score: 80,
       issues: [],
       recommendations: [
-        'Implement secure session management with timeout and regeneration',
+        "Implement secure session management with timeout and regeneration",
       ],
       executionTime: 0,
       timestamp: new Date().toISOString(),
@@ -639,12 +644,12 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'authz-role-based-access',
-      testName: 'Role-Based Access Control',
+      testId: "authz-role-based-access",
+      testName: "Role-Based Access Control",
       passed: true,
       score: 90,
       issues: [],
-      recommendations: ['Implement comprehensive role-based access control'],
+      recommendations: ["Implement comprehensive role-based access control"],
       executionTime: 0,
       timestamp: new Date().toISOString(),
     };
@@ -654,12 +659,12 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'authz-resource-level-security',
-      testName: 'Resource-Level Security',
+      testId: "authz-resource-level-security",
+      testName: "Resource-Level Security",
       passed: true,
       score: 85,
       issues: [],
-      recommendations: ['Implement resource-level access controls'],
+      recommendations: ["Implement resource-level access controls"],
       executionTime: 0,
       timestamp: new Date().toISOString(),
     };
@@ -669,12 +674,12 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'rate-limiting-endpoint',
-      testName: 'Endpoint Rate Limiting',
+      testId: "rate-limiting-endpoint",
+      testName: "Endpoint Rate Limiting",
       passed: true,
       score: 95,
       issues: [],
-      recommendations: ['Rate limiting is properly implemented'],
+      recommendations: ["Rate limiting is properly implemented"],
       executionTime: 0,
       timestamp: new Date().toISOString(),
     };
@@ -684,12 +689,12 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'input-validation-sql-injection',
-      testName: 'SQL Injection Protection',
+      testId: "input-validation-sql-injection",
+      testName: "SQL Injection Protection",
       passed: true,
       score: 90,
       issues: [],
-      recommendations: ['SQL injection protection is in place'],
+      recommendations: ["SQL injection protection is in place"],
       executionTime: 0,
       timestamp: new Date().toISOString(),
     };
@@ -699,12 +704,12 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'input-validation-xss',
-      testName: 'XSS Protection',
+      testId: "input-validation-xss",
+      testName: "XSS Protection",
       passed: true,
       score: 90,
       issues: [],
-      recommendations: ['XSS protection is implemented'],
+      recommendations: ["XSS protection is implemented"],
       executionTime: 0,
       timestamp: new Date().toISOString(),
     };
@@ -714,13 +719,13 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'rls-patient-data',
-      testName: 'Patient Data RLS',
+      testId: "rls-patient-data",
+      testName: "Patient Data RLS",
       passed: true,
       score: 95,
       issues: [],
       recommendations: [
-        'Row Level Security for patient data is properly implemented',
+        "Row Level Security for patient data is properly implemented",
       ],
       executionTime: 0,
       timestamp: new Date().toISOString(),
@@ -731,12 +736,12 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'data-exposure-sensitive-fields',
-      testName: 'Sensitive Data Exposure',
+      testId: "data-exposure-sensitive-fields",
+      testName: "Sensitive Data Exposure",
       passed: true,
       score: 88,
       issues: [],
-      recommendations: ['Sensitive data exposure controls are in place'],
+      recommendations: ["Sensitive data exposure controls are in place"],
       executionTime: 0,
       timestamp: new Date().toISOString(),
     };
@@ -746,12 +751,12 @@ export class HealthcareSecurityTestFramework {
     _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
-      testId: 'compliance-lgpd',
-      testName: 'LGPD Compliance',
+      testId: "compliance-lgpd",
+      testName: "LGPD Compliance",
       passed: true,
       score: 92,
       issues: [],
-      recommendations: ['LGPD compliance requirements are met'],
+      recommendations: ["LGPD compliance requirements are met"],
       executionTime: 0,
       timestamp: new Date().toISOString(),
     };
@@ -759,7 +764,7 @@ export class HealthcareSecurityTestFramework {
 
   // Log test result
   private logTestResult(result: SecurityTestResult): void {
-    const level = result.passed ? 'info' : 'warn';
+    const level = result.passed ? "info" : "warn";
     logger[level](`Security test completed: ${result.testName}`, {
       passed: result.passed,
       score: result.score,
@@ -770,7 +775,7 @@ export class HealthcareSecurityTestFramework {
 
   // Send security alert
   private sendSecurityAlert(result: SecurityTestResult): void {
-    logger.error('Security test failed - Alert triggered', {
+    logger.error("Security test failed - Alert triggered", {
       testId: result.testId,
       testName: result.testName,
       score: result.score,
@@ -787,18 +792,18 @@ export class HealthcareSecurityTestFramework {
       results: this.results,
       summary: {
         totalTests: this.results.length,
-        passedTests: this.results.filter(r => r.passed).length,
-        failedTests: this.results.filter(r => !r.passed).length,
-        averageScore: this.results.reduce((sum, _r) => sum + r.score, 0)
-          / this.results.length,
+        passedTests: this.results.filter((r) => r.passed).length,
+        failedTests: this.results.filter((r) => !r.passed).length,
+        averageScore:
+          this.results.reduce((sum, _r) => sum + r.score, 0) /
+          this.results.length,
         criticalIssues: this.results
-          .flatMap(r => r.issues)
-          .filter(i => i.severity === 'CRITICAL').length,
+          .flatMap((r) => r.issues)
+          .filter((i) => i.severity === "CRITICAL").length,
       },
     };
 
-    const reportPath =
-      `${this.config.reportPath}/security-test-report-${Date.now()}.${this.config.reportFormat.toLowerCase()}`;
+    const reportPath = `${this.config.reportPath}/security-test-report-${Date.now()}.${this.config.reportFormat.toLowerCase()}`;
 
     // Write report to file
     await Bun.write(reportPath, JSON.stringify(report, null, 2));
@@ -814,7 +819,9 @@ export class HealthcareSecurityTestFramework {
   // Get security score
   getSecurityScore(): number {
     if (this.results.length === 0) return 0;
-    return (this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length);
+    return (
+      this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length
+    );
   }
 }
 
@@ -823,9 +830,9 @@ export function createSecurityTestingFramework(
   config?: Partial<SecurityTestConfig>,
 ): HealthcareSecurityTestFramework {
   const defaultConfig: SecurityTestConfig = {
-    enabledTests: ['*'],
+    enabledTests: ["*"],
     disabledTests: [],
-    severityThreshold: 'MEDIUM',
+    severityThreshold: "MEDIUM",
     timeout: 30000,
     retries: 3,
     parallelTests: 5,
@@ -833,8 +840,8 @@ export function createSecurityTestingFramework(
     validateHIPAA: false,
     validateOWASP: true,
     generateReport: true,
-    reportFormat: 'JSON',
-    reportPath: './security-test-results',
+    reportFormat: "JSON",
+    reportPath: "./security-test-results",
     logResults: true,
     alertThreshold: 70,
     ...config,

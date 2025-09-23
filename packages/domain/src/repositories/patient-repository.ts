@@ -1,4 +1,4 @@
-import type { Patient } from '../entities/patient.js';
+import type { Patient } from "../entities/patient.js";
 
 /**
  * Patient Repository Interface
@@ -24,7 +24,9 @@ export interface PatientRepository {
    * @param medicalRecordNumber Medical record number
    * @returns Patient or null if not found
    */
-  findByMedicalRecordNumber(medicalRecordNumber: string): Promise<Patient | null>;
+  findByMedicalRecordNumber(
+    medicalRecordNumber: string,
+  ): Promise<Patient | null>;
 
   /**
    * Find patients by CPF
@@ -48,14 +50,20 @@ export interface PatientRepository {
    * @param offset Optional offset
    * @returns Array of active patients
    */
-  findActive(clinicId: string, limit?: number, offset?: number): Promise<Patient[]>;
+  findActive(
+    clinicId: string,
+    limit?: number,
+    offset?: number,
+  ): Promise<Patient[]>;
 
   /**
    * Create a new patient
    * @param patient Patient data
    * @returns Created patient with generated ID
    */
-  create(patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Promise<Patient>;
+  create(
+    patient: Omit<Patient, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Patient>;
 
   /**
    * Update an existing patient
@@ -90,7 +98,7 @@ export interface PatientRepository {
   medicalRecordNumberExists(
     medicalRecordNumber: string,
     clinicId: string,
-    excludePatientId?: string
+    excludePatientId?: string,
   ): Promise<boolean>;
 }
 
@@ -139,7 +147,7 @@ export interface PatientFilters {
   limit?: number;
   offset?: number;
   sortBy?: keyof Patient;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 /**

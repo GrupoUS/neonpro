@@ -270,13 +270,16 @@ export class AIChatMetrics {
       : this.events;
 
     const totalInteractions = events.length;
-    const piiDetections = events.reduce((sum, e) => sum + (e.metrics.piiDetections || 0),
+    const piiDetections = events.reduce(
+      (sum, e) => sum + (e.metrics.piiDetections || 0),
       0,
     );
-    const consentValidations = events.reduce((sum, e) => sum + (e.metrics.consentValidations || 0),
+    const consentValidations = events.reduce(
+      (sum, e) => sum + (e.metrics.consentValidations || 0),
       0,
     );
-    const auditEvents = events.reduce((sum, e) => sum + (e.metrics.auditEvents || 0),
+    const auditEvents = events.reduce(
+      (sum, e) => sum + (e.metrics.auditEvents || 0),
       0,
     );
 
@@ -308,7 +311,8 @@ export class AIChatMetrics {
 
     const rateLimitEvents = events.filter((e) => e.eventType === "rate_limit");
     const totalInteractions = events.length;
-    const totalHits = rateLimitEvents.reduce((sum, e) => sum + (e.metrics.rateLimitHits || 0),
+    const totalHits = rateLimitEvents.reduce(
+      (sum, e) => sum + (e.metrics.rateLimitHits || 0),
       0,
     );
 
@@ -321,7 +325,8 @@ export class AIChatMetrics {
         ? remainingValues.reduce((a, b) => a + b, 0) / remainingValues.length
         : 0;
 
-    const lastHitEvent = rateLimitEvents.sort((a, b) =>
+    const lastHitEvent = rateLimitEvents.sort(
+      (a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     )[0];
 
@@ -345,7 +350,8 @@ export class AIChatMetrics {
     rateLimitingStats: any;
     clinicMetrics: Array<{ clinicId: string; metrics: AIMetrics }>;
   } {
-    const clinicMetrics = Array.from(this.metrics.entries()).map(([clinicId, metrics]) => ({
+    const clinicMetrics = Array.from(this.metrics.entries()).map(
+      ([clinicId, metrics]) => ({
         clinicId,
         metrics,
       }),

@@ -4,10 +4,7 @@
  */
 
 // Core database clients - factory functions
-export {
-  createClient,
-  createServiceClient,
-} from "./client";
+export { createClient, createServiceClient } from "./client";
 
 // Database types
 export type { Database } from "./types/supabase-generated";
@@ -20,10 +17,7 @@ export { BaseService } from "./services/base.service";
 export { WebRTCSessionService } from "./services/webrtc-session.service";
 
 // Export types from services
-export type { 
-  ConsentRequest, 
-  ConsentRecord 
-} from "./services/consent-service";
+export type { ConsentRequest, ConsentRecord } from "./services/consent-service";
 
 export type {
   AuditLogRequest,
@@ -32,14 +26,14 @@ export type {
   AuditSearchCriteria,
   MedicalDataClassification,
   ResourceType,
-  AuditStatusType
+  AuditStatusType,
 } from "./services/audit-service";
 
 export type {
   WebRTCConfig,
   SessionParticipant,
   SessionQualityMetrics,
-  SessionRecording
+  SessionRecording,
 } from "./services/webrtc-session.service";
 
 // Application services using repository pattern
@@ -50,11 +44,8 @@ export {
   PatientRepository,
   ConsentRepository,
   AppointmentRepository,
-  RepositoryContainer
+  RepositoryContainer,
 } from "./repositories";
 
 // Utility functions
-export {
-  checkDatabaseHealth,
-  closeDatabaseConnections,
-} from "./client";
+export { checkDatabaseHealth, closeDatabaseConnections } from "./client";

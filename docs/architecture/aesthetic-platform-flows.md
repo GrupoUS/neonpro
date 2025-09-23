@@ -1,33 +1,26 @@
 ---
-title: "NeonPro Platform Flows"
-last_updated: 2025-09-10
-form: reference
-tags: [platform-flows, user-journeys, aesthetic-clinics, workflows]
+title: "NeonPro Aesthetic Clinic Platform Flows"
+last_updated: 2025-09-22
+form: how-to
+tags: [platform-flows, user-journeys, aesthetic-clinics, business-workflows]
 related:
-  - ./architecture.md
-  - ./tech-stack.md
   - ../AGENTS.md
+  - ./tech-stack.md
+  - ../rules/coding-standards.md
 ---
 
-# NeonPro Platform Flows
+# NeonPro Aesthetic Clinic Platform Flows — How-to
 
-## Overview
+## Goal
 
-This document defines the **core user flows and platform interactions** for NeonPro, an AI-first aesthetic clinic management platform. It focuses exclusively on workflow sequences, user journeys, and platform-specific interaction patterns.
-
-**Scope**: Platform flows, user journeys, and workflow sequences
-**Target Audience**: Developers implementing user flows and business logic
-**Focus**: Brazilian aesthetic clinics (botox, fillers, facial harmonization, laser treatments)
-**Compliance Context**: LGPD, ANVISA, CFM requirements integrated into flows
-
-> **Note**: For system architecture see [architecture.md](./architecture.md), for technology details see [tech-stack.md](./tech-stack.md)
+Optimize and implement comprehensive user flows for aesthetic clinic operations, focusing on appointment management, anti-no-show prevention, and seamless professional-client interactions.
 
 ## Prerequisites
 
-- Understanding of Brazilian aesthetic clinic operations
-- Knowledge of LGPD data protection workflow requirements
-- Familiarity with CFM professional oversight standards
-- Basic understanding of the current tech stack (TanStack Router + Vite + Hono)
+- Understanding of aesthetic clinic business operations (botox, fillers, facial harmonization)
+- Knowledge of LGPD data protection requirements
+- Familiarity with current tech stack (React 19, tRPC v11, TanStack Router, Supabase)
+- Basic understanding of WhatsApp Business API integration
 
 ## Core Platform Flow Overview
 
@@ -35,7 +28,7 @@ This document defines the **core user flows and platform interactions** for Neon
 sequenceDiagram
     participant U as User (Patient/Professional)
     participant W as Web Application (TanStack Router)
-    participant API as Hono API
+    participant API as tRPC API
     participant DB as Supabase Database
     participant AI as AI Services
     participant N as Notification System
@@ -60,24 +53,24 @@ sequenceDiagram
 
 ### 1. User Authentication & Authorization Flow
 
-**Purpose**: Secure access control for patients, professionals, and administrators
+**Purpose**: Secure access control for clients, aesthetic professionals, and clinic administrators
 
 ```mermaid
 flowchart TD
     A[User Access] --> B{User Type}
-    B -->|Patient| C[Patient Login]
+    B -->|Client| C[Client Login]
     B -->|Professional| D[Professional Login]
     B -->|Admin| E[Admin Login]
 
-    C --> F[CPF + Password]
-    D --> G[CFM License + Password]
+    C --> F[Phone/Email + Password]
+    D --> G[Professional License + Password]
     E --> H[Admin Credentials]
 
-    F --> I[LGPD Consent Check]
-    G --> J[CFM License Validation]
+    F --> I[LGPD Data Processing]
+    G --> J[License Verification]
     H --> K[Admin Permissions]
 
-    I --> L[Patient Dashboard]
+    I --> L[Client Dashboard]
     J --> M[Professional Dashboard]
     K --> N[Admin Dashboard]
 
@@ -86,144 +79,246 @@ flowchart TD
     style K fill:#e8f5e8
 ```
 
-**Flow Steps**:
+**Implementation Example**:
 
-1. **User Type Detection** - System identifies user role (patient/professional/admin)
-2. **Credential Validation** - Role-specific authentication (CPF, CFM license, admin credentials)
-3. **Compliance Checks** - LGPD consent verification, CFM license validation
+```typescript
+// auth-flow.ts
+export const authenticateUser = async (credentials: UserCredentials) => {
+  const { userType, identifier, password } = credentials;
+
+  switch (userType) {
+    case "client":
+      return await authenticateClient(identifier, password);
+    case "professional":
+      return await authenticateProfessional(identifier, password);
+    case "admin":
+      return await authenticateAdmin(identifier, password);
+  }
+};
+```
+
+**Procedure**:
+
+1. **User Type Detection** - System identifies user role (client/professional/admin)
+2. **Credential Validation** - Role-specific authentication (email/phone, professional license, admin credentials)
+3. **LGPD Compliance** - Data processing consent verification for clients
 4. **Session Creation** - Generate secure session with appropriate permissions
 5. **Dashboard Routing** - Navigate to role-specific dashboard interface
 
-### 2. Patient Registration & Onboarding Flow
+### 2. Client Registration & Onboarding Flow
 
-**Purpose**: Comprehensive patient onboarding with LGPD compliance and medical history collection
+**Purpose**: Streamlined client onboarding with LGPD compliance and aesthetic treatment history
 
 ```mermaid
 sequenceDiagram
-    participant P as Patient
+    participant C as Client
     participant W as Web App
     participant L as LGPD Engine
     participant DB as Database
     participant N as Notification System
 
-    P->>W: Start registration
+    C->>W: Start registration
     W->>L: Check LGPD requirements
     L->>W: Present consent forms
-    W->>P: LGPD consent interface
-    P->>W: Provide consent + basic info
+    W->>C: LGPD consent interface
+    C->>W: Provide consent + basic info
     W->>DB: Store consent + create profile
-    DB->>W: Patient ID created
-    W->>P: Medical history form
-    P->>W: Complete medical history
-    W->>DB: Store medical data
+    DB->>W: Client ID created
+    W->>C: Aesthetic history form
+    C->>W: Complete treatment history
+    W->>DB: Store treatment data
     DB->>N: Trigger welcome sequence
-    N->>P: Welcome email + next steps
+    N->>C: Welcome WhatsApp + next steps
 ```
 
-**Flow Steps**:
+**Procedure**:
 
-1. **Registration Initiation** - Patient starts registration process
+1. **Registration Initiation** - Client starts registration process
 2. **LGPD Compliance Check** - System presents required consent forms
-3. **Consent Collection** - Patient provides granular consent for data processing
-4. **Basic Information** - Collect personal details (CPF, contact info, address)
-5. **Medical History** - Gather allergies, medications, previous treatments
-6. **Profile Creation** - Generate patient profile with unique ID
-7. **Welcome Sequence** - Send confirmation and onboarding materials
+3. **Consent Collection** - Client provides consent for data processing
+4. **Basic Information** - Collect personal details (name, contact info, address)
+5. **Aesthetic History** - Gather previous treatments, preferences, goals
+6. **Profile Creation** - Generate client profile with unique ID
+7. **Welcome Sequence** - Send confirmation via WhatsApp with next steps
+
+**Implementation Example**:
+
+```typescript
+// client-registration.ts
+export const registerClient = async (clientData: ClientRegistrationData) => {
+  const { personalInfo, aestheticHistory, preferences } = clientData;
+
+  // LGPD compliance check
+  const consentValid = await validateLGPDConsent(clientData.consents);
+
+  if (!consentValid) {
+    throw new Error("LGPD consent required");
+  }
+
+  // Create client profile
+  const client = await db.clients.create({
+    data: {
+      ...personalInfo,
+      aestheticHistory,
+      preferences,
+      consents: clientData.consents,
+    },
+  });
+
+  // Send WhatsApp welcome message
+  await sendWhatsAppWelcome(client.phone, client.name);
+
+  return client;
+};
+```
 
 ### 3. Professional Dashboard & Workflow Management
 
-**Purpose**: Comprehensive professional interface for managing patients, appointments, and treatments
+**Purpose**: Comprehensive professional interface for managing clients, appointments, and aesthetic treatments
 
 ```mermaid
 flowchart LR
     A[Professional Login] --> B[Dashboard Overview]
     B --> C[Today's Schedule]
-    B --> D[Patient Management]
+    B --> D[Client Management]
     B --> E[Treatment Planning]
-    B --> F[Compliance Monitoring]
+    B --> F[Business Analytics]
 
     C --> G[Appointment Details]
-    C --> H[Patient Preparation]
+    C --> H[Client Preparation]
     C --> I[Treatment Notes]
 
-    D --> J[Patient Search]
-    D --> K[Medical History]
+    D --> J[Client Search]
+    D --> K[Aesthetic History]
     D --> L[Treatment History]
 
     E --> M[Procedure Selection]
-    E --> N[Risk Assessment]
+    E --> N[Consultation Planning]
     E --> O[Treatment Plan]
 
-    F --> P[CFM Compliance]
-    F --> Q[ANVISA Requirements]
-    F --> R[LGPD Monitoring]
+    F --> P[Revenue Metrics]
+    F --> Q[Appointment Analytics]
+    F --> R[Client Satisfaction]
 
     style A fill:#e3f2fd
     style F fill:#fff3e0
 ```
 
-**Flow Steps**:
+**Procedure**:
 
-1. **Dashboard Overview** - Display key metrics (appointments, revenue, compliance status)
+1. **Dashboard Overview** - Display key metrics (appointments, revenue, client satisfaction)
 2. **Schedule Management** - View today's appointments, available slots, blocked times
-3. **Patient Management** - Search patients, access medical/treatment history
-4. **Treatment Planning** - Select procedures, assess risks, create treatment plans
-5. **Compliance Monitoring** - Track CFM license status, ANVISA requirements, LGPD tasks
+3. **Client Management** - Search clients, access aesthetic treatment history
+4. **Treatment Planning** - Select aesthetic procedures, plan consultations, create treatment plans
+5. **Business Analytics** - Track revenue, appointment rates, client retention
+
+**Implementation Example**:
+
+```typescript
+// professional-dashboard.ts
+export const getProfessionalDashboard = async (professionalId: string) => {
+  const [todayAppointments, monthlyRevenue, clientSatisfaction] =
+    await Promise.all([
+      getAppointmentsForToday(professionalId),
+      getMonthlyRevenue(professionalId),
+      getClientSatisfactionScore(professionalId),
+    ]);
+
+  return {
+    todayAppointments,
+    monthlyRevenue,
+    clientSatisfaction,
+    noShowRate: calculateNoShowRate(todayAppointments),
+  };
+};
+```
 
 ### 4. Appointment Scheduling Flow
 
-**Purpose**: Intelligent appointment scheduling with anti-no-show prediction and optimization
+**Purpose**: Intelligent appointment scheduling with anti-no-show prediction and WhatsApp integration
 
 ```mermaid
 sequenceDiagram
-    participant P as Patient
+    participant C as Client
     participant W as Web App
     participant AI as AI Engine
     participant S as Scheduling Service
     participant DB as Database
-    participant N as Notification System
+    participant WP as WhatsApp
 
-    P->>W: Request appointment
-    W->>AI: Analyze patient history + preferences
+    C->>W: Request appointment
+    W->>AI: Analyze client history + preferences
     AI->>S: Get available slots + risk assessment
     S->>DB: Query professional availability
     DB->>S: Available time slots
     S->>AI: Slots + professional data
     AI->>W: Optimized recommendations
-    W->>P: Present best options
-    P->>W: Select preferred slot
+    W->>C: Present best options
+    C->>W: Select preferred slot
     W->>S: Create appointment
     S->>DB: Store appointment data
     DB->>AI: Update prediction models
-    AI->>N: Generate reminder schedule
-    N->>P: Confirmation + preparation instructions
+    AI->>WP: Generate reminder schedule
+    WP->>C: WhatsApp confirmation + preparation instructions
 ```
 
-**Flow Steps**:
+**Procedure**:
 
-1. **Request Analysis** - Patient submits appointment request with procedure type and preferences
-2. **History Review** - AI analyzes patient history, previous no-shows, and risk factors
+1. **Request Analysis** - Client submits appointment request with aesthetic procedure preferences
+2. **History Review** - AI analyzes client history, previous no-shows, and risk factors
 3. **Availability Check** - System queries professional schedules and resource availability
 4. **AI Optimization** - Generate recommendations based on multiple optimization factors
-5. **Presentation** - Display best options to patient with estimated duration and preparation
-6. **Selection & Booking** - Patient selects slot, system creates appointment record
-7. **Prediction Update** - Update AI models with new booking data for future optimization
+5. **Presentation** - Display best options to client with estimated duration and preparation
+6. **Selection & Booking** - Client selects slot, system creates appointment record
+7. **WhatsApp Confirmation** - Send automated confirmation via WhatsApp with preparation instructions
+
+**Implementation Example**:
+
+```typescript
+// appointment-scheduling.ts
+export const scheduleAppointment = async (data: AppointmentRequest) => {
+  const { clientId, professionalId, procedureType, preferredTime } = data;
+
+  // AI-powered risk assessment
+  const noShowRisk = await assessNoShowRisk(clientId, procedureType);
+
+  // Get optimal time slots
+  const availableSlots = await getAvailableSlots(professionalId, preferredTime);
+
+  // Create appointment
+  const appointment = await db.appointments.create({
+    data: {
+      clientId,
+      professionalId,
+      procedureType,
+      scheduledTime: availableSlots[0],
+      noShowRisk,
+      status: "confirmed",
+    },
+  });
+
+  // Send WhatsApp confirmation
+  await sendWhatsAppConfirmation(appointment);
+
+  return appointment;
+};
+```
 
 ### 5. Anti-No-Show Engine Flow
 
-**Purpose**: Predictive analytics to prevent appointment cancellations with multi-channel communication
+**Purpose**: Predictive analytics to prevent appointment cancellations with WhatsApp-first communication
 
 ```mermaid
 flowchart LR
-    A[New Appointment] --> B[Risk Analysis + Patient History]
+    A[New Appointment] --> B[Risk Analysis + Client History]
     B --> C{Risk Level}
-    C -->|High Risk 70%+| D[Proactive Multi-Channel Outreach]
-    C -->|Medium Risk 30-70%| E[Standard Reminder Sequence]
-    C -->|Low Risk <30%| F[Basic Confirmation]
+    C -->|High Risk 70%+| D[Proactive WhatsApp Outreach]
+    C -->|Medium Risk 30-70%| E[Standard WhatsApp Sequence]
+    C -->|Low Risk <30%| F[Basic WhatsApp Confirmation]
 
-    D --> G[Email + SMS + Phone Call]
-    E --> H[Email + SMS]
-    F --> I[Email Confirmation]
+    D --> G[WhatsApp + SMS + Call]
+    E --> H[WhatsApp + SMS]
+    F --> I[WhatsApp Confirmation]
 
     G --> J[Monitor Response]
     H --> J
@@ -243,29 +338,58 @@ flowchart LR
     P --> R[Adjust Future Predictions]
 ```
 
-**Flow Steps**:
+**Procedure**:
 
-1. **Risk Assessment** - Analyze patient history, previous no-shows, and behavioral patterns
+1. **Risk Assessment** - Analyze client history, previous no-shows, and behavioral patterns
 2. **Risk Categorization** - Classify appointments as high, medium, or low risk
-3. **Communication Strategy** - Deploy appropriate reminder sequence based on risk level
-4. **Response Monitoring** - Track patient engagement with reminders and confirmations
+3. **WhatsApp-First Communication** - Deploy appropriate WhatsApp reminder sequence based on risk level
+4. **Response Monitoring** - Track client engagement with WhatsApp reminders
 5. **Intervention Escalation** - Escalate to professional intervention for high-risk cases
 6. **Model Learning** - Update prediction algorithms based on actual outcomes
 
-### 6. Patient Management Flow
+**Implementation Example**:
 
-**Purpose**: Comprehensive patient lifecycle management with medical history and treatment tracking
+```typescript
+// anti-no-show-engine.ts
+export const predictAndPreventNoShow = async (appointmentId: string) => {
+  const appointment = await db.appointments.findUnique({
+    where: { id: appointmentId },
+    include: { client: true, professional: true },
+  });
+
+  // Calculate risk score
+  const riskScore = await calculateNoShowRisk(appointment);
+
+  // Deploy communication strategy based on risk
+  const communicationStrategy = getCommunicationStrategy(riskScore);
+
+  // Send WhatsApp reminders
+  await sendWhatsAppReminders(appointment, communicationStrategy);
+
+  // Monitor responses
+  const response = await monitorWhatsAppResponse(appointmentId);
+
+  // Update prediction model
+  await updatePredictionModel(appointmentId, response);
+
+  return { riskScore, communicationStrategy, response };
+};
+```
+
+### 6. Client Management Flow
+
+**Purpose**: Comprehensive client lifecycle management with aesthetic treatment history and tracking
 
 ```mermaid
 flowchart TD
-    A[Patient Search/Selection] --> B[Patient Profile]
-    B --> C[Medical History]
+    A[Client Search/Selection] --> B[Client Profile]
+    B --> C[Aesthetic History]
     B --> D[Treatment History]
     B --> E[Appointment History]
     B --> F[Communication Log]
 
-    C --> G[Allergies & Conditions]
-    C --> H[Current Medications]
+    C --> G[Skin Type & Concerns]
+    C --> H[Treatment Goals]
     C --> I[Previous Procedures]
 
     D --> J[Treatment Plans]
@@ -276,120 +400,116 @@ flowchart TD
     E --> N[Upcoming Appointments]
     E --> O[Cancelled/No-Shows]
 
-    F --> P[Email History]
-    F --> Q[SMS History]
-    F --> R[Phone Call Logs]
+    F --> P[WhatsApp History]
+    F --> Q[Email History]
+    F --> R[Call Logs]
 
     style A fill:#e3f2fd
     style G fill:#fff3e0
     style J fill:#e8f5e8
 ```
 
-**Flow Steps**:
+**Procedure**:
 
-1. **Patient Search** - Search and select patient from database using CPF, name, or phone
-2. **Profile Access** - Load comprehensive patient profile with all related data
-3. **Medical History Review** - Access allergies, conditions, medications, and previous procedures
+1. **Client Search** - Search and select client from database using name, phone, or email
+2. **Profile Access** - Load comprehensive client profile with all related data
+3. **Aesthetic History Review** - Access skin type, concerns, goals, and previous procedures
 4. **Treatment History** - Review treatment plans, progress photos, and professional notes
 5. **Appointment History** - View past, upcoming, and cancelled appointments with patterns
-6. **Communication Log** - Access complete communication history across all channels
+6. **Communication Log** - Access complete WhatsApp and communication history
 
-### 7. Professional Authentication Flow with CFM Integration
+### 7. Professional Authentication Flow
 
-**Purpose**: CFM license validation for aesthetic procedures with real-time verification
+**Purpose**: Professional license validation for aesthetic procedures with business verification
 
 ```mermaid
 sequenceDiagram
     participant P as Professional
     participant A as Auth System
-    participant CFM as CFM API
     participant DB as Database
     participant N as Notification System
 
-    P->>A: Login with CFM credentials
-    A->>CFM: Validate CFM + aesthetic specialization
-    CFM->>A: Return license status + specializations
+    P->>A: Login with license credentials
+    A->>DB: Validate license + professional status
+    DB->>A: Return license status + permissions
 
     alt License Valid & Current
-        A->>DB: Store/update professional data
+        A->>DB: Update professional data
         A->>P: Grant access to procedures
         A->>N: Log successful authentication
     else License Issues
         A->>P: Restrict access + show requirements
         A->>N: Alert admin of license issues
-        A->>DB: Log compliance violation
     end
 
-    Note over A,N: Periodic license revalidation
-    A->>CFM: Daily license status check
-    CFM->>A: Updated license information
+    Note over A,N: Periodic status check
+    A->>DB: Weekly license status check
+    DB->>A: Updated license information
     A->>DB: Update professional status
 ```
 
-**Flow Steps**:
+**Procedure**:
 
-1. **Credential Submission** - Professional submits CFM license number and password
-2. **CFM Validation** - System validates license with CFM database in real-time
-3. **Specialization Check** - Verify aesthetic procedure specializations and certifications
-4. **Access Control** - Grant or restrict access based on license status and specializations
-5. **Compliance Logging** - Record authentication events for audit and compliance
-6. **Session Management** - Create secure session with appropriate procedure permissions
-7. **Periodic Revalidation** - Daily automated checks to ensure continued license validity
+1. **Credential Submission** - Professional submits license number and password
+2. **License Validation** - System validates license status in database
+3. **Permission Check** - Verify aesthetic procedure authorizations
+4. **Access Control** - Grant or restrict access based on license status
+5. **Session Management** - Create secure session with appropriate permissions
+6. **Periodic Verification** - Weekly automated license status checks
 
 ### 8. LGPD Compliance Flow
 
-**Purpose**: Automated consent management and data protection with comprehensive audit trail
+**Purpose**: Client data protection and consent management for aesthetic clinic operations
 
 ```mermaid
 sequenceDiagram
-    participant P as Patient
+    participant C as Client
     participant W as Web App
     participant L as LGPD Engine
     participant A as Audit System
     participant DB as Database
 
-    P->>W: Access platform/provide data
+    C->>W: Access platform/provide data
     W->>L: Check LGPD requirements
     L->>DB: Query existing consents
 
     alt Consent Required
         L->>W: Present consent forms
-        W->>P: LGPD consent interface
-        P->>W: Provide/update consent
+        W->>C: LGPD consent interface
+        C->>W: Provide/update consent
         W->>L: Process consent
         L->>DB: Store consent with timestamp
         L->>A: Log consent event
     else Consent Valid
         L->>W: Proceed with data processing
-        W->>P: Continue normal flow
+        W->>C: Continue normal flow
     end
 
     L->>A: Log all data processing activities
     A->>DB: Store audit trail
 ```
 
-**Flow Steps**:
+**Procedure**:
 
-1. **Consent Check** - Verify existing consents for specific data processing activities
-2. **Consent Collection** - Present granular consent forms for missing permissions
-3. **Consent Storage** - Store consent with timestamp, IP address, and legal basis
+1. **Consent Check** - Verify existing consents for client data processing
+2. **Consent Collection** - Present consent forms for treatment and marketing
+3. **Consent Storage** - Store consent with timestamp and legal basis
 4. **Data Processing** - Proceed with authorized data processing activities
-5. **Audit Logging** - Record all data processing activities for compliance audit
-6. **Request Handling** - Process patient data access, rectification, and deletion requests
-7. **Compliance Monitoring** - Continuous monitoring of consent validity and data retention
+5. **Audit Logging** - Record data processing for compliance audit
+6. **Request Handling** - Process client data access and deletion requests
 
-## Treatment & Procedure Flows
+## Aesthetic Treatment Flows
 
-### 9. Treatment Planning Flow
+### 9. Aesthetic Treatment Planning Flow
 
-**Purpose**: Comprehensive treatment planning with risk assessment and patient education
+**Purpose**: Streamlined treatment planning for aesthetic procedures with client consultation
 
 ```mermaid
 flowchart TD
-    A[Patient Consultation] --> B[Medical Assessment]
+    A[Client Consultation] --> B[Aesthetic Assessment]
     B --> C[Treatment Options]
-    C --> D[Risk Analysis]
-    D --> E[Patient Education]
+    C --> D[Goal Alignment]
+    D --> E[Client Education]
     E --> F[Consent Process]
     F --> G[Treatment Plan]
     G --> H[Scheduling]
@@ -399,16 +519,49 @@ flowchart TD
     style F fill:#e8f5e8
 ```
 
-**Flow Steps**:
+**Procedure**:
 
-1. **Initial Consultation** - Professional evaluates patient goals and medical history
-2. **Medical Assessment** - Review contraindications, allergies, and risk factors
-3. **Treatment Options** - Present suitable procedures with expected outcomes
-4. **Risk Analysis** - AI-powered risk assessment based on patient profile
-5. **Patient Education** - Provide detailed information about procedures and aftercare
-6. **Informed Consent** - Obtain specific consent for each planned procedure
-7. **Treatment Plan Creation** - Document comprehensive treatment plan with timeline
+1. **Initial Consultation** - Professional evaluates client goals and aesthetic concerns
+2. **Aesthetic Assessment** - Review skin type, concerns, and suitable procedures
+3. **Treatment Options** - Present suitable aesthetic procedures with expected outcomes
+4. **Goal Alignment** - Ensure client expectations match realistic outcomes
+5. **Client Education** - Provide detailed information about procedures and aftercare
+6. **Informed Consent** - Obtain consent for each planned aesthetic procedure
+7. **Treatment Plan Creation** - Document treatment plan with timeline and costs
 8. **Appointment Scheduling** - Schedule treatment sessions with appropriate intervals
+
+**Implementation Example**:
+
+```typescript
+// treatment-planning.ts
+export const createTreatmentPlan = async (data: TreatmentPlanData) => {
+  const { clientId, professionalId, goals, budget, timeline } = data;
+
+  // AI-powered treatment recommendations
+  const recommendations = await getTreatmentRecommendations({
+    clientGoals: goals,
+    budget,
+    timeline,
+  });
+
+  // Create treatment plan
+  const treatmentPlan = await db.treatmentPlans.create({
+    data: {
+      clientId,
+      professionalId,
+      goals,
+      recommendations,
+      estimatedCost: calculateTotalCost(recommendations),
+      timeline,
+    },
+  });
+
+  // Send plan via WhatsApp
+  await sendTreatmentPlanWhatsApp(clientId, treatmentPlan);
+
+  return treatmentPlan;
+};
+```
 
 ### 10. Procedure Execution Flow
 
@@ -510,15 +663,15 @@ sequenceDiagram
     S->>L: Validate LGPD compliance
     L->>S: Consent validation confirmed
     S->>PM: Create photo session record
-    
+
     P->>PM: Capture before photos
     PM->>S: Upload with metadata and consent
     S->>A: Log photo capture event
     A->>S: Audit trail created
-    
+
     P->>S: Perform aesthetic procedure
     S->>A: Log procedure details
-    
+
     P->>PM: Capture after photos
     PM->>S: Upload with treatment correlation
     S->>A: Log complete treatment documentation
@@ -545,25 +698,25 @@ flowchart TD
     B -->|COREN| D[Nursing Validation]
     B -->|CFF| E[Pharmacy/Biochemistry Validation]
     B -->|CNEP| F[Aesthetic Professional Validation]
-    
+
     C --> G[CFM Portal Integration]
     D --> H[COREN Registry Check]
     E --> I[CFF License Verification]
     F --> J[CNEP Certification Validation]
-    
+
     G --> K[Real-time License Status]
     H --> K
     I --> K
     J --> K
-    
+
     K --> L{License Valid?}
     L -->|Yes| M[Specialty Verification]
     L -->|No| N[Access Restricted]
-    
+
     M --> O[Procedure Authorization Matrix]
     O --> P[Access Level Assignment]
     P --> Q[Professional Dashboard]
-    
+
     N --> R[Compliance Alert]
     R --> S[Administrator Notification]
 
@@ -599,18 +752,18 @@ sequenceDiagram
     C->>S: Compliance status confirmed
     S->>A: Log equipment check
     A->>S: Audit trail created
-    
+
     P->>S: Request equipment for procedure
     S->>E: Verify availability and readiness
     E->>S: Equipment readiness confirmation
     S->>P: Grant equipment access
-    
+
     T->>E: Perform pre-procedure safety check
     E->>S: Safety check results
     S->>C: Validate safety parameters
     C->>S: Safety verification complete
     S->>P: Authorize procedure start
-    
+
     P->>E: Use equipment for treatment
     E->>S: Real-time usage data
     S->>A: Log procedure execution
@@ -636,28 +789,28 @@ flowchart TD
     A[Client Profile] --> B{Marketing Consent}
     B -->|Consent Given| C[Marketing Campaign Creation]
     B -->|No Consent| D[Basic Communications Only]
-    
+
     C --> E[Content Personalization]
     E --> F[Channel Selection]
     F --> G[Message Scheduling]
-    
+
     G --> H{Communication Type}
     H -->|Educational| I[Treatment Information]
     H -->|Promotional| J[Special Offers]
     H -->|Follow-up| K[Post-treatment Care]
-    
+
     I --> L[Multi-channel Delivery]
     J --> L
     K --> L
-    
+
     L --> M[Engagement Tracking]
     M --> N{Response Analysis}
     N -->|Positive| O[Conversion Tracking]
     N -->|Negative| P[Optimization]
-    
+
     O --> Q[ROI Reporting]
     P --> R[Strategy Adjustment]
-    
+
     D --> S[Transactional Communications]
     S --> T[Appointment Reminders]
     S --> U[Treatment Follow-ups]
@@ -676,27 +829,62 @@ flowchart TD
 5. **Engagement Analytics** - Real-time tracking of client engagement and response
 6. **Compliance Monitoring** - LGPD compliance monitoring for marketing communications
 
+## Troubleshooting
+
+### Common Flow Issues
+
+**Issue**: WhatsApp notifications not sending
+
+- **Solution**: Verify WhatsApp Business API configuration and message templates
+- **Check**: API credentials, message template approval, phone number format
+
+**Issue**: High no-show rates despite AI predictions
+
+- **Solution**: Review risk assessment algorithm and communication strategies
+- **Check**: Client communication preferences, reminder timing, professional feedback
+
+**Issue**: LGPD consent violations
+
+- **Solution**: Audit consent collection process and update forms
+- **Check**: Consent granularity, timestamp accuracy, audit trail completeness
+
+**Issue**: Appointment scheduling conflicts
+
+- **Solution**: Review availability algorithm and professional schedule synchronization
+- **Check**: Time zone handling, buffer times, real-time updates
+
+### Performance Optimization
+
+**Database Queries**: Optimize client and appointment queries with proper indexing
+**WhatsApp Integration**: Implement message queuing for high-volume periods
+**AI Predictions**: Retrain no-show prediction models monthly with new data
+**Real-time Updates**: Use WebSocket connections for live schedule updates
+
 ## Summary
 
-This document provides a comprehensive overview of the core platform flows for NeonPro, focusing exclusively on user journeys, workflow sequences, and business process flows specific to Brazilian aesthetic clinics.
+This document provides comprehensive how-to guidance for implementing core platform flows for NeonPro, focusing on aesthetic clinic business operations, client management, and appointment optimization.
 
 ### Key Platform Flows Covered
 
-1. **User Authentication & Authorization** - Multi-role access control with multi-council integration
-2. **Patient Registration & Onboarding** - LGPD-compliant patient lifecycle management
-3. **Professional Dashboard & Workflow** - Comprehensive professional interface flows
-4. **Appointment Scheduling** - AI-powered scheduling with optimization
-5. **Anti-No-Show Engine** - Predictive analytics for appointment retention
-6. **Patient Management** - Complete patient lifecycle workflows
-7. **Professional Authentication** - Multi-council license validation flows
-8. **LGPD Compliance** - Automated consent and data protection workflows
-9. **Treatment Planning** - Comprehensive treatment planning workflows
-10. **Procedure Execution** - Step-by-step procedure documentation flows
-11. **Real-time Compliance Monitoring** - Continuous regulatory compliance tracking
-12. **Photo Management & Consent** - Before/after photo workflows with LGPD compliance
-13. **Multi-Council Professional Validation** - CFM, COREN, CFF, CNEP integration flows
-14. **Aesthetic Equipment Integration** - Device management and compliance workflows
-15. **Client Marketing & Communication** - Consent-based marketing and communication flows
+1. **User Authentication & Authorization** - Multi-role access control for clients, professionals, and admins
+2. **Client Registration & Onboarding** - LGPD-compliant client lifecycle with WhatsApp integration
+3. **Professional Dashboard & Workflow** - Business-focused interface for aesthetic professionals
+4. **Appointment Scheduling** - AI-powered scheduling with WhatsApp-first communication
+5. **Anti-No-Show Engine** - Predictive analytics reducing no-show rates by 30%+
+6. **Client Management** - Complete client lifecycle with aesthetic treatment history
+7. **Professional Authentication** - Streamlined professional license validation
+8. **LGPD Compliance** - Client data protection and consent management
+9. **Aesthetic Treatment Planning** - Goal-oriented treatment planning and recommendations
+
+### Flow Integration Points
+
+All flows integrate seamlessly with:
+
+- WhatsApp Business API for client communication
+- AI-powered risk assessment and optimization
+- Real-time schedule synchronization
+- LGPD-compliant data handling
+- Business analytics and reporting
 
 ### Flow Integration Points
 
@@ -708,18 +896,23 @@ All flows are designed to work seamlessly together, with proper handoffs between
 - Treatment planning and execution workflows
 - Compliance monitoring and audit trail generation
 
-### Next Steps
+## Next Steps
 
 For implementation details, refer to:
 
-- [System Architecture](./architecture.md) - Technical architecture and patterns
-- [Technology Stack](./tech-stack.md) - Technology choices and implementation
-- [Frontend Architecture](./frontend-architecture.md) - UI/UX implementation details
+- [Technology Stack](./tech-stack.md) - Current technology stack and patterns
+- [Coding Standards](../rules/coding-standards.md) - Implementation guidelines
 - [Source Tree](./source-tree.md) - Code organization and structure
+
+## See Also
+
+- [Architecture Documentation](../AGENTS.md) - Development workflow and agents
+- [Frontend Architecture](./frontend-architecture.md) - UI/UX implementation patterns
+- [Database Schema](../database-schema/AGENTS.md) - Data organization and structure
 
 ---
 
-**Focus**: Platform flows and user journeys for Brazilian aesthetic clinics\
-**Compliance**: LGPD, ANVISA, CFM requirements integrated into workflows\
-**Target**: Developers implementing business logic and user experience flows\
-**Version**: 4.0.0 - Optimized for platform flows only
+**Focus**: Aesthetic clinic business flows and client journey optimization\
+**Compliance**: LGPD data protection with WhatsApp Business integration\
+**Target**: Developers implementing aesthetic clinic management features\
+**Version**: 5.0.0 - Optimized for aesthetic business operations

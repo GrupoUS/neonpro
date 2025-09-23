@@ -102,7 +102,7 @@ const validateCNS = (cns: string): boolean => {
   if (cleanCNS.length !== 15) return false;
 
   const firstDigit = cleanCNS.charAt(0);
-  
+
   // Temporary CNS validation (starts with 7, 8, or 9)
   if (["7", "8", "9"].includes(firstDigit)) {
     let sum = 0;

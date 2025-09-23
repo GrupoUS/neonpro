@@ -1,23 +1,29 @@
-import { valibot } from 'valibot';
-import { z } from 'zod';
+import { valibot } from "valibot";
+import { z } from "zod";
 
 // Enhanced type guards for API layer
-export const isString = (value: unknown): value is string => typeof value === 'string';
+export const isString = (value: unknown): value is string =>
+  typeof value === "string";
 
 export const isNumber = (value: unknown): value is number =>
-  typeof value === 'number' && !isNaN(value);
+  typeof value === "number" && !isNaN(value);
 
-export const isBoolean = (value: unknown): value is boolean => typeof value === 'boolean';
+export const isBoolean = (value: unknown): value is boolean =>
+  typeof value === "boolean";
 
-export const isArray = <T>(value: unknown, guard?: (item: unknown) => item is T): value is T[] =>
-  Array.isArray(value) && (guard ? value.every(guard) : true);
+export const isArray = <T>(
+  value: unknown,
+  guard?: (item: unknown) => item is T,
+): value is T[] => Array.isArray(value) && (guard ? value.every(guard) : true);
 
 export const isObject = <T extends Record<string, unknown>>(
   value: unknown,
   guard?: (obj: Record<string, unknown>) => obj is T,
 ): value is T =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
-  && (guard ? guard(value as Record<string, unknown>) : true);
+  typeof value === "object" &&
+  value !== null &&
+  !Array.isArray(value) &&
+  (guard ? guard(value as Record<string, unknown>) : true);
 
 export const isDefined = <T>(value: T | undefined | null): value is T =>
   value !== undefined && value !== null;
@@ -29,18 +35,19 @@ export const isValidEmail = (value: unknown): value is string =>
   isString(value) && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
 export const isValidPhone = (value: unknown): value is string =>
-  isString(value) && /^\+?[\d\s\-\(\)]{10,}$/.test(value);
+  isString(value) && /^\+?[\d\s\-()]{10,}$/.test(value);
 
 export const isValidDate = (value: unknown): value is Date =>
   value instanceof Date && !isNaN(value.getTime());
 
 export const isValidUUID = (value: unknown): value is string =>
-  isString(value) && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+  isString(value) &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 
 // Healthcare-specific type guards
 export const isValidCPF = (value: unknown): value is string => {
   if (!isNonEmptyString(value)) return false;
-  const cpf = value.replace(/[^\d]/g, '');
+  const cpf = value.replace(/[^\d]/g, "");
   if (cpf.length !== 11 || !/^\d{11}$/.test(cpf)) return false;
 
   // CPF validation algorithm
@@ -64,7 +71,7 @@ export const isValidCPF = (value: unknown): value is string => {
 
 export const isValidCNPJ = (value: unknown): value is string => {
   if (!isNonEmptyString(value)) return false;
-  const cnpj = value.replace(/[^\d]/g, '');
+  const cnpj = value.replace(/[^\d]/g, "");
   if (cnpj.length !== 14 || !/^\d{14}$/.test(cnpj)) return false;
 
   // CNPJ validation algorithm
@@ -90,36 +97,56 @@ export const isValidCNPJ = (value: unknown): value is string => {
 };
 
 // API-specific type guards
-export const isValidPaginationParams = (value: unknown): value is {
+export const isValidPaginationParams = (
+  value: unknown,
+): value is {
   page: number;
   pageSize: number;
 } => {
-  return isObject(value, obj =>
-    isNumber(obj.page) && obj.page > 0
-    && isNumber(obj.pageSize) && obj.pageSize > 0 && obj.pageSize <= 100);
+  return isObject(
+    value,
+    (obj) =>
+      isNumber(obj.page) &&
+      obj.page > 0 &&
+      isNumber(obj.pageSize) &&
+      obj.pageSize > 0 &&
+      obj.pageSize <= 100,
+  );
 };
 
-export const isValidSortParams = (value: unknown): value is {
+export const isValidSortParams = (
+  value: unknown,
+): value is {
   sortBy: string;
-  sortOrder: 'asc' | 'desc';
+  sortOrder: "asc" | "desc";
 } => {
-  return isObject(value, obj =>
-    isNonEmptyString(obj.sortBy)
-    && (obj.sortOrder === 'asc' || obj.sortOrder === 'desc'));
+  return isObject(
+    value,
+    (obj) =>
+      isNonEmptyString(obj.sortBy) &&
+      (obj.sortOrder === "asc" || obj.sortOrder === "desc"),
+  );
 };
 
-export const isValidFilterParams = (value: unknown): value is Record<string, unknown> => {
+export const isValidFilterParams = (
+  value: unknown,
+): value is Record<string, unknown> => {
   return isObject(value);
 };
 
 // Safe parsing with error handling
-export const safeParse = <T>(schema: z.ZodSchema<T>, value: unknown): {
-  success: true;
-  data: T;
-} | {
-  success: false;
-  error: z.ZodError;
-} => {
+export const safeParse = <T>(
+  schema: z.ZodSchema<T>,
+  value: unknown,
+):
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      error: z.ZodError;
+    } => {
   const result = schema.safeParse(value);
   return result.success
     ? { success: true, data: result.data }
@@ -129,13 +156,15 @@ export const safeParse = <T>(schema: z.ZodSchema<T>, value: unknown): {
 export const safeParseValibot = <T>(
   schema: valibot.GenericSchema,
   value: unknown,
-): {
-  success: true;
-  data: T;
-} | {
-  success: false;
-  error: valibot.ValiError;
-} => {
+):
+  | {
+      success: true;
+      data: T;
+    }
+  | {
+      success: false;
+      error: valibot.ValiError;
+    } => {
   const result = valibot.safeParse(schema, value);
   return result.success
     ? { success: true, data: result.data }
@@ -150,23 +179,26 @@ export const assertString = (value: unknown, message?: string): string => {
   return value;
 };
 
-export const assertDefined = <T>(value: T | undefined | null, message?: string): T => {
+export const assertDefined = <T>(
+  value: T | undefined | null,
+  message?: string,
+): T => {
   if (!isDefined(value)) {
-    throw new Error(message || 'Value is undefined or null');
+    throw new Error(message || "Value is undefined or null");
   }
   return value;
 };
 
 export const assertUUID = (value: unknown, message?: string): string => {
   if (!isValidUUID(value)) {
-    throw new Error(message || 'Invalid UUID format');
+    throw new Error(message || "Invalid UUID format");
   }
   return value;
 };
 
 export const assertCPF = (value: unknown, message?: string): string => {
   if (!isValidCPF(value)) {
-    throw new Error(message || 'Invalid CPF format');
+    throw new Error(message || "Invalid CPF format");
   }
   return value;
 };
@@ -197,18 +229,18 @@ export const createOptionalValidator = <T>(schema: z.ZodSchema<T>) => {
 
 // Input sanitization
 export const sanitizeString = (value: unknown): string => {
-  if (!isString(value)) return '';
-  return value.trim().replace(/[<>]/g, '');
+  if (!isString(value)) return "";
+  return value.trim().replace(/[<>]/g, "");
 };
 
 export const sanitizeHtml = (value: unknown): string => {
-  if (!isString(value)) return '';
+  if (!isString(value)) return "";
   return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 };
 
 // Security type guards
@@ -221,13 +253,13 @@ export const isSafeHeaderValue = (value: unknown): value is string => {
     /vbscript:/i,
     /on\w+\s*=/i,
   ];
-  return !dangerousPatterns.some(pattern => pattern.test(value));
+  return !dangerousPatterns.some((pattern) => pattern.test(value));
 };
 
 export const isSafeRedirectUrl = (value: unknown): value is string => {
   if (!isString(value)) return false;
-  if (value.startsWith('javascript:')) return false;
-  if (value.startsWith('data:')) return false;
-  if (value.startsWith('vbscript:')) return false;
-  return /^https?:\/\//.test(value) || value.startsWith('/');
+  if (value.startsWith("javascript:")) return false;
+  if (value.startsWith("data:")) return false;
+  if (value.startsWith("vbscript:")) return false;
+  return /^https?:\/\//.test(value) || value.startsWith("/");
 };

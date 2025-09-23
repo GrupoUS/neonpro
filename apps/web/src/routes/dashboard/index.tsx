@@ -1,78 +1,98 @@
-import * as React from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { 
-  Users, 
-  Calendar, 
-  DollarSign, 
-  TrendingUp, 
+import * as React from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  Users,
+  Calendar,
+  DollarSign,
+  TrendingUp,
   Activity,
   Bell,
   Search,
   Settings,
   LogOut,
   Menu,
-  X
-} from 'lucide-react'
-import { useState } from 'react'
+  X,
+} from "lucide-react";
+import { useState } from "react";
 
-export const Route = createFileRoute('/dashboard/')({
+export const Route = createFileRoute("/dashboard/")({
   component: Dashboard,
-})
+});
 
 function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
-    { icon: TrendingUp, label: 'Visão Geral', href: '/dashboard' },
-    { icon: Users, label: 'Pacientes', href: '/patients' },
-    { icon: Calendar, label: 'Agendamentos', href: '/appointments' },
-    { icon: DollarSign, label: 'Financeiro', href: '/financial' },
-    { icon: Activity, label: 'Prontuários', href: '/records' },
-  ]
+    { icon: TrendingUp, label: "Visão Geral", href: "/dashboard" },
+    { icon: Users, label: "Pacientes", href: "/patients" },
+    { icon: Calendar, label: "Agendamentos", href: "/appointments" },
+    { icon: DollarSign, label: "Financeiro", href: "/financial" },
+    { icon: Activity, label: "Prontuários", href: "/records" },
+  ];
 
   const stats = [
     {
-      title: 'Pacientes Ativos',
-      value: '1,247',
-      change: '+12%',
+      title: "Pacientes Ativos",
+      value: "1,247",
+      change: "+12%",
       icon: Users,
-      color: 'text-blue-600',
+      color: "text-blue-600",
     },
     {
-      title: 'Consultas Hoje',
-      value: '24',
-      change: '+8%',
+      title: "Consultas Hoje",
+      value: "24",
+      change: "+8%",
       icon: Calendar,
-      color: 'text-green-600',
+      color: "text-green-600",
     },
     {
-      title: 'Faturamento Mês',
-      value: 'R$ 89.450',
-      change: '+23%',
+      title: "Faturamento Mês",
+      value: "R$ 89.450",
+      change: "+23%",
       icon: DollarSign,
-      color: 'text-purple-600',
+      color: "text-purple-600",
     },
     {
-      title: 'Taxa Ocupação',
-      value: '87%',
-      change: '+5%',
+      title: "Taxa Ocupação",
+      value: "87%",
+      change: "+5%",
       icon: Activity,
-      color: 'text-orange-600',
+      color: "text-orange-600",
     },
-  ]
+  ];
 
   const recentAppointments = [
-    { name: 'Ana Silva', time: '09:00', service: 'Botox', status: 'Confirmado' },
-    { name: 'Carlos Santos', time: '10:30', service: 'Preenchimento', status: 'Confirmado' },
-    { name: 'Maria Oliveira', time: '14:00', service: 'Limpeza', status: 'Aguardando' },
-    { name: 'João Costa', time: '15:30', service: 'Ácido', status: 'Confirmado' },
-  ]
+    {
+      name: "Ana Silva",
+      time: "09:00",
+      service: "Botox",
+      status: "Confirmado",
+    },
+    {
+      name: "Carlos Santos",
+      time: "10:30",
+      service: "Preenchimento",
+      status: "Confirmado",
+    },
+    {
+      name: "Maria Oliveira",
+      time: "14:00",
+      service: "Limpeza",
+      status: "Aguardando",
+    },
+    {
+      name: "João Costa",
+      time: "15:30",
+      service: "Ácido",
+      status: "Confirmado",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         >
@@ -81,9 +101,11 @@ function Dashboard() {
       )}
 
       {/* Sidebar */}
-      <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}>
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
         <div className="flex items-center justify-between h-16 px-4 border-b">
           <div className="flex items-center">
             <div className="flex-shrink-0">
@@ -95,14 +117,11 @@ function Dashboard() {
               <p className="text-sm font-medium text-gray-900">NeonPro</p>
             </div>
           </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden"
-          >
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden">
             <X className="h-6 w-6 text-gray-400" />
           </button>
         </div>
-        
+
         <nav className="mt-8 px-2">
           <div className="space-y-1">
             {menuItems.map((item) => (
@@ -132,7 +151,7 @@ function Dashboard() {
                 <Menu className="h-6 w-6 text-gray-400" />
               </button>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <button className="p-1 text-gray-400 hover:text-gray-500">
                 <Search className="h-6 w-6" />
@@ -189,18 +208,26 @@ function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">Consultas de Hoje</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  Consultas de Hoje
+                </h3>
               </div>
               <div className="divide-y divide-gray-200">
                 {recentAppointments.map((appointment, index) => (
                   <div key={index} className="px-6 py-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{appointment.name}</p>
-                        <p className="text-sm text-gray-500">{appointment.service}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {appointment.name}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {appointment.service}
+                        </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-sm font-medium text-gray-900">{appointment.time}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {appointment.time}
+                        </p>
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           {appointment.status}
                         </span>
@@ -213,7 +240,9 @@ function Dashboard() {
 
             <div className="bg-white rounded-lg shadow">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h3 className="text-lg font-medium text-gray-900">Atividade Recente</h3>
+                <h3 className="text-lg font-medium text-gray-900">
+                  Atividade Recente
+                </h3>
               </div>
               <div className="p-6">
                 <div className="space-y-4">
@@ -230,7 +259,7 @@ function Dashboard() {
                       <p className="text-sm text-gray-500">Há 2 minutos</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <div className="flex-shrink-0">
                       <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
@@ -244,7 +273,7 @@ function Dashboard() {
                       <p className="text-sm text-gray-500">Há 15 minutos</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start">
                     <div className="flex-shrink-0">
                       <div className="h-8 w-8 bg-purple-100 rounded-full flex items-center justify-center">
@@ -265,5 +294,5 @@ function Dashboard() {
         </main>
       </div>
     </div>
-  )
+  );
 }

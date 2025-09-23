@@ -12,12 +12,12 @@
  * - Efficient querying with proper indexes
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 export interface OperationStateData {
   operationId: string;
-  step: 'intent' | 'confirm' | 'execute';
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  step: "intent" | "confirm" | "execute";
+  status: "pending" | "processing" | "completed" | "failed";
   entity: string;
   operation: string;
   _userId: string;
@@ -33,8 +33,8 @@ export interface OperationStateData {
 export interface OperationState {
   id: string;
   operationId: string;
-  step: 'intent' | 'confirm' | 'execute';
-  status: 'pending' | 'processing' | 'completed' | 'failed';
+  step: "intent" | "confirm" | "execute";
+  status: "pending" | "processing" | "completed" | "failed";
   entity: string;
   operation: string;
   _userId: string;
@@ -85,13 +85,15 @@ export class OperationStateService {
   /**
    * Get operation state by operation ID
    */
-  async getStateByOperationId(operationId: string): Promise<OperationState | null> {
+  async getStateByOperationId(
+    operationId: string,
+  ): Promise<OperationState | null> {
     const state = await this.prisma.operationState.findFirst({
       where: {
         operation_id: operationId,
       },
       orderBy: {
-        created_at: 'desc',
+        created_at: "desc",
       },
     });
 
@@ -108,7 +110,9 @@ export class OperationStateService {
   ): Promise<OperationState> {
     const currentState = await this.getStateByOperationId(operationId);
     if (!currentState) {
-      throw new Error(`Operation state not found for operation ID: ${operationId}`);
+      throw new Error(
+        `Operation state not found for operation ID: ${operationId}`,
+      );
     }
 
     // Update the state using the unique ID
@@ -125,14 +129,18 @@ export class OperationStateService {
         ai_validation_result: updates.aiValidationResult,
         lgpd_compliance_result: updates.lgpdComplianceResult,
         updated_at: new Date(),
-        completed_at: updates.status === 'completed' || updates.status === 'failed'
-          ? new Date()
-          : null,
+        completed_at:
+          updates.status === "completed" || updates.status === "failed"
+            ? new Date()
+            : null,
       },
     });
 
     // Create audit entry for state change
-    if (currentState.step !== updates.step || currentState.status !== updates.status) {
+    if (
+      currentState.step !== updates.step ||
+      currentState.status !== updates.status
+    ) {
       await this.prisma.operationStateAudit.create({
         data: {
           operation_state_id: updatedState.id,
@@ -156,52 +164,61 @@ export class OperationStateService {
   /**
    * Get states by user ID
    */
-  async getStatesByUserId(_userId: string, limit: number = 50): Promise<OperationState[]> {
+  async getStatesByUserId(
+    _userId: string,
+    limit: number = 50,
+  ): Promise<OperationState[]> {
     const states = await this.prisma.operationState.findMany({
       where: {
         user_id: userId,
       },
       orderBy: {
-        created_at: 'desc',
+        created_at: "desc",
       },
       take: limit,
     });
 
-    return states.map(state => this.mapToOperationState(state));
+    return states.map((state) => this.mapToOperationState(state));
   }
 
   /**
    * Get states by status
    */
-  async getStatesByStatus(status: string, limit: number = 100): Promise<OperationState[]> {
+  async getStatesByStatus(
+    status: string,
+    limit: number = 100,
+  ): Promise<OperationState[]> {
     const states = await this.prisma.operationState.findMany({
       where: {
         status: status,
       },
       orderBy: {
-        created_at: 'desc',
+        created_at: "desc",
       },
       take: limit,
     });
 
-    return states.map(state => this.mapToOperationState(state));
+    return states.map((state) => this.mapToOperationState(state));
   }
 
   /**
    * Get states by step
    */
-  async getStatesByStep(step: string, limit: number = 100): Promise<OperationState[]> {
+  async getStatesByStep(
+    step: string,
+    limit: number = 100,
+  ): Promise<OperationState[]> {
     const states = await this.prisma.operationState.findMany({
       where: {
         step: step,
       },
       orderBy: {
-        created_at: 'desc',
+        created_at: "desc",
       },
       take: limit,
     });
 
-    return states.map(state => this.mapToOperationState(state));
+    return states.map((state) => this.mapToOperationState(state));
   }
 
   /**
@@ -217,7 +234,7 @@ export class OperationStateService {
           lt: cutoffDate,
         },
         status: {
-          in: ['completed', 'failed'],
+          in: ["completed", "failed"],
         },
       },
     });
@@ -237,19 +254,19 @@ export class OperationStateService {
     const [total, statusStats, stepStats, entityStats] = await Promise.all([
       this.prisma.operationState.count(),
       this.prisma.operationState.groupBy({
-        by: ['status'],
+        by: ["status"],
         _count: {
           status: true,
         },
       }),
       this.prisma.operationState.groupBy({
-        by: ['step'],
+        by: ["step"],
         _count: {
           step: true,
         },
       }),
       this.prisma.operationState.groupBy({
-        by: ['entity'],
+        by: ["entity"],
         _count: {
           entity: true,
         },
@@ -258,18 +275,27 @@ export class OperationStateService {
 
     return {
       total,
-      byStatus: statusStats.reduce((acc, _stat) => {
-        acc[stat.status] = stat._count.status;
-        return acc;
-      }, {} as Record<string, number>),
-      byStep: stepStats.reduce((acc, _stat) => {
-        acc[stat.step] = stat._count.step;
-        return acc;
-      }, {} as Record<string, number>),
-      byEntity: entityStats.reduce((acc, _stat) => {
-        acc[stat.entity] = stat._count.entity;
-        return acc;
-      }, {} as Record<string, number>),
+      byStatus: statusStats.reduce(
+        (acc, _stat) => {
+          acc[stat.status] = stat._count.status;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
+      byStep: stepStats.reduce(
+        (acc, _stat) => {
+          acc[stat.step] = stat._count.step;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
+      byEntity: entityStats.reduce(
+        (acc, _stat) => {
+          acc[stat.entity] = stat._count.entity;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     };
   }
 
@@ -300,6 +326,8 @@ export class OperationStateService {
 }
 
 // Factory function for easy instantiation
-export function createOperationStateService(prisma: PrismaClient): OperationStateService {
+export function createOperationStateService(
+  prisma: PrismaClient,
+): OperationStateService {
   return new OperationStateService(prisma);
 }

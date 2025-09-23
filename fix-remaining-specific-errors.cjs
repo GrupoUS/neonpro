@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-console.log('🚀 Starting specific error fixing...');
+console.log("🚀 Starting specific error fixing...");
 
 function processFile(filePath) {
   try {
-    let content = fs.readFileSync(filePath, 'utf8');
+    let content = fs.readFileSync(filePath, "utf8");
     let modified = false;
 
     // Fix remaining catch parameters
@@ -17,14 +17,14 @@ function processFile(filePath) {
       /} catch \((_fallbackError)\) \{/g,
       /} catch \((_checkError)\) \{/g,
       /catch \((_error)\) \{/g,
-      /catch \((error)\) \{([^}]*console\.error[^}]*)\}/g
+      /catch \((error)\) \{([^}]*console\.error[^}]*)\}/g,
     ];
 
     for (const pattern of catchParamPatterns) {
       if (content.match(pattern)) {
         content = content.replace(pattern, (match) => {
-          if (match.includes('console.error')) {
-            return match.replace(/catch \((error)\)/, 'catch (_error)');
+          if (match.includes("console.error")) {
+            return match.replace(/catch \((error)\)/, "catch (_error)");
           }
           return match;
         });
@@ -36,26 +36,26 @@ function processFile(filePath) {
     const paramPatterns = [
       /(\w+): any\) \{[\s\S]*?\/\/ [^}]*Parameter '\1' is declared but never used/g,
       /(\w+)\?: any,[\s\S]*?\/\/ [^}]*Parameter '\1' is declared but never used/g,
-      /(\w+): [^,)]+\)[\s\S]*?\/\/ [^}]*Parameter '\1' is declared but never used/g
+      /(\w+): [^,)]+\)[\s\S]*?\/\/ [^}]*Parameter '\1' is declared but never used/g,
     ];
 
     // Specific parameter fixes based on error output
     const specificParams = [
-      { old: 'config: any', new: '_config: any' },
-      { old: 'options?: any', new: '_options?: any' },
-      { old: 'query', new: '_query' },
-      { old: 'context', new: '_context' },
-      { old: 'userId', new: '_userId' },
-      { old: 'request', new: '_request' },
-      { old: 'role', new: '_role' },
-      { old: 'payload', new: '_payload' },
-      { old: 'service', new: '_service' },
-      { old: 'fallbackValue', new: '_fallbackValue' },
-      { old: 'ColumnDef', new: '_ColumnDef' }
+      { old: "config: any", new: "_config: any" },
+      { old: "options?: any", new: "_options?: any" },
+      { old: "query", new: "_query" },
+      { old: "context", new: "_context" },
+      { old: "userId", new: "_userId" },
+      { old: "request", new: "_request" },
+      { old: "role", new: "_role" },
+      { old: "payload", new: "_payload" },
+      { old: "service", new: "_service" },
+      { old: "fallbackValue", new: "_fallbackValue" },
+      { old: "ColumnDef", new: "_ColumnDef" },
     ];
 
     for (const { old, new: newParam } of specificParams) {
-      const oldPattern = new RegExp(`\\b${old}\\b(?=[:)]|\\?:)`, 'g');
+      const oldPattern = new RegExp(`\\b${old}\\b(?=[:)]|\\?:)`, "g");
       if (content.match(oldPattern)) {
         content = content.replace(oldPattern, newParam);
         modified = true;
@@ -66,7 +66,7 @@ function processFile(filePath) {
     const varPatterns = [
       /const (rateLimitKey) = /g,
       /const (now) = /g,
-      /const (windowMs) = /g
+      /const (windowMs) = /g,
     ];
 
     for (const pattern of varPatterns) {
@@ -80,18 +80,18 @@ function processFile(filePath) {
     const unusedImports = [
       /import.*z.*from ['"]zod['"];?\s*\n/g,
       /import { z } from ['"]zod['"];?\s*\n/g,
-      /import {[^}]*z[^}]*} from ['"]zod['"];?\s*\n/g
+      /import {[^}]*z[^}]*} from ['"]zod['"];?\s*\n/g,
     ];
 
     for (const pattern of unusedImports) {
       if (content.match(pattern)) {
-        content = content.replace(pattern, '');
+        content = content.replace(pattern, "");
         modified = true;
       }
     }
 
     // Clean up multiple empty lines
-    content = content.replace(/\n\n\n+/g, '\n\n');
+    content = content.replace(/\n\n\n+/g, "\n\n");
 
     if (modified) {
       fs.writeFileSync(filePath, content);
@@ -112,9 +112,16 @@ function processDirectory(dir) {
     const fullPath = path.join(dir, item);
     const stat = fs.statSync(fullPath);
 
-    if (stat.isDirectory() && !item.startsWith('.') && item !== 'node_modules') {
+    if (
+      stat.isDirectory() &&
+      !item.startsWith(".") &&
+      item !== "node_modules"
+    ) {
       fixedCount += processDirectory(fullPath);
-    } else if (stat.isFile() && (item.endsWith('.ts') || item.endsWith('.tsx') || item.endsWith('.js'))) {
+    } else if (
+      stat.isFile() &&
+      (item.endsWith(".ts") || item.endsWith(".tsx") || item.endsWith(".js"))
+    ) {
       if (processFile(fullPath)) {
         fixedCount++;
       }
@@ -125,7 +132,7 @@ function processDirectory(dir) {
 }
 
 // Process main directories
-const directories = ['./apps', './packages'];
+const directories = ["./apps", "./packages"];
 let totalFixed = 0;
 
 for (const dir of directories) {
@@ -136,7 +143,10 @@ for (const dir of directories) {
 }
 
 // Also fix the root level scripts
-const rootFiles = ['fix-unused-imports.js', 'fix-remaining-errors-comprehensive.cjs'];
+const rootFiles = [
+  "fix-unused-imports.js",
+  "fix-remaining-errors-comprehensive.cjs",
+];
 for (const file of rootFiles) {
   if (fs.existsSync(file)) {
     if (processFile(file)) {

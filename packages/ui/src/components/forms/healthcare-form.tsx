@@ -16,20 +16,20 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useRef
+  useRef,
 } from "react";
 import { z } from "zod";
 import { cn } from "../../lib/utils";
 import { useHealthcareTheme } from "../healthcare/healthcare-theme-provider";
 import {
   DataSensitivity,
-  validateEmergencyData
+  validateEmergencyData,
 } from "../../utils/healthcare-validation";
 import {
   announceToScreenReader,
   HealthcarePriority,
   useFocusTrap,
-  generateAccessibleId
+  generateAccessibleId,
 } from "../../utils/accessibility";
 
 // Healthcare form validation context
@@ -82,7 +82,7 @@ export interface HealthcareFormProps
     data: FormData,
     context: HealthcareFormContext,
   ) => Promise<void> | void;
-  onError?: (errors: Record<string,string[]>) => void;
+  onError?: (errors: Record<string, string[]>) => void;
 
   // Accessibility
   ariaLabel?: string;
@@ -154,7 +154,7 @@ export function HealthcareForm({
   const setFieldError = (field: string, fieldErrors: string[]) => {
     setErrors((prev) => ({
       ...prev,
-      [field]: fieldErrors
+      [field]: fieldErrors,
     }));
   };
 
@@ -256,7 +256,7 @@ export function HealthcareForm({
         setFieldError,
         clearFieldError,
         formId,
-        announceError
+        announceError,
       };
 
       // Call onSubmit handler
@@ -327,7 +327,7 @@ export function HealthcareForm({
     setFieldError,
     clearFieldError,
     formId,
-    announceError
+    announceError,
   };
 
   // Form CSS classes
@@ -338,7 +338,7 @@ export function HealthcareForm({
       "healthcare-form--emergency": emergencyForm,
       "healthcare-form--patient-data": patientDataForm,
       "healthcare-form--submitting": isSubmitting,
-      "healthcare-form--has-errors": contextValue.hasErrors
+      "healthcare-form--has-errors": contextValue.hasErrors,
     },
     className,
   );
@@ -449,13 +449,13 @@ export function HealthcareForm({
               Erros no formulário:
             </h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-destructive">
-              {errors.submit?.map((error,index) => (
+              {errors.submit?.map((error, index) => (
                 <li key={`submit-${index}`}>{error}</li>
               ))}
-              {errors.consent?.map((error,index) => (
+              {errors.consent?.map((error, index) => (
                 <li key={`consent-${index}`}>{error}</li>
               ))}
-              {errors.emergency?.map((error,index) => (
+              {errors.emergency?.map((error, index) => (
                 <li key={`emergency-${index}`}>{error}</li>
               ))}
             </ul>

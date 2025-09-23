@@ -1,41 +1,41 @@
-import * as React from 'react'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
-import { Eye, EyeOff, Lock, Mail, User, Building2, Phone } from 'lucide-react'
+import * as React from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { Eye, EyeOff, Lock, Mail, User, Building2, Phone } from "lucide-react";
 
-export const Route = createFileRoute('/auth/register')({
+export const Route = createFileRoute("/auth/register")({
   component: Register,
-})
+});
 
 function Register() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    clinicName: '',
-    acceptTerms: false
-  })
-  const [isLoading, setIsLoading] = useState(false)
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    clinicName: "",
+    acceptTerms: false,
+  });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    
+    e.preventDefault();
+    setIsLoading(true);
+
     // Simulate registration - replace with actual API call
     setTimeout(() => {
-      setIsLoading(false)
+      setIsLoading(false);
       // Redirect to login after successful registration
-      window.location.href = '/auth/login'
-    }, 2000)
-  }
+      window.location.href = "/auth/login";
+    }, 2000);
+  };
 
   const handleChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -44,18 +44,19 @@ function Register() {
           <div className="mx-auto h-12 w-12 bg-blue-600 rounded-lg flex items-center justify-center">
             <Building2 className="h-8 w-8 text-white" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Criar Conta
-          </h2>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">Criar Conta</h2>
           <p className="mt-2 text-sm text-gray-600">
             Junte-se ao NeonPro Healthcare
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Nome completo
               </label>
               <div className="mt-1 relative">
@@ -68,7 +69,7 @@ function Register() {
                   type="text"
                   required
                   value={formData.name}
-                  onChange={(e) => handleChange('name', e.target.value)}
+                  onChange={(e) => handleChange("name", e.target.value)}
                   className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Seu nome completo"
                 />
@@ -76,7 +77,10 @@ function Register() {
             </div>
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email profissional
               </label>
               <div className="mt-1 relative">
@@ -89,7 +93,7 @@ function Register() {
                   type="email"
                   required
                   value={formData.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
+                  onChange={(e) => handleChange("email", e.target.value)}
                   className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="seu@email.com"
                 />
@@ -97,7 +101,10 @@ function Register() {
             </div>
 
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Telefone
               </label>
               <div className="mt-1 relative">
@@ -110,7 +117,7 @@ function Register() {
                   type="tel"
                   required
                   value={formData.phone}
-                  onChange={(e) => handleChange('phone', e.target.value)}
+                  onChange={(e) => handleChange("phone", e.target.value)}
                   className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="(11) 99999-9999"
                 />
@@ -118,7 +125,10 @@ function Register() {
             </div>
 
             <div>
-              <label htmlFor="clinicName" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="clinicName"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Nome da clínica
               </label>
               <div className="mt-1 relative">
@@ -131,15 +141,18 @@ function Register() {
                   type="text"
                   required
                   value={formData.clinicName}
-                  onChange={(e) => handleChange('clinicName', e.target.value)}
+                  onChange={(e) => handleChange("clinicName", e.target.value)}
                   className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="Nome da sua clínica"
                 />
               </div>
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Senha
               </label>
               <div className="mt-1 relative">
@@ -149,10 +162,10 @@ function Register() {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   required
                   value={formData.password}
-                  onChange={(e) => handleChange('password', e.target.value)}
+                  onChange={(e) => handleChange("password", e.target.value)}
                   className="appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="••••••••"
                 />
@@ -171,7 +184,10 @@ function Register() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Confirmar senha
               </label>
               <div className="mt-1 relative">
@@ -181,10 +197,12 @@ function Register() {
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
+                  type={showConfirmPassword ? "text" : "password"}
                   required
                   value={formData.confirmPassword}
-                  onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                  onChange={(e) =>
+                    handleChange("confirmPassword", e.target.value)
+                  }
                   className="appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="••••••••"
                 />
@@ -210,15 +228,18 @@ function Register() {
               type="checkbox"
               required
               checked={formData.acceptTerms}
-              onChange={(e) => handleChange('acceptTerms', e.target.checked)}
+              onChange={(e) => handleChange("acceptTerms", e.target.checked)}
               className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
             />
-            <label htmlFor="accept-terms" className="ml-2 block text-sm text-gray-900">
-              Eu concordo com os{' '}
+            <label
+              htmlFor="accept-terms"
+              className="ml-2 block text-sm text-gray-900"
+            >
+              Eu concordo com os{" "}
               <a href="#" className="text-blue-600 hover:text-blue-500">
                 Termos de Serviço
-              </a>{' '}
-              e{' '}
+              </a>{" "}
+              e{" "}
               <a href="#" className="text-blue-600 hover:text-blue-500">
                 Política de Privacidade
               </a>
@@ -237,15 +258,18 @@ function Register() {
                   Criando conta...
                 </div>
               ) : (
-                'Criar Conta'
+                "Criar Conta"
               )}
             </button>
           </div>
 
           <div className="text-center">
             <span className="text-sm text-gray-600">
-              Já tem uma conta?{' '}
-              <Link to="/auth/login" className="font-medium text-blue-600 hover:text-blue-500">
+              Já tem uma conta?{" "}
+              <Link
+                to="/auth/login"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Faça login
               </Link>
             </span>
@@ -253,5 +277,5 @@ function Register() {
         </form>
       </div>
     </div>
-  )
+  );
 }

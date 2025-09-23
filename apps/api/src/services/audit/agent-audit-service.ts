@@ -5,8 +5,8 @@
  * with LGPD compliance and healthcare security requirements.
  */
 
-import { Database } from '@/types/database';
-import { createClient } from '@supabase/supabase-js';
+import { Database } from "@/types/database";
+import { createClient } from "@supabase/supabase-js";
 
 export interface AuditEvent {
   id: string;
@@ -25,7 +25,7 @@ export interface AuditEvent {
     dataAccessReason?: string;
     dataRetentionPolicy?: string;
     patientId?: string;
-    sensitivityLevel?: 'low' | 'medium' | 'high' | 'critical';
+    sensitivityLevel?: "low" | "medium" | "high" | "critical";
   };
 }
 
@@ -56,7 +56,7 @@ export class AgentAuditService {
   /**
    * Log an audit event
    */
-  async logEvent(event: Omit<AuditEvent, 'id' | 'timestamp'>): Promise<void> {
+  async logEvent(event: Omit<AuditEvent, "id" | "timestamp">): Promise<void> {
     const auditEvent: AuditEvent = {
       ...event,
       id: crypto.randomUUID(),
@@ -77,7 +77,7 @@ export class AgentAuditService {
   async logDataAccess(params: {
     _userId: string;
     sessionId?: string;
-    action: 'read' | 'write' | 'delete';
+    action: "read" | "write" | "delete";
     resource: string;
     resourceId?: string;
     success: boolean;
@@ -87,7 +87,10 @@ export class AgentAuditService {
     userAgent?: string;
     metadata?: Record<string, any>;
   }): Promise<void> {
-    const sensitivityLevel = this.determineSensitivityLevel(params.resource, params.patientId);
+    const sensitivityLevel = this.determineSensitivityLevel(
+      params.resource,
+      params.patientId,
+    );
 
     await this.logEvent({
       _userId: params.userId,
@@ -102,11 +105,14 @@ export class AgentAuditService {
         ...params.metadata,
         resourceId: params.resourceId,
         actionType: params.action,
-        accessMethod: 'api',
+        accessMethod: "api",
       },
       compliance: {
         lgpdConsentVerified: await this.verifyLgpdConsent(params._userId),
-        dataAccessReason: this.determineAccessReason(params.action, params.resource),
+        dataAccessReason: this.determineAccessReason(
+          params.action,
+          params.resource,
+        ),
         dataRetentionPolicy: this.getRetentionPolicy(params.resource),
         patientId: params.patientId,
         sensitivityLevel,
@@ -139,8 +145,8 @@ export class AgentAuditService {
     await this.logEvent({
       _userId: params.userId,
       sessionId: params.sessionId,
-      action: 'ai_query',
-      resource: 'agent_session',
+      action: "ai_query",
+      resource: "agent_session",
       success: params.success,
       error: params.error,
       ipAddress: params.ipAddress,
@@ -152,15 +158,15 @@ export class AgentAuditService {
         patientIds: params.patientIds,
         sources: params.sources,
         containsPhi,
-        aiModel: 'gpt-4', // Could be configured
+        aiModel: "gpt-4", // Could be configured
         queryType: this.categorizeQuery(params._query),
       },
       compliance: {
         lgpdConsentVerified: await this.verifyLgpdConsent(params._userId),
-        dataAccessReason: 'ai_assistant_interaction',
-        dataRetentionPolicy: '30_days',
+        dataAccessReason: "ai_assistant_interaction",
+        dataRetentionPolicy: "30_days",
         patientIds: params.patientIds,
-        sensitivityLevel: containsPhi ? 'high' : 'medium',
+        sensitivityLevel: containsPhi ? "high" : "medium",
       },
     });
   }
@@ -171,7 +177,7 @@ export class AgentAuditService {
   async logSessionEvent(params: {
     _userId: string;
     sessionId: string;
-    action: 'create' | 'update' | 'delete' | 'expire';
+    action: "create" | "update" | "delete" | "expire";
     success: boolean;
     error?: string;
     metadata?: Record<string, any>;
@@ -182,7 +188,7 @@ export class AgentAuditService {
       _userId: params.userId,
       sessionId: params.sessionId,
       action: `session_${params.action}`,
-      resource: 'agent_session',
+      resource: "agent_session",
       success: params.success,
       error: params.error,
       ipAddress: params.ipAddress,
@@ -193,8 +199,8 @@ export class AgentAuditService {
       },
       compliance: {
         lgpdConsentVerified: await this.verifyLgpdConsent(params._userId),
-        dataAccessReason: 'session_management',
-        dataRetentionPolicy: '24_hours',
+        dataAccessReason: "session_management",
+        dataRetentionPolicy: "24_hours",
       },
     });
   }
@@ -216,8 +222,8 @@ export class AgentAuditService {
     await this.logEvent({
       _userId: params.userId,
       sessionId: params.sessionId,
-      action: 'permission_check',
-      resource: params.resource || 'permissions',
+      action: "permission_check",
+      resource: params.resource || "permissions",
       success: params.granted,
       error: params.granted ? undefined : params.reason,
       ipAddress: params.ipAddress,
@@ -225,12 +231,12 @@ export class AgentAuditService {
       metadata: {
         permission: params.permission,
         processingTimeMs: params.processingTimeMs,
-        checkType: 'rbac',
+        checkType: "rbac",
       },
       compliance: {
         lgpdConsentVerified: true, // Permission checks don't require additional consent
-        dataAccessReason: 'security_validation',
-        dataRetentionPolicy: '90_days',
+        dataAccessReason: "security_validation",
+        dataRetentionPolicy: "90_days",
       },
     });
   }
@@ -245,36 +251,36 @@ export class AgentAuditService {
   }> {
     try {
       let query = this.supabase
-        .from('agent_audit_log')
-        .select('*', { count: 'exact' });
+        .from("agent_audit_log")
+        .select("*", { count: "exact" });
 
       // Apply filters
       if (options._userId) {
-        query = query.eq('user_id', options._userId);
+        query = query.eq("user_id", options._userId);
       }
 
       if (options.sessionId) {
-        query = query.eq('session_id', options.sessionId);
+        query = query.eq("session_id", options.sessionId);
       }
 
       if (options.action) {
-        query = query.eq('action', options.action);
+        query = query.eq("action", options.action);
       }
 
       if (options.resource) {
-        query = query.eq('table_name', options.resource);
+        query = query.eq("table_name", options.resource);
       }
 
       if (options.success !== undefined) {
-        query = query.eq('success', options.success);
+        query = query.eq("success", options.success);
       }
 
       if (options.startDate) {
-        query = query.gte('created_at', options.startDate);
+        query = query.gte("created_at", options.startDate);
       }
 
       if (options.endDate) {
-        query = query.lte('created_at', options.endDate);
+        query = query.lte("created_at", options.endDate);
       }
 
       // Apply pagination
@@ -287,7 +293,7 @@ export class AgentAuditService {
       }
 
       // Order by timestamp descending
-      query = query.order('created_at', { ascending: false });
+      query = query.order("created_at", { ascending: false });
 
       const { data, error, count } = await query;
 
@@ -303,7 +309,7 @@ export class AgentAuditService {
         hasMore: (options.limit || 0) + (options.offset || 0) < (count || 0),
       };
     } catch (error) {
-      console.error('Error querying audit logs:', error);
+      console.error("Error querying audit logs:", error);
       return {
         events: [],
         total: 0,
@@ -315,11 +321,13 @@ export class AgentAuditService {
   /**
    * Get audit statistics
    */
-  async getAuditStatistics(options: {
-    _userId?: string;
-    startDate?: string;
-    endDate?: string;
-  } = {}): Promise<{
+  async getAuditStatistics(
+    options: {
+      _userId?: string;
+      startDate?: string;
+      endDate?: string;
+    } = {},
+  ): Promise<{
     totalEvents: number;
     successfulEvents: number;
     failedEvents: number;
@@ -329,19 +337,21 @@ export class AgentAuditService {
   }> {
     try {
       let query = this.supabase
-        .from('agent_audit_log')
-        .select('action, table_name, success, compliance_metadata', { count: 'exact' });
+        .from("agent_audit_log")
+        .select("action, table_name, success, compliance_metadata", {
+          count: "exact",
+        });
 
       if (options._userId) {
-        query = query.eq('user_id', options._userId);
+        query = query.eq("user_id", options._userId);
       }
 
       if (options.startDate) {
-        query = query.gte('created_at', options.startDate);
+        query = query.gte("created_at", options.startDate);
       }
 
       if (options.endDate) {
-        query = query.lte('created_at', options.endDate);
+        query = query.lte("created_at", options.endDate);
       }
 
       const { data, error } = await query;
@@ -358,13 +368,19 @@ export class AgentAuditService {
       let totalProcessingTime = 0;
       let processingTimeCount = 0;
 
-      events.forEach(event => {
+      events.forEach((event) => {
         // Count actions
-        actionCounts.set(event.action, (actionCounts.get(event.action) || 0) + 1);
+        actionCounts.set(
+          event.action,
+          (actionCounts.get(event.action) || 0) + 1,
+        );
 
         // Count resources
         if (event.table_name) {
-          resourceCounts.set(event.table_name, (resourceCounts.get(event.table_name) || 0) + 1);
+          resourceCounts.set(
+            event.table_name,
+            (resourceCounts.get(event.table_name) || 0) + 1,
+          );
         }
 
         // Count success/failure
@@ -375,7 +391,8 @@ export class AgentAuditService {
         }
 
         // Sum processing times
-        const processingTime = event.compliance_metadata?.permission_processing_time;
+        const processingTime =
+          event.compliance_metadata?.permission_processing_time;
         if (processingTime) {
           totalProcessingTime += processingTime;
           processingTimeCount++;
@@ -399,12 +416,13 @@ export class AgentAuditService {
         failedEvents,
         topActions,
         topResources,
-        averageProcessingTime: processingTimeCount > 0
-          ? totalProcessingTime / processingTimeCount
-          : 0,
+        averageProcessingTime:
+          processingTimeCount > 0
+            ? totalProcessingTime / processingTimeCount
+            : 0,
       };
     } catch (error) {
-      console.error('Error getting audit statistics:', error);
+      console.error("Error getting audit statistics:", error);
       return {
         totalEvents: 0,
         successfulEvents: 0,
@@ -421,7 +439,7 @@ export class AgentAuditService {
    */
   async exportAuditLogs(
     options: AuditQueryOptions & {
-      format: 'csv' | 'json';
+      format: "csv" | "json";
     },
   ): Promise<string> {
     const { events } = await this.queryAuditLogs({
@@ -429,45 +447,49 @@ export class AgentAuditService {
       limit: 10000, // Max export size
     });
 
-    if (options.format === 'json') {
+    if (options.format === "json") {
       return JSON.stringify(events, null, 2);
     }
 
-    if (options.format === 'csv') {
+    if (options.format === "csv") {
       const headers = [
-        'ID',
-        'User ID',
-        'Session ID',
-        'Action',
-        'Resource',
-        'Timestamp',
-        'IP Address',
-        'Success',
-        'Error',
-        'Patient ID',
-        'Sensitivity Level',
+        "ID",
+        "User ID",
+        "Session ID",
+        "Action",
+        "Resource",
+        "Timestamp",
+        "IP Address",
+        "Success",
+        "Error",
+        "Patient ID",
+        "Sensitivity Level",
       ];
 
-      const rows = events.map(event => [
+      const rows = events.map((event) => [
         event.id,
         event.userId,
-        event.sessionId || '',
+        event.sessionId || "",
         event.action,
         event.resource,
         event.timestamp,
-        event.ipAddress || '',
+        event.ipAddress || "",
         event.success.toString(),
-        event.error || '',
-        event.compliance?.patientId || '',
-        event.compliance?.sensitivityLevel || '',
+        event.error || "",
+        event.compliance?.patientId || "",
+        event.compliance?.sensitivityLevel || "",
       ]);
 
       return [headers, ...rows]
-        .map(row => row.map(cell => `"${cell.toString().replace(/"/g, '""')}"`).join(','))
-        .join('\n');
+        .map((row) =>
+          row
+            .map((cell) => `"${cell.toString().replace(/"/g, '""')}"`)
+            .join(","),
+        )
+        .join("\n");
     }
 
-    throw new Error('Unsupported export format');
+    throw new Error("Unsupported export format");
   }
 
   /**
@@ -479,9 +501,9 @@ export class AgentAuditService {
       cutoffDate.setDate(cutoffDate.getDate() - 90); // Keep 90 days
 
       const { error } = await this.supabase
-        .from('agent_audit_log')
+        .from("agent_audit_log")
         .delete()
-        .lt('created_at', cutoffDate.toISOString());
+        .lt("created_at", cutoffDate.toISOString());
 
       if (error) {
         throw error;
@@ -489,7 +511,7 @@ export class AgentAuditService {
 
       return 0; // Actual count would need to be queried separately
     } catch (error) {
-      console.error('Error cleaning up old audit logs:', error);
+      console.error("Error cleaning up old audit logs:", error);
       return 0;
     }
   }
@@ -506,7 +528,7 @@ export class AgentAuditService {
     this.pendingEvents = [];
 
     try {
-      const records = eventsToFlush.map(event => ({
+      const records = eventsToFlush.map((event) => ({
         user_id: event.userId,
         session_id: event.sessionId,
         action: event.action,
@@ -523,16 +545,16 @@ export class AgentAuditService {
       }));
 
       const { error } = await this.supabase
-        .from('agent_audit_log')
+        .from("agent_audit_log")
         .insert(records);
 
       if (error) {
-        console.error('Error flushing audit events:', error);
+        console.error("Error flushing audit events:", error);
         // Re-add failed events to pending queue
         this.pendingEvents.unshift(...eventsToFlush);
       }
     } catch (error) {
-      console.error('Error flushing audit events:', error);
+      console.error("Error flushing audit events:", error);
       // Re-add failed events to pending queue
       this.pendingEvents.unshift(...eventsToFlush);
     }
@@ -573,20 +595,20 @@ export class AgentAuditService {
   private determineSensitivityLevel(
     resource: string,
     patientId?: string,
-  ): 'low' | 'medium' | 'high' | 'critical' {
-    if (resource.includes('financial') || resource.includes('billing')) {
-      return 'high';
+  ): "low" | "medium" | "high" | "critical" {
+    if (resource.includes("financial") || resource.includes("billing")) {
+      return "high";
     }
 
-    if (patientId && resource.includes('patient')) {
-      return 'critical';
+    if (patientId && resource.includes("patient")) {
+      return "critical";
     }
 
-    if (resource.includes('agent')) {
-      return 'medium';
+    if (resource.includes("agent")) {
+      return "medium";
     }
 
-    return 'low';
+    return "low";
   }
 
   /**
@@ -595,17 +617,17 @@ export class AgentAuditService {
   private async verifyLgpdConsent(_userId: string): Promise<boolean> {
     try {
       const { data } = await this.supabase
-        .from('user_lgpd_consents')
-        .select('id')
-        .eq('user_id', _userId)
-        .eq('consent_type', 'data_processing')
-        .eq('granted', true)
-        .gt('expires_at', new Date().toISOString())
+        .from("user_lgpd_consents")
+        .select("id")
+        .eq("user_id", _userId)
+        .eq("consent_type", "data_processing")
+        .eq("granted", true)
+        .gt("expires_at", new Date().toISOString())
         .single();
 
       return !!data;
     } catch (error) {
-      console.error('Error verifying LGPD consent:', error);
+      console.error("Error verifying LGPD consent:", error);
       return false;
     }
   }
@@ -614,42 +636,42 @@ export class AgentAuditService {
    * Determine access reason based on action and resource
    */
   private determineAccessReason(action: string, resource: string): string {
-    if (action === 'read') {
-      return 'data_viewing';
+    if (action === "read") {
+      return "data_viewing";
     }
 
-    if (action === 'write') {
-      return 'data_modification';
+    if (action === "write") {
+      return "data_modification";
     }
 
-    if (action === 'delete') {
-      return 'data_deletion';
+    if (action === "delete") {
+      return "data_deletion";
     }
 
-    if (resource.includes('ai') || resource.includes('agent')) {
-      return 'ai_assistant_interaction';
+    if (resource.includes("ai") || resource.includes("agent")) {
+      return "ai_assistant_interaction";
     }
 
-    return 'system_operation';
+    return "system_operation";
   }
 
   /**
    * Get retention policy for a resource
    */
   private getRetentionPolicy(resource: string): string {
-    if (resource.includes('financial') || resource.includes('billing')) {
-      return '7_years';
+    if (resource.includes("financial") || resource.includes("billing")) {
+      return "7_years";
     }
 
-    if (resource.includes('patient')) {
-      return '25_years';
+    if (resource.includes("patient")) {
+      return "25_years";
     }
 
-    if (resource.includes('agent')) {
-      return '30_days';
+    if (resource.includes("agent")) {
+      return "30_days";
     }
 
-    return '90_days';
+    return "90_days";
   }
 
   /**
@@ -664,7 +686,7 @@ export class AgentAuditService {
       /\b(patient|paciente|médico|doctor|hospital|clínica)\b/i, // Healthcare terms
     ];
 
-    return phiPatterns.some(pattern => pattern.test(text));
+    return phiPatterns.some((pattern) => pattern.test(text));
   }
 
   /**
@@ -673,23 +695,26 @@ export class AgentAuditService {
   private categorizeQuery(_query: string): string {
     const lowerQuery = query.toLowerCase();
 
-    if (lowerQuery.includes('agendamento') || lowerQuery.includes('appointment')) {
-      return 'scheduling';
+    if (
+      lowerQuery.includes("agendamento") ||
+      lowerQuery.includes("appointment")
+    ) {
+      return "scheduling";
     }
 
-    if (lowerQuery.includes('paciente') || lowerQuery.includes('patient')) {
-      return 'patient_data';
+    if (lowerQuery.includes("paciente") || lowerQuery.includes("patient")) {
+      return "patient_data";
     }
 
-    if (lowerQuery.includes('financeiro') || lowerQuery.includes('financial')) {
-      return 'financial';
+    if (lowerQuery.includes("financeiro") || lowerQuery.includes("financial")) {
+      return "financial";
     }
 
-    if (lowerQuery.includes('relatório') || lowerQuery.includes('report')) {
-      return 'reporting';
+    if (lowerQuery.includes("relatório") || lowerQuery.includes("report")) {
+      return "reporting";
     }
 
-    return 'general';
+    return "general";
   }
 
   /**

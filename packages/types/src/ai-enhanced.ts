@@ -9,7 +9,7 @@ export interface AIEnhancedMetadata {
   cacheHit?: boolean;
   modelVersion?: string;
   requestSource?: string;
-  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
+  complianceLevel?: "standard" | "enhanced" | "restricted";
   [key: string]: unknown;
 }
 

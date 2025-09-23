@@ -311,7 +311,8 @@ export class MedicalLicenseService {
   ): Promise<TelemedicineAuthorization> {
     try {
       // Check state-specific telemedicine regulations
-      const stateCouncil = this.stateCouncils.find((council) => council.state === state,
+      const stateCouncil = this.stateCouncils.find(
+        (council) => council.state === state,
       );
 
       if (!stateCouncil) {
@@ -684,7 +685,8 @@ export class MedicalLicenseService {
     if (cleanCRM.length < 4 || cleanCRM.length > 6) return false;
 
     // Check if state exists in our councils
-    const stateCouncil = this.stateCouncils.find((council) => council.state === state.toUpperCase(),
+    const stateCouncil = this.stateCouncils.find(
+      (council) => council.state === state.toUpperCase(),
     );
     if (!stateCouncil) return false;
 

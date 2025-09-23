@@ -3,10 +3,10 @@
  * Integrates WebRTC functionality with healthcare compliance and license verification
  */
 
-import { WebRTCSessionService } from '@neonpro/database';
-import { createAdminClient } from '../clients/supabase';
-import { logger } from '../lib/logger';
-import { HealthcareProfessionalAuthorizationService } from './healthcare-professional-authorization';
+import { WebRTCSessionService } from "@neonpro/database";
+import { createAdminClient } from "../clients/supabase";
+import { logger } from "../lib/logger";
+import { HealthcareProfessionalAuthorizationService } from "./healthcare-professional-authorization";
 
 export interface TelemedicineSessionInput {
   patientId: string;
@@ -26,7 +26,7 @@ export interface TelemedicineSession {
   physicianId: string;
   sessionType: string;
   specialty: string;
-  status: 'scheduled' | 'active' | 'ended' | 'cancelled';
+  status: "scheduled" | "active" | "ended" | "cancelled";
   scheduledFor: Date;
   startedAt?: Date;
   endedAt?: Date;
@@ -56,15 +56,18 @@ export class TelemedicineService {
 
   constructor() {
     this.webrtcService = new WebRTCSessionService();
-    this.authorizationService = new HealthcareProfessionalAuthorizationService();
+    this.authorizationService =
+      new HealthcareProfessionalAuthorizationService();
   }
 
   /**
    * Creates a new telemedicine session with proper license verification
    */
-  async createSession(input: TelemedicineSessionInput): Promise<TelemedicineSession> {
+  async createSession(
+    input: TelemedicineSessionInput,
+  ): Promise<TelemedicineSession> {
     try {
-      logger.info('Creating telemedicine session', {
+      logger.info("Creating telemedicine session", {
         patientId: input.patientId,
         physicianId: input.physicianId,
         specialty: input.specialty,
@@ -78,7 +81,7 @@ export class TelemedicineService {
       );
 
       if (!licenseVerification.telemedicineAuthorized) {
-        throw new Error('Physician not authorized for telemedicine practice');
+        throw new Error("Physician not authorized for telemedicine practice");
       }
 
       // Step 2: Verify clinic access permissions
@@ -94,7 +97,7 @@ export class TelemedicineService {
 
       // Step 4: Create telemedicine session record
       const { data: session, error } = await this.supabase
-        .from('telemedicine_sessions')
+        .from("telemedicine_sessions")
         .insert({
           patient_id: input.patientId,
           physician_id: input.physicianId,
@@ -105,19 +108,22 @@ export class TelemedicineService {
           notes: input.notes,
           clinic_id: input.clinicId,
           room_id: webrtcSession.roomId,
-          status: 'scheduled',
+          status: "scheduled",
           license_verified: true,
-          telemedicine_compliant: licenseVerification.complianceStatus.telemedicineCompliant,
+          telemedicine_compliant:
+            licenseVerification.complianceStatus.telemedicineCompliant,
           created_at: new Date().toISOString(),
         })
         .select()
         .single();
 
       if (error) {
-        throw new Error(`Failed to create telemedicine session: ${error.message}`);
+        throw new Error(
+          `Failed to create telemedicine session: ${error.message}`,
+        );
       }
 
-      logger.info('Telemedicine session created successfully', {
+      logger.info("Telemedicine session created successfully", {
         sessionId: session.id,
         roomId: webrtcSession.roomId,
         physicianId: input.physicianId,
@@ -143,7 +149,7 @@ export class TelemedicineService {
         },
       };
     } catch (error) {
-      logger.error('Error creating telemedicine session', {
+      logger.error("Error creating telemedicine session", {
         error: error instanceof Error ? error.message : String(error),
         physicianId: input.physicianId,
         patientId: input.patientId,
@@ -157,21 +163,21 @@ export class TelemedicineService {
    */
   async startSession(sessionId: string): Promise<void> {
     try {
-      logger.info('Starting telemedicine session', { sessionId });
+      logger.info("Starting telemedicine session", { sessionId });
 
       // Verify session exists and is in scheduled state
       const { data: session, error } = await this.supabase
-        .from('telemedicine_sessions')
-        .select('*')
-        .eq('id', sessionId)
+        .from("telemedicine_sessions")
+        .select("*")
+        .eq("id", sessionId)
         .single();
 
       if (error || !session) {
-        throw new Error('Telemedicine session not found');
+        throw new Error("Telemedicine session not found");
       }
 
-      if (session.status !== 'scheduled') {
-        throw new Error('Session can only be started from scheduled state');
+      if (session.status !== "scheduled") {
+        throw new Error("Session can only be started from scheduled state");
       }
 
       // Start WebRTC session
@@ -179,16 +185,16 @@ export class TelemedicineService {
 
       // Update session status
       await this.supabase
-        .from('telemedicine_sessions')
+        .from("telemedicine_sessions")
         .update({
-          status: 'active',
+          status: "active",
           started_at: new Date().toISOString(),
         })
-        .eq('id', sessionId);
+        .eq("id", sessionId);
 
-      logger.info('Telemedicine session started successfully', { sessionId });
+      logger.info("Telemedicine session started successfully", { sessionId });
     } catch (error) {
-      logger.error('Error starting telemedicine session', {
+      logger.error("Error starting telemedicine session", {
         error: error instanceof Error ? error.message : String(error),
         sessionId,
       });
@@ -207,7 +213,7 @@ export class TelemedicineService {
     recordingSummary?: any;
   }> {
     try {
-      logger.info('Ending telemedicine session', {
+      logger.info("Ending telemedicine session", {
         sessionId: input.sessionId,
         endReason: input.endReason,
         endedBy: input.endedBy,
@@ -215,35 +221,40 @@ export class TelemedicineService {
 
       // Get session details
       const { data: session, error } = await this.supabase
-        .from('telemedicine_sessions')
-        .select('*')
-        .eq('id', input.sessionId)
+        .from("telemedicine_sessions")
+        .select("*")
+        .eq("id", input.sessionId)
         .single();
 
       if (error || !session) {
-        throw new Error('Telemedicine session not found');
+        throw new Error("Telemedicine session not found");
       }
 
       // Calculate actual duration
       const startTime = new Date(session.started_at || session.scheduled_for);
       const endTime = new Date();
-      const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
+      const duration = Math.floor(
+        (endTime.getTime() - startTime.getTime()) / 1000,
+      );
 
       // Stop recording if enabled
       let recordingSummary;
       if (session.recording_enabled && input.recordingStopped) {
         try {
-          const recordingResult = await this.webrtcService.stopRecording(session.room_id);
+          const recordingResult = await this.webrtcService.stopRecording(
+            session.room_id,
+          );
           recordingSummary = {
             recordingId: recordingResult.recordingId,
             fileHash: recordingResult.fileHash,
             duration: recordingResult.duration,
           };
         } catch (recordingError) {
-          logger.warn('Failed to stop recording', {
-            error: recordingError instanceof Error
-              ? recordingError.message
-              : String(recordingError),
+          logger.warn("Failed to stop recording", {
+            error:
+              recordingError instanceof Error
+                ? recordingError.message
+                : String(recordingError),
             sessionId: input.sessionId,
           });
         }
@@ -254,18 +265,18 @@ export class TelemedicineService {
 
       // Update session record
       await this.supabase
-        .from('telemedicine_sessions')
+        .from("telemedicine_sessions")
         .update({
-          status: 'ended',
+          status: "ended",
           ended_at: endTime.toISOString(),
           end_reason: input.endReason,
           ended_by: input.endedBy,
           actual_duration: duration,
           recording_summary: recordingSummary,
         })
-        .eq('id', input.sessionId);
+        .eq("id", input.sessionId);
 
-      logger.info('Telemedicine session ended successfully', {
+      logger.info("Telemedicine session ended successfully", {
         sessionId: input.sessionId,
         duration,
         endReason: input.endReason,
@@ -279,7 +290,7 @@ export class TelemedicineService {
         recordingSummary,
       };
     } catch (error) {
-      logger.error('Error ending telemedicine session', {
+      logger.error("Error ending telemedicine session", {
         error: error instanceof Error ? error.message : String(error),
         sessionId: input.sessionId,
       });
@@ -300,17 +311,19 @@ export class TelemedicineService {
     try {
       // Get session details
       const { data: session, error } = await this.supabase
-        .from('telemedicine_sessions')
-        .select('*')
-        .eq('id', sessionId)
+        .from("telemedicine_sessions")
+        .select("*")
+        .eq("id", sessionId)
         .single();
 
       if (error || !session) {
-        throw new Error('Telemedicine session not found');
+        throw new Error("Telemedicine session not found");
       }
 
       // Get WebRTC status
-      const webrtcStatus = await this.webrtcService.getSessionStatus(session.room_id);
+      const webrtcStatus = await this.webrtcService.getSessionStatus(
+        session.room_id,
+      );
 
       // Format response
       const telemedicineSession: TelemedicineSession = {
@@ -322,7 +335,9 @@ export class TelemedicineService {
         specialty: session.specialty,
         status: session.status,
         scheduledFor: new Date(session.scheduled_for),
-        startedAt: session.started_at ? new Date(session.started_at) : undefined,
+        startedAt: session.started_at
+          ? new Date(session.started_at)
+          : undefined,
         endedAt: session.ended_at ? new Date(session.ended_at) : undefined,
         estimatedDuration: session.estimated_duration,
         actualDuration: session.actual_duration,
@@ -344,7 +359,7 @@ export class TelemedicineService {
         recording: webrtcStatus.recording || {},
       };
     } catch (error) {
-      logger.error('Error getting session status', {
+      logger.error("Error getting session status", {
         error: error instanceof Error ? error.message : String(error),
         sessionId,
       });
@@ -362,25 +377,26 @@ export class TelemedicineService {
     try {
       // Get physician details
       const { data: physician, error } = await this.supabase
-        .from('professionals')
-        .select('*')
-        .eq('id', physicianId)
-        .eq('role', 'physician')
+        .from("professionals")
+        .select("*")
+        .eq("id", physicianId)
+        .eq("role", "physician")
         .single();
 
       if (error || !physician) {
-        throw new Error('Physician not found');
+        throw new Error("Physician not found");
       }
 
       // Validate CFM license
-      const licenseVerification = await this.authorizationService.validateAuthorization(
-        physician.id,
-        'telemedicine_session',
-      );
+      const licenseVerification =
+        await this.authorizationService.validateAuthorization(
+          physician.id,
+          "telemedicine_session",
+        );
 
       return licenseVerification;
     } catch (error) {
-      logger.error('Error verifying physician license', {
+      logger.error("Error verifying physician license", {
         error: error instanceof Error ? error.message : String(error),
         physicianId,
         specialty,
@@ -392,23 +408,26 @@ export class TelemedicineService {
   /**
    * Verifies clinic access permissions
    */
-  private async verifyClinicAccess(physicianId: string, clinicId: string): Promise<void> {
+  private async verifyClinicAccess(
+    physicianId: string,
+    clinicId: string,
+  ): Promise<void> {
     try {
       const { data: physician, error } = await this.supabase
-        .from('professionals')
-        .select('clinic_id')
-        .eq('id', physicianId)
+        .from("professionals")
+        .select("clinic_id")
+        .eq("id", physicianId)
         .single();
 
       if (error || !physician) {
-        throw new Error('Physician not found');
+        throw new Error("Physician not found");
       }
 
       if (physician.clinic_id !== clinicId) {
-        throw new Error('Physician does not have access to this clinic');
+        throw new Error("Physician does not have access to this clinic");
       }
     } catch (error) {
-      logger.error('Error verifying clinic access', {
+      logger.error("Error verifying clinic access", {
         error: error instanceof Error ? error.message : String(error),
         physicianId,
         clinicId,
@@ -422,19 +441,19 @@ export class TelemedicineService {
    */
   async startRecording(
     sessionId: string,
-    consentMethod: 'verbal' | 'digital' | 'written',
+    consentMethod: "verbal" | "digital" | "written",
     consentEvidence?: any,
   ): Promise<{ recordingId: string; storageLocation: string }> {
     try {
       // Get session details
       const { data: session, error } = await this.supabase
-        .from('telemedicine_sessions')
-        .select('room_id')
-        .eq('id', sessionId)
+        .from("telemedicine_sessions")
+        .select("room_id")
+        .eq("id", sessionId)
         .single();
 
       if (error || !session) {
-        throw new Error('Telemedicine session not found');
+        throw new Error("Telemedicine session not found");
       }
 
       // Start recording via WebRTC service
@@ -446,19 +465,19 @@ export class TelemedicineService {
 
       // Update session record
       await this.supabase
-        .from('telemedicine_sessions')
+        .from("telemedicine_sessions")
         .update({
           recording_enabled: true,
           recording_consent: true,
           recording_consent_method: consentMethod,
         })
-        .eq('id', sessionId);
+        .eq("id", sessionId);
 
-      logger.info('Recording started for telemedicine session', { sessionId });
+      logger.info("Recording started for telemedicine session", { sessionId });
 
       return result;
     } catch (error) {
-      logger.error('Error starting recording', {
+      logger.error("Error starting recording", {
         error: error instanceof Error ? error.message : String(error),
         sessionId,
       });
@@ -477,13 +496,13 @@ export class TelemedicineService {
     try {
       // Get session details
       const { data: session, error } = await this.supabase
-        .from('telemedicine_sessions')
-        .select('room_id')
-        .eq('id', sessionId)
+        .from("telemedicine_sessions")
+        .select("room_id")
+        .eq("id", sessionId)
         .single();
 
       if (error || !session) {
-        throw new Error('Telemedicine session not found');
+        throw new Error("Telemedicine session not found");
       }
 
       // Stop recording via WebRTC service
@@ -491,17 +510,17 @@ export class TelemedicineService {
 
       // Update session record
       await this.supabase
-        .from('telemedicine_sessions')
+        .from("telemedicine_sessions")
         .update({
           recording_enabled: false,
         })
-        .eq('id', sessionId);
+        .eq("id", sessionId);
 
-      logger.info('Recording stopped for telemedicine session', { sessionId });
+      logger.info("Recording stopped for telemedicine session", { sessionId });
 
       return result;
     } catch (error) {
-      logger.error('Error stopping recording', {
+      logger.error("Error stopping recording", {
         error: error instanceof Error ? error.message : String(error),
         sessionId,
       });

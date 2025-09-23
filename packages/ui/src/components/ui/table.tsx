@@ -55,7 +55,9 @@ const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement>
 >(({ className, children, ...props }, ref) => {
-  const sanitizedChildren = React.Children.toArray(children).filter((child) => !(typeof child === "string" && child.trim() === ""));
+  const sanitizedChildren = React.Children.toArray(children).filter(
+    (child) => !(typeof child === "string" && child.trim() === ""),
+  );
   return (
     <tr
       ref={ref}
@@ -118,5 +120,5 @@ export {
   TableHead,
   TableRow,
   TableCell,
-  TableCaption
+  TableCaption,
 };

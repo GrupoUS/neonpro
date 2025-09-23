@@ -15,7 +15,7 @@ export interface Workflow {
     agent: string,
     phase: TDDPhase,
     context: OrchestrationContext,
-    coordination: AgentCoordinationPattern
+    coordination: AgentCoordinationPattern,
   ): Promise<AgentResult>;
 }
 
@@ -30,7 +30,7 @@ export class StandardTDDWorkflow implements Workflow {
     agent: string,
     phase: TDDPhase,
     context: OrchestrationContext,
-    coordination: AgentCoordinationPattern
+    coordination: AgentCoordinationPattern,
   ): Promise<AgentResult> {
     // Simplified agent execution
     return {
@@ -40,7 +40,7 @@ export class StandardTDDWorkflow implements Workflow {
       duration: 100,
       quality: {
         score: 85,
-        issues: []
+        issues: [],
       },
     };
   }
@@ -57,7 +57,7 @@ export class SecurityCriticalWorkflow implements Workflow {
     agent: string,
     phase: TDDPhase,
     context: OrchestrationContext,
-    coordination: AgentCoordinationPattern
+    coordination: AgentCoordinationPattern,
   ): Promise<AgentResult> {
     // Enhanced security validation
     const securityScore = context.healthcareCompliance.required ? 95 : 90;
@@ -71,12 +71,12 @@ export class SecurityCriticalWorkflow implements Workflow {
         agent,
         coordination,
         securityValidated: true,
-        complianceScore: securityScore
+        complianceScore: securityScore,
       },
       duration: 150,
       quality: {
         score: securityScore,
-        issues: []
+        issues: [],
       },
     };
   }

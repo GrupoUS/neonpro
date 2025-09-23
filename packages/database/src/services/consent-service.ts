@@ -1,6 +1,6 @@
-import { AuditEvent, ComplianceCheck } from '../types/audit.types.js';
-import { supabase } from '../client.js';
-import { ErrorMapper } from '@neonpro/shared/errors';
+import { AuditEvent, ComplianceCheck } from "../types/audit.types.js";
+import { supabase } from "../client.js";
+import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface ConsentRequest {
   patientId: string;
@@ -15,7 +15,7 @@ export interface ConsentRecord {
   id: string;
   patientId: string;
   consentType: string;
-  status: 'ACTIVE' | 'EXPIRED' | 'REVOKED';
+  status: "ACTIVE" | "EXPIRED" | "REVOKED";
   purpose: string;
   dataTypes: string[];
   grantedAt: string;
@@ -47,7 +47,7 @@ export class ConsentService {
         id: `consent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         patientId: request.patientId,
         consentType: request.consentType,
-        status: 'ACTIVE',
+        status: "ACTIVE",
         purpose: request.purpose,
         dataTypes: request.dataTypes,
         grantedAt: new Date().toISOString(),
@@ -60,10 +60,10 @@ export class ConsentService {
       const auditEvent: AuditEvent = {
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_CREATED',
-        entityType: 'consent',
+        action: "CONSENT_CREATED",
+        entityType: "consent",
         entityId: consent.id,
-        actorId: 'system',
+        actorId: "system",
         metadata: {
           consentType: request.consentType,
           purpose: request.purpose,
@@ -85,12 +85,12 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_CREATE_ERROR',
-        entityType: 'consent',
-        entityId: 'unknown',
-        actorId: 'system',
+        action: "CONSENT_CREATE_ERROR",
+        entityType: "consent",
+        entityId: "unknown",
+        actorId: "system",
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
           patientIdHash: this.hashPatientId(request.patientId),
         },
       });
@@ -109,10 +109,10 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_ACCESSED',
-        entityType: 'consent',
-        entityId: 'multiple',
-        actorId: 'system',
+        action: "CONSENT_ACCESSED",
+        entityType: "consent",
+        entityId: "multiple",
+        actorId: "system",
         metadata: {
           patientIdHash: this.hashPatientId(patientId),
         },
@@ -125,12 +125,12 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_ACCESS_ERROR',
-        entityType: 'consent',
-        entityId: 'multiple',
-        actorId: 'system',
+        action: "CONSENT_ACCESS_ERROR",
+        entityType: "consent",
+        entityId: "multiple",
+        actorId: "system",
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
           patientIdHash: this.hashPatientId(patientId),
         },
       });
@@ -154,7 +154,7 @@ export class ConsentService {
 
       const revokedConsent: ConsentRecord = {
         ...existingConsent,
-        status: 'REVOKED',
+        status: "REVOKED",
         revokedAt: new Date().toISOString(),
       };
 
@@ -165,10 +165,10 @@ export class ConsentService {
       const auditEvent: AuditEvent = {
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_REVOKED',
-        entityType: 'consent',
+        action: "CONSENT_REVOKED",
+        entityType: "consent",
         entityId: consentId,
-        actorId: 'system',
+        actorId: "system",
         metadata: {
           revokedAt: revokedConsent.revokedAt,
           patientIdHash: this.hashPatientId(revokedConsent.patientId),
@@ -183,12 +183,12 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_REVOKE_ERROR',
-        entityType: 'consent',
+        action: "CONSENT_REVOKE_ERROR",
+        entityType: "consent",
         entityId: consentId,
-        actorId: 'system',
+        actorId: "system",
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       });
       throw error;
@@ -206,12 +206,12 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'COMPLIANCE_CHECK',
-        entityType: 'patient',
+        action: "COMPLIANCE_CHECK",
+        entityType: "patient",
         entityId: this.hashPatientId(patientId),
-        actorId: 'system',
+        actorId: "system",
         metadata: {
-          checkType: 'LGPD_COMPLIANCE',
+          checkType: "LGPD_COMPLIANCE",
         },
       });
 
@@ -222,12 +222,12 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'COMPLIANCE_CHECK_ERROR',
-        entityType: 'patient',
+        action: "COMPLIANCE_CHECK_ERROR",
+        entityType: "patient",
         entityId: this.hashPatientId(patientId),
-        actorId: 'system',
+        actorId: "system",
         metadata: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
       });
       throw error;
@@ -242,7 +242,7 @@ export class ConsentService {
   private hashPatientId(patientId: string): string {
     // Simple hash for demo - in production use proper crypto hash
     const hash = Array.from(patientId)
-      .reduce((acc,_char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
+      .reduce((acc, _char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
       .toString(16);
     return `patient_${hash.slice(-8)}`;
   }
@@ -268,12 +268,12 @@ export class ConsentService {
     this.auditLogger({
       id: `audit-log-${Date.now()}`,
       timestamp: new Date().toISOString(),
-      action: 'AUDIT_LOG_ENTRY',
-      entityType: 'system',
-      entityId: 'consent-service',
-      actorId: 'system',
+      action: "AUDIT_LOG_ENTRY",
+      entityType: "system",
+      entityId: "consent-service",
+      actorId: "system",
       metadata: {
-        logType: 'audit-trail',
+        logType: "audit-trail",
         eventCount: 1,
         safeEventData: safeEvent,
       },
@@ -288,7 +288,7 @@ export class ConsentService {
   private async persistConsent(consent: ConsentRecord): Promise<void> {
     try {
       const { data: data, error } = await supabase
-        .from('patient_consents')
+        .from("patient_consents")
         .insert({
           id: consent.id,
           patient_id: consent.patientId,
@@ -313,10 +313,10 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_PERSISTED',
-        entityType: 'consent',
+        action: "CONSENT_PERSISTED",
+        entityType: "consent",
         entityId: consent.id,
-        actorId: 'system',
+        actorId: "system",
         metadata: {
           patientIdHash: this.hashPatientId(consent.patientId),
           consentType: consent.consentType,
@@ -325,7 +325,7 @@ export class ConsentService {
     } catch (error) {
       // Use ErrorMapper for consistent error handling
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'persist_consent',
+        action: "persist_consent",
         timestamp: new Date().toISOString(),
       });
 
@@ -333,10 +333,10 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_PERSIST_ERROR',
-        entityType: 'consent',
+        action: "CONSENT_PERSIST_ERROR",
+        entityType: "consent",
         entityId: consent.id,
-        actorId: 'system',
+        actorId: "system",
         metadata: {
           error: mappedError.message,
           patientIdHash: this.hashPatientId(consent.patientId),
@@ -353,13 +353,15 @@ export class ConsentService {
    * @returns Array of consent records
    * @throws Error if database operation fails
    */
-  private async queryConsentsByPatient(patientId: string): Promise<ConsentRecord[]> {
+  private async queryConsentsByPatient(
+    patientId: string,
+  ): Promise<ConsentRecord[]> {
     try {
       const { data: data, error } = await supabase
-        .from('patient_consents')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('granted_at', { ascending: false });
+        .from("patient_consents")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("granted_at", { ascending: false });
 
       if (error) {
         throw new Error(`Failed to query consents: ${error.message}`);
@@ -383,17 +385,17 @@ export class ConsentService {
       return consents;
     } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'query_consents',
+        action: "query_consents",
         timestamp: new Date().toISOString(),
       });
 
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_QUERY_ERROR',
-        entityType: 'consent',
-        entityId: 'multiple',
-        actorId: 'system',
+        action: "CONSENT_QUERY_ERROR",
+        entityType: "consent",
+        entityId: "multiple",
+        actorId: "system",
         metadata: {
           error: mappedError.message,
           patientIdHash: this.hashPatientId(patientId),
@@ -410,15 +412,18 @@ export class ConsentService {
    * @returns Consent record or null if not found
    * @throws Error if database operation fails
    */
-  private async findConsentById(consentId: string): Promise<ConsentRecord | null> {
+  private async findConsentById(
+    consentId: string,
+  ): Promise<ConsentRecord | null> {
     try {
       const { data: data, error } = await supabase
-        .from('patient_consents')
-        .select('*')
-        .eq('id', consentId)
+        .from("patient_consents")
+        .select("*")
+        .eq("id", consentId)
         .single();
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 = not found
+      if (error && error.code !== "PGRST116") {
+        // PGRST116 = not found
         throw new Error(`Failed to find consent: ${error.message}`);
       }
 
@@ -442,17 +447,17 @@ export class ConsentService {
       };
     } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'find_consent',
+        action: "find_consent",
         timestamp: new Date().toISOString(),
       });
 
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_FIND_ERROR',
-        entityType: 'consent',
+        action: "CONSENT_FIND_ERROR",
+        entityType: "consent",
         entityId: consentId,
-        actorId: 'system',
+        actorId: "system",
         metadata: {
           error: mappedError.message,
         },
@@ -470,13 +475,13 @@ export class ConsentService {
   private async updateConsent(consent: ConsentRecord): Promise<void> {
     try {
       const { data: data, error } = await supabase
-        .from('patient_consents')
+        .from("patient_consents")
         .update({
           status: consent.status,
           revoked_at: consent.revokedAt,
           audit_trail: consent.auditTrail,
         })
-        .eq('id', consent.id)
+        .eq("id", consent.id)
         .select()
         .single();
 
@@ -488,10 +493,10 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_UPDATED',
-        entityType: 'consent',
+        action: "CONSENT_UPDATED",
+        entityType: "consent",
         entityId: consent.id,
-        actorId: 'system',
+        actorId: "system",
         metadata: {
           patientIdHash: this.hashPatientId(consent.patientId),
           newStatus: consent.status,
@@ -499,17 +504,17 @@ export class ConsentService {
       });
     } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'update_consent',
+        action: "update_consent",
         timestamp: new Date().toISOString(),
       });
 
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_UPDATE_ERROR',
-        entityType: 'consent',
+        action: "CONSENT_UPDATE_ERROR",
+        entityType: "consent",
         entityId: consent.id,
-        actorId: 'system',
+        actorId: "system",
         metadata: {
           error: mappedError.message,
           patientIdHash: this.hashPatientId(consent.patientId),
@@ -526,7 +531,9 @@ export class ConsentService {
    * @returns Compliance check result
    * @throws Error if compliance check fails
    */
-  private async performComplianceCheck(patientId: string): Promise<ComplianceCheck> {
+  private async performComplianceCheck(
+    patientId: string,
+  ): Promise<ComplianceCheck> {
     try {
       // Get all consents for the patient
       const consents = await this.queryConsentsByPatient(patientId);
@@ -535,8 +542,8 @@ export class ConsentService {
       const now = new Date();
 
       // Check for expired consents
-      const expiredConsents = consents.filter(consent =>
-        consent.expiresAt && new Date(consent.expiresAt) < now
+      const expiredConsents = consents.filter(
+        (consent) => consent.expiresAt && new Date(consent.expiresAt) < now,
       );
 
       if (expiredConsents.length > 0) {
@@ -544,53 +551,72 @@ export class ConsentService {
       }
 
       // Check for consents without proper expiration dates
-      const consentsWithoutExpiration = consents.filter(consent =>
-        !consent.expiresAt && consent.consentType !== 'EMERGENCY'
+      const consentsWithoutExpiration = consents.filter(
+        (consent) => !consent.expiresAt && consent.consentType !== "EMERGENCY",
       );
 
       if (consentsWithoutExpiration.length > 0) {
-        violations.push(`Found ${consentsWithoutExpiration.length} consent(s) without expiration dates`);
+        violations.push(
+          `Found ${consentsWithoutExpiration.length} consent(s) without expiration dates`,
+        );
       }
 
       // Check data retention policies (max 2 years for most healthcare data)
-      const twoYearsAgo = new Date(now.getFullYear() - 2, now.getMonth(), now.getDate());
-      const oldConsents = consents.filter(consent =>
-        new Date(consent.grantedAt) < twoYearsAgo &&
-        consent.consentType !== 'EMERGENCY'
+      const twoYearsAgo = new Date(
+        now.getFullYear() - 2,
+        now.getMonth(),
+        now.getDate(),
+      );
+      const oldConsents = consents.filter(
+        (consent) =>
+          new Date(consent.grantedAt) < twoYearsAgo &&
+          consent.consentType !== "EMERGENCY",
       );
 
       if (oldConsents.length > 0) {
-        violations.push(`Found ${oldConsents.length} consent(s) exceeding 2-year retention policy`);
+        violations.push(
+          `Found ${oldConsents.length} consent(s) exceeding 2-year retention policy`,
+        );
       }
 
       // Check for missing sensitive data handling
-      const sensitiveConsents = consents.filter(consent =>
-        consent.dataTypes.some(type =>
-          ['medical_records', 'diagnosis', 'treatment', 'genetic_data'].includes(type)
-        )
+      const sensitiveConsents = consents.filter((consent) =>
+        consent.dataTypes.some((type) =>
+          [
+            "medical_records",
+            "diagnosis",
+            "treatment",
+            "genetic_data",
+          ].includes(type),
+        ),
       );
 
       if (sensitiveConsents.length > 0) {
-        const sensitiveWithoutExpiration = sensitiveConsents.filter(consent => !consent.expiresAt);
+        const sensitiveWithoutExpiration = sensitiveConsents.filter(
+          (consent) => !consent.expiresAt,
+        );
         if (sensitiveWithoutExpiration.length > 0) {
-          violations.push(`Found ${sensitiveWithoutExpiration.length} sensitive consent(s) without expiration dates`);
+          violations.push(
+            `Found ${sensitiveWithoutExpiration.length} sensitive consent(s) without expiration dates`,
+          );
         }
       }
 
       // Determine compliance status and risk level
       const isCompliant = violations.length === 0;
-      let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW';
+      let riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" = "LOW";
 
       if (violations.length >= 5) {
-        riskLevel = 'CRITICAL';
+        riskLevel = "CRITICAL";
       } else if (violations.length >= 3) {
-        riskLevel = 'HIGH';
+        riskLevel = "HIGH";
       } else if (violations.length >= 1) {
-        riskLevel = 'MEDIUM';
+        riskLevel = "MEDIUM";
       }
 
-      const status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING' =
-        isCompliant ? 'COMPLIANT' : 'NON_COMPLIANT'
+      const status: "COMPLIANT" | "NON_COMPLIANT" | "PENDING" = isCompliant
+        ? "COMPLIANT"
+        : "NON_COMPLIANT";
 
       return {
         status,
@@ -599,26 +625,29 @@ export class ConsentService {
         violations,
         isCompliant,
         lastChecked: now.toISOString(),
-        recommendations: violations.length > 0 ? [
-          'Review and update expired consents',
-          'Add expiration dates to consents without them',
-          'Archive consents exceeding retention policies',
-          'Implement additional safeguards for sensitive data'
-        ] : [],
+        recommendations:
+          violations.length > 0
+            ? [
+                "Review and update expired consents",
+                "Add expiration dates to consents without them",
+                "Archive consents exceeding retention policies",
+                "Implement additional safeguards for sensitive data",
+              ]
+            : [],
       };
     } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'compliance_check',
+        action: "compliance_check",
         timestamp: new Date().toISOString(),
       });
 
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'COMPLIANCE_CHECK_ERROR',
-        entityType: 'patient',
+        action: "COMPLIANCE_CHECK_ERROR",
+        entityType: "patient",
         entityId: this.hashPatientId(patientId),
-        actorId: 'system',
+        actorId: "system",
         metadata: {
           error: mappedError.message,
         },
@@ -630,7 +659,9 @@ export class ConsentService {
 }
 
 // Export utility functions for creating consent service instances
-export const createConsentService = (auditLogger?: (event: AuditEvent) => void) => {
+export const createConsentService = (
+  auditLogger?: (event: AuditEvent) => void,
+) => {
   return new ConsentService(auditLogger);
 };
 

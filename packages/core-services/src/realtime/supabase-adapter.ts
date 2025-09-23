@@ -404,7 +404,11 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   // Private Helper Methods
   // ============================================================================
 
-  private createRealtimeEvent: typeof createRealtimeEvent = (type, channelId, participant, data,
+  private createRealtimeEvent: typeof createRealtimeEvent = (
+    type,
+    channelId,
+    participant,
+    data,
   ) => {
     return {
       type,

@@ -4,4 +4,4 @@
  */
 
 // Export API Contract models
-export * from './api-contract';
+export * from "./api-contract";

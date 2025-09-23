@@ -1,6 +1,6 @@
 interface WarmupTarget {
   url: string;
-  method: 'GET' | 'POST';
+  method: "GET" | "POST";
   headers?: Record<string, string>;
   body?: string;
   expectedStatusCode?: number;
@@ -19,26 +19,26 @@ class FunctionWarmer {
   private setupDefaultTargets() {
     const baseUrl = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
-      : 'http://localhost:3000';
+      : "http://localhost:3000";
 
     this.targets = [
       {
         url: `${baseUrl}/api/health`,
-        method: 'GET',
+        method: "GET",
         expectedStatusCode: 200,
         timeout: 5000,
       },
       {
         url: `${baseUrl}/api/v1/health`,
-        method: 'GET',
+        method: "GET",
         expectedStatusCode: 200,
         timeout: 5000,
       },
       {
         url: `${baseUrl}/api/auth/validate`,
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: 'warmup-token' }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token: "warmup-token" }),
         expectedStatusCode: 401, // Expected failure for warmup
         timeout: 5000,
       },
@@ -50,9 +50,12 @@ class FunctionWarmer {
       this.stopWarmup();
     }
 
-    this.warmupInterval = setInterval(() => {
-      this.performWarmup();
-    }, intervalMinutes * 60 * 1000);
+    this.warmupInterval = setInterval(
+      () => {
+        this.performWarmup();
+      },
+      intervalMinutes * 60 * 1000,
+    );
 
     // Initial warmup
     this.performWarmup();
@@ -77,14 +80,14 @@ class FunctionWarmer {
         results.push(result);
       }
 
-      console.log('Function warmup completed:', {
+      console.log("Function warmup completed:", {
         timestamp: new Date().toISOString(),
-        results: results.filter(r => r.success).length,
-        failures: results.filter(r => !r.success).length,
+        results: results.filter((r) => r.success).length,
+        failures: results.filter((r) => !r.success).length,
         totalTargets: this.targets.length,
       });
     } catch (error) {
-      console.error('Warmup error:', error);
+      console.error("Warmup error:", error);
     } finally {
       this.isWarming = false;
     }
@@ -101,7 +104,10 @@ class FunctionWarmer {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), target.timeout || 5000);
+      const timeoutId = setTimeout(
+        () => controller.abort(),
+        target.timeout || 5000,
+      );
 
       // Do not send body for GET requests to satisfy lint rule and HTTP semantics
       const init: RequestInit = {
@@ -109,7 +115,7 @@ class FunctionWarmer {
         headers: target.headers,
         signal: controller.signal,
       };
-      if (target.method !== 'GET' && target.body !== undefined) {
+      if (target.method !== "GET" && target.body !== undefined) {
         init.body = target.body;
       }
 
@@ -133,7 +139,7 @@ class FunctionWarmer {
         url: target.url,
         success: false,
         duration,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   }
@@ -143,7 +149,7 @@ class FunctionWarmer {
   }
 
   public removeTarget(url: string) {
-    this.targets = this.targets.filter(t => t.url !== url);
+    this.targets = this.targets.filter((t) => t.url !== url);
   }
 
   public getTargets(): WarmupTarget[] {
@@ -155,8 +161,8 @@ export const functionWarmer = new FunctionWarmer();
 
 // Auto-start in production
 if (
-  process.env.NODE_ENV === 'production'
-  && process.env.VERCEL_ENV === 'production'
+  process.env.NODE_ENV === "production" &&
+  process.env.VERCEL_ENV === "production"
 ) {
   functionWarmer.startWarmup(5); // Warm every 5 minutes
 }

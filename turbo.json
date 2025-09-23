@@ -1,10 +1,6 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    "**/.env.*local",
-    "tsconfig.json",
-    "tsconfig.*.json"
-  ],
+  "globalDependencies": ["**/.env.*local", "tsconfig.json", "tsconfig.*.json"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
@@ -31,12 +27,12 @@
     "build:analyze": {
       "dependsOn": ["^build"],
       "outputs": ["*.stats.json", "*.stats.html", "bundle-analysis*.html"]
+    },
+    "build:copilot": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", ".next/**"],
+      "cache": true
     }
   },
-  "globalEnv": [
-    "NODE_ENV",
-    "VERCEL",
-    "VERCEL_ENV",
-    "EDGE_RUNTIME"
-  ]
+  "globalEnv": ["NODE_ENV", "VERCEL", "VERCEL_ENV", "EDGE_RUNTIME"]
 }

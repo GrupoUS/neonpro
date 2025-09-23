@@ -16,12 +16,12 @@ import { EventCalendar } from '@/components/event-calendar';
 
 ```typescript
 interface EventCalendarProps {
-  events?: CalendarEvent[];           // Array of calendar events to display
-  onEventAdd?: (event: CalendarEvent) => void;     // Callback when event is added
-  onEventUpdate?: (event: CalendarEvent) => void;  // Callback when event is updated
-  onEventDelete?: (eventId: string) => void;       // Callback when event is deleted
-  className?: string;               // Additional CSS classes
-  initialView?: CalendarView;       // Initial calendar view (default: "month")
+  events?: CalendarEvent[]; // Array of calendar events to display
+  onEventAdd?: (event: CalendarEvent) => void; // Callback when event is added
+  onEventUpdate?: (event: CalendarEvent) => void; // Callback when event is updated
+  onEventDelete?: (eventId: string) => void; // Callback when event is deleted
+  className?: string; // Additional CSS classes
+  initialView?: CalendarView; // Initial calendar view (default: "month")
 }
 ```
 
@@ -31,15 +31,15 @@ interface EventCalendarProps {
 
 ```typescript
 interface CalendarEvent {
-  id: string;           // Unique event identifier
-  title: string;        // Event title
+  id: string; // Unique event identifier
+  title: string; // Event title
   description?: string; // Event description (optional)
-  start: Date;          // Event start time
-  end: Date;            // Event end time
-  allDay?: boolean;     // Is this an all-day event?
-  color?: EventColor;   // Event color for visual distinction
-  label?: string;       // Event label/category
-  location?: string;    // Event location (optional)
+  start: Date; // Event start time
+  end: Date; // Event end time
+  allDay?: boolean; // Is this an all-day event?
+  color?: EventColor; // Event color for visual distinction
+  label?: string; // Event label/category
+  location?: string; // Event location (optional)
 }
 ```
 
@@ -52,12 +52,19 @@ type CalendarView = "month" | "week" | "day" | "agenda";
 ### EventColor
 
 ```typescript
-type EventColor = "default" | "primary" | "secondary" | "success" | "warning" | "error";
+type EventColor =
+  | "default"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "warning"
+  | "error";
 ```
 
 ## Features
 
 ### 🎯 Core Functionality
+
 - **Multiple View Modes**: Month, Week, Day, and Agenda views
 - **Drag & Drop**: Interactive event rescheduling and duration adjustment
 - **Keyboard Shortcuts**: Quick navigation and view switching
@@ -65,12 +72,14 @@ type EventColor = "default" | "primary" | "secondary" | "success" | "warning" | 
 - **Responsive Design**: Mobile-friendly interface
 
 ### ⚡ Performance Optimizations
+
 - **Virtual Scrolling**: Efficient rendering of large event sets
 - **Lazy Loading**: Events loaded on demand based on view
 - **Memoization**: Optimized re-rendering performance
 - **Debounced Input**: Efficient search and filtering
 
 ### 🔧 Healthcare-Specific Features
+
 - **Time Snapping**: Events snap to 15-minute intervals
 - **Overlapping Detection**: Smart handling of concurrent appointments
 - **Clinic Context**: Integration with clinic management system
@@ -95,7 +104,7 @@ const sampleEvents: CalendarEvent[] = [
     location: "Consultation Room A"
   },
   {
-    id: "2", 
+    id: "2",
     title: "Team Meeting",
     start: new Date("2024-01-15T14:00:00"),
     end: new Date("2024-01-15T15:00:00"),
@@ -170,16 +179,16 @@ function DailySchedule() {
 
 The EventCalendar includes comprehensive keyboard navigation:
 
-| Shortcut | Action |
-|----------|--------|
-| `M` | Switch to Month view |
-| `W` | Switch to Week view |
-| `D` | Switch to Day view |
-| `A` | Switch to Agenda view |
-| `←` | Navigate to previous period |
-| `→` | Navigate to next period |
-| `T` | Navigate to today |
-| `Esc` | Close dialogs/menus |
+| Shortcut | Action                      |
+| -------- | --------------------------- |
+| `M`      | Switch to Month view        |
+| `W`      | Switch to Week view         |
+| `D`      | Switch to Day view          |
+| `A`      | Switch to Agenda view       |
+| `←`      | Navigate to previous period |
+| `→`      | Navigate to next period     |
+| `T`      | Navigate to today           |
+| `Esc`    | Close dialogs/menus         |
 
 ## Event Management
 
@@ -196,9 +205,9 @@ const handleEventCreate = async (startTime: Date) => {
     start: startTime,
     end: addHours(startTime, 1),
     allDay: false,
-    color: "primary"
+    color: "primary",
   };
-  
+
   // The calendar automatically opens the event dialog
   return await createEvent(newEvent);
 };
@@ -207,6 +216,7 @@ const handleEventCreate = async (startTime: Date) => {
 ### Updating Events
 
 Events can be updated through:
+
 - **Drag & Drop**: Change event time by dragging
 - **Resize**: Adjust duration by dragging event edges
 - **Edit Dialog**: Click event to open details
@@ -215,7 +225,7 @@ Events can be updated through:
 const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
   // Update event in backend
   await updateEvent(updatedEvent.id, updatedEvent);
-  
+
   // Calendar automatically updates the display
   showSuccessToast("Appointment updated successfully");
 };
@@ -286,7 +296,7 @@ const clinicEvent: CalendarEvent = {
   end: addHours(new Date(), 1),
   clinicId: currentClinic.id, // From clinic context
   practitionerId: currentPractitioner.id,
-  patientId: selectedPatient?.id
+  patientId: selectedPatient?.id,
 };
 ```
 
@@ -317,7 +327,7 @@ const loadEventsForDateRange = async (start: Date, end: Date) => {
     const events = await calendarService.getEvents(start, end);
     setEvents(events);
   } catch (error) {
-    console.error('Failed to load events:', error);
+    console.error("Failed to load events:", error);
   } finally {
     setLoading(false);
   }
@@ -333,31 +343,30 @@ const handleEventSave = async (event: CalendarEvent) => {
   try {
     // Validate event data
     if (!event.title || !event.start || !event.end) {
-      throw new Error('Event must have title, start, and end times');
+      throw new Error("Event must have title, start, and end times");
     }
-    
+
     if (event.start >= event.end) {
-      throw new Error('Event end time must be after start time');
+      throw new Error("Event end time must be after start time");
     }
-    
+
     // Check for overlapping appointments
     const overlapping = checkForOverlappingEvents(event);
     if (overlapping.length > 0) {
-      throw new Error('This time slot conflicts with existing appointments');
+      throw new Error("This time slot conflicts with existing appointments");
     }
-    
+
     // Save event
     if (event.id) {
       await updateEvent(event);
     } else {
       await createEvent(event);
     }
-    
+
     setIsEventDialogOpen(false);
     setSelectedEvent(null);
-    
   } catch (error) {
-    console.error('Failed to save event:', error);
+    console.error("Failed to save event:", error);
     // Error is automatically handled by context with user-friendly toast
   }
 };
@@ -483,6 +492,7 @@ function CalendarWithRedux() {
 ## Changelog
 
 ### v2.0.0
+
 - Complete rewrite with enhanced performance
 - Added drag-and-drop functionality
 - Improved keyboard navigation
@@ -490,6 +500,7 @@ function CalendarWithRedux() {
 - Enhanced accessibility support
 
 ### v1.0.0
+
 - Initial release with basic calendar functionality
 - Multiple view modes support
 - Event CRUD operations

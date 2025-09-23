@@ -1,5 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { 
+import {
   AppointmentRepository as IAppointmentRepository,
   Appointment,
   AppointmentStatus,
@@ -7,7 +7,7 @@ import {
   UpdateAppointmentRequest,
   AppointmentFilter,
   AppointmentSearchResult,
-  AppointmentQueryOptions
+  AppointmentQueryOptions,
 } from "@neonpro/domain";
 
 /**
@@ -21,12 +21,14 @@ export class AppointmentRepository implements IAppointmentRepository {
     try {
       const { data, error } = await this.supabase
         .from("appointments")
-        .select(`
+        .select(
+          `
           *,
           patient:patients(id, full_name, cpf),
           professional:professionals(id, full_name, specialty),
           service_type:service_types(id, name, duration)
-        `)
+        `,
+        )
         .eq("id", id)
         .single();
 
@@ -44,7 +46,10 @@ export class AppointmentRepository implements IAppointmentRepository {
     }
   }
 
-  async findByPatientId(patientId: string, options?: AppointmentQueryOptions): Promise<AppointmentSearchResult> {
+  async findByPatientId(
+    patientId: string,
+    options?: AppointmentQueryOptions,
+  ): Promise<AppointmentSearchResult> {
     try {
       let query = this.supabase
         .from("appointments")
@@ -71,7 +76,10 @@ export class AppointmentRepository implements IAppointmentRepository {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1,
+        );
       }
 
       // Apply sorting
@@ -89,13 +97,15 @@ export class AppointmentRepository implements IAppointmentRepository {
         return { appointments: [], total: 0 };
       }
 
-      const appointments = data ? data.map(this.mapDatabaseAppointmentToDomain) : [];
+      const appointments = data
+        ? data.map(this.mapDatabaseAppointmentToDomain)
+        : [];
 
       return {
         appointments,
         total: count || 0,
         limit: options?.limit || 10,
-        offset: options?.offset || 0
+        offset: options?.offset || 0,
       };
     } catch (error) {
       console.error("AppointmentRepository.findByPatientId error:", error);
@@ -103,7 +113,10 @@ export class AppointmentRepository implements IAppointmentRepository {
     }
   }
 
-  async findByProfessionalId(professionalId: string, options?: AppointmentQueryOptions): Promise<AppointmentSearchResult> {
+  async findByProfessionalId(
+    professionalId: string,
+    options?: AppointmentQueryOptions,
+  ): Promise<AppointmentSearchResult> {
     try {
       let query = this.supabase
         .from("appointments")
@@ -130,7 +143,10 @@ export class AppointmentRepository implements IAppointmentRepository {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1,
+        );
       }
 
       // Apply sorting
@@ -144,17 +160,22 @@ export class AppointmentRepository implements IAppointmentRepository {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error("AppointmentRepository.findByProfessionalId error:", error);
+        console.error(
+          "AppointmentRepository.findByProfessionalId error:",
+          error,
+        );
         return { appointments: [], total: 0 };
       }
 
-      const appointments = data ? data.map(this.mapDatabaseAppointmentToDomain) : [];
+      const appointments = data
+        ? data.map(this.mapDatabaseAppointmentToDomain)
+        : [];
 
       return {
         appointments,
         total: count || 0,
         limit: options?.limit || 10,
-        offset: options?.offset || 0
+        offset: options?.offset || 0,
       };
     } catch (error) {
       console.error("AppointmentRepository.findByProfessionalId error:", error);
@@ -162,7 +183,10 @@ export class AppointmentRepository implements IAppointmentRepository {
     }
   }
 
-  async findByClinicId(clinicId: string, options?: AppointmentQueryOptions): Promise<AppointmentSearchResult> {
+  async findByClinicId(
+    clinicId: string,
+    options?: AppointmentQueryOptions,
+  ): Promise<AppointmentSearchResult> {
     try {
       let query = this.supabase
         .from("appointments")
@@ -189,7 +213,10 @@ export class AppointmentRepository implements IAppointmentRepository {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1,
+        );
       }
 
       // Apply sorting
@@ -207,13 +234,15 @@ export class AppointmentRepository implements IAppointmentRepository {
         return { appointments: [], total: 0 };
       }
 
-      const appointments = data ? data.map(this.mapDatabaseAppointmentToDomain) : [];
+      const appointments = data
+        ? data.map(this.mapDatabaseAppointmentToDomain)
+        : [];
 
       return {
         appointments,
         total: count || 0,
         limit: options?.limit || 10,
-        offset: options?.offset || 0
+        offset: options?.offset || 0,
       };
     } catch (error) {
       console.error("AppointmentRepository.findByClinicId error:", error);
@@ -221,7 +250,10 @@ export class AppointmentRepository implements IAppointmentRepository {
     }
   }
 
-  async findWithFilter(filter: AppointmentFilter, options?: AppointmentQueryOptions): Promise<AppointmentSearchResult> {
+  async findWithFilter(
+    filter: AppointmentFilter,
+    options?: AppointmentQueryOptions,
+  ): Promise<AppointmentSearchResult> {
     try {
       let query = this.supabase
         .from("appointments")
@@ -261,7 +293,10 @@ export class AppointmentRepository implements IAppointmentRepository {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1,
+        );
       }
 
       // Apply sorting
@@ -279,13 +314,15 @@ export class AppointmentRepository implements IAppointmentRepository {
         return { appointments: [], total: 0 };
       }
 
-      const appointments = data ? data.map(this.mapDatabaseAppointmentToDomain) : [];
+      const appointments = data
+        ? data.map(this.mapDatabaseAppointmentToDomain)
+        : [];
 
       return {
         appointments,
         total: count || 0,
         limit: options?.limit || 10,
-        offset: options?.offset || 0
+        offset: options?.offset || 0,
       };
     } catch (error) {
       console.error("AppointmentRepository.findWithFilter error:", error);
@@ -293,7 +330,9 @@ export class AppointmentRepository implements IAppointmentRepository {
     }
   }
 
-  async create(appointmentData: CreateAppointmentRequest): Promise<Appointment> {
+  async create(
+    appointmentData: CreateAppointmentRequest,
+  ): Promise<Appointment> {
     try {
       const dbAppointment = this.mapCreateRequestToDatabase(appointmentData);
 
@@ -315,7 +354,10 @@ export class AppointmentRepository implements IAppointmentRepository {
     }
   }
 
-  async update(id: string, appointmentData: UpdateAppointmentRequest): Promise<Appointment> {
+  async update(
+    id: string,
+    appointmentData: UpdateAppointmentRequest,
+  ): Promise<Appointment> {
     try {
       const updateData = this.mapUpdateRequestToDatabase(appointmentData);
 
@@ -357,7 +399,11 @@ export class AppointmentRepository implements IAppointmentRepository {
     }
   }
 
-  async findByDateRange(startDate: Date, endDate: Date, clinicId?: string): Promise<Appointment[]> {
+  async findByDateRange(
+    startDate: Date,
+    endDate: Date,
+    clinicId?: string,
+  ): Promise<Appointment[]> {
     try {
       let query = this.supabase
         .from("appointments")
@@ -465,7 +511,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       start: dbAppointment.start_time,
       end: dbAppointment.end_time,
       color: dbAppointment.color,
-      description: dbAppointment.notes
+      description: dbAppointment.notes,
     };
   }
 
@@ -487,7 +533,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       priority: request.priority,
       created_by: request.createdBy,
       title: request.title,
-      color: request.color
+      color: request.color,
     };
   }
 
@@ -498,19 +544,28 @@ export class AppointmentRepository implements IAppointmentRepository {
     const updateData: any = {};
 
     if (request.status !== undefined) updateData.status = request.status;
-    if (request.startTime !== undefined) updateData.start_time = request.startTime;
+    if (request.startTime !== undefined)
+      updateData.start_time = request.startTime;
     if (request.endTime !== undefined) updateData.end_time = request.endTime;
     if (request.notes !== undefined) updateData.notes = request.notes;
-    if (request.internalNotes !== undefined) updateData.internal_notes = request.internalNotes;
-    if (request.reminderSentAt !== undefined) updateData.reminder_sent_at = request.reminderSentAt;
-    if (request.confirmationSentAt !== undefined) updateData.confirmation_sent_at = request.confirmationSentAt;
-    if (request.whatsappReminderSent !== undefined) updateData.whatsapp_reminder_sent = request.whatsappReminderSent;
-    if (request.smsReminderSent !== undefined) updateData.sms_reminder_sent = request.smsReminderSent;
+    if (request.internalNotes !== undefined)
+      updateData.internal_notes = request.internalNotes;
+    if (request.reminderSentAt !== undefined)
+      updateData.reminder_sent_at = request.reminderSentAt;
+    if (request.confirmationSentAt !== undefined)
+      updateData.confirmation_sent_at = request.confirmationSentAt;
+    if (request.whatsappReminderSent !== undefined)
+      updateData.whatsapp_reminder_sent = request.whatsappReminderSent;
+    if (request.smsReminderSent !== undefined)
+      updateData.sms_reminder_sent = request.smsReminderSent;
     if (request.roomId !== undefined) updateData.room_id = request.roomId;
     if (request.priority !== undefined) updateData.priority = request.priority;
-    if (request.cancelledAt !== undefined) updateData.cancelled_at = request.cancelledAt;
-    if (request.cancelledBy !== undefined) updateData.cancelled_by = request.cancelledBy;
-    if (request.cancellationReason !== undefined) updateData.cancellation_reason = request.cancellationReason;
+    if (request.cancelledAt !== undefined)
+      updateData.cancelled_at = request.cancelledAt;
+    if (request.cancelledBy !== undefined)
+      updateData.cancelled_by = request.cancelledBy;
+    if (request.cancellationReason !== undefined)
+      updateData.cancellation_reason = request.cancellationReason;
     if (request.title !== undefined) updateData.title = request.title;
     if (request.color !== undefined) updateData.color = request.color;
 

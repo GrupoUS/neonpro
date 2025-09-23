@@ -6,7 +6,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState
+  useState,
 } from "react";
 import { cn } from "../../utils";
 
@@ -17,7 +17,7 @@ const ExpandableCardContext = createContext<{
 }>({
   id: null,
   expandedCard: null,
-  setExpandedCard: () => {}
+  setExpandedCard: () => {},
 });
 
 export const useExpandableCard = () => {
@@ -37,7 +37,7 @@ interface ExpandableCardProviderProps {
 
 export function ExpandableCardProvider({
   children,
-  className
+  className,
 }: ExpandableCardProviderProps) {
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
@@ -68,7 +68,7 @@ export function ExpandableCard({
   id,
   children,
   className,
-  expandedContent
+  expandedContent,
 }: ExpandableCardProps) {
   const { expandedCard, setExpandedCard } = useExpandableCard();
   const cardRef = useRef<HTMLDivElement>(null);

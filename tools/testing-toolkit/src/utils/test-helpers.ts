@@ -4,7 +4,7 @@
  * Common helper functions for testing across the NeonPro project.
  */
 
-import { expect } from 'vitest';
+import { expect } from "vitest";
 
 /**
  * Assert that a function throws an error with a specific message
@@ -86,7 +86,7 @@ export function createMock<T extends Record<string, any>>(
         return methods[prop as keyof T];
       }
 
-      if (typeof prop === 'string') {
+      if (typeof prop === "string") {
         return createSpy();
       }
 
@@ -98,7 +98,8 @@ export function createMock<T extends Record<string, any>>(
 /**
  * Sleep for a specified number of milliseconds
  */
-export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+export const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Create a deferred promise for testing async scenarios
@@ -126,7 +127,7 @@ export function expectObjectToHaveProperties<T extends Record<string, any>>(
   obj: T,
   properties: (keyof T)[],
 ): void {
-  properties.forEach(prop => {
+  properties.forEach((prop) => {
     expect(obj).toHaveProperty(prop as string);
     expect(obj[prop]).toBeDefined();
   });

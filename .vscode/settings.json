@@ -1,130 +1,130 @@
 {
-    "github.copilot.nextEditSuggestions.enabled": true,
-    "editor.fontSize": 16,
-    "editor.formatOnSave": true,
-    "files.autoSave": "afterDelay",
-    "editor.defaultFormatter": "dprint.dprint",
-    "editor.formatOnPaste": true,
-    // Dprint para o dia a dia
-    "[javascript]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[javascriptreact]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[typescriptreact]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[json]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[markdown]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[yaml]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[css]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[scss]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "[html]": {
-        "editor.defaultFormatter": "dprint.dprint"
-    },
-    "search.exclude": {
-        "**/node_modules": true,
-        "**/dist": true,
-        "**/build": true,
-        "**/.next": true,
-        "**/coverage": true,
-        "**/playwright-report": true,
-        "**/test-results": true,
-        "**/.turbo": true,
-        "**/logs": true,
-        "**/temp-*": true,
-        "**/tmp.*": true,
-        "**/.serena": true,
-        "**/docs": true,
-        "**/turbo": true,
-        "**/tools": true
-    },
-    "files.watcherExclude": {
-        "**/node_modules/**": true,
-        "**/.git/**": true,
-        "**/.husky/**": true,
-        "**/.serena/**": true,
-        "**/.vercel/**": true,
-        "**/.turbo/**": true,
-        "**/dist/**": true,
-        "**/build/**": true,
-        "**/.next/**": true,
-        "**/coverage/**": true,
-        "**/logs/**": true,
-        "**/temp-*/**": true,
-        "**/tmp.*": true
-    },
-    "editor.minimap.enabled": true,
-    "editor.minimap.renderCharacters": false,
-    "editor.minimap.maxColumn": 60,
-    "editor.minimap.showSlider": "always",
-    "editor.cursorBlinking": "smooth",
-    "editor.cursorSmoothCaretAnimation": "on",
-    "editor.smoothScrolling": true,
-    "vsicons.dontShowNewVersionMessage": true,
-    "github.copilot.enable": {
-        "*": true,
-        "plaintext": false,
-        "markdown": true,
-        "scminput": false,
-        "jsonc": true
-    },
-    "augment.chat.userGuidelines": "# MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References\n- **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.\n-  **ALWAYS** use Parallel tool calls when possible.\n- **MANDATORY** Use Desktop commander for terminal comands and edit/write files, dont use the augment terminal.\n- **MANDATORY** Use o gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic subtasks detalhadas para executar tudo o que foi solicitado em fases\n- **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, *DO NOT USE NATIVE SEARCH CODEBASE tool*\n- Avoid loop trying to fix errors and focus on the most impactful changes, finish all tasks and return to fix errors later\n- Ensure code adheres to project coding standards and best practices",
-    "explorer.confirmDragAndDrop": false,
-    "chat.todoListTool.enabled": true,
-    "github.copilot.chat.agent.thinkingTool": true,
-    "chat.edits2.enabled": true,
-    "git.enableSmartCommit": true,
-    "git.autofetch": true,
-    "git.confirmSync": false,
-    "chat.agentSessionsViewLocation": "view",
-    "workbench.settings.applyToAllProfiles": [
-        "chat.agentSessionsViewLocation",
-        "editor.fontFamily",
-        "chat.editor.fontFamily",
-        "chat.editor.fontSize"
-    ],
-    "workbench.editor.defaultBinaryEditor": "default",
-    "inlineChat.enableV2": true,
-    "oxc.typeAware": true,
-    "oxc.enable": true,
-    "dprint.experimentalLsp": true,
-    "dprint.verbose": true,
-    "npm.packageManager": "bun",
-    "npm.scriptRunner": "bun",
-    "terminal.integrated.fontFamily": "Cousine Nerd Font Mono",
-    "editor.fontFamily": "SauceCodePro Nerd Font",
-    "augment.completions.enableAutomaticCompletions": false,
-    "augment.completions.enableQuickSuggestions": false,
-    "augment.conflictingCodingAssistantCheck": false,
-    "[jsonc]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
-    },
-    "augment.nextEdit.enableBackgroundSuggestions": false,
-    "workbench.iconTheme": "vscode-icons",
-    "explorer.confirmDelete": false,
-    "terminal.integrated.defaultProfile.windows": "PowerShell",
-    "workbench.colorTheme": "One Hunter Flexoki Dark",
-    "chat.editor.fontSize": 15,
-    "chat.fontFamily": "Cousine Nerd Font",
-    "chat.fontSize": 14,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.tsserver.maxTsServerMemory": 4096,
-    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
-    "typescript.preferences.preferTypeOnlyAutoImports": true,
-    "typescript.disableAutomaticTypeAcquisition": true,
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "editor.fontSize": 16,
+  "editor.formatOnSave": true,
+  "files.autoSave": "afterDelay",
+  "editor.defaultFormatter": "dprint.dprint",
+  "editor.formatOnPaste": true,
+  // Dprint para o dia a dia
+  "[javascript]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "dprint.dprint"
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.next": true,
+    "**/coverage": true,
+    "**/playwright-report": true,
+    "**/test-results": true,
+    "**/.turbo": true,
+    "**/logs": true,
+    "**/temp-*": true,
+    "**/tmp.*": true,
+    "**/.serena": true,
+    "**/docs": true,
+    "**/turbo": true,
+    "**/tools": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.git/**": true,
+    "**/.husky/**": true,
+    "**/.serena/**": true,
+    "**/.vercel/**": true,
+    "**/.turbo/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.next/**": true,
+    "**/coverage/**": true,
+    "**/logs/**": true,
+    "**/temp-*/**": true,
+    "**/tmp.*": true
+  },
+  "editor.minimap.enabled": true,
+  "editor.minimap.renderCharacters": false,
+  "editor.minimap.maxColumn": 60,
+  "editor.minimap.showSlider": "always",
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.smoothScrolling": true,
+  "vsicons.dontShowNewVersionMessage": true,
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false,
+    "jsonc": true
+  },
+  "augment.chat.userGuidelines": "# MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References\n- **RIGHT TOOL FOR JOB**: Understand full context before implementation. Choose appropriate technology and mcp tools. Plan carefully, implement systematically.\n-  **ALWAYS** use Parallel tool calls when possible.\n- **MANDATORY** Use Desktop commander for terminal comands and edit/write files, dont use the augment terminal.\n- **MANDATORY** Use o gerenciador de tasks nativo do augment de forma mais ativa para acompanhar tudo o que precisa ser feito, criando atomic subtasks detalhadas para executar tudo o que foi solicitado em fases\n- **MANDATORY** use of `serena mcp` to search codebase and semantic code analysis, *DO NOT USE NATIVE SEARCH CODEBASE tool*\n- Avoid loop trying to fix errors and focus on the most impactful changes, finish all tasks and return to fix errors later\n- Ensure code adheres to project coding standards and best practices",
+  "explorer.confirmDragAndDrop": false,
+  "chat.todoListTool.enabled": true,
+  "github.copilot.chat.agent.thinkingTool": true,
+  "chat.edits2.enabled": true,
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "chat.agentSessionsViewLocation": "view",
+  "workbench.settings.applyToAllProfiles": [
+    "chat.agentSessionsViewLocation",
+    "editor.fontFamily",
+    "chat.editor.fontFamily",
+    "chat.editor.fontSize"
+  ],
+  "workbench.editor.defaultBinaryEditor": "default",
+  "inlineChat.enableV2": true,
+  "oxc.typeAware": true,
+  "oxc.enable": true,
+  "dprint.experimentalLsp": true,
+  "dprint.verbose": true,
+  "npm.packageManager": "bun",
+  "npm.scriptRunner": "bun",
+  "terminal.integrated.fontFamily": "Cousine Nerd Font Mono",
+  "editor.fontFamily": "SauceCodePro Nerd Font",
+  "augment.completions.enableAutomaticCompletions": false,
+  "augment.completions.enableQuickSuggestions": false,
+  "augment.conflictingCodingAssistantCheck": false,
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "augment.nextEdit.enableBackgroundSuggestions": false,
+  "workbench.iconTheme": "vscode-icons",
+  "explorer.confirmDelete": false,
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "workbench.colorTheme": "One Hunter Flexoki Dark",
+  "chat.editor.fontSize": 15,
+  "chat.fontFamily": "Cousine Nerd Font",
+  "chat.fontSize": 14,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.tsserver.maxTsServerMemory": 4096,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.disableAutomaticTypeAcquisition": true
 }

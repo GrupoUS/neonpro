@@ -29,35 +29,39 @@
 
 /* Theme-based hover border gradients for NeonPro aesthetic clinic */
 .hover-border-gradient--blue {
-  --hover-gradient-color: #3275F8;
+  --hover-gradient-color: #3275f8;
 }
 
 .hover-border-gradient--purple {
-  --hover-gradient-color: #8B5CF6;
+  --hover-gradient-color: #8b5cf6;
 }
 
 .hover-border-gradient--green {
-  --hover-gradient-color: #10B981;
+  --hover-gradient-color: #10b981;
 }
 
 .hover-border-gradient--red {
-  --hover-gradient-color: #EF4444;
+  --hover-gradient-color: #ef4444;
 }
 
 .hover-border-gradient--orange {
-  --hover-gradient-color: #F97316;
+  --hover-gradient-color: #f97316;
 }
 
 .hover-border-gradient--pink {
-  --hover-gradient-color: #EC4899;
+  --hover-gradient-color: #ec4899;
 }
 
 .hover-border-gradient--neonpro {
-  --hover-gradient-color: #AC9469; /* NeonPro aesthetic gold */
+  --hover-gradient-color: #ac9469; /* NeonPro aesthetic gold */
 }
 
 .hover-border-gradient--aesthetic {
-  --hover-gradient-color: linear-gradient(45deg, #AC9469, #294359); /* NeonPro aesthetic gradient */
+  --hover-gradient-color: linear-gradient(
+    45deg,
+    #ac9469,
+    #294359
+  ); /* NeonPro aesthetic gradient */
 }
 
 /* Smooth animations for professional aesthetic clinic feel */
@@ -85,7 +89,7 @@
 
 /* Enhanced accessibility for aesthetic clinic interface */
 .hover-border-gradient:focus-visible {
-  outline: 2px solid var(--hover-gradient-color, #3275F8);
+  outline: 2px solid var(--hover-gradient-color, #3275f8);
   outline-offset: 2px;
 }
 
@@ -95,7 +99,7 @@
     transition: none;
     animation: none;
   }
-  
+
   .hover-border-gradient {
     transition: none;
   }

@@ -1027,7 +1027,8 @@ export class APIRateLimitingService {
     console.log("📊 [APIRateLimitingService] Metrics collected:", {
       timestamp: new Date().toISOString(),
       metricsCount: metricsSnapshot.size,
-      totalMetrics: Array.from(metricsSnapshot.values()).reduce((sum,_m) => sum + m.totalRequests,
+      totalMetrics: Array.from(metricsSnapshot.values()).reduce(
+        (sum, _m) => sum + m.totalRequests,
         0,
       ),
     });

@@ -7,7 +7,10 @@ export interface HealthcareComponentProps {
   readonly patientId?: string;
   readonly userRole: "admin" | "professional" | "coordinator";
   readonly lgpdCompliant: boolean;
-  readonly onAuditLog?: (action: string, details?: Record<string,_any>) => void;
+  readonly onAuditLog?: (
+    action: string,
+    details?: Record<string, _any>,
+  ) => void;
 }
 
 /**
@@ -74,7 +77,8 @@ export function PatientRiskCard({
         Histórico: {riskScore.historicalNoShows} faltas
       </p>
 
-      {riskScore.score >= 0.4 && (<button
+      {riskScore.score >= 0.4 && (
+        <button
           onClick={() => handleInterventionClick("reminder")}
           className="w-full px-3 py-2 text-sm bg-white bg-opacity-50 rounded border border-current hover:bg-opacity-75 transition-colors"
         >

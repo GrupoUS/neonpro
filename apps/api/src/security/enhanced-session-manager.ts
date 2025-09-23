@@ -9,7 +9,7 @@
  * @version 2.0.0
  */
 
-import crypto from 'crypto';
+import crypto from "crypto";
 
 // Security configuration
 export interface SessionSecurityConfig {
@@ -60,7 +60,7 @@ export interface EnhancedSessionMetadata {
   lgpdConsent?: any;
 
   // Security tracking
-  securityLevel: 'normal' | 'elevated' | 'high';
+  securityLevel: "normal" | "elevated" | "high";
   riskScore: number;
   ipChangeCount: number;
   lastIPChangeTime?: Date;
@@ -76,7 +76,7 @@ export interface EnhancedSessionMetadata {
 // IP validation result
 export interface IPValidationResult {
   isValid: boolean;
-  action: 'allow' | 'warn' | 'block' | 'require_verification';
+  action: "allow" | "warn" | "block" | "require_verification";
   reason?: string;
   newIP?: string;
 }
@@ -84,9 +84,9 @@ export interface IPValidationResult {
 // Anomaly detection result
 export interface AnomalyDetectionResult {
   hasAnomaly: boolean;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   anomalies: string[];
-  recommendedAction: 'allow' | 'warn' | 'block' | 'require_mfa';
+  recommendedAction: "allow" | "warn" | "block" | "require_mfa";
   confidence: number;
 }
 
@@ -135,7 +135,7 @@ export class EnhancedSessionManager {
   private generateSecureSessionId(): string {
     const bytes = Math.ceil(this.config.sessionIdEntropyBits / 8);
     const randomBytes = crypto.randomBytes(bytes);
-    return randomBytes.toString('hex').substring(0, 32);
+    return randomBytes.toString("hex").substring(0, 32);
   }
 
   /**
@@ -145,20 +145,19 @@ export class EnhancedSessionManager {
     const bytes = Math.ceil(this.config.sessionIdEntropyBits / 8);
     const randomBytes = new Uint8Array(bytes);
     crypto.getRandomValues(randomBytes);
-    return Array.from(randomBytes, byte => byte.toString(16).padStart(2, '0')).join('').substring(
-      0,
-      32,
-    );
+    return Array.from(randomBytes, (byte) => byte.toString(16).padStart(2, "0"))
+      .join("")
+      .substring(0, 32);
   }
 
   /**
    * Calculate entropy of a string for session ID validation
    */
   private calculateEntropy(str: string): number {
-    const chars = str.split('');
+    const chars = str.split("");
     const charCounts: { [key: string]: number } = {};
 
-    chars.forEach(char => {
+    chars.forEach((char) => {
       charCounts[char] = (charCounts[char] || 0) + 1;
     });
 
@@ -188,7 +187,10 @@ export class EnhancedSessionManager {
   /**
    * Update session with validation result tracking
    */
-  private updateSessionValidationResult(session: EnhancedSessionMetadata, isValid: boolean): void {
+  private updateSessionValidationResult(
+    session: EnhancedSessionMetadata,
+    isValid: boolean,
+  ): void {
     if (isValid) {
       session.consecutiveFailures = 0;
       session.refreshCount++;
@@ -202,10 +204,10 @@ export class EnhancedSessionManager {
    * Extract IP subnet for mobile network tolerance
    */
   private extractIPSubnet(ip: string): string {
-    if (!ip) return '';
-    const parts = ip.split('.');
+    if (!ip) return "";
+    const parts = ip.split(".");
     if (parts.length !== 4) return ip;
-    return parts.slice(0, 3).join('.');
+    return parts.slice(0, 3).join(".");
   }
 
   /**
@@ -216,12 +218,12 @@ export class EnhancedSessionManager {
     currentIP: string,
   ): IPValidationResult {
     if (!this.config.enableIPBinding || !session.ipAddress) {
-      return { isValid: true, action: 'allow' };
+      return { isValid: true, action: "allow" };
     }
 
     // Exact match
     if (session.ipAddress === currentIP) {
-      return { isValid: true, action: 'allow' };
+      return { isValid: true, action: "allow" };
     }
 
     // Mobile network tolerance (same subnet)
@@ -237,8 +239,8 @@ export class EnhancedSessionManager {
 
         return {
           isValid: true,
-          action: 'warn',
-          reason: 'Mobile network IP change detected',
+          action: "warn",
+          reason: "Mobile network IP change detected",
           newIP: currentIP,
         };
       }
@@ -246,23 +248,24 @@ export class EnhancedSessionManager {
 
     // Check IP change frequency
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    const recentIPChanges = session.lastIPChangeTime && session.lastIPChangeTime > oneHourAgo
-      ? session.ipChangeCount
-      : 0;
+    const recentIPChanges =
+      session.lastIPChangeTime && session.lastIPChangeTime > oneHourAgo
+        ? session.ipChangeCount
+        : 0;
 
     if (recentIPChanges >= this.config.maxIPChangesPerHour) {
       return {
         isValid: false,
-        action: 'block',
-        reason: 'Too many IP changes in short period',
+        action: "block",
+        reason: "Too many IP changes in short period",
       };
     }
 
     // IP mismatch - potentially suspicious
     return {
       isValid: false,
-      action: 'require_verification',
-      reason: 'IP address mismatch detected',
+      action: "require_verification",
+      reason: "IP address mismatch detected",
     };
   }
 
@@ -277,9 +280,9 @@ export class EnhancedSessionManager {
     if (!this.config.enableAnomalyDetection) {
       return {
         hasAnomaly: false,
-        riskLevel: 'low',
+        riskLevel: "low",
         anomalies: [],
-        recommendedAction: 'allow',
+        recommendedAction: "allow",
         confidence: 1.0,
       };
     }
@@ -290,45 +293,45 @@ export class EnhancedSessionManager {
 
     // IP change detection
     if (session.ipAddress && session.ipAddress !== currentIP) {
-      anomalies.push('IP address change detected');
+      anomalies.push("IP address change detected");
       riskScore += 30;
       confidence += 0.1;
     }
 
     // User agent change detection
     if (session.userAgent && userAgent && session.userAgent !== userAgent) {
-      anomalies.push('User agent change detected');
+      anomalies.push("User agent change detected");
       riskScore += 40;
       confidence += 0.15;
     }
 
     // Rapid IP changes
     if (session.ipChangeCount > this.config.maxIPChangesPerHour) {
-      anomalies.push('Excessive IP changes detected');
+      anomalies.push("Excessive IP changes detected");
       riskScore += 50;
       confidence += 0.2;
     }
 
     // Consecutive failures
     if (session.consecutiveFailures > 3) {
-      anomalies.push('Multiple consecutive authentication failures');
+      anomalies.push("Multiple consecutive authentication failures");
       riskScore += 60;
       confidence += 0.25;
     }
 
     // Determine risk level and action
-    let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
-    let recommendedAction: 'allow' | 'warn' | 'block' | 'require_mfa' = 'allow';
+    let riskLevel: "low" | "medium" | "high" | "critical" = "low";
+    let recommendedAction: "allow" | "warn" | "block" | "require_mfa" = "allow";
 
     if (riskScore >= 80) {
-      riskLevel = 'critical';
-      recommendedAction = 'block';
+      riskLevel = "critical";
+      recommendedAction = "block";
     } else if (riskScore >= 60) {
-      riskLevel = 'high';
-      recommendedAction = 'require_mfa';
+      riskLevel = "high";
+      recommendedAction = "require_mfa";
     } else if (riskScore >= 30) {
-      riskLevel = 'medium';
-      recommendedAction = 'warn';
+      riskLevel = "medium";
+      recommendedAction = "warn";
     }
 
     return {
@@ -357,7 +360,7 @@ export class EnhancedSessionManager {
     if (sessionAge >= this.config.absoluteTimeout) {
       return {
         isExpired: true,
-        reason: 'Session exceeded maximum duration',
+        reason: "Session exceeded maximum duration",
       };
     }
 
@@ -365,7 +368,7 @@ export class EnhancedSessionManager {
     if (idleTime >= this.config.idleTimeout) {
       return {
         isExpired: true,
-        reason: 'Session expired due to inactivity',
+        reason: "Session expired due to inactivity",
       };
     }
 
@@ -374,9 +377,10 @@ export class EnhancedSessionManager {
     const idleTimeRemaining = this.config.idleTimeout - idleTime;
     const timeRemaining = Math.min(absoluteTimeRemaining, idleTimeRemaining);
 
-    const shouldWarn = timeRemaining <= this.config.timeoutWarningThreshold
-      && (!session.lastWarningTime
-        || now - session.lastWarningTime.getTime() > 60 * 1000); // Don't warn more than once per minute
+    const shouldWarn =
+      timeRemaining <= this.config.timeoutWarningThreshold &&
+      (!session.lastWarningTime ||
+        now - session.lastWarningTime.getTime() > 60 * 1000); // Don't warn more than once per minute
 
     return {
       isExpired: false,
@@ -388,41 +392,46 @@ export class EnhancedSessionManager {
   /**
    * Manage concurrent sessions
    */
-  private manageConcurrentSessions(_userId: string, currentSessionId: string): {
-    action: 'allow' | 'remove_oldest' | 'notify';
+  private manageConcurrentSessions(
+    _userId: string,
+    currentSessionId: string,
+  ): {
+    action: "allow" | "remove_oldest" | "notify";
     removedSession?: string;
   } {
     const userSessionIds = this.userSessions.get(userId) || new Set();
     const userSessions = Array.from(userSessionIds)
-      .map(id => this.sessions.get(id))
+      .map((id) => this.sessions.get(id))
       .filter(Boolean) as EnhancedSessionMetadata[];
 
     if (userSessions.length < this.config.maxConcurrentSessions) {
-      return { action: 'allow' };
+      return { action: "allow" };
     }
 
     if (userSessions.length === this.config.maxConcurrentSessions) {
       // Check if current session already exists
-      const existingSession = userSessions.find(s => s.sessionId === currentSessionId);
+      const existingSession = userSessions.find(
+        (s) => s.sessionId === currentSessionId,
+      );
       if (existingSession) {
-        return { action: 'allow' }; // Session already exists, allow it
+        return { action: "allow" }; // Session already exists, allow it
       }
     }
 
     // Find oldest session
     const oldestSession = userSessions.reduce((oldest, _current) =>
-      current.createdAt < oldest.createdAt ? current : oldest
+      current.createdAt < oldest.createdAt ? current : oldest,
     );
 
     if (oldestSession.sessionId === currentSessionId) {
-      return { action: 'allow' }; // Current session is the oldest, keep it
+      return { action: "allow" }; // Current session is the oldest, keep it
     }
 
     // Remove oldest session
     this.removeSession(oldestSession.sessionId);
 
     return {
-      action: 'remove_oldest',
+      action: "remove_oldest",
       removedSession: oldestSession.sessionId,
     };
   }
@@ -439,7 +448,10 @@ export class EnhancedSessionManager {
 
     // Manage concurrent sessions
     const concurrentResult = this.manageConcurrentSessions(userId, sessionId);
-    if (concurrentResult.action === 'remove_oldest' && concurrentResult.removedSession) {
+    if (
+      concurrentResult.action === "remove_oldest" &&
+      concurrentResult.removedSession
+    ) {
       console.warn(
         `Removed oldest session ${concurrentResult.removedSession} due to concurrent session limit`,
       );
@@ -451,7 +463,7 @@ export class EnhancedSessionManager {
       userId,
       createdAt: new Date(),
       lastActivity: new Date(),
-      securityLevel: 'normal',
+      securityLevel: "normal",
       riskScore: 0,
       ipChangeCount: 0,
       consecutiveFailures: 0,
@@ -504,7 +516,7 @@ export class EnhancedSessionManager {
   ): {
     isValid: boolean;
     session?: EnhancedSessionMetadata;
-    action: 'allow' | 'warn' | 'block' | 'require_verification' | 'require_mfa';
+    action: "allow" | "warn" | "block" | "require_verification" | "require_mfa";
     reason?: string;
     warnings?: string[];
     timeoutWarning?: number;
@@ -513,8 +525,8 @@ export class EnhancedSessionManager {
     if (!this.validateSessionId(sessionId)) {
       return {
         isValid: false,
-        action: 'block',
-        reason: 'Invalid session ID format',
+        action: "block",
+        reason: "Invalid session ID format",
       };
     }
 
@@ -522,8 +534,8 @@ export class EnhancedSessionManager {
     if (!session) {
       return {
         isValid: false,
-        action: 'block',
-        reason: 'Session not found',
+        action: "block",
+        reason: "Session not found",
       };
     }
 
@@ -533,13 +545,18 @@ export class EnhancedSessionManager {
       this.removeSession(sessionId);
       return {
         isValid: false,
-        action: 'block',
+        action: "block",
         reason: timeoutCheck.reason,
       };
     }
 
     const warnings: string[] = [];
-    let finalAction: 'allow' | 'warn' | 'block' | 'require_verification' | 'require_mfa' = 'allow';
+    let finalAction:
+      | "allow"
+      | "warn"
+      | "block"
+      | "require_verification"
+      | "require_mfa" = "allow";
 
     // IP binding validation
     if (currentIP) {
@@ -555,9 +572,9 @@ export class EnhancedSessionManager {
         };
       }
 
-      if (ipValidation.action === 'warn') {
-        warnings.push(ipValidation.reason || 'IP change detected');
-        finalAction = 'warn';
+      if (ipValidation.action === "warn") {
+        warnings.push(ipValidation.reason || "IP change detected");
+        finalAction = "warn";
 
         // Update IP if this was a mobile network change
         if (ipValidation.newIP) {
@@ -569,42 +586,51 @@ export class EnhancedSessionManager {
     }
 
     // Anomaly detection
-    const anomalyResult = this.detectAnomalies(session, currentIP || '', userAgent);
+    const anomalyResult = this.detectAnomalies(
+      session,
+      currentIP || "",
+      userAgent,
+    );
     if (anomalyResult.hasAnomaly) {
       warnings.push(...anomalyResult.anomalies);
 
       // Escalate action based on anomaly severity
-      if (anomalyResult.recommendedAction === 'block') {
+      if (anomalyResult.recommendedAction === "block") {
         // Track failure before returning
         session.consecutiveFailures++;
         session.lastFailureTime = new Date();
         return {
           isValid: false,
-          action: 'block',
-          reason: `Security anomaly detected: ${anomalyResult.anomalies.join(', ')}`,
+          action: "block",
+          reason: `Security anomaly detected: ${anomalyResult.anomalies.join(", ")}`,
         };
-      } else if (anomalyResult.recommendedAction === 'require_mfa') {
-        finalAction = 'require_mfa';
-      } else if (anomalyResult.recommendedAction === 'warn' && finalAction === 'allow') {
-        finalAction = 'warn';
+      } else if (anomalyResult.recommendedAction === "require_mfa") {
+        finalAction = "require_mfa";
+      } else if (
+        anomalyResult.recommendedAction === "warn" &&
+        finalAction === "allow"
+      ) {
+        finalAction = "warn";
       }
 
       // Update session security level and risk score
-      session.securityLevel = anomalyResult.riskLevel === 'critical'
-        ? 'high'
-        : anomalyResult.riskLevel === 'high'
-        ? 'high'
-        : anomalyResult.riskLevel === 'medium'
-        ? 'elevated'
-        : session.securityLevel;
+      session.securityLevel =
+        anomalyResult.riskLevel === "critical"
+          ? "high"
+          : anomalyResult.riskLevel === "high"
+            ? "high"
+            : anomalyResult.riskLevel === "medium"
+              ? "elevated"
+              : session.securityLevel;
 
-      session.riskScore = anomalyResult.riskLevel === 'critical'
-        ? 100
-        : anomalyResult.riskLevel === 'high'
-        ? 80
-        : anomalyResult.riskLevel === 'medium'
-        ? 50
-        : session.riskScore;
+      session.riskScore =
+        anomalyResult.riskLevel === "critical"
+          ? 100
+          : anomalyResult.riskLevel === "high"
+            ? 80
+            : anomalyResult.riskLevel === "medium"
+              ? 50
+              : session.riskScore;
     }
 
     // Update session activity and track validation
@@ -668,7 +694,7 @@ export class EnhancedSessionManager {
   getUserSessions(_userId: string): EnhancedSessionMetadata[] {
     const sessionIds = this.userSessions.get(userId) || new Set();
     return Array.from(sessionIds)
-      .map(id => this.sessions.get(id))
+      .map((id) => this.sessions.get(id))
       .filter(Boolean) as EnhancedSessionMetadata[];
   }
 
@@ -679,7 +705,7 @@ export class EnhancedSessionManager {
     const userSessionIds = this.userSessions.get(userId) || new Set();
     const removedCount = userSessionIds.size;
 
-    userSessionIds.forEach(sessionId => {
+    userSessionIds.forEach((sessionId) => {
       this.removeSession(sessionId);
     });
 
@@ -690,7 +716,9 @@ export class EnhancedSessionManager {
    * Clean expired sessions
    */
   cleanExpiredSessions(maxInactiveHours?: number): number {
-    const cutoffTime = new Date(Date.now() - (maxInactiveHours || 24) * 60 * 60 * 1000);
+    const cutoffTime = new Date(
+      Date.now() - (maxInactiveHours || 24) * 60 * 60 * 1000,
+    );
     const toRemove: string[] = [];
 
     for (const [sessionId, session] of this.sessions) {
@@ -746,7 +774,9 @@ export class EnhancedSessionManager {
     this.cleanupInterval = setInterval(() => {
       const cleanedCount = this.cleanExpiredSessions();
       if (cleanedCount > 0) {
-        console.log(`[EnhancedSessionManager] Cleaned ${cleanedCount} expired sessions`);
+        console.log(
+          `[EnhancedSessionManager] Cleaned ${cleanedCount} expired sessions`,
+        );
       }
     }, this.config.cleanupInterval);
   }

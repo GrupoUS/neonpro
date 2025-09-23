@@ -4,7 +4,7 @@
 **Date**: 2025-09-20  
 **Schema Version**: 2.0 (Prisma + Supabase Synchronized)  
 **Tables**: 100+ healthcare & financial tables  
-**Compliance**: LGPD + ANVISA + CFM + HIPAA  
+**Compliance**: LGPD + ANVISA + CFM + HIPAA
 
 ## 📊 SYNCHRONIZATION SUMMARY
 
@@ -74,6 +74,7 @@
 ## 🏗️ ARCHITECTURE OVERVIEW
 
 ### Core Healthcare Tables
+
 ```
 users (auth) → clinics → professionals
                     ↓
@@ -85,6 +86,7 @@ users (auth) → clinics → professionals
 ```
 
 ### Financial System
+
 ```
 payment_transactions ← payment_gateways
         ↓
@@ -94,6 +96,7 @@ payment_receipts ← reconciliation_data
 ```
 
 ### Compliance Layer
+
 ```
 patients → lgpd_consents → audit_logs
     ↓         ↓              ↓
@@ -103,12 +106,14 @@ PHI_data → consent_valid → compliance_report
 ## 📋 ENTITY MAPPING
 
 ### 👥 **Clientes (Patients)**
+
 - `patients` - Dados principais com LGPD
 - `lgpd_consents` - Consentimentos granulares
 - `consent_records` - Histórico de consentimentos
 - **Compliance**: CPF, CNS, dados de saúde protegidos
 
 ### 💰 **Financeiro (Complete System)**
+
 - `payment_transactions` - Transações principais
 - `payment_gateways` - Gateways de pagamento
 - `payment_methods` - Métodos de pagamento
@@ -119,6 +124,7 @@ PHI_data → consent_valid → compliance_report
 - **Features**: Analytics, KPIs, relatórios automáticos
 
 ### 🏥 **Serviços (Healthcare Services)**
+
 - `service_types` - Tipos de procedimentos
 - `service_categories` - Categorias (facial, corporal, etc)
 - `appointments` - Agendamentos com IA
@@ -126,10 +132,11 @@ PHI_data → consent_valid → compliance_report
 - **Features**: Previsão no-show, otimização de agenda
 
 ### 📅 **Agendamento (Smart Scheduling)**
+
 - `appointments` - Sistema principal
 - `google_calendar_integrations` - Sincronização Google
 - `telemedicine_sessions` - Consultas virtuais
-- **AI Features**: 
+- **AI Features**:
   - Previsão de no-show (87.5% precisão)
   - Otimização automática de horários
   - Lembretes inteligentes
@@ -137,6 +144,7 @@ PHI_data → consent_valid → compliance_report
 ## 🔒 COMPLIANCE FEATURES
 
 ### LGPD (Lei Geral de Proteção de Dados)
+
 - ✅ Consentimento granular por finalidade
 - ✅ Anonimização automática de dados
 - ✅ Direito ao esquecimento (Right to be Forgotten)
@@ -145,12 +153,14 @@ PHI_data → consent_valid → compliance_report
 - ✅ Retenção temporal configurável
 
 ### CFM (Conselho Federal de Medicina)
+
 - ✅ Validação de credenciais profissionais
 - ✅ Telemedicina Resolução 2.314/2022
 - ✅ Certificados ICP-Brasil
 - ✅ Assinatura digital de prontuários
 
 ### ANVISA (Agência Nacional de Vigilância Sanitária)
+
 - ✅ Compliance para dispositivos médicos
 - ✅ Rastreabilidade de procedimentos
 - ✅ Protocolos de segurança
@@ -158,6 +168,7 @@ PHI_data → consent_valid → compliance_report
 ## 📈 AI & ANALYTICS FEATURES
 
 ### Intelligent No-Show Prediction
+
 ```sql
 -- AI function for appointment risk assessment
 SELECT calculate_no_show_risk(appointment_id);
@@ -165,6 +176,7 @@ SELECT calculate_no_show_risk(appointment_id);
 ```
 
 ### PHI Sanitization for AI
+
 ```sql
 -- Remove sensitive data before AI processing
 SELECT sanitize_for_ai('Patient João has CPF 123.456.789-00');
@@ -172,6 +184,7 @@ SELECT sanitize_for_ai('Patient João has CPF 123.456.789-00');
 ```
 
 ### Governance Metrics
+
 - AI model performance tracking
 - Compliance score monitoring
 - Risk assessment automation
@@ -180,12 +193,14 @@ SELECT sanitize_for_ai('Patient João has CPF 123.456.789-00');
 ## 🚀 PERFORMANCE OPTIMIZATIONS
 
 ### Specialized Indexes
+
 - **Healthcare queries**: Patient search, appointment conflicts
 - **Compliance queries**: Consent validation, audit trails
 - **Financial queries**: Payment processing, reconciliation
 - **Analytics queries**: KPI calculations, reporting
 
 ### Caching Strategy
+
 - Frequently accessed patient data
 - Appointment availability caches
 - Compliance status caching
@@ -194,6 +209,7 @@ SELECT sanitize_for_ai('Patient João has CPF 123.456.789-00');
 ## 🛠️ DEVELOPMENT WORKFLOW
 
 ### Scripts Available
+
 ```bash
 # Database operations
 cd packages/database
@@ -209,13 +225,14 @@ supabase migration up       # Apply migrations
 ```
 
 ### Type Safety
+
 ```typescript
 // Prisma Client (ORM operations)
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 // Supabase Client (real-time, auth, storage)
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from './types/supabase-generated';
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "./types/supabase-generated";
 
 const supabase = createClient<Database>(url, key);
 ```
@@ -255,18 +272,21 @@ const supabase = createClient<Database>(url, key);
 ## 🎯 NEXT STEPS
 
 ### For Production Deployment
+
 1. **Environment Setup**
    - Configure production Supabase project
    - Set environment variables
    - Enable required extensions
 
 2. **Migration Deployment**
+
    ```bash
    supabase db push --linked
    supabase functions deploy
    ```
 
 3. **Type Generation**
+
    ```bash
    supabase gen types typescript --linked > types/database.ts
    ```
@@ -277,7 +297,9 @@ const supabase = createClient<Database>(url, key);
    - Configure performance alerts
 
 ### For Development
+
 1. **Local Setup**
+
    ```bash
    supabase start
    supabase db reset
@@ -302,6 +324,7 @@ const supabase = createClient<Database>(url, key);
 ## 📞 SUPPORT
 
 For issues or questions:
+
 1. Check migration logs in `supabase/migrations/`
 2. Validate types with `npm run validate-schema`
 3. Review compliance functions documentation

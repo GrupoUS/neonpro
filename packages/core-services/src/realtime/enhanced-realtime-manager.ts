@@ -192,7 +192,8 @@ export class CacheInvalidationStrategy {
     // Heuristics for when to use aggressive invalidation
     const criticalFields = ["status", "priority", "emergency", "cancelled"];
 
-    return criticalFields.some((field) =>
+    return criticalFields.some(
+      (field) =>
         payload[field] !== undefined &&
         (payload[field] === "emergency" || payload[field] === "high_priority"),
     );
@@ -303,7 +304,8 @@ export class EnhancedRealtimeManager {
 
     return this.supabase
       .channel(channelName)
-      .on("postgres_changes",
+      .on(
+        "postgres_changes",
         {
           event: "*",
           schema: "public",
@@ -605,7 +607,9 @@ export class EnhancedRealtimeManager {
 
       // Test connection with a simple health check
       const healthCheck =
-        await this.resilienceService.executeHealthcareOperation("supabase-realtime", async () => {
+        await this.resilienceService.executeHealthcareOperation(
+          "supabase-realtime",
+          async () => {
             // Test the Supabase connection
             const { data, error } = await this.supabase
               .from("health_checks")
@@ -713,7 +717,8 @@ export class EnhancedRealtimeManager {
   ): Promise<void> {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return (old?.map((item) =>
+      return (
+        old?.map((item) =>
           item.id === updatedRecord.id ? updatedRecord : item,
         ) || []
       );

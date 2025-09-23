@@ -9,6 +9,7 @@ This comprehensive error handling catalog covers common issues, solutions, and b
 ### 1. Initialization Errors
 
 #### Error: CalendarContextNotAvailable
+
 ```typescript
 // Error Message
 "Calendar context not available. Make sure to wrap your calendar with CalendarProvider."
@@ -31,6 +32,7 @@ function App() {
 ```
 
 #### Error: InvalidDateFormat
+
 ```typescript
 // Error Message
 "Invalid date format. Expected Date object or ISO string."
@@ -43,11 +45,11 @@ function App() {
 // Solution
 const handleEventCreate = (startTime: string | Date) => {
   const date = typeof startTime === 'string' ? new Date(startTime) : startTime;
-  
+
   if (isNaN(date.getTime())) {
     throw new Error('Invalid date format');
   }
-  
+
   // Continue with valid date
 };
 ```
@@ -55,6 +57,7 @@ const handleEventCreate = (startTime: string | Date) => {
 ### 2. Event Management Errors
 
 #### Error: EventConflict
+
 ```typescript
 // Error Message
 "Event conflicts with existing appointment(s)."
@@ -72,7 +75,7 @@ const handleEventCreate = (startTime: string | Date) => {
 // Solutions
 // 1. Implement conflict detection
 const checkForConflicts = (newEvent: CalendarEvent, existingEvents: CalendarEvent[]) => {
-  return existingEvents.filter(event => 
+  return existingEvents.filter(event =>
     event.id !== newEvent.id &&
     !(event.end <= newEvent.start || event.start >= newEvent.end) &&
     (event.resourceId === newEvent.resourceId || !event.resourceId)
@@ -82,7 +85,7 @@ const checkForConflicts = (newEvent: CalendarEvent, existingEvents: CalendarEven
 // 2. Handle conflicts gracefully
 const handleEventCreate = async (event: CalendarEvent) => {
   const conflicts = checkForConflicts(event, existingEvents);
-  
+
   if (conflicts.length > 0) {
     showConflictDialog({
       newEvent: event,
@@ -91,7 +94,7 @@ const handleEventCreate = async (event: CalendarEvent) => {
     });
     return;
   }
-  
+
   await createEvent(event);
 };
 
@@ -101,18 +104,18 @@ const [optimisticEvents, setOptimisticEvents] = useState<CalendarEvent[]>([]);
 const handleOptimisticCreate = (event: CalendarEvent) => {
   const tempId = `temp-${Date.now()}`;
   const optimisticEvent = { ...event, id: tempId, status: 'optimistic' };
-  
+
   setOptimisticEvents(prev => [...prev, optimisticEvent]);
-  
+
   createEvent(event)
     .then(savedEvent => {
-      setOptimisticEvents(prev => 
+      setOptimisticEvents(prev =>
         prev.filter(e => e.id !== tempId)
       );
       setEvents(prev => [...prev, savedEvent]);
     })
     .catch(error => {
-      setOptimisticEvents(prev => 
+      setOptimisticEvents(prev =>
         prev.filter(e => e.id !== tempId)
       );
       showErrorToast('Failed to create event');
@@ -121,6 +124,7 @@ const handleOptimisticCreate = (event: CalendarEvent) => {
 ```
 
 #### Error: InvalidEventDuration
+
 ```typescript
 // Error Message
 "Event duration must be positive and within allowed limits."
@@ -135,14 +139,14 @@ const validateEventDuration = (event: CalendarEvent) => {
   if (event.start >= event.end) {
     throw new Error('Event end time must be after start time');
   }
-  
+
   const duration = event.end.getTime() - event.start.getTime();
   const maxDuration = 12 * 60 * 60 * 1000; // 12 hours max
-  
+
   if (duration > maxDuration) {
     throw new Error('Event duration cannot exceed 12 hours');
   }
-  
+
   if (duration < 15 * 60 * 1000) { // 15 minutes minimum
     throw new Error('Event duration must be at least 15 minutes');
   }
@@ -152,6 +156,7 @@ const validateEventDuration = (event: CalendarEvent) => {
 ### 3. API Integration Errors
 
 #### Error: NetworkError
+
 ```typescript
 // Error Message
 "Failed to connect to calendar service. Please check your network connection."
@@ -165,48 +170,48 @@ const validateEventDuration = (event: CalendarEvent) => {
 // 1. Implement retry logic with exponential backoff
 const createEventWithRetry = async (event: CalendarEvent, maxRetries = 3) => {
   let lastError;
-  
+
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await calendarApi.createEvent(event);
     } catch (error) {
       lastError = error;
-      
+
       if (i === maxRetries - 1) break;
-      
+
       // Exponential backoff
       const delay = Math.pow(2, i) * 1000;
       await new Promise(resolve => setTimeout(resolve, delay));
     }
   }
-  
+
   throw lastError;
 };
 
 // 2. Add network status detection
 const useNetworkStatus = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  
+
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
-    
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
-    
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
   }, []);
-  
+
   return { isOnline };
 };
 
 // 3. Implement offline mode
 const useOfflineCalendar = () => {
   const [offlineEvents, setOfflineEvents] = useState<CalendarEvent[]>([]);
-  
+
   const syncOfflineEvents = async () => {
     for (const event of offlineEvents) {
       try {
@@ -217,12 +222,13 @@ const useOfflineCalendar = () => {
       }
     }
   };
-  
+
   return { offlineEvents, syncOfflineEvents };
 };
 ```
 
 #### Error: AuthenticationError
+
 ```typescript
 // Error Message
 "Authentication required. Please log in to access calendar features."
@@ -236,13 +242,13 @@ const useOfflineCalendar = () => {
 const useCalendarAuth = () => {
   const { user, token, refreshAuth } = useAuth();
   const [authError, setAuthError] = useState<string | null>(null);
-  
+
   const authenticatedRequest = async (request: () => Promise<any>) => {
     if (!token) {
       setAuthError('Authentication required');
       throw new Error('Authentication required');
     }
-    
+
     try {
       return await request();
     } catch (error: any) {
@@ -259,7 +265,7 @@ const useCalendarAuth = () => {
       throw error;
     }
   };
-  
+
   return { authenticatedRequest, authError };
 };
 ```
@@ -267,6 +273,7 @@ const useCalendarAuth = () => {
 ### 4. Performance Errors
 
 #### Error: TooManyEvents
+
 ```typescript
 // Error Message
 "Too many events to display. Please filter your view or use a different time range."
@@ -280,12 +287,12 @@ const useCalendarAuth = () => {
 // 1. Implement virtual scrolling
 const VirtualizedEventList = ({ events }: { events: CalendarEvent[] }) => {
   const [visibleRange, setVisibleRange] = useState({ start: 0, end: 50 });
-  
-  const visibleEvents = useMemo(() => 
+
+  const visibleEvents = useMemo(() =>
     events.slice(visibleRange.start, visibleRange.end),
     [events, visibleRange]
   );
-  
+
   return (
     <div className="virtualized-container">
       {visibleEvents.map(event => (
@@ -298,14 +305,14 @@ const VirtualizedEventList = ({ events }: { events: CalendarEvent[] }) => {
 // 2. Add pagination
 const usePaginatedEvents = (events: CalendarEvent[], pageSize = 50) => {
   const [currentPage, setCurrentPage] = useState(0);
-  
+
   const paginatedEvents = useMemo(() => {
     const start = currentPage * pageSize;
     return events.slice(start, start + pageSize);
   }, [events, currentPage, pageSize]);
-  
+
   const totalPages = Math.ceil(events.length / pageSize);
-  
+
   return {
     events: paginatedEvents,
     currentPage,
@@ -321,17 +328,17 @@ const useLazyEventLoading = (initialEvents: CalendarEvent[]) => {
   const [events, setEvents] = useState(initialEvents);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  
+
   const loadMoreEvents = async () => {
     if (!hasMore || loading) return;
-    
+
     setLoading(true);
     try {
       const newEvents = await calendarApi.getEvents(
         events[events.length - 1].end,
         addDays(events[events.length - 1].end, 7)
       );
-      
+
       if (newEvents.length === 0) {
         setHasMore(false);
       } else {
@@ -343,12 +350,13 @@ const useLazyEventLoading = (initialEvents: CalendarEvent[]) => {
       setLoading(false);
     }
   };
-  
+
   return { events, loading, hasMore, loadMoreEvents };
 };
 ```
 
 #### Error: MemoryLeak
+
 ```typescript
 // Error Message
 "Memory leak detected in calendar component."
@@ -365,14 +373,14 @@ function CalendarComponent() {
     const handleResize = () => {
       // Handle window resize
     };
-    
+
     window.addEventListener('resize', handleResize);
-    
+
     return () => {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-  
+
   return <EventCalendar />;
 }
 
@@ -385,7 +393,7 @@ const useDebouncedHandler = (handler: Function, delay: number) => {
     () => debounce(handler, delay),
     [handler, delay]
   );
-  
+
   return debouncedHandler;
 };
 ```
@@ -393,6 +401,7 @@ const useDebouncedHandler = (handler: Function, delay: number) => {
 ### 5. Healthcare Compliance Errors
 
 #### Error: LGPDComplianceViolation
+
 ```typescript
 // Error Message
 "LGPD compliance violation detected. Action cannot be completed."
@@ -411,11 +420,11 @@ const checkLGPDCompliance = async (action: string, data: any) => {
     user: currentUser,
     timestamp: new Date()
   });
-  
+
   if (!complianceCheck.valid) {
     throw new Error(`LGPD violation: ${complianceCheck.reason}`);
   }
-  
+
   return complianceCheck;
 };
 
@@ -439,25 +448,26 @@ const minimizeEventData = (event: CalendarEvent): Partial<CalendarEvent> => {
 ```
 
 #### Error: HealthcareDataValidation
+
 ```typescript
 // Error Message
-"Invalid healthcare data. Please check appointment details."
+"Invalid healthcare data. Please check appointment details.";
 
 // Solutions
 // 1. Validate healthcare-specific fields
 const validateHealthcareEvent = (event: CalendarEvent) => {
-  const requiredFields = ['patientId', 'practitionerId', 'appointmentType'];
-  
+  const requiredFields = ["patientId", "practitionerId", "appointmentType"];
+
   for (const field of requiredFields) {
     if (!event[field as keyof CalendarEvent]) {
       throw new Error(`Missing required field: ${field}`);
     }
   }
-  
+
   // Validate appointment type
-  const validTypes = ['consultation', 'follow-up', 'procedure', 'emergency'];
+  const validTypes = ["consultation", "follow-up", "procedure", "emergency"];
   if (!validTypes.includes(event.appointmentType as string)) {
-    throw new Error('Invalid appointment type');
+    throw new Error("Invalid appointment type");
   }
 };
 
@@ -467,17 +477,17 @@ const validateBusinessRules = (event: CalendarEvent) => {
   const practitionerAvailable = checkPractitionerAvailability(
     event.practitionerId,
     event.start,
-    event.end
+    event.end,
   );
-  
+
   if (!practitionerAvailable) {
-    throw new Error('Practitioner is not available at selected time');
+    throw new Error("Practitioner is not available at selected time");
   }
-  
+
   // Check if patient has required documentation
   const patientDocumentation = getPatientDocumentation(event.patientId);
   if (!patientDocumentation.complete) {
-    throw new Error('Patient documentation is incomplete');
+    throw new Error("Patient documentation is incomplete");
   }
 };
 ```
@@ -485,6 +495,7 @@ const validateBusinessRules = (event: CalendarEvent) => {
 ### 6. Browser Compatibility Errors
 
 #### Error: BrowserNotSupported
+
 ```typescript
 // Error Message
 "Your browser is not supported. Please upgrade to a modern browser."
@@ -493,36 +504,36 @@ const validateBusinessRules = (event: CalendarEvent) => {
 const useBrowserCompatibility = () => {
   const [isCompatible, setIsCompatible] = useState(true);
   const [browserInfo, setBrowserInfo] = useState<any>(null);
-  
+
   useEffect(() => {
     const userAgent = navigator.userAgent;
     const browser = detectBrowser(userAgent);
-    
+
     setBrowserInfo(browser);
-    
+
     const supportedBrowsers = {
       chrome: { minVersion: 90 },
       firefox: { minVersion: 88 },
       safari: { minVersion: 14 },
       edge: { minVersion: 90 }
     };
-    
+
     const isSupported = supportedBrowsers[browser.name as keyof typeof supportedBrowsers]?.minVersion <= browser.version;
-    
+
     setIsCompatible(isSupported);
-    
+
     if (!isSupported) {
       console.warn(`Browser ${browser.name} ${browser.version} is not supported`);
     }
   }, []);
-  
+
   return { isCompatible, browserInfo };
 };
 
 // Usage
 function CalendarWrapper() {
   const { isCompatible, browserInfo } = useBrowserCompatibility();
-  
+
   if (!isCompatible) {
     return (
       <div className="browser-unsupported">
@@ -540,7 +551,7 @@ function CalendarWrapper() {
       </div>
     );
   }
-  
+
   return <EventCalendar />;
 }
 ```
@@ -548,17 +559,18 @@ function CalendarWrapper() {
 ## Error Recovery Patterns
 
 ### 1. Retry Pattern
+
 ```typescript
 const useRetry = (fn: Function, maxRetries = 3) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-  
+
   const execute = async (...args: any[]) => {
     setIsLoading(true);
     setError(null);
-    
+
     let lastError;
-    
+
     for (let i = 0; i < maxRetries; i++) {
       try {
         const result = await fn(...args);
@@ -566,32 +578,33 @@ const useRetry = (fn: Function, maxRetries = 3) => {
         return result;
       } catch (err) {
         lastError = err;
-        
+
         if (i === maxRetries - 1) break;
-        
+
         // Wait before retrying
-        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
       }
     }
-    
+
     setIsLoading(false);
     setError(lastError);
     throw lastError;
   };
-  
+
   return { execute, isLoading, error };
 };
 ```
 
 ### 2. Fallback Pattern
+
 ```typescript
 const CalendarWithFallback = () => {
   const [hasError, setHasError] = useState(false);
-  
+
   if (hasError) {
     return <SimpleCalendarFallback />;
   }
-  
+
   return (
     <ErrorBoundary
       fallback={<SimpleCalendarFallback />}
@@ -604,10 +617,11 @@ const CalendarWithFallback = () => {
 ```
 
 ### 3. Degraded Mode Pattern
+
 ```typescript
 const useDegradedMode = () => {
   const [mode, setMode] = useState<'full' | 'basic' | 'offline'>('full');
-  
+
   useEffect(() => {
     const handleConnectionChange = () => {
       if (!navigator.onLine) {
@@ -619,22 +633,22 @@ const useDegradedMode = () => {
         });
       }
     };
-    
+
     window.addEventListener('online', handleConnectionChange);
     window.addEventListener('offline', handleConnectionChange);
-    
+
     return () => {
       window.removeEventListener('online', handleConnectionChange);
       window.removeEventListener('offline', handleConnectionChange);
     };
   }, []);
-  
+
   return { mode };
 };
 
 function DegradedCalendar() {
   const { mode } = useDegradedMode();
-  
+
   switch (mode) {
     case 'offline':
       return <OfflineCalendar />;
@@ -649,10 +663,11 @@ function DegradedCalendar() {
 ## Debugging Tools
 
 ### 1. Calendar Debug Panel
+
 ```typescript
 const CalendarDebugPanel = () => {
   const [debugInfo, setDebugInfo] = useState<any>({});
-  
+
   useEffect(() => {
     const info = {
       browser: navigator.userAgent,
@@ -662,14 +677,14 @@ const CalendarDebugPanel = () => {
       view: currentView,
       performance: performance.getEntriesByType('measure')
     };
-    
+
     setDebugInfo(info);
   }, [events, currentView]);
-  
+
   if (process.env.NODE_ENV !== 'development') {
     return null;
   }
-  
+
   return (
     <div className="debug-panel">
       <h3>Calendar Debug Info</h3>
@@ -680,34 +695,35 @@ const CalendarDebugPanel = () => {
 ```
 
 ### 2. Performance Monitor
+
 ```typescript
 const usePerformanceMonitor = () => {
   const [metrics, setMetrics] = useState({
     renderTime: 0,
     eventCount: 0,
-    memoryUsage: 0
+    memoryUsage: 0,
   });
-  
+
   useEffect(() => {
     const measurePerformance = () => {
       const start = performance.now();
-      
+
       // Measure render performance
       const end = performance.now();
-      
-      setMetrics(prev => ({
+
+      setMetrics((prev) => ({
         ...prev,
         renderTime: end - start,
         eventCount: events.length,
-        memoryUsage: (performance as any).memory?.usedJSHeapSize || 0
+        memoryUsage: (performance as any).memory?.usedJSHeapSize || 0,
       }));
     };
-    
+
     const interval = setInterval(measurePerformance, 5000);
-    
+
     return () => clearInterval(interval);
   }, [events]);
-  
+
   return metrics;
 };
 ```
@@ -715,35 +731,39 @@ const usePerformanceMonitor = () => {
 ## Prevention Strategies
 
 ### 1. Input Validation
+
 ```typescript
 const validateCalendarEvent = (event: Partial<CalendarEvent>) => {
   const errors: string[] = [];
-  
+
   if (!event.title || event.title.trim().length === 0) {
-    errors.push('Event title is required');
+    errors.push("Event title is required");
   }
-  
+
   if (!event.start || !(event.start instanceof Date)) {
-    errors.push('Valid start time is required');
+    errors.push("Valid start time is required");
   }
-  
+
   if (!event.end || !(event.end instanceof Date)) {
-    errors.push('Valid end time is required');
+    errors.push("Valid end time is required");
   }
-  
+
   if (event.start && event.end && event.start >= event.end) {
-    errors.push('End time must be after start time');
+    errors.push("End time must be after start time");
   }
-  
+
   return errors;
 };
 ```
 
 ### 2. Type Safety
+
 ```typescript
 // Use strict TypeScript
-type StrictCalendarEvent = Required<Pick<CalendarEvent, 'id' | 'title' | 'start' | 'end'>> &
-  Partial<Omit<CalendarEvent, 'id' | 'title' | 'start' | 'end'>>;
+type StrictCalendarEvent = Required<
+  Pick<CalendarEvent, "id" | "title" | "start" | "end">
+> &
+  Partial<Omit<CalendarEvent, "id" | "title" | "start" | "end">>;
 
 const createStrictEvent = (event: StrictCalendarEvent) => {
   // TypeScript will enforce required fields
@@ -752,6 +772,7 @@ const createStrictEvent = (event: StrictCalendarEvent) => {
 ```
 
 ### 3. Error Boundaries
+
 ```typescript
 class CalendarErrorBoundary extends React.Component<
   { children: React.ReactNode; fallback?: React.ReactNode },
@@ -761,21 +782,21 @@ class CalendarErrorBoundary extends React.Component<
     super(props);
     this.state = { hasError: false };
   }
-  
+
   static getDerivedStateFromError(error: Error) {
     return { hasError: true, error };
   }
-  
+
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Calendar Error:', error, errorInfo);
-    
+
     // Log error to monitoring service
     errorMonitoringService.captureException(error, {
       component: 'Calendar',
       errorInfo
     });
   }
-  
+
   render() {
     if (this.state.hasError) {
       return this.props.fallback || (
@@ -788,7 +809,7 @@ class CalendarErrorBoundary extends React.Component<
         </div>
       );
     }
-    
+
     return this.props.children;
   }
 }
@@ -797,6 +818,7 @@ class CalendarErrorBoundary extends React.Component<
 ## Best Practices
 
 ### 1. Always Validate Input
+
 ```typescript
 const handleEventCreate = (eventData: any) => {
   try {
@@ -809,17 +831,22 @@ const handleEventCreate = (eventData: any) => {
 ```
 
 ### 2. Provide User Feedback
+
 ```typescript
 const useToast = () => {
-  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info') => {
+  const showToast = (
+    message: string,
+    type: "success" | "error" | "warning" | "info",
+  ) => {
     // Implementation depends on your toast library
   };
-  
+
   return { showToast };
 };
 ```
 
 ### 3. Log Everything
+
 ```typescript
 const logger = {
   info: (message: string, data?: any) => {
@@ -832,26 +859,29 @@ const logger = {
   },
   warn: (message: string, data?: any) => {
     console.warn(`[Calendar Warning] ${message}`, data);
-  }
+  },
 };
 ```
 
 ### 4. Test Error Scenarios
+
 ```typescript
-describe('Calendar Error Handling', () => {
-  test('handles network errors gracefully', async () => {
+describe("Calendar Error Handling", () => {
+  test("handles network errors gracefully", async () => {
     // Mock network error
-    jest.spyOn(calendarApi, 'createEvent').mockRejectedValueOnce(
-      new Error('Network error')
-    );
-    
+    jest
+      .spyOn(calendarApi, "createEvent")
+      .mockRejectedValueOnce(new Error("Network error"));
+
     const { result } = renderHook(() => useCalendar());
-    
+
     await act(async () => {
       await expect(result.current.createEvent(mockEvent)).rejects.toThrow();
     });
-    
-    expect(result.current.error).toBe('Failed to create event. Please try again.');
+
+    expect(result.current.error).toBe(
+      "Failed to create event. Please try again.",
+    );
   });
 });
 ```

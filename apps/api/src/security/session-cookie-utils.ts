@@ -9,17 +9,17 @@
  * @version 1.0.0
  */
 
-import { EnhancedSessionManager } from './enhanced-session-manager';
+import { EnhancedSessionManager } from "./enhanced-session-manager";
 
 export interface CookieConfig {
   httpOnly: boolean;
   secure: boolean;
-  sameSite: 'strict' | 'lax' | 'none';
+  sameSite: "strict" | "lax" | "none";
   path: string;
   domain?: string;
   maxAge?: number;
   expires?: Date;
-  priority?: 'low' | 'medium' | 'high';
+  priority?: "low" | "medium" | "high";
 }
 
 export interface CookieValidationResult {
@@ -33,15 +33,15 @@ export class SessionCookieUtils {
   private static readonly DEFAULT_COOKIE_CONFIG: CookieConfig = {
     httpOnly: true,
     secure: true,
-    sameSite: 'strict',
-    path: '/',
+    sameSite: "strict",
+    path: "/",
     maxAge: 8 * 60 * 60, // 8 hours
-    priority: 'high',
+    priority: "high",
   };
 
-  private static readonly SESSION_COOKIE_NAME = 'sessionId';
-  private static readonly CSRF_COOKIE_NAME = 'csrfToken';
-  private static readonly SESSION_SIGNATURE_COOKIE_NAME = 'sessionSig';
+  private static readonly SESSION_COOKIE_NAME = "sessionId";
+  private static readonly CSRF_COOKIE_NAME = "csrfToken";
+  private static readonly SESSION_SIGNATURE_COOKIE_NAME = "sessionSig";
 
   /**
    * Generate secure session cookie with signature
@@ -57,7 +57,10 @@ export class SessionCookieUtils {
     const csrfToken = this.generateCSRFToken();
 
     // Generate session signature for integrity
-    const sessionSignature = this.generateSessionSignature(sessionId, secretKey);
+    const sessionSignature = this.generateSessionSignature(
+      sessionId,
+      secretKey,
+    );
 
     // Create session cookie string
     const sessionCookie = this.formatCookie(
@@ -67,15 +70,11 @@ export class SessionCookieUtils {
     );
 
     // Create CSRF cookie string
-    const csrfCookie = this.formatCookie(
-      this.CSRF_COOKIE_NAME,
-      csrfToken,
-      {
-        ...cookieConfig,
-        httpOnly: false, // Allow JavaScript access for CSRF token
-        maxAge: cookieConfig.maxAge, // Match session cookie lifetime
-      },
-    );
+    const csrfCookie = this.formatCookie(this.CSRF_COOKIE_NAME, csrfToken, {
+      ...cookieConfig,
+      httpOnly: false, // Allow JavaScript access for CSRF token
+      maxAge: cookieConfig.maxAge, // Match session cookie lifetime
+    });
 
     // Create signature cookie string
     const signatureCookie = this.formatCookie(
@@ -102,7 +101,7 @@ export class SessionCookieUtils {
     if (!cookieHeader) {
       return {
         isValid: false,
-        error: 'No session cookies found',
+        error: "No session cookies found",
       };
     }
 
@@ -117,7 +116,7 @@ export class SessionCookieUtils {
       if (!sessionId) {
         return {
           isValid: false,
-          error: 'Session ID cookie missing',
+          error: "Session ID cookie missing",
         };
       }
 
@@ -125,7 +124,7 @@ export class SessionCookieUtils {
       if (!this.validateSessionIdFormat(sessionId)) {
         return {
           isValid: false,
-          error: 'Invalid session ID format',
+          error: "Invalid session ID format",
         };
       }
 
@@ -134,22 +133,25 @@ export class SessionCookieUtils {
       if (!providedSignature) {
         return {
           isValid: false,
-          error: 'Session signature missing',
+          error: "Session signature missing",
         };
       }
 
-      const expectedSignature = this.generateSessionSignature(sessionId, secretKey);
+      const expectedSignature = this.generateSessionSignature(
+        sessionId,
+        secretKey,
+      );
       if (providedSignature !== expectedSignature) {
         return {
           isValid: false,
-          error: 'Session signature invalid',
+          error: "Session signature invalid",
         };
       }
 
       // Validate CSRF token (if present)
       const csrfToken = cookies[this.CSRF_COOKIE_NAME];
       if (csrfToken && !this.validateCSRFToken(csrfToken)) {
-        warnings.push('CSRF token format invalid');
+        warnings.push("CSRF token format invalid");
       }
 
       // Check if session exists in session manager
@@ -157,7 +159,7 @@ export class SessionCookieUtils {
       if (!session) {
         return {
           isValid: false,
-          error: 'Session not found or expired',
+          error: "Session not found or expired",
         };
       }
 
@@ -172,7 +174,7 @@ export class SessionCookieUtils {
     } catch (error) {
       return {
         isValid: false,
-        error: 'Failed to parse session cookies',
+        error: "Failed to parse session cookies",
       };
     }
   }
@@ -183,7 +185,9 @@ export class SessionCookieUtils {
   private static generateCSRFToken(): string {
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+      "",
+    );
   }
 
   /**
@@ -196,17 +200,20 @@ export class SessionCookieUtils {
   /**
    * Generate session signature for integrity
    */
-  private static generateSessionSignature(sessionId: string, secretKey: string): string {
+  private static generateSessionSignature(
+    sessionId: string,
+    secretKey: string,
+  ): string {
     const encoder = new TextEncoder();
     const data = encoder.encode(sessionId);
     const key = encoder.encode(secretKey);
 
-    return crypto.subtle
-      .sign('HMAC', key, data)
-      .then(signature => {
-        const signatureArray = new Uint8Array(signature);
-        return Array.from(signatureArray, byte => byte.toString(16).padStart(2, '0')).join('');
-      });
+    return crypto.subtle.sign("HMAC", key, data).then((signature) => {
+      const signatureArray = new Uint8Array(signature);
+      return Array.from(signatureArray, (byte) =>
+        byte.toString(16).padStart(2, "0"),
+      ).join("");
+    });
   }
 
   /**
@@ -219,13 +226,15 @@ export class SessionCookieUtils {
   /**
    * Parse cookie header into object
    */
-  private static parseCookieHeader(cookieHeader: string): Record<string, string> {
+  private static parseCookieHeader(
+    cookieHeader: string,
+  ): Record<string, string> {
     const cookies: Record<string, string> = {};
 
-    cookieHeader.split(';').forEach(cookie => {
-      const [name, ...valueParts] = cookie.trim().split('=');
+    cookieHeader.split(";").forEach((cookie) => {
+      const [name, ...valueParts] = cookie.trim().split("=");
       if (name && valueParts.length > 0) {
-        cookies[name.trim()] = valueParts.join('=').trim();
+        cookies[name.trim()] = valueParts.join("=").trim();
       }
     });
 
@@ -235,53 +244,65 @@ export class SessionCookieUtils {
   /**
    * Format cookie string with attributes
    */
-  private static formatCookie(name: string, value: string, config: CookieConfig): string {
+  private static formatCookie(
+    name: string,
+    value: string,
+    config: CookieConfig,
+  ): string {
     const attributes: string[] = [];
 
     attributes.push(`${name}=${value}`);
 
-    if (config.httpOnly) attributes.push('HttpOnly');
-    if (config.secure) attributes.push('Secure');
+    if (config.httpOnly) attributes.push("HttpOnly");
+    if (config.secure) attributes.push("Secure");
     if (config.sameSite) attributes.push(`SameSite=${config.sameSite}`);
     if (config.path) attributes.push(`Path=${config.path}`);
     if (config.domain) attributes.push(`Domain=${config.domain}`);
     if (config.maxAge) attributes.push(`Max-Age=${config.maxAge}`);
-    if (config.expires) attributes.push(`Expires=${config.expires.toUTCString()}`);
+    if (config.expires)
+      attributes.push(`Expires=${config.expires.toUTCString()}`);
     if (config.priority) attributes.push(`Priority=${config.priority}`);
 
-    return attributes.join('; ');
+    return attributes.join("; ");
   }
 
   /**
    * Validate cookie security attributes
    */
-  private static validateCookieSecurity(cookieHeader: string, warnings: string[]): void {
+  private static validateCookieSecurity(
+    cookieHeader: string,
+    warnings: string[],
+  ): void {
     // Check for HttpOnly flag
-    if (!cookieHeader.includes('HttpOnly')) {
-      warnings.push('Session cookie missing HttpOnly flag');
+    if (!cookieHeader.includes("HttpOnly")) {
+      warnings.push("Session cookie missing HttpOnly flag");
     }
 
     // Check for Secure flag
-    if (!cookieHeader.includes('Secure')) {
-      warnings.push('Session cookie missing Secure flag');
+    if (!cookieHeader.includes("Secure")) {
+      warnings.push("Session cookie missing Secure flag");
     }
 
     // Check for SameSite flag
-    if (!cookieHeader.includes('SameSite')) {
-      warnings.push('Session cookie missing SameSite flag');
+    if (!cookieHeader.includes("SameSite")) {
+      warnings.push("Session cookie missing SameSite flag");
     }
 
     // Check for secure SameSite value
-    if (cookieHeader.includes('SameSite=None') && !cookieHeader.includes('Secure')) {
-      warnings.push('SameSite=None requires Secure flag');
+    if (
+      cookieHeader.includes("SameSite=None") &&
+      !cookieHeader.includes("Secure")
+    ) {
+      warnings.push("SameSite=None requires Secure flag");
     }
 
     // Check for reasonable Max-Age
     const maxAgeMatch = cookieHeader.match(/Max-Age=(\d+)/);
     if (maxAgeMatch) {
       const maxAge = parseInt(maxAgeMatch[1], 10);
-      if (maxAge > 24 * 60 * 60) { // More than 24 hours
-        warnings.push('Session cookie Max-Age exceeds recommended duration');
+      if (maxAge > 24 * 60 * 60) {
+        // More than 24 hours
+        warnings.push("Session cookie Max-Age exceeds recommended duration");
       }
     }
   }
@@ -296,11 +317,19 @@ export class SessionCookieUtils {
       expires: new Date(0), // Expired immediately
     };
 
-    const sessionCookie = this.formatCookie(this.SESSION_COOKIE_NAME, '', expiredConfig);
-    const csrfCookie = this.formatCookie(this.CSRF_COOKIE_NAME, '', expiredConfig);
+    const sessionCookie = this.formatCookie(
+      this.SESSION_COOKIE_NAME,
+      "",
+      expiredConfig,
+    );
+    const csrfCookie = this.formatCookie(
+      this.CSRF_COOKIE_NAME,
+      "",
+      expiredConfig,
+    );
     const signatureCookie = this.formatCookie(
       this.SESSION_SIGNATURE_COOKIE_NAME,
-      '',
+      "",
       expiredConfig,
     );
 
@@ -310,7 +339,9 @@ export class SessionCookieUtils {
   /**
    * Extract session ID from cookie header (basic extraction without validation)
    */
-  static extractSessionId(cookieHeader: string | undefined): string | undefined {
+  static extractSessionId(
+    cookieHeader: string | undefined,
+  ): string | undefined {
     if (!cookieHeader) return undefined;
 
     const cookies = this.parseCookieHeader(cookieHeader);
@@ -324,7 +355,10 @@ export class SessionCookieUtils {
     if (!cookieHeader) return false;
 
     const cookies = this.parseCookieHeader(cookieHeader);
-    return !!(cookies[this.SESSION_COOKIE_NAME] && cookies[this.SESSION_SIGNATURE_COOKIE_NAME]);
+    return !!(
+      cookies[this.SESSION_COOKIE_NAME] &&
+      cookies[this.SESSION_SIGNATURE_COOKIE_NAME]
+    );
   }
 
   /**
@@ -349,21 +383,21 @@ export class SessionCookieUtils {
     if (!cookieCSRFToken) {
       return {
         isValid: false,
-        error: 'CSRF token missing from cookies',
+        error: "CSRF token missing from cookies",
       };
     }
 
     if (!csrfTokenHeader) {
       return {
         isValid: false,
-        error: 'CSRF token missing from request headers',
+        error: "CSRF token missing from request headers",
       };
     }
 
     if (cookieCSRFToken !== csrfTokenHeader) {
       return {
         isValid: false,
-        error: 'CSRF token mismatch',
+        error: "CSRF token mismatch",
       };
     }
 

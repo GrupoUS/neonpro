@@ -1,4 +1,9 @@
-import { DateRange, QueryIntent, QueryParameters, UserRole } from '@neonpro/types';
+import {
+  DateRange,
+  QueryIntent,
+  QueryParameters,
+  UserRole,
+} from "@neonpro/types";
 
 /**
  * Intent Parser Service
@@ -37,21 +42,10 @@ export class IntentParserService {
   };
 
   private readonly DATE_PATTERNS = {
-    today: [
-      /hoje\b/i,
-      /agora\b/i,
-    ],
-    tomorrow: [
-      /amanh[ãa]\b/i,
-    ],
-    this_week: [
-      /esta\s+semana\b/i,
-      /pr[óo]ximos?\s+7\s+dias\b/i,
-    ],
-    this_month: [
-      /este\s+m[êe]s\b/i,
-      /m[êe]s\s+atual\b/i,
-    ],
+    today: [/hoje\b/i, /agora\b/i],
+    tomorrow: [/amanh[ãa]\b/i],
+    this_week: [/esta\s+semana\b/i, /pr[óo]ximos?\s+7\s+dias\b/i],
+    this_month: [/este\s+m[êe]s\b/i, /m[êe]s\s+atual\b/i],
     specific_dates: [
       /(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/g, // DD/MM/YYYY
       /(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})/gi, // DD de MMMM de YYYY
@@ -64,26 +58,18 @@ export class IntentParserService {
   ];
 
   private readonly FINANCIAL_TYPE_PATTERNS = {
-    revenue: [
-      /receita\b/i,
-      /faturamento?\b/i,
-      /entradas?\b/i,
-    ],
-    payments: [
-      /pagamentos?\b/i,
-      /recebidos?\b/i,
-    ],
-    expenses: [
-      /despesas?\b/i,
-      /gastos?\b/i,
-      /custos?\b/i,
-    ],
+    revenue: [/receita\b/i, /faturamento?\b/i, /entradas?\b/i],
+    payments: [/pagamentos?\b/i, /recebidos?\b/i],
+    expenses: [/despesas?\b/i, /gastos?\b/i, /custos?\b/i],
   };
 
   /**
    * Parse natural language query to extract intent and parameters
    */
-  parseQuery(_query: string, userRole: UserRole): {
+  parseQuery(
+    _query: string,
+    userRole: UserRole,
+  ): {
     intent: QueryIntent;
     parameters: QueryParameters;
     confidence: number;
@@ -95,7 +81,11 @@ export class IntentParserService {
     const confidence = this.calculateConfidence(normalizedQuery, intent);
 
     // Extract parameters based on intent
-    const parameters = this.extractParameters(normalizedQuery, intent, userRole);
+    const parameters = this.extractParameters(
+      normalizedQuery,
+      intent,
+      userRole,
+    );
 
     return {
       intent,
@@ -111,10 +101,10 @@ export class IntentParserService {
     return query
       .toLowerCase()
       .trim()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '') // Remove accents
-      .replace(/[^\w\s]/g, ' ') // Keep only alphanumeric and spaces
-      .replace(/\s+/g, ' ') // Normalize whitespace
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // Remove accents
+      .replace(/[^\w\s]/g, " ") // Keep only alphanumeric and spaces
+      .replace(/\s+/g, " ") // Normalize whitespace
       .trim();
   }
 
@@ -142,7 +132,7 @@ export class IntentParserService {
     // Find intent with highest score
     const maxScore = Math.max(...Object.values(intentScores));
     if (maxScore === 0) {
-      return 'unknown';
+      return "unknown";
     }
 
     const bestIntents = Object.entries(intentScores)
@@ -160,13 +150,16 @@ export class IntentParserService {
   /**
    * Resolve ties between multiple matching intents
    */
-  private resolveIntentTie(_query: string, intents: QueryIntent[]): QueryIntent {
+  private resolveIntentTie(
+    _query: string,
+    intents: QueryIntent[],
+  ): QueryIntent {
     // Priority order for tie-breaking
     const priorityOrder: QueryIntent[] = [
-      'financial',
-      'appointments',
-      'client_data',
-      'general',
+      "financial",
+      "appointments",
+      "client_data",
+      "general",
     ];
 
     for (const intent of priorityOrder) {
@@ -182,7 +175,7 @@ export class IntentParserService {
    * Calculate confidence score for intent detection
    */
   private calculateConfidence(_query: string, intent: QueryIntent): number {
-    if (intent === 'unknown') {
+    if (intent === "unknown") {
       return 0.3;
     }
 
@@ -212,14 +205,14 @@ export class IntentParserService {
     let bonus = 0;
 
     // Bonus for specific names
-    if (this.CLIENT_NAME_PATTERNS.some(pattern => pattern.test(query))) {
+    if (this.CLIENT_NAME_PATTERNS.some((pattern) => pattern.test(query))) {
       bonus += 0.2;
     }
 
     // Bonus for dates
     if (
-      Object.values(this.DATE_PATTERNS).some(patterns =>
-        patterns.some(pattern => pattern.test(query))
+      Object.values(this.DATE_PATTERNS).some((patterns) =>
+        patterns.some((pattern) => pattern.test(query)),
       )
     ) {
       bonus += 0.2;
@@ -227,8 +220,8 @@ export class IntentParserService {
 
     // Bonus for financial type specification
     if (
-      Object.values(this.FINANCIAL_TYPE_PATTERNS).some(patterns =>
-        patterns.some(pattern => pattern.test(query))
+      Object.values(this.FINANCIAL_TYPE_PATTERNS).some((patterns) =>
+        patterns.some((pattern) => pattern.test(query)),
       )
     ) {
       bonus += 0.1;
@@ -250,15 +243,15 @@ export class IntentParserService {
     };
 
     switch (intent) {
-      case 'client_data':
+      case "client_data":
         parameters.clientNames = this.extractClientNames(query);
         break;
 
-      case 'appointments':
+      case "appointments":
         parameters.dateRanges = this.extractDateRanges(query);
         break;
 
-      case 'financial':
+      case "financial":
         parameters.financial = this.extractFinancialParameters(query);
         break;
     }
@@ -295,7 +288,7 @@ export class IntentParserService {
     const now = new Date();
 
     // Check for relative date patterns
-    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.today.some((pattern) => pattern.test(query))) {
       const today = new Date(now);
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
@@ -304,7 +297,7 @@ export class IntentParserService {
       ranges.push({ start: today, end: tomorrow });
     }
 
-    if (this.DATE_PATTERNS.tomorrow.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.tomorrow.some((pattern) => pattern.test(query))) {
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(0, 0, 0, 0);
@@ -314,7 +307,7 @@ export class IntentParserService {
       ranges.push({ start: tomorrow, end: dayAfter });
     }
 
-    if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.this_week.some((pattern) => pattern.test(query))) {
       const weekStart = new Date(now);
       weekStart.setDate(now.getDate() - now.getDay());
       weekStart.setHours(0, 0, 0, 0);
@@ -324,7 +317,7 @@ export class IntentParserService {
       ranges.push({ start: weekStart, end: weekEnd });
     }
 
-    if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.this_month.some((pattern) => pattern.test(query))) {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       monthEnd.setHours(23, 59, 59, 999);
@@ -366,7 +359,8 @@ export class IntentParserService {
     const dateMatches = query.matchAll(/(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/g);
     for (const match of dateMatches) {
       const [, day, month, year] = match;
-      const fullYear = year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
+      const fullYear =
+        year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
       const date = new Date(fullYear, parseInt(month) - 1, parseInt(day));
 
       if (!isNaN(date.getTime())) {
@@ -380,29 +374,37 @@ export class IntentParserService {
   /**
    * Extract financial parameters from query
    */
-  private extractFinancialParameters(_query: string): QueryParameters['financial'] {
-    const financial: QueryParameters['financial'] = {
-      type: 'all',
-      period: 'month',
+  private extractFinancialParameters(
+    _query: string,
+  ): QueryParameters["financial"] {
+    const financial: QueryParameters["financial"] = {
+      type: "all",
+      period: "month",
     };
 
     // Extract financial type
-    for (const [type, patterns] of Object.entries(this.FINANCIAL_TYPE_PATTERNS)) {
-      if (patterns.some(pattern => pattern.test(query))) {
-        financial.type = type as 'revenue' | 'payments' | 'expenses';
+    for (const [type, patterns] of Object.entries(
+      this.FINANCIAL_TYPE_PATTERNS,
+    )) {
+      if (patterns.some((pattern) => pattern.test(query))) {
+        financial.type = type as "revenue" | "payments" | "expenses";
         break;
       }
     }
 
     // Extract period
-    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(query))) {
-      financial.period = 'today';
-    } else if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(query))) {
-      financial.period = 'week';
-    } else if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(query))) {
-      financial.period = 'month';
-    } else if (query.includes('ano') || query.includes('year')) {
-      financial.period = 'year';
+    if (this.DATE_PATTERNS.today.some((pattern) => pattern.test(query))) {
+      financial.period = "today";
+    } else if (
+      this.DATE_PATTERNS.this_week.some((pattern) => pattern.test(query))
+    ) {
+      financial.period = "week";
+    } else if (
+      this.DATE_PATTERNS.this_month.some((pattern) => pattern.test(query))
+    ) {
+      financial.period = "month";
+    } else if (query.includes("ano") || query.includes("year")) {
+      financial.period = "year";
     }
 
     return financial;
@@ -413,18 +415,18 @@ export class IntentParserService {
    */
   getSuggestedQueries(userRole: UserRole): string[] {
     const baseSuggestions = [
-      'Quais os próximos agendamentos?',
-      'Me mostre os clientes cadastrados',
-      'Como está o faturamento?',
+      "Quais os próximos agendamentos?",
+      "Me mostre os clientes cadastrados",
+      "Como está o faturamento?",
     ];
 
     // Add role-specific suggestions
-    if (userRole === 'admin') {
-      baseSuggestions.push('Resumo financeiro completo');
-    } else if (userRole === 'doctor') {
-      baseSuggestions.push('Me mostre informações do paciente [nome]');
-    } else if (userRole === 'receptionist') {
-      baseSuggestions.push('Agendamentos para hoje');
+    if (userRole === "admin") {
+      baseSuggestions.push("Resumo financeiro completo");
+    } else if (userRole === "doctor") {
+      baseSuggestions.push("Me mostre informações do paciente [nome]");
+    } else if (userRole === "receptionist") {
+      baseSuggestions.push("Agendamentos para hoje");
     }
 
     return baseSuggestions;
@@ -433,36 +435,41 @@ export class IntentParserService {
   /**
    * Validate extracted parameters
    */
-  validateParameters(parameters: QueryParameters, intent: QueryIntent): {
+  validateParameters(
+    parameters: QueryParameters,
+    intent: QueryIntent,
+  ): {
     valid: boolean;
     errors: string[];
   } {
     const errors: string[] = [];
 
     switch (intent) {
-      case 'client_data':
+      case "client_data":
         if (parameters.clientNames && parameters.clientNames.length > 5) {
-          errors.push('Too many client names specified (max 5)');
+          errors.push("Too many client names specified (max 5)");
         }
         break;
 
-      case 'appointments':
+      case "appointments":
         if (parameters.dateRanges && parameters.dateRanges.length > 3) {
-          errors.push('Too many date ranges specified (max 3)');
+          errors.push("Too many date ranges specified (max 3)");
         }
         for (const range of parameters.dateRanges || []) {
           if (range.start > range.end) {
-            errors.push('Date range start must be before end');
+            errors.push("Date range start must be before end");
           }
         }
         break;
 
-      case 'financial':
+      case "financial":
         if (
-          parameters.financial?.type
-          && !['revenue', 'payments', 'expenses', 'all'].includes(parameters.financial.type)
+          parameters.financial?.type &&
+          !["revenue", "payments", "expenses", "all"].includes(
+            parameters.financial.type,
+          )
         ) {
-          errors.push('Invalid financial type specified');
+          errors.push("Invalid financial type specified");
         }
         break;
     }

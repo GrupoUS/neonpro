@@ -45,9 +45,11 @@ Transform NeonPro's basic Financeiro page into a sophisticated, interactive fina
 **Scale/Scope**: 15+ chart components, 5-tier permission system, 10k+ financial records
 
 ## Constitution Check
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### Aesthetic Clinic Compliance Gates
+
 - [x] **Healthcare-First Development**: Feature prioritizes financial transparency and data privacy (LGPD) with RLS enforcement
 - [x] **AI-Native Architecture**: Systems designed with AI integration for financial insights and predictive analytics
 - [x] **Test-Driven Healthcare**: TDD mandatory for financial-critical features with proper test cases
@@ -58,6 +60,7 @@ Transform NeonPro's basic Financeiro page into a sophisticated, interactive fina
 - [x] **Quality Gates**: Healthcare testing requirements, code quality standards, and performance requirements met
 
 ### Technology Stack Validation
+
 - [x] Frontend: Uses TanStack Router + Vite + React 19, TypeScript 5.9.2, Shadcn MCP (compatible with existing stack)
 - [x] Backend: Uses tRPC v11.0.0, Supabase with RLS, comprehensive audit logging
 - [x] Infrastructure: Uses existing monorepo structure, comprehensive testing with Vitest/Playwright
@@ -66,6 +69,7 @@ Transform NeonPro's basic Financeiro page into a sophisticated, interactive fina
 - [x] **Password Security**: bcryptjs v2.4.3 with migration path to Argon2id for enhanced security
 
 ### Constitutional Compliance Assessment
+
 - [x] KISS Principle: Using proven frameworks (Shadcn MCP, Recharts) rather than custom charting implementation
 - [x] YAGNI Principle: Building only enhanced dashboard features, not full financial ERP system
 - [x] Chain of Thought: Clear phased approach with validation at each step

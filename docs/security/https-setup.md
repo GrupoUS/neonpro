@@ -47,7 +47,7 @@ Create `config/tls-config.js`:
 ```javascript
 /**
  * TLS 1.3 Configuration for Healthcare Compliance
- * 
+ *
  * This configuration ensures:
  * - Perfect Forward Secrecy
  * - Modern cipher suites
@@ -57,82 +57,84 @@ Create `config/tls-config.js`:
 
 const tlsConfig = {
   // TLS 1.3 only (with 1.2 fallback)
-  minVersion: 'TLSv1.2',
-  maxVersion: 'TLSv1.3',
-  
+  minVersion: "TLSv1.2",
+  maxVersion: "TLSv1.3",
+
   // Perfect Forward Secrecy cipher suites
   ciphers: [
     // TLS 1.3 cipher suites
-    'TLS_AES_256_GCM_SHA384',
-    'TLS_CHACHA20_POLY1305_SHA256',
-    'TLS_AES_128_GCM_SHA256',
-    
+    "TLS_AES_256_GCM_SHA384",
+    "TLS_CHACHA20_POLY1305_SHA256",
+    "TLS_AES_128_GCM_SHA256",
+
     // TLS 1.2 cipher suites (ECDHE required for PFS)
-    'ECDHE-ECDSA-AES256-GCM-SHA384',
-    'ECDHE-RSA-AES256-GCM-SHA384',
-    'ECDHE-ECDSA-CHACHA20-POLY1305',
-    'ECDHE-RSA-CHACHA20-POLY1305',
-    'ECDHE-ECDSA-AES128-GCM-SHA256',
-    'ECDHE-RSA-AES128-GCM-SHA256',
-    
+    "ECDHE-ECDSA-AES256-GCM-SHA384",
+    "ECDHE-RSA-AES256-GCM-SHA384",
+    "ECDHE-ECDSA-CHACHA20-POLY1305",
+    "ECDHE-RSA-CHACHA20-POLY1305",
+    "ECDHE-ECDSA-AES128-GCM-SHA256",
+    "ECDHE-RSA-AES128-GCM-SHA256",
+
     // Legacy support (remove if not needed)
-    'ECDHE-ECDSA-AES256-SHA384',
-    'ECDHE-RSA-AES256-SHA384',
-    'ECDHE-ECDSA-AES128-SHA256',
-    'ECDHE-RSA-AES128-SHA256',
-  ].join(':'),
-  
+    "ECDHE-ECDSA-AES256-SHA384",
+    "ECDHE-RSA-AES256-SHA384",
+    "ECDHE-ECDSA-AES128-SHA256",
+    "ECDHE-RSA-AES128-SHA256",
+  ].join(":"),
+
   // Honor cipher order
   honorCipherOrder: true,
-  
+
   // ECDH curve preference
-  ecdhCurve: 'auto',
-  
+  ecdhCurve: "auto",
+
   // DH parameters
   dhparam: undefined, // Use auto-generated
-  
+
   // Session resumption
   sessionTimeout: 300, // 5 minutes
-  
+
   // Session tickets
   sessionTickets: {
     keys: [
       // 48-byte keys for session ticket encryption
-      Buffer.from('your-48-byte-key-1-here', 'hex'),
-      Buffer.from('your-48-byte-key-2-here', 'hex'),
+      Buffer.from("your-48-byte-key-1-here", "hex"),
+      Buffer.from("your-48-byte-key-2-here", "hex"),
     ],
     ticketLifetime: 86400, // 24 hours
   },
-  
+
   // OCSP stapling
   requestOCSP: true,
-  
+
   // Certificate chain
   cert: process.env.SSL_CERT_PATH,
   key: process.env.SSL_KEY_PATH,
-  
+
   // CA bundle for certificate verification
   ca: process.env.SSL_CA_PATH,
 };
 
 // Security validation
 function validateTLSConfig(config) {
-  const required = ['cert', 'key'];
-  const missing = required.filter(key => !config[key]);
-  
+  const required = ["cert", "key"];
+  const missing = required.filter((key) => !config[key]);
+
   if (missing.length > 0) {
-    throw new Error(`Missing required TLS configuration: ${missing.join(', ')}`);
+    throw new Error(
+      `Missing required TLS configuration: ${missing.join(", ")}`,
+    );
   }
-  
+
   // Validate cipher suites for PFS
-  const pfsCiphers = config.ciphers.split(':').filter(cipher => 
-    cipher.includes('ECDHE') || cipher.includes('TLS_')
-  );
-  
+  const pfsCiphers = config.ciphers
+    .split(":")
+    .filter((cipher) => cipher.includes("ECDHE") || cipher.includes("TLS_"));
+
   if (pfsCiphers.length === 0) {
-    throw new Error('No Perfect Forward Secrecy cipher suites configured');
+    throw new Error("No Perfect Forward Secrecy cipher suites configured");
   }
-  
+
   return config;
 }
 
@@ -146,7 +148,7 @@ Create `middleware/security-headers.js`:
 ```javascript
 /**
  * Security Headers for Healthcare Compliance
- * 
+ *
  * Implements OWASP recommended headers and
  * healthcare-specific security requirements
  */
@@ -154,32 +156,37 @@ Create `middleware/security-headers.js`:
 function createSecurityHeaders() {
   return {
     // Strict Transport Security
-    'Strict-Transport-Security': process.env.HSTS_ENABLED === 'true' 
-      ? `max-age=${process.env.HSTS_MAX_AGE || 31536000}; includeSubDomains; preload`
-      : undefined,
-    
+    "Strict-Transport-Security":
+      process.env.HSTS_ENABLED === "true"
+        ? `max-age=${process.env.HSTS_MAX_AGE || 31536000}; includeSubDomains; preload`
+        : undefined,
+
     // Content Security Policy
-    'Content-Security-Policy': process.env.CSP_ENABLED === 'true'
-      ? process.env.CSP_POLICY || "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' wss: https:;"
-      : undefined,
-    
+    "Content-Security-Policy":
+      process.env.CSP_ENABLED === "true"
+        ? process.env.CSP_POLICY ||
+          "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' wss: https:;"
+        : undefined,
+
     // Frame Options
-    'X-Frame-Options': process.env.FRAME_OPTIONS || 'DENY',
-    
+    "X-Frame-Options": process.env.FRAME_OPTIONS || "DENY",
+
     // XSS Protection
-    'X-XSS-Protection': process.env.XSS_PROTECTION || '1; mode=block',
-    
+    "X-XSS-Protection": process.env.XSS_PROTECTION || "1; mode=block",
+
     // Content Type Options
-    'X-Content-Type-Options': process.env.CONTENT_TYPE_OPTIONS || 'nosniff',
-    
+    "X-Content-Type-Options": process.env.CONTENT_TYPE_OPTIONS || "nosniff",
+
     // Referrer Policy
-    'Referrer-Policy': process.env.REFERRER_POLICY || 'strict-origin-when-cross-origin',
-    
+    "Referrer-Policy":
+      process.env.REFERRER_POLICY || "strict-origin-when-cross-origin",
+
     // Permissions Policy
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-    
+    "Permissions-Policy":
+      "camera=(), microphone=(), geolocation=(), payment=()",
+
     // Remove server information
-    'Server': undefined,
+    Server: undefined,
   };
 }
 
@@ -187,14 +194,14 @@ function createSecurityHeaders() {
 function securityHeadersMiddleware() {
   return async (c, next) => {
     const headers = createSecurityHeaders();
-    
+
     // Apply security headers
     Object.entries(headers).forEach(([key, value]) => {
       if (value !== undefined) {
         c.header(key, value);
       }
     });
-    
+
     await next();
   };
 }
@@ -210,33 +217,33 @@ module.exports = {
 Create `server/https-server.js`:
 
 ```javascript
-const https = require('https');
-const { Hono } = require('hono');
-const { handle } = require('hono/vercel');
-const tlsConfig = require('../config/tls-config');
-const { securityHeadersMiddleware } = require('../middleware/security-headers');
+const https = require("https");
+const { Hono } = require("hono");
+const { handle } = require("hono/vercel");
+const tlsConfig = require("../config/tls-config");
+const { securityHeadersMiddleware } = require("../middleware/security-headers");
 
 // Create Hono app
 const app = new Hono();
 
 // Apply security headers
-app.use('*', securityHeadersMiddleware());
+app.use("*", securityHeadersMiddleware());
 
 // HTTPS redirect middleware
-app.use('*', async (c, next) => {
-  if (c.req.header('x-forwarded-proto') !== 'https') {
-    return c.redirect(`https://${c.req.header('host')}${c.req.url}`, 301);
+app.use("*", async (c, next) => {
+  if (c.req.header("x-forwarded-proto") !== "https") {
+    return c.redirect(`https://${c.req.header("host")}${c.req.url}`, 301);
   }
   await next();
 });
 
 // Your routes here
-app.get('/health', (c) => {
-  return c.json({ 
-    status: 'healthy', 
+app.get("/health", (c) => {
+  return c.json({
+    status: "healthy",
     timestamp: new Date().toISOString(),
-    tls_version: 'TLS 1.3',
-    security_headers: 'enabled'
+    tls_version: "TLS 1.3",
+    security_headers: "enabled",
   });
 });
 
@@ -252,10 +259,10 @@ server.listen(PORT, () => {
 });
 
 // Graceful shutdown
-process.on('SIGTERM', () => {
-  console.log('Received SIGTERM, shutting down gracefully');
+process.on("SIGTERM", () => {
+  console.log("Received SIGTERM, shutting down gracefully");
   server.close(() => {
-    console.log('Server closed');
+    console.log("Server closed");
     process.exit(0);
   });
 });
@@ -268,23 +275,23 @@ module.exports = server;
 Create `scripts/ssl-manager.js`:
 
 ```javascript
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
+const { execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
+const https = require("https");
 
 /**
  * SSL Certificate Management
- * 
+ *
  * Handles certificate renewal, validation, and monitoring
  */
 
 class SSLManager {
   constructor() {
-    this.certPath = process.env.SSL_CERT_PATH || '/etc/ssl/certs/neonpro.crt';
-    this.keyPath = process.env.SSL_KEY_PATH || '/etc/ssl/private/neonpro.key';
-    this.caPath = process.env.SSL_CA_PATH || '/etc/ssl/certs/ca-bundle.crt';
-    
+    this.certPath = process.env.SSL_CERT_PATH || "/etc/ssl/certs/neonpro.crt";
+    this.keyPath = process.env.SSL_KEY_PATH || "/etc/ssl/private/neonpro.key";
+    this.caPath = process.env.SSL_CA_PATH || "/etc/ssl/certs/ca-bundle.crt";
+
     // Monitoring settings
     this.renewalThreshold = 30; // days before expiry
     this.checkInterval = 24 * 60 * 60 * 1000; // 24 hours
@@ -297,17 +304,19 @@ class SSLManager {
     try {
       const cert = fs.readFileSync(this.certPath);
       const certInfo = new crypto.X509Certificate(cert);
-      
+
       const expiryDate = new Date(certInfo.validTo);
       const now = new Date();
-      const daysUntilExpiry = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-      
+      const daysUntilExpiry = Math.ceil(
+        (expiryDate - now) / (1000 * 60 * 60 * 24),
+      );
+
       console.log(`Certificate expires in ${daysUntilExpiry} days`);
-      
+
       if (daysUntilExpiry <= this.renewalThreshold) {
         this.renewCertificate();
       }
-      
+
       return {
         valid: true,
         expiryDate,
@@ -316,7 +325,7 @@ class SSLManager {
         subject: certInfo.subject,
       };
     } catch (error) {
-      console.error('Certificate check failed:', error);
+      console.error("Certificate check failed:", error);
       return { valid: false, error: error.message };
     }
   }
@@ -326,24 +335,27 @@ class SSLManager {
    */
   async renewCertificate() {
     try {
-      console.log('Starting certificate renewal...');
-      
+      console.log("Starting certificate renewal...");
+
       // Example using Certbot (Let's Encrypt)
-      const domain = process.env.DOMAIN || 'api.neonpro.com.br';
-      const email = process.env.SSL_EMAIL || 'admin@neonpro.com.br';
-      
-      execSync(`certbot certonly --nginx --non-interactive --agree-tos --email ${email} -d ${domain}`, {
-        stdio: 'inherit',
-      });
-      
-      console.log('Certificate renewed successfully');
-      
+      const domain = process.env.DOMAIN || "api.neonpro.com.br";
+      const email = process.env.SSL_EMAIL || "admin@neonpro.com.br";
+
+      execSync(
+        `certbot certonly --nginx --non-interactive --agree-tos --email ${email} -d ${domain}`,
+        {
+          stdio: "inherit",
+        },
+      );
+
+      console.log("Certificate renewed successfully");
+
       // Reload server with new certificate
       this.reloadServer();
-      
-      return { success: true, message: 'Certificate renewed successfully' };
+
+      return { success: true, message: "Certificate renewed successfully" };
     } catch (error) {
-      console.error('Certificate renewal failed:', error);
+      console.error("Certificate renewal failed:", error);
       return { success: false, error: error.message };
     }
   }
@@ -353,26 +365,28 @@ class SSLManager {
    */
   async testHTTPSConfiguration() {
     const options = {
-      hostname: process.env.DOMAIN || 'localhost',
+      hostname: process.env.DOMAIN || "localhost",
       port: 443,
-      path: '/health',
-      method: 'GET',
+      path: "/health",
+      method: "GET",
       rejectUnauthorized: true,
     };
 
     return new Promise((resolve) => {
       const req = https.request(options, (res) => {
-        const handshakeTime = res.socket.getPeerCertificate ? 
-          res.socket.getPeerCertificate().raw : 'N/A';
-        
-        const tlsVersion = res.socket.getProtocol ? 
-          res.socket.getProtocol() : 'N/A';
-        
+        const handshakeTime = res.socket.getPeerCertificate
+          ? res.socket.getPeerCertificate().raw
+          : "N/A";
+
+        const tlsVersion = res.socket.getProtocol
+          ? res.socket.getProtocol()
+          : "N/A";
+
         const startTime = Date.now();
-        let data = '';
-        
-        res.on('data', chunk => data += chunk);
-        res.on('end', () => {
+        let data = "";
+
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
           resolve({
             success: true,
             statusCode: res.statusCode,
@@ -384,7 +398,7 @@ class SSLManager {
         });
       });
 
-      req.on('error', (error) => {
+      req.on("error", (error) => {
         resolve({ success: false, error: error.message });
       });
 
@@ -396,11 +410,11 @@ class SSLManager {
    * Monitor certificate status
    */
   startMonitoring() {
-    console.log('Starting SSL certificate monitoring...');
-    
+    console.log("Starting SSL certificate monitoring...");
+
     // Check immediately
     this.checkCertificateExpiry();
-    
+
     // Check periodically
     setInterval(() => {
       this.checkCertificateExpiry();
@@ -413,11 +427,11 @@ class SSLManager {
   reloadServer() {
     // Implement server reload logic
     // This depends on your deployment setup
-    console.log('Reloading server with new certificate...');
-    
+    console.log("Reloading server with new certificate...");
+
     // Example: send SIGHUP to process
     if (process.send) {
-      process.send('reload');
+      process.send("reload");
     }
   }
 }
@@ -428,29 +442,31 @@ if (require.main === module) {
   const manager = new SSLManager();
 
   switch (command) {
-    case 'check':
+    case "check":
       const result = manager.checkCertificateExpiry();
-      console.log('Certificate status:', result);
+      console.log("Certificate status:", result);
       break;
-      
-    case 'renew':
-      manager.renewCertificate()
-        .then(result => console.log('Renewal result:', result))
-        .catch(error => console.error('Renewal failed:', error));
+
+    case "renew":
+      manager
+        .renewCertificate()
+        .then((result) => console.log("Renewal result:", result))
+        .catch((error) => console.error("Renewal failed:", error));
       break;
-      
-    case 'test':
-      manager.testHTTPSConfiguration()
-        .then(result => console.log('HTTPS test result:', result))
-        .catch(error => console.error('HTTPS test failed:', error));
+
+    case "test":
+      manager
+        .testHTTPSConfiguration()
+        .then((result) => console.log("HTTPS test result:", result))
+        .catch((error) => console.error("HTTPS test failed:", error));
       break;
-      
-    case 'monitor':
+
+    case "monitor":
       manager.startMonitoring();
       break;
-      
+
     default:
-      console.log('Usage: node ssl-manager.js [check|renew|test|monitor]');
+      console.log("Usage: node ssl-manager.js [check|renew|test|monitor]");
   }
 }
 
@@ -501,7 +517,7 @@ Create `config/nginx.conf`:
 server {
     listen 80;
     server_name api.neonpro.com.br;
-    
+
     # Redirect all HTTP traffic to HTTPS
     return 301 https://$server_name$request_uri;
 }
@@ -509,40 +525,40 @@ server {
 server {
     listen 443 ssl http2;
     server_name api.neonpro.com.br;
-    
+
     # SSL configuration
     ssl_certificate /etc/ssl/certs/neonpro.crt;
     ssl_certificate_key /etc/ssl/private/neonpro.key;
     ssl_trusted_certificate /etc/ssl/certs/ca-bundle.crt;
-    
+
     # TLS 1.3 configuration
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_prefer_server_ciphers on;
-    
+
     # Perfect Forward Secrecy
     ssl_dhparam /etc/ssl/certs/dhparam.pem;
     ssl_ciphers 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384';
-    
+
     # Performance optimizations
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
     ssl_session_tickets on;
-    
+
     # OCSP stapling
     ssl_stapling on;
     ssl_stapling_verify on;
     ssl_stapling_file /etc/ssl/certs/ocsp.resp;
-    
+
     # Security headers
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
     add_header X-Frame-Options "DENY" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-    
+
     # Content Security Policy
     add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' wss: https:;" always;
-    
+
     # Proxy to Node.js application
     location / {
         proxy_pass http://localhost:3000;
@@ -555,7 +571,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_cache_bypass $http_upgrade;
     }
-    
+
     # Health check endpoint
     location /health {
         access_log off;

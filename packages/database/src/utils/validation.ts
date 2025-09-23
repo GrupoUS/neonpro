@@ -61,7 +61,8 @@ export async function validateSchema(): Promise<boolean> {
         `) as { column_name: string }[];
 
         const existingColumns = columnsResult.map((col) => col.column_name);
-        const missingColumns = tableSpec.requiredColumns.filter((col) => !existingColumns.includes(col),
+        const missingColumns = tableSpec.requiredColumns.filter(
+          (col) => !existingColumns.includes(col),
         );
 
         if (missingColumns.length > 0) {
@@ -126,7 +127,8 @@ export async function checkTablesExist(
       // Verify that all required columns are present in the response
       if (data && data.length > 0) {
         const row = data[0];
-        const missingColumns = tableSpec.requiredColumns.filter((col) => !(col in row),
+        const missingColumns = tableSpec.requiredColumns.filter(
+          (col) => !(col in row),
         );
         if (missingColumns.length > 0) {
           console.error(

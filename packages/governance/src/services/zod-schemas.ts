@@ -1,6 +1,8 @@
 // Realistic zod schemas for compliance integration tests (Phase 1)
 // --- Compliance Validation Schemas (Phase 1 minimal) ---
 
+import * as z from "zod";
+
 // Basic patient schema focusing on fields used in prediction & compliance flows
 export const patientSchema = z.object({
   id: z.string().uuid().optional(),
@@ -252,13 +254,13 @@ export function checkComplianceRequirements(
     const parsed = COMPLIANCE_SCHEMAS[schemaType].parse(data);
     return { valid: true, data: parsed, errors: [] as any[] };
   } catch (_err: any) {
-    if (err?.issues) {
-      return { valid: false, data: null, errors: err.issues };
+    if (_err?.issues) {
+      return { valid: false, data: null, errors: _err.issues };
     }
     return {
       valid: false,
       data: null,
-      errors: [{ message: err?.message || "Unknown error" }],
+      errors: [{ message: _err?.message || "Unknown error" }],
     };
   }
 }

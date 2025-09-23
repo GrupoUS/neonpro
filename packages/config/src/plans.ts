@@ -535,7 +535,9 @@ export function getRecommendedUpgrade(
     .filter(({ priority }) => priority > currentPriority)
     .sort((a, b) => a.priority - b.priority);
 
-  return availableUpgrades.length > 0 ? (availableUpgrades[0]?.plan ?? null) : null;
+  return availableUpgrades.length > 0
+    ? (availableUpgrades[0]?.plan ?? null)
+    : null;
 }
 
 /**
@@ -550,7 +552,8 @@ export function getPreferredModel(
 
   // For healthcare-specific use cases, prefer healthcare-optimized models
   if (useCase === "analysis" || useCase === "prediction") {
-    const healthcareModel = planConfig.availableModels.find((model) => MODEL_ACCESS_CONTROL[model].healthcareOptimized,
+    const healthcareModel = planConfig.availableModels.find(
+      (model) => MODEL_ACCESS_CONTROL[model].healthcareOptimized,
     );
     if (healthcareModel) return healthcareModel;
   }

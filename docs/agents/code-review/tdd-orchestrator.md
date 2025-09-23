@@ -105,18 +105,18 @@ PARALLEL_EXECUTION_ENGINE:
   performance_monitoring: "real-time"
 
 COORDINATION_PATTERNS:
-  sequential: 
+  sequential:
     trigger: "healthcare_compliance == true || dependencies.linear == true"
     description: "Healthcare compliance or linear dependencies require sequential execution"
-  
+
   parallel:
     trigger: "independent_agents == true && resource_constraints.low == true"
     description: "Independent agents with low resource constraints execute in parallel"
-  
+
   hybrid:
     trigger: "mixed_dependencies == true && complexity.medium == true"
     description: "Mixed patterns for complex scenarios with both sequential and parallel phases"
-  
+
   adaptive:
     trigger: "dynamic_context == true && performance_requirements.high == true"
     description: "Dynamic switching based on execution context and performance requirements"
@@ -131,17 +131,17 @@ RESOURCE_MANAGEMENT:
     max_agents: 12
     min_agents: 2
     scaling_algorithm: "performance_based"
-  
+
   task_queue:
     priority_levels: ["critical", "high", "medium", "low"]
     optimization: "intelligent"
     auto_balancing: true
-  
+
   resource_allocation:
     algorithm: "adaptive_optimization"
     efficiency_target: 0.90
     utilization_monitoring: "continuous"
-  
+
   performance_tracking:
     metrics: ["execution_time", "agent_utilization", "error_rate", "throughput"]
     monitoring: "real_time"
@@ -298,15 +298,15 @@ SCORING_FACTORS:
   capability_match:
     weight: 0.40
     calculation: "required_capabilities ∩ agent_capabilities / |required_capabilities|"
-  
+
   performance_history:
     weight: 0.25
     calculation: "success_rate * 0.7 + specialization_score * 0.3"
-  
+
   resource_availability:
     weight: 0.20
     calculation: "1 - (current_tasks / max_concurrent_tasks)"
-  
+
   coordination_efficiency:
     weight: 0.15
     calculation: "historical_coordination_success_rate"
@@ -344,13 +344,13 @@ DIVISION_PRINCIPLES:
     - "Single responsibility principle applied"
     - "Clear input/output boundaries"
     - "Measurable success criteria"
-  
+
   granularity:
     - "Optimal size for parallel execution"
     - "Minimal coordination overhead"
     - "Maximum resource utilization"
     - "Balanced workload distribution"
-  
+
   traceability:
     - "Complete audit trail"
     - "Parent-child relationship tracking"
@@ -365,7 +365,7 @@ SUBTASK_ANALYSIS_ENGINE:
       - "Integration points"
       - "Compliance requirements"
       - "Performance constraints"
-    
+
     scoring:
       simple: "1-3 points"
       moderate: "4-6 points"
@@ -379,7 +379,7 @@ SUBTASK_ANALYSIS_ENGINE:
       - "Resource dependencies"
       - "Knowledge dependencies"
       - "Compliance dependencies"
-    
+
     resolution:
       - "Critical path identification"
       - "Dependency chain optimization"
@@ -391,17 +391,17 @@ DECOMPOSITION_STRATEGIES:
     approach: "Break down by functionality"
     best_for: "Feature development, API endpoints"
     granularity: "Function-level components"
-  
+
   technical_decomposition:
     approach: "Break down by technical layers"
     best_for: "Architecture, system integration"
     granularity: "Layer-level components"
-  
+
   domain_decomposition:
     approach: "Break down by domain concepts"
     best_for: "Business logic, healthcare workflows"
     granularity: "Domain entity components"
-  
+
   compliance_decomposition:
     approach: "Break down by compliance requirements"
     best_for: "Regulatory requirements, security"
@@ -424,17 +424,17 @@ OPTIMIZATION_ALGORITHMS:
     method: "Identify and optimize critical path"
     benefit: "20-30% reduction in total execution time"
     implementation: "Real-time path identification and optimization"
-  
+
   resource_balancing:
     method: "Distribute workload evenly across agents"
     benefit: "15-25% improvement in resource utilization"
     implementation: "Dynamic load balancing algorithms"
-  
+
   parallel_opportunity_identification:
     method: "Maximize parallel execution"
     benefit: "40-60% improvement in throughput"
     implementation: "Dependency analysis and parallel scheduling"
-  
+
   predictive_scaling:
     method: "Anticipate resource needs"
     benefit: "25-35% improvement in responsiveness"
@@ -446,13 +446,13 @@ PERFORMANCE_METRICS:
     - "Agent utilization percentage"
     - "Resource efficiency ratio"
     - "Coordination overhead percentage"
-  
+
   quality_metrics:
     - "Error rate percentage"
     - "Quality gate pass rate"
     - "Compliance validation rate"
     - "User satisfaction score"
-  
+
   optimization_metrics:
     - "Performance improvement percentage"
     - "Resource optimization ratio"
@@ -470,19 +470,19 @@ ATOMIC_EXECUTION_FRAMEWORK:
       - "Capability matching"
       - "Resource allocation"
       - "Dependency mapping"
-    
+
     execution:
       - "Agent assignment"
       - "Resource provisioning"
       - "Parallel execution"
       - "Progress monitoring"
-    
+
     validation:
       - "Quality gate validation"
       - "Compliance checking"
       - "Performance verification"
       - "Stakeholder approval"
-    
+
     completion:
       - "Result documentation"
       - "Knowledge integration"
@@ -495,13 +495,13 @@ ERROR_HANDLING:
     - "Automated validation"
     - "Peer review systems"
     - "Quality gate enforcement"
-  
+
   error_recovery:
     - "Automatic retry mechanisms"
     - "Agent reassignment"
     - "Resource reallocation"
     - "Escalation procedures"
-  
+
   error_prevention:
     - "Pattern recognition"
     - "Best practices enforcement"
@@ -526,25 +526,25 @@ PATTERN_ANALYSIS_FACTORS:
     levels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     assessment: "multi_criterion"
     weight: 0.25
-  
+
   agent_capabilities:
     matching_algorithm: "capability_based"
     availability_tracking: true
     performance_history: true
     weight: 0.20
-  
+
   resource_constraints:
     memory_monitoring: true
     cpu_utilization: true
     network_bandwidth: true
     weight: 0.15
-  
+
   dependencies:
     analysis: "critical_path_identification"
     parallel_opportunities: true
     conflict_detection: true
     weight: 0.20
-  
+
   healthcare_compliance:
     mandatory_sequential: true
     validation_required: true
@@ -560,7 +560,7 @@ COORDINATION_DECISION_MATRIX:
       - "resource_constraints.high == true"
     optimization: "error_minimization"
     priority: "high"
-  
+
   parallel:
     conditions:
       - "independent_agents >= 3"
@@ -569,7 +569,7 @@ COORDINATION_DECISION_MATRIX:
       - "performance_requirements.high == true"
     optimization: "speed_maximization"
     priority: "medium"
-  
+
   hybrid:
     conditions:
       - "mixed_dependencies == true"
@@ -577,7 +577,7 @@ COORDINATION_DECISION_MATRIX:
       - "resource_constraints.medium == true"
     optimization: "balanced_efficiency"
     priority: "medium"
-  
+
   adaptive:
     conditions:
       - "dynamic_context == true"
@@ -694,13 +694,13 @@ QUALITY_GATE_EXECUTION:
     - "security-auditor: Security vulnerability assessment"
     - "apex-dev: Integration and functionality validation"
     - "architect-review: Architecture compliance verification"
-  
+
   systematic_error_recovery:
     detection: "automated_scanning"
     analysis: "root_cause_identification"
     correction: "automated_fixes"
     validation: "comprehensive_testing"
-  
+
   continuous_monitoring:
     metrics: ["quality_score", "security_posture", "performance_metrics"]
     frequency: "real_time"
@@ -721,13 +721,13 @@ TASK_EXECUTION_WORKFLOW:
     agent_assignment: "dynamic"
     progress_tracking: "real_time"
     error_handling: "systematic"
-  
+
   atomic_subtask_division:
     decomposition_algorithm: "intelligent"
     dependency_analysis: "critical_path"
     optimization: "parallel_execution"
     validation: "continuous"
-  
+
   reporting:
     progress_updates: "real_time"
     quality_metrics: "comprehensive"
@@ -738,7 +738,7 @@ TASK_EXECUTION_WORKFLOW:
 ### **### Agentes Individuais**
 
 - **[APEX Dev](./agents/apex-dev.md)** - Especialização full-stack
-- **[APEX Research](./agents/apex-researcher.md)** - Inteligência de pesquisa  
+- **[APEX Research](./agents/apex-researcher.md)** - Inteligência de pesquisa
 - **[APEX UI/UX](./agents/apex-ui-ux-designer.md)** - Design e acessibilidade
 - **[Code Review](./agents/code-review/code-reviewer.md)** - Qualidade de código
 - **[Security](./agents/code-review/security-auditor.md)** - Auditoria de segurança
@@ -757,7 +757,7 @@ SPECIALIZED_SKILLS:
     success_criteria: "100% requirement coverage with 60% faster scenario creation"
     lead_agent: "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md)"
     coordination_pattern: "parallel"
-    performance_metrics: 
+    performance_metrics:
       - "Scenario creation time: 60% reduction"
       - "Coverage accuracy: 100%"
       - "Agent utilization: 85%+"
@@ -847,7 +847,14 @@ SPECIALIZED_SKILLS:
 COORDINATION_ENGINE_CAPABILITIES:
   multi_factor_analysis:
     description: "Comprehensive analysis considering task complexity, agent capabilities, resources, and dependencies"
-    factors: ["task_complexity", "agent_capabilities", "resource_constraints", "dependencies", "compliance"]
+    factors:
+      [
+        "task_complexity",
+        "agent_capabilities",
+        "resource_constraints",
+        "dependencies",
+        "compliance",
+      ]
     algorithm: "weighted_decision_matrix"
     accuracy: "95%+"
 
@@ -859,13 +866,21 @@ COORDINATION_ENGINE_CAPABILITIES:
 
   resource_optimization:
     description: "Advanced resource allocation and optimization with dynamic scaling and load balancing"
-    algorithms: ["adaptive_allocation", "intelligent_load_balancing", "dynamic_scaling"]
+    algorithms:
+      ["adaptive_allocation", "intelligent_load_balancing", "dynamic_scaling"]
     efficiency_target: "90%+"
     scaling: "automatic"
 
   performance_monitoring:
     description: "Real-time performance monitoring with predictive analysis and adaptive adjustment"
-    metrics: ["execution_time", "agent_utilization", "error_rate", "throughput", "resource_efficiency"]
+    metrics:
+      [
+        "execution_time",
+        "agent_utilization",
+        "error_rate",
+        "throughput",
+        "resource_efficiency",
+      ]
     monitoring: "continuous"
     adjustment: "adaptive"
     prediction: "85%+ accuracy"
@@ -967,30 +982,30 @@ COLLABORATION_WORKFLOWS:
     name: "Optimized Basic TDD Implementation"
     coordination_pattern: "hybrid"
     performance_target: "60% faster execution"
-    sequence: 
+    sequence:
       PHASE_1_ANALYSIS:
         agents:
           - "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md) → Test analysis and scenario design"
           - "[sequential-thinking] → Requirements complexity assessment"
         execution: "parallel"
         duration: "30% faster"
-      
+
       PHASE_2_IMPLEMENTATION:
         agents:
           - "[apex-dev](./agents/apex-dev.md) → Red-green-refactor implementation"
           - "[test-auditor] → Test validation and coverage analysis"
         execution: "parallel"
         duration: "40% faster"
-      
+
       PHASE_3_VALIDATION:
         agents:
           - "[code-reviewer](./agents/code-review/code-reviewer.md) → Quality validation and review"
           - "[security-auditor](./agents/code-review/security-auditor.md) → Security assessment"
         execution: "parallel"
         duration: "50% faster"
-    
+
     output: "Production-ready code with comprehensive test coverage"
-    success_metrics: 
+    success_metrics:
       - "Agent utilization: 85%+"
       - "Execution time: 60% reduction"
       - "Quality gates: 100% compliance"
@@ -999,7 +1014,7 @@ COLLABORATION_WORKFLOWS:
     name: "Enhanced Multi-Agent Feature Testing"
     coordination_pattern: "adaptive"
     performance_target: "70% faster execution"
-    sequence: 
+    sequence:
       PHASE_1_PLANNING:
         agents:
           - "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md) → Comprehensive test planning"
@@ -1007,7 +1022,7 @@ COLLABORATION_WORKFLOWS:
           - "[archon] → Task management and coordination"
         execution: "parallel"
         coordination: "intelligent_load_balancing"
-      
+
       PHASE_2_IMPLEMENTATION:
         agents:
           - "[apex-dev](./agents/apex-dev.md) → Implementation with TDD discipline"
@@ -1015,7 +1030,7 @@ COLLABORATION_WORKFLOWS:
           - "[security-auditor](./agents/code-review/security-auditor.md) → Security integration"
         execution: "parallel"
         coordination: "conflict_resolution"
-      
+
       PHASE_3_VALIDATION:
         agents:
           - "[code-reviewer](./agents/code-review/code-reviewer.md) → Final quality validation"
@@ -1023,7 +1038,7 @@ COLLABORATION_WORKFLOWS:
           - "[apex-researcher](./agents/apex-researcher.md) → Research validation"
         execution: "parallel"
         coordination: "resource_optimization"
-    
+
     output: "Enterprise-grade feature with full test coverage"
     success_metrics:
       - "Agent utilization: 90%+"
@@ -1035,7 +1050,7 @@ COLLABORATION_WORKFLOWS:
     name: "Enterprise Parallel Testing Framework"
     coordination_pattern: "parallel"
     performance_target: "80% faster execution"
-    sequence: 
+    sequence:
       PHASE_1_ARCHITECTURE:
         agents:
           - "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md) → Test architecture design"
@@ -1043,7 +1058,7 @@ COLLABORATION_WORKFLOWS:
           - "[apex-researcher](./agents/apex-researcher.md) → Framework research"
         execution: "parallel"
         coordination: "critical_path_optimization"
-      
+
       PHASE_2_IMPLEMENTATION:
         agents:
           - "[apex-dev](./agents/apex-dev.md) → Core implementation with TDD"
@@ -1052,7 +1067,7 @@ COLLABORATION_WORKFLOWS:
           - "[apex-ui-ux-designer](./agents/apex-ui-ux-designer.md) → UI testing components"
         execution: "parallel"
         coordination: "adaptive_resource_allocation"
-      
+
       PHASE_3_INTEGRATION:
         agents:
           - "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md) → Test integration and validation"
@@ -1060,7 +1075,7 @@ COLLABORATION_WORKFLOWS:
           - "[test-auditor] → Test suite validation"
         execution: "parallel"
         coordination: "comprehensive_validation"
-    
+
     output: "Complete testing framework with continuous validation"
     success_metrics:
       - "Agent utilization: 95%+"
@@ -1073,13 +1088,13 @@ COLLABORATION_WORKFLOWS:
     coordination_pattern: "parallel"
     integration: "quality-control.md"
     performance_target: "75% faster validation"
-    sequence: 
+    sequence:
       PHASE_1_ANALYSIS:
         agents:
           - "[tdd-orchestrator] → Quality analysis coordination"
           - "[sequential-thinking] → Quality requirements analysis"
         execution: "parallel"
-      
+
       PHASE_2_VALIDATION:
         agents:
           - "[code-reviewer](./agents/code-review/code-reviewer.md) → Code quality analysis"
@@ -1088,19 +1103,19 @@ COLLABORATION_WORKFLOWS:
           - "[architect-review](./agents/code-review/architect-review.md) → Architecture compliance"
         execution: "parallel"
         coordination: "intelligent_validation"
-      
+
       PHASE_3_CORRECTION:
         agents:
           - "[apex-dev](./agents/apex-dev.md) → Quality issue resolution"
           - "[tdd-orchestrator] → Correction coordination"
         execution: "parallel"
-      
+
       PHASE_4_FINAL_VALIDATION:
         agents:
           - "multi-agent-team → Comprehensive final validation"
         execution: "parallel"
         coordination: "systematic_validation"
-    
+
     output: "Quality-validated code with comprehensive reporting"
     success_metrics:
       - "Validation time: 75% reduction"
@@ -1113,13 +1128,13 @@ COLLABORATION_WORKFLOWS:
     coordination_pattern: "adaptive"
     integration: "archon-tasks.md"
     performance_target: "85% faster task completion"
-    sequence: 
+    sequence:
       PHASE_1_INITIALIZATION:
         agents:
           - "[tdd-orchestrator] → Pipeline coordination"
           - "[archon] → Task management setup"
         execution: "parallel"
-      
+
       PHASE_2_ATOMIC_SUBTASKS:
         agents:
           - "[tdd-orchestrator] → Atomic subtask division"
@@ -1127,7 +1142,7 @@ COLLABORATION_WORKFLOWS:
           - "[archon] → Task dependency mapping"
         execution: "parallel"
         coordination: "intelligent_task_decomposition"
-      
+
       PHASE_3_PARALLEL_EXECUTION:
         agents:
           - "[apex-dev] → Primary task implementation"
@@ -1136,19 +1151,19 @@ COLLABORATION_WORKFLOWS:
           - "[test-auditor] → Test implementation"
         execution: "parallel"
         coordination: "adaptive_resource_allocation"
-      
+
       PHASE_4_VALIDATION:
         agents:
           - "[tdd-orchestrator] → Validation coordination"
           - "[multi-agent-team] → Comprehensive validation"
         execution: "parallel"
-      
+
       PHASE_5_COMPLETION:
         agents:
           - "[archon] → Task completion and documentation"
           - "[tdd-orchestrator] → Final quality validation"
         execution: "parallel"
-    
+
     output: "Automated task completion with comprehensive validation"
     success_metrics:
       - "Task completion: 85% faster"
@@ -1165,23 +1180,23 @@ ADVANCED_COORDINATION:
     algorithm: "intelligent_workload_distribution"
     factors: ["agent_capability", "task_complexity", "resource_availability"]
     optimization: "real_time"
-  
+
   conflict_resolution:
     detection: "automatic"
     resolution: "intelligent_negotiation"
     escalation: "hierarchical"
-  
+
   performance_monitoring:
     metrics: ["execution_time", "agent_utilization", "error_rate", "throughput"]
     monitoring: "continuous"
     adjustment: "adaptive"
-  
+
   error_recovery:
     detection: "automated"
     analysis: "root_cause"
     correction: "systematic"
     validation: "comprehensive"
-  
+
   resource_optimization:
     allocation: "dynamic"
     scaling: "automatic"
@@ -1233,25 +1248,25 @@ PERFORMANCE_TARGETS:
     reduction_target: "60-80%"
     baseline: "traditional_sequential_execution"
     measurement: "end_to_end_workflow_completion"
-  
+
   resource_utilization:
     agent_efficiency: "90%+"
     resource_optimization: "85%+"
     memory_efficiency: "80%+"
     cpu_efficiency: "75%+"
-  
+
   quality_metrics:
     test_coverage: "100%"
     quality_gates: "100% compliance"
     error_detection: "99.9%"
     defect_prevention: "95%+"
-  
+
   scalability_metrics:
     concurrent_agents: "50+"
     linear_scaling: "up_to_100_agents"
     performance_consistency: "95%+"
     fault_tolerance: "99.9%"
-  
+
   coordination_efficiency:
     handoff_success: "98%+"
     conflict_resolution: "95%+"
@@ -1284,13 +1299,13 @@ QUALITY_VALIDATION:
     performance_testing: "comprehensive"
     stress_testing: "validated"
     integration_testing: "complete"
-  
+
   manual_validation:
     code_review: "multi_agent"
     security_audit: "comprehensive"
     architecture_review: "systematic"
     performance_validation: "detailed"
-  
+
   continuous_monitoring:
     production_metrics: "real_time"
     error_tracking: "automated"
@@ -1308,13 +1323,13 @@ SUCCESS_MEASUREMENT:
     resource_utilization: "90%+ optimization"
     scalability_performance: "linear_scaling_50+_agents"
     reliability_metrics: "99.9% success_rate"
-  
+
   measurement_methodology:
     data_collection: "automated_real_time"
     analysis: "ai_driven_insights"
     reporting: "comprehensive_dashboards"
     improvement: "continuous_optimization"
-  
+
   validation_protocols:
     automated_validation: "continuous"
     manual_review: "systematic"

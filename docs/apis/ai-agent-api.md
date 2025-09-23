@@ -57,7 +57,7 @@ interface AgentQueryRequest {
 ```typescript
 interface AgentResponse {
   id: string;
-  type: 'text' | 'table' | 'list' | 'chart';
+  type: "text" | "table" | "list" | "chart";
   content: {
     title: string;
     text?: string;
@@ -65,10 +65,10 @@ interface AgentResponse {
     columns?: Array<{
       key: string;
       label: string;
-      type: 'string' | 'number' | 'date' | 'currency';
+      type: "string" | "number" | "date" | "currency";
     }>;
     chart?: {
-      type: 'bar' | 'line' | 'pie';
+      type: "bar" | "line" | "pie";
       data: Array<{
         label: string;
         value: number;
@@ -89,7 +89,7 @@ interface AgentResponse {
 
 interface InteractiveAction {
   id: string;
-  type: 'button' | 'link' | 'form';
+  type: "button" | "link" | "form";
   label: string;
   action: string;
   parameters?: Record<string, any>;
@@ -165,7 +165,7 @@ interface SessionResponse {
   id: string;
   messages: Array<{
     id: string;
-    role: 'user' | 'assistant' | 'system';
+    role: "user" | "assistant" | "system";
     content: string;
     timestamp: Date;
     metadata?: Record<string, any>;
@@ -205,7 +205,7 @@ interface FeedbackRequest {
   messageId?: string;
   rating: 1 | 2 | 3 | 4 | 5;
   feedback: string;
-  category?: 'accuracy' | 'helpfulness' | 'clarity' | 'completeness' | 'other';
+  category?: "accuracy" | "helpfulness" | "clarity" | "completeness" | "other";
   suggestions?: string;
 }
 ```
@@ -239,6 +239,7 @@ curl -X POST "https://api.neonpro.com.br/api/ai/sessions/session_123/feedback" \
 ### Client Data Queries
 
 **Supported Queries:**
+
 - "Me mostre os clientes cadastrados"
 - "Busque informações do cliente João Silva"
 - "Clientes com email @gmail.com"
@@ -249,6 +250,7 @@ curl -X POST "https://api.neonpro.com.br/api/ai/sessions/session_123/feedback" \
 ### Appointment Queries
 
 **Supported Queries:**
+
 - "Quais os próximos agendamentos?"
 - "Agendamentos para hoje"
 - "Consultas com Dr. Carlos Santos"
@@ -259,6 +261,7 @@ curl -X POST "https://api.neonpro.com.br/api/ai/sessions/session_123/feedback" \
 ### Financial Queries
 
 **Supported Queries:**
+
 - "Como está o faturamento?"
 - "Resumo financeiro do mês"
 - "Pagamentos recebidos hoje"
@@ -269,6 +272,7 @@ curl -X POST "https://api.neonpro.com.br/api/ai/sessions/session_123/feedback" \
 ### General Inquiries
 
 **Supported Queries:**
+
 - "Oi, tudo bem?"
 - "O que você pode fazer?"
 - "Me ajude a encontrar informações"
@@ -284,7 +288,7 @@ interface ErrorResponse {
   success: false;
   response: {
     id: string;
-    type: 'error';
+    type: "error";
     content: {
       title: string;
       text: string;
@@ -307,15 +311,15 @@ interface ErrorResponse {
 
 ### Common Error Codes
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| `INVALID_QUERY` | 400 | Query cannot be empty or malformed |
-| `INVALID_SESSION` | 400 | Session ID is required or invalid |
-| `INVALID_PARAMETERS` | 400 | Invalid query parameters |
-| `ACCESS_DENIED` | 403 | Insufficient permissions for requested data |
-| `SESSION_EXPIRED` | 401 | Session has expired, please refresh |
-| `PROCESSING_ERROR` | 500 | Error processing the query |
-| `INTERNAL_ERROR` | 500 | Internal server error |
+| Code                 | HTTP Status | Description                                 |
+| -------------------- | ----------- | ------------------------------------------- |
+| `INVALID_QUERY`      | 400         | Query cannot be empty or malformed          |
+| `INVALID_SESSION`    | 400         | Session ID is required or invalid           |
+| `INVALID_PARAMETERS` | 400         | Invalid query parameters                    |
+| `ACCESS_DENIED`      | 403         | Insufficient permissions for requested data |
+| `SESSION_EXPIRED`    | 401         | Session has expired, please refresh         |
+| `PROCESSING_ERROR`   | 500         | Error processing the query                  |
+| `INTERNAL_ERROR`     | 500         | Internal server error                       |
 
 ### Error Response Example
 
@@ -382,7 +386,7 @@ wss://api.neonpro.com.br/ai/realtime
 
 ```typescript
 interface WebSocketMessage {
-  type: 'query' | 'feedback' | 'status';
+  type: "query" | "feedback" | "status";
   payload: any;
   sessionId: string;
 }
@@ -406,16 +410,16 @@ interface WebSocketMessage {
 ### TypeScript/JavaScript
 
 ```typescript
-import { NeonProAIAgent } from '@neonpro/ai-agent';
+import { NeonProAIAgent } from "@neonpro/ai-agent";
 
 const agent = new NeonProAIAgent({
-  baseUrl: 'https://api.neonpro.com.br',
-  token: 'your-jwt-token'
+  baseUrl: "https://api.neonpro.com.br",
+  token: "your-jwt-token",
 });
 
 const response = await agent.query({
-  query: 'Quais os próximos agendamentos?',
-  sessionId: 'session_123'
+  query: "Quais os próximos agendamentos?",
+  sessionId: "session_123",
 });
 ```
 

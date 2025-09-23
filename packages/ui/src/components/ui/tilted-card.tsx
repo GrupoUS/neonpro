@@ -27,7 +27,7 @@ export function TiltedCard({
   transitionEasing = [0.03, 0.98, 0.52, 0.99],
   transitionDuration = 400,
   transformOrigin = "center center",
-  disableHoverEffect = false
+  disableHoverEffect = false,
 }: TiltedCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -77,13 +77,13 @@ export function TiltedCard({
         transformStyle: "preserve-3d",
         transformOrigin,
         rotateX: disableHoverEffect ? 0 : rotateX,
-        rotateY: disableHoverEffect ? 0 : rotateY
+        rotateY: disableHoverEffect ? 0 : rotateY,
       }}
       transition={{
         type: "spring",
         stiffness: 300,
         damping: 30,
-        mass: 0.5
+        mass: 0.5,
       }}
       whileHover={
         disableHoverEffect
@@ -92,8 +92,8 @@ export function TiltedCard({
               scale: scale,
               transition: {
                 duration: transitionDuration / 1000,
-                ease: transitionEasing
-              }
+                ease: transitionEasing,
+              },
             }
       }
     >
@@ -101,7 +101,7 @@ export function TiltedCard({
         className="w-full h-full"
         style={{
           perspective: `${perspective}px`,
-          transformStyle: "preserve-3d"
+          transformStyle: "preserve-3d",
         }}
       >
         {children}

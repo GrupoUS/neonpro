@@ -327,7 +327,9 @@ export class AuditService {
         return [];
       }
 
-      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
+      return logs.map((log: DatabaseLogEntry) =>
+        this.mapDatabaseLogToEntry(log),
+      );
     } catch (error) {
       console.error("AuditService.getSessionAuditLogs error:", error);
       return [];
@@ -366,7 +368,9 @@ export class AuditService {
         return [];
       }
 
-      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
+      return logs.map((log: DatabaseLogEntry) =>
+        this.mapDatabaseLogToEntry(log),
+      );
     } catch (error) {
       console.error("AuditService.getUserAuditLogs error:", error);
       return [];
@@ -447,10 +451,14 @@ export class AuditService {
 
       if (error) {
         console.error("Failed to generate compliance report:", error);
-        throw new Error(`Failed to generate compliance report: ${error.message}`);
+        throw new Error(
+          `Failed to generate compliance report: ${error.message}`,
+        );
       }
 
-      const auditLogs = logs ? logs.map((log: any) => this.mapDatabaseLogToEntry(log)) : [];
+      const auditLogs = logs
+        ? logs.map((log: any) => this.mapDatabaseLogToEntry(log))
+        : [];
 
       return this.generateComplianceReport(auditLogs, startDate, endDate);
     } catch (error) {
@@ -464,7 +472,9 @@ export class AuditService {
    * @param criteria - Search criteria
    * @returns Promise<RTCAuditLogEntry[]> - Array of matching audit log entries
    */
-  async searchAuditLogs(criteria: AuditSearchCriteria): Promise<RTCAuditLogEntry[]> {
+  async searchAuditLogs(
+    criteria: AuditSearchCriteria,
+  ): Promise<RTCAuditLogEntry[]> {
     try {
       let query = this.supabase.from("webrtc_audit_logs").select("*");
 
@@ -485,12 +495,18 @@ export class AuditService {
       }
 
       if (criteria.startDate) {
-        const startDate = typeof criteria.startDate === 'string' ? new Date(criteria.startDate) : criteria.startDate;
+        const startDate =
+          typeof criteria.startDate === "string"
+            ? new Date(criteria.startDate)
+            : criteria.startDate;
         query = query.gte("timestamp", startDate.toISOString());
       }
 
       if (criteria.endDate) {
-        const endDate = typeof criteria.endDate === 'string' ? new Date(criteria.endDate) : criteria.endDate;
+        const endDate =
+          typeof criteria.endDate === "string"
+            ? new Date(criteria.endDate)
+            : criteria.endDate;
         query = query.lte("timestamp", endDate.toISOString());
       }
 
@@ -536,9 +552,13 @@ export class AuditService {
       id: log.id,
       sessionId: log.session_id,
       _userId: log.user_id,
-      action: log.action || this.mapActionToEventType(log.event_type || log.action),
+      action:
+        log.action || this.mapActionToEventType(log.event_type || log.action),
       userRole: log.user_role || "system",
-      dataClassification: typeof log.data_classification === 'string' ? log.data_classification : "general",
+      dataClassification:
+        typeof log.data_classification === "string"
+          ? log.data_classification
+          : "general",
       description: log.description || "",
       timestamp: log.timestamp || log.created_at,
       ipAddress: log.ip_address,
@@ -546,9 +566,13 @@ export class AuditService {
       clinicContext: log.clinic_id ? { clinicId: log.clinic_id } : undefined,
       metadata: log.metadata,
       complianceCheck: {
-        isCompliant: log.compliance_check?.status === "COMPLIANT" || log.status === "SUCCESS",
+        isCompliant:
+          log.compliance_check?.status === "COMPLIANT" ||
+          log.status === "SUCCESS",
         violations: [],
-        riskLevel: (log.compliance_check?.risk_level || log.risk_level || "LOW") as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
+        riskLevel: (log.compliance_check?.risk_level ||
+          log.risk_level ||
+          "LOW") as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
       },
     };
   }
@@ -579,7 +603,9 @@ export class AuditService {
     endDate: Date,
   ): ComplianceReport {
     const totalEvents = logs.length;
-    const compliantEvents = logs.filter((log) => log.complianceCheck?.isCompliant === true).length;
+    const compliantEvents = logs.filter(
+      (log) => log.complianceCheck?.isCompliant === true,
+    ).length;
     const nonCompliantEvents = totalEvents - compliantEvents;
 
     const riskLevels = {
@@ -592,7 +618,7 @@ export class AuditService {
     const violations: Record<string, number> = {};
 
     logs.forEach((log) => {
-      const riskLevel = log.complianceCheck?.riskLevel || 'LOW';
+      const riskLevel = log.complianceCheck?.riskLevel || "LOW";
       if (riskLevel in riskLevels) {
         riskLevels[riskLevel.toLowerCase() as keyof typeof riskLevels]++;
       }
@@ -615,7 +641,7 @@ export class AuditService {
     return {
       id: `compliance-report-${Date.now()}`,
       generatedAt: new Date().toISOString(),
-      reportType: 'GENERAL',
+      reportType: "GENERAL",
       periodStart: startDate.toISOString(),
       periodEnd: endDate.toISOString(),
       reportPeriod: {
@@ -624,7 +650,8 @@ export class AuditService {
       },
       summary: {
         totalEvents,
-        complianceScore: totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100,
+        complianceScore:
+          totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100,
         violationsCount: nonCompliantEvents,
         riskLevel: this.calculateOverallRiskLevel(riskLevels),
         compliantEvents,
@@ -637,7 +664,12 @@ export class AuditService {
     };
   }
 
-  private calculateOverallRiskLevel(riskLevels: { low: number; medium: number; high: number; critical: number }): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
+  private calculateOverallRiskLevel(riskLevels: {
+    low: number;
+    medium: number;
+    high: number;
+    critical: number;
+  }): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
     if (riskLevels.critical > 0) return "CRITICAL";
     if (riskLevels.high > 0) return "HIGH";
     if (riskLevels.medium > 0) return "MEDIUM";

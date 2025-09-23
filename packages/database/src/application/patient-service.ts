@@ -1,13 +1,13 @@
 import {
   PatientRepository as IPatientRepository,
   Patient,
-CreatePatientRequest,
+  CreatePatientRequest,
   UpdatePatientRequest,
   PatientFilter,
   PatientSearchResult,
   PatientQueryOptions,
   PatientError,
-  PatientEntityValidationError
+  PatientEntityValidationError,
 } from "@neonpro/domain";
 
 /**
@@ -21,15 +21,19 @@ export class PatientService {
   /**
    * Create a new patient with validation
    */
-async createPatient(_request: CreatePatientRequest): Promise<Patient> {
+  async createPatient(_request: CreatePatientRequest): Promise<Patient> {
     try {
       // Validate required fields
       this.validateCreateRequest(_request);
 
       // Check for duplicate CPF instead (since medicalRecordNumber doesn't exist in API)
-      const existingPatients = await this.patientRepository.findByCPF(_request.cpf);
+      const existingPatients = await this.patientRepository.findByCPF(
+        _request.cpf,
+      );
       if (existingPatients.length > 0) {
-        throw new PatientEntityValidationError(["Patient with this CPF already exists"]);
+        throw new PatientEntityValidationError([
+          "Patient with this CPF already exists",
+        ]);
       }
 
       // Validate CPF (required field)
@@ -46,14 +50,21 @@ async createPatient(_request: CreatePatientRequest): Promise<Patient> {
       if (error instanceof PatientEntityValidationError) {
         throw error;
       }
-      throw new PatientError(`Failed to create patient: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_CREATE_ERROR', 500);
+      throw new PatientError(
+        `Failed to create patient: ${error instanceof Error ? error.message : "Unknown error"}`,
+        "PATIENT_CREATE_ERROR",
+        500,
+      );
     }
   }
 
   /**
    * Update an existing patient
    */
-async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient> {
+  async updatePatient(
+    id: string,
+    _request: UpdatePatientRequest,
+  ): Promise<Patient> {
     try {
       // Check if patient exists
       const existingPatient = await this.patientRepository.findById(id);
@@ -74,7 +85,11 @@ async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient
       if (error instanceof PatientEntityValidationError) {
         throw error;
       }
-      throw new PatientError(`Failed to update patient: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_UPDATE_ERROR', 500);
+      throw new PatientError(
+        `Failed to update patient: ${error instanceof Error ? error.message : "Unknown error"}`,
+        "PATIENT_UPDATE_ERROR",
+        500,
+      );
     }
   }
 
@@ -85,7 +100,11 @@ async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient
     try {
       return await this.patientRepository.findById(id);
     } catch (error) {
-      throw new PatientError(`Failed to get patient: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_GET_ERROR', 500);
+      throw new PatientError(
+        `Failed to get patient: ${error instanceof Error ? error.message : "Unknown error"}`,
+        "PATIENT_GET_ERROR",
+        500,
+      );
     }
   }
 
@@ -94,7 +113,7 @@ async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient
    */
   async getPatientsByClinic(
     clinicId: string,
-    options?: PatientQueryOptions
+    options?: PatientQueryOptions,
   ): Promise<PatientSearchResult> {
     try {
       const patients = await this.patientRepository.findByClinicId(clinicId);
@@ -104,10 +123,11 @@ async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient
 
       if (options?.search) {
         const searchLower = options.search.toLowerCase();
-        filteredPatients = filteredPatients.filter(p =>
-          p.fullName.toLowerCase().includes(searchLower) ||
-          p.email?.toLowerCase().includes(searchLower) ||
-          p.cpf?.includes(searchLower)
+        filteredPatients = filteredPatients.filter(
+          (p) =>
+            p.fullName.toLowerCase().includes(searchLower) ||
+            p.email?.toLowerCase().includes(searchLower) ||
+            p.cpf?.includes(searchLower),
         );
       }
 
@@ -120,10 +140,14 @@ async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient
         patients: paginatedPatients,
         total: filteredPatients.length,
         limit,
-        offset
+        offset,
       };
     } catch (error) {
-      throw new PatientError(`Failed to get patients: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_LIST_ERROR', 500);
+      throw new PatientError(
+        `Failed to get patients: ${error instanceof Error ? error.message : "Unknown error"}`,
+        "PATIENT_LIST_ERROR",
+        500,
+      );
     }
   }
 
@@ -131,9 +155,9 @@ async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient
    * Search patients by query string
    */
   async searchPatients(
-_query: string,
+    _query: string,
     clinicId?: string,
-    options?: PatientQueryOptions
+    options?: PatientQueryOptions,
   ): Promise<PatientSearchResult> {
     try {
       let patients: Patient[];
@@ -148,11 +172,12 @@ _query: string,
 
       // Apply search filtering
       const searchLower = _query.toLowerCase();
-      const filteredPatients = patients.filter(p =>
-        p.fullName.toLowerCase().includes(searchLower) ||
-        p.email?.toLowerCase().includes(searchLower) ||
-        p.cpf?.includes(searchLower) ||
-        p.medicalRecordNumber.toLowerCase().includes(searchLower)
+      const filteredPatients = patients.filter(
+        (p) =>
+          p.fullName.toLowerCase().includes(searchLower) ||
+          p.email?.toLowerCase().includes(searchLower) ||
+          p.cpf?.includes(searchLower) ||
+          p.medicalRecordNumber.toLowerCase().includes(searchLower),
       );
 
       // Apply pagination
@@ -164,10 +189,14 @@ _query: string,
         patients: paginatedPatients,
         total: filteredPatients.length,
         limit,
-        offset
+        offset,
       };
     } catch (error) {
-      throw new PatientError(`Failed to search patients: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_SEARCH_ERROR', 500);
+      throw new PatientError(
+        `Failed to search patients: ${error instanceof Error ? error.message : "Unknown error"}`,
+        "PATIENT_SEARCH_ERROR",
+        500,
+      );
     }
   }
 
@@ -187,7 +216,11 @@ _query: string,
       if (error instanceof PatientEntityValidationError) {
         throw error;
       }
-      throw new PatientError(`Failed to delete patient: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_DELETE_ERROR', 500);
+      throw new PatientError(
+        `Failed to delete patient: ${error instanceof Error ? error.message : "Unknown error"}`,
+        "PATIENT_DELETE_ERROR",
+        500,
+      );
     }
   }
 
@@ -208,15 +241,19 @@ _query: string,
       let filteredPatients = patients;
 
       if (filter.isActive !== undefined) {
-        filteredPatients = filteredPatients.filter(p => p.isActive === filter.isActive);
+        filteredPatients = filteredPatients.filter(
+          (p) => p.isActive === filter.isActive,
+        );
       }
 
       if (filter.gender) {
-        filteredPatients = filteredPatients.filter(p => p.gender === filter.gender);
+        filteredPatients = filteredPatients.filter(
+          (p) => p.gender === filter.gender,
+        );
       }
 
       if (filter.birthDateFrom && filter.birthDateTo) {
-        filteredPatients = filteredPatients.filter(p => {
+        filteredPatients = filteredPatients.filter((p) => {
           if (!p.birthDate) return false;
           const birthDate = new Date(p.birthDate);
           const fromDate = new Date(filter.birthDateFrom);
@@ -227,14 +264,18 @@ _query: string,
 
       return filteredPatients.length;
     } catch (error) {
-      throw new PatientError(`Failed to count patients: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_COUNT_ERROR', 500);
+      throw new PatientError(
+        `Failed to count patients: ${error instanceof Error ? error.message : "Unknown error"}`,
+        "PATIENT_COUNT_ERROR",
+        500,
+      );
     }
   }
 
   /**
    * Validate patient creation request
    */
-private validateCreateRequest(_request: CreatePatientRequest): void {
+  private validateCreateRequest(_request: CreatePatientRequest): void {
     if (!_request.clinicId) {
       throw new PatientEntityValidationError(["Clinic ID is required"]);
     }
@@ -264,14 +305,22 @@ private validateCreateRequest(_request: CreatePatientRequest): void {
     }
 
     if (birthDate > now) {
-      throw new PatientEntityValidationError(["Birth date cannot be in the future"]);
+      throw new PatientEntityValidationError([
+        "Birth date cannot be in the future",
+      ]);
     }
 
     // Check if person is reasonably old (not older than 150 years)
     const maxAge = 150;
-    const minDate = new Date(now.getFullYear() - maxAge, now.getMonth(), now.getDate());
+    const minDate = new Date(
+      now.getFullYear() - maxAge,
+      now.getMonth(),
+      now.getDate(),
+    );
     if (birthDate < minDate) {
-      throw new PatientEntityValidationError(["Birth date is too far in the past"]);
+      throw new PatientEntityValidationError([
+        "Birth date is too far in the past",
+      ]);
     }
 
     // Validate phone number if provided
@@ -297,9 +346,16 @@ private validateCreateRequest(_request: CreatePatientRequest): void {
 
     // Check for known invalid CPFs
     const invalidCPFs = [
-      "00000000000", "11111111111", "22222222222", "33333333333",
-      "44444444444", "55555555555", "66666666666", "77777777777",
-      "88888888888", "99999999999"
+      "00000000000",
+      "11111111111",
+      "22222222222",
+      "33333333333",
+      "44444444444",
+      "55555555555",
+      "66666666666",
+      "77777777777",
+      "88888888888",
+      "99999999999",
     ];
 
     if (invalidCPFs.includes(cleanCPF)) return false;
@@ -360,16 +416,21 @@ private validateCreateRequest(_request: CreatePatientRequest): void {
   /**
    * Adapt API request to domain format
    */
-  private adaptApiRequestToDomain(request: CreatePatientRequest): Omit<Patient, 'id' | 'createdAt' | 'updatedAt'> {
-    const names = request.fullName.split(' ');
+  private adaptApiRequestToDomain(
+    request: CreatePatientRequest,
+  ): Omit<Patient, "id" | "createdAt" | "updatedAt"> {
+    const names = request.fullName.split(" ");
     const givenNames = names.slice(0, -1);
     const familyName = names[names.length - 1];
 
     return {
       clinicId: request.clinicId,
       medicalRecordNumber: `MRN-${Date.now()}`, // Generate one since API doesn't provide it
-      givenNames: givenNames.length > 0 ? givenNames : [givenNames.join(' ') || 'Unknown'],
-      familyName: familyName || 'Unknown',
+      givenNames:
+        givenNames.length > 0
+          ? givenNames
+          : [givenNames.join(" ") || "Unknown"],
+      familyName: familyName || "Unknown",
       fullName: request.fullName,
       cpf: request.cpf,
       birthDate: request.dateOfBirth,
@@ -379,7 +440,7 @@ private validateCreateRequest(_request: CreatePatientRequest): void {
       allergies: [],
       chronicConditions: [],
       currentMedications: [],
-      isActive: true
+      isActive: true,
     };
-  };
+  }
 }

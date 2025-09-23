@@ -1,6 +1,6 @@
 // Simple structured logging service for testing
 export interface LoggerConfig {
-  level: 'debug' | 'info' | 'warn' | 'error';
+  level: "debug" | "info" | "warn" | "error";
   enableConsole: boolean;
   enableFile: boolean;
   enableAudit: boolean;
@@ -36,42 +36,47 @@ export class SimpleStructuredLogger {
     this.correlationId = id;
   }
 
-  private createLogEntry(level: string, message: string, data?: any, _context?: any): LogEntry {
+  private createLogEntry(
+    level: string,
+    message: string,
+    data?: any,
+    _context?: any,
+  ): LogEntry {
     return {
       timestamp: new Date().toISOString(),
       level,
       message,
       data,
       context,
-      correlationId: this.correlationId
+      correlationId: this.correlationId,
     };
   }
 
   public debug(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
-      const entry = this.createLogEntry('debug', message, data, _context);
-      console.log('[DEBUG]', entry);
+      const entry = this.createLogEntry("debug", message, data, _context);
+      console.log("[DEBUG]", entry);
     }
   }
 
   public info(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
-      const entry = this.createLogEntry('info', message, data, _context);
-      console.log('[INFO]', entry);
+      const entry = this.createLogEntry("info", message, data, _context);
+      console.log("[INFO]", entry);
     }
   }
 
   public warn(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
-      const entry = this.createLogEntry('warn', message, data, _context);
-      console.warn('[WARN]', entry);
+      const entry = this.createLogEntry("warn", message, data, _context);
+      console.warn("[WARN]", entry);
     }
   }
 
   public error(message: string, data?: any, _context?: any): void {
     if (this.config.enableConsole) {
-      const entry = this.createLogEntry('error', message, data, _context);
-      console.error('[ERROR]', entry);
+      const entry = this.createLogEntry("error", message, data, _context);
+      console.error("[ERROR]", entry);
     }
   }
 
@@ -82,10 +87,10 @@ export class SimpleStructuredLogger {
 
 // Default logger instance
 export const defaultLogger = new SimpleStructuredLogger({
-  level: 'info',
+  level: "info",
   enableConsole: true,
   enableFile: false,
-  enableAudit: false
+  enableAudit: false,
 });
 
 export default SimpleStructuredLogger;

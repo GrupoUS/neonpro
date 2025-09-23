@@ -102,20 +102,22 @@ curl http://localhost:8080/api/ai/status
 ### WebSocket Connection
 
 ```javascript
-const ws = new WebSocket('ws://localhost:8080/ws/agent/session_123');
+const ws = new WebSocket("ws://localhost:8080/ws/agent/session_123");
 
 ws.onopen = () => {
-  ws.send(JSON.stringify({
-    type: 'query',
-    query: 'What medications is this patient currently taking?',
-    user_id: 'user_456',
-    patient_id: 'patient_789',
-  }));
+  ws.send(
+    JSON.stringify({
+      type: "query",
+      query: "What medications is this patient currently taking?",
+      user_id: "user_456",
+      patient_id: "patient_789",
+    }),
+  );
 };
 
-ws.onmessage = event => {
+ws.onmessage = (event) => {
   const response = JSON.parse(event.data);
-  console.log('Response:', response);
+  console.log("Response:", response);
 };
 ```
 

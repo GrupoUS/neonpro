@@ -1,8 +1,8 @@
-import { appRouter } from '@/trpc/router';
-import type { AppRouter } from '@/trpc/router';
-import type { AIInput, AIOutput } from '@/types/api/contracts';
-import { createTRPCMsw } from 'msw-trpc';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { appRouter } from "@/trpc/router";
+import type { AppRouter } from "@/trpc/router";
+import type { AIInput, AIOutput } from "@/types/api/contracts";
+import { createTRPCMsw } from "msw-trpc";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * AI Contract Tests
@@ -11,10 +11,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Covers AI chat, insights, and automation endpoints
  */
 
-describe('AI Contract Testing', () => {
+describe("AI Contract Testing", () => {
   const mockContext = {
-    user: { id: 'user-123', _role: 'professional' },
-    auth: { _userId: 'user-123', isAuthenticated: true },
+    user: { id: "user-123", _role: "professional" },
+    auth: { _userId: "user-123", isAuthenticated: true },
     prisma: {
       aiChatSession: {
         create: vi.fn(),
@@ -71,34 +71,34 @@ describe('AI Contract Testing', () => {
     vi.clearAllMocks();
   });
 
-  describe('AI Chat Session Contract', () => {
-    it('should validate chat session creation', async () => {
-      const sessionInput: AIInput['createChatSession'] = {
+  describe("AI Chat Session Contract", () => {
+    it("should validate chat session creation", async () => {
+      const sessionInput: AIInput["createChatSession"] = {
         _context: {
-          type: 'patient_consultation',
-          patientId: 'patient-456',
-          professionalId: 'prof-123',
-          clinicId: 'clinic-789',
+          type: "patient_consultation",
+          patientId: "patient-456",
+          professionalId: "prof-123",
+          clinicId: "clinic-789",
         },
         configuration: {
-          model: 'gpt-4',
+          model: "gpt-4",
           temperature: 0.7,
           maxTokens: 2048,
-          language: 'pt-BR',
+          language: "pt-BR",
         },
         privacy: {
-          phiHandling: 'sanitized',
-          auditLevel: 'detailed',
-          retentionPeriod: '30d',
+          phiHandling: "sanitized",
+          auditLevel: "detailed",
+          retentionPeriod: "30d",
         },
       };
 
       const mockSession = {
-        id: 'session-uuid-123',
-        _userId: 'user-123',
-        patientId: 'patient-456',
-        type: 'patient_consultation',
-        status: 'active',
+        id: "session-uuid-123",
+        _userId: "user-123",
+        patientId: "patient-456",
+        type: "patient_consultation",
+        status: "active",
         configuration: sessionInput.configuration,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -115,65 +115,66 @@ describe('AI Contract Testing', () => {
       expect(result).toMatchObject({
         success: true,
         data: expect.objectContaining({
-          sessionId: 'session-uuid-123',
-          status: 'active',
+          sessionId: "session-uuid-123",
+          status: "active",
           configuration: expect.objectContaining({
-            model: 'gpt-4',
-            language: 'pt-BR',
+            model: "gpt-4",
+            language: "pt-BR",
           }),
         }),
       });
 
       // Verify PHI compliance validation
       expect(mockContext.compliance.validatePhiHandling).toHaveBeenCalledWith({
-        patientId: 'patient-456',
-        phiHandling: 'sanitized',
+        patientId: "patient-456",
+        phiHandling: "sanitized",
       });
 
       // Verify audit logging
       expect(mockContext.audit.logAIInteraction).toHaveBeenCalledWith({
-        action: 'create_session',
-        sessionId: 'session-uuid-123',
-        _userId: 'user-123',
-        patientId: 'patient-456',
+        action: "create_session",
+        sessionId: "session-uuid-123",
+        _userId: "user-123",
+        patientId: "patient-456",
         timestamp: expect.any(Date),
       });
     });
 
-    it('should enforce PHI sanitization requirements', async () => {
-      const unsafeInput: AIInput['createChatSession'] = {
+    it("should enforce PHI sanitization requirements", async () => {
+      const unsafeInput: AIInput["createChatSession"] = {
         _context: {
-          type: 'patient_consultation',
-          patientId: 'patient-456',
-          professionalId: 'prof-123',
-          clinicId: 'clinic-789',
+          type: "patient_consultation",
+          patientId: "patient-456",
+          professionalId: "prof-123",
+          clinicId: "clinic-789",
         },
         privacy: {
-          phiHandling: 'raw', // Unsafe PHI handling
-          auditLevel: 'minimal',
+          phiHandling: "raw", // Unsafe PHI handling
+          auditLevel: "minimal",
         },
       };
 
       mockContext.compliance.validatePhiHandling.mockResolvedValue({
         valid: false,
-        error: 'Raw PHI handling not permitted',
+        error: "Raw PHI handling not permitted",
       });
 
       await expect(
         caller.api.ai.createChatSession(unsafeInput),
       ).rejects.toThrow(
-        'PHI handling validation failed: Raw PHI handling not permitted',
+        "PHI handling validation failed: Raw PHI handling not permitted",
       );
     });
   });
 
-  describe('AI Chat Message Contract', () => {
-    it('should validate message sending with PHI sanitization', async () => {
-      const messageInput: AIInput['sendMessage'] = {
-        sessionId: 'session-uuid-123',
+  describe("AI Chat Message Contract", () => {
+    it("should validate message sending with PHI sanitization", async () => {
+      const messageInput: AIInput["sendMessage"] = {
+        sessionId: "session-uuid-123",
         message: {
-          content: 'Paciente João Silva (CPF: 123.456.789-00) relatou dor abdominal.',
-          type: 'user',
+          content:
+            "Paciente João Silva (CPF: 123.456.789-00) relatou dor abdominal.",
+          type: "user",
           metadata: {
             patientContext: true,
             clinicalData: true,
@@ -187,29 +188,30 @@ describe('AI Contract Testing', () => {
       };
 
       const sanitizedContent =
-        'Paciente [NOME_REDACTED] (CPF: [CPF_REDACTED]) relatou dor abdominal.';
+        "Paciente [NOME_REDACTED] (CPF: [CPF_REDACTED]) relatou dor abdominal.";
       const mockMessage = {
-        id: 'msg-uuid-456',
-        sessionId: 'session-uuid-123',
+        id: "msg-uuid-456",
+        sessionId: "session-uuid-123",
         content: messageInput.message.content,
         sanitizedContent,
-        type: 'user',
+        type: "user",
         metadata: messageInput.message.metadata,
         createdAt: new Date(),
       };
 
       const mockAIResponse = {
-        id: 'msg-uuid-789',
-        sessionId: 'session-uuid-123',
-        content: 'Compreendo. Baseado nos sintomas relatados, sugiro avaliar...',
-        type: 'assistant',
+        id: "msg-uuid-789",
+        sessionId: "session-uuid-123",
+        content:
+          "Compreendo. Baseado nos sintomas relatados, sugiro avaliar...",
+        type: "assistant",
         confidence: 0.92,
         createdAt: new Date(),
       };
 
       mockContext.ai.sanitizePhiData.mockResolvedValue({
         sanitized: sanitizedContent,
-        redactedFields: ['name', 'cpf'],
+        redactedFields: ["name", "cpf"],
       });
       mockContext.ai.validatePromptSafety.mockResolvedValue({ safe: true });
       mockContext.ai.generateResponse.mockResolvedValue({
@@ -227,14 +229,15 @@ describe('AI Contract Testing', () => {
         success: true,
         data: expect.objectContaining({
           userMessage: expect.objectContaining({
-            id: 'msg-uuid-456',
+            id: "msg-uuid-456",
             sanitizedContent,
-            type: 'user',
+            type: "user",
           }),
           aiResponse: expect.objectContaining({
-            id: 'msg-uuid-789',
-            content: 'Compreendo. Baseado nos sintomas relatados, sugiro avaliar...',
-            type: 'assistant',
+            id: "msg-uuid-789",
+            content:
+              "Compreendo. Baseado nos sintomas relatados, sugiro avaliar...",
+            type: "assistant",
             confidence: 0.92,
           }),
         }),
@@ -251,30 +254,30 @@ describe('AI Contract Testing', () => {
       );
     });
 
-    it('should reject unsafe message content', async () => {
-      const unsafeInput: AIInput['sendMessage'] = {
-        sessionId: 'session-uuid-123',
+    it("should reject unsafe message content", async () => {
+      const unsafeInput: AIInput["sendMessage"] = {
+        sessionId: "session-uuid-123",
         message: {
-          content: 'Como posso hackear o sistema da clínica?',
-          type: 'user',
+          content: "Como posso hackear o sistema da clínica?",
+          type: "user",
         },
       };
 
       mockContext.ai.validatePromptSafety.mockResolvedValue({
         safe: false,
-        reason: 'Malicious intent detected',
+        reason: "Malicious intent detected",
       });
 
       await expect(caller.api.ai.sendMessage(unsafeInput)).rejects.toThrow(
-        'Message content rejected: Malicious intent detected',
+        "Message content rejected: Malicious intent detected",
       );
     });
   });
 
-  describe('AI No-Show Prediction Contract', () => {
-    it('should validate no-show prediction generation', async () => {
-      const predictionInput: AIInput['predictNoShow'] = {
-        appointmentId: 'appt-789',
+  describe("AI No-Show Prediction Contract", () => {
+    it("should validate no-show prediction generation", async () => {
+      const predictionInput: AIInput["predictNoShow"] = {
+        appointmentId: "appt-789",
         factors: {
           patientHistory: {
             totalAppointments: 12,
@@ -284,30 +287,30 @@ describe('AI Contract Testing', () => {
             averageAdvanceBooking: 7,
           },
           appointmentDetails: {
-            type: 'consultation',
-            scheduledDate: '2024-02-15T14:00:00Z',
-            dayOfWeek: 'thursday',
-            timeOfDay: 'afternoon',
+            type: "consultation",
+            scheduledDate: "2024-02-15T14:00:00Z",
+            dayOfWeek: "thursday",
+            timeOfDay: "afternoon",
             advanceBookingDays: 14,
           },
           externalFactors: {
-            weather: 'rainy',
-            season: 'summer',
+            weather: "rainy",
+            season: "summer",
             isHoliday: false,
-            publicTransportStatus: 'normal',
+            publicTransportStatus: "normal",
           },
         },
       };
 
       const mockPrediction = {
-        id: 'prediction-uuid-456',
-        appointmentId: 'appt-789',
+        id: "prediction-uuid-456",
+        appointmentId: "appt-789",
         probability: 0.23,
-        riskLevel: 'low',
+        riskLevel: "low",
         confidence: 0.87,
         factors: {
-          positive: ['good_history', 'advance_booking'],
-          negative: ['rainy_weather'],
+          positive: ["good_history", "advance_booking"],
+          negative: ["rainy_weather"],
           weights: {
             patient_history: 0.6,
             appointment_timing: 0.25,
@@ -316,9 +319,9 @@ describe('AI Contract Testing', () => {
         },
         recommendations: [
           {
-            action: 'send_reminder',
-            timing: '24h_before',
-            priority: 'medium',
+            action: "send_reminder",
+            timing: "24h_before",
+            priority: "medium",
           },
         ],
         createdAt: new Date(),
@@ -326,7 +329,7 @@ describe('AI Contract Testing', () => {
 
       mockContext.ai.predictNoShow.mockResolvedValue({
         probability: 0.23,
-        riskLevel: 'low',
+        riskLevel: "low",
         confidence: 0.87,
         factors: mockPrediction.factors,
         recommendations: mockPrediction.recommendations,
@@ -340,18 +343,18 @@ describe('AI Contract Testing', () => {
       expect(result).toMatchObject({
         success: true,
         data: expect.objectContaining({
-          predictionId: 'prediction-uuid-456',
+          predictionId: "prediction-uuid-456",
           probability: 0.23,
-          riskLevel: 'low',
+          riskLevel: "low",
           confidence: 0.87,
           factors: expect.objectContaining({
-            positive: expect.arrayContaining(['good_history']),
-            negative: expect.arrayContaining(['rainy_weather']),
+            positive: expect.arrayContaining(["good_history"]),
+            negative: expect.arrayContaining(["rainy_weather"]),
           }),
           recommendations: expect.arrayContaining([
             expect.objectContaining({
-              action: 'send_reminder',
-              timing: '24h_before',
+              action: "send_reminder",
+              timing: "24h_before",
             }),
           ]),
         }),
@@ -366,9 +369,9 @@ describe('AI Contract Testing', () => {
       );
     });
 
-    it('should handle insufficient data for prediction', async () => {
-      const insufficientInput: AIInput['predictNoShow'] = {
-        appointmentId: 'appt-new-patient',
+    it("should handle insufficient data for prediction", async () => {
+      const insufficientInput: AIInput["predictNoShow"] = {
+        appointmentId: "appt-new-patient",
         factors: {
           patientHistory: {
             totalAppointments: 0,
@@ -377,8 +380,8 @@ describe('AI Contract Testing', () => {
             noShowCount: 0,
           },
           appointmentDetails: {
-            type: 'consultation',
-            scheduledDate: '2024-02-15T14:00:00Z',
+            type: "consultation",
+            scheduledDate: "2024-02-15T14:00:00Z",
           },
         },
       };
@@ -386,7 +389,7 @@ describe('AI Contract Testing', () => {
       mockContext.ai.predictNoShow.mockResolvedValue({
         probability: null,
         confidence: 0.3,
-        error: 'Insufficient historical data',
+        error: "Insufficient historical data",
       });
 
       const result = await caller.api.ai.predictNoShow(insufficientInput);
@@ -396,78 +399,78 @@ describe('AI Contract Testing', () => {
         data: expect.objectContaining({
           probability: null,
           confidence: 0.3,
-          message: 'Insufficient data for reliable prediction',
+          message: "Insufficient data for reliable prediction",
         }),
       });
     });
   });
 
-  describe('AI Insights Generation Contract', () => {
-    it('should validate clinic insights generation', async () => {
-      const insightsInput: AIInput['generateInsights'] = {
-        clinicId: 'clinic-789',
-        scope: 'clinic_performance',
+  describe("AI Insights Generation Contract", () => {
+    it("should validate clinic insights generation", async () => {
+      const insightsInput: AIInput["generateInsights"] = {
+        clinicId: "clinic-789",
+        scope: "clinic_performance",
         period: {
-          start: '2024-01-01',
-          end: '2024-01-31',
+          start: "2024-01-01",
+          end: "2024-01-31",
         },
         metrics: [
-          'appointment_patterns',
-          'patient_satisfaction',
-          'revenue_trends',
-          'operational_efficiency',
+          "appointment_patterns",
+          "patient_satisfaction",
+          "revenue_trends",
+          "operational_efficiency",
         ],
         configuration: {
-          depth: 'detailed',
+          depth: "detailed",
           includeRecommendations: true,
-          language: 'pt-BR',
+          language: "pt-BR",
         },
       };
 
       const mockInsights = {
-        id: 'insights-uuid-789',
-        clinicId: 'clinic-789',
-        scope: 'clinic_performance',
+        id: "insights-uuid-789",
+        clinicId: "clinic-789",
+        scope: "clinic_performance",
         period: insightsInput.period,
         insights: {
           appointmentPatterns: {
-            peakHours: ['14:00-16:00', '09:00-11:00'],
-            busyDays: ['tuesday', 'thursday'],
+            peakHours: ["14:00-16:00", "09:00-11:00"],
+            busyDays: ["tuesday", "thursday"],
             seasonalTrends: {
-              summer: 'high_demand',
-              winter: 'moderate_demand',
+              summer: "high_demand",
+              winter: "moderate_demand",
             },
           },
           patientSatisfaction: {
             averageRating: 4.7,
-            improvementAreas: ['waiting_time', 'appointment_scheduling'],
-            strongPoints: ['treatment_quality', 'staff_friendliness'],
+            improvementAreas: ["waiting_time", "appointment_scheduling"],
+            strongPoints: ["treatment_quality", "staff_friendliness"],
           },
           revenueTrends: {
             monthlyGrowth: 12.5,
-            topServices: ['botox', 'laser_therapy', 'facial_treatments'],
-            paymentPreferences: ['credit_card', 'pix', 'installments'],
+            topServices: ["botox", "laser_therapy", "facial_treatments"],
+            paymentPreferences: ["credit_card", "pix", "installments"],
           },
           operationalEfficiency: {
             appointmentUtilization: 0.87,
             averageWaitTime: 8.5,
-            resourceOptimization: 'good',
+            resourceOptimization: "good",
           },
         },
         recommendations: [
           {
-            category: 'scheduling_optimization',
-            priority: 'high',
-            description: 'Adicionar mais horários nos períodos de pico',
-            impact: 'increase_capacity_by_20_percent',
-            effort: 'medium',
+            category: "scheduling_optimization",
+            priority: "high",
+            description: "Adicionar mais horários nos períodos de pico",
+            impact: "increase_capacity_by_20_percent",
+            effort: "medium",
           },
           {
-            category: 'patient_experience',
-            priority: 'medium',
-            description: 'Implementar sistema de notificação de atrasos',
-            impact: 'improve_satisfaction_score',
-            effort: 'low',
+            category: "patient_experience",
+            priority: "medium",
+            description: "Implementar sistema de notificação de atrasos",
+            impact: "improve_satisfaction_score",
+            effort: "low",
           },
         ],
         confidence: 0.91,
@@ -487,23 +490,23 @@ describe('AI Contract Testing', () => {
         data: expect.objectContaining({
           insights: expect.objectContaining({
             appointmentPatterns: expect.objectContaining({
-              peakHours: expect.arrayContaining(['14:00-16:00']),
-              busyDays: expect.arrayContaining(['tuesday']),
+              peakHours: expect.arrayContaining(["14:00-16:00"]),
+              busyDays: expect.arrayContaining(["tuesday"]),
             }),
             patientSatisfaction: expect.objectContaining({
               averageRating: 4.7,
-              improvementAreas: expect.arrayContaining(['waiting_time']),
+              improvementAreas: expect.arrayContaining(["waiting_time"]),
             }),
             revenueTrends: expect.objectContaining({
               monthlyGrowth: 12.5,
-              topServices: expect.arrayContaining(['botox']),
+              topServices: expect.arrayContaining(["botox"]),
             }),
           }),
           recommendations: expect.arrayContaining([
             expect.objectContaining({
-              category: 'scheduling_optimization',
-              priority: 'high',
-              impact: 'increase_capacity_by_20_percent',
+              category: "scheduling_optimization",
+              priority: "high",
+              impact: "increase_capacity_by_20_percent",
             }),
           ]),
           confidence: 0.91,
@@ -511,46 +514,46 @@ describe('AI Contract Testing', () => {
       });
     });
 
-    it('should validate patient-specific insights', async () => {
-      const patientInsightsInput: AIInput['generateInsights'] = {
-        scope: 'patient_analysis',
-        patientId: 'patient-456',
+    it("should validate patient-specific insights", async () => {
+      const patientInsightsInput: AIInput["generateInsights"] = {
+        scope: "patient_analysis",
+        patientId: "patient-456",
         metrics: [
-          'treatment_history',
-          'appointment_behavior',
-          'satisfaction_trends',
-          'health_outcomes',
+          "treatment_history",
+          "appointment_behavior",
+          "satisfaction_trends",
+          "health_outcomes",
         ],
         configuration: {
-          depth: 'comprehensive',
+          depth: "comprehensive",
           includeRecommendations: true,
-          privacyLevel: 'high',
+          privacyLevel: "high",
         },
       };
 
       const mockPatientInsights = {
         treatmentHistory: {
           totalTreatments: 15,
-          treatmentTypes: ['botox', 'facial_treatment', 'laser_therapy'],
-          progressTracking: 'positive',
+          treatmentTypes: ["botox", "facial_treatment", "laser_therapy"],
+          progressTracking: "positive",
           compliance: 0.94,
         },
         appointmentBehavior: {
-          punctuality: 'excellent',
+          punctuality: "excellent",
           noShowRate: 0.05,
-          reschedulingFrequency: 'low',
-          preferredTimes: ['morning', 'early_afternoon'],
+          reschedulingFrequency: "low",
+          preferredTimes: ["morning", "early_afternoon"],
         },
         satisfactionTrends: {
           overallSatisfaction: 4.8,
           treatmentSatisfaction: 4.9,
           serviceSatisfaction: 4.7,
-          trends: 'improving',
+          trends: "improving",
         },
         healthOutcomes: {
-          objectiveImprovement: 'significant',
-          subjectiveImprovement: 'very_satisfied',
-          sideEffects: 'minimal',
+          objectiveImprovement: "significant",
+          subjectiveImprovement: "very_satisfied",
+          sideEffects: "minimal",
         },
       };
 
@@ -572,10 +575,10 @@ describe('AI Contract Testing', () => {
           insights: expect.objectContaining({
             treatmentHistory: expect.objectContaining({
               totalTreatments: 15,
-              progressTracking: 'positive',
+              progressTracking: "positive",
             }),
             appointmentBehavior: expect.objectContaining({
-              punctuality: 'excellent',
+              punctuality: "excellent",
               noShowRate: 0.05,
             }),
           }),
@@ -584,15 +587,15 @@ describe('AI Contract Testing', () => {
     });
   });
 
-  describe('AI Chat History Contract', () => {
-    it('should validate chat history retrieval with filters', async () => {
-      const historyInput: AIInput['getChatHistory'] = {
-        sessionId: 'session-uuid-123',
+  describe("AI Chat History Contract", () => {
+    it("should validate chat history retrieval with filters", async () => {
+      const historyInput: AIInput["getChatHistory"] = {
+        sessionId: "session-uuid-123",
         filters: {
-          messageType: 'assistant',
+          messageType: "assistant",
           dateRange: {
-            start: '2024-01-01',
-            end: '2024-01-31',
+            start: "2024-01-01",
+            end: "2024-01-31",
           },
           includeMetadata: true,
         },
@@ -604,22 +607,22 @@ describe('AI Contract Testing', () => {
 
       const mockMessages = [
         {
-          id: 'msg-1',
-          sessionId: 'session-uuid-123',
-          content: 'Como posso ajudar com o agendamento?',
-          type: 'assistant',
+          id: "msg-1",
+          sessionId: "session-uuid-123",
+          content: "Como posso ajudar com o agendamento?",
+          type: "assistant",
           confidence: 0.95,
-          metadata: { topic: 'scheduling' },
-          createdAt: new Date('2024-01-15T10:00:00Z'),
+          metadata: { topic: "scheduling" },
+          createdAt: new Date("2024-01-15T10:00:00Z"),
         },
         {
-          id: 'msg-2',
-          sessionId: 'session-uuid-123',
-          content: 'Baseado no histórico, recomendo...',
-          type: 'assistant',
+          id: "msg-2",
+          sessionId: "session-uuid-123",
+          content: "Baseado no histórico, recomendo...",
+          type: "assistant",
           confidence: 0.89,
-          metadata: { topic: 'recommendation' },
-          createdAt: new Date('2024-01-15T10:05:00Z'),
+          metadata: { topic: "recommendation" },
+          createdAt: new Date("2024-01-15T10:05:00Z"),
         },
       ];
 
@@ -632,11 +635,11 @@ describe('AI Contract Testing', () => {
         data: expect.objectContaining({
           messages: expect.arrayContaining([
             expect.objectContaining({
-              id: 'msg-1',
-              type: 'assistant',
+              id: "msg-1",
+              type: "assistant",
               confidence: 0.95,
               metadata: expect.objectContaining({
-                topic: 'scheduling',
+                topic: "scheduling",
               }),
             }),
           ]),
@@ -649,13 +652,13 @@ describe('AI Contract Testing', () => {
     });
   });
 
-  describe('Contract Type Safety', () => {
-    it('should enforce AI input type constraints', () => {
-      const validChatInput: AIInput['sendMessage'] = {
-        sessionId: 'session-123',
+  describe("Contract Type Safety", () => {
+    it("should enforce AI input type constraints", () => {
+      const validChatInput: AIInput["sendMessage"] = {
+        sessionId: "session-123",
         message: {
-          content: 'Olá, como posso agendar uma consulta?',
-          type: 'user',
+          content: "Olá, como posso agendar uma consulta?",
+          type: "user",
         },
         options: {
           sanitizePhiData: true,
@@ -663,8 +666,8 @@ describe('AI Contract Testing', () => {
         },
       };
 
-      const validPredictionInput: AIInput['predictNoShow'] = {
-        appointmentId: 'appt-456',
+      const validPredictionInput: AIInput["predictNoShow"] = {
+        appointmentId: "appt-456",
         factors: {
           patientHistory: {
             totalAppointments: 5,
@@ -673,8 +676,8 @@ describe('AI Contract Testing', () => {
             noShowCount: 0,
           },
           appointmentDetails: {
-            type: 'consultation',
-            scheduledDate: '2024-02-15T14:00:00Z',
+            type: "consultation",
+            scheduledDate: "2024-02-15T14:00:00Z",
           },
         },
       };
@@ -683,36 +686,36 @@ describe('AI Contract Testing', () => {
       expect(validPredictionInput).toBeDefined();
     });
 
-    it('should enforce AI output type constraints', () => {
-      const mockChatOutput: AIOutput['sendMessage'] = {
+    it("should enforce AI output type constraints", () => {
+      const mockChatOutput: AIOutput["sendMessage"] = {
         success: true,
         data: {
           userMessage: {
-            id: 'msg-user-123',
-            content: 'Mensagem do usuário',
-            type: 'user',
+            id: "msg-user-123",
+            content: "Mensagem do usuário",
+            type: "user",
             createdAt: new Date(),
           },
           aiResponse: {
-            id: 'msg-ai-456',
-            content: 'Resposta da IA',
-            type: 'assistant',
+            id: "msg-ai-456",
+            content: "Resposta da IA",
+            type: "assistant",
             confidence: 0.92,
             createdAt: new Date(),
           },
         },
       };
 
-      const mockPredictionOutput: AIOutput['predictNoShow'] = {
+      const mockPredictionOutput: AIOutput["predictNoShow"] = {
         success: true,
         data: {
-          predictionId: 'pred-789',
+          predictionId: "pred-789",
           probability: 0.15,
-          riskLevel: 'low',
+          riskLevel: "low",
           confidence: 0.88,
           factors: {
-            positive: ['good_history'],
-            negative: ['weather'],
+            positive: ["good_history"],
+            negative: ["weather"],
           },
           recommendations: [],
         },

@@ -5,10 +5,10 @@
  * Implements message formatting, validation, and session management.
  */
 
-import { EventEmitter } from 'events';
-import * as jwt from 'jsonwebtoken';
-import { v4 as uuidv4 } from 'uuid';
-import { WebSocket } from 'ws';
+import { EventEmitter } from "events";
+import * as jwt from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+import { WebSocket } from "ws";
 import {
   AguiContextUpdate,
   AguiErrorCode,
@@ -24,7 +24,7 @@ import {
   AguiSessionUpdate,
   AguiStatusMessage,
   AguiStreamingChunk,
-} from './types';
+} from "./types";
 
 export class AguiProtocol extends EventEmitter {
   private connections: Map<string, AguiConnection> = new Map();
@@ -51,8 +51,10 @@ export class AguiProtocol extends EventEmitter {
     try {
       // Check rate limits
       if (!this.checkRateLimit(clientIp)) {
-        this.sendError(ws, 'RATE_LIMITED', 'Rate limit exceeded', { connectionId });
-        ws.close(1008, 'Rate limit exceeded');
+        this.sendError(ws, "RATE_LIMITED", "Rate limit exceeded", {
+          connectionId,
+        });
+        ws.close(1008, "Rate limit exceeded");
         return;
       }
 
@@ -72,17 +74,17 @@ export class AguiProtocol extends EventEmitter {
       this.connections.set(connectionId, connection);
 
       // Set up message handler
-      ws.on('message', data => this.handleMessage(connectionId, data));
-      ws.on('close', () => this.handleDisconnect(connectionId));
-      ws.on('error', error => this.handleError(connectionId, error));
+      ws.on("message", (data) => this.handleMessage(connectionId, data));
+      ws.on("close", () => this.handleDisconnect(connectionId));
+      ws.on("error", (error) => this.handleError(connectionId, error));
 
       // Send hello message
       this.sendHello(connection);
 
-      this.emit('connection', connection);
+      this.emit("connection", connection);
     } catch (error) {
-      this.emit('connectionError', { connectionId, error });
-      ws.close(1011, 'Internal server error');
+      this.emit("connectionError", { connectionId, error });
+      ws.close(1011, "Internal server error");
     }
   }
 
@@ -105,38 +107,46 @@ export class AguiProtocol extends EventEmitter {
       // Validate message
       const validationError = this.validateMessage(message);
       if (validationError) {
-        this.sendError(connection.ws, 'INVALID_MESSAGE', validationError);
+        this.sendError(connection.ws, "INVALID_MESSAGE", validationError);
         return;
       }
 
       // Handle message based on type
       switch (message.type) {
-        case 'hello':
+        case "hello":
           await this.handleHello(connection, message);
           break;
-        case 'query':
+        case "query":
           await this.handleQuery(connection, message);
           break;
-        case 'feedback':
+        case "feedback":
           await this.handleFeedback(connection, message);
           break;
-        case 'ping':
+        case "ping":
           this.sendPong(connection);
           break;
-        case 'session_update':
+        case "session_update":
           await this.handleSessionUpdate(connection, message);
           break;
-        case 'context_update':
+        case "context_update":
           await this.handleContextUpdate(connection, message);
           break;
         default:
-          this.sendError(connection.ws, 'INVALID_MESSAGE', `Unknown message type: ${message.type}`);
+          this.sendError(
+            connection.ws,
+            "INVALID_MESSAGE",
+            `Unknown message type: ${message.type}`,
+          );
       }
 
-      this.emit('message', { connection, message });
+      this.emit("message", { connection, message });
     } catch (error) {
-      this.emit('messageError', { connectionId, error, data });
-      this.sendError(connection.ws, 'INTERNAL_ERROR', 'Failed to process message');
+      this.emit("messageError", { connectionId, error, data });
+      this.sendError(
+        connection.ws,
+        "INTERNAL_ERROR",
+        "Failed to process message",
+      );
     }
   }
 
@@ -148,7 +158,12 @@ export class AguiProtocol extends EventEmitter {
       const message = JSON.parse(data.toString());
 
       // Basic structure validation
-      if (!message.id || !message.type || !message.timestamp || !message.sessionId) {
+      if (
+        !message.id ||
+        !message.type ||
+        !message.timestamp ||
+        !message.sessionId
+      ) {
         return null;
       }
 
@@ -168,27 +183,28 @@ export class AguiProtocol extends EventEmitter {
     const timeDiff = Math.abs(now.getTime() - messageTime.getTime());
 
     if (timeDiff > this.config.maxMessageAge) {
-      return 'Message timestamp is too old or in the future';
+      return "Message timestamp is too old or in the future";
     }
 
     // Validate session ID
     if (!this.isValidSessionId(message.sessionId)) {
-      return 'Invalid session ID format';
+      return "Invalid session ID format";
     }
 
     // Type-specific validation
     switch (message.type) {
-      case 'query':
+      case "query":
         if (!message.payload?._query) {
-          return 'Query message must contain a query';
+          return "Query message must contain a query";
         }
         break;
-      case 'feedback':
+      case "feedback":
         if (
-          typeof message.payload?.rating !== 'number' || message.payload.rating < 1
-          || message.payload.rating > 5
+          typeof message.payload?.rating !== "number" ||
+          message.payload.rating < 1 ||
+          message.payload.rating > 5
         ) {
-          return 'Feedback rating must be a number between 1 and 5';
+          return "Feedback rating must be a number between 1 and 5";
         }
         break;
     }
@@ -199,13 +215,20 @@ export class AguiProtocol extends EventEmitter {
   /**
    * Handle hello message (initial handshake)
    */
-  private async handleHello(connection: AguiConnection, message: AguiMessage): Promise<void> {
+  private async handleHello(
+    connection: AguiConnection,
+    message: AguiMessage,
+  ): Promise<void> {
     try {
       const hello = message.payload as AguiHelloMessage;
 
       // Validate protocol version
       if (!this.isVersionSupported(hello.version)) {
-        this.sendError(connection.ws, 'INVALID_MESSAGE', 'Unsupported protocol version');
+        this.sendError(
+          connection.ws,
+          "INVALID_MESSAGE",
+          "Unsupported protocol version",
+        );
         return;
       }
 
@@ -213,7 +236,11 @@ export class AguiProtocol extends EventEmitter {
       if (hello.authentication) {
         const authResult = await this.authenticate(hello.authentication);
         if (!authResult.success) {
-          this.sendError(connection.ws, 'AUTHENTICATION_FAILED', authResult.error);
+          this.sendError(
+            connection.ws,
+            "AUTHENTICATION_FAILED",
+            authResult.error,
+          );
           return;
         }
 
@@ -227,7 +254,7 @@ export class AguiProtocol extends EventEmitter {
       // Send hello response
       this.sendMessage(connection.ws, {
         id: uuidv4(),
-        type: 'hello',
+        type: "hello",
         timestamp: new Date().toISOString(),
         sessionId: message.sessionId,
         _payload: {
@@ -236,29 +263,43 @@ export class AguiProtocol extends EventEmitter {
         },
       });
 
-      this.emit('authenticated', { connection, _userId: connection.userId });
+      this.emit("authenticated", { connection, _userId: connection.userId });
     } catch (error) {
-      this.sendError(connection.ws, 'INTERNAL_ERROR', 'Failed to process hello message');
+      this.sendError(
+        connection.ws,
+        "INTERNAL_ERROR",
+        "Failed to process hello message",
+      );
     }
   }
 
   /**
    * Handle query message
    */
-  private async handleQuery(connection: AguiConnection, message: AguiMessage): Promise<void> {
+  private async handleQuery(
+    connection: AguiConnection,
+    message: AguiMessage,
+  ): Promise<void> {
     if (!connection.authenticated) {
-      this.sendError(connection.ws, 'AUTHENTICATION_FAILED', 'Authentication required');
+      this.sendError(
+        connection.ws,
+        "AUTHENTICATION_FAILED",
+        "Authentication required",
+      );
       return;
     }
 
     const query = message.payload as AguiQueryMessage;
 
     // Check session
-    const session = await this.getOrCreateSession(message.sessionId, connection._userId);
+    const session = await this.getOrCreateSession(
+      message.sessionId,
+      connection._userId,
+    );
     connection.sessionId = session.id;
 
     // Emit query event for processing by the agent
-    this.emit('query', {
+    this.emit("query", {
       connection,
       session,
       _query: query.query,
@@ -271,10 +312,13 @@ export class AguiProtocol extends EventEmitter {
   /**
    * Handle feedback message
    */
-  private async handleFeedback(connection: AguiConnection, message: AguiMessage): Promise<void> {
+  private async handleFeedback(
+    connection: AguiConnection,
+    message: AguiMessage,
+  ): Promise<void> {
     const feedback = message.payload as AguiFeedbackMessage;
 
-    this.emit('feedback', {
+    this.emit("feedback", {
       sessionId: message.sessionId,
       messageId: feedback.messageId,
       rating: feedback.rating,
@@ -295,14 +339,20 @@ export class AguiProtocol extends EventEmitter {
 
     const session = this.sessions.get(update.sessionId);
     if (!session || session.userId !== connection._userId) {
-      this.sendError(connection.ws, 'AUTHORIZATION_FAILED', 'Session not found or access denied');
+      this.sendError(
+        connection.ws,
+        "AUTHORIZATION_FAILED",
+        "Session not found or access denied",
+      );
       return;
     }
 
     // Update session
-    Object.assign(session, update.updates, { updatedAt: new Date().toISOString() });
+    Object.assign(session, update.updates, {
+      updatedAt: new Date().toISOString(),
+    });
 
-    this.emit('sessionUpdated', { session, updates: update.updates });
+    this.emit("sessionUpdated", { session, updates: update.updates });
   }
 
   /**
@@ -314,7 +364,7 @@ export class AguiProtocol extends EventEmitter {
   ): Promise<void> {
     const contextUpdate = message.payload as AguiContextUpdate;
 
-    this.emit('contextUpdate', {
+    this.emit("contextUpdate", {
       sessionId: contextUpdate.sessionId,
       _context: contextUpdate.context,
       source: contextUpdate.source,
@@ -325,15 +375,19 @@ export class AguiProtocol extends EventEmitter {
   /**
    * Send response to client
    */
-  sendResponse(connectionId: string, response: AguiResponseMessage, messageId?: string): void {
+  sendResponse(
+    connectionId: string,
+    response: AguiResponseMessage,
+    messageId?: string,
+  ): void {
     const connection = this.connections.get(connectionId);
     if (!connection) return;
 
     this.sendMessage(connection.ws, {
       id: uuidv4(),
-      type: 'response',
+      type: "response",
       timestamp: new Date().toISOString(),
-      sessionId: connection.sessionId || '',
+      sessionId: connection.sessionId || "",
       _payload: response,
       metadata: messageId ? { requestId: messageId } : undefined,
     });
@@ -348,9 +402,9 @@ export class AguiProtocol extends EventEmitter {
 
     this.sendMessage(connection.ws, {
       id: uuidv4(),
-      type: 'streaming_chunk',
+      type: "streaming_chunk",
       timestamp: new Date().toISOString(),
-      sessionId: connection.sessionId || '',
+      sessionId: connection.sessionId || "",
       _payload: chunk,
     });
   }
@@ -366,9 +420,9 @@ export class AguiProtocol extends EventEmitter {
   ): void {
     this.sendMessage(ws, {
       id: uuidv4(),
-      type: 'error',
+      type: "error",
       timestamp: new Date().toISOString(),
-      sessionId: '',
+      sessionId: "",
       _payload: {
         code,
         message,
@@ -383,7 +437,7 @@ export class AguiProtocol extends EventEmitter {
    */
   sendStatus(connectionId?: string): void {
     const status: AguiStatusMessage = {
-      status: 'ready',
+      status: "ready",
       uptime: process.uptime() * 1000,
       activeSessions: this.sessions.size,
       queueSize: 0,
@@ -395,9 +449,9 @@ export class AguiProtocol extends EventEmitter {
       if (connection) {
         this.sendMessage(connection.ws, {
           id: uuidv4(),
-          type: 'status',
+          type: "status",
           timestamp: new Date().toISOString(),
-          sessionId: connection.sessionId || '',
+          sessionId: connection.sessionId || "",
           _payload: status,
         });
       }
@@ -405,9 +459,9 @@ export class AguiProtocol extends EventEmitter {
       // Broadcast to all connections
       this.broadcast({
         id: uuidv4(),
-        type: 'status',
+        type: "status",
         timestamp: new Date().toISOString(),
-        sessionId: '',
+        sessionId: "",
         _payload: status,
       });
     }
@@ -419,9 +473,9 @@ export class AguiProtocol extends EventEmitter {
   private sendHello(connection: AguiConnection): void {
     this.sendMessage(connection.ws, {
       id: uuidv4(),
-      type: 'hello',
+      type: "hello",
       timestamp: new Date().toISOString(),
-      sessionId: '',
+      sessionId: "",
       _payload: {
         version: this.config.version,
         capabilities: this.getCapabilities(),
@@ -435,9 +489,9 @@ export class AguiProtocol extends EventEmitter {
   private sendPong(connection: AguiConnection): void {
     this.sendMessage(connection.ws, {
       id: uuidv4(),
-      type: 'pong',
+      type: "pong",
       timestamp: new Date().toISOString(),
-      sessionId: connection.sessionId || '',
+      sessionId: connection.sessionId || "",
       _payload: { timestamp: new Date().toISOString() },
     });
   }
@@ -449,7 +503,7 @@ export class AguiProtocol extends EventEmitter {
     try {
       ws.send(JSON.stringify(message));
     } catch (error) {
-      this.emit('sendError', { error, message });
+      this.emit("sendError", { error, message });
     }
   }
 
@@ -469,7 +523,7 @@ export class AguiProtocol extends EventEmitter {
     const connection = this.connections.get(connectionId);
     if (connection) {
       this.connections.delete(connectionId);
-      this.emit('disconnect', connection);
+      this.emit("disconnect", connection);
     }
   }
 
@@ -479,7 +533,7 @@ export class AguiProtocol extends EventEmitter {
   private handleError(connectionId: string, error: Error): void {
     const connection = this.connections.get(connectionId);
     if (connection) {
-      this.emit('connectionError', { connection, error });
+      this.emit("connectionError", { connection, error });
       this.handleDisconnect(connectionId);
     }
   }
@@ -491,21 +545,24 @@ export class AguiProtocol extends EventEmitter {
     auth: any,
   ): Promise<{ success: boolean; _userId?: string; error?: string }> {
     try {
-      if (auth.type === 'jwt') {
+      if (auth.type === "jwt") {
         const decoded = jwt.verify(auth.token, this.config.jwtSecret) as any;
         return { success: true, _userId: decoded.userId };
       }
 
-      return { success: false, error: 'Unsupported authentication type' };
+      return { success: false, error: "Unsupported authentication type" };
     } catch (error) {
-      return { success: false, error: 'Invalid authentication token' };
+      return { success: false, error: "Invalid authentication token" };
     }
   }
 
   /**
    * Get or create session
    */
-  private async getOrCreateSession(sessionId: string, _userId: string): Promise<AguiSession> {
+  private async getOrCreateSession(
+    sessionId: string,
+    _userId: string,
+  ): Promise<AguiSession> {
     let session = this.sessions.get(sessionId);
 
     if (!session) {
@@ -522,7 +579,7 @@ export class AguiProtocol extends EventEmitter {
       };
 
       this.sessions.set(sessionId, session);
-      this.emit('sessionCreated', session);
+      this.emit("sessionCreated", session);
     }
 
     return session;
@@ -587,8 +644,10 @@ export class AguiProtocol extends EventEmitter {
 
       // Remove old entries
       if (limit.currentUsage.minute === 0 && limit.currentUsage.hour === 0) {
-        const lastActivity = new Date(limit.resetTimes.minute).getTime() - 60000;
-        if (now - lastActivity > 3600000) { // 1 hour of inactivity
+        const lastActivity =
+          new Date(limit.resetTimes.minute).getTime() - 60000;
+        if (now - lastActivity > 3600000) {
+          // 1 hour of inactivity
           this.rateLimiter.delete(clientIp);
         }
       }
@@ -605,14 +664,17 @@ export class AguiProtocol extends EventEmitter {
     for (const [sessionId, session] of this.sessions.entries()) {
       if (new Date(session.expiresAt).getTime() < now) {
         this.sessions.delete(sessionId);
-        this.emit('sessionExpired', session);
+        this.emit("sessionExpired", session);
       }
     }
 
     // Clean up inactive connections
     for (const [connectionId, connection] of this.connections.entries()) {
-      if (now - connection.lastActivity.getTime() > this.config.connectionTimeout) {
-        connection.ws.close(1000, 'Connection timeout');
+      if (
+        now - connection.lastActivity.getTime() >
+        this.config.connectionTimeout
+      ) {
+        connection.ws.close(1000, "Connection timeout");
         this.connections.delete(connectionId);
       }
     }
@@ -622,9 +684,11 @@ export class AguiProtocol extends EventEmitter {
    * Get client IP address
    */
   private getClientIp(_request: any): string {
-    return request.headers['x-forwarded-for']
-      || _request.connection.remoteAddress
-      || _request.socket.remoteAddress;
+    return (
+      request.headers["x-forwarded-for"] ||
+      _request.connection.remoteAddress ||
+      _request.socket.remoteAddress
+    );
   }
 
   /**
@@ -647,19 +711,19 @@ export class AguiProtocol extends EventEmitter {
   private getCapabilities(): AguiCapability[] {
     return [
       {
-        name: 'query',
-        version: '1.0.0',
-        features: ['streaming', 'context-aware', 'multi-modal'],
+        name: "query",
+        version: "1.0.0",
+        features: ["streaming", "context-aware", "multi-modal"],
       },
       {
-        name: 'session',
-        version: '1.0.0',
-        features: ['persistence', 'context-sharing', 'encryption'],
+        name: "session",
+        version: "1.0.0",
+        features: ["persistence", "context-sharing", "encryption"],
       },
       {
-        name: 'feedback',
-        version: '1.0.0',
-        features: ['rating', 'comments', 'categorization'],
+        name: "feedback",
+        version: "1.0.0",
+        features: ["rating", "comments", "categorization"],
       },
     ];
   }
@@ -681,7 +745,12 @@ export class AguiProtocol extends EventEmitter {
    * Check if error is retryable
    */
   private isRetryableError(code: AguiErrorCode): boolean {
-    const retryableErrors = ['TIMEOUT', 'RATE_LIMITED', 'INTERNAL_ERROR', 'AI_SERVICE_ERROR'];
+    const retryableErrors = [
+      "TIMEOUT",
+      "RATE_LIMITED",
+      "INTERNAL_ERROR",
+      "AI_SERVICE_ERROR",
+    ];
     return retryableErrors.includes(code);
   }
 
@@ -690,12 +759,12 @@ export class AguiProtocol extends EventEmitter {
    */
   getHealthStatus(): AguiHealthStatus {
     return {
-      status: 'healthy',
+      status: "healthy",
       components: {
-        database: 'healthy',
-        ai_service: 'healthy',
-        vector_store: 'healthy',
-        websocket_server: 'healthy',
+        database: "healthy",
+        ai_service: "healthy",
+        vector_store: "healthy",
+        websocket_server: "healthy",
       },
       metrics: this.getPerformanceMetrics(),
       lastCheck: new Date().toISOString(),
@@ -709,8 +778,8 @@ export class AguiProtocol extends EventEmitter {
     return {
       version: this.config.version,
       supportedVersions: this.config.supportedVersions,
-      compatibility: 'full',
-      features: ['query', 'session', 'feedback', 'streaming', 'encryption'],
+      compatibility: "full",
+      features: ["query", "session", "feedback", "streaming", "encryption"],
     };
   }
 }

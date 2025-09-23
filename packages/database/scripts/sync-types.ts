@@ -4,28 +4,34 @@
  * Run with: npx tsx scripts/sync-types.ts
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 // ES module equivalents for __dirname
 const filename = fileURLToPath(import.meta.url);
 const dirname = dirname(__filename);
 
 // Read Prisma schema and generate basic Supabase types
-const prismaSchemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma');
-const typesOutputPath = path.join(__dirname, '..', 'src', 'types', 'supabase-generated.ts');
+const prismaSchemaPath = path.join(__dirname, "..", "prisma", "schema.prisma");
+const typesOutputPath = path.join(
+  __dirname,
+  "..",
+  "src",
+  "types",
+  "supabase-generated.ts",
+);
 
 function generateSupabaseTypes() {
-  console.log('🔄 Synchronizing Supabase types with Prisma schema...');
+  console.log("🔄 Synchronizing Supabase types with Prisma schema...");
 
   // Ensure the types directory exists
   const typesDir = path.dirname(typesOutputPath);
   if (!fs.existsSync(typesDir)) {
     fs.mkdirSync(typesDir, { recursive: true });
   }
-  
+
   const generatedTypes = `
 // Auto-generated Supabase types from Prisma schema
 // DO NOT EDIT MANUALLY - Run 'npm run sync-types' to regenerate
@@ -664,7 +670,7 @@ export type Enums<T extends keyof Database['public']['Enums']> = Database['publi
 `;
 
   fs.writeFileSync(typesOutputPath, generatedTypes);
-  console.log('✅ Supabase types synchronized successfully!');
+  console.log("✅ Supabase types synchronized successfully!");
   console.log(`📁 Generated: ${typesOutputPath}`);
 }
 

@@ -22,6 +22,7 @@ Serviço de agente de IA para integração com dados de saúde, utilizando proto
 ## Configuração
 
 1. Copie o arquivo de variáveis de ambiente:
+
    ```bash
    cp .env.example .env
    ```
@@ -36,6 +37,7 @@ Serviço de agente de IA para integração com dados de saúde, utilizando proto
 ## Instalação
 
 1. Instale as dependências:
+
    ```bash
    pip install -r requirements.txt
    ```
@@ -46,6 +48,7 @@ Serviço de agente de IA para integração com dados de saúde, utilizando proto
    ```
 
 Ou utilize Docker:
+
 ```bash
 docker-compose up --build
 ```
@@ -53,9 +56,11 @@ docker-compose up --build
 ## Endpoints da API
 
 ### WebSocket
+
 - `ws://localhost:8001/ws/agent` - Endpoint principal do AG-UI
 
 ### REST API
+
 - `GET /health` - Verificação de saúde
 - `POST /api/agent/query` - Processar queries
 - `GET /api/agent/capabilities` - Obter capacidades do agente
@@ -63,6 +68,7 @@ docker-compose up --build
 ## Mensagens do AG-UI Protocol
 
 ### Query Message
+
 ```json
 {
   "type": "query",
@@ -75,6 +81,7 @@ docker-compose up --build
 ```
 
 ### Data Response
+
 ```json
 {
   "type": "data_response",
@@ -104,6 +111,7 @@ services/ai-agent/
 ## Desenvolvimento
 
 Para executar em modo de desenvolvimento:
+
 ```bash
 uvicorn main:app --reload --host 0.0.0.0 --port 8001
 ```
@@ -111,6 +119,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8001
 ## Testes
 
 Execute os testes com:
+
 ```bash
 pytest
 ```
@@ -118,6 +127,7 @@ pytest
 ## LGPD e Compliance
 
 O serviço implementa:
+
 - Validação de consentimento LGPD
 - Log de auditoria para acesso a dados
 - Criptografia de dados em trânsito

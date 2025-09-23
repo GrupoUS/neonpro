@@ -11,33 +11,36 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Format date for Brazilian locale
  */
-export function formatDate(date: Date | string, format: 'short' | 'long' = 'short'): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
-  if (format === 'long') {
-    return dateObj.toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+export function formatDate(
+  date: Date | string,
+  format: "short" | "long" = "short",
+): string {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+
+  if (format === "long") {
+    return dateObj.toLocaleDateString("pt-BR", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   }
-  
-  return dateObj.toLocaleDateString('pt-BR');
+
+  return dateObj.toLocaleDateString("pt-BR");
 }
 
 /**
  * Format date and time for Brazilian locale
  */
 export function formatDateTime(date: Date | string): string {
-  const dateObj = typeof date === 'string' ? new Date(date) : date;
-  
-  return dateObj.toLocaleString('pt-BR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+
+  return dateObj.toLocaleString("pt-BR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 }
 
@@ -46,10 +49,10 @@ export function formatDateTime(date: Date | string): string {
  */
 export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
-  delay: number
+  delay: number,
 ): (...args: Parameters<T>) => void {
   let timeoutId: ReturnType<typeof setTimeout>;
-  
+
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => func(...args), delay);
@@ -61,10 +64,10 @@ export function debounce<T extends (...args: unknown[]) => unknown>(
  */
 export function throttle<T extends (...args: unknown[]) => unknown>(
   func: T,
-  limit: number
+  limit: number,
 ): (...args: Parameters<T>) => void {
   let inThrottle: boolean;
-  
+
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
       func(...args);
@@ -77,7 +80,7 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 /**
  * Generate unique ID for accessibility
  */
-export function generateId(prefix: string = 'element'): string {
+export function generateId(prefix: string = "element"): string {
   return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
@@ -92,5 +95,5 @@ export function capitalize(str: string): string {
  * Sleep utility for async operations
  */
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

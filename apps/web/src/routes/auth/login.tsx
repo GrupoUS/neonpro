@@ -1,29 +1,29 @@
-import * as React from 'react'
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { Eye, EyeOff, Lock, Mail, Building2 } from 'lucide-react'
+import * as React from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
+import { Eye, EyeOff, Lock, Mail, Building2 } from "lucide-react";
 
-export const Route = createFileRoute('/auth/login')({
+export const Route = createFileRoute("/auth/login")({
   component: Login,
-})
+});
 
 function Login() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    
+    e.preventDefault();
+    setIsLoading(true);
+
     // Simulate login - replace with actual authentication
     setTimeout(() => {
-      setIsLoading(false)
+      setIsLoading(false);
       // Redirect to dashboard after successful login
-      window.location.href = '/dashboard'
-    }, 1500)
-  }
+      window.location.href = "/dashboard";
+    }, 1500);
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -39,11 +39,14 @@ function Login() {
             Plataforma para clínicas de estética brasileiras
           </p>
         </div>
-        
+
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Email profissional
               </label>
               <div className="mt-1 relative">
@@ -63,9 +66,12 @@ function Login() {
                 />
               </div>
             </div>
-            
+
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Senha
               </label>
               <div className="mt-1 relative">
@@ -75,7 +81,7 @@ function Login() {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   autoComplete="current-password"
                   required
                   value={password}
@@ -106,13 +112,19 @@ function Login() {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-900"
+              >
                 Lembrar-me
               </label>
             </div>
 
             <div className="text-sm">
-              <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+              <a
+                href="#"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Esqueceu sua senha?
               </a>
             </div>
@@ -130,15 +142,18 @@ function Login() {
                   Entrando...
                 </div>
               ) : (
-                'Entrar'
+                "Entrar"
               )}
             </button>
           </div>
 
           <div className="text-center">
             <span className="text-sm text-gray-600">
-              Não tem uma conta?{' '}
-              <a href="/auth/register" className="font-medium text-blue-600 hover:text-blue-500">
+              Não tem uma conta?{" "}
+              <a
+                href="/auth/register"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
                 Cadastre-se
               </a>
             </span>
@@ -146,5 +161,5 @@ function Login() {
         </form>
       </div>
     </div>
-  )
+  );
 }

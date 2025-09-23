@@ -23,6 +23,7 @@ related:
 ## Database Cleanup Summary
 
 ### 🎯 **Cleanup Results**
+
 - **Before**: 292 tables (massive redundancy and legacy data)
 - **After**: 24 essential tables (clean, focused healthcare schema)
 - **Reduction**: 92% reduction in database complexity
@@ -30,6 +31,7 @@ related:
 - **Features**: RLS policies, índices otimizados, triggers LGPD, dados demo inclusos
 
 ### 📋 **Essential Tables Retained**
+
 1. **Core Healthcare**: clinics, professionals, patients, appointments
 2. **Compliance**: lgpd_consents, consent_records, audit_logs, resource_permissions
 3. **AI & Analytics**: ai_logs, ai_predictions, ai_model_performance
@@ -37,6 +39,7 @@ related:
 5. **Reporting**: compliance_reports, reports, system_config
 
 ### 🔧 **Migration Strategy**
+
 - Created timestamp-based migrations for proper versioning
 - Applied cleanup using Supabase CLI
 - Maintained all healthcare compliance requirements

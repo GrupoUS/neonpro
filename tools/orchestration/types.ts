@@ -2,9 +2,18 @@
  * Core types for TDD orchestration system
  */
 
-export type AgentCoordinationPattern = "parallel" | "sequential" | "hierarchical" | "event-driven" | "consensus";
+export type AgentCoordinationPattern =
+  | "parallel"
+  | "sequential"
+  | "hierarchical"
+  | "event-driven"
+  | "consensus";
 
-export type WorkflowType = "standard-tdd" | "security-critical" | "performance-focused" | "healthcare-compliant";
+export type WorkflowType =
+  | "standard-tdd"
+  | "security-critical"
+  | "performance-focused"
+  | "healthcare-compliant";
 
 export interface ToolExecutionRequest {
   id: string;
@@ -239,7 +248,10 @@ export interface TDDOrchestrationSystem {
   getMetrics(): OrchestrationMetrics;
   getStatus(): SystemStatus;
   getCommandExamples(): CommandExample;
-  validateCompliance(context: any, agentResults: AgentResult[]): Promise<HealthcareCompliance>;
+  validateCompliance(
+    context: any,
+    agentResults: AgentResult[],
+  ): Promise<HealthcareCompliance>;
 }
 
 export interface QualityControlContext {
@@ -321,7 +333,10 @@ export interface WorkflowEngine {
 
 export interface TDDOrchestrator {
   executeTDDCycle(context: OrchestrationContext): Promise<TDDCycleResult>;
-  executeFullTDDCycle(feature: FeatureContext, options?: any): Promise<TDDCycleResult>;
+  executeFullTDDCycle(
+    feature: FeatureContext,
+    options?: any,
+  ): Promise<TDDCycleResult>;
   getPhaseStatus(): TDDPhase;
   pauseExecution(): void;
   resumeExecution(): void;

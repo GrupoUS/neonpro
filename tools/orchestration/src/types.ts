@@ -1,11 +1,35 @@
-export type AgentCoordinationPattern = "parallel" | "sequential" | "hierarchical" | "event-driven" | "consensus";
+export type AgentCoordinationPattern =
+  | "parallel"
+  | "sequential"
+  | "hierarchical"
+  | "event-driven"
+  | "consensus";
 
 // Agent and workflow type definitions
-export type AgentName = "test" | "code-reviewer" | "security-auditor" | "architect-review" | "tdd-orchestrator" | "test-auditor" | "custom-agent" | "tertiary-agent" | "non-existent-agent";
-export type WorkflowType = "parallel" | "sequential" | "hierarchical" | "event-driven";
+export type AgentName =
+  | "test"
+  | "code-reviewer"
+  | "security-auditor"
+  | "architect-review"
+  | "tdd-orchestrator"
+  | "test-auditor"
+  | "custom-agent"
+  | "tertiary-agent"
+  | "non-existent-agent";
+export type WorkflowType =
+  | "parallel"
+  | "sequential"
+  | "hierarchical"
+  | "event-driven";
 
 // Re-export types from agent-registry
-export type { AgentCapability, OrchestrationContext, AgentType, TDDPhase, AgentStats } from './agent-registry';
+export type {
+  AgentCapability,
+  OrchestrationContext,
+  AgentType,
+  TDDPhase,
+  AgentStats,
+} from "./agent-registry";
 
 export type OrchestrationOptions = {
   workflow: string;
@@ -42,7 +66,7 @@ export interface ToolExecutionRequest {
     disk: number;
   };
   metadata?: Record<string, any>;
-};
+}
 
 export type QualityControlContext = {
   action: string;
@@ -185,7 +209,10 @@ export type TDDOrchestrationSystem = {
   getMetrics(): OrchestrationMetrics;
   getStatus(): SystemStatus;
   getCommandExamples(): CommandExample;
-  validateCompliance(context: any, agentResults: AgentResult[]): Promise<HealthcareCompliance>;
+  validateCompliance(
+    context: any,
+    agentResults: AgentResult[],
+  ): Promise<HealthcareCompliance>;
 };
 
 // Re-export WorkflowEngine and AgentRegistry interfaces for test compatibility

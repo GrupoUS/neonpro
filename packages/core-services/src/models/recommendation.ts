@@ -198,7 +198,8 @@ export class RecommendationModel {
     this.generateComplianceImprovementRecommendations();
 
     // Sort by priority and return
-    return Array.from(this._recommendations.values()).sort((a,_b) =>
+    return Array.from(this._recommendations.values()).sort(
+      (a, _b) =>
         this.getPriorityScore(b.priority) - this.getPriorityScore(a.priority),
     );
   }
@@ -462,9 +463,11 @@ export class RecommendationModel {
       category: "usage",
       currentPlan: userPlan.planCode,
       recommendedPlan: nextTier,
-      unlockingFeatures: nextPlan.availableFeatures.filter((f) => !userPlan.plan.hasFeature(f),
+      unlockingFeatures: nextPlan.availableFeatures.filter(
+        (f) => !userPlan.plan.hasFeature(f),
       ),
-      additionalModels: nextPlan.availableModels.filter((m) => !userPlan.plan.hasModelAccess(m),
+      additionalModels: nextPlan.availableModels.filter(
+        (m) => !userPlan.plan.hasModelAccess(m),
       ),
       costDifferenceUsd: costDifference,
       reason: "quota_exceeded",
@@ -500,7 +503,8 @@ export class RecommendationModel {
       currentPlan: userPlan.planCode,
       recommendedPlan: nextTier,
       unlockingFeatures: missingFeatures,
-      additionalModels: nextPlan.availableModels.filter((m) => !userPlan.plan.hasModelAccess(m),
+      additionalModels: nextPlan.availableModels.filter(
+        (m) => !userPlan.plan.hasModelAccess(m),
       ),
       costDifferenceUsd: costDifference,
       reason: "feature_access",
@@ -533,9 +537,11 @@ export class RecommendationModel {
         category: "cost",
         currentPlan: userPlan.planCode,
         recommendedPlan: "enterprise",
-        unlockingFeatures: enterprisePlan.availableFeatures.filter((f) => !userPlan.plan.hasFeature(f),
+        unlockingFeatures: enterprisePlan.availableFeatures.filter(
+          (f) => !userPlan.plan.hasFeature(f),
         ),
-        additionalModels: enterprisePlan.availableModels.filter((m) => !userPlan.plan.hasModelAccess(m),
+        additionalModels: enterprisePlan.availableModels.filter(
+          (m) => !userPlan.plan.hasModelAccess(m),
         ),
         costDifferenceUsd: this.estimatePlanCostDifference("pro", "enterprise"),
         projectedSavings,
@@ -556,7 +562,8 @@ export class RecommendationModel {
     const modelSuggestions = this.generateModelCostSuggestions();
     if (modelSuggestions.length === 0) return null;
 
-    const totalSavings = modelSuggestions.reduce((sum,_s) => sum + s.costSavings,
+    const totalSavings = modelSuggestions.reduce(
+      (sum, _s) => sum + s.costSavings,
       0,
     );
 
@@ -836,7 +843,8 @@ export class RecommendationModel {
   getRecommendationsByPriority(
     priority: BaseRecommendation["priority"],
   ): Recommendation[] {
-    return Array.from(this._recommendations.values()).filter((rec) => rec.priority === priority,
+    return Array.from(this._recommendations.values()).filter(
+      (rec) => rec.priority === priority,
     );
   }
 
@@ -844,7 +852,8 @@ export class RecommendationModel {
    * Gets active (non-dismissed) recommendations
    */
   getActiveRecommendations(): Recommendation[] {
-    return Array.from(this._recommendations.values()).filter((rec) =>
+    return Array.from(this._recommendations.values()).filter(
+      (rec) =>
         !rec.dismissed && (!rec.validUntil || rec.validUntil > new Date()),
     );
   }

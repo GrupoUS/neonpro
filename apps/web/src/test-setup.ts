@@ -1,10 +1,10 @@
-import { vi } from 'vitest';
-import '@testing-library/jest-dom';
+import { vi, describe, it, test, expect } from "vitest";
+import "@testing-library/jest-dom";
 
 // Mock global APIs that might be used in components
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation(query => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -31,15 +31,15 @@ global.IntersectionObserver = vi.fn().mockImplementation(() => ({
 }));
 
 // Mock Web APIs
-Object.defineProperty(window, 'scrollTo', {
+Object.defineProperty(window, "scrollTo", {
   value: vi.fn(),
   writable: true,
 });
 
 // Mock crypto.randomUUID if not available
 if (!window.crypto?.randomUUID) {
-  Object.defineProperty(window.crypto, 'randomUUID', {
-    value: () => 'test-uuid-' + Math.random().toString(36).substr(2, 9),
+  Object.defineProperty(window.crypto, "randomUUID", {
+    value: () => "test-uuid-" + Math.random().toString(36).substr(2, 9),
   });
 }
 
@@ -47,7 +47,7 @@ if (!window.crypto?.randomUUID) {
 global.fetch = vi.fn();
 
 // Mock URL.createObjectURL
-global.URL.createObjectURL = vi.fn(() => 'mock-url');
+global.URL.createObjectURL = vi.fn(() => "mock-url");
 global.URL.revokeObjectURL = vi.fn();
 
 // Mock performance API
@@ -56,9 +56,9 @@ global.performance = {
   now: vi.fn(() => Date.now()),
 };
 
-// Setup test utilities
-global.describe = describe;
-global.it = it;
-global.test = test;
-global.expect = expect;
-global.vi = vi;
+// Setup test globals
+(globalThis as any).describe = describe;
+(globalThis as any).it = it;
+(globalThis as any).test = test;
+(globalThis as any).expect = expect;
+(globalThis as any).vi = vi;

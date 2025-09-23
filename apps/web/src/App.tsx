@@ -1,6 +1,3 @@
-import React from 'react'
-import { supabase } from './integrations/supabase/client'
-
 function App() {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -8,24 +5,26 @@ function App() {
         <div className="px-4 py-6 sm:px-0">
           <div className="border-4 border-dashed border-gray-200 rounded-lg p-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              NeonPro Healthcare Platform
+              NeonPro Aesthetic Clinic Platform
             </h1>
             <p className="text-lg text-gray-600 mb-4">
-              Modern healthcare management system for Brazilian aesthetic clinics
+              Modern aesthetic clinic management platform for Brazilian beauty
+              professionals
             </p>
             <div className="bg-green-50 border border-green-200 rounded-md p-4">
               <p className="text-green-800">
-                ✅ Build system configuration completed successfully
+                ✅ Platform flows documentation updated successfully
               </p>
               <p className="text-green-700 text-sm mt-2">
-                Next steps: Implement authentication, patient management, and appointment scheduling
+                Next steps: WhatsApp integration, anti-no-show engine, and
+                client management
               </p>
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

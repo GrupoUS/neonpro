@@ -3,9 +3,9 @@
  * Implements intelligent query optimization, connection pooling, and performance monitoring
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { performance } from 'perf_hooks';
-import { Pool, PoolConfig } from 'pg';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { performance } from "perf_hooks";
+import { Pool, PoolConfig } from "pg";
 
 export interface QueryOptimizerConfig {
   supabaseUrl: string;
@@ -103,8 +103,8 @@ export class QueryOptimizerService {
     const poolConfig: PoolConfig = {
       host: new URL(this.config.supabaseUrl).hostname,
       port: 5432,
-      database: 'postgres',
-      user: 'postgres',
+      database: "postgres",
+      user: "postgres",
       password: this.config.supabaseServiceKey,
       max: this.config.maxConnections,
       idleTimeoutMillis: 30000,
@@ -116,26 +116,26 @@ export class QueryOptimizerService {
     this.pool = new Pool(poolConfig);
 
     // Set up pool event handlers for monitoring
-    this.pool.on('connect', () => {
+    this.pool.on("connect", () => {
       this.connectionMetrics.totalConnections++;
     });
 
-    this.pool.on('acquire', client => {
+    this.pool.on("acquire", (client) => {
       this.connectionMetrics.activeConnections++;
       this.connectionMetrics.idleConnections--;
     });
 
-    this.pool.on('release', client => {
+    this.pool.on("release", (client) => {
       this.connectionMetrics.activeConnections--;
       this.connectionMetrics.idleConnections++;
     });
 
-    this.pool.on('remove', client => {
+    this.pool.on("remove", (client) => {
       this.connectionMetrics.totalConnections--;
     });
 
-    this.pool.on('error', (err, _client) => {
-      console.error('[QueryOptimizer] Pool error:', err);
+    this.pool.on("error", (err, _client) => {
+      console.error("[QueryOptimizer] Pool error:", err);
       this.connectionMetrics.failedQueries++;
     });
   }
@@ -235,13 +235,13 @@ export class QueryOptimizerService {
         indexesUsed: [],
         timestamp: new Date().toISOString(),
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       };
 
       this.recordQueryMetrics(metrics);
       this.connectionMetrics.failedQueries++;
 
-      console.error('[QueryOptimizer] Query execution failed:', error);
+      console.error("[QueryOptimizer] Query execution failed:", error);
       throw error;
     }
   }
@@ -255,7 +255,7 @@ export class QueryOptimizerService {
     options: { timeout?: number },
   ): Promise<T[]> {
     if (!this.pool) {
-      throw new Error('Connection pool not available');
+      throw new Error("Connection pool not available");
     }
 
     const timeout = options.timeout || this.config.queryTimeout!;
@@ -267,11 +267,11 @@ export class QueryOptimizerService {
       }, timeout);
 
       this.pool!.query(query, params)
-        .then(result => {
+        .then((result) => {
           clearTimeout(timer);
           resolve(result.rows as T[]);
         })
-        .catch(error => {
+        .catch((error) => {
           clearTimeout(timer);
           reject(error);
         });
@@ -287,7 +287,7 @@ export class QueryOptimizerService {
   ): Promise<T[]> {
     // For Supabase, we need to use RPC for custom queries
     // This is a simplified implementation
-    const { data, error } = await this.supabase.rpc('execute_query', {
+    const { data, error } = await this.supabase.rpc("execute_query", {
       query_text: query,
       query_params: params,
     });
@@ -311,9 +311,9 @@ export class QueryOptimizerService {
         analyze: false,
       });
 
-      const planData = data[0]?.['QUERY PLAN']?.[0];
+      const planData = data[0]?.["QUERY PLAN"]?.[0];
       if (!planData) {
-        throw new Error('Unable to parse query plan');
+        throw new Error("Unable to parse query plan");
       }
 
       const indexesUsed = this.extractIndexesFromPlan(planData.Plan);
@@ -322,22 +322,22 @@ export class QueryOptimizerService {
       return {
         query,
         plan: planData,
-        estimatedCost: planData.Plan?.['Total Cost'] || 0,
-        estimatedRows: planData.Plan?.['Plan Rows'] || 0,
-        actualExecutionTimeMs: planData['Execution Time'],
-        actualRows: planData.Plan?.['Actual Rows'] || 0,
+        estimatedCost: planData.Plan?.["Total Cost"] || 0,
+        estimatedRows: planData.Plan?.["Plan Rows"] || 0,
+        actualExecutionTimeMs: planData["Execution Time"],
+        actualRows: planData.Plan?.["Actual Rows"] || 0,
         indexesUsed,
         recommendations,
       };
     } catch (error) {
-      console.error('[QueryOptimizer] Failed to get query plan:', error);
+      console.error("[QueryOptimizer] Failed to get query plan:", error);
       return {
         query,
         plan: null,
         estimatedCost: 0,
         estimatedRows: 0,
         indexesUsed: [],
-        recommendations: ['Unable to analyze query plan'],
+        recommendations: ["Unable to analyze query plan"],
       };
     }
   }
@@ -351,12 +351,12 @@ export class QueryOptimizerService {
     const traverse = (node: any) => {
       if (!node) return;
 
-      if (node['Index Name']) {
-        indexes.push(node['Index Name']);
+      if (node["Index Name"]) {
+        indexes.push(node["Index Name"]);
       }
 
-      if (node['Index Cond']) {
-        const indexMatch = String(node['Index Cond']).match(/idx_[\w_]+/g);
+      if (node["Index Cond"]) {
+        const indexMatch = String(node["Index Cond"]).match(/idx_[\w_]+/g);
         if (indexMatch) {
           indexes.push(...indexMatch);
         }
@@ -380,23 +380,31 @@ export class QueryOptimizerService {
     if (!plan) return recommendations;
 
     // Check for sequential scans
-    if (plan['Node Type'] === 'Seq Scan' && plan.Plan?.Rows > 1000) {
-      recommendations.push('Consider adding an index for this table to avoid sequential scan');
+    if (plan["Node Type"] === "Seq Scan" && plan.Plan?.Rows > 1000) {
+      recommendations.push(
+        "Consider adding an index for this table to avoid sequential scan",
+      );
     }
 
     // Check for high cost queries
-    if (plan['Total Cost'] > 10000) {
-      recommendations.push('Query has high estimated cost, consider optimization');
+    if (plan["Total Cost"] > 10000) {
+      recommendations.push(
+        "Query has high estimated cost, consider optimization",
+      );
     }
 
     // Check for missing indexes
-    if (!plan.Plan?.['Index Name'] && plan.Plan?.['Plan Rows'] > 100) {
-      recommendations.push('Consider adding appropriate indexes for better performance');
+    if (!plan.Plan?.["Index Name"] && plan.Plan?.["Plan Rows"] > 100) {
+      recommendations.push(
+        "Consider adding appropriate indexes for better performance",
+      );
     }
 
     // Check for slow execution
-    if (plan['Actual Time'] > 1000) {
-      recommendations.push('Query execution time is high, consider query optimization');
+    if (plan["Actual Time"] > 1000) {
+      recommendations.push(
+        "Query execution time is high, consider query optimization",
+      );
     }
 
     return recommendations;
@@ -412,7 +420,7 @@ export class QueryOptimizerService {
     try {
       const plan = await this.getQueryPlan(query);
 
-      console.log('[QueryOptimizer] Optimization recommendations:', {
+      console.log("[QueryOptimizer] Optimization recommendations:", {
         _query: this.sanitizeQuery(query),
         executionTimeMs: executionTime,
         estimatedCost: plan.estimatedCost,
@@ -422,14 +430,17 @@ export class QueryOptimizerService {
 
       // Log recommendations to audit log
       await this.logOptimizationEvent({
-        type: 'query_optimization',
+        type: "query_optimization",
         _query: this.sanitizeQuery(query),
         executionTimeMs: executionTime,
         recommendations: plan.recommendations,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      console.error('[QueryOptimizer] Failed to provide optimization recommendations:', error);
+      console.error(
+        "[QueryOptimizer] Failed to provide optimization recommendations:",
+        error,
+      );
     }
   }
 
@@ -461,9 +472,10 @@ export class QueryOptimizerService {
       totalQueries: this.queryMetrics.length,
       cacheHitRate: this.calculateCacheHitRate(),
       averageExecutionTimeMs: this.calculateAverageExecutionTime(),
-      slowQueries:
-        this.queryMetrics.filter(m => m.executionTimeMs > this.slowQueryThreshold).length,
-      failedQueries: this.queryMetrics.filter(m => !m.success).length,
+      slowQueries: this.queryMetrics.filter(
+        (m) => m.executionTimeMs > this.slowQueryThreshold,
+      ).length,
+      failedQueries: this.queryMetrics.filter((m) => !m.success).length,
       topSlowQueries: this.getTopSlowQueries(5),
       mostUsedIndexes: this.getMostUsedIndexes(5),
       executionTimeDistribution: this.getExecutionTimeDistribution(),
@@ -479,20 +491,32 @@ export class QueryOptimizerService {
     let optimizedQuery = query;
 
     // Remove unnecessary ORDER BY clauses for large datasets
-    if (optimizedQuery.includes('ORDER BY') && !optimizedQuery.includes('LIMIT')) {
+    if (
+      optimizedQuery.includes("ORDER BY") &&
+      !optimizedQuery.includes("LIMIT")
+    ) {
       const limitMatch = optimizedQuery.match(/LIMIT\s+(\d+)/);
       if (!limitMatch || parseInt(limitMatch[1]) > 1000) {
-        optimizedQuery = optimizedQuery.replace(/ORDER BY\s+[\w\s,.]+(?=\s*(?:LIMIT|$))/gi, '');
+        optimizedQuery = optimizedQuery.replace(
+          /ORDER BY\s+[\w\s,.]+(?=\s*(?:LIMIT|$))/gi,
+          "",
+        );
       }
     }
 
     // Add LIMIT to prevent large result sets
-    if (!optimizedQuery.includes('LIMIT') && !optimizedQuery.match(/INSERT|UPDATE|DELETE/)) {
-      optimizedQuery += ' LIMIT 1000';
+    if (
+      !optimizedQuery.includes("LIMIT") &&
+      !optimizedQuery.match(/INSERT|UPDATE|DELETE/)
+    ) {
+      optimizedQuery += " LIMIT 1000";
     }
 
     // Optimize JOIN operations
-    optimizedQuery = optimizedQuery.replace(/SELECT\s+\*/gi, 'SELECT specific_columns');
+    optimizedQuery = optimizedQuery.replace(
+      /SELECT\s+\*/gi,
+      "SELECT specific_columns",
+    );
 
     return optimizedQuery.trim();
   }
@@ -513,10 +537,10 @@ export class QueryOptimizerService {
    * Calculate cache hit rate
    */
   private calculateCacheHitRate(): number {
-    const relevantQueries = this.queryMetrics.filter(m => m.success);
+    const relevantQueries = this.queryMetrics.filter((m) => m.success);
     if (relevantQueries.length === 0) return 0;
 
-    const cacheHits = relevantQueries.filter(m => m.cacheHit).length;
+    const cacheHits = relevantQueries.filter((m) => m.cacheHit).length;
     return (cacheHits / relevantQueries.length) * 100;
   }
 
@@ -524,10 +548,13 @@ export class QueryOptimizerService {
    * Calculate average execution time
    */
   private calculateAverageExecutionTime(): number {
-    const successfulQueries = this.queryMetrics.filter(m => m.success);
+    const successfulQueries = this.queryMetrics.filter((m) => m.success);
     if (successfulQueries.length === 0) return 0;
 
-    const totalTime = successfulQueries.reduce((sum, _m) => sum + m.executionTimeMs, 0);
+    const totalTime = successfulQueries.reduce(
+      (sum, _m) => sum + m.executionTimeMs,
+      0,
+    );
     return totalTime / successfulQueries.length;
   }
 
@@ -536,7 +563,7 @@ export class QueryOptimizerService {
    */
   private getTopSlowQueries(limit: number) {
     return this.queryMetrics
-      .filter(m => m.success)
+      .filter((m) => m.success)
       .sort((a, _b) => b.executionTimeMs - a.executionTimeMs)
       .slice(0, limit);
   }
@@ -547,8 +574,8 @@ export class QueryOptimizerService {
   private getMostUsedIndexes(limit: number) {
     const indexCounts: Record<string, number> = {};
 
-    this.queryMetrics.forEach(m => {
-      m.indexesUsed.forEach(index => {
+    this.queryMetrics.forEach((m) => {
+      m.indexesUsed.forEach((index) => {
         indexCounts[index] = (indexCounts[index] || 0) + 1;
       });
     });
@@ -563,20 +590,22 @@ export class QueryOptimizerService {
    */
   private getExecutionTimeDistribution() {
     const ranges = {
-      '<100ms': 0,
-      '100-500ms': 0,
-      '500-1000ms': 0,
-      '1-2s': 0,
-      '>2s': 0,
+      "<100ms": 0,
+      "100-500ms": 0,
+      "500-1000ms": 0,
+      "1-2s": 0,
+      ">2s": 0,
     };
 
-    this.queryMetrics.filter(m => m.success).forEach(m => {
-      if (m.executionTimeMs < 100) ranges['<100ms']++;
-      else if (m.executionTimeMs < 500) ranges['100-500ms']++;
-      else if (m.executionTimeMs < 1000) ranges['500-1000ms']++;
-      else if (m.executionTimeMs < 2000) ranges['1-2s']++;
-      else ranges['>2s']++;
-    });
+    this.queryMetrics
+      .filter((m) => m.success)
+      .forEach((m) => {
+        if (m.executionTimeMs < 100) ranges["<100ms"]++;
+        else if (m.executionTimeMs < 500) ranges["100-500ms"]++;
+        else if (m.executionTimeMs < 1000) ranges["500-1000ms"]++;
+        else if (m.executionTimeMs < 2000) ranges["1-2s"]++;
+        else ranges[">2s"]++;
+      });
 
     return ranges;
   }
@@ -593,13 +622,16 @@ export class QueryOptimizerService {
    */
   private sanitizeQuery(_query: string): string {
     // Remove sensitive data from query logging
-    return query.replace(/'[^']*'/g, '?').replace(/\d+/g, '?');
+    return query.replace(/'[^']*'/g, "?").replace(/\d+/g, "?");
   }
 
   /**
    * Get result from cache
    */
-  private async getFromCache<T>(_query: string, params: any[]): Promise<T | null> {
+  private async getFromCache<T>(
+    _query: string,
+    params: any[],
+  ): Promise<T | null> {
     // Simple cache implementation - in production, use Redis
     const cacheKey = this.generateCacheKey(query, params);
     // Cache implementation would go here
@@ -609,7 +641,11 @@ export class QueryOptimizerService {
   /**
    * Cache result
    */
-  private async cacheResult<T>(_query: string, params: any[], _result: T): Promise<void> {
+  private async cacheResult<T>(
+    _query: string,
+    params: any[],
+    _result: T,
+  ): Promise<void> {
     // Simple cache implementation - in production, use Redis
     const cacheKey = this.generateCacheKey(query, params);
     // Cache implementation would go here
@@ -631,7 +667,7 @@ export class QueryOptimizerService {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16);
@@ -643,18 +679,19 @@ export class QueryOptimizerService {
   private async logOptimizationEvent(event: any): Promise<void> {
     // Log to audit trail for compliance
     try {
-      await this.supabase
-        .from('agent_audit_log')
-        .insert({
-          user_id: 'system',
-          session_id: 'optimization',
-          event_type: 'performance_metric',
-          severity: 'info',
-          details: event,
-          timestamp: new Date().toISOString(),
-        });
+      await this.supabase.from("agent_audit_log").insert({
+        user_id: "system",
+        session_id: "optimization",
+        event_type: "performance_metric",
+        severity: "info",
+        details: event,
+        timestamp: new Date().toISOString(),
+      });
     } catch (error) {
-      console.error('[QueryOptimizer] Failed to log optimization event:', error);
+      console.error(
+        "[QueryOptimizer] Failed to log optimization event:",
+        error,
+      );
     }
   }
 

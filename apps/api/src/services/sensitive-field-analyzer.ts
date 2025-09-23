@@ -14,21 +14,21 @@
  * @healthcare-platform NeonPro
  */
 
-import { Context } from 'hono';
-import { logger } from '../lib/logger';
+import { Context } from "hono";
+import { logger } from "../lib/logger";
 
 // Sensitive Field Classification
 export interface SensitiveFieldClassification {
   name: string;
   category:
-    | 'PERSONAL'
-    | 'MEDICAL'
-    | 'FINANCIAL'
-    | 'CONTACT'
-    | 'IDENTIFICATION'
-    | 'HEALTH_HISTORY';
-  sensitivity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  dataType: 'string' | 'number' | 'date' | 'boolean' | 'object' | 'array';
+    | "PERSONAL"
+    | "MEDICAL"
+    | "FINANCIAL"
+    | "CONTACT"
+    | "IDENTIFICATION"
+    | "HEALTH_HISTORY";
+  sensitivity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  dataType: "string" | "number" | "date" | "boolean" | "object" | "array";
   maskingRequired: boolean;
   encryptionRequired: boolean;
   retentionPolicy?: {
@@ -44,11 +44,11 @@ export interface ExposureAnalysisResult {
   fieldType: string;
   classification: SensitiveFieldClassification;
   isExposed: boolean;
-  exposureLevel: 'NONE' | 'PARTIAL' | 'FULL' | 'OVEREXPOSED';
+  exposureLevel: "NONE" | "PARTIAL" | "FULL" | "OVEREXPOSED";
   maskingApplied: boolean;
   encryptionApplied: boolean;
   recommendations: string[];
-  complianceRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  complianceRisk: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 }
 
 // API Response Analysis
@@ -58,7 +58,7 @@ export interface APIResponseAnalysis {
   statusCode: number;
   responseSize: number;
   sensitiveFields: ExposureAnalysisResult[];
-  overallRiskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  overallRiskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   violationCount: number;
   recommendations: string[];
   timestamp: string;
@@ -68,153 +68,153 @@ export interface APIResponseAnalysis {
 export const HEALTHCARE_SENSITIVE_FIELDS: SensitiveFieldClassification[] = [
   // Personal Identification
   {
-    name: 'cpf',
-    category: 'IDENTIFICATION',
-    sensitivity: 'CRITICAL',
-    dataType: 'string',
+    name: "cpf",
+    category: "IDENTIFICATION",
+    sensitivity: "CRITICAL",
+    dataType: "string",
     maskingRequired: true,
     encryptionRequired: true,
-    retentionPolicy: { duration: '10_years', automaticDeletion: true },
-    legalBasis: ['consent', 'legal_obligation'],
+    retentionPolicy: { duration: "10_years", automaticDeletion: true },
+    legalBasis: ["consent", "legal_obligation"],
   },
   {
-    name: 'rg',
-    category: 'IDENTIFICATION',
-    sensitivity: 'HIGH',
-    dataType: 'string',
-    maskingRequired: true,
-    encryptionRequired: true,
-  },
-  {
-    name: 'passport_number',
-    category: 'IDENTIFICATION',
-    sensitivity: 'HIGH',
-    dataType: 'string',
+    name: "rg",
+    category: "IDENTIFICATION",
+    sensitivity: "HIGH",
+    dataType: "string",
     maskingRequired: true,
     encryptionRequired: true,
   },
   {
-    name: 'birth_date',
-    category: 'PERSONAL',
-    sensitivity: 'HIGH',
-    dataType: 'date',
+    name: "passport_number",
+    category: "IDENTIFICATION",
+    sensitivity: "HIGH",
+    dataType: "string",
+    maskingRequired: true,
+    encryptionRequired: true,
+  },
+  {
+    name: "birth_date",
+    category: "PERSONAL",
+    sensitivity: "HIGH",
+    dataType: "date",
     maskingRequired: false,
     encryptionRequired: true,
   },
 
   // Contact Information
   {
-    name: 'email',
-    category: 'CONTACT',
-    sensitivity: 'MEDIUM',
-    dataType: 'string',
+    name: "email",
+    category: "CONTACT",
+    sensitivity: "MEDIUM",
+    dataType: "string",
     maskingRequired: false,
     encryptionRequired: true,
   },
   {
-    name: 'phone',
-    category: 'CONTACT',
-    sensitivity: 'MEDIUM',
-    dataType: 'string',
+    name: "phone",
+    category: "CONTACT",
+    sensitivity: "MEDIUM",
+    dataType: "string",
     maskingRequired: false,
     encryptionRequired: true,
   },
   {
-    name: 'address',
-    category: 'CONTACT',
-    sensitivity: 'HIGH',
-    dataType: 'object',
+    name: "address",
+    category: "CONTACT",
+    sensitivity: "HIGH",
+    dataType: "object",
     maskingRequired: false,
     encryptionRequired: true,
   },
 
   // Medical Information
   {
-    name: 'diagnosis',
-    category: 'MEDICAL',
-    sensitivity: 'CRITICAL',
-    dataType: 'string',
+    name: "diagnosis",
+    category: "MEDICAL",
+    sensitivity: "CRITICAL",
+    dataType: "string",
     maskingRequired: false,
     encryptionRequired: true,
-    retentionPolicy: { duration: '20_years', automaticDeletion: false },
-    legalBasis: ['healthcare', 'vital_interests'],
+    retentionPolicy: { duration: "20_years", automaticDeletion: false },
+    legalBasis: ["healthcare", "vital_interests"],
   },
   {
-    name: 'medical_history',
-    category: 'HEALTH_HISTORY',
-    sensitivity: 'CRITICAL',
-    dataType: 'object',
+    name: "medical_history",
+    category: "HEALTH_HISTORY",
+    sensitivity: "CRITICAL",
+    dataType: "object",
     maskingRequired: false,
     encryptionRequired: true,
-    retentionPolicy: { duration: 'lifetime', automaticDeletion: false },
+    retentionPolicy: { duration: "lifetime", automaticDeletion: false },
   },
   {
-    name: 'medications',
-    category: 'MEDICAL',
-    sensitivity: 'HIGH',
-    dataType: 'array',
-    maskingRequired: false,
-    encryptionRequired: true,
-  },
-  {
-    name: 'allergies',
-    category: 'MEDICAL',
-    sensitivity: 'HIGH',
-    dataType: 'array',
+    name: "medications",
+    category: "MEDICAL",
+    sensitivity: "HIGH",
+    dataType: "array",
     maskingRequired: false,
     encryptionRequired: true,
   },
   {
-    name: 'blood_type',
-    category: 'MEDICAL',
-    sensitivity: 'MEDIUM',
-    dataType: 'string',
+    name: "allergies",
+    category: "MEDICAL",
+    sensitivity: "HIGH",
+    dataType: "array",
+    maskingRequired: false,
+    encryptionRequired: true,
+  },
+  {
+    name: "blood_type",
+    category: "MEDICAL",
+    sensitivity: "MEDIUM",
+    dataType: "string",
     maskingRequired: false,
     encryptionRequired: true,
   },
 
   // Financial Information
   {
-    name: 'insurance_number',
-    category: 'FINANCIAL',
-    sensitivity: 'CRITICAL',
-    dataType: 'string',
+    name: "insurance_number",
+    category: "FINANCIAL",
+    sensitivity: "CRITICAL",
+    dataType: "string",
     maskingRequired: true,
     encryptionRequired: true,
   },
   {
-    name: 'billing_info',
-    category: 'FINANCIAL',
-    sensitivity: 'HIGH',
-    dataType: 'object',
+    name: "billing_info",
+    category: "FINANCIAL",
+    sensitivity: "HIGH",
+    dataType: "object",
     maskingRequired: false,
     encryptionRequired: true,
   },
   {
-    name: 'payment_method',
-    category: 'FINANCIAL',
-    sensitivity: 'HIGH',
-    dataType: 'object',
+    name: "payment_method",
+    category: "FINANCIAL",
+    sensitivity: "HIGH",
+    dataType: "object",
     maskingRequired: false,
     encryptionRequired: true,
   },
 
   // Genetic and Biometric Data
   {
-    name: 'genetic_data',
-    category: 'MEDICAL',
-    sensitivity: 'CRITICAL',
-    dataType: 'object',
+    name: "genetic_data",
+    category: "MEDICAL",
+    sensitivity: "CRITICAL",
+    dataType: "object",
     maskingRequired: false,
     encryptionRequired: true,
-    retentionPolicy: { duration: 'lifetime', automaticDeletion: false },
-    legalBasis: ['explicit_consent', 'healthcare'],
+    retentionPolicy: { duration: "lifetime", automaticDeletion: false },
+    legalBasis: ["explicit_consent", "healthcare"],
   },
   {
-    name: 'biometric_data',
-    category: 'IDENTIFICATION',
-    sensitivity: 'CRITICAL',
-    dataType: 'object',
+    name: "biometric_data",
+    category: "IDENTIFICATION",
+    sensitivity: "CRITICAL",
+    dataType: "object",
     maskingRequired: false,
     encryptionRequired: true,
   },
@@ -228,13 +228,13 @@ export class HealthcareSensitiveFieldAnalyzer {
     this.sensitiveFields = new Map();
 
     // Initialize with default healthcare sensitive fields
-    HEALTHCARE_SENSITIVE_FIELDS.forEach(field => {
+    HEALTHCARE_SENSITIVE_FIELDS.forEach((field) => {
       this.sensitiveFields.set(field.name, field);
     });
 
     // Add custom fields
     if (customFields) {
-      customFields.forEach(field => {
+      customFields.forEach((field) => {
         this.sensitiveFields.set(field.name, field);
       });
     }
@@ -253,21 +253,21 @@ export class HealthcareSensitiveFieldAnalyzer {
       statusCode,
       responseSize: JSON.stringify(response).length,
       sensitiveFields: [],
-      overallRiskLevel: 'LOW',
+      overallRiskLevel: "LOW",
       violationCount: 0,
       recommendations: [],
       timestamp: new Date().toISOString(),
     };
 
     // Recursively analyze response data
-    this.analyzeDataStructure(response, analysis.sensitiveFields, '');
+    this.analyzeDataStructure(response, analysis.sensitiveFields, "");
 
     // Calculate overall risk level
     analysis.overallRiskLevel = this.calculateOverallRisk(
       analysis.sensitiveFields,
     );
     analysis.violationCount = analysis.sensitiveFields.filter(
-      f => f.isExposed,
+      (f) => f.isExposed,
     ).length;
 
     // Generate recommendations
@@ -282,11 +282,11 @@ export class HealthcareSensitiveFieldAnalyzer {
   private analyzeDataStructure(
     data: any,
     results: ExposureAnalysisResult[],
-    path: string = '',
+    path: string = "",
   ): void {
     if (data === null || data === undefined) return;
 
-    if (typeof data === 'object') {
+    if (typeof data === "object") {
       if (Array.isArray(data)) {
         data.forEach((item, _index) => {
           this.analyzeDataStructure(item, results, `${path}[${index}]`);
@@ -355,17 +355,18 @@ export class HealthcareSensitiveFieldAnalyzer {
     classification: SensitiveFieldClassification,
   ): boolean {
     // Check if value is unmasked and sensitive
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       // Check for common masking patterns
-      const isMasked = value.includes('*') || value.includes('***') || value.includes('•••');
+      const isMasked =
+        value.includes("*") || value.includes("***") || value.includes("•••");
       if (isMasked) return false;
 
       // Check for sensitive patterns
-      if (classification.category === 'IDENTIFICATION') {
+      if (classification.category === "IDENTIFICATION") {
         return value.length > 2; // Non-empty identification data
       }
 
-      if (classification.category === 'MEDICAL') {
+      if (classification.category === "MEDICAL") {
         return value.length > 10; // Substantial medical information
       }
     }
@@ -377,20 +378,20 @@ export class HealthcareSensitiveFieldAnalyzer {
   private calculateExposureLevel(
     value: any,
     classification: SensitiveFieldClassification,
-  ): 'NONE' | 'PARTIAL' | 'FULL' | 'OVEREXPOSED' {
-    if (!this.isFieldExposed(value, classification)) return 'NONE';
+  ): "NONE" | "PARTIAL" | "FULL" | "OVEREXPOSED" {
+    if (!this.isFieldExposed(value, classification)) return "NONE";
 
-    if (classification.sensitivity === 'CRITICAL') return 'OVEREXPOSED';
-    if (classification.sensitivity === 'HIGH') return 'FULL';
-    if (classification.sensitivity === 'MEDIUM') return 'PARTIAL';
-    return 'NONE';
+    if (classification.sensitivity === "CRITICAL") return "OVEREXPOSED";
+    if (classification.sensitivity === "HIGH") return "FULL";
+    if (classification.sensitivity === "MEDIUM") return "PARTIAL";
+    return "NONE";
   }
 
   // Check if masking is applied
   private isMaskingApplied(value: any): boolean {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== "string") return false;
     return (
-      value.includes('*') || value.includes('***') || value.includes('•••')
+      value.includes("*") || value.includes("***") || value.includes("•••")
     );
   }
 
@@ -404,33 +405,33 @@ export class HealthcareSensitiveFieldAnalyzer {
   private calculateComplianceRisk(
     isExposed: boolean,
     classification: SensitiveFieldClassification,
-  ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
-    if (!isExposed) return 'LOW';
+  ): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
+    if (!isExposed) return "LOW";
 
-    if (classification.sensitivity === 'CRITICAL') return 'CRITICAL';
-    if (classification.sensitivity === 'HIGH') return 'HIGH';
-    if (classification.sensitivity === 'MEDIUM') return 'MEDIUM';
-    return 'LOW';
+    if (classification.sensitivity === "CRITICAL") return "CRITICAL";
+    if (classification.sensitivity === "HIGH") return "HIGH";
+    if (classification.sensitivity === "MEDIUM") return "MEDIUM";
+    return "LOW";
   }
 
   // Calculate overall risk level
   private calculateOverallRisk(
     fields: ExposureAnalysisResult[],
-  ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
+  ): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
     const criticalRisks = fields.filter(
-      f => f.complianceRisk === 'CRITICAL',
+      (f) => f.complianceRisk === "CRITICAL",
     ).length;
-    const highRisks = fields.filter(f => f.complianceRisk === 'HIGH').length;
+    const highRisks = fields.filter((f) => f.complianceRisk === "HIGH").length;
     const mediumRisks = fields.filter(
-      f => f.complianceRisk === 'MEDIUM',
+      (f) => f.complianceRisk === "MEDIUM",
     ).length;
 
-    if (criticalRisks > 0) return 'CRITICAL';
-    if (highRisks > 2) return 'CRITICAL';
-    if (highRisks > 0) return 'HIGH';
-    if (mediumRisks > 3) return 'HIGH';
-    if (mediumRisks > 0) return 'MEDIUM';
-    return 'LOW';
+    if (criticalRisks > 0) return "CRITICAL";
+    if (highRisks > 2) return "CRITICAL";
+    if (highRisks > 0) return "HIGH";
+    if (mediumRisks > 3) return "HIGH";
+    if (mediumRisks > 0) return "MEDIUM";
+    return "LOW";
   }
 
   // Generate field-specific recommendations
@@ -448,7 +449,7 @@ export class HealthcareSensitiveFieldAnalyzer {
       recommendations.push(`Enable encryption for ${classification.name}`);
     }
 
-    if (classification.sensitivity === 'CRITICAL') {
+    if (classification.sensitivity === "CRITICAL") {
       recommendations.push(
         `Implement strict access controls for ${classification.name}`,
       );
@@ -464,9 +465,9 @@ export class HealthcareSensitiveFieldAnalyzer {
   private generateRecommendations(fields: ExposureAnalysisResult[]): string[] {
     const recommendations: string[] = [];
 
-    const exposedFields = fields.filter(f => f.isExposed);
-    const unmaskedFields = exposedFields.filter(f => !f.maskingApplied);
-    const unencryptedFields = exposedFields.filter(f => !f.encryptionApplied);
+    const exposedFields = fields.filter((f) => f.isExposed);
+    const unmaskedFields = exposedFields.filter((f) => !f.maskingApplied);
+    const unencryptedFields = exposedFields.filter((f) => !f.encryptionApplied);
 
     if (unmaskedFields.length > 0) {
       recommendations.push(
@@ -482,16 +483,16 @@ export class HealthcareSensitiveFieldAnalyzer {
 
     if (exposedFields.length > 5) {
       recommendations.push(
-        'Consider reducing the amount of sensitive data returned in API responses',
+        "Consider reducing the amount of sensitive data returned in API responses",
       );
     }
 
     const criticalExposures = fields.filter(
-      f => f.complianceRisk === 'CRITICAL',
+      (f) => f.complianceRisk === "CRITICAL",
     );
     if (criticalExposures.length > 0) {
       recommendations.push(
-        'Immediate action required: Critical sensitive data exposure detected',
+        "Immediate action required: Critical sensitive data exposure detected",
       );
     }
 
@@ -500,9 +501,9 @@ export class HealthcareSensitiveFieldAnalyzer {
 
   // Log exposure analysis for audit trail
   logExposureAnalysis(analysis: APIResponseAnalysis): void {
-    if (analysis.overallRiskLevel === 'LOW') return;
+    if (analysis.overallRiskLevel === "LOW") return;
 
-    logger.warn('Sensitive data exposure detected', {
+    logger.warn("Sensitive data exposure detected", {
       endpoint: analysis.endpoint,
       method: analysis.method,
       statusCode: analysis.statusCode,
@@ -514,9 +515,9 @@ export class HealthcareSensitiveFieldAnalyzer {
 
     // Log individual violations
     analysis.sensitiveFields
-      .filter(f => f.isExposed)
-      .forEach(field => {
-        logger.security('sensitive_data_exposure', 'Field exposure detected', {
+      .filter((f) => f.isExposed)
+      .forEach((field) => {
+        logger.security("sensitive_data_exposure", "Field exposure detected", {
           fieldName: field.fieldName,
           fieldType: field.fieldType,
           sensitivity: field.classification.sensitivity,
@@ -556,7 +557,11 @@ export function sensitiveDataExposureMiddleware(): (
     const originalJson = c.json;
 
     // Override json method to analyze response
-    c.json = (data: any, status?: number, headers?: Record<string, _string>) => {
+    c.json = (
+      data: any,
+      status?: number,
+      headers?: Record<string, _string>,
+    ) => {
       // Analyze response for sensitive data exposure
       const analysis = sensitiveFieldAnalyzer.analyzeAPIResponse(
         data,
@@ -570,12 +575,12 @@ export function sensitiveDataExposureMiddleware(): (
 
       // Add security headers with exposure info
       c.header(
-        'X-Sensitive-Data-Fields',
+        "X-Sensitive-Data-Fields",
         analysis.sensitiveFields.length.toString(),
       );
-      c.header('X-Sensitive-Data-Risk', analysis.overallRiskLevel);
+      c.header("X-Sensitive-Data-Risk", analysis.overallRiskLevel);
       c.header(
-        'X-Sensitive-Data-Violations',
+        "X-Sensitive-Data-Violations",
         analysis.violationCount.toString(),
       );
 
@@ -588,4 +593,8 @@ export function sensitiveDataExposureMiddleware(): (
 }
 
 // Export types and utilities
-export type { APIResponseAnalysis, ExposureAnalysisResult, SensitiveFieldClassification };
+export type {
+  APIResponseAnalysis,
+  ExposureAnalysisResult,
+  SensitiveFieldClassification,
+};

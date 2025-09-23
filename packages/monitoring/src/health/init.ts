@@ -50,8 +50,8 @@ export async function runHealthChecks(): Promise<HealthStatus> {
         name: checkNames[index],
         status: "fail",
         duration: Date.now() - startTime,
-        message: result.reason.message || "Health check failed",
-      });
+        message: result.reason?.message || "Health check failed",
+      } as HealthCheck);
     }
   });
 

@@ -1,4 +1,4 @@
-export type OutputFormat = 'json' | 'text';
+export type OutputFormat = "json" | "text";
 
 export interface ScanOptions {
   root: string;

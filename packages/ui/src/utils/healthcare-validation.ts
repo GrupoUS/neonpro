@@ -174,7 +174,7 @@ export const healthcareValidationSchemas = {
       .string()
       .min(2, "Alérgeno deve ter pelo menos 2 caracteres")
       .max(100, "Alérgeno deve ter no máximo 100 caracteres"),
-    severity: z.enum(["leve","moderada","grave"], {
+    severity: z.enum(["leve", "moderada", "grave"], {
       errorMap: () => ({ message: "Selecione uma severidade válida" }),
     }),
     notes: z

@@ -32,7 +32,7 @@ import { CalendarEvent } from '@/components/event-calendar/types';
 
 export default function AppointmentsPage() {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
-  
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Appointments</h1>
@@ -69,8 +69,8 @@ function SimpleCalendar() {
   }, []);
 
   const handleEventUpdate = useCallback((updatedEvent: CalendarEvent) => {
-    setEvents(prev => 
-      prev.map(event => 
+    setEvents(prev =>
+      prev.map(event =>
         event.id === updatedEvent.id ? updatedEvent : event
       )
     );
@@ -106,7 +106,7 @@ const calendarApi = {
     const response = await fetch(`/api/events?start=${start.toISOString()}&end=${end.toISOString()}`);
     return response.json();
   },
-  
+
   createEvent: async (event: Omit<CalendarEvent, 'id'>) => {
     const response = await fetch('/api/events', {
       method: 'POST',
@@ -115,7 +115,7 @@ const calendarApi = {
     });
     return response.json();
   },
-  
+
   updateEvent: async (id: string, event: Partial<CalendarEvent>) => {
     const response = await fetch(`/api/events/${id}`, {
       method: 'PUT',
@@ -124,7 +124,7 @@ const calendarApi = {
     });
     return response.json();
   },
-  
+
   deleteEvent: async (id: string) => {
     await fetch(`/api/events/${id}`, { method: 'DELETE' });
   }
@@ -133,7 +133,7 @@ const calendarApi = {
 function ApiIntegratedCalendar() {
   const queryClient = useQueryClient();
   const [currentDate, setCurrentDate] = useState(new Date());
-  
+
   // Get events for current view
   const { data: events, isLoading } = useQuery({
     queryKey: ['events', currentDate],
@@ -158,7 +158,7 @@ function ApiIntegratedCalendar() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, ...event }: CalendarEvent) => 
+    mutationFn: ({ id, ...event }: CalendarEvent) =>
       calendarApi.updateEvent(id, event),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
@@ -194,12 +194,12 @@ function ApiIntegratedCalendar() {
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Appointment Schedule</h2>
-        <CalendarNavigation 
+        <CalendarNavigation
           currentDate={currentDate}
           onDateChange={setCurrentDate}
         />
       </div>
-      
+
       <EventCalendar
         events={events || []}
         onEventAdd={handleEventCreate}
@@ -267,14 +267,14 @@ function HealthcareCalendar() {
 
       // Save to backend
       const savedEvent = await createHealthcareAppointment(healthcareEvent);
-      
+
       showSuccessToast('Appointment created successfully');
       return savedEvent;
 
     } catch (error) {
       console.error('Healthcare compliance error:', error);
       showErrorToast(error.message || 'Failed to create appointment');
-      
+
       // Log compliance failure
       await logAudit({
         action: 'COMPLIANCE_VIOLATION',
@@ -285,18 +285,18 @@ function HealthcareCalendar() {
           attemptedAction: 'create_appointment'
         }
       });
-      
+
       throw error;
     }
   };
 
   return (
     <div className="healthcare-calendar-container">
-      <PatientSelector 
+      <PatientSelector
         selectedPatient={selectedPatient}
         onPatientSelect={setSelectedPatient}
       />
-      
+
       <EventCalendar
         events={clinicAppointments}
         onEventAdd={handleEventCreate}
@@ -331,13 +331,13 @@ function MultiResourceCalendar() {
     { id: 'room-a', name: 'Consultation Room A', type: 'room', color: '#f59e0b' },
     { id: 'room-b', name: 'Consultation Room B', type: 'room', color: '#ef4444' }
   ]);
-  
+
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
 
   // Filter events by selected resource
   const filteredEvents = useMemo(() => {
     if (!selectedResource) return allEvents;
-    return allEvents.filter(event => 
+    return allEvents.filter(event =>
       event.resourceId === selectedResource.id
     );
   }, [allEvents, selectedResource]);
@@ -377,7 +377,7 @@ function MultiResourceCalendar() {
               }`}
             >
               <div className="flex items-center gap-2">
-                <div 
+                <div
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: resource.color }}
                 />
@@ -444,8 +444,8 @@ function RealTimeCalendar() {
   };
 
   const handleEventUpdated = (updatedEvent: CalendarEvent) => {
-    setEvents(prev => 
-      prev.map(event => 
+    setEvents(prev =>
+      prev.map(event =>
         event.id === updatedEvent.id ? updatedEvent : event
       )
     );
@@ -466,8 +466,8 @@ function RealTimeCalendar() {
     <div className="relative">
       {/* Connection status indicator */}
       <div className={`absolute top-2 right-2 z-10 px-2 py-1 rounded-full text-xs font-medium ${
-        connected 
-          ? 'bg-green-100 text-green-800' 
+        connected
+          ? 'bg-green-100 text-green-800'
           : 'bg-red-100 text-red-800'
       }`}>
         {connected ? 'Live' : 'Disconnected'}
@@ -536,7 +536,7 @@ function CustomWeekView() {
     const isCurrentHour = isSameHour(date, new Date());
 
     return (
-      <div 
+      <div
         className={`
           time-slot-custom
           ${isBusinessHours ? 'business-hours' : 'after-hours'}
@@ -583,8 +583,8 @@ function OptimizedCalendar() {
 
     const start = getViewStart(view, date);
     const end = getViewEnd(view, date);
-    
-    return events.filter(event => 
+
+    return events.filter(event =>
       event.start >= start && event.end <= end
     );
   }, [events]);
@@ -688,43 +688,46 @@ describe('Calendar Integration', () => {
 
 ```typescript
 // cypress/support/commands.ts
-Cypress.Commands.add('createAppointment', (title: string, startTime: string) => {
-  cy.get('[data-testid="calendar"]').within(() => {
-    cy.contains(startTime).click();
-    cy.get('[data-testid="event-title-input"]').type(title);
-    cy.get('[data-testid="save-event-btn"]').click();
-  });
-});
+Cypress.Commands.add(
+  "createAppointment",
+  (title: string, startTime: string) => {
+    cy.get('[data-testid="calendar"]').within(() => {
+      cy.contains(startTime).click();
+      cy.get('[data-testid="event-title-input"]').type(title);
+      cy.get('[data-testid="save-event-btn"]').click();
+    });
+  },
+);
 
 // cypress/e2e/calendar.cy.ts
-describe('Calendar E2E', () => {
+describe("Calendar E2E", () => {
   beforeEach(() => {
-    cy.visit('/appointments');
-    cy.login('test-user', 'password');
+    cy.visit("/appointments");
+    cy.login("test-user", "password");
   });
 
-  it('creates and views appointments', () => {
+  it("creates and views appointments", () => {
     // Create appointment
-    cy.createAppointment('Patient Consultation', '10:00 AM');
-    
+    cy.createAppointment("Patient Consultation", "10:00 AM");
+
     // Verify appointment appears
-    cy.contains('Patient Consultation').should('be.visible');
-    
+    cy.contains("Patient Consultation").should("be.visible");
+
     // Navigate to different views
     cy.get('[data-testid="week-view-btn"]').click();
-    cy.contains('Patient Consultation').should('be.visible');
-    
+    cy.contains("Patient Consultation").should("be.visible");
+
     cy.get('[data-testid="month-view-btn"]').click();
-    cy.contains('Patient Consultation').should('be.visible');
+    cy.contains("Patient Consultation").should("be.visible");
   });
 
-  it('handles appointment conflicts', () => {
+  it("handles appointment conflicts", () => {
     // Create overlapping appointments
-    cy.createAppointment('First Appointment', '10:00 AM');
-    cy.createAppointment('Second Appointment', '10:00 AM');
-    
+    cy.createAppointment("First Appointment", "10:00 AM");
+    cy.createAppointment("Second Appointment", "10:00 AM");
+
     // Should show conflict warning
-    cy.get('[data-testid="conflict-warning"]').should('be.visible');
+    cy.get('[data-testid="conflict-warning"]').should("be.visible");
   });
 });
 ```
@@ -737,24 +740,24 @@ describe('Calendar E2E', () => {
 // config/calendar.ts
 export const calendarConfig = {
   api: {
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || '/api',
-    timeout: parseInt(process.env.API_TIMEOUT || '30000'),
-    retries: parseInt(process.env.API_RETRIES || '3')
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "/api",
+    timeout: parseInt(process.env.API_TIMEOUT || "30000"),
+    retries: parseInt(process.env.API_RETRIES || "3"),
   },
   features: {
-    enableRealTime: process.env.ENABLE_REAL_TIME === 'true',
-    enableNotifications: process.env.ENABLE_NOTIFICATIONS === 'true',
-    enableExport: process.env.ENABLE_EXPORT === 'true'
+    enableRealTime: process.env.ENABLE_REAL_TIME === "true",
+    enableNotifications: process.env.ENABLE_NOTIFICATIONS === "true",
+    enableExport: process.env.ENABLE_EXPORT === "true",
   },
   limits: {
-    maxEventsPerView: parseInt(process.env.MAX_EVENTS_PER_VIEW || '1000'),
-    maxConcurrentRequests: parseInt(process.env.MAX_CONCURRENT_REQUESTS || '5')
+    maxEventsPerView: parseInt(process.env.MAX_EVENTS_PER_VIEW || "1000"),
+    maxConcurrentRequests: parseInt(process.env.MAX_CONCURRENT_REQUESTS || "5"),
   },
   healthcare: {
-    enableCompliance: process.env.ENABLE_COMPLIANCE !== 'false',
-    lgpdEnabled: process.env.LGPD_ENABLED !== 'false',
-    auditLogging: process.env.AUDIT_LOGGING !== 'false'
-  }
+    enableCompliance: process.env.ENABLE_COMPLIANCE !== "false",
+    lgpdEnabled: process.env.LGPD_ENABLED !== "false",
+    auditLogging: process.env.AUDIT_LOGGING !== "false",
+  },
 };
 ```
 
@@ -764,11 +767,11 @@ export const calendarConfig = {
 // utils/calendar-analytics.ts
 export const trackCalendarPerformance = (eventName: string, metrics: any) => {
   // Track custom performance metrics
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', eventName, {
+  if (typeof window !== "undefined" && window.gtag) {
+    window.gtag("event", eventName, {
       custom_parameter_1: metrics.loadTime,
       custom_parameter_2: metrics.eventCount,
-      custom_parameter_3: metrics.viewType
+      custom_parameter_3: metrics.viewType,
     });
   }
 
@@ -779,14 +782,14 @@ export const trackCalendarPerformance = (eventName: string, metrics: any) => {
 // Usage in calendar component
 const handleViewChange = (view: CalendarView) => {
   const startTime = performance.now();
-  
+
   setCurrentView(view);
-  
+
   const endTime = performance.now();
-  trackCalendarPerformance('calendar_view_change', {
+  trackCalendarPerformance("calendar_view_change", {
     loadTime: endTime - startTime,
     viewType: view,
-    eventCount: events.length
+    eventCount: events.length,
   });
 };
 ```

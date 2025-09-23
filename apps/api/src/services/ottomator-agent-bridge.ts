@@ -5,11 +5,11 @@
  * Provides a unified interface for RAG-based healthcare data queries.
  */
 
-import { ChildProcess, spawn } from 'child_process';
-import { EventEmitter } from 'events';
-import * as fs from 'fs';
-import * as path from 'path';
-import { logger } from '../lib/logger';
+import { ChildProcess, spawn } from "child_process";
+import { EventEmitter } from "events";
+import * as fs from "fs";
+import * as path from "path";
+import { logger } from "../lib/logger";
 
 export interface OttomatorQuery {
   _query: string;
@@ -27,14 +27,14 @@ export interface OttomatorResponse {
   success: boolean;
   response?: {
     content: string;
-    type: 'text' | 'structured' | 'chart' | 'table';
+    type: "text" | "structured" | "chart" | "table";
     sources?: Array<{
       title: string;
       url?: string;
       confidence: number;
     }>;
     actions?: Array<{
-      type: 'button' | 'link' | 'form';
+      type: "button" | "link" | "form";
       label: string;
       action: string;
       data?: any;
@@ -78,8 +78,10 @@ export class OttomatorAgentBridge extends EventEmitter {
     super();
 
     this.config = {
-      pythonPath: config?.pythonPath || 'python3',
-      agentPath: config?.agentPath || path.join(process.cwd(), 'agents', 'ag-ui-rag-agent'),
+      pythonPath: config?.pythonPath || "python3",
+      agentPath:
+        config?.agentPath ||
+        path.join(process.cwd(), "agents", "ag-ui-rag-agent"),
       maxConcurrentQueries: config?.maxConcurrentQueries || 5,
       queryTimeout: config?.queryTimeout || 30000,
       healthCheckInterval: config?.healthCheckInterval || 30000,
@@ -95,7 +97,7 @@ export class OttomatorAgentBridge extends EventEmitter {
    */
   async initialize(): Promise<void> {
     try {
-      logger.info('Initializing Ottomator Agent Bridge', {
+      logger.info("Initializing Ottomator Agent Bridge", {
         agentPath: this.config.agentPath,
         pythonPath: this.config.pythonPath,
       });
@@ -110,11 +112,11 @@ export class OttomatorAgentBridge extends EventEmitter {
       await this.waitForAgentReady();
 
       this.isHealthy = true;
-      this.emit('ready');
+      this.emit("ready");
 
-      logger.info('Ottomator Agent Bridge initialized successfully');
+      logger.info("Ottomator Agent Bridge initialized successfully");
     } catch (error) {
-      logger.error('Failed to initialize Ottomator Agent Bridge', { error });
+      logger.error("Failed to initialize Ottomator Agent Bridge", { error });
       throw error;
     }
   }
@@ -124,24 +126,24 @@ export class OttomatorAgentBridge extends EventEmitter {
    */
   async processQuery(_query: OttomatorQuery): Promise<OttomatorResponse> {
     if (!this.isHealthy) {
-      throw new Error('Ottomator agent is not healthy');
+      throw new Error("Ottomator agent is not healthy");
     }
 
     if (this.activeQueries.size >= this.config.maxConcurrentQueries) {
-      throw new Error('Maximum concurrent queries exceeded');
+      throw new Error("Maximum concurrent queries exceeded");
     }
 
     return new Promise((resolve, _reject) => {
       const queryId = `query_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const timeout = setTimeout(() => {
         this.activeQueries.delete(queryId);
-        reject(new Error('Query timeout'));
+        reject(new Error("Query timeout"));
       }, this.config.queryTimeout);
 
       this.activeQueries.set(queryId, { resolve, reject, timeout });
 
       // Send query to Python agent
-      this.sendQueryToAgent(queryId, _query).catch(error => {
+      this.sendQueryToAgent(queryId, _query).catch((error) => {
         clearTimeout(timeout);
         this.activeQueries.delete(queryId);
         reject(error);
@@ -160,25 +162,25 @@ export class OttomatorAgentBridge extends EventEmitter {
    * Shutdown the agent bridge
    */
   async shutdown(): Promise<void> {
-    logger.info('Shutting down Ottomator Agent Bridge');
+    logger.info("Shutting down Ottomator Agent Bridge");
 
     if (this.healthCheckTimer) {
       clearInterval(this.healthCheckTimer);
     }
 
     if (this.agentProcess) {
-      this.agentProcess.kill('SIGTERM');
+      this.agentProcess.kill("SIGTERM");
 
       // Wait for graceful shutdown
-      await new Promise(resolve => {
+      await new Promise((resolve) => {
         const timeout = setTimeout(() => {
           if (this.agentProcess) {
-            this.agentProcess.kill('SIGKILL');
+            this.agentProcess.kill("SIGKILL");
           }
           resolve(void 0);
         }, 5000);
 
-        this.agentProcess?.on('exit', () => {
+        this.agentProcess?.on("exit", () => {
           clearTimeout(timeout);
           resolve(void 0);
         });
@@ -186,12 +188,15 @@ export class OttomatorAgentBridge extends EventEmitter {
     }
 
     this.isHealthy = false;
-    this.emit('shutdown');
+    this.emit("shutdown");
   }
 
   private async validateAgentFiles(): Promise<void> {
-    const mainPyPath = path.join(this.config.agentPath, 'main.py');
-    const requirementsPath = path.join(this.config.agentPath, 'requirements.txt');
+    const mainPyPath = path.join(this.config.agentPath, "main.py");
+    const requirementsPath = path.join(
+      this.config.agentPath,
+      "requirements.txt",
+    );
 
     if (!fs.existsSync(mainPyPath)) {
       throw new Error(`Agent main.py not found at ${mainPyPath}`);
@@ -201,14 +206,14 @@ export class OttomatorAgentBridge extends EventEmitter {
       logger.warn(`Requirements file not found at ${requirementsPath}`);
     }
 
-    logger.info('Agent files validated successfully');
+    logger.info("Agent files validated successfully");
   }
 
   private async startAgentProcess(): Promise<void> {
     return new Promise((resolve, _reject) => {
-      const args = [path.join(this.config.agentPath, 'main.py')];
+      const args = [path.join(this.config.agentPath, "main.py")];
 
-      logger.info('Starting Python agent process', {
+      logger.info("Starting Python agent process", {
         command: this.config.pythonPath,
         args,
         cwd: this.config.agentPath,
@@ -216,36 +221,36 @@ export class OttomatorAgentBridge extends EventEmitter {
 
       this.agentProcess = spawn(this.config.pythonPath, args, {
         cwd: this.config.agentPath,
-        stdio: ['pipe', 'pipe', 'pipe'],
+        stdio: ["pipe", "pipe", "pipe"],
         env: {
           ...process.env,
           PYTHONPATH: this.config.agentPath,
-          AGENT_MODE: 'bridge',
+          AGENT_MODE: "bridge",
         },
       });
 
-      this.agentProcess.on('error', error => {
-        logger.error('Agent process error', { error });
+      this.agentProcess.on("error", (error) => {
+        logger.error("Agent process error", { error });
         this.isHealthy = false;
-        this.emit('error', error);
+        this.emit("error", error);
         reject(error);
       });
 
-      this.agentProcess.on('exit', (code, _signal) => {
-        logger.warn('Agent process exited', { code, signal });
+      this.agentProcess.on("exit", (code, _signal) => {
+        logger.warn("Agent process exited", { code, signal });
         this.isHealthy = false;
-        this.emit('exit', { code, signal });
+        this.emit("exit", { code, signal });
       });
 
       if (this.agentProcess.stdout) {
-        this.agentProcess.stdout.on('data', data => {
+        this.agentProcess.stdout.on("data", (data) => {
           this.handleAgentOutput(data.toString());
         });
       }
 
       if (this.agentProcess.stderr) {
-        this.agentProcess.stderr.on('data', data => {
-          logger.error('Agent stderr', { output: data.toString() });
+        this.agentProcess.stderr.on("data", (data) => {
+          logger.error("Agent stderr", { output: data.toString() });
         });
       }
 
@@ -254,7 +259,7 @@ export class OttomatorAgentBridge extends EventEmitter {
         if (this.agentProcess && !this.agentProcess.killed) {
           resolve();
         } else {
-          reject(new Error('Failed to start agent process'));
+          reject(new Error("Failed to start agent process"));
         }
       }, 2000);
     });
@@ -266,24 +271,27 @@ export class OttomatorAgentBridge extends EventEmitter {
     return Promise.resolve();
   }
 
-  private async sendQueryToAgent(queryId: string, _query: OttomatorQuery): Promise<void> {
+  private async sendQueryToAgent(
+    queryId: string,
+    _query: OttomatorQuery,
+  ): Promise<void> {
     if (!this.agentProcess || !this.agentProcess.stdin) {
-      throw new Error('Agent process not available');
+      throw new Error("Agent process not available");
     }
 
     const message = {
       id: queryId,
-      type: 'query',
+      type: "query",
       data: query,
       timestamp: Date.now(),
     };
 
-    const messageStr = JSON.stringify(message) + '\n';
+    const messageStr = JSON.stringify(message) + "\n";
     this.agentProcess.stdin.write(messageStr);
   }
 
   private handleAgentOutput(output: string): void {
-    const lines = output.trim().split('\n');
+    const lines = output.trim().split("\n");
 
     for (const line of lines) {
       try {
@@ -291,29 +299,29 @@ export class OttomatorAgentBridge extends EventEmitter {
         this.handleAgentMessage(message);
       } catch (error) {
         if (this.config.enableLogging) {
-          logger.info('Agent output (non-JSON)', { output: line });
+          logger.info("Agent output (non-JSON)", { output: line });
         }
       }
     }
   }
 
   private handleAgentMessage(message: any): void {
-    if (message.type === 'response' && message.id) {
+    if (message.type === "response" && message.id) {
       const activeQuery = this.activeQueries.get(message.id);
       if (activeQuery) {
         clearTimeout(activeQuery.timeout);
         this.activeQueries.delete(message.id);
         activeQuery.resolve(message.data);
       }
-    } else if (message.type === 'error' && message.id) {
+    } else if (message.type === "error" && message.id) {
       const activeQuery = this.activeQueries.get(message.id);
       if (activeQuery) {
         clearTimeout(activeQuery.timeout);
         this.activeQueries.delete(message.id);
-        activeQuery.reject(new Error(message.error || 'Agent error'));
+        activeQuery.reject(new Error(message.error || "Agent error"));
       }
-    } else if (message.type === 'health') {
-      this.isHealthy = message.status === 'healthy';
+    } else if (message.type === "health") {
+      this.isHealthy = message.status === "healthy";
     }
   }
 
@@ -333,15 +341,15 @@ export class OttomatorAgentBridge extends EventEmitter {
     try {
       const healthMessage = {
         id: `health_${Date.now()}`,
-        type: 'health_check',
+        type: "health_check",
         timestamp: Date.now(),
       };
 
       if (this.agentProcess.stdin) {
-        this.agentProcess.stdin.write(JSON.stringify(healthMessage) + '\n');
+        this.agentProcess.stdin.write(JSON.stringify(healthMessage) + "\n");
       }
     } catch (error) {
-      logger.error('Health check failed', { error });
+      logger.error("Health check failed", { error });
       this.isHealthy = false;
     }
   }
@@ -350,7 +358,9 @@ export class OttomatorAgentBridge extends EventEmitter {
 // Singleton instance
 let ottomatorBridge: OttomatorAgentBridge | null = null;
 
-export function getOttomatorBridge(config?: Partial<OttomatorAgentConfig>): OttomatorAgentBridge {
+export function getOttomatorBridge(
+  config?: Partial<OttomatorAgentConfig>,
+): OttomatorAgentBridge {
   if (!ottomatorBridge) {
     ottomatorBridge = new OttomatorAgentBridge(config);
   }

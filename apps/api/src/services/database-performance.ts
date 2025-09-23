@@ -10,7 +10,7 @@
  * - Brazilian healthcare compliance monitoring
  */
 
-import { QueryPerformanceMonitor } from '../utils/query-optimizer';
+import { QueryPerformanceMonitor } from "../utils/query-optimizer";
 
 // Database performance metrics
 export interface DatabaseMetrics {
@@ -45,16 +45,16 @@ export interface DatabaseMetrics {
 export interface IndexRecommendation {
   table: string;
   columns: string[];
-  type: 'btree' | 'gin' | 'gist' | 'hash';
+  type: "btree" | "gin" | "gist" | "hash";
   reason: string;
   estimatedImprovement: number; // Percentage
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: "low" | "medium" | "high" | "critical";
   healthcareRelevant: boolean;
 }
 
 // Database health status
 export interface DatabaseHealth {
-  status: 'healthy' | 'warning' | 'critical';
+  status: "healthy" | "warning" | "critical";
   score: number; // 0-100
   issues: string[];
   recommendations: string[];
@@ -64,26 +64,26 @@ export interface DatabaseHealth {
 // Healthcare-specific query patterns
 export const HEALTHCARE_QUERY_PATTERNS = {
   patientSearch: {
-    tables: ['patients'],
-    commonFilters: ['clinic_id', 'full_name', 'cpf', 'phone_primary', 'email'],
+    tables: ["patients"],
+    commonFilters: ["clinic_id", "full_name", "cpf", "phone_primary", "email"],
     expectedResponseTime: 50, // ms
   },
   appointmentScheduling: {
-    tables: ['appointments', 'professionals', 'patients'],
-    commonFilters: ['professional_id', 'start_time', 'end_time', 'status'],
+    tables: ["appointments", "professionals", "patients"],
+    commonFilters: ["professional_id", "start_time", "end_time", "status"],
     expectedResponseTime: 75, // ms
   },
   patientHistory: {
-    tables: ['patients', 'appointments', 'medical_records'],
-    commonFilters: ['patient_id', 'created_at', 'updated_at'],
+    tables: ["patients", "appointments", "medical_records"],
+    commonFilters: ["patient_id", "created_at", "updated_at"],
     expectedResponseTime: 100, // ms
   },
   lgpdCompliance: {
-    tables: ['patients', 'consent_records', 'audit_logs'],
+    tables: ["patients", "consent_records", "audit_logs"],
     commonFilters: [
-      'lgpd_consent_given',
-      'consent_date',
-      'data_retention_until',
+      "lgpd_consent_given",
+      "consent_date",
+      "data_retention_until",
     ],
     expectedResponseTime: 25, // ms - Critical for compliance
   },
@@ -92,60 +92,60 @@ export const HEALTHCARE_QUERY_PATTERNS = {
 // Recommended indexes for healthcare workloads
 export const HEALTHCARE_RECOMMENDED_INDEXES = [
   {
-    table: 'patients',
-    columns: ['clinic_id', 'full_name'],
-    type: 'btree' as const,
-    reason: 'Patient search by clinic and name',
-    priority: 'high' as const,
+    table: "patients",
+    columns: ["clinic_id", "full_name"],
+    type: "btree" as const,
+    reason: "Patient search by clinic and name",
+    priority: "high" as const,
   },
   {
-    table: 'patients',
-    columns: ['clinic_id', 'cpf'],
-    type: 'btree' as const,
-    reason: 'Patient lookup by CPF within clinic',
-    priority: 'critical' as const,
+    table: "patients",
+    columns: ["clinic_id", "cpf"],
+    type: "btree" as const,
+    reason: "Patient lookup by CPF within clinic",
+    priority: "critical" as const,
   },
   {
-    table: 'patients',
-    columns: ['full_name', 'phone_primary', 'email'],
-    type: 'gin' as const,
-    reason: 'Full-text search across patient contact information',
-    priority: 'high' as const,
+    table: "patients",
+    columns: ["full_name", "phone_primary", "email"],
+    type: "gin" as const,
+    reason: "Full-text search across patient contact information",
+    priority: "high" as const,
   },
   {
-    table: 'appointments',
-    columns: ['professional_id', 'start_time'],
-    type: 'btree' as const,
-    reason: 'Professional schedule queries',
-    priority: 'critical' as const,
+    table: "appointments",
+    columns: ["professional_id", "start_time"],
+    type: "btree" as const,
+    reason: "Professional schedule queries",
+    priority: "critical" as const,
   },
   {
-    table: 'appointments',
-    columns: ['patient_id', 'start_time'],
-    type: 'btree' as const,
-    reason: 'Patient appointment history',
-    priority: 'high' as const,
+    table: "appointments",
+    columns: ["patient_id", "start_time"],
+    type: "btree" as const,
+    reason: "Patient appointment history",
+    priority: "high" as const,
   },
   {
-    table: 'appointments',
-    columns: ['clinic_id', 'start_time', 'status'],
-    type: 'btree' as const,
-    reason: 'Clinic daily schedule with status filtering',
-    priority: 'high' as const,
+    table: "appointments",
+    columns: ["clinic_id", "start_time", "status"],
+    type: "btree" as const,
+    reason: "Clinic daily schedule with status filtering",
+    priority: "high" as const,
   },
   {
-    table: 'consent_records',
-    columns: ['patient_id', 'consent_type', 'is_active'],
-    type: 'btree' as const,
-    reason: 'LGPD compliance queries',
-    priority: 'critical' as const,
+    table: "consent_records",
+    columns: ["patient_id", "consent_type", "is_active"],
+    type: "btree" as const,
+    reason: "LGPD compliance queries",
+    priority: "critical" as const,
   },
   {
-    table: 'audit_logs',
-    columns: ['table_name', 'record_id', 'created_at'],
-    type: 'btree' as const,
-    reason: 'Audit trail queries for compliance',
-    priority: 'medium' as const,
+    table: "audit_logs",
+    columns: ["table_name", "record_id", "created_at"],
+    type: "btree" as const,
+    reason: "Audit trail queries for compliance",
+    priority: "medium" as const,
   },
 ];
 
@@ -207,9 +207,9 @@ export class DatabasePerformanceService {
     const totalIndexes = 25;
     const unusedIndexes = 3;
     const missingIndexes = [
-      'patients(clinic_id, created_at)',
-      'appointments(status, start_time)',
-      'professionals(clinic_id, is_active)',
+      "patients(clinic_id, created_at)",
+      "appointments(status, start_time)",
+      "professionals(clinic_id, is_active)",
     ];
 
     return {
@@ -241,7 +241,7 @@ export class DatabasePerformanceService {
    * Generate index recommendations based on query patterns
    */
   generateIndexRecommendations(): IndexRecommendation[] {
-    return HEALTHCARE_RECOMMENDED_INDEXES.map(index => ({
+    return HEALTHCARE_RECOMMENDED_INDEXES.map((index) => ({
       ...index,
       estimatedImprovement: this.calculateIndexImprovement(index),
       healthcareRelevant: this.isHealthcareRelevant(index.table),
@@ -253,7 +253,7 @@ export class DatabasePerformanceService {
    */
   private calculateIndexImprovement(index: any): number {
     // Healthcare-critical tables get higher improvement estimates
-    const healthcareCritical = ['patients', 'appointments', 'consent_records'];
+    const healthcareCritical = ["patients", "appointments", "consent_records"];
     const baseImprovement = healthcareCritical.includes(index.table) ? 40 : 25;
 
     // Adjust based on priority
@@ -272,14 +272,14 @@ export class DatabasePerformanceService {
    */
   private isHealthcareRelevant(table: string): boolean {
     const healthcareTables = [
-      'patients',
-      'appointments',
-      'professionals',
-      'medical_records',
-      'consent_records',
-      'audit_logs',
-      'clinics',
-      'services',
+      "patients",
+      "appointments",
+      "professionals",
+      "medical_records",
+      "consent_records",
+      "audit_logs",
+      "clinics",
+      "services",
     ];
     return healthcareTables.includes(table);
   }
@@ -295,33 +295,34 @@ export class DatabasePerformanceService {
 
     // Check connection pool health
     if (metrics.connectionPool.utilization > 80) {
-      issues.push('High connection pool utilization');
-      recommendations.push('Consider increasing connection pool size');
+      issues.push("High connection pool utilization");
+      recommendations.push("Consider increasing connection pool size");
       score -= 15;
     }
 
     // Check query performance
     if (metrics.queryPerformance.averageResponseTime > 100) {
-      issues.push('Slow average query response time');
-      recommendations.push('Optimize slow queries and add missing indexes');
+      issues.push("Slow average query response time");
+      recommendations.push("Optimize slow queries and add missing indexes");
       score -= 20;
     }
 
     // Check healthcare compliance
     if (metrics.healthcareCompliance.avgPatientQueryTime > 50) {
-      issues.push('Patient data queries exceeding healthcare thresholds');
-      recommendations.push('Optimize patient data indexes for LGPD compliance');
+      issues.push("Patient data queries exceeding healthcare thresholds");
+      recommendations.push("Optimize patient data indexes for LGPD compliance");
       score -= 25;
     }
 
     // Check index efficiency
     if (metrics.indexUsage.indexEfficiency < 80) {
-      issues.push('Low index efficiency detected');
-      recommendations.push('Remove unused indexes and add missing ones');
+      issues.push("Low index efficiency detected");
+      recommendations.push("Remove unused indexes and add missing ones");
       score -= 10;
     }
 
-    const status = score >= 80 ? 'healthy' : score >= 60 ? 'warning' : 'critical';
+    const status =
+      score >= 80 ? "healthy" : score >= 60 ? "warning" : "critical";
 
     return {
       status,
@@ -340,13 +341,13 @@ export class DatabasePerformanceService {
     this.healthCheckInterval = setInterval(async () => {
       const health = await this.performHealthCheck();
 
-      if (health.status === 'critical') {
+      if (health.status === "critical") {
         console.error(
-          'CRITICAL: Database health issues detected:',
+          "CRITICAL: Database health issues detected:",
           health.issues,
         );
-      } else if (health.status === 'warning') {
-        console.warn('WARNING: Database performance issues:', health.issues);
+      } else if (health.status === "warning") {
+        console.warn("WARNING: Database performance issues:", health.issues);
       }
     }, intervalMs);
   }

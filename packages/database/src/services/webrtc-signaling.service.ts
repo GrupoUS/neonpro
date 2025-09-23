@@ -8,7 +8,7 @@ import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 import type { Socket } from "socket.io";
 
-// Import services  
+// Import services
 import { WebRTCSessionService } from "./webrtc-session.service";
 import { CFMComplianceService } from "./cfm-compliance.service";
 import { winstonLogger } from "@neonpro/shared/services/structured-logging";
@@ -79,15 +79,19 @@ export class WebRTCSignalingServer {
 
     // Start server
     this.server.listen(port, () => {
-      winstonLogger.info(`WebRTC Signaling Server listening on port ${port}`, undefined, {
-        healthcare: {
-          workflowType: "system_maintenance",
-          clinicalContext: {
-            facilityId: "signaling-server",
-            requiresAudit: true,
+      winstonLogger.info(
+        `WebRTC Signaling Server listening on port ${port}`,
+        undefined,
+        {
+          healthcare: {
+            workflowType: "system_maintenance",
+            clinicalContext: {
+              facilityId: "signaling-server",
+              requiresAudit: true,
+            },
           },
         },
-      });
+      );
     });
   }
 
@@ -99,7 +103,8 @@ export class WebRTCSignalingServer {
       winstonLogger.debug(`Socket connected: ${socket.id}`);
 
       // Handle session join
-      socket.on("join-session",
+      socket.on(
+        "join-session",
         async (data: {
           sessionId: string;
           _userId: string;
@@ -110,7 +115,10 @@ export class WebRTCSignalingServer {
           try {
             await this.handleJoinSession(socket, data);
           } catch (error) {
-            winstonLogger.error("Error joining session", error instanceof Error ? error : undefined);
+            winstonLogger.error(
+              "Error joining session",
+              error instanceof Error ? error : undefined,
+            );
             socket.emit("error", {
               type: "join-session-failed",
               message: "Failed to join session",
@@ -121,7 +129,8 @@ export class WebRTCSignalingServer {
       );
 
       // Handle WebRTC signaling
-      socket.on("webrtc-signal",
+      socket.on(
+        "webrtc-signal",
         async (signal: {
           type: "offer" | "answer" | "ice-candidate";
           data: any;
@@ -131,7 +140,10 @@ export class WebRTCSignalingServer {
           try {
             await this.handleWebRTCSignal(socket, signal);
           } catch (error) {
-            winstonLogger.error("Error handling WebRTC signal", error instanceof Error ? error : undefined);
+            winstonLogger.error(
+              "Error handling WebRTC signal",
+              error instanceof Error ? error : undefined,
+            );
             socket.emit("error", {
               type: "signal-failed",
               message: "Failed to relay signal",
@@ -142,7 +154,8 @@ export class WebRTCSignalingServer {
       );
 
       // Handle connection state updates
-      socket.on("connection-state",
+      socket.on(
+        "connection-state",
         async (state: {
           sessionId: string;
           connectionState: RTCPeerConnectionState;
@@ -172,7 +185,8 @@ export class WebRTCSignalingServer {
       });
 
       // Handle heartbeat for connection monitoring
-      socket.on("heartbeat",
+      socket.on(
+        "heartbeat",
         (data: { sessionId: string; timestamp: number }) => {
           socket.emit("heartbeat-ack", { timestamp: Date.now() });
           this.updateParticipantActivity(socket.id, data.sessionId);
@@ -181,12 +195,15 @@ export class WebRTCSignalingServer {
 
       // Handle disconnect
       socket.on("disconnect", (reason: string) => {
-        winstonLogger.debug(`Socket disconnected: ${socket.id}, reason: ${reason}`);
+        winstonLogger.debug(
+          `Socket disconnected: ${socket.id}, reason: ${reason}`,
+        );
         this.handleDisconnect(socket);
       });
 
       // Handle compliance events
-      socket.on("compliance-event",
+      socket.on(
+        "compliance-event",
         async (event: {
           sessionId: string;
           eventType: string;
@@ -364,7 +381,8 @@ export class WebRTCSignalingServer {
     }
 
     // Find target participant's socket
-    const targetParticipant = Array.from(room.participants.values()).find((p) => p.userId === to,
+    const targetParticipant = Array.from(room.participants.values()).find(
+      (p) => p.userId === to,
     );
 
     if (!targetParticipant) {
@@ -686,7 +704,8 @@ export class WebRTCSignalingServer {
    * Gets active sessions count for monitoring
    */
   public getActiveSessionsCount(): number {
-    return Array.from(this.sessionRooms.values()).filter((room) => room.isActive && room.participants.size > 0,
+    return Array.from(this.sessionRooms.values()).filter(
+      (room) => room.isActive && room.participants.size > 0,
     ).length;
   }
 
@@ -694,7 +713,8 @@ export class WebRTCSignalingServer {
    * Gets total participants count for monitoring
    */
   public getTotalParticipantsCount(): number {
-    return Array.from(this.sessionRooms.values()).reduce((total,_room) => total + room.participants.size,
+    return Array.from(this.sessionRooms.values()).reduce(
+      (total, _room) => total + room.participants.size,
       0,
     );
   }

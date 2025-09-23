@@ -3,7 +3,7 @@ import { resolve } from "path";
 
 /**
  * Standardized Vitest Base Configuration for NEONPRO TDD Compliance
- * 
+ *
  * TDD Principles Enforced:
  * - No empty test suites (passWithNoTests: false)
  * - Mandatory coverage thresholds (80% minimum)
@@ -29,7 +29,7 @@ export interface VitestBaseOptions {
 
 export const createVitestConfig = (options: VitestBaseOptions = {}) => {
   const {
-    packageName = '',
+    packageName = "",
     coverageThresholds = {},
     setupFiles = [],
     coverageExclude = [],
@@ -46,15 +46,15 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
 
   // Standard exclude patterns for healthcare applications
   const defaultExclude = [
-    'node_modules/**',
-    'dist/',
-    'build/',
-    '**/*.d.ts',
-    '**/*.config.ts',
-    '**/*.config.js',
-    '**/types/**',
-    '**/interfaces/**',
-    '**/constants/**',
+    "node_modules/**",
+    "dist/",
+    "build/",
+    "**/*.d.ts",
+    "**/*.config.ts",
+    "**/*.config.js",
+    "**/types/**",
+    "**/interfaces/**",
+    "**/constants/**",
     ...coverageExclude,
   ];
 
@@ -62,21 +62,32 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
     test: {
       // TDD Compliance: Tests must exist and drive development
       passWithNoTests: false,
-      
+
       // Standard test environment
-      environment: 'node',
+      environment: "node",
       globals: false,
-      
+
       // Setup files for test environment
       setupFiles: [
-        ...(packageName ? [resolve(__dirname, '..', '..', 'tests', 'setup/', `${packageName}.setup.ts`)] : []),
+        ...(packageName
+          ? [
+              resolve(
+                __dirname,
+                "..",
+                "..",
+                "tests",
+                "setup/",
+                `${packageName}.setup.ts`,
+              ),
+            ]
+          : []),
         ...setupFiles,
       ],
-      
+
       // Coverage configuration with TDD quality gates
       coverage: {
-        provider: 'v8',
-        reporter: ['text', 'json', 'html', 'lcov'],
+        provider: "v8",
+        reporter: ["text", "json", "html", "lcov"],
         exclude: defaultExclude,
         thresholds: {
           global: defaultThresholds,
@@ -84,30 +95,30 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
         // Clean coverage directory before runs
         clean: true,
         // Include all source files in coverage
-        include: ['src/**/*.{ts,js,tsx,jsx}'],
+        include: ["src/**/*.{ts,js,tsx,jsx}"],
       },
-      
+
       // Mocking strategy - enforce vi.mock usage
       mockReset: true,
       restoreMocks: true,
-      
+
       // Test timeout for healthcare validation scenarios
       testTimeout: 10000,
-      
+
       // Hook timeout for async setup
       hookTimeout: 10000,
-      
+
       // Verbose output for better debugging
       verbose: true,
       bail: false,
     },
-    
+
     // Type checking configuration
     typecheck: {
       enabled: true,
-      include: ['src/**/*.{test,spec}.{ts,tsx}'],
+      include: ["src/**/*.{test,spec}.{ts,tsx}"],
     },
-    
+
     // No additional plugins by default - keep it simple
     plugins: [],
   });

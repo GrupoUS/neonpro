@@ -70,7 +70,7 @@ export async function runTDDCycle(
     // Preserve the duration from the orchestrator result
     return {
       ...result,
-      duration: result.duration || (Date.now() - startTime),
+      duration: result.duration || Date.now() - startTime,
     };
   } finally {
     await system.shutdown();

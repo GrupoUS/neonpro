@@ -120,7 +120,7 @@ export class CLIWrapper {
         if (option.includes("=")) {
           const [opt, value] = option.split("=");
           if (opt) {
-            result.options[opt] = value ?? '';
+            result.options[opt] = value ?? "";
           }
           currentOption = null;
         } else {
@@ -130,7 +130,7 @@ export class CLIWrapper {
       // Handle option values or positional arguments
       else {
         if (currentOption) {
-          result.options[currentOption] = arg ?? '';
+          result.options[currentOption] = arg ?? "";
           currentOption = null;
         } else {
           if (!result.command && arg && this.commands.has(arg)) {
@@ -163,7 +163,8 @@ export class CLIWrapper {
         },
       });
     } else {
-      const commands = Array.from(this.commands.entries()).map(([name, cmd]) => ({
+      const commands = Array.from(this.commands.entries()).map(
+        ([name, cmd]) => ({
           name,
           description: cmd.description,
         }),

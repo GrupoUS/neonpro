@@ -51,17 +51,20 @@ apps/api/src/
 ### 1. Basic Usage
 
 ```typescript
-import { createPrismaWithContext, getHealthcarePrismaClient } from './clients/prisma.js';
+import {
+  createPrismaWithContext,
+  getHealthcarePrismaClient,
+} from "./clients/prisma.js";
 
 // Get singleton client
 const prisma = getHealthcarePrismaClient();
 
 // Create context-aware client
 const context = {
-  userId: 'user-123',
-  clinicId: 'clinic-456',
-  role: 'professional',
-  permissions: ['patient_read', 'patient_write'],
+  userId: "user-123",
+  clinicId: "clinic-456",
+  role: "professional",
+  permissions: ["patient_read", "patient_write"],
   cfmValidated: true,
 };
 
@@ -71,11 +74,11 @@ const prismaWithContext = createPrismaWithContext(context);
 ### 2. Middleware Integration (Hono.js)
 
 ```typescript
-import { prismaRLSMiddleware } from './middleware/prisma-rls.js';
+import { prismaRLSMiddleware } from "./middleware/prisma-rls.js";
 
 // Apply RLS middleware
 app.use(
-  '*',
+  "*",
   prismaRLSMiddleware({
     requireAuth: true,
     requireClinicAccess: true,
@@ -84,9 +87,9 @@ app.use(
 );
 
 // Use in route handlers
-app.get('/patients', async c => {
+app.get("/patients", async (c) => {
   const { prisma } = getHealthcareContext(c);
-  const patients = await prisma.findPatientsInClinic(c.get('clinicId'));
+  const patients = await prisma.findPatientsInClinic(c.get("clinicId"));
   return c.json(patients);
 });
 ```
@@ -94,7 +97,7 @@ app.get('/patients', async c => {
 ### 3. LGPD Compliance Operations
 
 ```typescript
-import { LGPDComplianceValidator } from './utils/lgpd-compliance-validator.js';
+import { LGPDComplianceValidator } from "./utils/lgpd-compliance-validator.js";
 
 const validator = new LGPDComplianceValidator(prismaWithContext);
 
@@ -102,21 +105,21 @@ const validator = new LGPDComplianceValidator(prismaWithContext);
 const exportData = await prisma.exportPatientData(
   patientId,
   requestedBy,
-  'Patient data portability request',
+  "Patient data portability request",
 );
 
 // Delete patient data (LGPD Article 18.VI)
 await prisma.deletePatientData(patientId, {
   cascadeDelete: true,
   retainAuditTrail: true,
-  reason: 'Right to erasure request',
+  reason: "Right to erasure request",
 });
 
 // Exercise data subject rights
 await validator.exerciseDataSubjectRight(
   patientId,
   LGPDDataSubjectRights.ACCESS,
-  { requestedBy: userId, reason: 'Data access request' },
+  { requestedBy: userId, reason: "Data access request" },
 );
 ```
 
@@ -127,14 +130,15 @@ await validator.exerciseDataSubjectRight(
 ```typescript
 // Find patients with RLS
 const patients = await prisma.findPatientsInClinic(clinicId, {
-  patientStatus: 'active',
+  patientStatus: "active",
   isActive: true,
 });
 
 // Validate patient data
-const validation = PatientDataHelper.validatePatientDataCompleteness(patientData);
+const validation =
+  PatientDataHelper.validatePatientDataCompleteness(patientData);
 if (!validation.isComplete) {
-  console.log('Missing fields:', validation.missingFields);
+  console.log("Missing fields:", validation.missingFields);
 }
 
 // Generate medical record number
@@ -163,9 +167,10 @@ const riskScore = await HealthcareAppointmentHelper.calculateNoShowRisk(
 
 ```typescript
 // Validate Brazilian documents
-const isValidCPF = BrazilianHealthcareValidator.validateCPF('123.456.789-01');
-const isValidPhone = BrazilianHealthcareValidator.validateBrazilianPhone('(11) 99999-9999');
-const isValidCFM = BrazilianHealthcareValidator.validateCFM('12345');
+const isValidCPF = BrazilianHealthcareValidator.validateCPF("123.456.789-01");
+const isValidPhone =
+  BrazilianHealthcareValidator.validateBrazilianPhone("(11) 99999-9999");
+const isValidCFM = BrazilianHealthcareValidator.validateCFM("12345");
 ```
 
 ## 🔧 Performance Features
@@ -173,13 +178,13 @@ const isValidCFM = BrazilianHealthcareValidator.validateCFM('12345');
 ### Query Optimization
 
 ```typescript
-import { HealthcareQueryOptimizer } from './utils/healthcare-performance.js';
+import { HealthcareQueryOptimizer } from "./utils/healthcare-performance.js";
 
 const optimizer = new HealthcareQueryOptimizer(prismaWithContext);
 
 // Optimized patient search with caching
 const searchResult = await optimizer.searchPatientsOptimized(clinicId, {
-  query: 'João Silva',
+  query: "João Silva",
   page: 1,
   limit: 20,
 });
@@ -224,8 +229,8 @@ npm run test:coverage
 ```typescript
 // Get performance metrics
 const metrics = optimizer.getPerformanceMetrics();
-console.log('Cache hit rate:', metrics.cacheHitRate);
-console.log('Average query time:', metrics.avgQueryTime);
+console.log("Cache hit rate:", metrics.cacheHitRate);
+console.log("Average query time:", metrics.avgQueryTime);
 ```
 
 ### Health Monitoring
@@ -247,15 +252,15 @@ import {
   HealthcareComplianceError,
   LGPDComplianceError,
   UnauthorizedHealthcareAccessError,
-} from './utils/healthcare-errors.js';
+} from "./utils/healthcare-errors.js";
 
 try {
   await prisma.someOperation();
 } catch (error) {
   if (error instanceof LGPDComplianceError) {
-    console.log('LGPD violation:', error.lgpdArticle);
+    console.log("LGPD violation:", error.lgpdArticle);
   } else if (error instanceof UnauthorizedHealthcareAccessError) {
-    console.log('Access denied to:', error.resourceType);
+    console.log("Access denied to:", error.resourceType);
   }
 }
 ```
@@ -269,7 +274,7 @@ Always validate healthcare context before operations:
 ```typescript
 const isValid = await prismaWithContext.validateContext();
 if (!isValid) {
-  throw new UnauthorizedHealthcareAccessError('Invalid healthcare context');
+  throw new UnauthorizedHealthcareAccessError("Invalid healthcare context");
 }
 ```
 
@@ -286,10 +291,10 @@ All operations are automatically logged:
 
 ```typescript
 // Manual audit logging
-await prisma.createAuditLog('VIEW', 'PATIENT_RECORD', patientId, {
-  operation: 'patient_view',
+await prisma.createAuditLog("VIEW", "PATIENT_RECORD", patientId, {
+  operation: "patient_view",
   ipAddress: req.ip,
-  userAgent: req.headers['user-agent'],
+  userAgent: req.headers["user-agent"],
 });
 ```
 

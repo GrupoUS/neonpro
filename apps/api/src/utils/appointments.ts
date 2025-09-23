@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma';
+import { prisma } from "../lib/prisma";
 
 export async function hasConflict(params: {
   clinicId: string;
@@ -10,7 +10,7 @@ export async function hasConflict(params: {
   const where: any = {
     clinicId: params.clinicId,
     professionalId: params.professionalId,
-    status: { in: ['scheduled', 'confirmed'] },
+    status: { in: ["scheduled", "confirmed"] },
     ...(params.excludeId ? { NOT: { id: params.excludeId } } : {}),
     OR: [
       { startTime: { lt: params.endTime }, endTime: { gt: params.startTime } },

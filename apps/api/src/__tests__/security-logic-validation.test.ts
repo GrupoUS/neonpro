@@ -3,11 +3,11 @@
  * These tests should fail initially and pass after security logic issues are fixed
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-describe('Security Logic Validation - TDD RED Phase', () => {
-  describe('Security Test Logic Error', () => {
-    it('should FAIL: hardcoded secrets detection should incorrectly return true', () => {
+describe("Security Logic Validation - TDD RED Phase", () => {
+  describe("Security Test Logic Error", () => {
+    it("should FAIL: hardcoded secrets detection should incorrectly return true", () => {
       // This is the failing test in tests/security/telemedicine-security.test.ts
       // The test expects false but gets true for hardcoded secrets detection
 
@@ -31,34 +31,34 @@ describe('Security Logic Validation - TDD RED Phase', () => {
       const currentState = {
         expected: false,
         actual: false, // Now fixed
-        testFile: 'tests/security/telemedicine-security.test.ts',
-        testName: 'should PASS: detect hardcoded default secrets',
-        status: 'FIXED - Proper secret management implemented',
+        testFile: "tests/security/telemedicine-security.test.ts",
+        testName: "should PASS: detect hardcoded default secrets",
+        status: "FIXED - Proper secret management implemented",
       };
 
       expect(currentState.expected).toBe(currentState.actual); // Now passes
     });
 
-    it('should FAIL: security test expectations should be incorrect', () => {
+    it("should FAIL: security test expectations should be incorrect", () => {
       // Test for incorrect security test expectations
       const incorrectExpectations = [
         {
-          test: 'detect hardcoded default secrets',
+          test: "detect hardcoded default secrets",
           expected: false,
           actual: true,
-          issue: 'Test expects no hardcoded secrets but secrets are detected',
+          issue: "Test expects no hardcoded secrets but secrets are detected",
         },
         {
-          test: 'detect hardcoded salt in encryption',
+          test: "detect hardcoded salt in encryption",
           expected: true,
           actual: false,
-          issue: 'Test expects hardcoded salt but none is detected',
+          issue: "Test expects hardcoded salt but none is detected",
         },
         {
-          test: 'validate secure memory storage',
+          test: "validate secure memory storage",
           expected: false,
           actual: true,
-          issue: 'Test expects insecure storage but storage is secure',
+          issue: "Test expects insecure storage but storage is secure",
         },
       ];
 
@@ -66,26 +66,28 @@ describe('Security Logic Validation - TDD RED Phase', () => {
       expect(incorrectExpectations.length).toBeGreaterThan(0);
 
       // At least one expectation should be wrong
-      const wrongExpectations = incorrectExpectations.filter(exp => exp.expected !== exp.actual);
+      const wrongExpectations = incorrectExpectations.filter(
+        (exp) => exp.expected !== exp.actual,
+      );
       expect(wrongExpectations.length).toBeGreaterThan(0);
     });
   });
 
-  describe('Security Vulnerability Detection Logic', () => {
-    it('should FAIL: vulnerability detection should have false positives', () => {
+  describe("Security Vulnerability Detection Logic", () => {
+    it("should FAIL: vulnerability detection should have false positives", () => {
       // Test for false positives in security detection
       const falsePositives = [
         {
-          pattern: 'default-secret',
-          detectedAs: 'hardcoded secret',
-          actualContext: 'example variable name',
-          issue: 'Pattern matching too aggressive',
+          pattern: "default-secret",
+          detectedAs: "hardcoded secret",
+          actualContext: "example variable name",
+          issue: "Pattern matching too aggressive",
         },
         {
           pattern: 'password = "test"',
-          detectedAs: 'hardcoded password',
-          actualContext: 'test fixture',
-          issue: 'Test code flagged as production code',
+          detectedAs: "hardcoded password",
+          actualContext: "test fixture",
+          issue: "Test code flagged as production code",
         },
       ];
 
@@ -93,23 +95,23 @@ describe('Security Logic Validation - TDD RED Phase', () => {
       expect(falsePositives.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL: vulnerability detection should miss real issues', () => {
+    it("should FAIL: vulnerability detection should miss real issues", () => {
       // Test for missed security vulnerabilities
       const missedVulnerabilities = [
         {
-          issue: 'Hardcoded API key in environment file',
-          detection: 'Not detected',
-          severity: 'critical',
+          issue: "Hardcoded API key in environment file",
+          detection: "Not detected",
+          severity: "critical",
         },
         {
-          issue: 'Weak encryption algorithm',
-          detection: 'Not detected',
-          severity: 'high',
+          issue: "Weak encryption algorithm",
+          detection: "Not detected",
+          severity: "high",
         },
         {
-          issue: 'Missing input validation',
-          detection: 'Not detected',
-          severity: 'medium',
+          issue: "Missing input validation",
+          detection: "Not detected",
+          severity: "medium",
         },
       ];
 
@@ -118,30 +120,30 @@ describe('Security Logic Validation - TDD RED Phase', () => {
     });
   });
 
-  describe('Security Compliance Logic', () => {
-    it('should FAIL: compliance checks should be incorrect', () => {
+  describe("Security Compliance Logic", () => {
+    it("should FAIL: compliance checks should be incorrect", () => {
       // Test for incorrect compliance logic
       const complianceIssues = [
         {
-          regulation: 'LGPD',
-          check: 'Data encryption requirements',
+          regulation: "LGPD",
+          check: "Data encryption requirements",
           expected: true,
           actual: false,
-          issue: 'Compliance check incorrectly failing',
+          issue: "Compliance check incorrectly failing",
         },
         {
-          regulation: 'CFM',
-          check: 'Audit trail requirements',
+          regulation: "CFM",
+          check: "Audit trail requirements",
           expected: true,
           actual: false,
-          issue: 'Compliance check incorrectly failing',
+          issue: "Compliance check incorrectly failing",
         },
         {
-          regulation: 'ANVISA',
-          check: 'Medical device security',
+          regulation: "ANVISA",
+          check: "Medical device security",
           expected: false,
           actual: true,
-          issue: 'Compliance check incorrectly passing',
+          issue: "Compliance check incorrectly passing",
         },
       ];
 
@@ -149,30 +151,32 @@ describe('Security Logic Validation - TDD RED Phase', () => {
       expect(complianceIssues.length).toBeGreaterThan(0);
 
       // At least one compliance check is wrong
-      const wrongChecks = complianceIssues.filter(check => check.expected !== check.actual);
+      const wrongChecks = complianceIssues.filter(
+        (check) => check.expected !== check.actual,
+      );
       expect(wrongChecks.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL: security scoring should be incorrect', () => {
+    it("should FAIL: security scoring should be incorrect", () => {
       // Test for incorrect security scoring
       const scoringIssues = [
         {
-          test: 'Password strength validation',
+          test: "Password strength validation",
           actualScore: 85,
           expectedScore: 45,
-          issue: 'Score too high for weak passwords',
+          issue: "Score too high for weak passwords",
         },
         {
-          test: 'Session timeout validation',
+          test: "Session timeout validation",
           actualScore: 60,
           expectedScore: 90,
-          issue: 'Score too low for proper timeout',
+          issue: "Score too low for proper timeout",
         },
         {
-          test: 'Input validation coverage',
+          test: "Input validation coverage",
           actualScore: 30,
           expectedScore: 95,
-          issue: 'Score too low for comprehensive validation',
+          issue: "Score too low for comprehensive validation",
         },
       ];
 
@@ -181,25 +185,25 @@ describe('Security Logic Validation - TDD RED Phase', () => {
     });
   });
 
-  describe('Security Test Data Issues', () => {
-    it('should FAIL: security test fixtures should be incorrect', () => {
+  describe("Security Test Data Issues", () => {
+    it("should FAIL: security test fixtures should be incorrect", () => {
       // Test for incorrect test fixtures
       const fixtureIssues = [
         {
-          fixture: 'malicious-payload.json',
-          issue: 'Payload not malicious enough',
+          fixture: "malicious-payload.json",
+          issue: "Payload not malicious enough",
           expectedDetection: true,
           actualDetection: false,
         },
         {
-          fixture: 'valid-user-input.json',
-          issue: 'Valid input flagged as malicious',
+          fixture: "valid-user-input.json",
+          issue: "Valid input flagged as malicious",
           expectedDetection: false,
           actualDetection: true,
         },
         {
-          fixture: 'sql-injection-attempts.json',
-          issue: 'Missing SQL injection patterns',
+          fixture: "sql-injection-attempts.json",
+          issue: "Missing SQL injection patterns",
           expectedPatterns: 10,
           actualPatterns: 3,
         },
@@ -209,26 +213,26 @@ describe('Security Logic Validation - TDD RED Phase', () => {
       expect(fixtureIssues.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL: security test environment should be misconfigured', () => {
+    it("should FAIL: security test environment should be misconfigured", () => {
       // Test for misconfigured security test environment
       const envIssues = [
         {
-          setting: 'Security scan timeout',
-          current: '5s',
-          required: '30s',
-          issue: 'Timeout too short for comprehensive scan',
+          setting: "Security scan timeout",
+          current: "5s",
+          required: "30s",
+          issue: "Timeout too short for comprehensive scan",
         },
         {
-          setting: 'Vulnerability database',
-          current: 'outdated',
-          required: 'current',
-          issue: 'Using outdated vulnerability signatures',
+          setting: "Vulnerability database",
+          current: "outdated",
+          required: "current",
+          issue: "Using outdated vulnerability signatures",
         },
         {
-          setting: 'Test SSL certificates',
-          current: 'expired',
-          required: 'valid',
-          issue: 'Invalid test certificates',
+          setting: "Test SSL certificates",
+          current: "expired",
+          required: "valid",
+          issue: "Invalid test certificates",
         },
       ];
 
@@ -237,23 +241,23 @@ describe('Security Logic Validation - TDD RED Phase', () => {
     });
   });
 
-  describe('Security Mocking Issues', () => {
-    it('should FAIL: security mocks should be unrealistic', () => {
+  describe("Security Mocking Issues", () => {
+    it("should FAIL: security mocks should be unrealistic", () => {
       // Test for unrealistic security mocks
       const mockIssues = [
         {
-          mock: 'Encryption service',
-          issue: 'Always returns success',
+          mock: "Encryption service",
+          issue: "Always returns success",
           realistic: false,
         },
         {
-          mock: 'Authentication service',
-          issue: 'Never fails authentication',
+          mock: "Authentication service",
+          issue: "Never fails authentication",
           realistic: false,
         },
         {
-          mock: 'Rate limiting service',
-          issue: 'Always allows requests',
+          mock: "Rate limiting service",
+          issue: "Always allows requests",
           realistic: false,
         },
       ];
@@ -262,21 +266,21 @@ describe('Security Logic Validation - TDD RED Phase', () => {
       expect(mockIssues.length).toBeGreaterThan(0);
 
       // All mocks should be unrealistic (failing state)
-      const unrealisticMocks = mockIssues.filter(mock => !mock.realistic);
+      const unrealisticMocks = mockIssues.filter((mock) => !mock.realistic);
       expect(unrealisticMocks.length).toBe(mockIssues.length);
     });
 
-    it('should FAIL: security test scenarios should be incomplete', () => {
+    it("should FAIL: security test scenarios should be incomplete", () => {
       // Test for incomplete security test scenarios
       const missingScenarios = [
-        'Denial of service attacks',
-        'Cross-site scripting (XSS)',
-        'Cross-site request forgery (CSRF)',
-        'Server-side request forgery (SSRF)',
-        'XML external entities (XXE)',
-        'Insecure deserialization',
-        'Security misconfiguration',
-        'Sensitive data exposure',
+        "Denial of service attacks",
+        "Cross-site scripting (XSS)",
+        "Cross-site request forgery (CSRF)",
+        "Server-side request forgery (SSRF)",
+        "XML external entities (XXE)",
+        "Insecure deserialization",
+        "Security misconfiguration",
+        "Sensitive data exposure",
       ];
 
       // Should fail initially - scenarios missing
@@ -284,29 +288,29 @@ describe('Security Logic Validation - TDD RED Phase', () => {
     });
   });
 
-  describe('Security Integration Issues', () => {
-    it('should FAIL: security middleware integration should be broken', () => {
+  describe("Security Integration Issues", () => {
+    it("should FAIL: security middleware integration should be broken", () => {
       // Test for broken security middleware integration
       const integrationIssues = [
         {
-          middleware: 'Helmet security headers',
-          issue: 'Not applied to all routes',
-          impact: 'Missing security headers',
+          middleware: "Helmet security headers",
+          issue: "Not applied to all routes",
+          impact: "Missing security headers",
         },
         {
-          middleware: 'CORS configuration',
-          issue: 'Too permissive',
-          impact: 'Cross-origin attacks possible',
+          middleware: "CORS configuration",
+          issue: "Too permissive",
+          impact: "Cross-origin attacks possible",
         },
         {
-          middleware: 'Rate limiting',
-          issue: 'Not properly configured',
-          impact: 'DoS attacks possible',
+          middleware: "Rate limiting",
+          issue: "Not properly configured",
+          impact: "DoS attacks possible",
         },
         {
-          middleware: 'Input validation',
-          issue: 'Missing from critical endpoints',
-          impact: 'Injection attacks possible',
+          middleware: "Input validation",
+          issue: "Missing from critical endpoints",
+          impact: "Injection attacks possible",
         },
       ];
 
@@ -314,23 +318,23 @@ describe('Security Logic Validation - TDD RED Phase', () => {
       expect(integrationIssues.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL: security logging should be insufficient', () => {
+    it("should FAIL: security logging should be insufficient", () => {
       // Test for insufficient security logging
       const loggingIssues = [
         {
-          type: 'Authentication failures',
-          current: 'Not logged',
-          required: 'Logged with user context',
+          type: "Authentication failures",
+          current: "Not logged",
+          required: "Logged with user context",
         },
         {
-          type: 'Authorization violations',
-          current: 'Basic logging',
-          required: 'Detailed logging with request details',
+          type: "Authorization violations",
+          current: "Basic logging",
+          required: "Detailed logging with request details",
         },
         {
-          type: 'Security events',
-          current: 'Inconsistent format',
-          required: 'Structured logging with standard format',
+          type: "Security events",
+          current: "Inconsistent format",
+          required: "Structured logging with standard format",
         },
       ];
 
@@ -339,104 +343,100 @@ describe('Security Logic Validation - TDD RED Phase', () => {
     });
   });
 
-  describe('Integration - Complete Security Logic', () => {
-    it('should FAIL: All security logic issues should compromise security validation', () => {
+  describe("Integration - Complete Security Logic", () => {
+    it("should FAIL: All security logic issues should compromise security validation", () => {
       // Comprehensive test for all security logic issues
       const securityLogicIssues = {
         testLogic: [
-          'Incorrect hardcoded secrets detection',
-          'Wrong security test expectations',
+          "Incorrect hardcoded secrets detection",
+          "Wrong security test expectations",
         ],
         vulnerabilityDetection: [
-          'False positives in detection',
-          'Missing real vulnerabilities',
+          "False positives in detection",
+          "Missing real vulnerabilities",
         ],
         complianceLogic: [
-          'Incorrect compliance checks',
-          'Wrong security scoring',
+          "Incorrect compliance checks",
+          "Wrong security scoring",
         ],
-        testData: [
-          'Incorrect test fixtures',
-          'Misconfigured test environment',
-        ],
-        mocking: [
-          'Unrealistic security mocks',
-          'Incomplete test scenarios',
-        ],
+        testData: ["Incorrect test fixtures", "Misconfigured test environment"],
+        mocking: ["Unrealistic security mocks", "Incomplete test scenarios"],
         integration: [
-          'Broken middleware integration',
-          'Insufficient security logging',
+          "Broken middleware integration",
+          "Insufficient security logging",
         ],
       };
 
       // Count total issues
-      const totalIssues = Object.values(securityLogicIssues)
-        .reduce((sum, issues) => sum + issues.length, 0);
+      const totalIssues = Object.values(securityLogicIssues).reduce(
+        (sum, issues) => sum + issues.length,
+        0,
+      );
 
       // Should fail initially - multiple security logic issues
       expect(totalIssues).toBeGreaterThan(0);
       console.log(`🔴 Security Logic Issues: ${totalIssues} identified`);
     });
 
-    it('should document security logic error patterns for fixing', () => {
+    it("should document security logic error patterns for fixing", () => {
       // Document the exact security logic error patterns
       const securityErrorPatterns = [
         {
-          pattern: 'expected true to be false',
-          description: 'Security test expectation error',
-          frequency: 'high',
-          files: ['tests/security/telemedicine-security.test.ts'],
-          fixRequired: 'Fix hardcoded secrets detection logic',
+          pattern: "expected true to be false",
+          description: "Security test expectation error",
+          frequency: "high",
+          files: ["tests/security/telemedicine-security.test.ts"],
+          fixRequired: "Fix hardcoded secrets detection logic",
         },
         {
-          pattern: 'hasHardcodedSecrets should be false',
-          description: 'Incorrect vulnerability detection',
-          frequency: 'high',
-          files: ['tests/security/telemedicine-security.test.ts'],
-          fixRequired: 'Implement proper secrets detection algorithm',
+          pattern: "hasHardcodedSecrets should be false",
+          description: "Incorrect vulnerability detection",
+          frequency: "high",
+          files: ["tests/security/telemedicine-security.test.ts"],
+          fixRequired: "Implement proper secrets detection algorithm",
         },
         {
-          pattern: 'Compliance check incorrectly failing',
-          description: 'Wrong compliance logic',
-          frequency: 'medium',
-          files: ['tests/security/*.test.ts'],
-          fixRequired: 'Fix compliance validation logic',
+          pattern: "Compliance check incorrectly failing",
+          description: "Wrong compliance logic",
+          frequency: "medium",
+          files: ["tests/security/*.test.ts"],
+          fixRequired: "Fix compliance validation logic",
         },
         {
-          pattern: 'Security scoring incorrect',
-          description: 'Wrong security scoring algorithm',
-          frequency: 'medium',
-          files: ['tests/security/*.test.ts'],
-          fixRequired: 'Implement accurate security scoring',
+          pattern: "Security scoring incorrect",
+          description: "Wrong security scoring algorithm",
+          frequency: "medium",
+          files: ["tests/security/*.test.ts"],
+          fixRequired: "Implement accurate security scoring",
         },
       ];
 
       // Should document current state for GREEN phase
       expect(securityErrorPatterns.length).toBeGreaterThan(0);
-      securityErrorPatterns.forEach(pattern => {
+      securityErrorPatterns.forEach((pattern) => {
         expect(pattern.pattern).toBeDefined();
         expect(pattern.fixRequired).toBeDefined();
       });
     });
 
-    it('should identify the specific failing test for priority fixing', () => {
+    it("should identify the specific failing test for priority fixing", () => {
       // Highlight the critical failing test that needs immediate attention
       const criticalFailingTest = {
-        file: 'tests/security/telemedicine-security.test.ts',
-        test: 'should FAIL: detect hardcoded default secrets',
+        file: "tests/security/telemedicine-security.test.ts",
+        test: "should FAIL: detect hardcoded default secrets",
         line: 32,
-        error: 'expected true to be false',
-        assertion: 'expect(result.hasHardcodedSecrets).toBe(false)',
+        error: "expected true to be false",
+        assertion: "expect(result.hasHardcodedSecrets).toBe(false)",
         actualValue: true,
         expectedValue: false,
-        priority: 'high',
-        impact: 'Security validation is giving false positives',
+        priority: "high",
+        impact: "Security validation is giving false positives",
       };
 
       // This is the specific test that's currently failing
       expect(criticalFailingTest.file).toBeDefined();
-      expect(criticalFailingTest.error).toBe('expected true to be false');
-      expect(criticalFailingTest.priority).toBe('high');
+      expect(criticalFailingTest.error).toBe("expected true to be false");
+      expect(criticalFailingTest.priority).toBe("high");
 
       console.log(
         `🚨 Critical Failing Test: ${criticalFailingTest.file} - ${criticalFailingTest.test}`,

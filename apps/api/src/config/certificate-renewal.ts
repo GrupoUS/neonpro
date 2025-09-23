@@ -3,8 +3,8 @@
  * Implements automatic certificate renewal for healthcare compliance
  */
 
-import { readFileSync } from 'fs';
-import { logger } from '../lib/logger';
+import { readFileSync } from "fs";
+import { logger } from "../lib/logger";
 
 interface CertificateInfo {
   cert: string;
@@ -18,7 +18,7 @@ interface CertificateInfo {
 }
 
 interface RenewalConfig {
-  provider: 'letsencrypt' | 'manual';
+  provider: "letsencrypt" | "manual";
   email: string;
   domains: string[];
   staging: boolean;
@@ -31,10 +31,10 @@ interface RenewalConfig {
  */
 function parseCertificate(certPath: string): CertificateInfo | null {
   try {
-    const certContent = readFileSync(certPath, 'utf8');
+    const certContent = readFileSync(certPath, "utf8");
 
     // Parse certificate using crypto module
-    const crypto = require('crypto');
+    const crypto = require("crypto");
     const cert = new crypto.X509Certificate(certContent);
 
     const expiryDate = new Date(cert.validTo);
@@ -45,7 +45,7 @@ function parseCertificate(certPath: string): CertificateInfo | null {
 
     return {
       cert: certContent,
-      key: '', // Will be loaded separately
+      key: "", // Will be loaded separately
       issuer: cert.issuer,
       subject: cert.subject,
       expiryDate,
@@ -53,7 +53,7 @@ function parseCertificate(certPath: string): CertificateInfo | null {
       serialNumber: cert.serialNumber,
     };
   } catch (error) {
-    logger.error('Failed to parse certificate', { error: error.message });
+    logger.error("Failed to parse certificate", { error: error.message });
     return null;
   }
 }
@@ -66,17 +66,17 @@ export async function checkCertificateExpiry(): Promise<void> {
   const certPath = process.env.SSL_CERT_PATH;
 
   if (!certPath) {
-    logger.warn('SSL certificate path not configured');
+    logger.warn("SSL certificate path not configured");
     return;
   }
 
   const certInfo = parseCertificate(certPath);
   if (!certInfo) {
-    logger.error('Failed to parse certificate for expiry check');
+    logger.error("Failed to parse certificate for expiry check");
     return;
   }
 
-  logger.info('Certificate expiry check', {
+  logger.info("Certificate expiry check", {
     expiryDate: certInfo.expiryDate,
     daysUntilExpiry: certInfo.daysUntilExpiry,
     subject: certInfo.subject,
@@ -84,14 +84,14 @@ export async function checkCertificateExpiry(): Promise<void> {
 
   // Check if renewal is needed
   if (certInfo.daysUntilExpiry <= config.renewalThresholdDays) {
-    logger.warn('Certificate renewal required', {
+    logger.warn("Certificate renewal required", {
       daysUntilExpiry: certInfo.daysUntilExpiry,
       threshold: config.renewalThresholdDays,
     });
 
     await triggerCertificateRenewal(config);
   } else {
-    logger.info('Certificate is valid', {
+    logger.info("Certificate is valid", {
       daysUntilExpiry: certInfo.daysUntilExpiry,
     });
   }
@@ -102,19 +102,19 @@ export async function checkCertificateExpiry(): Promise<void> {
  */
 async function triggerCertificateRenewal(config: RenewalConfig): Promise<void> {
   try {
-    logger.info('Starting certificate renewal process', {
+    logger.info("Starting certificate renewal process", {
       provider: config.provider,
       domains: config.domains,
     });
 
-    if (config.provider === 'letsencrypt') {
+    if (config.provider === "letsencrypt") {
       await renewLetsEncryptCertificate(config);
     } else {
-      logger.warn('Manual certificate renewal required');
+      logger.warn("Manual certificate renewal required");
       await notifyManualRenewalRequired(config);
     }
   } catch (error) {
-    logger.error('Certificate renewal failed', { error: error.message });
+    logger.error("Certificate renewal failed", { error: error.message });
     await notifyRenewalFailure(error as Error);
   }
 }
@@ -122,39 +122,41 @@ async function triggerCertificateRenewal(config: RenewalConfig): Promise<void> {
 /**
  * Renew Let's Encrypt certificate using certbot
  */
-async function renewLetsEncryptCertificate(config: RenewalConfig): Promise<void> {
-  const { spawn } = require('child_process');
+async function renewLetsEncryptCertificate(
+  config: RenewalConfig,
+): Promise<void> {
+  const { spawn } = require("child_process");
 
   const certbotArgs = [
-    'renew',
-    '--quiet',
-    '--non-interactive',
-    '--agree-tos',
-    '--email',
+    "renew",
+    "--quiet",
+    "--non-interactive",
+    "--agree-tos",
+    "--email",
     config.email,
   ];
 
   if (config.staging) {
-    certbotArgs.push('--staging');
+    certbotArgs.push("--staging");
   }
 
   return new Promise((resolve, reject) => {
-    const certbot = spawn('certbot', certbotArgs);
+    const certbot = spawn("certbot", certbotArgs);
 
-    certbot.on('close', (code: number) => {
+    certbot.on("close", (code: number) => {
       if (code === 0) {
-        logger.info('Certificate renewal successful');
+        logger.info("Certificate renewal successful");
         notifyRenewalSuccess();
         resolve();
       } else {
         const error = new Error(`Certbot renewal failed with code ${code}`);
-        logger.error('Certificate renewal failed', { exitCode: code });
+        logger.error("Certificate renewal failed", { exitCode: code });
         reject(error);
       }
     });
 
-    certbot.on('error', (error: Error) => {
-      logger.error('Certbot spawn error', { error: error.message });
+    certbot.on("error", (error: Error) => {
+      logger.error("Certbot spawn error", { error: error.message });
       reject(error);
     });
   });
@@ -165,12 +167,17 @@ async function renewLetsEncryptCertificate(config: RenewalConfig): Promise<void>
  */
 function getRenewalConfig(): RenewalConfig {
   return {
-    provider: (process.env.CERT_PROVIDER as 'letsencrypt' | 'manual') || 'letsencrypt',
-    email: process.env.LETSENCRYPT_EMAIL || 'admin@neonpro.com',
-    domains: process.env.CERT_DOMAINS?.split(',') || ['api.neonpro.com'],
-    staging: process.env.LETSENCRYPT_STAGING === 'true',
-    renewalThresholdDays: parseInt(process.env.CERT_RENEWAL_THRESHOLD_DAYS || '30'),
-    monitoringIntervalHours: parseInt(process.env.CERT_MONITORING_INTERVAL_HOURS || '24'),
+    provider:
+      (process.env.CERT_PROVIDER as "letsencrypt" | "manual") || "letsencrypt",
+    email: process.env.LETSENCRYPT_EMAIL || "admin@neonpro.com",
+    domains: process.env.CERT_DOMAINS?.split(",") || ["api.neonpro.com"],
+    staging: process.env.LETSENCRYPT_STAGING === "true",
+    renewalThresholdDays: parseInt(
+      process.env.CERT_RENEWAL_THRESHOLD_DAYS || "30",
+    ),
+    monitoringIntervalHours: parseInt(
+      process.env.CERT_MONITORING_INTERVAL_HOURS || "24",
+    ),
   };
 }
 
@@ -181,7 +188,7 @@ export function startCertificateMonitoring(): void {
   const config = getRenewalConfig();
   const intervalMs = config.monitoringIntervalHours * 60 * 60 * 1000;
 
-  logger.info('Starting certificate monitoring service', {
+  logger.info("Starting certificate monitoring service", {
     intervalHours: config.monitoringIntervalHours,
     thresholdDays: config.renewalThresholdDays,
   });
@@ -199,13 +206,15 @@ export function startCertificateMonitoring(): void {
  * Notify successful renewal
  */
 async function notifyRenewalSuccess(): Promise<void> {
-  logger.info('Certificate renewal successful - service will restart to load new certificate');
+  logger.info(
+    "Certificate renewal successful - service will restart to load new certificate",
+  );
 
   // In production, you might want to reload the certificate without restart
   // For now, we'll log the success
   const certInfo = parseCertificate(process.env.SSL_CERT_PATH!);
   if (certInfo) {
-    logger.info('New certificate loaded', {
+    logger.info("New certificate loaded", {
       expiryDate: certInfo.expiryDate,
       daysUntilExpiry: certInfo.daysUntilExpiry,
     });
@@ -215,8 +224,10 @@ async function notifyRenewalSuccess(): Promise<void> {
 /**
  * Notify manual renewal required
  */
-async function notifyManualRenewalRequired(config: RenewalConfig): Promise<void> {
-  const message = `Manual certificate renewal required for domains: ${config.domains.join(', ')}`;
+async function notifyManualRenewalRequired(
+  config: RenewalConfig,
+): Promise<void> {
+  const message = `Manual certificate renewal required for domains: ${config.domains.join(", ")}`;
 
   logger.warn(message, {
     provider: config.provider,
@@ -241,7 +252,7 @@ async function notifyRenewalFailure(error: Error): Promise<void> {
  * Health check for certificate status
  */
 export function getCertificateHealth(): {
-  status: 'healthy' | 'warning' | 'critical';
+  status: "healthy" | "warning" | "critical";
   daysUntilExpiry: number;
   expiryDate?: Date;
   error?: string;
@@ -250,26 +261,27 @@ export function getCertificateHealth(): {
     const certPath = process.env.SSL_CERT_PATH;
     if (!certPath) {
       return {
-        status: 'critical',
+        status: "critical",
         daysUntilExpiry: 0,
-        error: 'Certificate path not configured',
+        error: "Certificate path not configured",
       };
     }
 
     const certInfo = parseCertificate(certPath);
     if (!certInfo) {
       return {
-        status: 'critical',
+        status: "critical",
         daysUntilExpiry: 0,
-        error: 'Failed to parse certificate',
+        error: "Failed to parse certificate",
       };
     }
 
-    const status = certInfo.daysUntilExpiry <= 7
-      ? 'critical'
-      : certInfo.daysUntilExpiry <= 30
-      ? 'warning'
-      : 'healthy';
+    const status =
+      certInfo.daysUntilExpiry <= 7
+        ? "critical"
+        : certInfo.daysUntilExpiry <= 30
+          ? "warning"
+          : "healthy";
 
     return {
       status,
@@ -278,7 +290,7 @@ export function getCertificateHealth(): {
     };
   } catch (error) {
     return {
-      status: 'critical',
+      status: "critical",
       daysUntilExpiry: 0,
       error: (error as Error).message,
     };

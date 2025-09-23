@@ -4,13 +4,13 @@
  * Provides user-related test data for authentication and authorization testing.
  */
 
-import { TEST_IDS } from './index';
+import { TEST_IDS } from "./index";
 
 export interface MockUser {
   id: string;
   email: string;
   name: string;
-  role: 'admin' | 'professional' | 'patient' | 'staff';
+  role: "admin" | "professional" | "patient" | "staff";
   clinicId?: string;
   active: boolean;
   createdAt: Date;
@@ -31,9 +31,9 @@ export interface MockSession {
 export function createMockUser(overrides: Partial<MockUser> = {}): MockUser {
   return {
     id: TEST_IDS.USER,
-    email: 'test@example.com',
-    name: 'Test User',
-    role: 'professional',
+    email: "test@example.com",
+    name: "Test User",
+    role: "professional",
     clinicId: TEST_IDS.CLINIC,
     active: true,
     createdAt: new Date(),
@@ -53,9 +53,9 @@ export function createMockSession(
   expiresAt.setHours(expiresAt.getHours() + 24); // 24 hours from now
 
   return {
-    id: 'session-123',
+    id: "session-123",
     userId: TEST_IDS.USER,
-    token: 'mock-jwt-token',
+    token: "mock-jwt-token",
     expiresAt,
     createdAt: now,
     ...overrides,
@@ -68,29 +68,29 @@ export function createMockSession(
 export function createTestUsers() {
   return {
     admin: createMockUser({
-      id: 'admin-123',
-      email: 'admin@neonpro.com',
-      name: 'Admin User',
-      role: 'admin',
+      id: "admin-123",
+      email: "admin@neonpro.com",
+      name: "Admin User",
+      role: "admin",
     }),
     professional: createMockUser({
       id: TEST_IDS.PROFESSIONAL,
-      email: 'doctor@clinic.com',
-      name: 'Dr. Professional',
-      role: 'professional',
+      email: "doctor@clinic.com",
+      name: "Dr. Professional",
+      role: "professional",
       clinicId: TEST_IDS.CLINIC,
     }),
     patient: createMockUser({
       id: TEST_IDS.PATIENT,
-      email: 'patient@email.com',
-      name: 'Patient User',
-      role: 'patient',
+      email: "patient@email.com",
+      name: "Patient User",
+      role: "patient",
     }),
     staff: createMockUser({
-      id: 'staff-123',
-      email: 'staff@clinic.com',
-      name: 'Staff Member',
-      role: 'staff',
+      id: "staff-123",
+      email: "staff@clinic.com",
+      name: "Staff Member",
+      role: "staff",
       clinicId: TEST_IDS.CLINIC,
     }),
   };

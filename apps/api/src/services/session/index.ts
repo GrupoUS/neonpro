@@ -4,13 +4,13 @@
  * Exports all session-related services and utilities
  */
 
-export { AgentSessionService } from './agent-session-service';
+export { AgentSessionService } from "./agent-session-service";
 export type {
   SessionConfig,
   SessionContext,
   SessionCreateOptions,
   SessionData,
-} from './agent-session-service';
+} from "./agent-session-service";
 
 // Default session configurations
 export const DEFAULT_SESSION_CONFIG = {
@@ -29,12 +29,12 @@ export const HEALTHCARE_SESSION_CONFIG = {
 
 // Session event types
 export const SESSION_EVENTS = {
-  CREATED: 'session_created',
-  UPDATED: 'session_updated',
-  EXPIRED: 'session_expired',
-  DELETED: 'session_deleted',
-  ACTIVITY: 'session_activity',
-  CLEANUP: 'session_cleanup',
+  CREATED: "session_created",
+  UPDATED: "session_updated",
+  EXPIRED: "session_expired",
+  DELETED: "session_deleted",
+  ACTIVITY: "session_activity",
+  CLEANUP: "session_cleanup",
 } as const;
 
 // Helper functions for session management
@@ -60,16 +60,19 @@ export const formatSessionDuration = (ms: number): string => {
   }
 };
 
-export const getSessionHealth = (session: SessionData): 'healthy' | 'expiring_soon' | 'expired' => {
+export const getSessionHealth = (
+  session: SessionData,
+): "healthy" | "expiring_soon" | "expired" => {
   const now = new Date();
   const expiresAt = new Date(session.expiresAt);
   const timeUntilExpiration = expiresAt.getTime() - now.getTime();
 
   if (timeUntilExpiration <= 0) {
-    return 'expired';
-  } else if (timeUntilExpiration <= 5 * 60 * 1000) { // 5 minutes
-    return 'expiring_soon';
+    return "expired";
+  } else if (timeUntilExpiration <= 5 * 60 * 1000) {
+    // 5 minutes
+    return "expiring_soon";
   } else {
-    return 'healthy';
+    return "healthy";
   }
 };

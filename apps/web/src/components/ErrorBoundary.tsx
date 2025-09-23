@@ -1,27 +1,30 @@
-import * as React from 'react'
-import { AlertTriangle, RefreshCw } from 'lucide-react'
+import * as React from "react";
+import { AlertTriangle, RefreshCw } from "lucide-react";
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 interface ErrorBoundaryState {
-  hasError: boolean
-  error?: Error
+  hasError: boolean;
+  error?: Error;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends React.Component<
+  ErrorBoundaryProps,
+  ErrorBoundaryState
+> {
   constructor(props: ErrorBoundaryProps) {
-    super(props)
-    this.state = { hasError: false }
+    super(props);
+    this.state = { hasError: false };
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
-    return { hasError: true, error }
+    return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by boundary:', error, errorInfo)
+    console.error("Error caught by boundary:", error, errorInfo);
   }
 
   render() {
@@ -36,12 +39,13 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               Oops! Algo deu errado
             </h2>
             <p className="text-gray-600 mb-6">
-              {this.state.error?.message || 'Ocorreu um erro inesperado. Por favor, tente novamente.'}
+              {this.state.error?.message ||
+                "Ocorreu um erro inesperado. Por favor, tente novamente."}
             </p>
             <button
               onClick={() => {
-                this.setState({ hasError: false, error: undefined })
-                window.location.reload()
+                this.setState({ hasError: false, error: undefined });
+                window.location.reload();
               }}
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
@@ -50,20 +54,20 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             </button>
           </div>
         </div>
-      )
+      );
     }
 
-    return this.props.children
+    return this.props.children;
   }
 }
 
 // Hook-based error boundary for functional components
 export function useErrorHandler() {
-  const [error, setError] = React.useState<Error | null>(null)
-  
+  const [error, setError] = React.useState<Error | null>(null);
+
   if (error) {
-    throw error
+    throw error;
   }
-  
-  return setError
+
+  return setError;
 }

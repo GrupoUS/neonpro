@@ -1,6 +1,6 @@
-import crypto from 'crypto';
-import fs from 'fs';
-import https from 'https';
+import crypto from "crypto";
+import fs from "fs";
+import https from "https";
 import {
   ERROR_CONSTANTS,
   formatCipherList,
@@ -8,13 +8,13 @@ import {
   getDefaultTLSVersion,
   isWeakCipher,
   TLS_CONSTANTS,
-} from './tls-constants';
+} from "./tls-constants";
 
 export interface TLSConfiguration {
   key: string | Buffer;
   cert: string | Buffer;
   ca?: string | Buffer | Array<string | Buffer>;
-  minVersion: 'TLSv1.2' | 'TLSv1.3';
+  minVersion: "TLSv1.2" | "TLSv1.3";
   ciphers: string[];
   honorCipherOrder: boolean;
   secureOptions: number;
@@ -94,36 +94,39 @@ export class TLSConfigManager {
       throw new Error(ERROR_CONSTANTS.MESSAGES.INVALID_CONFIGURATION);
     }
 
-    if (!certConfig.keyPath || typeof certConfig.keyPath !== 'string') {
-      throw new Error('Certificate key path is required and must be a string');
+    if (!certConfig.keyPath || typeof certConfig.keyPath !== "string") {
+      throw new Error("Certificate key path is required and must be a string");
     }
 
-    if (!certConfig.certPath || typeof certConfig.certPath !== 'string') {
-      throw new Error('Certificate path is required and must be a string');
+    if (!certConfig.certPath || typeof certConfig.certPath !== "string") {
+      throw new Error("Certificate path is required and must be a string");
     }
 
-    if (certConfig.caPath && typeof certConfig.caPath !== 'string') {
-      throw new Error('Certificate CA path must be a string if provided');
+    if (certConfig.caPath && typeof certConfig.caPath !== "string") {
+      throw new Error("Certificate CA path must be a string if provided");
     }
 
-    if (certConfig.passphrase && typeof certConfig.passphrase !== 'string') {
-      throw new Error('Certificate passphrase must be a string if provided');
+    if (certConfig.passphrase && typeof certConfig.passphrase !== "string") {
+      throw new Error("Certificate passphrase must be a string if provided");
     }
   }
 
-  private createTLSConfiguration(certConfig: CertificateConfig): TLSConfiguration {
+  private createTLSConfiguration(
+    certConfig: CertificateConfig,
+  ): TLSConfiguration {
     // Use centralized cipher suites and security options
     const allCiphers = getAllCiphers();
     const cipherList = formatCipherList(allCiphers);
 
     // Secure Options for HTTPS - centralized security configuration
-    const secureOptions = https.constants.SSL_OP_NO_SSLv2
-      | https.constants.SSL_OP_NO_SSLv3
-      | https.constants.SSL_OP_NO_TLSv1
-      | https.constants.SSL_OP_NO_TLSv1_1
-      | https.constants.SSL_OP_CIPHER_SERVER_PREFERENCE
-      | https.constants.SSL_OP_SINGLE_ECDH_USE
-      | https.constants.SSL_OP_SINGLE_DH_USE;
+    const secureOptions =
+      https.constants.SSL_OP_NO_SSLv2 |
+      https.constants.SSL_OP_NO_SSLv3 |
+      https.constants.SSL_OP_NO_TLSv1 |
+      https.constants.SSL_OP_NO_TLSv1_1 |
+      https.constants.SSL_OP_CIPHER_SERVER_PREFERENCE |
+      https.constants.SSL_OP_SINGLE_ECDH_USE |
+      https.constants.SSL_OP_SINGLE_DH_USE;
 
     try {
       // Load certificates
@@ -145,12 +148,14 @@ export class TLSConfigManager {
         secureOptions,
         sessionIdTimeout: TLS_CONSTANTS.SECURITY.SESSION_ID_TIMEOUT,
         sessionTimeout: TLS_CONSTANTS.SECURITY.SESSION_TIMEOUT,
-        ticketKeys: crypto.getRandomValues(new Uint8Array(TLS_CONSTANTS.SECURITY.TICKET_KEY_SIZE)),
+        ticketKeys: crypto.getRandomValues(
+          new Uint8Array(TLS_CONSTANTS.SECURITY.TICKET_KEY_SIZE),
+        ),
       };
     } catch (error) {
       throw new Error(
         `Failed to load TLS certificates: ${
-          error instanceof Error ? error.message : 'Unknown error'
+          error instanceof Error ? error.message : "Unknown error"
         }`,
       );
     }
@@ -191,15 +196,20 @@ export class TLSConfigManager {
         subject: TLS_CONSTANTS.CERTIFICATE.SUBJECT_PLACEHOLDER,
         validFrom: new Date(),
         validTo: new Date(
-          Date.now() + TLS_CONSTANTS.CERTIFICATE.DEFAULT_VALIDITY_DAYS * 24 * 60 * 60 * 1000,
+          Date.now() +
+            TLS_CONSTANTS.CERTIFICATE.DEFAULT_VALIDITY_DAYS *
+              24 *
+              60 *
+              60 *
+              1000,
         ),
         fingerprint: this.generateCertificateFingerprint(cert),
       };
     } catch (error) {
       // Log certificate parsing error securely
       console.error(
-        'Certificate parsing failed:',
-        error instanceof Error ? error.message : 'Unknown error',
+        "Certificate parsing failed:",
+        error instanceof Error ? error.message : "Unknown error",
       );
       return {};
     }
@@ -214,27 +224,35 @@ export class TLSConfigManager {
     const warnings: string[] = [];
 
     if (!this.config) {
-      errors.push('TLS configuration not initialized');
+      errors.push("TLS configuration not initialized");
       return { valid: false, errors, warnings };
     }
 
     // Check certificate paths
     if (this.certificateConfig) {
-      const requiredPaths = [this.certificateConfig.keyPath, this.certificateConfig.certPath];
+      const requiredPaths = [
+        this.certificateConfig.keyPath,
+        this.certificateConfig.certPath,
+      ];
 
-      requiredPaths.forEach(filePath => {
+      requiredPaths.forEach((filePath) => {
         if (!fs.existsSync(filePath)) {
           errors.push(`Certificate file not found: ${filePath}`);
         }
       });
 
-      if (this.certificateConfig.caPath && !fs.existsSync(this.certificateConfig.caPath)) {
-        warnings.push(`Optional CA file not found: ${this.certificateConfig.caPath}`);
+      if (
+        this.certificateConfig.caPath &&
+        !fs.existsSync(this.certificateConfig.caPath)
+      ) {
+        warnings.push(
+          `Optional CA file not found: ${this.certificateConfig.caPath}`,
+        );
       }
     }
 
     // Check cipher strength
-    this.config.ciphers.split(':').forEach(cipher => {
+    this.config.ciphers.split(":").forEach((cipher) => {
       if (isWeakCipher(cipher)) {
         errors.push(`Weak cipher detected: ${cipher}`);
       }
@@ -242,7 +260,7 @@ export class TLSConfigManager {
 
     // Check TLS version
     if (this.config.minVersion !== getDefaultTLSVersion()) {
-      warnings.push('Consider using TLS 1.3 for enhanced security');
+      warnings.push("Consider using TLS 1.3 for enhanced security");
     }
 
     return {
@@ -254,7 +272,9 @@ export class TLSConfigManager {
 
   public generateDHParams(): Buffer {
     // Generate Diffie-Hellman parameters for Perfect Forward Secrecy
-    const dhParams = crypto.createDiffieHellman(TLS_CONSTANTS.SECURITY.DH_PARAM_SIZE);
+    const dhParams = crypto.createDiffieHellman(
+      TLS_CONSTANTS.SECURITY.DH_PARAM_SIZE,
+    );
     return dhParams.getPrime();
   }
 
@@ -283,6 +303,10 @@ export class TLSConfigManager {
    * This is a simplified implementation - in production, use a proper crypto library
    */
   private generateCertificateFingerprint(cert: string): string {
-    return crypto.createHash('sha256').update(cert).digest('hex').substring(0, 16);
+    return crypto
+      .createHash("sha256")
+      .update(cert)
+      .digest("hex")
+      .substring(0, 16);
   }
 }

@@ -16,14 +16,14 @@ export default defineConfig({
         "src/tests/",
         "**/*.d.ts",
         "**/*.config.*",
-        "**/vitest.*"
-      ]
-    }
+        "**/vitest.*",
+      ],
+    },
   },
   resolve: {
     alias: {
       "@neonpro/domain": resolve(__dirname, "../domain/src"),
-      "@neonpro/database": resolve(__dirname, "./src")
-    }
-  }
+      "@neonpro/database": resolve(__dirname, "./src"),
+    },
+  },
 });

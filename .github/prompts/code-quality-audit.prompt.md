@@ -115,7 +115,14 @@ COORDINATION_ENGINE:
   performance_monitoring: "real_time"
 
 PATTERN_DETERMINATION:
-  factors: ["task_complexity", "agent_capabilities", "resource_constraints", "dependencies", "compliance"]
+  factors:
+    [
+      "task_complexity",
+      "agent_capabilities",
+      "resource_constraints",
+      "dependencies",
+      "compliance",
+    ]
   patterns: ["sequential", "parallel", "hybrid", "adaptive"]
   selection_algorithm: "multi_factor_analysis"
   optimization_target: "60-80% performance_improvement"
@@ -409,7 +416,7 @@ describe('UserService', () => {
     // TDD ORCHESTRATOR APPROACH: This will fail in RED phase as expected
     expect(() => userService.createUser({})).toThrow('Method not implemented');
   });
-  
+
   it('should validate user data before creation', () => {
     const userService = new UserService();
     // COMPREHENSIVE RED PHASE: Multiple failure scenarios
@@ -590,8 +597,8 @@ vi.mock('@/services/api', () => ({
 
 // ✅ Solution: TDD orchestrator-validated mocking with comprehensive scenarios
 vi.mock('@/services/api', () => ({
-  fetchUser: vi.fn(() => Promise.resolve({ 
-    id: 1, 
+  fetchUser: vi.fn(() => Promise.resolve({
+    id: 1,
     name: 'Test User',
     email: 'test@example.com',
     createdAt: new Date().toISOString()

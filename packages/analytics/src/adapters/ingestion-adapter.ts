@@ -188,7 +188,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     const invalid: any[] = [];
     const errors: IngestionError[] = [];
 
-    data.forEach((record,_index) => {
+    data.forEach((record, _index) => {
       let isValid = true;
 
       for (const rule of this.validationRules) {
@@ -258,7 +258,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     const transformed: any[] = [];
     const errors: IngestionError[] = [];
 
-    data.forEach((record,_index) => {
+    data.forEach((record, _index) => {
       let transformedRecord = { ...record };
 
       for (const rule of this.transformationRules) {
@@ -357,13 +357,13 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   }
 
   private getFieldValue(record: any, fieldPath: string): any {
-    return fieldPath.split(".").reduce((obj,_key) => obj?.[key], record);
+    return fieldPath.split(".").reduce((obj, _key) => obj?.[key], record);
   }
 
   private setFieldValue(record: any, fieldPath: string, value: any): void {
     const keys = fieldPath.split(".");
     const lastKey = keys.pop()!;
-    const target = keys.reduce((obj,_key) => {
+    const target = keys.reduce((obj, _key) => {
       if (!obj[key]) obj[key] = {};
       return obj[key];
     }, record);
@@ -481,7 +481,8 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         processedRecords: transformed.length,
         validRecords: valid.length,
         invalidRecords: invalid.length,
-        errors: [...validationErrors, ...transformationErrors].map((e) => e.message,
+        errors: [...validationErrors, ...transformationErrors].map(
+          (e) => e.message,
         ),
         warnings: [],
       },

@@ -30,13 +30,7 @@
     "packages/**/__tests__/**/*",
     "packages/**/tests/**/*"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/dist/**/*",
-    "**/*.js",
-    "**/*.d.ts"
-  ],
+  "exclude": ["node_modules", "dist", "**/dist/**/*", "**/*.js", "**/*.d.ts"],
   "references": [
     { "path": "./packages/types" },
     { "path": "./packages/utils" },

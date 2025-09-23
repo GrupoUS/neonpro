@@ -780,7 +780,8 @@ export class HealthcareMiddlewareService {
       userContext?.userRole === "system_admin";
 
     // Workflow type detection
-    let workflowType: HealthcareRequestContext["workflowContext"]["workflowType"] = "administrative_task";
+    let workflowType: HealthcareRequestContext["workflowContext"]["workflowType"] =
+      "administrative_task";
 
     if (path.includes("/patient") && method === "POST")
       workflowType = "patient_registration";
@@ -1216,7 +1217,8 @@ export class HealthcareMiddlewareService {
       ];
       const requestedFields = Object.keys(body);
 
-      const unnecessarySensitiveFields = sensitiveFields.filter((field) =>
+      const unnecessarySensitiveFields = sensitiveFields.filter(
+        (field) =>
           requestedFields.includes(field) &&
           !this.isFieldNecessary(field, _context),
       );
@@ -1364,7 +1366,9 @@ export class HealthcareMiddlewareService {
   /**
    * Determine error status code
    */
-  private determineErrorStatusCode(error: Error & { message?: string }): number {
+  private determineErrorStatusCode(
+    error: Error & { message?: string },
+  ): number {
     if (error.message?.includes("LGPD_CONSENT_REQUIRED")) return 403;
     if (error.message?.includes("CSRF_TOKEN_MISSING")) return 403;
     if (error.message?.includes("RATE_LIMIT_EXCEEDED")) return 429;
@@ -1374,7 +1378,10 @@ export class HealthcareMiddlewareService {
   /**
    * Create error response
    */
-  private createErrorResponse(error: Error & { message?: string }, _context?: HealthcareRequestContext) {
+  private createErrorResponse(
+    error: Error & { message?: string },
+    _context?: HealthcareRequestContext,
+  ) {
     const baseResponse = {
       error: true,
       message: this.config.errorHandling.enableDetailedErrors
@@ -1415,7 +1422,7 @@ export class HealthcareMiddlewareService {
       console.log("📊 [HealthcareMiddlewareService] Metrics collected:", {
         count: metricsToReport.length,
         averageDuration:
-          metricsToReport.reduce((sum,_m) => sum + (m.duration || 0), 0) /
+          metricsToReport.reduce((sum, _m) => sum + (m.duration || 0), 0) /
           metricsToReport.length,
         errorRate:
           metricsToReport.filter((m) => m.errorOccurred).length /

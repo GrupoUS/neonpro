@@ -67,7 +67,7 @@ export interface PatientQueryOptions {
   /** Field to sort by */
   sortBy?: string;
   /** Sort order: 'asc' or 'desc' */
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 /**
@@ -83,4 +83,3 @@ export interface PatientSearchResult {
   /** Offset applied to this result */
   offset: number;
 }
-

@@ -10,10 +10,10 @@
  * - Database encryption at rest and in transit
  */
 
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
-  const { default: app } = await import('../../src/app');
+  const { default: app } = await import("../../src/app");
   const url = new URL(`http://local.test${path}`);
   return app.request(url, init);
 }
@@ -28,10 +28,10 @@ const EncryptedFieldSchema = z.object({
     encryptedAt: z.string().datetime(),
     fieldType: z.string(),
     dataClassification: z.enum([
-      'public',
-      'internal',
-      'confidential',
-      'restricted',
+      "public",
+      "internal",
+      "confidential",
+      "restricted",
     ]),
   }),
 });
@@ -57,11 +57,11 @@ const PatientDataEncryptionSchema = z.object({
   }),
 });
 
-describe('Patient Data Encryption Integration Tests', () => {
+describe("Patient Data Encryption Integration Tests", () => {
   const testAuthHeaders = {
-    Authorization: 'Bearer test-token',
-    'Content-Type': 'application/json',
-    'X-Healthcare-Professional': 'CRM-123456',
+    Authorization: "Bearer test-token",
+    "Content-Type": "application/json",
+    "X-Healthcare-Professional": "CRM-123456",
   };
 
   let testPatientId: string;
@@ -73,38 +73,38 @@ describe('Patient Data Encryption Integration Tests', () => {
   });
 
   beforeEach(async () => {
-    testPatientId = '550e8400-e29b-41d4-a716-446655440000';
-    testEncryptionKeyId = '550e8400-e29b-41d4-a716-446655440001';
+    testPatientId = "550e8400-e29b-41d4-a716-446655440000";
+    testEncryptionKeyId = "550e8400-e29b-41d4-a716-446655440001";
   });
 
   afterAll(async () => {
     // Cleanup test data and encryption keys
   });
 
-  describe('Field-Level Encryption', () => {
-    it('should encrypt sensitive patient data fields', async () => {
+  describe("Field-Level Encryption", () => {
+    it("should encrypt sensitive patient data fields", async () => {
       const sensitivePatientData = {
-        name: 'João Silva', // Not encrypted - used for search
-        dateOfBirth: '1980-01-15', // Not encrypted - used for age calculation
-        cpf: '123.456.789-00', // Encrypted
-        phone: '(11) 99999-9999', // Encrypted
-        email: 'joao.silva@test.com', // Encrypted
+        name: "João Silva", // Not encrypted - used for search
+        dateOfBirth: "1980-01-15", // Not encrypted - used for age calculation
+        cpf: "123.456.789-00", // Encrypted
+        phone: "(11) 99999-9999", // Encrypted
+        email: "joao.silva@test.com", // Encrypted
         address: {
-          street: 'Rua das Flores, 123',
-          city: 'São Paulo',
-          state: 'SP',
-          cep: '01234-567',
+          street: "Rua das Flores, 123",
+          city: "São Paulo",
+          state: "SP",
+          cep: "01234-567",
         }, // Encrypted as JSON
         medicalHistory: {
-          conditions: ['Hipertensão', 'Diabetes tipo 2'],
-          medications: ['Losartana 50mg', 'Metformina 850mg'],
+          conditions: ["Hipertensão", "Diabetes tipo 2"],
+          medications: ["Losartana 50mg", "Metformina 850mg"],
           surgeries: [],
         }, // Encrypted as JSON
-        allergies: ['Penicilina', 'Látex'], // Encrypted
+        allergies: ["Penicilina", "Látex"], // Encrypted
       };
 
-      const response = await api('/api/v2/patients', {
-        method: 'POST',
+      const response = await api("/api/v2/patients", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify(sensitivePatientData),
       });
@@ -117,39 +117,39 @@ describe('Patient Data Encryption Integration Tests', () => {
       expect(createdPatient.cpf).toMatchObject({
         value: expect.stringMatching(/^[A-Za-z0-9+/]+=*$/), // Base64 encrypted value
         keyId: expect.any(String),
-        algorithm: 'AES-256-GCM',
+        algorithm: "AES-256-GCM",
         metadata: expect.objectContaining({
-          fieldType: 'cpf',
-          dataClassification: 'restricted',
+          fieldType: "cpf",
+          dataClassification: "restricted",
         }),
       });
 
       expect(createdPatient.medicalHistory).toMatchObject({
         value: expect.stringMatching(/^[A-Za-z0-9+/]+=*$/),
         keyId: expect.any(String),
-        algorithm: 'AES-256-GCM',
+        algorithm: "AES-256-GCM",
         metadata: expect.objectContaining({
-          fieldType: 'medical_history',
-          dataClassification: 'restricted',
+          fieldType: "medical_history",
+          dataClassification: "restricted",
         }),
       });
     });
 
-    it('should decrypt data when accessed by authorized users', async () => {
+    it("should decrypt data when accessed by authorized users", async () => {
       // Create encrypted patient data
       const patientData = {
-        name: 'Maria Santos',
-        cpf: '987.654.321-00',
-        phone: '(21) 88888-8888',
-        email: 'maria.santos@test.com',
+        name: "Maria Santos",
+        cpf: "987.654.321-00",
+        phone: "(21) 88888-8888",
+        email: "maria.santos@test.com",
         medicalHistory: {
-          conditions: ['Asma'],
-          medications: ['Salbutamol'],
+          conditions: ["Asma"],
+          medications: ["Salbutamol"],
         },
       };
 
-      const createResponse = await api('/api/v2/patients', {
-        method: 'POST',
+      const createResponse = await api("/api/v2/patients", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify(patientData),
       });
@@ -161,7 +161,7 @@ describe('Patient Data Encryption Integration Tests', () => {
       const getResponse = await api(`/api/v2/patients/${created.id}`, {
         headers: {
           ...testAuthHeaders,
-          'X-Decrypt-Fields': 'cpf,phone,email,medicalHistory',
+          "X-Decrypt-Fields": "cpf,phone,email,medicalHistory",
         },
       });
 
@@ -169,23 +169,23 @@ describe('Patient Data Encryption Integration Tests', () => {
       const retrieved = await getResponse.json();
 
       // Verify decrypted values match original
-      expect(retrieved.cpf.decrypted).toBe('987.654.321-00');
-      expect(retrieved.phone.decrypted).toBe('(21) 88888-8888');
-      expect(retrieved.email.decrypted).toBe('maria.santos@test.com');
-      expect(retrieved.medicalHistory.decrypted.conditions).toContain('Asma');
+      expect(retrieved.cpf.decrypted).toBe("987.654.321-00");
+      expect(retrieved.phone.decrypted).toBe("(21) 88888-8888");
+      expect(retrieved.email.decrypted).toBe("maria.santos@test.com");
+      expect(retrieved.medicalHistory.decrypted.conditions).toContain("Asma");
     });
 
-    it('should support searchable encryption for CPF queries', async () => {
+    it("should support searchable encryption for CPF queries", async () => {
       // Create patient with encrypted CPF
       const patientData = {
-        name: 'Carlos Oliveira',
-        cpf: '111.222.333-44',
-        phone: '(31) 77777-7777',
-        email: 'carlos@test.com',
+        name: "Carlos Oliveira",
+        cpf: "111.222.333-44",
+        phone: "(31) 77777-7777",
+        email: "carlos@test.com",
       };
 
-      const createResponse = await api('/api/v2/patients', {
-        method: 'POST',
+      const createResponse = await api("/api/v2/patients", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify(patientData),
       });
@@ -193,26 +193,26 @@ describe('Patient Data Encryption Integration Tests', () => {
       expect(createResponse.status).toBe(201);
 
       // Search by encrypted CPF
-      const searchResponse = await api('/api/v2/patients/search', {
-        method: 'POST',
+      const searchResponse = await api("/api/v2/patients/search", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify({
-          cpf: '111.222.333-44',
-          searchType: 'encrypted_exact_match',
+          cpf: "111.222.333-44",
+          searchType: "encrypted_exact_match",
         }),
       });
 
       expect(searchResponse.status).toBe(200);
       const searchResults = await searchResponse.json();
       expect(searchResults.data).toHaveLength(1);
-      expect(searchResults.data[0].name).toBe('Carlos Oliveira');
+      expect(searchResults.data[0].name).toBe("Carlos Oliveira");
     });
   });
 
-  describe('Key Management', () => {
-    it('should support multiple encryption keys for key rotation', async () => {
+  describe("Key Management", () => {
+    it("should support multiple encryption keys for key rotation", async () => {
       // Check current encryption keys
-      const keysResponse = await api('/api/v2/security/encryption/keys', {
+      const keysResponse = await api("/api/v2/security/encryption/keys", {
         headers: testAuthHeaders,
       });
 
@@ -225,16 +225,16 @@ describe('Patient Data Encryption Integration Tests', () => {
       expect(keys.keyRotationSchedule).toBeDefined();
     });
 
-    it('should perform key rotation without data loss', async () => {
+    it("should perform key rotation without data loss", async () => {
       // Create patient data with current key
       const originalData = {
-        name: 'Ana Costa',
-        cpf: '555.666.777-88',
-        medicalHistory: { conditions: ['Enxaqueca'] },
+        name: "Ana Costa",
+        cpf: "555.666.777-88",
+        medicalHistory: { conditions: ["Enxaqueca"] },
       };
 
-      const createResponse = await api('/api/v2/patients', {
-        method: 'POST',
+      const createResponse = await api("/api/v2/patients", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify(originalData),
       });
@@ -245,13 +245,13 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       // Trigger key rotation
       const rotationResponse = await api(
-        '/api/v2/security/encryption/rotate-keys',
+        "/api/v2/security/encryption/rotate-keys",
         {
-          method: 'POST',
+          method: "POST",
           headers: testAuthHeaders,
           body: JSON.stringify({
-            rotationType: 'gradual',
-            estimatedDuration: '24h',
+            rotationType: "gradual",
+            estimatedDuration: "24h",
           }),
         },
       );
@@ -262,26 +262,26 @@ describe('Patient Data Encryption Integration Tests', () => {
       const verifyResponse = await api(`/api/v2/patients/${patient.id}`, {
         headers: {
           ...testAuthHeaders,
-          'X-Decrypt-Fields': 'cpf,medicalHistory',
+          "X-Decrypt-Fields": "cpf,medicalHistory",
         },
       });
 
       expect(verifyResponse.status).toBe(200);
       const verifiedPatient = await verifyResponse.json();
-      expect(verifiedPatient.cpf.decrypted).toBe('555.666.777-88');
+      expect(verifiedPatient.cpf.decrypted).toBe("555.666.777-88");
       expect(verifiedPatient.medicalHistory.decrypted.conditions).toContain(
-        'Enxaqueca',
+        "Enxaqueca",
       );
     });
 
-    it('should validate encryption key integrity', async () => {
+    it("should validate encryption key integrity", async () => {
       const integrityResponse = await api(
-        '/api/v2/security/encryption/validate',
+        "/api/v2/security/encryption/validate",
         {
-          method: 'POST',
+          method: "POST",
           headers: testAuthHeaders,
           body: JSON.stringify({
-            checkType: 'comprehensive',
+            checkType: "comprehensive",
             sampleSize: 100,
           }),
         },
@@ -290,28 +290,28 @@ describe('Patient Data Encryption Integration Tests', () => {
       expect(integrityResponse.status).toBe(200);
       const validation = await integrityResponse.json();
 
-      expect(validation.status).toBe('healthy');
+      expect(validation.status).toBe("healthy");
       expect(validation.checkedRecords).toBeGreaterThan(0);
       expect(validation.corruptedRecords).toBe(0);
       expect(validation.keyIntegrity).toBe(true);
     });
   });
 
-  describe('Performance Impact', () => {
-    it('should maintain acceptable performance with encryption', async () => {
+  describe("Performance Impact", () => {
+    it("should maintain acceptable performance with encryption", async () => {
       const startTime = Date.now();
 
       // Create patient with encrypted data
       const patientData = {
-        name: 'Performance Test Patient',
-        cpf: '999.888.777-66',
-        phone: '(41) 66666-6666',
-        email: 'performance@test.com',
+        name: "Performance Test Patient",
+        cpf: "999.888.777-66",
+        phone: "(41) 66666-6666",
+        email: "performance@test.com",
         address: {
-          street: 'Av. Performance, 1000',
-          city: 'Curitiba',
-          state: 'PR',
-          cep: '80000-000',
+          street: "Av. Performance, 1000",
+          city: "Curitiba",
+          state: "PR",
+          cep: "80000-000",
         },
         medicalHistory: {
           conditions: Array.from(
@@ -325,8 +325,8 @@ describe('Patient Data Encryption Integration Tests', () => {
         },
       };
 
-      const response = await api('/api/v2/patients', {
-        method: 'POST',
+      const response = await api("/api/v2/patients", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify(patientData),
       });
@@ -338,27 +338,25 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       const responseData = await response.json();
       expect(responseData.encryptionMetadata.encryptionStandard).toBe(
-        'AES-256-GCM',
+        "AES-256-GCM",
       );
     });
 
-    it('should support batch encryption for large datasets', async () => {
+    it("should support batch encryption for large datasets", async () => {
       const batchSize = 10;
       const patients = Array.from({ length: batchSize }, (_, i) => ({
         name: `Batch Patient ${i + 1}`,
-        cpf: `${String(i + 1).padStart(3, '0')}.${String(i + 1).padStart(3, '0')}.${
-          String(
-            i + 1,
-          ).padStart(3, '0')
-        }-${String(i + 1).padStart(2, '0')}`,
-        phone: `(11) ${String(i + 1).padStart(5, '0')}-${String(i + 1).padStart(4, '0')}`,
+        cpf: `${String(i + 1).padStart(3, "0")}.${String(i + 1).padStart(3, "0")}.${String(
+          i + 1,
+        ).padStart(3, "0")}-${String(i + 1).padStart(2, "0")}`,
+        phone: `(11) ${String(i + 1).padStart(5, "0")}-${String(i + 1).padStart(4, "0")}`,
         email: `batch${i + 1}@test.com`,
       }));
 
       const startTime = Date.now();
 
-      const batchResponse = await api('/api/v2/patients/batch', {
-        method: 'POST',
+      const batchResponse = await api("/api/v2/patients/batch", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify({ patients }),
       });
@@ -374,17 +372,17 @@ describe('Patient Data Encryption Integration Tests', () => {
     });
   });
 
-  describe('Compliance and Audit', () => {
-    it('should log all encryption/decryption operations', async () => {
+  describe("Compliance and Audit", () => {
+    it("should log all encryption/decryption operations", async () => {
       // Create patient to generate encryption logs
       const patientData = {
-        name: 'Audit Test Patient',
-        cpf: '123.123.123-12',
-        medicalHistory: { conditions: ['Test condition'] },
+        name: "Audit Test Patient",
+        cpf: "123.123.123-12",
+        medicalHistory: { conditions: ["Test condition"] },
       };
 
-      const createResponse = await api('/api/v2/patients', {
-        method: 'POST',
+      const createResponse = await api("/api/v2/patients", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify(patientData),
       });
@@ -396,20 +394,20 @@ describe('Patient Data Encryption Integration Tests', () => {
       await api(`/api/v2/patients/${patient.id}`, {
         headers: {
           ...testAuthHeaders,
-          'X-Decrypt-Fields': 'cpf,medicalHistory',
+          "X-Decrypt-Fields": "cpf,medicalHistory",
         },
       });
 
       // Check audit logs
       const auditResponse = await api(
-        '/api/v2/security/audit/encryption-events',
+        "/api/v2/security/audit/encryption-events",
         {
-          method: 'POST',
+          method: "POST",
           headers: testAuthHeaders,
           body: JSON.stringify({
             patientId: patient.id,
-            timeRange: '1h',
-            operations: ['encrypt', 'decrypt'],
+            timeRange: "1h",
+            operations: ["encrypt", "decrypt"],
           }),
         },
       );
@@ -419,24 +417,24 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       expect(auditLogs.events).toContainEqual(
         expect.objectContaining({
-          operation: 'encrypt',
+          operation: "encrypt",
           patientId: patient.id,
-          fields: expect.arrayContaining(['cpf', 'medicalHistory']),
+          fields: expect.arrayContaining(["cpf", "medicalHistory"]),
         }),
       );
 
       expect(auditLogs.events).toContainEqual(
         expect.objectContaining({
-          operation: 'decrypt',
+          operation: "decrypt",
           patientId: patient.id,
           _userId: expect.any(String),
         }),
       );
     });
 
-    it('should enforce healthcare data protection standards', async () => {
+    it("should enforce healthcare data protection standards", async () => {
       const complianceResponse = await api(
-        '/api/v2/security/compliance/encryption',
+        "/api/v2/security/compliance/encryption",
         {
           headers: testAuthHeaders,
         },
@@ -446,23 +444,23 @@ describe('Patient Data Encryption Integration Tests', () => {
       const compliance = await complianceResponse.json();
 
       // Verify compliance with healthcare standards
-      expect(compliance.standards).toContain('LGPD');
-      expect(compliance.standards).toContain('ANVISA');
-      expect(compliance.standards).toContain('CFM');
-      expect(compliance.encryptionStandard).toBe('FIPS-140-2-Level-3');
-      expect(compliance.keyManagement).toBe('NIST-SP-800-57');
+      expect(compliance.standards).toContain("LGPD");
+      expect(compliance.standards).toContain("ANVISA");
+      expect(compliance.standards).toContain("CFM");
+      expect(compliance.encryptionStandard).toBe("FIPS-140-2-Level-3");
+      expect(compliance.keyManagement).toBe("NIST-SP-800-57");
       expect(compliance.complianceScore).toBeGreaterThanOrEqual(95);
     });
 
-    it('should support data breach response procedures', async () => {
+    it("should support data breach response procedures", async () => {
       // Simulate suspected data breach
-      const breachResponse = await api('/api/v2/security/breach-response', {
-        method: 'POST',
+      const breachResponse = await api("/api/v2/security/breach-response", {
+        method: "POST",
         headers: testAuthHeaders,
         body: JSON.stringify({
-          incidentType: 'suspected_unauthorized_access',
-          affectedSystems: ['patient_database'],
-          severity: 'high',
+          incidentType: "suspected_unauthorized_access",
+          affectedSystems: ["patient_database"],
+          severity: "high",
           discoveredAt: new Date().toISOString(),
         }),
       });
@@ -472,46 +470,46 @@ describe('Patient Data Encryption Integration Tests', () => {
 
       // Verify breach response procedures
       expect(response.incidentId).toBeDefined();
-      expect(response.immediateActions).toContain('key_rotation_triggered');
-      expect(response.immediateActions).toContain('access_logs_secured');
+      expect(response.immediateActions).toContain("key_rotation_triggered");
+      expect(response.immediateActions).toContain("access_logs_secured");
       expect(response.notificationTimeline).toBeDefined();
       expect(response.affectedPatients).toBeDefined();
       expect(response.lgpdNotificationRequired).toBe(true);
     });
   });
 
-  describe('Error Handling and Recovery', () => {
-    it('should handle encryption key unavailability gracefully', async () => {
+  describe("Error Handling and Recovery", () => {
+    it("should handle encryption key unavailability gracefully", async () => {
       // Simulate key unavailability
-      const response = await api('/api/v2/patients/encrypted-test', {
-        method: 'POST',
+      const response = await api("/api/v2/patients/encrypted-test", {
+        method: "POST",
         headers: {
           ...testAuthHeaders,
-          'X-Simulate-Key-Unavailable': 'true',
+          "X-Simulate-Key-Unavailable": "true",
         },
         body: JSON.stringify({
-          name: 'Key Unavailable Test',
-          cpf: '000.000.000-00',
+          name: "Key Unavailable Test",
+          cpf: "000.000.000-00",
         }),
       });
 
       expect(response.status).toBe(503); // Service Unavailable
-      expect(response.headers.get('Retry-After')).toBeDefined();
+      expect(response.headers.get("Retry-After")).toBeDefined();
 
       const errorResponse = await response.json();
-      expect(errorResponse.error).toBe('encryption_service_unavailable');
+      expect(errorResponse.error).toBe("encryption_service_unavailable");
       expect(errorResponse.fallbackAvailable).toBe(false);
     });
 
-    it('should validate data integrity after system recovery', async () => {
+    it("should validate data integrity after system recovery", async () => {
       // Simulate system recovery validation
       const validationResponse = await api(
-        '/api/v2/security/recovery/validate',
+        "/api/v2/security/recovery/validate",
         {
-          method: 'POST',
+          method: "POST",
           headers: testAuthHeaders,
           body: JSON.stringify({
-            validationType: 'full_integrity_check',
+            validationType: "full_integrity_check",
             samplePercentage: 10,
           }),
         },
@@ -520,7 +518,7 @@ describe('Patient Data Encryption Integration Tests', () => {
       expect(validationResponse.status).toBe(200);
       const validation = await validationResponse.json();
 
-      expect(validation.status).toBe('healthy');
+      expect(validation.status).toBe("healthy");
       expect(validation.integrityViolations).toBe(0);
       expect(validation.encryptionConsistency).toBe(100);
       expect(validation.keyAccessibility).toBe(100);

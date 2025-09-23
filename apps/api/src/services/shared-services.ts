@@ -3,10 +3,10 @@
  * Provides centralized access to all services used across the application
  */
 
-import { AIChatService } from './ai-chat-service';
-import { ComprehensiveAuditService } from './audit-service';
-import { LGPDService } from './lgpd-service';
-import { PatientService } from './patient-service';
+import { AIChatService } from "./ai-chat-service";
+import { ComprehensiveAuditService } from "./audit-service";
+import { LGPDService } from "./lgpd-service";
+import { PatientService } from "./patient-service";
 
 // Service interface for type safety
 export interface ServiceInterface {
@@ -38,4 +38,9 @@ export const getServices = (): ServiceInterface => {
 };
 
 // Export individual services for direct access if needed
-export { AIChatService, ComprehensiveAuditService, LGPDService, PatientService };
+export {
+  AIChatService,
+  ComprehensiveAuditService,
+  LGPDService,
+  PatientService,
+};

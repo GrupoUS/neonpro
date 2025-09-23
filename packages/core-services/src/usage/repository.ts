@@ -141,7 +141,9 @@ export class UsageCounterRepository {
   /**
    * Creates a new usage counter
    */
-  async create(data: UsageCounterCreateData): Promise<ExtendedUsageCounterData> {
+  async create(
+    data: UsageCounterCreateData,
+  ): Promise<ExtendedUsageCounterData> {
     const now = new Date();
 
     const insertData = {
@@ -186,7 +188,9 @@ export class UsageCounterRepository {
    * Daily upsert: Insert new or update existing usage counter
    * This is the core functionality for T017
    */
-  async dailyUpsert(params: DailyUsageUpsertParams): Promise<ExtendedUsageCounterData> {
+  async dailyUpsert(
+    params: DailyUsageUpsertParams,
+  ): Promise<ExtendedUsageCounterData> {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
@@ -223,32 +227,40 @@ export class UsageCounterRepository {
             : (existing.dailyQueries || 0) + inc.dailyQueries;
         }
         if (inc.costUsd) {
-          updateData.current_cost_usd = (existing.currentCostUsd || 0) + inc.costUsd;
-          const existingMetadata = (existing.metadata as UsageMetadata) || {} as UsageMetadata;
+          updateData.current_cost_usd =
+            (existing.currentCostUsd || 0) + inc.costUsd;
+          const existingMetadata =
+            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             total_cost_usd: (existingMetadata.totalCostUsd || 0) + inc.costUsd,
           };
         }
         if (inc.totalRequests) {
-          const existingMetadata = (existing.metadata as UsageMetadata) || {} as UsageMetadata;
+          const existingMetadata =
+            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
-            total_requests: (existingMetadata.totalRequests || 0) + inc.totalRequests,
+            total_requests:
+              (existingMetadata.totalRequests || 0) + inc.totalRequests,
           };
         }
         if (inc.tokensUsed) {
-          const existingMetadata = (existing.metadata as UsageMetadata) || {} as UsageMetadata;
+          const existingMetadata =
+            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
-            total_tokens_used: (existingMetadata.totalTokensUsed || 0) + inc.tokensUsed,
+            total_tokens_used:
+              (existingMetadata.totalTokensUsed || 0) + inc.tokensUsed,
           };
         }
         if (inc.cacheSavingsUsd) {
-          const existingMetadata = (existing.metadata as UsageMetadata) || {} as UsageMetadata;
+          const existingMetadata =
+            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
-            cache_savings_usd: (existingMetadata.cacheSavingsUsd || 0) + inc.cacheSavingsUsd,
+            cache_savings_usd:
+              (existingMetadata.cacheSavingsUsd || 0) + inc.cacheSavingsUsd,
           };
         }
       }
@@ -267,7 +279,8 @@ export class UsageCounterRepository {
           updateData.error_rate = metrics.errorRate;
         }
         if (metrics.concurrentRequests !== undefined) {
-          const existingMetadata = (existing.metadata as UsageMetadata) || {} as UsageMetadata;
+          const existingMetadata =
+            (existing.metadata as UsageMetadata) || ({} as UsageMetadata);
           updateData.metadata = {
             ...(updateData.metadata || existingMetadata),
             concurrent_requests: metrics.concurrentRequests,
@@ -371,7 +384,9 @@ export class UsageCounterRepository {
 
     // Apply filters
     if (filters.clinicId) {
-      query = query.eq("entity_type", "clinic").eq("entity_id", filters.clinicId);
+      query = query
+        .eq("entity_type", "clinic")
+        .eq("entity_id", filters.clinicId);
     }
     if (filters._userId) {
       query = query.eq("metadata->>user_id", filters._userId);
@@ -554,28 +569,44 @@ export class UsageCounterRepository {
 
     const totalUsers = data.length;
     const totalMonthlyQueries = data.reduce(
-      (sum: number, item: UsageCounterDatabaseRow) => sum + (item.monthly_queries || 0),
+      (sum: number, item: UsageCounterDatabaseRow) =>
+        sum + (item.monthly_queries || 0),
       0,
     );
     const totalDailyQueries = data.reduce(
-      (sum: number, item: UsageCounterDatabaseRow) => sum + (item.daily_queries || 0),
+      (sum: number, item: UsageCounterDatabaseRow) =>
+        sum + (item.daily_queries || 0),
       0,
     );
     const totalCostUsd = data.reduce(
-      (sum: number, item: UsageCounterDatabaseRow) => sum + (item.current_cost_usd || 0),
+      (sum: number, item: UsageCounterDatabaseRow) =>
+        sum + (item.current_cost_usd || 0),
       0,
     );
-    const averageLatencyMs = totalUsers > 0
-      ? data.reduce((sum: number, item: UsageCounterDatabaseRow) => sum + (item.average_latency_ms || 0), 0) /
-        totalUsers
-      : 0;
-    const overallCacheHitRate = totalUsers > 0
-      ? data.reduce((sum: number, item: UsageCounterDatabaseRow) => sum + (item.cache_hit_rate || 0), 0) /
-        totalUsers
-      : 0;
-    const overallErrorRate = totalUsers > 0
-      ? data.reduce((sum: number, item: UsageCounterDatabaseRow) => sum + (item.error_rate || 0), 0) / totalUsers
-      : 0;
+    const averageLatencyMs =
+      totalUsers > 0
+        ? data.reduce(
+            (sum: number, item: UsageCounterDatabaseRow) =>
+              sum + (item.average_latency_ms || 0),
+            0,
+          ) / totalUsers
+        : 0;
+    const overallCacheHitRate =
+      totalUsers > 0
+        ? data.reduce(
+            (sum: number, item: UsageCounterDatabaseRow) =>
+              sum + (item.cache_hit_rate || 0),
+            0,
+          ) / totalUsers
+        : 0;
+    const overallErrorRate =
+      totalUsers > 0
+        ? data.reduce(
+            (sum: number, item: UsageCounterDatabaseRow) =>
+              sum + (item.error_rate || 0),
+            0,
+          ) / totalUsers
+        : 0;
 
     return {
       totalUsers,
@@ -605,13 +636,16 @@ export class UsageCounterRepository {
   /**
    * Maps database row to model data
    */
-  private mapDatabaseToModel(row: UsageCounterDatabaseRow): ExtendedUsageCounterData {
-    const metadata = (row.metadata as unknown as UsageMetadata) || {} as UsageMetadata;
+  private mapDatabaseToModel(
+    row: UsageCounterDatabaseRow,
+  ): ExtendedUsageCounterData {
+    const metadata =
+      (row.metadata as unknown as UsageMetadata) || ({} as UsageMetadata);
 
     return {
       clinicId: row.entity_id,
-      userId: metadata.userId || '',
-      planCode: metadata.planCode || 'basic',
+      userId: metadata.userId || "",
+      planCode: metadata.planCode || "basic",
       monthlyQueries: row.monthly_queries || 0,
       dailyQueries: row.daily_queries || 0,
       currentCostUsd: parseFloat(row.current_cost_usd?.toString() || "0"),
@@ -629,7 +663,10 @@ export class UsageCounterRepository {
     };
   }
 
-  private async getExistingMetadata(clinicId: string, _userId: string): Promise<Partial<UsageMetadata>> {
+  private async getExistingMetadata(
+    clinicId: string,
+    _userId: string,
+  ): Promise<Partial<UsageMetadata>> {
     try {
       const { data } = await this.supabase
         .from("usage_counters")

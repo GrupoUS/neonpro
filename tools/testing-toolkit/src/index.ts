@@ -6,42 +6,57 @@
  */
 
 // Core testing utilities
-export * from './core';
+export * from "./core";
 
 // Agent coordination
-export * from './agents';
+export * from "./agents";
 
 // Healthcare compliance
-export * from './compliance';
+export * from "./compliance";
 
 // Test fixtures and mocks
-export * from './fixtures';
+export * from "./fixtures";
 
 // Testing utilities
-export * from './utils';
+export * from "./utils";
 
 // Re-export commonly used testing libraries for convenience
-export { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+export {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 
-export { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+export {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 
-export { userEvent } from '@testing-library/user-event';
+export { userEvent } from "@testing-library/user-event";
 
 // Version and metadata
-export const TOOLKIT_VERSION = '1.0.0';
+export const TOOLKIT_VERSION = "1.0.0";
 export const SUPPORTED_FRAMEWORKS = [
-  'React',
-  'Hono',
-  'Vitest',
-  'Playwright',
-  'Supabase',
+  "React",
+  "Hono",
+  "Vitest",
+  "Playwright",
+  "Supabase",
 ] as const;
 
-export const COMPLIANCE_STANDARDS = ['LGPD', 'ANVISA', 'CFM'] as const;
+export const COMPLIANCE_STANDARDS = ["LGPD", "ANVISA", "CFM"] as const;
 
 export const AGENT_TYPES = [
-  'architect-review',
-  'code-reviewer',
-  'test-auditor',
-  'tdd-orchestrator',
+  "architect-review",
+  "code-reviewer",
+  "test-auditor",
+  "tdd-orchestrator",
 ] as const;

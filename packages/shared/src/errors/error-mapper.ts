@@ -23,7 +23,10 @@ export class ErrorMapper {
   /**
    * Maps internal errors to user-safe responses
    */
-  static mapError(error: Error | unknown, _context?: ErrorContext): MappedError {
+  static mapError(
+    error: Error | unknown,
+    _context?: ErrorContext,
+  ): MappedError {
     const timestamp = new Date().toISOString();
 
     // Handle known error types

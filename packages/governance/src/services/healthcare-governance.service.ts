@@ -29,7 +29,7 @@ import {
   HealthcarePolicyRecord,
   HealthcareAlertRecord,
   ComplianceReportRecord,
-} from "../../types/database-records";
+} from "@neonpro/types/database-records";
 
 export class HealthcareGovernanceService
   extends SupabaseGovernanceService
@@ -122,7 +122,7 @@ export class HealthcareGovernanceService
         resource: "healthcare_metric",
         resourceType: "REPORT",
         resourceId: data.id,
-        _userId: "system", // TODO: Get from context
+        userId: "system", // TODO: Get from context
         ipAddress: "127.0.0.1", // TODO: Get from context
         userAgent: "system", // TODO: Get from context
         status: "SUCCESS",
@@ -182,7 +182,7 @@ export class HealthcareGovernanceService
         resource: "healthcare_metric",
         resourceType: "REPORT",
         resourceId: update.id,
-        _userId: "system", // TODO: Get from context
+        userId: "system", // TODO: Get from context
         ipAddress: "127.0.0.1", // TODO: Get from context
         userAgent: "system", // TODO: Get from context
         status: "SUCCESS",
@@ -222,7 +222,7 @@ export class HealthcareGovernanceService
         resource: "healthcare_metric",
         resourceType: "REPORT",
         resourceId: id,
-        _userId: "system", // TODO: Get from context
+        userId: "system", // TODO: Get from context
         ipAddress: "127.0.0.1", // TODO: Get from context
         userAgent: "system", // TODO: Get from context
         status: "SUCCESS",
@@ -630,7 +630,7 @@ export class HealthcareGovernanceService
         resource: entry.resource,
         resourceType: entry.resourceType,
         resourceId: entry.resourceId,
-        _userId: entry.userId,
+        userId: entry.userId,
         clinicId: entry.clinicId,
         patientId: entry.patientId,
         ipAddress: entry.ipAddress,
@@ -669,7 +669,8 @@ export class HealthcareGovernanceService
       const alerts = await this.getHealthcareAlerts(clinicId, {
         status: "ACTIVE",
       });
-      const criticalAlerts = alerts.filter((alert) => alert.severity === "CRITICAL",
+      const criticalAlerts = alerts.filter(
+        (alert) => alert.severity === "CRITICAL",
       ).length;
 
       // Calculate compliance scores
@@ -678,7 +679,8 @@ export class HealthcareGovernanceService
 
       // Get CFM and ANVISA specific compliance
       const cfmMetrics = metrics.filter((m) => m.complianceFramework === "CFM");
-      const anvisaMetrics = metrics.filter((m) => m.complianceFramework === "ANVISA",
+      const anvisaMetrics = metrics.filter(
+        (m) => m.complianceFramework === "ANVISA",
       );
 
       const cfmComplianceScore = this.calculateComplianceScore(cfmMetrics);
@@ -688,7 +690,8 @@ export class HealthcareGovernanceService
       return {
         overallComplianceScore,
         criticalAlerts,
-        activeViolations: alerts.filter((alert) => alert.alertType === "COMPLIANCE_VIOLATION",
+        activeViolations: alerts.filter(
+          (alert) => alert.alertType === "COMPLIANCE_VIOLATION",
         ).length,
         patientSafetyScore,
         cfmComplianceStatus: {
@@ -722,7 +725,9 @@ export class HealthcareGovernanceService
   }
 
   // Private helper methods
-  private mapHealthcareMetrics(data: HealthcareMetricRecord[]): HealthcareMetric[] {
+  private mapHealthcareMetrics(
+    data: HealthcareMetricRecord[],
+  ): HealthcareMetric[] {
     return data.map((item) => this.mapHealthcareMetric(item));
   }
 
@@ -748,7 +753,9 @@ export class HealthcareGovernanceService
     };
   }
 
-  private mapPatientSafetyKPIs(data: PatientSafetyKPIRecord[]): PatientSafetyKPI[] {
+  private mapPatientSafetyKPIs(
+    data: PatientSafetyKPIRecord[],
+  ): PatientSafetyKPI[] {
     return data.map((item) => this.mapPatientSafetyKPI(item));
   }
 
@@ -757,23 +764,34 @@ export class HealthcareGovernanceService
       id: data.id,
       clinicId: data.clinic_id,
       kpiName: data.kpi_name,
-      category: data.category as "MEDICATION_SAFETY" | "DIAGNOSTIC_ACCURACY" | "TREATMENT_OUTCOMES" | "INFECTION_CONTROL",
+      category: data.category as
+        | "MEDICATION_SAFETY"
+        | "DIAGNOSTIC_ACCURACY"
+        | "TREATMENT_OUTCOMES"
+        | "INFECTION_CONTROL",
       currentValue: data.current_value,
       targetValue: data.target_value,
       benchmark: data.benchmark,
       trend: data.trend as "IMPROVING" | "STABLE" | "DECLINING",
       alertThreshold: data.alert_threshold,
-      lastIncident: data.last_incident ? new Date(data.last_incident) : undefined,
+      lastIncident: data.last_incident
+        ? new Date(data.last_incident)
+        : undefined,
       incidentCount: data.incident_count,
       mitigationActions: data.mitigation_actions || [],
       responsibleTeam: data.responsible_team,
-      reportingFrequency: data.reporting_frequency as "DAILY" | "WEEKLY" | "MONTHLY",
+      reportingFrequency: data.reporting_frequency as
+        | "DAILY"
+        | "WEEKLY"
+        | "MONTHLY",
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
   }
 
-  private mapHealthcarePolicies(data: HealthcarePolicyRecord[]): HealthcarePolicy[] {
+  private mapHealthcarePolicies(
+    data: HealthcarePolicyRecord[],
+  ): HealthcarePolicy[] {
     return data.map((item) => this.mapHealthcarePolicy(item));
   }
 
@@ -784,7 +802,11 @@ export class HealthcareGovernanceService
       description: data.description,
       category: data.category,
       version: data.version || "1.0",
-      status: (data.status || "ACTIVE") as "ACTIVE" | "DRAFT" | "ARCHIVED" | "UNDER_REVIEW",
+      status: (data.status || "ACTIVE") as
+        | "ACTIVE"
+        | "DRAFT"
+        | "ARCHIVED"
+        | "UNDER_REVIEW",
       content: data.content,
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),
@@ -792,9 +814,18 @@ export class HealthcareGovernanceService
       regulatoryBody: data.regulatory_body as "CFM" | "ANVISA" | "MS" | "CRM",
       regulationNumber: data.regulation_number || "",
       applicableServices: data.applicable_services || [],
-      complianceDeadline: data.compliance_deadline ? new Date(data.compliance_deadline) : undefined,
-      auditFrequency: data.audit_frequency as "MONTHLY" | "QUARTERLY" | "ANNUALLY",
-      criticalityLevel: data.criticality_level as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
+      complianceDeadline: data.compliance_deadline
+        ? new Date(data.compliance_deadline)
+        : undefined,
+      auditFrequency: data.audit_frequency as
+        | "MONTHLY"
+        | "QUARTERLY"
+        | "ANNUALLY",
+      criticalityLevel: data.criticality_level as
+        | "LOW"
+        | "MEDIUM"
+        | "HIGH"
+        | "CRITICAL",
       // Add missing properties from PolicyManagement interface
       framework: data.framework as any,
       enforcementRate: data.enforcement_rate || 0,
@@ -802,7 +833,9 @@ export class HealthcareGovernanceService
     };
   }
 
-  private mapHealthcareAlerts(data: HealthcareAlertRecord[]): HealthcareAlert[] {
+  private mapHealthcareAlerts(
+    data: HealthcareAlertRecord[],
+  ): HealthcareAlert[] {
     return data.map((item) => this.mapHealthcareAlert(item));
   }
 
@@ -810,17 +843,29 @@ export class HealthcareGovernanceService
     return {
       id: data.id,
       clinicId: data.clinic_id,
-      alertType: data.alert_type as "COMPLIANCE_VIOLATION" | "SAFETY_INCIDENT" | "METRIC_THRESHOLD" | "POLICY_BREACH",
+      alertType: data.alert_type as
+        | "COMPLIANCE_VIOLATION"
+        | "SAFETY_INCIDENT"
+        | "METRIC_THRESHOLD"
+        | "POLICY_BREACH",
       severity: data.severity as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
       title: data.title,
       description: data.description,
       source: data.source || "",
       triggeredBy: data.triggered_by || "",
-      status: data.status as "ACTIVE" | "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED",
+      status: data.status as
+        | "ACTIVE"
+        | "ACKNOWLEDGED"
+        | "RESOLVED"
+        | "DISMISSED",
       assignedTo: data.assigned_to || undefined,
       escalationLevel: data.escalation_level as any,
-      autoEscalationTime: data.auto_escalation_time ? new Date(data.auto_escalation_time) : undefined,
-      resolutionDeadline: data.resolution_deadline ? new Date(data.resolution_deadline) : undefined,
+      autoEscalationTime: data.auto_escalation_time
+        ? new Date(data.auto_escalation_time)
+        : undefined,
+      resolutionDeadline: data.resolution_deadline
+        ? new Date(data.resolution_deadline)
+        : undefined,
       actions: data.actions || [],
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),
@@ -828,7 +873,9 @@ export class HealthcareGovernanceService
     };
   }
 
-  private mapComplianceReports(data: ComplianceReportRecord[]): HealthcareComplianceReport[] {
+  private mapComplianceReports(
+    data: ComplianceReportRecord[],
+  ): HealthcareComplianceReport[] {
     return data.map((item) => ({
       id: item.id,
       clinicId: item.clinic_id,
@@ -838,13 +885,20 @@ export class HealthcareGovernanceService
         endDate: new Date(item.period_end),
       },
       overallScore: item.overall_score,
-      complianceStatus: item.compliance_status as "COMPLIANT" | "NON_COMPLIANT" | "UNDER_REVIEW" | "CRITICAL",
+      complianceStatus: item.compliance_status as
+        | "COMPLIANT"
+        | "NON_COMPLIANT"
+        | "UNDER_REVIEW"
+        | "CRITICAL",
       metrics: [], // Would need to fetch separately
-      violations: item.violations !== null && item.violations !== undefined 
-        ? { count: item.violations, critical: 0, resolved: 0, pending: 0 }
-        : { count: 0, critical: 0, resolved: 0, pending: 0 },
+      violations:
+        item.violations !== null && item.violations !== undefined
+          ? { count: item.violations, critical: 0, resolved: 0, pending: 0 }
+          : { count: 0, critical: 0, resolved: 0, pending: 0 },
       recommendations: item.recommendations || [],
-      nextAuditDate: item.next_audit_date ? new Date(item.next_audit_date) : new Date(),
+      nextAuditDate: item.next_audit_date
+        ? new Date(item.next_audit_date)
+        : new Date(),
       generatedBy: item.generated_by,
       approvedBy: item.approved_by || undefined,
       metadata: item.metadata || {},
@@ -860,11 +914,12 @@ export class HealthcareGovernanceService
       return Math.min(performance * 100, 100);
     });
 
-    return scores.reduce((sum,_score) => sum + score, 0) / scores.length;
+    return scores.reduce((sum, _score) => sum + score, 0) / scores.length;
   }
 
   private calculatePatientSafetyScore(metrics: HealthcareMetric[]): number {
-    const safetyMetrics = metrics.filter((m) => m.category === "PATIENT_SAFETY",
+    const safetyMetrics = metrics.filter(
+      (m) => m.category === "PATIENT_SAFETY",
     );
     return this.calculateComplianceScore(safetyMetrics);
   }
@@ -908,7 +963,8 @@ export class HealthcareGovernanceService
     const recommendations: string[] = [];
 
     // Check for low-performing metrics
-    const lowPerformingMetrics = metrics.filter((m) => m.currentValue < m.threshold,
+    const lowPerformingMetrics = metrics.filter(
+      (m) => m.currentValue < m.threshold,
     );
     if (lowPerformingMetrics.length > 0) {
       recommendations.push(
@@ -917,7 +973,8 @@ export class HealthcareGovernanceService
     }
 
     // Check for high-risk metrics
-    const highRiskMetrics = metrics.filter((m) => m.riskLevel === "HIGH" || m.riskLevel === "CRITICAL",
+    const highRiskMetrics = metrics.filter(
+      (m) => m.riskLevel === "HIGH" || m.riskLevel === "CRITICAL",
     );
     if (highRiskMetrics.length > 0) {
       recommendations.push(

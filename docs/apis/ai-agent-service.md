@@ -29,6 +29,7 @@ The AI Agent Service is a Python-based microservice that provides intelligent qu
 ## Components
 
 ### 1. Agent Service (`agent_service.py`)
+
 - **Purpose**: Core AI logic and query processing
 - **Features**:
   - Intent detection for Portuguese queries
@@ -38,6 +39,7 @@ The AI Agent Service is a Python-based microservice that provides intelligent qu
   - LGPD compliance validation
 
 ### 2. Database Service (`database_service.py`)
+
 - **Purpose**: Data access layer with caching
 - **Features**:
   - Patient search by name
@@ -47,6 +49,7 @@ The AI Agent Service is a Python-based microservice that provides intelligent qu
   - Built-in caching with TTL
 
 ### 3. WebSocket Manager (`websocket_manager.py`)
+
 - **Purpose**: Real-time communication handler
 - **Features**:
   - Connection management
@@ -59,6 +62,7 @@ The AI Agent Service is a Python-based microservice that provides intelligent qu
 ### Message Types
 
 #### Query Message
+
 ```json
 {
   "type": "query",
@@ -71,6 +75,7 @@ The AI Agent Service is a Python-based microservice that provides intelligent qu
 ```
 
 #### Data Response
+
 ```json
 {
   "type": "data_response",
@@ -83,6 +88,7 @@ The AI Agent Service is a Python-based microservice that provides intelligent qu
 ```
 
 #### Action Message
+
 ```json
 {
   "type": "action",
@@ -98,23 +104,25 @@ The AI Agent Service is a Python-based microservice that provides intelligent qu
 
 The service automatically detects user intent based on Portuguese keywords:
 
-| Intent | Keywords | Example |
-|--------|----------|---------|
-| CLIENT_SEARCH | buscar, procurar, achar, paciente | "Buscar pacientes com nome Maria" |
-| APPOINTMENT_QUERY | consulta, agendamento, marcação | "Mostrar agendamentos de João" |
-| FINANCIAL_QUERY | financeiro, pagamento, fatura | "Ver pagamentos pendentes" |
-| SCHEDULE_MANAGEMENT | agenda, marcar, cancelar | "Marcar nova consulta" |
-| REPORT_GENERATION | relatório, resumo | "Gerar relatório mensal" |
+| Intent              | Keywords                          | Example                           |
+| ------------------- | --------------------------------- | --------------------------------- |
+| CLIENT_SEARCH       | buscar, procurar, achar, paciente | "Buscar pacientes com nome Maria" |
+| APPOINTMENT_QUERY   | consulta, agendamento, marcação   | "Mostrar agendamentos de João"    |
+| FINANCIAL_QUERY     | financeiro, pagamento, fatura     | "Ver pagamentos pendentes"        |
+| SCHEDULE_MANAGEMENT | agenda, marcar, cancelar          | "Marcar nova consulta"            |
+| REPORT_GENERATION   | relatório, resumo                 | "Gerar relatório mensal"          |
 
 ## Brazilian Healthcare Compliance
 
 ### LGPD Implementation
+
 - Consent validation before data access
 - Audit logging for all queries
 - Data encryption in transit
 - Automatic data retention policies
 
 ### Healthcare Validations
+
 - CPF format validation
 - Medical license verification
 - ANVISA compliance checks
@@ -123,6 +131,7 @@ The service automatically detects user intent based on Portuguese keywords:
 ## Configuration
 
 ### Environment Variables
+
 - `SUPABASE_URL`: Supabase project URL
 - `SUPABASE_SERVICE_ROLE_KEY`: Database access key
 - `OPENAI_API_KEY`: OpenAI API key
@@ -131,6 +140,7 @@ The service automatically detects user intent based on Portuguese keywords:
 - `ALLOWED_ORIGINS`: CORS allowed origins
 
 ### Service Settings
+
 ```python
 # Maximum WebSocket connections
 WS_MAX_CONNECTIONS = 100
@@ -148,7 +158,9 @@ DATA_RETENTION_DAYS = 365
 ## Deployment
 
 ### Docker Deployment
+
 1. Build the image:
+
    ```bash
    docker build -t neonpro-ai-agent .
    ```
@@ -159,12 +171,15 @@ DATA_RETENTION_DAYS = 365
    ```
 
 ### Manual Deployment
+
 1. Install dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 2. Set environment variables:
+
    ```bash
    cp .env.example .env
    # Edit .env with your values
@@ -178,12 +193,15 @@ DATA_RETENTION_DAYS = 365
 ## Monitoring
 
 ### Health Check
+
 ```bash
 curl http://localhost:8001/health
 ```
 
 ### Connection Stats
+
 Access WebSocket stats at:
+
 ```bash
 ws://localhost:8001/ws/stats
 ```
@@ -191,11 +209,13 @@ ws://localhost:8001/ws/stats
 ## Testing
 
 Run the test suite:
+
 ```bash
 pytest
 ```
 
 Run with coverage:
+
 ```bash
 pytest --cov=services
 ```
@@ -210,14 +230,17 @@ The service integrates with the React frontend through:
 4. **AG-UI Protocol**: Standardized message format
 
 Example frontend integration:
-```typescript
-const ws = new WebSocket('ws://localhost:8001/ws/agent');
 
-ws.send(JSON.stringify({
-  type: 'query',
-  query: 'Buscar pacientes chamados Silva',
-  context: { userId: user.id }
-}));
+```typescript
+const ws = new WebSocket("ws://localhost:8001/ws/agent");
+
+ws.send(
+  JSON.stringify({
+    type: "query",
+    query: "Buscar pacientes chamados Silva",
+    context: { userId: user.id },
+  }),
+);
 ```
 
 ## Error Handling

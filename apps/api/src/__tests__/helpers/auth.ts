@@ -4,26 +4,26 @@
 
 // Mock user for testing
 export const testUser = {
-  id: '123e4567-e89b-12d3-a456-426614174000',
-  email: 'test@example.com',
-  _role: 'patient',
-  permissions: ['read', 'write'],
+  id: "123e4567-e89b-12d3-a456-426614174000",
+  email: "test@example.com",
+  _role: "patient",
+  permissions: ["read", "write"],
 };
 
 // Mock professional user for testing
 export const testProfessional = {
-  id: '123e4567-e89b-12d3-a456-426614174001',
-  email: 'doctor@example.com',
-  _role: 'professional',
-  permissions: ['read', 'write', 'admin'],
-  clinicId: '123e4567-e89b-12d3-a456-426614174002',
+  id: "123e4567-e89b-12d3-a456-426614174001",
+  email: "doctor@example.com",
+  _role: "professional",
+  permissions: ["read", "write", "admin"],
+  clinicId: "123e4567-e89b-12d3-a456-426614174002",
 };
 
 // Mock clinic for testing
 export const testClinic = {
-  id: '123e4567-e89b-12d3-a456-426614174002',
-  name: 'Test Clinic',
-  code: 'TEST001',
+  id: "123e4567-e89b-12d3-a456-426614174002",
+  name: "Test Clinic",
+  code: "TEST001",
 };
 
 /**
@@ -33,10 +33,10 @@ export function createTestAuthContext(user = testUser) {
   return {
     user,
     session: {
-      access_token: 'test-token',
-      refresh_token: 'test-refresh-token',
+      access_token: "test-token",
+      refresh_token: "test-refresh-token",
       expires_at: Date.now() + 3600 * 1000, // 1 hour from now
-      token_type: 'bearer',
+      token_type: "bearer",
       user,
     },
     authenticated: true,
@@ -47,9 +47,9 @@ export function createTestAuthContext(user = testUser) {
  * Create mock user for integration tests
  */
 export async function createMockUser(
-  _role: 'patient' | 'professional' = 'patient',
+  _role: "patient" | "professional" = "patient",
 ) {
-  if (role === 'professional') {
+  if (role === "professional") {
     return testProfessional;
   }
   return testUser;
@@ -60,19 +60,19 @@ export async function createMockUser(
  */
 export async function createMockPatient() {
   return {
-    id: '123e4567-e89b-12d3-a456-426614174003',
-    email: 'patient@example.com',
-    name: 'Test Patient',
-    cpf: '123.456.789-00',
-    phone: '+55 11 99999-9999',
-    birthDate: '1990-01-01',
-    gender: 'other',
+    id: "123e4567-e89b-12d3-a456-426614174003",
+    email: "patient@example.com",
+    name: "Test Patient",
+    cpf: "123.456.789-00",
+    phone: "+55 11 99999-9999",
+    birthDate: "1990-01-01",
+    gender: "other",
     address: {
-      street: 'Test Street, 123',
-      city: 'São Paulo',
-      state: 'SP',
-      zipCode: '01234-567',
-      country: 'Brasil',
+      street: "Test Street, 123",
+      city: "São Paulo",
+      state: "SP",
+      zipCode: "01234-567",
+      country: "Brasil",
     },
   };
 }
@@ -85,9 +85,9 @@ export async function setupTestAuth(
 ): Promise<Record<string, string>> {
   return {
     Authorization: `Bearer test-token`,
-    'Content-Type': 'application/json',
-    'X-User-ID': userId,
-    'X-User-Role': 'professional',
+    "Content-Type": "application/json",
+    "X-User-ID": userId,
+    "X-User-Role": "professional",
   };
 }
 
@@ -98,7 +98,7 @@ export function createMockSupabaseClient() {
   // Return a mock client that doesn't make real API calls
   return {
     from: (_table: string) => ({
-      select: (_columns = '*') => ({
+      select: (_columns = "*") => ({
         eq: (_column: string, _value: any) => ({
           single: () => Promise.resolve({ data: null, error: null }),
           limit: (_n: number) => Promise.resolve({ data: [], error: null }),
@@ -110,14 +110,17 @@ export function createMockSupabaseClient() {
       }),
       insert: (_data: any) => Promise.resolve({ data: null, error: null }),
       update: (_data: any) => ({
-        eq: (_column: string, _value: any) => Promise.resolve({ data: null, error: null }),
+        eq: (_column: string, _value: any) =>
+          Promise.resolve({ data: null, error: null }),
       }),
       delete: () => ({
-        eq: (_column: string, _value: any) => Promise.resolve({ data: null, error: null }),
+        eq: (_column: string, _value: any) =>
+          Promise.resolve({ data: null, error: null }),
       }),
     }),
     auth: {
-      getSession: () => Promise.resolve({ data: { session: null }, error: null }),
+      getSession: () =>
+        Promise.resolve({ data: { session: null }, error: null }),
       getUser: () => Promise.resolve({ data: { user: null }, error: null }),
       signInWithPassword: (_credentials: any) =>
         Promise.resolve({
@@ -128,9 +131,12 @@ export function createMockSupabaseClient() {
     },
     storage: {
       from: (_bucket: string) => ({
-        upload: (_path: string, _file: any) => Promise.resolve({ data: null, error: null }),
-        download: (_path: string) => Promise.resolve({ data: null, error: null }),
-        remove: (_paths: string[]) => Promise.resolve({ data: null, error: null }),
+        upload: (_path: string, _file: any) =>
+          Promise.resolve({ data: null, error: null }),
+        download: (_path: string) =>
+          Promise.resolve({ data: null, error: null }),
+        remove: (_paths: string[]) =>
+          Promise.resolve({ data: null, error: null }),
       }),
     },
   };
@@ -142,9 +148,9 @@ export function createMockSupabaseClient() {
 export function createTestHeaders(user = testUser) {
   return {
     Authorization: `Bearer test-token`,
-    'Content-Type': 'application/json',
-    'X-User-ID': user.id,
-    'X-User-Role': user.role,
+    "Content-Type": "application/json",
+    "X-User-ID": user.id,
+    "X-User-Role": user.role,
   };
 }
 
@@ -163,15 +169,15 @@ export function mockAuthMiddleware(user = testUser) {
  * Validate test environment variables
  */
 export function validateTestEnvironment() {
-  const required = ['SUPABASE_URL', 'SUPABASE_ANON_KEY'];
+  const required = ["SUPABASE_URL", "SUPABASE_ANON_KEY"];
 
-  const missing = required.filter(key => !process.env[key]);
+  const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
     console.warn(
-      `⚠️  Missing test environment variables: ${missing.join(', ')}`,
+      `⚠️  Missing test environment variables: ${missing.join(", ")}`,
     );
-    console.warn('Some integration tests may be skipped or use mock data.');
+    console.warn("Some integration tests may be skipped or use mock data.");
     return false;
   }
 

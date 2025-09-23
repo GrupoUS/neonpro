@@ -14,15 +14,18 @@
 
 **Problem**: Multiple test files had JSX syntax with .ts extension causing Biome parser errors
 **Files Affected**:
+
 - `/apps/web/src/__tests__/bundle-optimization-simple.test.ts`
 - `/apps/web/src/__tests__/chart-css-syntax.test.ts`
 
 **Root Causes**:
+
 - Extra parentheses in describe/it blocks: `describe(('text', () => {`
 - Missing closing parentheses in test functions
 - Files containing JSX content but using .ts extension
 
 **Solution Applied**:
+
 - Fixed syntax errors: `describe(('text', () => {` → `describe('text', () => {`
 - Renamed files to .tsx extension: `bundle-optimization-simple.test.tsx`, `chart-css-syntax.test.tsx`
 - Standardized test structure across all affected files
@@ -33,10 +36,12 @@
 **File Affected**: `/apps/web/e2e/performance.spec.ts`
 
 **Root Causes**:
+
 - Incorrect Playwright POST request format using `data` instead of `json`
 - Inconsistent variable naming (`query` vs `_query`)
 
 **Solution Applied**:
+
 - Changed all POST requests: `{ data: { ... } }` → `{ json: { ... } }`
 - Standardized variable naming to use `query` consistently
 - Updated 5 POST request calls across performance test scenarios
@@ -47,6 +52,7 @@
 **Files Affected**: Multiple test files across the suite
 
 **Solution Applied**:
+
 - Standardized to `query` parameter naming
 - Fixed unused underscore-prefixed variables
 - Ensured consistent variable reference patterns
@@ -57,6 +63,7 @@
 **Files Affected**: Bundle validation tests and optimization tests
 
 **Solution Applied**:
+
 - Consolidated test patterns
 - Removed code duplication
 - Optimized test structure for better maintainability
@@ -79,6 +86,7 @@
 ### Technical Changes
 
 **Before (Problematic)**:
+
 ```typescript
 describe(('Bundle Optimization Tests', () => {  // Extra parentheses
   it(('should render component', () => {        // Extra parentheses
@@ -93,6 +101,7 @@ await request.post(url, {
 ```
 
 **After (Fixed)**:
+
 ```typescript
 describe('Bundle Optimization Tests', () => {   // Correct syntax
   it('should render component', () => {          // Correct syntax

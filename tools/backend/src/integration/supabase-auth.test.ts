@@ -21,16 +21,16 @@ describe("Supabase Authentication Tests", () => {
     };
 
     if (!config.url || !config.anonKey) {
-      throw new Error("Missing Supabase configuration for auth tests"
+      throw new Error("Missing Supabase configuration for auth tests");
     }
 
-    supabase = createClient<Database>(config.url, config.anonKey
-  }
+    supabase = createClient<Database>(config.url, config.anonKey);
+  });
 
   afterAll(async () => {
     // Cleanup: Sign out any test sessions
-    await supabase.auth.signOut(
-  }
+    await supabase.auth.signOut();
+  });
 
   describe("User Registration", () => {
     it("should register a new user", async () => {
@@ -42,38 +42,38 @@ describe("Supabase Authentication Tests", () => {
             full_name: testUser.fullName,
           },
         },
-      }
+      });
 
-      expect(error).toBeNull(
-      expect(data.user).toBeDefined(
-      expect(data.user?.email).toBe(testUser.email
-    }
-  }
+      expect(error).toBeNull();
+      expect(data.user).toBeDefined();
+      expect(data.user?.email).toBe(testUser.email);
+    });
+  });
 
   describe("User Authentication", () => {
     it("should sign in with valid credentials", async () => {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: testUser.email,
         password: testUser.password,
-      }
+      });
 
-      expect(error).toBeNull(
-      expect(data.user).toBeDefined(
-      expect(data.session).toBeDefined(
-      expect(data.user?.email).toBe(testUser.email
-    }
+      expect(error).toBeNull();
+      expect(data.user).toBeDefined();
+      expect(data.session).toBeDefined();
+      expect(data.user?.email).toBe(testUser.email);
+    });
 
     it("should reject invalid credentials", async () => {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: testUser.email,
         password: "WrongPassword123!",
-      }
+      });
 
-      expect(error).toBeDefined(
-      expect(data.user).toBeNull(
-      expect(data.session).toBeNull(
-    }
-  }
+      expect(error).toBeDefined();
+      expect(data.user).toBeNull();
+      expect(data.session).toBeNull();
+    });
+  });
 
   describe("Session Management", () => {
     it("should maintain session after sign in", async () => {
@@ -81,24 +81,24 @@ describe("Supabase Authentication Tests", () => {
       await supabase.auth.signInWithPassword({
         email: testUser.email,
         password: testUser.password,
-      }
+      });
 
       // Check session
-      const { data, error } = await supabase.auth.getSession(
+      const { data, error } = await supabase.auth.getSession();
 
-      expect(error).toBeNull(
-      expect(data.session).toBeDefined(
-      expect(data.session?.user.email).toBe(testUser.email
-    }
+      expect(error).toBeNull();
+      expect(data.session).toBeDefined();
+      expect(data.session?.user.email).toBe(testUser.email);
+    });
 
     it("should sign out successfully", async () => {
-      const { error } = await supabase.auth.signOut(
+      const { error } = await supabase.auth.signOut();
 
-      expect(error).toBeNull(
+      expect(error).toBeNull();
 
       // Verify session is cleared
-      const { data } = await supabase.auth.getSession(
-      expect(data.session).toBeNull(
-    }
-  }
-}
+      const { data } = await supabase.auth.getSession();
+      expect(data.session).toBeNull();
+    });
+  });
+});

@@ -7,7 +7,6 @@
 
 import { AIProvider } from "../providers/ai-provider";
 
-
 // Simple error class for AI service management
 class AIServiceError extends Error {
   constructor(
@@ -354,7 +353,8 @@ export class AIServiceManagement {
     ];
 
     if (provider || model) {
-      return availableModels.filter((m) =>
+      return availableModels.filter(
+        (m) =>
           (!provider || m.provider === provider) &&
           (!model || m.model === model),
       );
@@ -426,10 +426,16 @@ export class AIServiceManagement {
       });
     }
 
-    const totalRequests = dailyBreakdown.reduce((sum, _day) => sum + _day.requests, 0);
+    const totalRequests = dailyBreakdown.reduce(
+      (sum, _day) => sum + _day.requests,
+      0,
+    );
     const successfulRequests = Math.floor(totalRequests * 0.95);
     const failedRequests = totalRequests - successfulRequests;
-    const totalTokensUsed = dailyBreakdown.reduce((sum, _day) => sum + _day.tokens, 0);
+    const totalTokensUsed = dailyBreakdown.reduce(
+      (sum, _day) => sum + _day.tokens,
+      0,
+    );
     const totalCost = dailyBreakdown.reduce((sum, _day) => sum + _day.cost, 0);
 
     return {

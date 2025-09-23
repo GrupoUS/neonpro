@@ -276,7 +276,6 @@ TDD_ERROR_RECOVERY:
   parallel_recovery: true
   max_concurrent_fixes: 10
   recovery_strategies:
-
     immediate_recovery:
       - "Erro detection em tempo real"
       - "Correção paralela com múltiplos agentes"
@@ -322,14 +321,21 @@ EXECUTION_MATRIX:
       agents: ["apex-dev"]
       parallel_mode: "single_agent"
       estimated_performance_gain: "3-5x"
-    
+
     medium_complexity:
       agents: ["apex-dev", "apex-researcher", "apex-ui-ux-designer"]
       parallel_mode: "coordinated_parallel"
       estimated_performance_gain: "8-12x"
-    
+
     high_complexity:
-      agents: ["tdd-orchestrator", "apex-dev", "code-reviewer", "security-auditor", "architect-review"]
+      agents:
+        [
+          "tdd-orchestrator",
+          "apex-dev",
+          "code-reviewer",
+          "security-auditor",
+          "architect-review",
+        ]
       parallel_mode: "full_parallel_orchestration"
       estimated_performance_gain: "15-25x"
 
@@ -381,13 +387,13 @@ PARALLEL_SUCCESS_FACTORS:
     - "Dynamic agent selection baseado em capabilities"
     - "Intelligent resource allocation com load balancing"
     - "Real-time performance monitoring e ajustes"
-  
+
   efficiency_targets:
     - "Agent utilization ≥90% para alta carga"
     - "Task completion 15-25x mais rápido para complexidade alta"
     - "Resource optimization com scaling automático"
     - "Error recovery tempo ≤10% do tempo de execução normal"
-  
+
   quality_assurance:
     - "Parallel validation com múltiplos agentes especializados"
     - "Cross-validation entre resultados de agentes diferentes"
@@ -411,13 +417,13 @@ PERFORMANCE_TARGETS:
     medium_complexity_tasks: "8-12x mais rápido"
     high_complexity_tasks: "15-25x mais rápido"
     parallel_efficiency: "≥90% utilization"
-  
+
   resource_optimization:
     agent_allocation: "Dynamic scaling 1-50 agentes"
     memory_usage: "Adaptive optimization"
     cpu_balancing: "Intelligent load distribution"
     error_recovery: "≤10% overhead total"
-  
+
   quality_metrics:
     validation_coverage: "100% com múltiplos agentes"
     error_detection: "Real-time com parallel scanning"
@@ -434,13 +440,13 @@ CONTINUOUS_OPTIMIZATION:
     - "Resource utilization metrics"
     - "Task completion rates"
     - "Error pattern analysis"
-  
+
   adaptive_adjustment:
     - "Dynamic agent scaling"
     - "Resource reallocation"
     - "Priority rebalancing"
     - "Performance tuning"
-  
+
   learning_system:
     - "Pattern recognition"
     - "Success rate optimization"
@@ -459,13 +465,13 @@ EXCELLENCE_FRAMEWORK:
     dynamic_optimization: "Real-time adjustment"
     parallel_efficiency: "≥90% utilization"
     resource_awareness: "Intelligent allocation"
-  
+
   execution_excellence:
     atomic_subtask_division: "Precision granularity"
     dependency_resolution: "Real-time optimization"
     quality_gate_automation: "Cascading validation"
     error_recovery_system: "Multi-agent coordination"
-  
+
   performance_excellence:
     scaling_capability: "1-50 agentes dinâmicos"
     load_balancing: "Intelligent distribution"

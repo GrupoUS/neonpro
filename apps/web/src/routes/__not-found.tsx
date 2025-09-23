@@ -1,6 +1,6 @@
-import * as React from 'react'
-import { Link } from '@tanstack/react-router'
-import { Home, Search } from 'lucide-react'
+import * as React from "react";
+import { Link } from "@tanstack/react-router";
+import { Home, Search } from "lucide-react";
 
 export function NotFound() {
   return (
@@ -31,7 +31,7 @@ export function NotFound() {
             >
               Ir para login
             </Link>
-            {' | '}
+            {" | "}
             <Link
               to="/dashboard"
               className="text-blue-600 hover:text-blue-500 font-medium"
@@ -42,5 +42,5 @@ export function NotFound() {
         </div>
       </div>
     </div>
-  )
+  );
 }

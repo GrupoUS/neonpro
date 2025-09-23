@@ -1277,7 +1277,7 @@ export class StructuredLogger {
 
 /**
  * Default structured logger instance with healthcare-optimized settings
- * 
+ *
  * Note: This logger now uses the enhanced Winston-based backend while maintaining
  * backward compatibility with the existing API.
  */
@@ -1327,7 +1327,7 @@ export const logger = new StructuredLogger({
 
 /**
  * Enhanced Winston-based logger with Brazilian compliance features
- * 
+ *
  * This is the new generation logger with:
  * - Winston transport system
  * - Enhanced Brazilian PII/PHI redaction
@@ -1342,7 +1342,7 @@ export const winstonLogger = enhancedLogger;
 export function createWinstonHealthcareLogger(serviceName: string) {
   return createHealthcareLogger({
     _service: serviceName,
-    environment: process.env.NODE_ENV as any || "development",
+    environment: (process.env.NODE_ENV as any) || "development",
   });
 }
 
@@ -1355,9 +1355,9 @@ export const piiRedactionService = brazilianPIIRedactionService;
  * Utility function to redact PII from any text or object
  */
 export function redactPII(data: unknown): unknown {
-  if (typeof data === 'string') {
+  if (typeof data === "string") {
     return piiRedactionService.redactText(data);
-  } else if (typeof data === 'object' && data !== null) {
+  } else if (typeof data === "object" && data !== null) {
     return piiRedactionService.redactObject(data);
   }
   return data;
@@ -1367,9 +1367,9 @@ export function redactPII(data: unknown): unknown {
  * Utility function to check if data contains PII
  */
 export function containsPII(data: unknown): boolean {
-  if (typeof data === 'string') {
+  if (typeof data === "string") {
     return piiRedactionService.containsPII(data);
-  } else if (typeof data === 'object' && data !== null) {
+  } else if (typeof data === "object" && data !== null) {
     return piiRedactionService.containsPII(JSON.stringify(data));
   }
   return false;
@@ -1386,26 +1386,35 @@ export function generateCorrelationId(): string {
  * Create logging middleware for request correlation
  */
 export function createLoggingMiddleware() {
-  return (req: { headers?: Record<string, string> }, res: { setHeader: (key: string, value: string) => void }, next: () => void) => {
-    const correlationId = req.headers['x-correlation-id'] || generateCorrelationId();
-    
+  return (
+    req: { headers?: Record<string, string> },
+    res: { setHeader: (key: string, value: string) => void },
+    next: () => void,
+  ) => {
+    const correlationId =
+      req.headers["x-correlation-id"] || generateCorrelationId();
+
     // Set correlation ID in both loggers
     logger.setCorrelationId?.(correlationId);
     winstonLogger.setCorrelationId(correlationId);
-    
+
     // Add to response headers
-    res.setHeader('x-correlation-id', correlationId);
-    
+    res.setHeader("x-correlation-id", correlationId);
+
     // Set request context
     winstonLogger.setRequestContext({
       requestId: correlationId,
       sessionId: req.session?.id,
-      anonymizedUserId: req.user?.id ? `user_${req.user.id.slice(-8)}` : undefined,
-      deviceType: req.headers['user-agent']?.includes('Mobile') ? 'mobile' : 'desktop',
+      anonymizedUserId: req.user?.id
+        ? `user_${req.user.id.slice(-8)}`
+        : undefined,
+      deviceType: req.headers["user-agent"]?.includes("Mobile")
+        ? "mobile"
+        : "desktop",
       method: req.method,
       url: req.url,
     });
-    
+
     next();
   };
 }

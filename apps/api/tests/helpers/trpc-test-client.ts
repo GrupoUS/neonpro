@@ -3,21 +3,21 @@
  * For testing with MSW (Mock Service Worker)
  */
 
-import { createTRPCClient, httpBatchLink } from '@trpc/client';
-import { createTRPCMsw } from 'msw-trpc';
-import superjson from 'superjson';
-import type { AppRouter } from '../../src/trpc';
+import { createTRPCClient, httpBatchLink } from "@trpc/client";
+import { createTRPCMsw } from "msw-trpc";
+import superjson from "superjson";
+import type { AppRouter } from "../../src/trpc";
 
 // Create tRPC test client configuration
 export const createTestTRPCClient = () => {
   return createTRPCClient<AppRouter>({
     links: [
       httpBatchLink({
-        url: 'http://localhost:3000/trpc',
+        url: "http://localhost:3000/trpc",
         headers: {
-          'x-user-id': 'test-user-id',
-          'x-clinic-id': 'test-clinic-id',
-          'x-session-id': 'test-session-id',
+          "x-user-id": "test-user-id",
+          "x-clinic-id": "test-clinic-id",
+          "x-session-id": "test-session-id",
         },
       }),
     ],
@@ -28,7 +28,7 @@ export const createTestTRPCClient = () => {
 // Create MSW tRPC mock with proper configuration
 export const createTestTRPCMsw = () => {
   return createTRPCMsw<AppRouter>({
-    baseUrl: 'http://localhost:3000/trpc',
+    baseUrl: "http://localhost:3000/trpc",
     transformer: {
       input: superjson,
       output: superjson,

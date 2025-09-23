@@ -114,7 +114,7 @@ interface AgentQueryRequest {
 
 interface AgentResponse {
   id: string;
-  type: 'text' | 'table' | 'list' | 'chart';
+  type: "text" | "table" | "list" | "chart";
   content: {
     title: string;
     text?: string;
@@ -122,7 +122,7 @@ interface AgentResponse {
     columns?: Array<{
       key: string;
       label: string;
-      type: 'string' | 'number' | 'date' | 'currency';
+      type: "string" | "number" | "date" | "currency";
     }>;
   };
   actions?: InteractiveAction[];

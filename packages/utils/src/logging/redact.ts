@@ -44,13 +44,15 @@ export function redact(input: string, opts: RedactOptions = {}) {
   if (!input) return input;
 
   // Email replacer function
-  const emailRepl = opts.emailReplacement || ((match: string) => {
-    const parts = match.split('@');
-    const local = parts[0] || '';
-    const domain = parts[1] || '';
-    const maskedLocal = local[0] + '*'.repeat(Math.max(0, local.length - 1));
-    return maskedLocal + '@' + domain;
-  });
+  const emailRepl =
+    opts.emailReplacement ||
+    ((match: string) => {
+      const parts = match.split("@");
+      const local = parts[0] || "";
+      const domain = parts[1] || "";
+      const maskedLocal = local[0] + "*".repeat(Math.max(0, local.length - 1));
+      return maskedLocal + "@" + domain;
+    });
 
   const cpfRepl = opts.cpfReplacement || "***.***.***-**";
   const phoneRepl = opts.phoneReplacement || "(11) 9****-****";

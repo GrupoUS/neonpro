@@ -90,7 +90,7 @@ export class AIServiceManagement {
       const results = await Promise.allSettled(healthChecks);
       const healthStatuses: AIServiceHealth[] = [];
 
-      results.forEach((result,_index) => {
+      results.forEach((result, _index) => {
         if (result.status === "fulfilled") {
           healthStatuses.push(result.value);
         } else {
@@ -144,7 +144,7 @@ export class AIServiceManagement {
       const results = await Promise.allSettled(checks);
       const availabilities: ModelAvailability[] = [];
 
-      results.forEach((result,_index) => {
+      results.forEach((result, _index) => {
         if (result.status === "fulfilled") {
           availabilities.push(result.value);
         } else {
@@ -351,7 +351,8 @@ export class AIServiceManagement {
     ];
 
     if (provider || model) {
-      return availableModels.filter((m) =>
+      return availableModels.filter(
+        (m) =>
           (!provider || m.provider === provider) &&
           (!model || m.model === model),
       );
@@ -423,15 +424,17 @@ export class AIServiceManagement {
       });
     }
 
-    const totalRequests = dailyBreakdown.reduce((sum,_day) => sum + day.requests,
+    const totalRequests = dailyBreakdown.reduce(
+      (sum, _day) => sum + day.requests,
       0,
     );
     const successfulRequests = Math.floor(totalRequests * 0.95);
     const failedRequests = totalRequests - successfulRequests;
-    const totalTokensUsed = dailyBreakdown.reduce((sum,_day) => sum + day.tokens,
+    const totalTokensUsed = dailyBreakdown.reduce(
+      (sum, _day) => sum + day.tokens,
       0,
     );
-    const totalCost = dailyBreakdown.reduce((sum,_day) => sum + day.cost, 0);
+    const totalCost = dailyBreakdown.reduce((sum, _day) => sum + day.cost, 0);
 
     return {
       provider: providerName,

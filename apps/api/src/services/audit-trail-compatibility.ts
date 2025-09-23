@@ -8,8 +8,11 @@
  * This is a temporary solution until the full refactoring is complete.
  */
 
-import { PrismaClient } from '@prisma/client';
-import { createOperationStateService, OperationStateService } from './operation-state-service';
+import { PrismaClient } from "@prisma/client";
+import {
+  createOperationStateService,
+  OperationStateService,
+} from "./operation-state-service";
 
 export class AuditTrailCompatibility {
   private operationStateService: OperationStateService;
@@ -36,11 +39,15 @@ export class AuditTrailCompatibility {
     const { where, orderBy } = params;
 
     // Check if this is an operationId query (the misuse pattern)
-    if (where.additionalInfo?.path?.includes('operationId') && where.additionalInfo?.equals) {
+    if (
+      where.additionalInfo?.path?.includes("operationId") &&
+      where.additionalInfo?.equals
+    ) {
       const operationId = where.additionalInfo.equals;
 
       // Use proper state management instead
-      const state = await this.operationStateService.getStateByOperationId(operationId);
+      const state =
+        await this.operationStateService.getStateByOperationId(operationId);
 
       if (state) {
         // Convert state to auditTrail format for backward compatibility
@@ -60,12 +67,12 @@ export class AuditTrailCompatibility {
           updatedAt: state.updatedAt,
           // Add other required auditTrail fields
           _userId: state.userId,
-          action: 'CRUD_OPERATION',
+          action: "CRUD_OPERATION",
           resourceType: state.entity.toUpperCase(),
           resourceId: `${state.entity}_${state.operationId}`,
-          ipAddress: 'unknown',
-          userAgent: 'system',
-          riskLevel: 'LOW',
+          ipAddress: "unknown",
+          userAgent: "system",
+          riskLevel: "LOW",
         };
       }
     }
@@ -94,10 +101,10 @@ export class AuditTrailCompatibility {
         resource_type: params.resourceType as any,
         resource_id: params.resourceId,
         additional_info: params.details ? JSON.stringify(params.details) : null,
-        ip_address: params.ipAddress || 'unknown',
-        user_agent: params.userAgent || 'unknown',
-        risk_level: (params.riskLevel || 'LOW') as any,
-        status: 'SUCCESS',
+        ip_address: params.ipAddress || "unknown",
+        user_agent: params.userAgent || "unknown",
+        risk_level: (params.riskLevel || "LOW") as any,
+        status: "SUCCESS",
       },
     });
   }
@@ -107,19 +114,21 @@ export class AuditTrailCompatibility {
    */
   private mapStatusToAuditStatus(status: string): string {
     switch (status) {
-      case 'completed':
-        return 'SUCCESS';
-      case 'failed':
-        return 'FAILED';
-      case 'processing':
-        return 'PROCESSING';
+      case "completed":
+        return "SUCCESS";
+      case "failed":
+        return "FAILED";
+      case "processing":
+        return "PROCESSING";
       default:
-        return 'PENDING';
+        return "PENDING";
     }
   }
 }
 
 // Factory function
-export function createAuditTrailCompatibility(prisma: PrismaClient): AuditTrailCompatibility {
+export function createAuditTrailCompatibility(
+  prisma: PrismaClient,
+): AuditTrailCompatibility {
   return new AuditTrailCompatibility(prisma);
 }

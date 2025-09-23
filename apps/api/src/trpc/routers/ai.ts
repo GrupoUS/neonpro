@@ -11,17 +11,22 @@
  * - ANVISA compliance for AI-powered medical assistance
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import * as v from 'valibot';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+import {
+  AuditAction,
+  AuditStatus,
+  ResourceType,
+  RiskLevel,
+} from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import * as v from "valibot";
+import { healthcareProcedure, protectedProcedure, router } from "../trpc";
 
 // =====================================
 // AI PROVIDER CONFIGURATION
 // =====================================
 
 interface AIProvider {
-  name: 'openai' | 'anthropic';
+  name: "openai" | "anthropic";
   model: string;
   maxTokens: number;
   temperature: number;
@@ -32,8 +37,8 @@ interface AIProvider {
 
 const AI_PROVIDERS: AIProvider[] = [
   {
-    name: 'openai',
-    model: 'gpt-4',
+    name: "openai",
+    model: "gpt-4",
     maxTokens: 4000,
     temperature: 0.3,
     costPerToken: 0.00003,
@@ -41,8 +46,8 @@ const AI_PROVIDERS: AIProvider[] = [
     healthScore: 0.95,
   },
   {
-    name: 'anthropic',
-    model: 'claude-3-sonnet',
+    name: "anthropic",
+    model: "claude-3-sonnet",
     maxTokens: 4000,
     temperature: 0.3,
     costPerToken: 0.000015,
@@ -57,46 +62,46 @@ const AI_PROVIDERS: AIProvider[] = [
  */
 const MEDICAL_TERMINOLOGY_PT = {
   // Common symptoms
-  fever: 'febre',
-  headache: 'dor de cabeça',
-  nausea: 'náusea',
-  fatigue: 'fadiga',
-  pain: 'dor',
-  cough: 'tosse',
-  'shortness of breath': 'falta de ar',
-  'chest pain': 'dor no peito',
-  'abdominal pain': 'dor abdominal',
-  dizziness: 'tontura',
+  fever: "febre",
+  headache: "dor de cabeça",
+  nausea: "náusea",
+  fatigue: "fadiga",
+  pain: "dor",
+  cough: "tosse",
+  "shortness of breath": "falta de ar",
+  "chest pain": "dor no peito",
+  "abdominal pain": "dor abdominal",
+  dizziness: "tontura",
 
   // Medical specialties
-  cardiology: 'cardiologia',
-  dermatology: 'dermatologia',
-  neurology: 'neurologia',
-  psychiatry: 'psiquiatria',
-  pediatrics: 'pediatria',
-  gynecology: 'ginecologia',
-  orthopedics: 'ortopedia',
-  ophthalmology: 'oftalmologia',
+  cardiology: "cardiologia",
+  dermatology: "dermatologia",
+  neurology: "neurologia",
+  psychiatry: "psiquiatria",
+  pediatrics: "pediatria",
+  gynecology: "ginecologia",
+  orthopedics: "ortopedia",
+  ophthalmology: "oftalmologia",
 
   // Medical procedures
-  'blood test': 'exame de sangue',
-  'x-ray': 'raio-x',
-  ultrasound: 'ultrassom',
-  mri: 'ressonância magnética',
-  'ct scan': 'tomografia computadorizada',
-  consultation: 'consulta',
-  surgery: 'cirurgia',
-  prescription: 'prescrição',
+  "blood test": "exame de sangue",
+  "x-ray": "raio-x",
+  ultrasound: "ultrassom",
+  mri: "ressonância magnética",
+  "ct scan": "tomografia computadorizada",
+  consultation: "consulta",
+  surgery: "cirurgia",
+  prescription: "prescrição",
 
   // Body parts
-  heart: 'coração',
-  brain: 'cérebro',
-  liver: 'fígado',
-  kidney: 'rim',
-  lung: 'pulmão',
-  stomach: 'estômago',
-  skin: 'pele',
-  bone: 'osso',
+  heart: "coração",
+  brain: "cérebro",
+  liver: "fígado",
+  kidney: "rim",
+  lung: "pulmão",
+  stomach: "estômago",
+  skin: "pele",
+  bone: "osso",
 };
 
 /**
@@ -148,12 +153,12 @@ const HEALTHCARE_CONTEXT_PROMPTS = {
  * Routes requests to optimal provider based on cost, latency, and availability
  */
 async function selectOptimalProvider(
-  requestType: 'conversation' | 'prediction' | 'analysis',
-  complexity: 'low' | 'medium' | 'high',
+  requestType: "conversation" | "prediction" | "analysis",
+  complexity: "low" | "medium" | "high",
   maxCost?: number,
 ): Promise<AIProvider> {
   // Filter providers based on cost constraints
-  let availableProviders = AI_PROVIDERS.filter(provider => {
+  let availableProviders = AI_PROVIDERS.filter((provider) => {
     if (maxCost && provider.costPerToken > maxCost) return false;
     return provider.healthScore > 0.8; // Only healthy providers
   });
@@ -164,20 +169,24 @@ async function selectOptimalProvider(
 
   // Select based on request type and complexity
   switch (requestType) {
-    case 'conversation':
+    case "conversation":
       // Prefer OpenAI for conversations (better Portuguese support)
       return (
-        availableProviders.find(p => p.name === 'openai')
-        || availableProviders[0]
+        availableProviders.find((p) => p.name === "openai") ||
+        availableProviders[0]
       );
 
-    case 'prediction':
+    case "prediction":
       // Prefer lower cost for prediction tasks
-      return availableProviders.sort((a, _b) => a.costPerToken - b.costPerToken)[0];
+      return availableProviders.sort(
+        (a, _b) => a.costPerToken - b.costPerToken,
+      )[0];
 
-    case 'analysis':
+    case "analysis":
       // Prefer higher quality for analysis
-      return availableProviders.sort((a, _b) => b.healthScore - a.healthScore)[0];
+      return availableProviders.sort(
+        (a, _b) => b.healthScore - a.healthScore,
+      )[0];
 
     default:
       return availableProviders[0];
@@ -192,36 +201,40 @@ async function callAIProvider(
   prompt: string,
 ): Promise<{ response: string; tokensUsed: number; cost: number }> {
   // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300));
+  await new Promise((resolve) =>
+    setTimeout(resolve, 200 + Math.random() * 300),
+  );
 
   // Mock response based on provider
   const responses = {
     openai: {
       conversation:
-        'Olá! Como posso ajudá-lo com suas questões de saúde hoje? Lembre-se de que este assistente não substitui uma consulta médica presencial.',
+        "Olá! Como posso ajudá-lo com suas questões de saúde hoje? Lembre-se de que este assistente não substitui uma consulta médica presencial.",
       prediction:
-        'Com base nos dados analisados, a probabilidade de não comparecimento é de 23% (baixa). Recomendo enviar lembrete por WhatsApp 2 horas antes da consulta.',
+        "Com base nos dados analisados, a probabilidade de não comparecimento é de 23% (baixa). Recomendo enviar lembrete por WhatsApp 2 horas antes da consulta.",
       analysis:
-        'Análise dos dados de saúde indica aumento de 15% nas consultas de cardiologia no último trimestre, correlacionado com fatores sazonais.',
+        "Análise dos dados de saúde indica aumento de 15% nas consultas de cardiologia no último trimestre, correlacionado com fatores sazonais.",
     },
     anthropic: {
       conversation:
-        'Sou seu assistente de saúde virtual. Posso ajudar com informações gerais, mas sempre consulte um médico para diagnósticos.',
+        "Sou seu assistente de saúde virtual. Posso ajudar com informações gerais, mas sempre consulte um médico para diagnósticos.",
       prediction:
-        'Análise comportamental indica risco baixo de falta (18%). Fatores positivos: histórico de pontualidade, confirmação prévia.',
+        "Análise comportamental indica risco baixo de falta (18%). Fatores positivos: histórico de pontualidade, confirmação prévia.",
       analysis:
-        'Insights de dados revelam padrões significativos na aderência ao tratamento, com variações regionais importantes.',
+        "Insights de dados revelam padrões significativos na aderência ao tratamento, com variações regionais importantes.",
     },
   };
 
-  const responseType = prompt.includes('no-show') || prompt.includes('probabilidade')
-    ? 'prediction'
-    : prompt.includes('análise') || prompt.includes('insights')
-    ? 'analysis'
-    : 'conversation';
+  const responseType =
+    prompt.includes("no-show") || prompt.includes("probabilidade")
+      ? "prediction"
+      : prompt.includes("análise") || prompt.includes("insights")
+        ? "analysis"
+        : "conversation";
 
-  const response = responses[provider.name][responseType]
-    || responses[provider.name].conversation;
+  const response =
+    responses[provider.name][responseType] ||
+    responses[provider.name].conversation;
   const tokensUsed = Math.floor(response.length / 4); // Rough token estimation
   const cost = tokensUsed * provider.costPerToken;
 
@@ -257,25 +270,26 @@ function anonymizePatientDataForAI(data: any): any {
   }
 
   if (anonymized.city) {
-    anonymized.regionType = anonymized.city.includes('São Paulo') || anonymized.city.includes('Rio')
-      ? 'metropolitan'
-      : 'other';
+    anonymized.regionType =
+      anonymized.city.includes("São Paulo") || anonymized.city.includes("Rio")
+        ? "metropolitan"
+        : "other";
     delete anonymized.city;
   }
 
   // Keep relevant behavioral/medical data
   const allowedFields = [
-    'totalAppointments',
-    'totalNoShows',
-    'noShowRiskScore',
-    'allergies',
-    'chronicConditions',
-    'bloodType',
-    'behavioralPatterns',
-    'communicationPreferences',
-    'ageRange',
-    'regionType',
-    'gender',
+    "totalAppointments",
+    "totalNoShows",
+    "noShowRiskScore",
+    "allergies",
+    "chronicConditions",
+    "bloodType",
+    "behavioralPatterns",
+    "communicationPreferences",
+    "ageRange",
+    "regionType",
+    "gender",
   ];
 
   return Object.keys(anonymized).reduce((acc, _key) => {
@@ -293,7 +307,7 @@ function translateMedicalTerms(text: string): string {
   let translatedText = text;
 
   Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(([english, _portuguese]) => {
-    const regex = new RegExp(`\\b${english}\\b`, 'gi');
+    const regex = new RegExp(`\\b${english}\\b`, "gi");
     translatedText = translatedText.replace(regex, portuguese);
   });
 
@@ -312,7 +326,7 @@ export const aiRouter = router({
   chat: healthcareProcedure
     .input(
       v.object({
-        message: v.string([v.minLength(1, 'Message cannot be empty')]),
+        message: v.string([v.minLength(1, "Message cannot be empty")]),
         _context: v.optional(
           v.object({
             patientId: v.optional(v.string()),
@@ -326,11 +340,10 @@ export const aiRouter = router({
     .mutation(async ({ ctx, _input }) => {
       try {
         // Select optimal AI provider
-        const provider = await selectOptimalProvider('conversation', 'medium');
+        const provider = await selectOptimalProvider("conversation", "medium");
 
         // Build prompt with healthcare context
-        const prompt =
-          `${HEALTHCARE_CONTEXT_PROMPTS.medicalAssistant}\n\nPaciente: ${input.message}`;
+        const prompt = `${HEALTHCARE_CONTEXT_PROMPTS.medicalAssistant}\n\nPaciente: ${input.message}`;
 
         // Call AI provider
         const result = await callAIProvider(provider, prompt, input._context);
@@ -345,7 +358,7 @@ export const aiRouter = router({
             clinicId: ctx.clinicId,
             patientId: input.context?.patientId,
             action: AuditAction.READ,
-            resource: 'ai_chat',
+            resource: "ai_chat",
             resourceType: ResourceType.SYSTEM_CONFIG,
             ipAddress: ctx.auditMeta.ipAddress,
             userAgent: ctx.auditMeta.userAgent,
@@ -353,7 +366,7 @@ export const aiRouter = router({
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.LOW,
             additionalInfo: JSON.stringify({
-              action: 'ai_chat_interaction',
+              action: "ai_chat_interaction",
               provider: provider.name,
               tokensUsed: result.tokensUsed,
               cost: result.cost,
@@ -376,8 +389,8 @@ export const aiRouter = router({
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to process AI chat request',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to process AI chat request",
           cause: error,
         });
       }
@@ -390,7 +403,7 @@ export const aiRouter = router({
   predictNoShow: protectedProcedure
     .input(
       v.object({
-        patientId: v.string([v.uuid('Invalid patient ID')]),
+        patientId: v.string([v.uuid("Invalid patient ID")]),
         appointmentTime: v.date(),
         includeWeatherData: v.optional(v.boolean()),
         additionalFactors: v.optional(
@@ -412,8 +425,8 @@ export const aiRouter = router({
           },
           include: {
             appointments: {
-              where: { status: { in: ['completed', 'no_show', 'cancelled'] } },
-              orderBy: { startTime: 'desc' },
+              where: { status: { in: ["completed", "no_show", "cancelled"] } },
+              orderBy: { startTime: "desc" },
               take: 10,
             },
           },
@@ -421,8 +434,8 @@ export const aiRouter = router({
 
         if (!patient) {
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Patient not found',
+            code: "NOT_FOUND",
+            message: "Patient not found",
           });
         }
 
@@ -430,7 +443,7 @@ export const aiRouter = router({
         const anonymizedData = anonymizePatientDataForAI(patient);
 
         // Select optimal AI provider for prediction
-        const provider = await selectOptimalProvider('prediction', 'high');
+        const provider = await selectOptimalProvider("prediction", "high");
 
         // Build prediction prompt
         const prompt = `${HEALTHCARE_CONTEXT_PROMPTS.noShowPrediction}
@@ -453,7 +466,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
             clinicId: ctx.clinicId,
             patientId: input.patientId,
             action: AuditAction.READ,
-            resource: 'ai_prediction',
+            resource: "ai_prediction",
             resourceType: ResourceType.PATIENT_DATA,
             resourceId: input.patientId,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -462,7 +475,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.MEDIUM,
             additionalInfo: JSON.stringify({
-              action: 'noshow_risk_predicted_ai',
+              action: "noshow_risk_predicted_ai",
               provider: provider.name,
               tokensUsed: result.tokensUsed,
               cost: result.cost,
@@ -474,21 +487,22 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
         return {
           prediction: {
             riskScore: Math.random() * 100, // Mock score, replace with real AI analysis
-            riskLevel: Math.random() > 0.7
-              ? 'high'
-              : Math.random() > 0.4
-              ? 'medium'
-              : 'low',
+            riskLevel:
+              Math.random() > 0.7
+                ? "high"
+                : Math.random() > 0.4
+                  ? "medium"
+                  : "low",
             confidence: 0.85,
             factors: [
-              'historical_patterns',
-              'appointment_timing',
-              'weather_conditions',
+              "historical_patterns",
+              "appointment_timing",
+              "weather_conditions",
             ],
             recommendations: [
-              'Enviar lembrete por WhatsApp 2 horas antes',
-              'Confirmar presença 24 horas antes',
-              'Oferecer reagendamento se necessário',
+              "Enviar lembrete por WhatsApp 2 horas antes",
+              "Confirmar presença 24 horas antes",
+              "Oferecer reagendamento se necessário",
             ],
           },
           aiAnalysis: result.response,
@@ -502,8 +516,8 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to predict no-show risk',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to predict no-show risk",
           cause: error,
         });
       }
@@ -517,7 +531,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
     .input(
       v.object({
         dataType: v.string([
-          v.picklist(['appointments', 'patients', 'treatments', 'outcomes']),
+          v.picklist(["appointments", "patients", "treatments", "outcomes"]),
         ]),
         timeRange: v.object({
           startDate: v.date(),
@@ -531,14 +545,14 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
           }),
         ),
         analysisType: v.optional(
-          v.string([v.picklist(['trends', 'predictions', 'recommendations'])]),
+          v.string([v.picklist(["trends", "predictions", "recommendations"])]),
         ),
       }),
     )
     .query(async ({ ctx, _input }) => {
       try {
         // Select optimal AI provider for analysis
-        const provider = await selectOptimalProvider('analysis', 'high');
+        const provider = await selectOptimalProvider("analysis", "high");
 
         // Build analysis prompt
         const prompt = `${HEALTHCARE_CONTEXT_PROMPTS.healthcareInsights}
@@ -546,7 +560,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
 Tipo de análise: ${input.dataType}
 Período: ${input.timeRange.startDate.toISOString()} até ${input.timeRange.endDate.toISOString()}
 Filtros: ${JSON.stringify(input.filters || {}, null, 2)}
-Tipo de análise: ${input.analysisType || 'trends'}
+Tipo de análise: ${input.analysisType || "trends"}
 
 Gere insights relevantes para gestão de clínica no Brasil, considerando regulamentações locais.`;
 
@@ -559,7 +573,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
             _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.READ,
-            resource: 'ai_insights',
+            resource: "ai_insights",
             resourceType: ResourceType.SYSTEM_CONFIG,
             ipAddress: ctx.auditMeta.ipAddress,
             userAgent: ctx.auditMeta.userAgent,
@@ -567,7 +581,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.LOW,
             additionalInfo: JSON.stringify({
-              action: 'healthcare_insights_generated',
+              action: "healthcare_insights_generated",
               provider: provider.name,
               dataType: input.dataType,
               analysisType: input.analysisType,
@@ -581,14 +595,14 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
           insights: {
             summary: result.response,
             trends: [
-              'Aumento de 15% em consultas cardiológicas',
-              'Redução de 8% em faltas',
+              "Aumento de 15% em consultas cardiológicas",
+              "Redução de 8% em faltas",
             ],
             recommendations: [
-              'Implementar programa de prevenção cardiovascular',
-              'Otimizar agendamento para horários de menor falta',
+              "Implementar programa de prevenção cardiovascular",
+              "Otimizar agendamento para horários de menor falta",
             ],
-            predictions: ['Crescimento esperado de 20% no próximo trimestre'],
+            predictions: ["Crescimento esperado de 20% no próximo trimestre"],
           },
           metadata: {
             generatedAt: new Date(),
@@ -605,8 +619,8 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to generate healthcare insights',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to generate healthcare insights",
           cause: error,
         });
       }
@@ -619,7 +633,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
   predict: protectedProcedure
     .input(
       v.object({
-        patient_id: v.string([v.uuid('Invalid patient ID')]),
+        patient_id: v.string([v.uuid("Invalid patient ID")]),
         appointment_time: v.date(),
         factors: v.optional(
           v.object({
@@ -639,8 +653,9 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         includeWeatherData: !!input.factors?.weather_conditions,
         additionalFactors: {
           dayOfWeek: input.factors?.day_of_week,
-          timeOfDay: input.appointment_time.getHours() < 12 ? 'morning' : 'afternoon',
-          seasonality: new Date().getMonth() < 6 ? 'winter' : 'summer',
+          timeOfDay:
+            input.appointment_time.getHours() < 12 ? "morning" : "afternoon",
+          seasonality: new Date().getMonth() < 6 ? "winter" : "summer",
         },
       };
 
@@ -665,7 +680,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
   analyzeAestheticRisk: healthcareProcedure
     .input(
       v.object({
-        patient_id: v.string([v.uuid('Invalid patient ID')]),
+        patient_id: v.string([v.uuid("Invalid patient ID")]),
         procedure_type: v.string(),
         medical_history: v.optional(v.any()),
         specialization: v.optional(v.string()),
@@ -683,8 +698,8 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
 
         if (!patient) {
           throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Patient not found',
+            code: "NOT_FOUND",
+            message: "Patient not found",
           });
         }
 
@@ -692,7 +707,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         const anonymizedData = anonymizePatientDataForAI(patient);
 
         // Select AI provider
-        const provider = await selectOptimalProvider('analysis', 'high');
+        const provider = await selectOptimalProvider("analysis", "high");
 
         // Build aesthetic risk analysis prompt
         const prompt = `
@@ -704,7 +719,7 @@ Analise o risco do procedimento considerando:
 - Contraindicações específicas
 
 Procedimento: ${input.procedure_type}
-Especialização: ${input.specialization || 'medicina_estetica'}
+Especialização: ${input.specialization || "medicina_estetica"}
 Dados do paciente: ${JSON.stringify(anonymizedData, null, 2)}
 
 Forneça análise de risco e recomendações.`;
@@ -718,7 +733,7 @@ Forneça análise de risco e recomendações.`;
             clinicId: ctx.clinicId,
             patientId: input.patient_id,
             action: AuditAction.READ,
-            resource: 'aesthetic_risk_analysis',
+            resource: "aesthetic_risk_analysis",
             resourceType: ResourceType.PATIENT_DATA,
             resourceId: input.patient_id,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -727,7 +742,7 @@ Forneça análise de risco e recomendações.`;
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.MEDIUM,
             additionalInfo: JSON.stringify({
-              action: 'aesthetic_risk_analyzed',
+              action: "aesthetic_risk_analyzed",
               procedure: input.procedure_type,
               provider: provider.name,
               cost: result.cost,
@@ -737,13 +752,14 @@ Forneça análise de risco e recomendações.`;
 
         return {
           risk_assessment: {
-            overall_risk: Math.random() > 0.7
-              ? 'high'
-              : Math.random() > 0.4
-              ? 'medium'
-              : 'low',
-            contraindications: ['Nenhuma contraindicação identificada'],
-            recommendations: ['Realizar avaliação pré-procedimento detalhada'],
+            overall_risk:
+              Math.random() > 0.7
+                ? "high"
+                : Math.random() > 0.4
+                  ? "medium"
+                  : "low",
+            contraindications: ["Nenhuma contraindicação identificada"],
+            recommendations: ["Realizar avaliação pré-procedimento detalhada"],
             anvisa_compliance: true,
             cfm_compliance: true,
           },
@@ -758,8 +774,8 @@ Forneça análise de risco e recomendações.`;
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to analyze aesthetic risk',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to analyze aesthetic risk",
           cause: error,
         });
       }
@@ -773,12 +789,12 @@ Forneça análise de risco e recomendações.`;
     .input(
       v.object({
         request_type: v.string([
-          v.picklist(['conversation', 'prediction', 'analysis']),
+          v.picklist(["conversation", "prediction", "analysis"]),
         ]),
-        complexity: v.string([v.picklist(['low', 'medium', 'high'])]),
+        complexity: v.string([v.picklist(["low", "medium", "high"])]),
         max_cost: v.optional(v.number()),
         preferred_provider: v.optional(
-          v.string([v.picklist(['openai', 'anthropic'])]),
+          v.string([v.picklist(["openai", "anthropic"])]),
         ),
       }),
     )
@@ -795,7 +811,7 @@ Forneça análise de risco e recomendações.`;
         let selectedProvider = provider;
         if (input.preferred_provider) {
           const preferredProvider = AI_PROVIDERS.find(
-            p => p.name === input.preferred_provider,
+            (p) => p.name === input.preferred_provider,
           );
           if (preferredProvider && preferredProvider.healthScore > 0.8) {
             selectedProvider = preferredProvider;
@@ -808,7 +824,7 @@ Forneça análise de risco e recomendações.`;
             _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.READ,
-            resource: 'ai_provider_routing',
+            resource: "ai_provider_routing",
             resourceType: ResourceType.SYSTEM_CONFIG,
             ipAddress: ctx.auditMeta.ipAddress,
             userAgent: ctx.auditMeta.userAgent,
@@ -816,7 +832,7 @@ Forneça análise de risco e recomendações.`;
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.LOW,
             additionalInfo: JSON.stringify({
-              action: 'provider_routed',
+              action: "provider_routed",
               selected_provider: selectedProvider.name,
               request_type: input.request_type,
               complexity: input.complexity,
@@ -833,8 +849,8 @@ Forneça análise de risco e recomendações.`;
             max_concurrency: selectedProvider.maxConcurrency,
           },
           fallback_providers: AI_PROVIDERS.filter(
-            p => p.name !== selectedProvider.name,
-          ).map(p => ({ name: p.name, health_score: p.healthScore })),
+            (p) => p.name !== selectedProvider.name,
+          ).map((p) => ({ name: p.name, health_score: p.healthScore })),
           compliance: {
             cost_optimized: true,
             health_checked: true,
@@ -843,8 +859,8 @@ Forneça análise de risco e recomendações.`;
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to route AI provider',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to route AI provider",
           cause: error,
         });
       }
@@ -861,11 +877,11 @@ Forneça análise de risco e recomendações.`;
           v.object({
             id: v.string(),
             type: v.string([
-              v.picklist(['conversation', 'prediction', 'analysis']),
+              v.picklist(["conversation", "prediction", "analysis"]),
             ]),
             data: v.any(),
             priority: v.optional(
-              v.string([v.picklist(['low', 'normal', 'high'])]),
+              v.string([v.picklist(["low", "normal", "high"])]),
             ),
           }),
         ),
@@ -888,23 +904,23 @@ Forneça análise de risco e recomendações.`;
         for (let i = 0; i < requests.length; i += maxConcurrent) {
           const batch = requests.slice(i, i + maxConcurrent);
 
-          const batchPromises = batch.map(async request => {
+          const batchPromises = batch.map(async (request) => {
             try {
               const provider = await selectOptimalProvider(
                 request.type as any,
-                'medium',
+                "medium",
               );
 
               const result = (await Promise.race([
                 callAIProvider(provider, JSON.stringify(request.data)),
                 new Promise((resolve, reject) =>
-                  setTimeout(() => reject(new Error('Timeout')), timeoutMs)
+                  setTimeout(() => reject(new Error("Timeout")), timeoutMs),
                 ),
               ])) as any;
 
               return {
                 id: request.id,
-                status: 'success',
+                status: "success",
                 result: result.response,
                 provider: provider.name,
                 cost: result.cost,
@@ -912,8 +928,8 @@ Forneça análise de risco e recomendações.`;
             } catch (error) {
               return {
                 id: request.id,
-                status: 'error',
-                error: error instanceof Error ? error.message : 'Unknown error',
+                status: "error",
+                error: error instanceof Error ? error.message : "Unknown error",
               };
             }
           });
@@ -928,7 +944,7 @@ Forneça análise de risco e recomendações.`;
             _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.READ,
-            resource: 'ai_batch_analysis',
+            resource: "ai_batch_analysis",
             resourceType: ResourceType.SYSTEM_CONFIG,
             ipAddress: ctx.auditMeta.ipAddress,
             userAgent: ctx.auditMeta.userAgent,
@@ -936,10 +952,10 @@ Forneça análise de risco e recomendações.`;
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.LOW,
             additionalInfo: JSON.stringify({
-              action: 'batch_analysis_completed',
+              action: "batch_analysis_completed",
               total_requests: requests.length,
-              successful: results.filter(r => r.status === 'success').length,
-              failed: results.filter(r => r.status === 'error').length,
+              successful: results.filter((r) => r.status === "success").length,
+              failed: results.filter((r) => r.status === "error").length,
             }),
           },
         });
@@ -949,8 +965,8 @@ Forneça análise de risco e recomendações.`;
           total_requests: requests.length,
           results,
           summary: {
-            successful: results.filter(r => r.status === 'success').length,
-            failed: results.filter(r => r.status === 'error').length,
+            successful: results.filter((r) => r.status === "success").length,
+            failed: results.filter((r) => r.status === "error").length,
             total_cost: results.reduce((sum, _r) => sum + (r.cost || 0), 0),
           },
           compliance: {
@@ -961,8 +977,8 @@ Forneça análise de risco e recomendações.`;
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to process batch analysis',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to process batch analysis",
           cause: error,
         });
       }

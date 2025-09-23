@@ -99,11 +99,7 @@
         "severity": "high",
         "description": "Multiple failed login attempts from same source",
         "detection_pattern": "COUNT(event.type='auth' AND event.status='failed') > 10 WITHIN 5m GROUP BY source_ip",
-        "response_actions": [
-          "ip_blocking",
-          "rate_limiting",
-          "security_alert"
-        ],
+        "response_actions": ["ip_blocking", "rate_limiting", "security_alert"],
         "compliance_impact": ["LGPD"],
         "healthcare_risk": "credential_theft"
       },
@@ -190,7 +186,10 @@
       "notification_channels": [
         {
           "type": "email",
-          "recipients": ["security@neonpro.healthcare", "dpo@neonpro.healthcare"],
+          "recipients": [
+            "security@neonpro.healthcare",
+            "dpo@neonpro.healthcare"
+          ],
           "severity_levels": ["medium", "high", "critical"]
         },
         {
@@ -219,12 +218,18 @@
         },
         "weekly_compliance_report": {
           "enabled": true,
-          "recipients": ["compliance@neonpro.healthcare", "dpo@neonpro.healthcare"],
+          "recipients": [
+            "compliance@neonpro.healthcare",
+            "dpo@neonpro.healthcare"
+          ],
           "format": "pdf"
         },
         "monthly_audit_trail": {
           "enabled": true,
-          "recipients": ["audit@neonpro.healthcare", "legal@neonpro.healthcare"],
+          "recipients": [
+            "audit@neonpro.healthcare",
+            "legal@neonpro.healthcare"
+          ],
           "format": "csv"
         }
       },

@@ -408,7 +408,8 @@ export function shouldApplySemanticCache(
   }
 
   // Simple similarity check (in production, use more sophisticated NLP)
-  const maxSimilarity = Math.max(...previousQueries.map((prev) =>
+  const maxSimilarity = Math.max(
+    ...previousQueries.map((prev) =>
       calculateStringSimilarity(query.toLowerCase(), prev.toLowerCase()),
     ),
   );

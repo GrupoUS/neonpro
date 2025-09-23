@@ -2,7 +2,7 @@
 // Comprehensive metrics system for LGPD, CFM, ANVISA compliance tracking
 // Note: Keep PII out of labels and logs
 
-import { createAdminClient } from '../clients/supabase';
+import { createAdminClient } from "../clients/supabase";
 
 export type Timer = { start: bigint };
 
@@ -25,35 +25,35 @@ export interface HealthcareMetric {
 
 export enum HealthcareMetricType {
   // LGPD Compliance Metrics
-  LGPD_CONSENT_VALIDATION = 'lgpd_consent_validation',
-  LGPD_DATA_ACCESS = 'lgpd_data_access',
-  LGPD_DATA_RETENTION = 'lgpd_data_retention',
-  LGPD_COMPLIANCE_SCORE = 'lgpd_compliance_score',
+  LGPD_CONSENT_VALIDATION = "lgpd_consent_validation",
+  LGPD_DATA_ACCESS = "lgpd_data_access",
+  LGPD_DATA_RETENTION = "lgpd_data_retention",
+  LGPD_COMPLIANCE_SCORE = "lgpd_compliance_score",
 
   // CFM Compliance Metrics
-  CFM_CREDENTIAL_VALIDATION = 'cfm_credential_validation',
-  CFM_PROFESSIONAL_ACCESS = 'cfm_professional_access',
-  CFM_VALIDATION_SUCCESS_RATE = 'cfm_validation_success_rate',
+  CFM_CREDENTIAL_VALIDATION = "cfm_credential_validation",
+  CFM_PROFESSIONAL_ACCESS = "cfm_professional_access",
+  CFM_VALIDATION_SUCCESS_RATE = "cfm_validation_success_rate",
 
   // ANVISA Compliance Metrics
-  ANVISA_PROCEDURE_COMPLIANCE = 'anvisa_procedure_compliance',
-  ANVISA_SAFETY_PROTOCOL = 'anvisa_safety_protocol',
-  ANVISA_ADVERSE_EVENT = 'anvisa_adverse_event',
+  ANVISA_PROCEDURE_COMPLIANCE = "anvisa_procedure_compliance",
+  ANVISA_SAFETY_PROTOCOL = "anvisa_safety_protocol",
+  ANVISA_ADVERSE_EVENT = "anvisa_adverse_event",
 
   // Patient Safety Metrics
-  PATIENT_DATA_ACCESS = 'patient_data_access',
-  PATIENT_CONSENT_STATUS = 'patient_consent_status',
-  EMERGENCY_ACCESS = 'emergency_access',
+  PATIENT_DATA_ACCESS = "patient_data_access",
+  PATIENT_CONSENT_STATUS = "patient_consent_status",
+  EMERGENCY_ACCESS = "emergency_access",
 
   // Audit Trail Metrics
-  AUDIT_LOG_INTEGRITY = 'audit_log_integrity',
-  AUDIT_COMPLETENESS = 'audit_completeness',
-  COMPLIANCE_VIOLATION = 'compliance_violation',
+  AUDIT_LOG_INTEGRITY = "audit_log_integrity",
+  AUDIT_COMPLETENESS = "audit_completeness",
+  COMPLIANCE_VIOLATION = "compliance_violation",
 
   // Performance Metrics
-  API_RESPONSE_TIME = 'api_response_time',
-  DATABASE_QUERY_TIME = 'database_query_time',
-  SYSTEM_AVAILABILITY = 'system_availability',
+  API_RESPONSE_TIME = "api_response_time",
+  DATABASE_QUERY_TIME = "database_query_time",
+  SYSTEM_AVAILABILITY = "system_availability",
 }
 
 export interface ComplianceKPI {
@@ -61,15 +61,15 @@ export interface ComplianceKPI {
   name: string;
   type: HealthcareMetricType;
   target: number;
-  direction: 'higher-better' | 'lower-better';
+  direction: "higher-better" | "lower-better";
   unit: string;
   description: string;
-  complianceLevel: 'critical' | 'high' | 'medium' | 'low';
+  complianceLevel: "critical" | "high" | "medium" | "low";
 }
 
 export interface MetricAggregation {
   type: HealthcareMetricType;
-  period: 'hour' | 'day' | 'week' | 'month';
+  period: "hour" | "day" | "week" | "month";
   value: number;
   count: number;
   min: number;
@@ -91,58 +91,59 @@ export class HealthcareMetricsService {
   private initializeHealthcareKPIs() {
     const defaultKPIs: ComplianceKPI[] = [
       {
-        id: 'lgpd_compliance_rate',
-        name: 'LGPD Compliance Rate',
+        id: "lgpd_compliance_rate",
+        name: "LGPD Compliance Rate",
         type: HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
         target: 95,
-        direction: 'higher-better',
-        unit: '%',
-        description: 'Percentage of operations compliant with LGPD requirements',
-        complianceLevel: 'critical',
+        direction: "higher-better",
+        unit: "%",
+        description:
+          "Percentage of operations compliant with LGPD requirements",
+        complianceLevel: "critical",
       },
       {
-        id: 'cfm_validation_success',
-        name: 'CFM Validation Success Rate',
+        id: "cfm_validation_success",
+        name: "CFM Validation Success Rate",
         type: HealthcareMetricType.CFM_VALIDATION_SUCCESS_RATE,
         target: 98,
-        direction: 'higher-better',
-        unit: '%',
-        description: 'Success rate of CFM professional credential validations',
-        complianceLevel: 'critical',
+        direction: "higher-better",
+        unit: "%",
+        description: "Success rate of CFM professional credential validations",
+        complianceLevel: "critical",
       },
       {
-        id: 'anvisa_compliance_rate',
-        name: 'ANVISA Procedure Compliance',
+        id: "anvisa_compliance_rate",
+        name: "ANVISA Procedure Compliance",
         type: HealthcareMetricType.ANVISA_PROCEDURE_COMPLIANCE,
         target: 100,
-        direction: 'higher-better',
-        unit: '%',
-        description: 'Compliance rate with ANVISA safety protocols',
-        complianceLevel: 'critical',
+        direction: "higher-better",
+        unit: "%",
+        description: "Compliance rate with ANVISA safety protocols",
+        complianceLevel: "critical",
       },
       {
-        id: 'emergency_access_rate',
-        name: 'Emergency Access Rate',
+        id: "emergency_access_rate",
+        name: "Emergency Access Rate",
         type: HealthcareMetricType.EMERGENCY_ACCESS,
         target: 5,
-        direction: 'lower-better',
-        unit: '%',
-        description: 'Percentage of data access through emergency protocols',
-        complianceLevel: 'high',
+        direction: "lower-better",
+        unit: "%",
+        description: "Percentage of data access through emergency protocols",
+        complianceLevel: "high",
       },
       {
-        id: 'audit_integrity_score',
-        name: 'Audit Log Integrity Score',
+        id: "audit_integrity_score",
+        name: "Audit Log Integrity Score",
         type: HealthcareMetricType.AUDIT_LOG_INTEGRITY,
         target: 100,
-        direction: 'higher-better',
-        unit: '%',
-        description: 'Integrity score of audit log chain validation',
-        complianceLevel: 'critical',
+        direction: "higher-better",
+        unit: "%",
+        description: "Integrity score of audit log chain validation",
+        complianceLevel: "critical",
       },
     ];
 
-    defaultKPIs.forEach(kpi => this.kpis.set(kpi.id, kpi));
+    defaultKPIs.forEach((kpi) => this.kpis.set(kpi.id, kpi));
   }
 
   /**
@@ -155,7 +156,7 @@ export class HealthcareMetricsService {
     _context: {
       clinicId?: string;
       _userId?: string;
-      complianceFlags?: Partial<HealthcareMetric['complianceFlags']>;
+      complianceFlags?: Partial<HealthcareMetric["complianceFlags"]>;
     } = {},
   ): Promise<{ success: boolean; metricId?: string; error?: string }> {
     try {
@@ -177,7 +178,7 @@ export class HealthcareMetricsService {
 
       // Store in database
       const { data, error } = await this.supabase
-        .from('healthcare_metrics')
+        .from("healthcare_metrics")
         .insert({
           id: metric.id,
           timestamp: metric.timestamp.toISOString(),
@@ -193,16 +194,16 @@ export class HealthcareMetricsService {
         .single();
 
       if (error) {
-        console.error('Error storing healthcare metric:', error);
+        console.error("Error storing healthcare metric:", error);
         // Fallback to console logging
         this.logMetricToConsole(metric);
-        return { success: false, error: 'Failed to store metric in database' };
+        return { success: false, error: "Failed to store metric in database" };
       }
 
       return { success: true, metricId: data.id };
     } catch (error) {
-      console.error('Error recording healthcare metric:', error);
-      return { success: false, error: 'Internal metric recording error' };
+      console.error("Error recording healthcare metric:", error);
+      return { success: false, error: "Internal metric recording error" };
     }
   }
 
@@ -211,24 +212,24 @@ export class HealthcareMetricsService {
    */
   async getKPIStatus(
     kpiId: string,
-    period: 'hour' | 'day' | 'week' | 'month' = 'day',
+    period: "hour" | "day" | "week" | "month" = "day",
   ): Promise<{
     success: boolean;
     kpi?: ComplianceKPI;
     currentValue?: number;
-    complianceStatus?: 'compliant' | 'warning' | 'violation';
-    trend?: 'improving' | 'stable' | 'declining';
+    complianceStatus?: "compliant" | "warning" | "violation";
+    trend?: "improving" | "stable" | "declining";
     error?: string;
   }> {
     try {
       const kpi = this.kpis.get(kpiId);
       if (!kpi) {
-        return { success: false, error: 'KPI not found' };
+        return { success: false, error: "KPI not found" };
       }
 
       const aggregation = await this.getMetricAggregation(kpi.type, period);
       if (!aggregation.success || !aggregation.data) {
-        return { success: false, error: 'Failed to get metric aggregation' };
+        return { success: false, error: "Failed to get metric aggregation" };
       }
 
       const currentValue = aggregation.data.avg;
@@ -240,17 +241,18 @@ export class HealthcareMetricsService {
         period,
         1,
       );
-      let trend: 'improving' | 'stable' | 'declining' = 'stable';
+      let trend: "improving" | "stable" | "declining" = "stable";
 
       if (previousPeriod.success && previousPeriod.data) {
         const previousValue = previousPeriod.data.avg;
-        const improvement = kpi.direction === 'higher-better'
-          ? currentValue > previousValue
-          : currentValue < previousValue;
+        const improvement =
+          kpi.direction === "higher-better"
+            ? currentValue > previousValue
+            : currentValue < previousValue;
 
         if (Math.abs(currentValue - previousValue) > kpi.target * 0.05) {
           // 5% threshold
-          trend = improvement ? 'improving' : 'declining';
+          trend = improvement ? "improving" : "declining";
         }
       }
 
@@ -262,8 +264,8 @@ export class HealthcareMetricsService {
         trend,
       };
     } catch (error) {
-      console.error('Error getting KPI status:', error);
-      return { success: false, error: 'Internal KPI status error' };
+      console.error("Error getting KPI status:", error);
+      return { success: false, error: "Internal KPI status error" };
     }
   }
 
@@ -272,7 +274,7 @@ export class HealthcareMetricsService {
    */
   async getMetricAggregation(
     type: HealthcareMetricType,
-    period: 'hour' | 'day' | 'week' | 'month',
+    period: "hour" | "day" | "week" | "month",
     periodsBack: number = 0,
   ): Promise<{
     success: boolean;
@@ -292,15 +294,15 @@ export class HealthcareMetricsService {
       const startTime = new Date(endTime.getTime() - periodMs[period]);
 
       const { data, error } = await this.supabase
-        .from('healthcare_metrics')
-        .select('value, compliance_flags')
-        .eq('type', type)
-        .gte('timestamp', startTime.toISOString())
-        .lt('timestamp', endTime.toISOString());
+        .from("healthcare_metrics")
+        .select("value, compliance_flags")
+        .eq("type", type)
+        .gte("timestamp", startTime.toISOString())
+        .lt("timestamp", endTime.toISOString());
 
       if (error) {
-        console.error('Error querying metrics:', error);
-        return { success: false, error: 'Failed to query metrics' };
+        console.error("Error querying metrics:", error);
+        return { success: false, error: "Failed to query metrics" };
       }
 
       if (!data || data.length === 0) {
@@ -320,12 +322,12 @@ export class HealthcareMetricsService {
         };
       }
 
-      const values = data.map(d => d.value);
+      const values = data.map((d) => d.value);
       const compliantCount = data.filter(
-        d =>
-          d.compliance_flags.lgpd_compliant
-          && d.compliance_flags.cfm_validated
-          && d.compliance_flags.anvisa_compliant,
+        (d) =>
+          d.compliance_flags.lgpd_compliant &&
+          d.compliance_flags.cfm_validated &&
+          d.compliance_flags.anvisa_compliant,
       ).length;
 
       const aggregation: MetricAggregation = {
@@ -342,8 +344,8 @@ export class HealthcareMetricsService {
 
       return { success: true, data: aggregation };
     } catch (error) {
-      console.error('Error in getMetricAggregation:', error);
-      return { success: false, error: 'Internal aggregation error' };
+      console.error("Error in getMetricAggregation:", error);
+      return { success: false, error: "Internal aggregation error" };
     }
   }
 
@@ -356,15 +358,15 @@ export class HealthcareMetricsService {
       kpis: Array<{
         kpi: ComplianceKPI;
         currentValue: number;
-        complianceStatus: 'compliant' | 'warning' | 'violation';
-        trend: 'improving' | 'stable' | 'declining';
+        complianceStatus: "compliant" | "warning" | "violation";
+        trend: "improving" | "stable" | "declining";
       }>;
       overallScore: number;
       criticalViolations: number;
       recentAlerts: Array<{
         type: HealthcareMetricType;
         message: string;
-        severity: 'critical' | 'high' | 'medium' | 'low';
+        severity: "critical" | "high" | "medium" | "low";
         timestamp: Date;
       }>;
     };
@@ -385,31 +387,33 @@ export class HealthcareMetricsService {
           const kpiData = {
             kpi,
             currentValue: status.currentValue,
-            complianceStatus: status.complianceStatus || 'violation',
-            trend: status.trend || 'stable',
+            complianceStatus: status.complianceStatus || "violation",
+            trend: status.trend || "stable",
           };
 
           kpiStatuses.push(kpiData);
 
           // Calculate weighted score
-          const weight = kpi.complianceLevel === 'critical'
-            ? 3
-            : kpi.complianceLevel === 'high'
-            ? 2
-            : 1;
+          const weight =
+            kpi.complianceLevel === "critical"
+              ? 3
+              : kpi.complianceLevel === "high"
+                ? 2
+                : 1;
           const kpiScore = this.calculateKPIScore(status.currentValue, kpi);
           totalScore += kpiScore * weight;
 
           if (
-            status.complianceStatus === 'violation'
-            && kpi.complianceLevel === 'critical'
+            status.complianceStatus === "violation" &&
+            kpi.complianceLevel === "critical"
           ) {
             criticalViolations++;
           }
         }
       }
 
-      const overallScore = kpiStatuses.length > 0 ? totalScore / kpiStatuses.length : 0;
+      const overallScore =
+        kpiStatuses.length > 0 ? totalScore / kpiStatuses.length : 0;
 
       // Get recent alerts (simplified - would be more sophisticated in production)
       const recentAlerts = await this.getRecentAlerts(clinicId);
@@ -424,8 +428,8 @@ export class HealthcareMetricsService {
         },
       };
     } catch (error) {
-      console.error('Error generating compliance dashboard:', error);
-      return { success: false, error: 'Internal dashboard generation error' };
+      console.error("Error generating compliance dashboard:", error);
+      return { success: false, error: "Internal dashboard generation error" };
     }
   }
 
@@ -434,25 +438,25 @@ export class HealthcareMetricsService {
   private evaluateCompliance(
     value: number,
     kpi: ComplianceKPI,
-  ): 'compliant' | 'warning' | 'violation' {
+  ): "compliant" | "warning" | "violation" {
     const target = kpi.target;
     const warningThreshold = target * 0.9; // 10% tolerance for warning
 
-    if (kpi.direction === 'higher-better') {
-      if (value >= target) return 'compliant';
-      if (value >= warningThreshold) return 'warning';
-      return 'violation';
+    if (kpi.direction === "higher-better") {
+      if (value >= target) return "compliant";
+      if (value >= warningThreshold) return "warning";
+      return "violation";
     } else {
-      if (value <= target) return 'compliant';
-      if (value <= target * 1.1) return 'warning'; // 10% over target
-      return 'violation';
+      if (value <= target) return "compliant";
+      if (value <= target * 1.1) return "warning"; // 10% over target
+      return "violation";
     }
   }
 
   private calculateKPIScore(value: number, kpi: ComplianceKPI): number {
     const target = kpi.target;
 
-    if (kpi.direction === 'higher-better') {
+    if (kpi.direction === "higher-better") {
       return Math.min(100, (value / target) * 100);
     } else {
       return Math.min(100, (target / Math.max(value, 0.1)) * 100);
@@ -464,40 +468,40 @@ export class HealthcareMetricsService {
       const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
       let query = this.supabase
-        .from('healthcare_metrics')
-        .select('type, metadata, timestamp, compliance_flags')
-        .gte('timestamp', oneDayAgo.toISOString())
+        .from("healthcare_metrics")
+        .select("type, metadata, timestamp, compliance_flags")
+        .gte("timestamp", oneDayAgo.toISOString())
         .or(
-          'compliance_flags->lgpd_compliant.eq.false,compliance_flags->cfm_validated.eq.false,compliance_flags->anvisa_compliant.eq.false',
+          "compliance_flags->lgpd_compliant.eq.false,compliance_flags->cfm_validated.eq.false,compliance_flags->anvisa_compliant.eq.false",
         )
-        .order('timestamp', { ascending: false })
+        .order("timestamp", { ascending: false })
         .limit(10);
 
       if (clinicId) {
-        query = query.eq('clinic_id', clinicId);
+        query = query.eq("clinic_id", clinicId);
       }
 
       const { data, error } = await query;
 
       if (error) {
-        return { success: false, error: 'Failed to get recent alerts' };
+        return { success: false, error: "Failed to get recent alerts" };
       }
 
-      const alerts = data.map(record => ({
+      const alerts = data.map((record) => ({
         type: record.type as HealthcareMetricType,
         message: this.generateAlertMessage(record),
         severity: this.determineSeverity(record) as
-          | 'critical'
-          | 'high'
-          | 'medium'
-          | 'low',
+          | "critical"
+          | "high"
+          | "medium"
+          | "low",
         timestamp: new Date(record.timestamp),
       }));
 
       return { success: true, alerts };
     } catch (error) {
-      console.error('Failed to aggregate alerts:', error);
-      return { success: false, error: 'Internal alerts error' };
+      console.error("Failed to aggregate alerts:", error);
+      return { success: false, error: "Internal alerts error" };
     }
   }
 
@@ -505,26 +509,26 @@ export class HealthcareMetricsService {
     const flags = record.compliance_flags;
     const violations = [];
 
-    if (!flags.lgpd_compliant) violations.push('LGPD');
-    if (!flags.cfm_validated) violations.push('CFM');
-    if (!flags.anvisa_compliant) violations.push('ANVISA');
+    if (!flags.lgpd_compliant) violations.push("LGPD");
+    if (!flags.cfm_validated) violations.push("CFM");
+    if (!flags.anvisa_compliant) violations.push("ANVISA");
 
-    return `Compliance violation detected: ${violations.join(', ')} - ${record.type}`;
+    return `Compliance violation detected: ${violations.join(", ")} - ${record.type}`;
   }
 
   private determineSeverity(record: any): string {
     const flags = record.compliance_flags;
 
-    if (!flags.lgpd_compliant || !flags.anvisa_compliant) return 'critical';
-    if (!flags.cfm_validated) return 'high';
-    return 'medium';
+    if (!flags.lgpd_compliant || !flags.anvisa_compliant) return "critical";
+    if (!flags.cfm_validated) return "high";
+    return "medium";
   }
 
   private logMetricToConsole(metric: HealthcareMetric) {
     try {
       console.log(
         JSON.stringify({
-          type: 'healthcare_metrics',
+          type: "healthcare_metrics",
           metric_type: metric.type,
           value: metric.value,
           compliance_flags: metric.complianceFlags,
@@ -548,7 +552,7 @@ export class HealthcareMetricsService {
 
   logMetric(event: Record<string, unknown>) {
     try {
-      console.log(JSON.stringify({ type: 'metrics', ...event }));
+      console.log(JSON.stringify({ type: "metrics", ...event }));
     } catch {
       // noop
     }
@@ -570,7 +574,7 @@ export function endTimerMs(t: Timer): number {
 
 export function logMetric(event: Record<string, unknown>) {
   try {
-    console.log(JSON.stringify({ type: 'metrics', ...event }));
+    console.log(JSON.stringify({ type: "metrics", ...event }));
   } catch {
     // noop
   }

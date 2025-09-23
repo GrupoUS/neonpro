@@ -100,6 +100,8 @@
     "desktop-commander",
     "context7",
     "Sequential Thinking",
-    "serena"
-  ]
+    "serena",
+    "playwright"
+  ],
+  "enableAllProjectMcpServers": true
 }

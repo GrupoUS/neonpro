@@ -5,44 +5,45 @@
  * with healthcare compliance and security filtering.
  */
 
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import { jwt } from 'hono/jwt';
-import { v4 as uuidv4 } from 'uuid';
-import { AguiService } from '../../services/agui-protocol/service';
-import { logger } from '../../utils/secure-logger';
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { jwt } from "hono/jwt";
+import { v4 as uuidv4 } from "uuid";
+import { AguiService } from "../../services/agui-protocol/service";
+import { logger } from "../../utils/secure-logger";
 
 const app = new Hono();
 
 // Apply CORS for cross-origin requests
 app.use(
-  '*',
+  "*",
   cors({
-    origin: process.env.NODE_ENV === 'production'
-      ? ['https://app.neonpro.com', 'https://neonpro.com']
-      : ['http://localhost:3000', 'http://localhost:3005'],
-    allowMethods: ['GET', 'POST', 'DELETE'],
-    allowHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+    origin:
+      process.env.NODE_ENV === "production"
+        ? ["https://app.neonpro.com", "https://neonpro.com"]
+        : ["http://localhost:3000", "http://localhost:3005"],
+    allowMethods: ["GET", "POST", "DELETE"],
+    allowHeaders: ["Content-Type", "Authorization", "X-Request-ID"],
   }),
 );
 
 // Apply JWT authentication for protected routes
 app.use(
-  '/subscribe',
+  "/subscribe",
   jwt({
-    secret: process.env.JWT_SECRET || 'fallback-secret',
+    secret: process.env.JWT_SECRET || "fallback-secret",
   }),
 );
 app.use(
-  '/unsubscribe',
+  "/unsubscribe",
   jwt({
-    secret: process.env.JWT_SECRET || 'fallback-secret',
+    secret: process.env.JWT_SECRET || "fallback-secret",
   }),
 );
 app.use(
-  '/analytics',
+  "/analytics",
   jwt({
-    secret: process.env.JWT_SECRET || 'fallback-secret',
+    secret: process.env.JWT_SECRET || "fallback-secret",
   }),
 );
 
@@ -50,28 +51,32 @@ app.use(
  * POST /api/ai/realtime/subscribe
  * Create a new real-time subscription
  */
-app.post('/subscribe', async c => {
+app.post("/subscribe", async (c) => {
   try {
-    const requestId = c.req.header('X-Request-ID') || uuidv4();
+    const requestId = c.req.header("X-Request-ID") || uuidv4();
     const start = Date.now();
 
     const payload = await c.req.json();
-    const { eventTypes, sessionId, includeSystemEvents, heartbeatInterval } = payload;
+    const { eventTypes, sessionId, includeSystemEvents, heartbeatInterval } =
+      payload;
 
     // Get user info from JWT token
-    const tokenPayload = c.get('jwtPayload');
+    const tokenPayload = c.get("jwtPayload");
     const userId = tokenPayload.sub;
 
     if (!_userId) {
-      return c.json({
-        success: false,
-        error: 'User ID not found in token',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: "User ID not found in token",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        400,
+      );
     }
 
-    logger.info('Real-time subscription request', {
+    logger.info("Real-time subscription request", {
       requestId,
       userId,
       sessionId,
@@ -81,24 +86,30 @@ app.post('/subscribe', async c => {
 
     // Validate input
     if (!eventTypes || !Array.isArray(eventTypes)) {
-      return c.json({
-        success: false,
-        error: 'Event types must be provided as an array',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: "Event types must be provided as an array",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        400,
+      );
     }
 
     // Get AG-UI service instance
-    const aguiService = c.get('aguiService') as AguiService;
+    const aguiService = c.get("aguiService") as AguiService;
     if (!aguiService) {
-      logger.error('AG-UI service not available', { requestId });
-      return c.json({
-        success: false,
-        error: 'Real-time service not available',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 503);
+      logger.error("AG-UI service not available", { requestId });
+      return c.json(
+        {
+          success: false,
+          error: "Real-time service not available",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        503,
+      );
     }
 
     // Create subscription
@@ -109,7 +120,7 @@ app.post('/subscribe', async c => {
       heartbeatInterval: heartbeatInterval || 30000,
     });
 
-    logger.info('Real-time subscription created successfully', {
+    logger.info("Real-time subscription created successfully", {
       requestId,
       subscriptionId: subscription.id,
       userId,
@@ -131,16 +142,19 @@ app.post('/subscribe', async c => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('Error creating real-time subscription', error, {
-      requestId: c.req.header('X-Request-ID'),
+    logger.error("Error creating real-time subscription", error, {
+      requestId: c.req.header("X-Request-ID"),
     });
 
-    return c.json({
-      success: false,
-      error: error.message || 'Internal server error',
-      requestId: c.req.header('X-Request-ID'),
-      timestamp: new Date().toISOString(),
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: error.message || "Internal server error",
+        requestId: c.req.header("X-Request-ID"),
+        timestamp: new Date().toISOString(),
+      },
+      500,
+    );
   }
 });
 
@@ -148,26 +162,29 @@ app.post('/subscribe', async c => {
  * DELETE /api/ai/realtime/unsubscribe/:subscriptionId
  * Remove a real-time subscription
  */
-app.delete('/unsubscribe/:subscriptionId', async c => {
+app.delete("/unsubscribe/:subscriptionId", async (c) => {
   try {
-    const requestId = c.req.header('X-Request-ID') || uuidv4();
-    const subscriptionId = c.req.param('subscriptionId');
+    const requestId = c.req.header("X-Request-ID") || uuidv4();
+    const subscriptionId = c.req.param("subscriptionId");
     const start = Date.now();
 
     // Get user info from JWT token
-    const tokenPayload = c.get('jwtPayload');
+    const tokenPayload = c.get("jwtPayload");
     const userId = tokenPayload.sub;
 
     if (!_userId) {
-      return c.json({
-        success: false,
-        error: 'User ID not found in token',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: "User ID not found in token",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        400,
+      );
     }
 
-    logger.info('Real-time unsubscription request', {
+    logger.info("Real-time unsubscription request", {
       requestId,
       subscriptionId,
       userId,
@@ -175,21 +192,24 @@ app.delete('/unsubscribe/:subscriptionId', async c => {
     });
 
     // Get AG-UI service instance
-    const aguiService = c.get('aguiService') as AguiService;
+    const aguiService = c.get("aguiService") as AguiService;
     if (!aguiService) {
-      logger.error('AG-UI service not available', { requestId });
-      return c.json({
-        success: false,
-        error: 'Real-time service not available',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 503);
+      logger.error("AG-UI service not available", { requestId });
+      return c.json(
+        {
+          success: false,
+          error: "Real-time service not available",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        503,
+      );
     }
 
     // Remove subscription
     await aguiService.removeRealtimeSubscription(subscriptionId);
 
-    logger.info('Real-time subscription removed successfully', {
+    logger.info("Real-time subscription removed successfully", {
       requestId,
       subscriptionId,
       userId,
@@ -201,23 +221,26 @@ app.delete('/unsubscribe/:subscriptionId', async c => {
       success: true,
       data: {
         subscriptionId,
-        message: 'Subscription removed successfully',
+        message: "Subscription removed successfully",
       },
       requestId,
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('Error removing real-time subscription', error, {
-      requestId: c.req.header('X-Request-ID'),
-      subscriptionId: c.req.param('subscriptionId'),
+    logger.error("Error removing real-time subscription", error, {
+      requestId: c.req.header("X-Request-ID"),
+      subscriptionId: c.req.param("subscriptionId"),
     });
 
-    return c.json({
-      success: false,
-      error: error.message || 'Internal server error',
-      requestId: c.req.header('X-Request-ID'),
-      timestamp: new Date().toISOString(),
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: error.message || "Internal server error",
+        requestId: c.req.header("X-Request-ID"),
+        timestamp: new Date().toISOString(),
+      },
+      500,
+    );
   }
 });
 
@@ -225,27 +248,30 @@ app.delete('/unsubscribe/:subscriptionId', async c => {
  * GET /api/ai/realtime/analytics
  * Get real-time analytics (admin only)
  */
-app.get('/analytics', async c => {
+app.get("/analytics", async (c) => {
   try {
-    const requestId = c.req.header('X-Request-ID') || uuidv4();
+    const requestId = c.req.header("X-Request-ID") || uuidv4();
     const start = Date.now();
 
     // Get user info from JWT token
-    const tokenPayload = c.get('jwtPayload');
+    const tokenPayload = c.get("jwtPayload");
     const userId = tokenPayload.sub;
     const userRole = tokenPayload.role;
 
     // Check admin permissions
-    if (!userRole || !['admin', 'service_role'].includes(userRole)) {
-      return c.json({
-        success: false,
-        error: 'Insufficient permissions',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 403);
+    if (!userRole || !["admin", "service_role"].includes(userRole)) {
+      return c.json(
+        {
+          success: false,
+          error: "Insufficient permissions",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        403,
+      );
     }
 
-    logger.info('Real-time analytics request', {
+    logger.info("Real-time analytics request", {
       requestId,
       userId,
       userRole,
@@ -253,21 +279,24 @@ app.get('/analytics', async c => {
     });
 
     // Get AG-UI service instance
-    const aguiService = c.get('aguiService') as AguiService;
+    const aguiService = c.get("aguiService") as AguiService;
     if (!aguiService) {
-      logger.error('AG-UI service not available', { requestId });
-      return c.json({
-        success: false,
-        error: 'Real-time service not available',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 503);
+      logger.error("AG-UI service not available", { requestId });
+      return c.json(
+        {
+          success: false,
+          error: "Real-time service not available",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        503,
+      );
     }
 
     // Get analytics
     const analytics = aguiService.getRealtimeAnalytics();
 
-    logger.info('Real-time analytics retrieved successfully', {
+    logger.info("Real-time analytics retrieved successfully", {
       requestId,
       processingTimeMs: Date.now() - start,
       timestamp: new Date().toISOString(),
@@ -280,16 +309,19 @@ app.get('/analytics', async c => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('Error getting real-time analytics', error, {
-      requestId: c.req.header('X-Request-ID'),
+    logger.error("Error getting real-time analytics", error, {
+      requestId: c.req.header("X-Request-ID"),
     });
 
-    return c.json({
-      success: false,
-      error: error.message || 'Internal server error',
-      requestId: c.req.header('X-Request-ID'),
-      timestamp: new Date().toISOString(),
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: error.message || "Internal server error",
+        requestId: c.req.header("X-Request-ID"),
+        timestamp: new Date().toISOString(),
+      },
+      500,
+    );
   }
 });
 
@@ -297,46 +329,52 @@ app.get('/analytics', async c => {
  * GET /api/ai/realtime/subscriptions
  * Get user's active subscriptions
  */
-app.get('/subscriptions', async c => {
+app.get("/subscriptions", async (c) => {
   try {
-    const requestId = c.req.header('X-Request-ID') || uuidv4();
+    const requestId = c.req.header("X-Request-ID") || uuidv4();
     const start = Date.now();
 
     // Get user info from JWT token
-    const tokenPayload = c.get('jwtPayload');
+    const tokenPayload = c.get("jwtPayload");
     const userId = tokenPayload.sub;
 
     if (!_userId) {
-      return c.json({
-        success: false,
-        error: 'User ID not found in token',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: "User ID not found in token",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        400,
+      );
     }
 
-    logger.info('Real-time subscriptions request', {
+    logger.info("Real-time subscriptions request", {
       requestId,
       userId,
       timestamp: new Date().toISOString(),
     });
 
     // Get AG-UI service instance
-    const aguiService = c.get('aguiService') as AguiService;
+    const aguiService = c.get("aguiService") as AguiService;
     if (!aguiService) {
-      logger.error('AG-UI service not available', { requestId });
-      return c.json({
-        success: false,
-        error: 'Real-time service not available',
-        requestId,
-        timestamp: new Date().toISOString(),
-      }, 503);
+      logger.error("AG-UI service not available", { requestId });
+      return c.json(
+        {
+          success: false,
+          error: "Real-time service not available",
+          requestId,
+          timestamp: new Date().toISOString(),
+        },
+        503,
+      );
     }
 
     // Get user subscriptions
     const subscriptions = aguiService.getUserRealtimeSubscriptions(userId);
 
-    logger.info('Real-time subscriptions retrieved successfully', {
+    logger.info("Real-time subscriptions retrieved successfully", {
       requestId,
       userId,
       subscriptionCount: subscriptions.length,
@@ -346,7 +384,7 @@ app.get('/subscriptions', async c => {
 
     return c.json({
       success: true,
-      data: subscriptions.map(sub => ({
+      data: subscriptions.map((sub) => ({
         id: sub.id,
         _userId: sub.userId,
         sessionId: sub.sessionId,
@@ -359,28 +397,31 @@ app.get('/subscriptions', async c => {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('Error getting real-time subscriptions', error, {
-      requestId: c.req.header('X-Request-ID'),
+    logger.error("Error getting real-time subscriptions", error, {
+      requestId: c.req.header("X-Request-ID"),
     });
 
-    return c.json({
-      success: false,
-      error: error.message || 'Internal server error',
-      requestId: c.req.header('X-Request-ID'),
-      timestamp: new Date().toISOString(),
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: error.message || "Internal server error",
+        requestId: c.req.header("X-Request-ID"),
+        timestamp: new Date().toISOString(),
+      },
+      500,
+    );
   }
 });
 
 /**
  * Health check endpoint
  */
-app.get('/health', c => {
+app.get("/health", (c) => {
   return c.json({
-    status: 'healthy',
-    _service: 'realtime-subscriptions',
+    status: "healthy",
+    _service: "realtime-subscriptions",
     timestamp: new Date().toISOString(),
-    version: '1.0.0',
+    version: "1.0.0",
   });
 });
 

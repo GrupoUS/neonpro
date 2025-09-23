@@ -5,10 +5,10 @@
 
 // Healthcare-compliant metadata types for Enhanced AI
 export interface EnhancedAIMetadata {
-  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
-  dataSensitivity?: 'public' | 'internal' | 'confidential' | 'restricted';
+  complianceLevel?: "standard" | "enhanced" | "restricted";
+  dataSensitivity?: "public" | "internal" | "confidential" | "restricted";
   auditTrail?: boolean;
-  encryptionLevel?: 'none' | 'basic' | 'advanced' | 'military';
+  encryptionLevel?: "none" | "basic" | "advanced" | "military";
   retentionPeriod?: number;
   [key: string]: unknown;
 }

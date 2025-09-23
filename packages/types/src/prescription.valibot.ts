@@ -83,12 +83,12 @@ const validatePharmaceuticalBarcode = (barcode: string): boolean => {
   // EAN-13 check digit validation
   let sum = 0;
   for (let i = 0; i < 12; i++) {
-    const digit = parseInt(cleanBarcode[i] || '0');
+    const digit = parseInt(cleanBarcode[i] || "0");
     sum += i % 2 === 0 ? digit : digit * 3;
   }
 
   const checkDigit = (10 - (sum % 10)) % 10;
-  return checkDigit === parseInt(cleanBarcode[12] || '0');
+  return checkDigit === parseInt(cleanBarcode[12] || "0");
 };
 
 /**
@@ -435,7 +435,10 @@ export const MedicationInformationSchema = v.object({
         /^\d\.\d{4}\.\d{4}\.\d{3}-\d$/,
         "Registro ANVISA deve estar no formato X.XXXX.XXXX.XXX-X",
       ),
-      v.check(validateANVISARegisterNumber, "Número de registro ANVISA inválido"),
+      v.check(
+        validateANVISARegisterNumber,
+        "Número de registro ANVISA inválido",
+      ),
     ),
   ),
   barcode: v.optional(PharmaceuticalBarcodeSchema),
@@ -576,92 +579,87 @@ export const PrescriptionAuditTrailSchema = v.object({
 const PrescriptionCreationBaseSchema = v.object({
   // Basic prescription info
   clinic_id: v.pipe(v.string(), v.uuid("ID da clínica deve ser UUID válido")),
-    patient_id: v.pipe(
-      v.string(),
-      v.uuid("ID do paciente deve ser UUID válido"),
-    ),
-    professional_id: v.pipe(
-      v.string(),
-      v.uuid("ID do profissional deve ser UUID válido"),
-    ),
-    appointment_id: v.optional(
-      v.pipe(v.string(), v.uuid("ID do agendamento deve ser UUID válido")),
-    ),
+  patient_id: v.pipe(v.string(), v.uuid("ID do paciente deve ser UUID válido")),
+  professional_id: v.pipe(
+    v.string(),
+    v.uuid("ID do profissional deve ser UUID válido"),
+  ),
+  appointment_id: v.optional(
+    v.pipe(v.string(), v.uuid("ID do agendamento deve ser UUID válido")),
+  ),
 
-    // Prescription metadata
-    prescription_type: PrescriptionTypeSchema,
-    prescription_number: v.optional(
-      v.pipe(v.string(), v.minLength(5), v.maxLength(50)),
-    ),
+  // Prescription metadata
+  prescription_type: PrescriptionTypeSchema,
+  prescription_number: v.optional(
+    v.pipe(v.string(), v.minLength(5), v.maxLength(50)),
+  ),
 
-    // Medications
-    medications: v.pipe(
-      v.array(
-        v.object({
-          medication: MedicationInformationSchema,
-          instructions: PrescriptionInstructionsSchema,
-
-          // Validation for controlled substances
-          controlled_substance_validation: v.optional(
-            v.object({
-              requires_special_prescription: v.boolean(),
-              prescription_series: v.optional(
-                v.pipe(v.string(), v.minLength(5), v.maxLength(20)),
-              ),
-              special_authorization: v.optional(
-                v.pipe(v.string(), v.maxLength(200)),
-              ),
-            }),
-          ),
-        }),
-      ),
-      v.minLength(1, "Pelo menos um medicamento deve ser prescrito"),
-    ),
-
-    // Digital signature
-    digital_certificate: DigitalCertificateSchema,
-
-    // Validity
-    issue_date: v.pipe(
-      v.string(),
-      v.isoDate("Data de emissão deve estar em formato ISO"),
-    ),
-    expiration_date: v.pipe(
-      v.string(),
-      v.isoDate("Data de validade deve estar em formato ISO"),
-    ),
-
-    // Clinical context
-    diagnosis: v.optional(
-      v.pipe(v.string(), v.minLength(10), v.maxLength(500)),
-    ),
-    clinical_indication: v.optional(
-      v.pipe(v.string(), v.minLength(5), v.maxLength(500)),
-    ),
-
-    // Special notes
-    general_instructions: v.optional(v.pipe(v.string(), v.maxLength(1000))),
-    pharmacy_notes: v.optional(v.pipe(v.string(), v.maxLength(500))),
-
-    // Regulatory compliance
-    cfm_compliance_verified: v.pipe(
-      v.boolean(),
-      v.literal(true, "Conformidade CFM deve ser verificada"),
-    ),
-    anvisa_compliance_verified: v.pipe(
-      v.boolean(),
-      v.literal(true, "Conformidade ANVISA deve ser verificada"),
-    ),
-
-    // Emergency contact
-    emergency_contact: v.optional(
+  // Medications
+  medications: v.pipe(
+    v.array(
       v.object({
-        name: v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
-        phone: v.pipe(v.string(), v.minLength(10), v.maxLength(20)),
-        relationship: v.pipe(v.string(), v.maxLength(50)),
+        medication: MedicationInformationSchema,
+        instructions: PrescriptionInstructionsSchema,
+
+        // Validation for controlled substances
+        controlled_substance_validation: v.optional(
+          v.object({
+            requires_special_prescription: v.boolean(),
+            prescription_series: v.optional(
+              v.pipe(v.string(), v.minLength(5), v.maxLength(20)),
+            ),
+            special_authorization: v.optional(
+              v.pipe(v.string(), v.maxLength(200)),
+            ),
+          }),
+        ),
       }),
     ),
-  });
+    v.minLength(1, "Pelo menos um medicamento deve ser prescrito"),
+  ),
+
+  // Digital signature
+  digital_certificate: DigitalCertificateSchema,
+
+  // Validity
+  issue_date: v.pipe(
+    v.string(),
+    v.isoDate("Data de emissão deve estar em formato ISO"),
+  ),
+  expiration_date: v.pipe(
+    v.string(),
+    v.isoDate("Data de validade deve estar em formato ISO"),
+  ),
+
+  // Clinical context
+  diagnosis: v.optional(v.pipe(v.string(), v.minLength(10), v.maxLength(500))),
+  clinical_indication: v.optional(
+    v.pipe(v.string(), v.minLength(5), v.maxLength(500)),
+  ),
+
+  // Special notes
+  general_instructions: v.optional(v.pipe(v.string(), v.maxLength(1000))),
+  pharmacy_notes: v.optional(v.pipe(v.string(), v.maxLength(500))),
+
+  // Regulatory compliance
+  cfm_compliance_verified: v.pipe(
+    v.boolean(),
+    v.literal(true, "Conformidade CFM deve ser verificada"),
+  ),
+  anvisa_compliance_verified: v.pipe(
+    v.boolean(),
+    v.literal(true, "Conformidade ANVISA deve ser verificada"),
+  ),
+
+  // Emergency contact
+  emergency_contact: v.optional(
+    v.object({
+      name: v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
+      phone: v.pipe(v.string(), v.minLength(10), v.maxLength(20)),
+      relationship: v.pipe(v.string(), v.maxLength(50)),
+    }),
+  ),
+});
 
 export const PrescriptionCreationSchema = PrescriptionCreationBaseSchema;
 

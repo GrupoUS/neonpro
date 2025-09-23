@@ -41,19 +41,20 @@ function Calendar({
     outside:
       "text-muted-foreground data-selected:bg-accent/50 data-selected:text-muted-foreground",
     hidden: "invisible",
-    weeknumber: "size-9 p-0 text-xs font-medium text-muted-foreground/80"
+    weeknumber: "size-9 p-0 text-xs font-medium text-muted-foreground/80",
   };
 
   const mergedClassNames: typeof defaultClassNames = Object.keys(
     defaultClassNames,
-  ).reduce((acc, key) => ({
+  ).reduce(
+    (acc, key) => ({
       ...acc,
       [key]: classNames?.[key as keyof typeof classNames]
         ? cn(
             defaultClassNames[key as keyof typeof defaultClassNames],
             classNames[key as keyof typeof classNames],
           )
-        : defaultClassNames[key as keyof typeof defaultClassNames]
+        : defaultClassNames[key as keyof typeof defaultClassNames],
     }),
     {} as typeof defaultClassNames,
   );
@@ -69,12 +70,12 @@ function Calendar({
         return <ChevronLeftIcon size={16} {...props} aria-hidden="true" />;
       }
       return <ChevronRightIcon size={16} {...props} aria-hidden="true" />;
-    }
+    },
   };
 
   const mergedComponents = {
     ...defaultComponents,
-    ...userComponents
+    ...userComponents,
   };
 
   return (

@@ -7,6 +7,7 @@ This comprehensive testing guide covers strategies, tools, and examples for test
 ## Testing Framework Stack
 
 ### Core Testing Tools
+
 - **Vitest**: Unit and integration testing
 - **Testing Library**: Component testing utilities
 - **Playwright**: End-to-end testing
@@ -15,11 +16,13 @@ This comprehensive testing guide covers strategies, tools, and examples for test
 - **MSW**: API mocking
 
 ### Accessibility Testing
+
 - **axe-core**: Accessibility rule engine
 - **WAVE**: Web accessibility evaluation tool
 - **Lighthouse**: Performance and accessibility audits
 
 ### Performance Testing
+
 - **Lighthouse**: Performance metrics
 - **WebPageTest**: Real-world performance testing
 - **k6**: Load testing
@@ -62,7 +65,7 @@ describe('EventCalendar Component', () => {
   beforeEach(() => {
     // Reset mocks
     jest.clearAllMocks();
-    
+
     // Setup default mock context
     (useCalendarContext as jest.Mock).mockReturnValue({
       currentDate: new Date('2024-01-15'),
@@ -79,7 +82,7 @@ describe('EventCalendar Component', () => {
   describe('Rendering', () => {
     test('should render calendar with events', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       expect(screen.getByText('Patient Consultation')).toBeInTheDocument();
       expect(screen.getByText('Team Meeting')).toBeInTheDocument();
       expect(screen.getByText('10:00 AM')).toBeInTheDocument();
@@ -92,7 +95,7 @@ describe('EventCalendar Component', () => {
       });
 
       render(<EventCalendar events={mockEvents} />);
-      
+
       expect(screen.getByText('Loading calendar...')).toBeInTheDocument();
     });
 
@@ -103,7 +106,7 @@ describe('EventCalendar Component', () => {
       });
 
       render(<EventCalendar events={mockEvents} />);
-      
+
       expect(screen.getByText('Failed to load events')).toBeInTheDocument();
     });
   });
@@ -112,18 +115,18 @@ describe('EventCalendar Component', () => {
     test('should call onEventSelect when event is clicked', () => {
       const mockOnSelect = jest.fn();
       render(<EventCalendar events={mockEvents} onEventSelect={mockOnSelect} />);
-      
+
       fireEvent.click(screen.getByText('Patient Consultation'));
-      
+
       expect(mockOnSelect).toHaveBeenCalledWith(mockEvents[0]);
     });
 
     test('should open event dialog when creating new event', () => {
       const mockOnCreate = jest.fn();
       render(<EventCalendar events={mockEvents} onEventCreate={mockOnCreate} />);
-      
+
       fireEvent.click(screen.getByLabelText('Create new appointment'));
-      
+
       expect(screen.getByRole('dialog')).toBeInTheDocument();
     });
 
@@ -141,18 +144,18 @@ describe('EventCalendar Component', () => {
       });
 
       render(<EventCalendar events={mockEvents} />);
-      
+
       // Click to create event
       fireEvent.click(screen.getByLabelText('Create new appointment'));
-      
+
       // Fill form
       fireEvent.change(screen.getByLabelText('Title'), {
         target: { value: 'New Appointment' }
       });
-      
+
       // Save
       fireEvent.click(screen.getByText('Save'));
-      
+
       await waitFor(() => {
         expect(mockCreateEvent).toHaveBeenCalledWith(expect.objectContaining({
           title: 'New Appointment'
@@ -164,15 +167,15 @@ describe('EventCalendar Component', () => {
   describe('View Switching', () => {
     test('should switch between calendar views', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       // Switch to month view
       fireEvent.click(screen.getByText('Month'));
       expect(screen.getByText('January 2024')).toBeInTheDocument();
-      
+
       // Switch to week view
       fireEvent.click(screen.getByText('Week'));
       expect(screen.getByText('Week of January 15')).toBeInTheDocument();
-      
+
       // Switch to day view
       fireEvent.click(screen.getByText('Day'));
       expect(screen.getByText('January 15, 2024')).toBeInTheDocument();
@@ -187,7 +190,7 @@ describe('EventCalendar Component', () => {
       });
 
       render(<EventCalendar events={mockEvents} />);
-      
+
       fireEvent.click(screen.getByText('Week'));
       expect(mockSetView).toHaveBeenCalledWith('week');
     });
@@ -196,10 +199,10 @@ describe('EventCalendar Component', () => {
   describe('Accessibility', () => {
     test('should have proper ARIA attributes', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       const calendar = screen.getByRole('grid');
       expect(calendar).toHaveAttribute('aria-label', 'Calendar');
-      
+
       const events = screen.getAllByRole('button').filter(
         button => button.textContent?.includes('Patient Consultation')
       );
@@ -210,13 +213,13 @@ describe('EventCalendar Component', () => {
 
     test('should support keyboard navigation', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       const calendar = screen.getByRole('grid');
-      
+
       // Tab navigation
       fireEvent.keyDown(calendar, { key: 'Tab' });
       // Should move focus to next interactive element
-      
+
       // Arrow key navigation
       fireEvent.keyDown(calendar, { key: 'ArrowRight' });
       // Should navigate to next day/week
@@ -340,143 +343,143 @@ describe('useCalendarContext Hook', () => {
 
 ```typescript
 // utils/__tests__/date-utils.test.ts
-import { 
-  formatEventTime, 
+import {
+  formatEventTime,
   isEventInDateRange,
   calculateEventDuration,
   getWeekDates,
-  isBusinessHours 
-} from '../date-utils';
+  isBusinessHours,
+} from "../date-utils";
 
-describe('Date Utilities', () => {
-  describe('formatEventTime', () => {
-    test('should format single day event correctly', () => {
+describe("Date Utilities", () => {
+  describe("formatEventTime", () => {
+    test("should format single day event correctly", () => {
       const event = {
-        start: new Date('2024-01-15T10:00:00'),
-        end: new Date('2024-01-15T11:00:00')
+        start: new Date("2024-01-15T10:00:00"),
+        end: new Date("2024-01-15T11:00:00"),
       };
 
       const result = formatEventTime(event);
-      expect(result).toBe('10:00 AM - 11:00 AM');
+      expect(result).toBe("10:00 AM - 11:00 AM");
     });
 
-    test('should format multi-day event correctly', () => {
+    test("should format multi-day event correctly", () => {
       const event = {
-        start: new Date('2024-01-15T10:00:00'),
-        end: new Date('2024-01-16T11:00:00')
+        start: new Date("2024-01-15T10:00:00"),
+        end: new Date("2024-01-16T11:00:00"),
       };
 
       const result = formatEventTime(event);
-      expect(result).toBe('Jan 15, 10:00 AM - Jan 16, 11:00 AM');
+      expect(result).toBe("Jan 15, 10:00 AM - Jan 16, 11:00 AM");
     });
 
-    test('should format all-day event correctly', () => {
+    test("should format all-day event correctly", () => {
       const event = {
-        start: new Date('2024-01-15T00:00:00'),
-        end: new Date('2024-01-16T00:00:00'),
-        allDay: true
+        start: new Date("2024-01-15T00:00:00"),
+        end: new Date("2024-01-16T00:00:00"),
+        allDay: true,
       };
 
       const result = formatEventTime(event);
-      expect(result).toBe('All day');
+      expect(result).toBe("All day");
     });
   });
 
-  describe('isEventInDateRange', () => {
-    test('should return true for event within range', () => {
+  describe("isEventInDateRange", () => {
+    test("should return true for event within range", () => {
       const event = {
-        start: new Date('2024-01-15T10:00:00'),
-        end: new Date('2024-01-15T11:00:00')
+        start: new Date("2024-01-15T10:00:00"),
+        end: new Date("2024-01-15T11:00:00"),
       };
-      const rangeStart = new Date('2024-01-15');
-      const rangeEnd = new Date('2024-01-16');
+      const rangeStart = new Date("2024-01-15");
+      const rangeEnd = new Date("2024-01-16");
 
       expect(isEventInDateRange(event, rangeStart, rangeEnd)).toBe(true);
     });
 
-    test('should return true for event overlapping range start', () => {
+    test("should return true for event overlapping range start", () => {
       const event = {
-        start: new Date('2024-01-14T23:00:00'),
-        end: new Date('2024-01-15T01:00:00')
+        start: new Date("2024-01-14T23:00:00"),
+        end: new Date("2024-01-15T01:00:00"),
       };
-      const rangeStart = new Date('2024-01-15');
-      const rangeEnd = new Date('2024-01-16');
+      const rangeStart = new Date("2024-01-15");
+      const rangeEnd = new Date("2024-01-16");
 
       expect(isEventInDateRange(event, rangeStart, rangeEnd)).toBe(true);
     });
 
-    test('should return true for event overlapping range end', () => {
+    test("should return true for event overlapping range end", () => {
       const event = {
-        start: new Date('2024-01-15T23:00:00'),
-        end: new Date('2024-01-16T01:00:00')
+        start: new Date("2024-01-15T23:00:00"),
+        end: new Date("2024-01-16T01:00:00"),
       };
-      const rangeStart = new Date('2024-01-15');
-      const rangeEnd = new Date('2024-01-16');
+      const rangeStart = new Date("2024-01-15");
+      const rangeEnd = new Date("2024-01-16");
 
       expect(isEventInDateRange(event, rangeStart, rangeEnd)).toBe(true);
     });
 
-    test('should return false for event outside range', () => {
+    test("should return false for event outside range", () => {
       const event = {
-        start: new Date('2024-01-14T10:00:00'),
-        end: new Date('2024-01-14T11:00:00')
+        start: new Date("2024-01-14T10:00:00"),
+        end: new Date("2024-01-14T11:00:00"),
       };
-      const rangeStart = new Date('2024-01-15');
-      const rangeEnd = new Date('2024-01-16');
+      const rangeStart = new Date("2024-01-15");
+      const rangeEnd = new Date("2024-01-16");
 
       expect(isEventInDateRange(event, rangeStart, rangeEnd)).toBe(false);
     });
   });
 
-  describe('calculateEventDuration', () => {
-    test('should calculate duration in minutes', () => {
+  describe("calculateEventDuration", () => {
+    test("should calculate duration in minutes", () => {
       const event = {
-        start: new Date('2024-01-15T10:00:00'),
-        end: new Date('2024-01-15T11:30:00')
+        start: new Date("2024-01-15T10:00:00"),
+        end: new Date("2024-01-15T11:30:00"),
       };
 
       expect(calculateEventDuration(event)).toBe(90); // 90 minutes
     });
 
-    test('should handle multi-day events', () => {
+    test("should handle multi-day events", () => {
       const event = {
-        start: new Date('2024-01-15T10:00:00'),
-        end: new Date('2024-01-16T11:00:00')
+        start: new Date("2024-01-15T10:00:00"),
+        end: new Date("2024-01-16T11:00:00"),
       };
 
       expect(calculateEventDuration(event)).toBe(1500); // 25 hours = 1500 minutes
     });
   });
 
-  describe('getWeekDates', () => {
-    test('should return correct week dates', () => {
-      const weekStart = new Date('2024-01-14'); // Sunday
+  describe("getWeekDates", () => {
+    test("should return correct week dates", () => {
+      const weekStart = new Date("2024-01-14"); // Sunday
       const weekDates = getWeekDates(weekStart);
 
       expect(weekDates).toHaveLength(7);
-      expect(weekDates[0]).toEqual(new Date('2024-01-14'));
-      expect(weekDates[6]).toEqual(new Date('2024-01-20'));
+      expect(weekDates[0]).toEqual(new Date("2024-01-14"));
+      expect(weekDates[6]).toEqual(new Date("2024-01-20"));
     });
   });
 
-  describe('isBusinessHours', () => {
-    test('should return true during business hours', () => {
-      const businessTime = new Date('2024-01-15T10:00:00'); // Monday 10 AM
+  describe("isBusinessHours", () => {
+    test("should return true during business hours", () => {
+      const businessTime = new Date("2024-01-15T10:00:00"); // Monday 10 AM
       expect(isBusinessHours(businessTime)).toBe(true);
     });
 
-    test('should return false before business hours', () => {
-      const earlyTime = new Date('2024-01-15T07:00:00'); // Monday 7 AM
+    test("should return false before business hours", () => {
+      const earlyTime = new Date("2024-01-15T07:00:00"); // Monday 7 AM
       expect(isBusinessHours(earlyTime)).toBe(false);
     });
 
-    test('should return false after business hours', () => {
-      const lateTime = new Date('2024-01-15T18:00:00'); // Monday 6 PM
+    test("should return false after business hours", () => {
+      const lateTime = new Date("2024-01-15T18:00:00"); // Monday 6 PM
       expect(isBusinessHours(lateTime)).toBe(false);
     });
 
-    test('should return false on weekends', () => {
-      const weekendTime = new Date('2024-01-13T10:00:00'); // Saturday 10 AM
+    test("should return false on weekends", () => {
+      const weekendTime = new Date("2024-01-13T10:00:00"); // Saturday 10 AM
       expect(isBusinessHours(weekendTime)).toBe(false);
     });
   });
@@ -745,7 +748,7 @@ describe('Calendar Integration Tests', () => {
 
       // Simulate real-time update
       mockCalendarService.getEvents.mockResolvedValue(updatedEvents);
-      
+
       // Trigger refresh (this would normally come from WebSocket)
       fireEvent.click(screen.getByText('Refresh'));
 
@@ -761,142 +764,146 @@ describe('Calendar Integration Tests', () => {
 
 ```typescript
 // integration/__tests__/calendar-api.test.ts
-import { rest } from 'msw';
-import { setupServer } from 'msw/node';
-import { calendarService } from '../services/calendar-service';
+import { rest } from "msw";
+import { setupServer } from "msw/node";
+import { calendarService } from "../services/calendar-service";
 
 const server = setupServer(
-  rest.get('/api/events', (req, res, ctx) => {
-    const start = req.url.searchParams.get('start');
-    const end = req.url.searchParams.get('end');
-    
+  rest.get("/api/events", (req, res, ctx) => {
+    const start = req.url.searchParams.get("start");
+    const end = req.url.searchParams.get("end");
+
     return res(
       ctx.json([
         {
-          id: '1',
-          title: 'Test Event',
-          start: new Date(start || '2024-01-01'),
-          end: new Date(end || '2024-01-02')
-        }
-      ])
+          id: "1",
+          title: "Test Event",
+          start: new Date(start || "2024-01-01"),
+          end: new Date(end || "2024-01-02"),
+        },
+      ]),
     );
   }),
-  
-  rest.post('/api/events', async (req, res, ctx) => {
+
+  rest.post("/api/events", async (req, res, ctx) => {
     const body = await req.json();
-    
+
     return res(
       ctx.status(201),
       ctx.json({
-        id: 'new-event',
-        ...body
-      })
+        id: "new-event",
+        ...body,
+      }),
     );
   }),
-  
-  rest.put('/api/events/:id', async (req, res, ctx) => {
+
+  rest.put("/api/events/:id", async (req, res, ctx) => {
     const { id } = req.params;
     const body = await req.json();
-    
+
     return res(
       ctx.json({
         id,
-        ...body
-      })
+        ...body,
+      }),
     );
   }),
-  
-  rest.delete('/api/events/:id', (req, res, ctx) => {
+
+  rest.delete("/api/events/:id", (req, res, ctx) => {
     return res(ctx.status(204));
-  })
+  }),
 );
 
-describe('Calendar API Integration', () => {
+describe("Calendar API Integration", () => {
   beforeAll(() => server.listen());
   afterAll(() => server.close());
   afterEach(() => server.resetHandlers());
 
-  describe('getEvents', () => {
-    test('should fetch events within date range', async () => {
-      const start = new Date('2024-01-01');
-      const end = new Date('2024-01-31');
-      
+  describe("getEvents", () => {
+    test("should fetch events within date range", async () => {
+      const start = new Date("2024-01-01");
+      const end = new Date("2024-01-31");
+
       const events = await calendarService.getEvents(start, end);
-      
+
       expect(events).toHaveLength(1);
-      expect(events[0].title).toBe('Test Event');
+      expect(events[0].title).toBe("Test Event");
     });
 
-    test('should handle API errors', async () => {
+    test("should handle API errors", async () => {
       server.use(
-        rest.get('/api/events', (req, res, ctx) => {
+        rest.get("/api/events", (req, res, ctx) => {
           return res(
             ctx.status(500),
-            ctx.json({ error: 'Internal server error' })
+            ctx.json({ error: "Internal server error" }),
           );
-        })
+        }),
       );
 
-      await expect(calendarService.getEvents(
-        new Date('2024-01-01'),
-        new Date('2024-01-31')
-      )).rejects.toThrow('Internal server error');
+      await expect(
+        calendarService.getEvents(
+          new Date("2024-01-01"),
+          new Date("2024-01-31"),
+        ),
+      ).rejects.toThrow("Internal server error");
     });
   });
 
-  describe('createEvent', () => {
-    test('should create new event', async () => {
+  describe("createEvent", () => {
+    test("should create new event", async () => {
       const newEvent = {
-        title: 'New Appointment',
-        start: new Date('2024-01-15T10:00:00'),
-        end: new Date('2024-01-15T11:00:00')
+        title: "New Appointment",
+        start: new Date("2024-01-15T10:00:00"),
+        end: new Date("2024-01-15T11:00:00"),
       };
 
       const createdEvent = await calendarService.createEvent(newEvent);
 
-      expect(createdEvent.id).toBe('new-event');
-      expect(createdEvent.title).toBe('New Appointment');
+      expect(createdEvent.id).toBe("new-event");
+      expect(createdEvent.title).toBe("New Appointment");
     });
 
-    test('should validate event data', async () => {
+    test("should validate event data", async () => {
       const invalidEvent = {
-        title: '', // Invalid: empty title
-        start: new Date('2024-01-15T10:00:00'),
-        end: new Date('2024-01-15T09:00:00') // Invalid: end before start
+        title: "", // Invalid: empty title
+        start: new Date("2024-01-15T10:00:00"),
+        end: new Date("2024-01-15T09:00:00"), // Invalid: end before start
       };
 
       await expect(calendarService.createEvent(invalidEvent)).rejects.toThrow();
     });
   });
 
-  describe('updateEvent', () => {
-    test('should update existing event', async () => {
+  describe("updateEvent", () => {
+    test("should update existing event", async () => {
       const updateData = {
-        title: 'Updated Appointment',
-        start: new Date('2024-01-15T14:00:00'),
-        end: new Date('2024-01-15T15:00:00')
+        title: "Updated Appointment",
+        start: new Date("2024-01-15T14:00:00"),
+        end: new Date("2024-01-15T15:00:00"),
       };
 
-      const updatedEvent = await calendarService.updateEvent('1', updateData);
+      const updatedEvent = await calendarService.updateEvent("1", updateData);
 
-      expect(updatedEvent.title).toBe('Updated Appointment');
-      expect(updatedEvent.start).toEqual(new Date('2024-01-15T14:00:00'));
+      expect(updatedEvent.title).toBe("Updated Appointment");
+      expect(updatedEvent.start).toEqual(new Date("2024-01-15T14:00:00"));
     });
   });
 
-  describe('deleteEvent', () => {
-    test('should delete event', async () => {
-      await expect(calendarService.deleteEvent('1')).resolves.not.toThrow();
+  describe("deleteEvent", () => {
+    test("should delete event", async () => {
+      await expect(calendarService.deleteEvent("1")).resolves.not.toThrow();
     });
 
-    test('should handle non-existent event', async () => {
+    test("should handle non-existent event", async () => {
       server.use(
-        rest.delete('/api/events/:id', (req, res, ctx) => {
+        rest.delete("/api/events/:id", (req, res, ctx) => {
           return res(ctx.status(404));
-        })
+        }),
       );
 
-      await expect(calendarService.deleteEvent('non-existent')).rejects.toThrow();
+      await expect(
+        calendarService.deleteEvent("non-existent"),
+      ).rejects.toThrow();
     });
   });
 });
@@ -908,185 +915,220 @@ describe('Calendar API Integration', () => {
 
 ```typescript
 // e2e/calendar.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Calendar E2E Tests', () => {
+test.describe("Calendar E2E Tests", () => {
   test.beforeEach(async ({ page }) => {
     // Login before each test
-    await page.goto('/login');
-    await page.fill('[data-testid="email"]', 'test@example.com');
-    await page.fill('[data-testid="password"]', 'password123');
+    await page.goto("/login");
+    await page.fill('[data-testid="email"]', "test@example.com");
+    await page.fill('[data-testid="password"]', "password123");
     await page.click('[data-testid="login-button"]');
-    
+
     // Wait for dashboard to load
-    await page.waitForURL('/dashboard');
+    await page.waitForURL("/dashboard");
   });
 
-  test('should load calendar with appointments', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should load calendar with appointments", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Wait for calendar to load
     await page.waitForSelector('[data-testid="calendar"]');
-    
+
     // Check for calendar elements
     await expect(page.locator('[data-testid="calendar"]')).toBeVisible();
     await expect(page.locator('[data-testid="view-controls"]')).toBeVisible();
-    await expect(page.locator('[data-testid="new-appointment-btn"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="new-appointment-btn"]'),
+    ).toBeVisible();
   });
 
-  test('should create new appointment', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should create new appointment", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Click new appointment button
     await page.click('[data-testid="new-appointment-btn"]');
-    
+
     // Wait for modal to open
     await page.waitForSelector('[data-testid="appointment-modal"]');
-    
+
     // Fill appointment form
-    await page.fill('[data-testid="title-input"]', 'Patient Consultation');
-    await page.fill('[data-testid="patient-search"]', 'John Doe');
+    await page.fill('[data-testid="title-input"]', "Patient Consultation");
+    await page.fill('[data-testid="patient-search"]', "John Doe");
     await page.click('[data-testid="patient-option"]:has-text("John Doe")');
-    
+
     // Select date and time
     await page.click('[data-testid="date-picker"]');
     await page.click('[data-testid="date-option"]:has-text("Tomorrow")');
-    await page.selectOption('[data-testid="time-select"]', '10:00');
-    
+    await page.selectOption('[data-testid="time-select"]', "10:00");
+
     // Add description
-    await page.fill('[data-testid="description"]', 'Initial consultation for new patient');
-    
+    await page.fill(
+      '[data-testid="description"]',
+      "Initial consultation for new patient",
+    );
+
     // Save appointment
     await page.click('[data-testid="save-appointment"]');
-    
+
     // Wait for success message
     await page.waitForSelector('[data-testid="success-toast"]');
-    await expect(page.locator('[data-testid="success-toast"]')).toHaveText(/Appointment created/);
-    
+    await expect(page.locator('[data-testid="success-toast"]')).toHaveText(
+      /Appointment created/,
+    );
+
     // Verify appointment appears in calendar
-    await expect(page.locator('[data-testid="calendar"]')).toContainText('Patient Consultation');
+    await expect(page.locator('[data-testid="calendar"]')).toContainText(
+      "Patient Consultation",
+    );
   });
 
-  test('should edit existing appointment', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should edit existing appointment", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Wait for calendar to load
     await page.waitForSelector('[data-testid="calendar"]');
-    
+
     // Click on existing appointment
-    await page.click('[data-testid="appointment-item"]:has-text("Team Meeting")');
-    
+    await page.click(
+      '[data-testid="appointment-item"]:has-text("Team Meeting")',
+    );
+
     // Wait for edit modal
     await page.waitForSelector('[data-testid="edit-appointment-modal"]');
-    
+
     // Update appointment details
-    await page.fill('[data-testid="title-input"]', 'Updated Team Meeting');
-    await page.selectOption('[data-testid="time-select"]', '14:00');
-    
+    await page.fill('[data-testid="title-input"]', "Updated Team Meeting");
+    await page.selectOption('[data-testid="time-select"]', "14:00");
+
     // Save changes
     await page.click('[data-testid="save-changes"]');
-    
+
     // Verify update
-    await expect(page.locator('[data-testid="calendar"]')).toContainText('Updated Team Meeting');
+    await expect(page.locator('[data-testid="calendar"]')).toContainText(
+      "Updated Team Meeting",
+    );
   });
 
-  test('should delete appointment with confirmation', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should delete appointment with confirmation", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Click on appointment to delete
-    await page.click('[data-testid="appointment-item"]:has-text("Old Appointment")');
-    
+    await page.click(
+      '[data-testid="appointment-item"]:has-text("Old Appointment")',
+    );
+
     // Click delete button
     await page.click('[data-testid="delete-appointment"]');
-    
+
     // Confirm deletion in modal
     await page.waitForSelector('[data-testid="confirm-delete-modal"]');
     await page.click('[data-testid="confirm-delete"]');
-    
+
     // Verify appointment is removed
-    await expect(page.locator('[data-testid="calendar"]')).not.toContainText('Old Appointment');
+    await expect(page.locator('[data-testid="calendar"]')).not.toContainText(
+      "Old Appointment",
+    );
   });
 
-  test('should switch between calendar views', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should switch between calendar views", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Test month view
     await page.click('[data-testid="month-view"]');
-    await expect(page.locator('[data-testid="calendar-header"]')).toHaveText(/January 2024/);
-    
+    await expect(page.locator('[data-testid="calendar-header"]')).toHaveText(
+      /January 2024/,
+    );
+
     // Test week view
     await page.click('[data-testid="week-view"]');
-    await expect(page.locator('[data-testid="calendar-header"]')).toHaveText(/Week of/);
-    
+    await expect(page.locator('[data-testid="calendar-header"]')).toHaveText(
+      /Week of/,
+    );
+
     // Test day view
     await page.click('[data-testid="day-view"]');
-    await expect(page.locator('[data-testid="calendar-header"]')).toHaveText(/January 15, 2024/);
-    
+    await expect(page.locator('[data-testid="calendar-header"]')).toHaveText(
+      /January 15, 2024/,
+    );
+
     // Test agenda view
     await page.click('[data-testid="agenda-view"]');
     await expect(page.locator('[data-testid="agenda-list"]')).toBeVisible();
   });
 
-  test('should search and filter appointments', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should search and filter appointments", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Search for specific patient
-    await page.fill('[data-testid="search-input"]', 'John Doe');
-    await page.press('[data-testid="search-input"]', 'Enter');
-    
+    await page.fill('[data-testid="search-input"]', "John Doe");
+    await page.press('[data-testid="search-input"]', "Enter");
+
     // Verify search results
-    await expect(page.locator('[data-testid="calendar"]')).toContainText('John Doe');
-    await expect(page.locator('[data-testid="calendar"]')).not.toContainText('Jane Smith');
-    
+    await expect(page.locator('[data-testid="calendar"]')).toContainText(
+      "John Doe",
+    );
+    await expect(page.locator('[data-testid="calendar"]')).not.toContainText(
+      "Jane Smith",
+    );
+
     // Clear search
     await page.click('[data-testid="clear-search"]');
-    await expect(page.locator('[data-testid="calendar"]')).toContainText('Jane Smith');
+    await expect(page.locator('[data-testid="calendar"]')).toContainText(
+      "Jane Smith",
+    );
   });
 
-  test('should handle appointment conflicts', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should handle appointment conflicts", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Try to create appointment at conflicting time
     await page.click('[data-testid="new-appointment-btn"]');
     await page.waitForSelector('[data-testid="appointment-modal"]');
-    
+
     // Select time that conflicts with existing appointment
     await page.click('[data-testid="time-slot-conflict"]');
-    
+
     // Should show conflict warning
-    await expect(page.locator('[data-testid="conflict-warning"]')).toBeVisible();
-    await expect(page.locator('[data-testid="save-appointment"]')).toBeDisabled();
+    await expect(
+      page.locator('[data-testid="conflict-warning"]'),
+    ).toBeVisible();
+    await expect(
+      page.locator('[data-testid="save-appointment"]'),
+    ).toBeDisabled();
   });
 
-  test('should validate appointment form', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should validate appointment form", async ({ page }) => {
+    await page.goto("/calendar");
+
     await page.click('[data-testid="new-appointment-btn"]');
     await page.waitForSelector('[data-testid="appointment-modal"]');
-    
+
     // Try to save without required fields
     await page.click('[data-testid="save-appointment"]');
-    
+
     // Should show validation errors
     await expect(page.locator('[data-testid="title-error"]')).toBeVisible();
     await expect(page.locator('[data-testid="patient-error"]')).toBeVisible();
     await expect(page.locator('[data-testid="time-error"]')).toBeVisible();
   });
 
-  test('should work with keyboard navigation', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should work with keyboard navigation", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Navigate calendar with keyboard
-    await page.keyboard.press('Tab'); // Navigate to calendar
-    await page.keyboard.press('ArrowRight'); // Next day
-    await page.keyboard.press('ArrowDown'); // Next week
-    
+    await page.keyboard.press("Tab"); // Navigate to calendar
+    await page.keyboard.press("ArrowRight"); // Next day
+    await page.keyboard.press("ArrowDown"); // Next week
+
     // Create appointment with keyboard
-    await page.keyboard.press('n'); // New appointment shortcut
+    await page.keyboard.press("n"); // New appointment shortcut
     await page.waitForSelector('[data-testid="appointment-modal"]');
-    
-    await page.keyboard.press('Escape'); // Close modal
-    await expect(page.locator('[data-testid="appointment-modal"]')).not.toBeVisible();
+
+    await page.keyboard.press("Escape"); // Close modal
+    await expect(
+      page.locator('[data-testid="appointment-modal"]'),
+    ).not.toBeVisible();
   });
 });
 ```
@@ -1095,29 +1137,32 @@ test.describe('Calendar E2E Tests', () => {
 
 ```typescript
 // e2e/performance.spec.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Calendar Performance Tests', () => {
-  test('should load calendar within performance budget', async ({ page }) => {
+test.describe("Calendar Performance Tests", () => {
+  test("should load calendar within performance budget", async ({ page }) => {
     // Start performance tracing
-    await page.goto('/calendar');
-    
+    await page.goto("/calendar");
+
     // Wait for calendar to be fully loaded
     await page.waitForSelector('[data-testid="calendar"]:not(.loading)');
-    
+
     // Get performance metrics
     const metrics = await page.evaluate(() => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      const paint = performance.getEntriesByType('paint');
-      
+      const navigation = performance.getEntriesByType(
+        "navigation",
+      )[0] as PerformanceNavigationTiming;
+      const paint = performance.getEntriesByType("paint");
+
       return {
-        fcp: paint.find(p => p.name === 'first-contentful-paint')?.startTime,
-        lcp: paint.find(p => p.name === 'largest-contentful-paint')?.startTime,
+        fcp: paint.find((p) => p.name === "first-contentful-paint")?.startTime,
+        lcp: paint.find((p) => p.name === "largest-contentful-paint")
+          ?.startTime,
         loadTime: navigation.loadEventEnd - navigation.loadEventStart,
-        domInteractive: navigation.domInteractive - navigation.fetchStart
+        domInteractive: navigation.domInteractive - navigation.fetchStart,
       };
     });
-    
+
     // Assert performance budgets
     expect(metrics.fcp).toBeLessThan(1500);
     expect(metrics.lcp).toBeLessThan(2500);
@@ -1125,25 +1170,25 @@ test.describe('Calendar Performance Tests', () => {
     expect(metrics.domInteractive).toBeLessThan(1000);
   });
 
-  test('should handle large datasets efficiently', async ({ page }) => {
+  test("should handle large datasets efficiently", async ({ page }) => {
     // Mock large dataset
-    await page.route('/api/events', async (route) => {
+    await page.route("/api/events", async (route) => {
       const events = Array.from({ length: 1000 }, (_, i) => ({
         id: `event-${i}`,
         title: `Event ${i}`,
         start: new Date(Date.now() + i * 60000).toISOString(),
-        end: new Date(Date.now() + i * 60000 + 3600000).toISOString()
+        end: new Date(Date.now() + i * 60000 + 3600000).toISOString(),
       }));
-      
+
       await route.fulfill({
         status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(events)
+        contentType: "application/json",
+        body: JSON.stringify(events),
       });
     });
-    
-    await page.goto('/calendar');
-    
+
+    await page.goto("/calendar");
+
     // Measure render time
     const renderTime = await page.evaluate(() => {
       return new Promise((resolve) => {
@@ -1153,30 +1198,38 @@ test.describe('Calendar Performance Tests', () => {
         });
       });
     });
-    
+
     expect(renderTime).toBeLessThan(100);
-    
+
     // Check if calendar is responsive
     await page.click('[data-testid="next-week"]');
     await expect(page.locator('[data-testid="calendar"]')).toBeVisible();
   });
 
-  test('should maintain performance during rapid interactions', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should maintain performance during rapid interactions", async ({
+    page,
+  }) => {
+    await page.goto("/calendar");
+
     // Perform rapid view switching
     const viewSwitchingTime = await page.evaluate(async () => {
       const start = performance.now();
-      
+
       for (let i = 0; i < 10; i++) {
-        document.querySelector('[data-testid="month-view"]')?.dispatchEvent(new MouseEvent('click'));
-        document.querySelector('[data-testid="week-view"]')?.dispatchEvent(new MouseEvent('click'));
-        document.querySelector('[data-testid="day-view"]')?.dispatchEvent(new MouseEvent('click'));
+        document
+          .querySelector('[data-testid="month-view"]')
+          ?.dispatchEvent(new MouseEvent("click"));
+        document
+          .querySelector('[data-testid="week-view"]')
+          ?.dispatchEvent(new MouseEvent("click"));
+        document
+          .querySelector('[data-testid="day-view"]')
+          ?.dispatchEvent(new MouseEvent("click"));
       }
-      
+
       return performance.now() - start;
     });
-    
+
     expect(viewSwitchingTime).toBeLessThan(5000); // Should handle rapid interactions
   });
 });
@@ -1212,7 +1265,7 @@ describe('Calendar Accessibility', () => {
     test('should not have accessibility violations', async () => {
       const { container } = render(<EventCalendar events={mockEvents} />);
       const results = await axe(container);
-      
+
       expect(results).toHaveNoViolations();
     });
   });
@@ -1220,37 +1273,37 @@ describe('Calendar Accessibility', () => {
   describe('Keyboard Navigation', () => {
     test('should support full keyboard navigation', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       const calendar = screen.getByRole('grid');
-      
+
       // Tab navigation
       fireEvent.keyDown(calendar, { key: 'Tab' });
       const focusedElement = document.activeElement;
       expect(focusedElement).toBeInTheDocument();
-      
+
       // Arrow key navigation
       fireEvent.keyDown(calendar, { key: 'ArrowRight' });
       fireEvent.keyDown(calendar, { key: 'ArrowDown' });
       fireEvent.keyDown(calendar, { key: 'ArrowLeft' });
       fireEvent.keyDown(calendar, { key: 'ArrowUp' });
-      
+
       // Enter key for selection
       fireEvent.keyDown(calendar, { key: 'Enter' });
     });
 
     test('should support keyboard shortcuts', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       // Test view switching shortcuts
       fireEvent.keyDown(document, { key: 'm' }); // Month view
       expect(screen.getByText('January 2024')).toBeInTheDocument();
-      
+
       fireEvent.keyDown(document, { key: 'w' }); // Week view
       expect(screen.getByText('Week')).toBeInTheDocument();
-      
+
       fireEvent.keyDown(document, { key: 'd' }); // Day view
       expect(screen.getByText('January 15, 2024')).toBeInTheDocument();
-      
+
       fireEvent.keyDown(document, { key: 'a' }); // Agenda view
       expect(screen.getByText('Agenda')).toBeInTheDocument();
     });
@@ -1259,20 +1312,20 @@ describe('Calendar Accessibility', () => {
   describe('Screen Reader Support', () => {
     test('should have proper ARIA labels', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       const calendar = screen.getByRole('grid');
       expect(calendar).toHaveAttribute('aria-label', 'Calendar');
-      
+
       const event = screen.getByText('Patient Consultation');
       expect(event).toHaveAttribute('aria-describedby');
     });
 
     test('should announce view changes to screen readers', () => {
       const { container } = render(<EventCalendar events={mockEvents} />);
-      
+
       // Switch to week view
       fireEvent.click(screen.getByText('Week'));
-      
+
       // Check for live region announcement
       const liveRegion = container.querySelector('[aria-live="polite"]');
       expect(liveRegion).toBeInTheDocument();
@@ -1281,17 +1334,17 @@ describe('Calendar Accessibility', () => {
 
     test('should announce event creation', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       fireEvent.click(screen.getByText('New Appointment'));
-      
+
       // Fill form
       fireEvent.change(screen.getByLabelText('Title'), {
         target: { value: 'New Event' }
       });
-      
+
       // Save
       fireEvent.click(screen.getByText('Save'));
-      
+
       // Check for success announcement
       const liveRegion = document.querySelector('[aria-live="assertive"]');
       expect(liveRegion).toHaveTextContent('Appointment created successfully');
@@ -1301,16 +1354,16 @@ describe('Calendar Accessibility', () => {
   describe('Focus Management', () => {
     test('should manage focus properly in modals', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       // Open event dialog
       fireEvent.click(screen.getByText('New Appointment'));
-      
+
       const modal = screen.getByRole('dialog');
       const firstFocusableElement = modal.querySelector('button, input, select, textarea');
-      
+
       // Focus should be trapped in modal
       expect(firstFocusableElement).toHaveFocus();
-      
+
       // Tab navigation should stay within modal
       fireEvent.keyDown(modal, { key: 'Tab' });
       const focusedElement = document.activeElement;
@@ -1319,14 +1372,14 @@ describe('Calendar Accessibility', () => {
 
     test('should restore focus after modal close', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       const createButton = screen.getByText('New Appointment');
       createButton.focus();
-      
+
       // Open and close modal
       fireEvent.click(createButton);
       fireEvent.click(screen.getByText('Cancel'));
-      
+
       // Focus should be restored to create button
       expect(createButton).toHaveFocus();
     });
@@ -1335,10 +1388,10 @@ describe('Calendar Accessibility', () => {
   describe('Color Contrast', () => {
     test('should have sufficient color contrast', () => {
       render(<EventCalendar events={mockEvents} />);
-      
+
       const event = screen.getByText('Patient Consultation');
       const computedStyle = window.getComputedStyle(event);
-      
+
       // This would typically be tested with a color contrast library
       // For now, we'll check that colors are defined
       expect(computedStyle.backgroundColor).not.toBe('');
@@ -1354,15 +1407,15 @@ describe('Calendar Accessibility', () => {
         configurable: true,
         value: 375
       });
-      
+
       Object.defineProperty(window, 'innerHeight', {
         writable: true,
         configurable: true,
         value: 667
       });
-      
+
       render(<EventCalendar events={mockEvents} />);
-      
+
       // Should have mobile-specific classes or structure
       const calendar = screen.getByRole('grid');
       expect(calendar).toHaveClass('mobile-calendar');
@@ -1373,9 +1426,9 @@ describe('Calendar Accessibility', () => {
       Object.defineProperty(navigator, 'maxTouchPoints', {
         value: 5
       });
-      
+
       render(<EventCalendar events={mockEvents} />);
-      
+
       const events = screen.getAllByText('Patient Consultation');
       events.forEach(event => {
         const computedStyle = window.getComputedStyle(event);
@@ -1390,111 +1443,119 @@ describe('Calendar Accessibility', () => {
 
 ```typescript
 // accessibility/automated-tests.ts
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('Automated Accessibility Tests', () => {
-  test('should pass axe-core accessibility scan', async ({ page }) => {
-    await page.goto('/calendar');
-    
+test.describe("Automated Accessibility Tests", () => {
+  test("should pass axe-core accessibility scan", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Wait for page to fully load
     await page.waitForSelector('[data-testid="calendar"]:not(.loading)');
-    
+
     // Run axe-core accessibility audit
     const accessibilityScanResults = await page.accessibility.scan();
-    
+
     // Log any violations for debugging
-    accessibilityScanResults.violations.forEach(violation => {
-      console.log('Accessibility violation:', {
+    accessibilityScanResults.violations.forEach((violation) => {
+      console.log("Accessibility violation:", {
         id: violation.id,
         impact: violation.impact,
         description: violation.description,
-        nodes: violation.nodes.map(node => node.html)
+        nodes: violation.nodes.map((node) => node.html),
       });
     });
-    
+
     // Assert no critical or serious violations
     const criticalViolations = accessibilityScanResults.violations.filter(
-      v => v.impact === 'critical'
+      (v) => v.impact === "critical",
     );
     const seriousViolations = accessibilityScanResults.violations.filter(
-      v => v.impact === 'serious'
+      (v) => v.impact === "serious",
     );
-    
+
     expect(criticalViolations).toHaveLength(0);
     expect(seriousViolations).toHaveLength(0);
   });
 
-  test('should meet WCAG 2.1 AA standards', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should meet WCAG 2.1 AA standards", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Test specific WCAG criteria
-    
+
     // 1.1.1 Non-text Content
-    await expect(page.locator('img')).toHaveAttribute('alt');
-    await expect(page.locator('[aria-label]')).toHaveCount({ min: 1 });
-    
+    await expect(page.locator("img")).toHaveAttribute("alt");
+    await expect(page.locator("[aria-label]")).toHaveCount({ min: 1 });
+
     // 1.3.1 Info and Relationships
-    await expect(page.locator('table')).toHaveAttribute('role');
+    await expect(page.locator("table")).toHaveAttribute("role");
     await expect(page.locator('[role="grid"]')).toBeVisible();
-    
+
     // 1.4.3 Contrast (Minimum)
-    const elementsWithColor = await page.locator('*[style*="color"], *[style*="background"]').count();
+    const elementsWithColor = await page
+      .locator('*[style*="color"], *[style*="background"]')
+      .count();
     if (elementsWithColor > 0) {
       // In a real implementation, you would check contrast ratios
-      console.log('Found elements with custom colors - manual contrast check needed');
+      console.log(
+        "Found elements with custom colors - manual contrast check needed",
+      );
     }
-    
+
     // 2.1.1 Keyboard
-    await page.keyboard.press('Tab');
-    const focusedElement = page.locator(':focus');
+    await page.keyboard.press("Tab");
+    const focusedElement = page.locator(":focus");
     await expect(focusedElement).toBeVisible();
-    
+
     // 2.4.3 Focus Order
-    await page.keyboard.press('Tab');
-    await page.keyboard.press('Tab');
-    await page.keyboard.press('Tab');
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
     // Focus should move logically through the interface
-    
+
     // 3.2.1 On Focus
-    const button = page.locator('button').first();
+    const button = page.locator("button").first();
     await button.focus();
     // Should not trigger unexpected state changes
-    
+
     // 4.1.2 Name, Role, Value
-    const interactiveElements = page.locator('button, input, select, textarea, a[href]');
+    const interactiveElements = page.locator(
+      "button, input, select, textarea, a[href]",
+    );
     const count = await interactiveElements.count();
     for (let i = 0; i < count; i++) {
       const element = interactiveElements.nth(i);
-      await expect(element).toHaveAttribute('aria-label', { or: expect(element).toHaveAttribute('aria-labelledby') });
+      await expect(element).toHaveAttribute("aria-label", {
+        or: expect(element).toHaveAttribute("aria-labelledby"),
+      });
     }
   });
 
-  test('should work with screen readers', async ({ page }) => {
-    await page.goto('/calendar');
-    
+  test("should work with screen readers", async ({ page }) => {
+    await page.goto("/calendar");
+
     // Test screen reader compatibility
-    
+
     // Check for proper ARIA landmarks
     await expect(page.locator('[role="main"]')).toBeVisible();
     await expect(page.locator('[role="navigation"]')).toBeVisible();
     await expect(page.locator('[role="complementary"]')).toBeVisible();
-    
+
     // Test form accessibility
     await page.click('[data-testid="new-appointment-btn"]');
     await page.waitForSelector('[data-testid="appointment-modal"]');
-    
+
     // Check form labels
-    const inputs = page.locator('input, select, textarea');
+    const inputs = page.locator("input, select, textarea");
     const inputCount = await inputs.count();
     for (let i = 0; i < inputCount; i++) {
       const input = inputs.nth(i);
-      const id = await input.getAttribute('id');
+      const id = await input.getAttribute("id");
       if (id) {
         const label = page.locator(`label[for="${id}"]`);
         await expect(label).toBeVisible();
       }
     }
-    
+
     // Test error handling
     await page.click('[data-testid="save-appointment"]'); // Submit empty form
     await expect(page.locator('[role="alert"]')).toBeVisible();
@@ -1523,7 +1584,7 @@ const customRender = (
   }
 ) => {
   const queryClient = options?.queryClient || createTestQueryClient();
-  
+
   const AllProviders = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>
       <AuthProvider value={options?.authContext || defaultAuthContext}>
@@ -1621,22 +1682,24 @@ export const fireCustomEvent = (element: HTMLElement, eventName: string, detail?
 
 ```typescript
 // utils/mock-data-generator.ts
-import { CalendarEvent, CalendarView } from '../types';
+import { CalendarEvent, CalendarView } from "../types";
 
 export class MockDataGenerator {
-  static generateCalendarEvent(overrides?: Partial<CalendarEvent>): CalendarEvent {
+  static generateCalendarEvent(
+    overrides?: Partial<CalendarEvent>,
+  ): CalendarEvent {
     const baseEvent: CalendarEvent = {
       id: `event-${Date.now()}-${Math.random()}`,
-      title: 'Sample Appointment',
-      description: 'Sample appointment description',
+      title: "Sample Appointment",
+      description: "Sample appointment description",
       start: new Date(),
       end: new Date(Date.now() + 60 * 60 * 1000), // 1 hour duration
       allDay: false,
-      color: 'primary',
-      location: 'Consultation Room A',
+      color: "primary",
+      location: "Consultation Room A",
       patientId: `patient-${Math.floor(Math.random() * 1000)}`,
       practitionerId: `practitioner-${Math.floor(Math.random() * 100)}`,
-      clinicId: 'clinic-1'
+      clinicId: "clinic-1",
     };
 
     return { ...baseEvent, ...overrides };
@@ -1645,7 +1708,7 @@ export class MockDataGenerator {
   static generateEventsForDateRange(
     startDate: Date,
     endDate: Date,
-    count: number = 10
+    count: number = 10,
   ): CalendarEvent[] {
     const events: CalendarEvent[] = [];
     const timeRange = endDate.getTime() - startDate.getTime();
@@ -1655,12 +1718,14 @@ export class MockDataGenerator {
       const eventStart = new Date(startDate.getTime() + randomOffset);
       const duration = 30 + Math.random() * 120; // 30-150 minutes
 
-      events.push(this.generateCalendarEvent({
-        start: eventStart,
-        end: new Date(eventStart.getTime() + duration * 60 * 1000),
-        title: `Appointment ${i + 1}`,
-        patientId: `patient-${Math.floor(Math.random() * 1000)}`
-      }));
+      events.push(
+        this.generateCalendarEvent({
+          start: eventStart,
+          end: new Date(eventStart.getTime() + duration * 60 * 1000),
+          title: `Appointment ${i + 1}`,
+          patientId: `patient-${Math.floor(Math.random() * 1000)}`,
+        }),
+      );
     }
 
     return events.sort((a, b) => a.start.getTime() - b.start.getTime());
@@ -1674,15 +1739,15 @@ export class MockDataGenerator {
       this.generateCalendarEvent({
         start: baseTime,
         end: new Date(baseTime.getTime() + 60 * 60 * 1000),
-        title: 'First Appointment',
-        patientId: 'patient-1'
+        title: "First Appointment",
+        patientId: "patient-1",
       }),
       this.generateCalendarEvent({
         start: new Date(baseTime.getTime() + 30 * 60 * 1000), // 30 minutes overlap
         end: new Date(baseTime.getTime() + 90 * 60 * 1000),
-        title: 'Conflicting Appointment',
-        patientId: 'patient-2'
-      })
+        title: "Conflicting Appointment",
+        patientId: "patient-2",
+      }),
     ];
   }
 
@@ -1691,24 +1756,30 @@ export class MockDataGenerator {
       id: `patient-${i + 1}`,
       name: `Patient ${i + 1}`,
       email: `patient${i + 1}@example.com`,
-      phone: `(555) ${String(i + 1).padStart(3, '0')}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+      phone: `(555) ${String(i + 1).padStart(3, "0")}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
       dateOfBirth: new Date(
         1950 + Math.floor(Math.random() * 50),
         Math.floor(Math.random() * 12) + 1,
-        Math.floor(Math.random() * 28) + 1
-      )
+        Math.floor(Math.random() * 28) + 1,
+      ),
     }));
   }
 
   static generatePractitionerData(count: number = 10) {
-    const specialties = ['Cardiology', 'Dermatology', 'Pediatrics', 'Orthopedics', 'Neurology'];
-    
+    const specialties = [
+      "Cardiology",
+      "Dermatology",
+      "Pediatrics",
+      "Orthopedics",
+      "Neurology",
+    ];
+
     return Array.from({ length: count }, (_, i) => ({
       id: `practitioner-${i + 1}`,
-      name: `Dr. ${['Smith', 'Johnson', 'Williams', 'Brown', 'Jones'][i % 5]}`,
+      name: `Dr. ${["Smith", "Johnson", "Williams", "Brown", "Jones"][i % 5]}`,
       specialty: specialties[i % specialties.length],
       email: `dr${i + 1}@clinic.com`,
-      phone: `(555) ${String(200 + i).padStart(3, '0')}-${String(Math.floor(Math.random() * 9000) + 1000)}`
+      phone: `(555) ${String(200 + i).padStart(3, "0")}-${String(Math.floor(Math.random() * 9000) + 1000)}`,
     }));
   }
 }

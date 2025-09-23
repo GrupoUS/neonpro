@@ -6,7 +6,8 @@ export * from "./performance";
 export * from "./health";
 
 // Main monitoring initialization
-export { initializeMonitoring, MonitoringConfig } from "./init";
+export { initializeMonitoring } from "./init";
+export type { MonitoringConfig } from "./init";
 
 // Types
 export type {

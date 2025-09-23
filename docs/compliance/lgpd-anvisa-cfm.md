@@ -318,7 +318,7 @@ export async function validateProfessionalLicense(
     COREN: `https://portal.coren-sp.gov.br/api/enfermeiros/${license}`,
     CFF: `https://www.cff.org.br/api/farmaceuticos/${license}`,
   };
-  
+
   const response = await fetch(endpoints[councilType]);
   const data = await response.json();
 
@@ -331,10 +331,10 @@ export function validateScopeOfPractice(
   procedure: string,
 ): boolean {
   const SCOPE_MATRIX = {
-    "Dermatologia": ["Dermatoscopia", "Biópsia", "Peeling Químico"],
+    Dermatologia: ["Dermatoscopia", "Biópsia", "Peeling Químico"],
     "Cirurgia Plástica": ["Botox", "Preenchimento", "Lipoaspiração"],
     "Enfermagem Estética": ["Limpeza de Pele", "Aplicação de Cosméticos"],
-    "Estética": ["Massagem Facial", "Tratamentos Capilares"],
+    Estética: ["Massagem Facial", "Tratamentos Capilares"],
     // ... other specialties
   };
 
@@ -406,7 +406,12 @@ class SignatureService {
    ```typescript
    const ROLES = {
      ADMIN: ["read", "write", "delete", "manage"],
-     MEDICAL_DIRECTOR: ["read", "write", "diagnose", "manage_aesthetic_procedures"],
+     MEDICAL_DIRECTOR: [
+       "read",
+       "write",
+       "diagnose",
+       "manage_aesthetic_procedures",
+     ],
      AESTHETIC_PROFESSIONAL: ["read", "write", "perform_authorized_procedures"],
      CLINIC_STAFF: ["read", "create-appointments", "manage_client_data"],
    };
@@ -456,14 +461,14 @@ class SignatureService {
 
 ### Client Data
 
-| Data Type      | Retention Period | Legal Basis    |
-| -------------- | ---------------- | -------------- |
-| Treatment Records | 25 years      | CFM Resolution |
-| Before/After Photos | 25 years     | LGPD/Client Consent |
-| Financial Data | 10 years         | Tax Law        |
-| Contact Data   | 5 years          | LGPD           |
-| Consultation Notes | 25 years       | Professional Standards |
-| Audit Logs     | 25 years         | CFM Resolution |
+| Data Type           | Retention Period | Legal Basis            |
+| ------------------- | ---------------- | ---------------------- |
+| Treatment Records   | 25 years         | CFM Resolution         |
+| Before/After Photos | 25 years         | LGPD/Client Consent    |
+| Financial Data      | 10 years         | Tax Law                |
+| Contact Data        | 5 years          | LGPD                   |
+| Consultation Notes  | 25 years         | Professional Standards |
+| Audit Logs          | 25 years         | CFM Resolution         |
 
 ### Data Deletion
 

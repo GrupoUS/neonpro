@@ -34,13 +34,20 @@
 }
 
 .shine-border::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   padding: var(--border-width, 1px);
-  background: linear-gradient(90deg, transparent, var(--shine-color, #000000), transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--shine-color, #000000),
+    transparent
+  );
   border-radius: inherit;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: xor;
   -webkit-mask-composite: xor;
   animation: shine-pulse var(--shine-duration, 14s) infinite linear;
@@ -53,12 +60,22 @@
 }
 
 .shine-border--wave::before {
-  background: linear-gradient(45deg, transparent, var(--shine-color, #000000), transparent);
+  background: linear-gradient(
+    45deg,
+    transparent,
+    var(--shine-color, #000000),
+    transparent
+  );
   animation: shine-wave var(--shine-duration, 14s) infinite linear;
 }
 
 .shine-border--orbital::before {
-  background: conic-gradient(from 0deg, transparent, var(--shine-color, #000000), transparent);
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    var(--shine-color, #000000),
+    transparent
+  );
   animation: shine-rotate var(--shine-duration, 14s) infinite linear;
 }
 
@@ -132,7 +149,7 @@
   .shine-border::before {
     animation: none;
   }
-  
+
   .shine-border:hover::before {
     opacity: 0.5;
     transition: opacity 0.3s ease;
@@ -149,26 +166,28 @@
 }
 
 .shine-border--neonpro-accent::before {
-  background: linear-gradient(90deg, transparent, #AC9469, transparent);
+  background: linear-gradient(90deg, transparent, #ac9469, transparent);
 }
 
 .shine-border--neonpro-neutral::before {
-  background: linear-gradient(90deg, transparent, #B4AC9C, transparent);
+  background: linear-gradient(90deg, transparent, #b4ac9c, transparent);
 }
 
 /* Multi-color gradients for enhanced beauty effects */
 .shine-border--aesthetic-gold::before {
-  background: linear-gradient(90deg, 
-    transparent, 
-    #ffd700, 
-    #ffed4e, 
-    #ffd700, 
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #ffd700,
+    #ffed4e,
+    #ffd700,
     transparent
   );
 }
 
 .shine-border--beauty-rainbow::before {
-  background: linear-gradient(90deg,
+  background: linear-gradient(
+    90deg,
     transparent,
     #ff6b6b,
     #4ecdc4,

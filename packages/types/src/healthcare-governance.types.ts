@@ -155,6 +155,21 @@ export interface HealthcareAlert {
 
 // Integration Layer Types
 export interface HealthcareAuditEvent extends CreateAuditTrailEntry {
+  action?: string;
+  resource?: string;
+  resourceType?: string;
+  resourceId?: string;
+  userId?: string;
+  clinicId?: string;
+  patientId?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  sessionId?: string;
+  status?: string;
+  riskLevel?: string;
+  additionalInfo?: Record<string, any>;
+  encryptedDetails?: string;
+  timestamp?: Date;
   healthcareContext: {
     patientId?: string;
     appointmentId?: string;

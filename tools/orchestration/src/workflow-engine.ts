@@ -1,7 +1,4 @@
-import type {
-  AgentCoordinationPattern,
-  AgentResult,
-} from "./types";
+import type { AgentCoordinationPattern, AgentResult } from "./types";
 
 type ExecutionPlan = {
   phases: Array<{

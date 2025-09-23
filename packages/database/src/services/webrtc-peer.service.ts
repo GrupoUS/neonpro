@@ -666,7 +666,7 @@ export class WebRTCPeerManager {
       const stats = await this.peerConnection.getStats();
       const statsObj: any = {};
 
-      stats.forEach((report,_id) => {
+      stats.forEach((report, _id) => {
         statsObj[id] = report;
       });
 

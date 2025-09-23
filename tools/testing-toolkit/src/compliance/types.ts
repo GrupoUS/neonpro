@@ -4,9 +4,9 @@
  * Type definitions for healthcare compliance testing.
  */
 
-export type ComplianceStandard = 'LGPD' | 'ANVISA' | 'CFM';
+export type ComplianceStandard = "LGPD" | "ANVISA" | "CFM";
 
-export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
+export type RiskLevel = "low" | "medium" | "high" | "critical";
 
 export interface ComplianceRequirement {
   id: string;

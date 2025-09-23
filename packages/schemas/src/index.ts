@@ -6,16 +6,6 @@
 // Patient schemas
 export * from "./patient/base-patient.schema";
 export * from "./patient/brazilian-patient.schema";
-
-// Re-export commonly used types and schemas from base-patient.schema
-export {
-  BasePatient,
-  PatientAddress,
-  PatientHealthInsurance,
-  EmergencyContact,
-  LGPDConsent,
-  CompletePatient,
-} from "./patient/base-patient.schema";
 export {
   CPFSchema,
   CNPJSchema,

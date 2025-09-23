@@ -1,5 +1,5 @@
-import { createAdminClient } from '@/lib/supabase/client';
-import { NextRequest, NextResponse } from 'next/server';
+import { createAdminClient } from "@/lib/supabase/client";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(_request: NextRequest) {
   try {
@@ -10,8 +10,8 @@ export async function POST(_request: NextRequest) {
     const executeSQL = async (_sql: string) => {
       try {
         const { data, error } = await supabase
-          .from('pg_tables')
-          .select('*')
+          .from("pg_tables")
+          .select("*")
           .limit(1);
 
         if (error) {
@@ -20,30 +20,34 @@ export async function POST(_request: NextRequest) {
 
         return { success: true, data };
       } catch (error) {
-        return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+        return {
+          success: false,
+          error: error instanceof Error ? error.message : "Unknown error",
+        };
       }
     };
 
     // Check if we can connect to the database
-    const connectionTest = await executeSQL('SELECT 1');
+    const connectionTest = await executeSQL("SELECT 1");
     if (!connectionTest.success) {
       return NextResponse.json(
-        { error: 'Database connection failed', details: connectionTest.error },
+        { error: "Database connection failed", details: connectionTest.error },
         { status: 500 },
       );
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Database connection successful - Ready to execute agent RLS migration',
+      message:
+        "Database connection successful - Ready to execute agent RLS migration",
       connectionTest: connectionTest.success,
     });
   } catch (error) {
-    console.error('Migration error:', error);
+    console.error("Migration error:", error);
     return NextResponse.json(
       {
-        error: 'Migration failed',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        error: "Migration failed",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
       { status: 500 },
     );
@@ -52,7 +56,7 @@ export async function POST(_request: NextRequest) {
 
 export async function GET() {
   return NextResponse.json({
-    message: 'Agent RLS Migration API. Use POST to execute migration.',
+    message: "Agent RLS Migration API. Use POST to execute migration.",
     timestamp: new Date().toISOString(),
   });
 }

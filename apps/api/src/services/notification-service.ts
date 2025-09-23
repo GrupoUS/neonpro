@@ -14,7 +14,7 @@
  * - Comprehensive error handling with Portuguese error messages
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 // Service response interface
 export interface ServiceResponse<T = any> {
@@ -28,10 +28,10 @@ export interface ServiceResponse<T = any> {
 // Notification interface
 export interface Notification {
   recipientId: string;
-  channel: 'email' | 'sms' | 'whatsapp' | 'push';
+  channel: "email" | "sms" | "whatsapp" | "push";
   templateId: string;
   data: Record<string, any>;
-  priority?: 'low' | 'medium' | 'high' | 'critical';
+  priority?: "low" | "medium" | "high" | "critical";
   scheduledFor?: Date;
   lgpdConsent?: boolean;
   metadata?: Record<string, any>;
@@ -172,7 +172,8 @@ export class NotificationService {
     notification: Notification;
     priority: number;
   }> = [];
-  private rateLimits: Map<string, { count: number; resetTime: Date }> = new Map();
+  private rateLimits: Map<string, { count: number; resetTime: Date }> =
+    new Map();
   private isInitialized = false;
 
   constructor() {
@@ -184,8 +185,9 @@ export class NotificationService {
    */
   private initialize(): void {
     // Initialize Supabase client
-    const supabaseUrl = process.env.SUPABASE_URL || 'https://mock-supabase-url.supabase.co';
-    const supabaseKey = process.env.SUPABASE_ANON_KEY || 'mock-supabase-key';
+    const supabaseUrl =
+      process.env.SUPABASE_URL || "https://mock-supabase-url.supabase.co";
+    const supabaseKey = process.env.SUPABASE_ANON_KEY || "mock-supabase-key";
 
     this.supabase = createClient(supabaseUrl, supabaseKey);
     this.isInitialized = true;
@@ -200,47 +202,50 @@ export class NotificationService {
   private initializeDefaultTemplates(): void {
     const defaultTemplates: NotificationTemplate[] = [
       {
-        templateId: 'appointment_reminder',
-        name: 'Lembrete de Consulta',
-        description: 'Template para lembretes de consulta',
-        channel: 'email',
-        language: 'pt-BR',
-        subject: 'Lembrete: Consulta agendada para {{appointmentDate}} - {{patientName}}',
+        templateId: "appointment_reminder",
+        name: "Lembrete de Consulta",
+        description: "Template para lembretes de consulta",
+        channel: "email",
+        language: "pt-BR",
+        subject:
+          "Lembrete: Consulta agendada para {{appointmentDate}} - {{patientName}}",
         content:
-          'Olá {{patientName}}, sua {{appointmentType}} está agendada para {{appointmentDate}} às {{appointmentTime}}.',
+          "Olá {{patientName}}, sua {{appointmentType}} está agendada para {{appointmentDate}} às {{appointmentTime}}.",
         variables: [
-          'patientName',
-          'appointmentType',
-          'appointmentDate',
-          'appointmentTime',
+          "patientName",
+          "appointmentType",
+          "appointmentDate",
+          "appointmentTime",
         ],
-        category: 'appointment',
+        category: "appointment",
       },
       {
-        templateId: 'lgpd_consent_update',
-        name: 'Atualização de Consentimento LGPD',
-        description: 'Template para atualizações de consentimento LGPD',
-        channel: 'email',
-        language: 'pt-BR',
-        subject: 'Atualização de Consentimento - {{consentType}}',
-        content: 'Olá {{patientName}}, seu consentimento para {{consentType}} foi atualizado.',
-        variables: ['patientName', 'consentType'],
-        category: 'lgpd',
+        templateId: "lgpd_consent_update",
+        name: "Atualização de Consentimento LGPD",
+        description: "Template para atualizações de consentimento LGPD",
+        channel: "email",
+        language: "pt-BR",
+        subject: "Atualização de Consentimento - {{consentType}}",
+        content:
+          "Olá {{patientName}}, seu consentimento para {{consentType}} foi atualizado.",
+        variables: ["patientName", "consentType"],
+        category: "lgpd",
       },
       {
-        templateId: 'custom_reminder',
-        name: 'Lembrete Personalizado',
-        description: 'Template para lembretes personalizados',
-        channel: 'email',
-        language: 'pt-BR',
-        subject: 'Lembrete: {{appointmentType}} em {{clinicName}}',
-        content: 'Olá {{patientName}}, este é um lembrete sobre seu(sua) {{appointmentType}}.',
-        variables: ['patientName', 'appointmentType', 'clinicName'],
-        category: 'appointment',
+        templateId: "custom_reminder",
+        name: "Lembrete Personalizado",
+        description: "Template para lembretes personalizados",
+        channel: "email",
+        language: "pt-BR",
+        subject: "Lembrete: {{appointmentType}} em {{clinicName}}",
+        content:
+          "Olá {{patientName}}, este é um lembrete sobre seu(sua) {{appointmentType}}.",
+        variables: ["patientName", "appointmentType", "clinicName"],
+        category: "appointment",
       },
     ];
 
-    defaultTemplates.forEach(template => {
+    defaultTemplates.forEach((template) => {
       this.templates.set(template.templateId, template);
     });
   }
@@ -281,7 +286,7 @@ export class NotificationService {
       if (params.simulateDbError) {
         return {
           success: false,
-          error: 'Erro de conexão com banco de dados',
+          error: "Erro de conexão com banco de dados",
         };
       }
 
@@ -295,11 +300,11 @@ export class NotificationService {
         channel: params.channel,
         template_id: params.templateId,
         data: params.data,
-        priority: params.priority || 'medium',
+        priority: params.priority || "medium",
         scheduled_for: params.scheduledFor?.toISOString(),
         lgpd_consent: params.lgpdConsent || false,
         metadata: params.metadata || {},
-        status: 'queued',
+        status: "queued",
         created_at: timestamp.toISOString(),
       };
 
@@ -308,7 +313,7 @@ export class NotificationService {
       const result: any = {
         notificationId,
         channel: params.channel,
-        status: 'queued',
+        status: "queued",
         persisted: true,
       };
 
@@ -336,12 +341,12 @@ export class NotificationService {
       }
 
       // Add LGPD compliance for SMS notifications with consent
-      if (params.channel === 'sms' && params.lgpdConsent) {
+      if (params.channel === "sms" && params.lgpdConsent) {
         result.lgpdCompliant = true;
       }
 
       // Add metadata for WhatsApp notifications
-      if (params.channel === 'whatsapp' && params.metadata) {
+      if (params.channel === "whatsapp" && params.metadata) {
         result.metadata = params.metadata;
       }
 
@@ -352,7 +357,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -381,7 +386,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -410,7 +415,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -432,7 +437,7 @@ export class NotificationService {
         success: true,
         data: {
           notificationId,
-          status: 'delivered',
+          status: "delivered",
           deliveryAttempts: 1,
           lastUpdated: new Date(),
         },
@@ -440,7 +445,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -467,7 +472,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -484,20 +489,21 @@ export class NotificationService {
   > {
     try {
       // Mock Brazilian phone validation
-      const isValid = params.contactInfo.phone?.match(/^\(\d{2}\) \d{4,5}-\d{4}$/) !== null;
+      const isValid =
+        params.contactInfo.phone?.match(/^\(\d{2}\) \d{4,5}-\d{4}$/) !== null;
 
       return {
         success: true,
         data: {
           isValid,
-          format: 'brazilian_mobile',
-          carrier: 'Vivo', // Mock carrier
+          format: "brazilian_mobile",
+          carrier: "Vivo", // Mock carrier
         },
       };
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -544,7 +550,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -568,7 +574,7 @@ export class NotificationService {
       if (!template) {
         return {
           success: false,
-          error: 'Template não encontrado',
+          error: "Template não encontrado",
         };
       }
 
@@ -577,10 +583,10 @@ export class NotificationService {
       let renderedContent = template.content;
       const missingVariables: string[] = [];
 
-      template.variables.forEach(variable => {
+      template.variables.forEach((variable) => {
         const value = params.data[variable];
         if (value !== undefined) {
-          const regex = new RegExp(`{{${variable}}}`, 'g');
+          const regex = new RegExp(`{{${variable}}}`, "g");
           renderedSubject = renderedSubject.replace(regex, value);
           renderedContent = renderedContent.replace(regex, value);
         } else {
@@ -599,7 +605,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -623,7 +629,7 @@ export class NotificationService {
       if (!template) {
         return {
           success: false,
-          error: 'Template não encontrado',
+          error: "Template não encontrado",
         };
       }
 
@@ -639,14 +645,14 @@ export class NotificationService {
         data: {
           templateId,
           subject: updatedTemplate.subject,
-          lastModifiedBy: updates.lastModifiedBy || 'system',
+          lastModifiedBy: updates.lastModifiedBy || "system",
           version: 2, // Mock version increment
         },
       };
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -671,13 +677,13 @@ export class NotificationService {
 
       // Apply filters
       if (filters.channel) {
-        templates = templates.filter(t => t.channel === filters.channel);
+        templates = templates.filter((t) => t.channel === filters.channel);
       }
       if (filters.language) {
-        templates = templates.filter(t => t.language === filters.language);
+        templates = templates.filter((t) => t.language === filters.language);
       }
       if (filters.category) {
-        templates = templates.filter(t => t.category === filters.category);
+        templates = templates.filter((t) => t.category === filters.category);
       }
 
       return {
@@ -691,7 +697,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -709,7 +715,7 @@ export class NotificationService {
         success: true,
         data: {
           notificationId,
-          deliveryStatus: 'delivered',
+          deliveryStatus: "delivered",
           deliveryAttempts: 1,
           lastAttempt: new Date(),
           nextRetry,
@@ -718,7 +724,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -752,7 +758,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -797,7 +803,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -835,7 +841,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -851,13 +857,14 @@ export class NotificationService {
     }>
   > {
     try {
-      const priority = this.getPriorityValue(params.priority || 'medium');
+      const priority = this.getPriorityValue(params.priority || "medium");
 
       // Add to queue
       this.notificationQueue.push({ notification: params, priority });
       this.notificationQueue.sort((a, _b) => b.priority - a.priority);
 
-      const queuePosition = params.priority === 'critical' ? 1 : this.notificationQueue.length;
+      const queuePosition =
+        params.priority === "critical" ? 1 : this.notificationQueue.length;
       const estimatedDelivery = new Date(Date.now() + queuePosition * 1000);
 
       return {
@@ -871,7 +878,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -909,7 +916,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -948,7 +955,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -969,31 +976,31 @@ export class NotificationService {
 
       const byPriority = {
         critical: this.notificationQueue.filter(
-          n => n.notification.priority === 'critical',
+          (n) => n.notification.priority === "critical",
         ).length,
         high: this.notificationQueue.filter(
-          n => n.notification.priority === 'high',
+          (n) => n.notification.priority === "high",
         ).length,
         medium: this.notificationQueue.filter(
-          n => n.notification.priority === 'medium',
+          (n) => n.notification.priority === "medium",
         ).length,
         low: this.notificationQueue.filter(
-          n => n.notification.priority === 'low',
+          (n) => n.notification.priority === "low",
         ).length,
       };
 
       const byChannel = {
         email: this.notificationQueue.filter(
-          n => n.notification.channel === 'email',
+          (n) => n.notification.channel === "email",
         ).length,
         sms: this.notificationQueue.filter(
-          n => n.notification.channel === 'sms',
+          (n) => n.notification.channel === "sms",
         ).length,
         whatsapp: this.notificationQueue.filter(
-          n => n.notification.channel === 'whatsapp',
+          (n) => n.notification.channel === "whatsapp",
         ).length,
         push: this.notificationQueue.filter(
-          n => n.notification.channel === 'push',
+          (n) => n.notification.channel === "push",
         ).length,
       };
 
@@ -1009,7 +1016,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -1039,7 +1046,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -1061,15 +1068,15 @@ export class NotificationService {
         success: true,
         data: {
           consentValid: true,
-          legalBasis: 'consent',
-          consentDate: new Date('2024-01-01'),
+          legalBasis: "consent",
+          consentDate: new Date("2024-01-01"),
           canSend: true,
         },
       };
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -1093,13 +1100,13 @@ export class NotificationService {
         data: {
           auditId,
           logged: true,
-          complianceFlags: ['notification_delivery', 'lgpd_compliance'],
+          complianceFlags: ["notification_delivery", "lgpd_compliance"],
         },
       };
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -1127,14 +1134,14 @@ export class NotificationService {
             whatsapp: false,
             push: true,
           },
-          enabledChannels: ['email', 'sms', 'push'],
+          enabledChannels: ["email", "sms", "push"],
           lastSynced: new Date(),
         },
       };
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -1168,7 +1175,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -1188,7 +1195,7 @@ export class NotificationService {
   > {
     try {
       const recordsToDelete = 500;
-      const spaceToReclaim = '25MB';
+      const spaceToReclaim = "25MB";
 
       return {
         success: true,
@@ -1200,7 +1207,7 @@ export class NotificationService {
     } catch {
       return {
         success: false,
-        error: 'Erro interno do servidor',
+        error: "Erro interno do servidor",
       };
     }
   }
@@ -1217,11 +1224,11 @@ export class NotificationService {
   } {
     return {
       databaseConnection: {
-        provider: 'supabase',
-        status: 'connected',
-        url: process.env.SUPABASE_URL || 'mock-url',
+        provider: "supabase",
+        status: "connected",
+        url: process.env.SUPABASE_URL || "mock-url",
       },
-      supportedChannels: ['email', 'sms', 'whatsapp', 'push'],
+      supportedChannels: ["email", "sms", "whatsapp", "push"],
       rateLimits: {
         email: { perHour: 100, perDay: 1000 },
         sms: { perHour: 50, perDay: 500 },
@@ -1229,9 +1236,9 @@ export class NotificationService {
         push: { perHour: 200, perDay: 2000 },
       },
       templateEngine: {
-        engine: 'handlebars',
-        version: '4.7.7',
-        features: ['variables', 'conditionals', 'loops'],
+        engine: "handlebars",
+        version: "4.7.7",
+        features: ["variables", "conditionals", "loops"],
       },
       complianceSettings: {
         lgpd: { enabled: true, auditRequired: true },
@@ -1250,35 +1257,35 @@ export class NotificationService {
   } {
     const errors: Array<{ field: string; message: string; code: string }> = [];
 
-    if (!params.recipientId || params.recipientId.trim() === '') {
+    if (!params.recipientId || params.recipientId.trim() === "") {
       errors.push({
-        field: 'recipientId',
-        message: 'ID do destinatário é obrigatório',
-        code: 'REQUIRED',
+        field: "recipientId",
+        message: "ID do destinatário é obrigatório",
+        code: "REQUIRED",
       });
     }
 
-    if (!params.channel || params.channel.trim() === '') {
+    if (!params.channel || params.channel.trim() === "") {
       errors.push({
-        field: 'channel',
-        message: 'Canal de notificação é obrigatório',
-        code: 'REQUIRED',
+        field: "channel",
+        message: "Canal de notificação é obrigatório",
+        code: "REQUIRED",
       });
     }
 
-    if (!params.templateId || params.templateId.trim() === '') {
+    if (!params.templateId || params.templateId.trim() === "") {
       errors.push({
-        field: 'templateId',
-        message: 'ID do template é obrigatório',
-        code: 'REQUIRED',
+        field: "templateId",
+        message: "ID do template é obrigatório",
+        code: "REQUIRED",
       });
     }
 
     if (!params.data || Object.keys(params.data).length === 0) {
       errors.push({
-        field: 'data',
-        message: 'Dados da notificação são obrigatórios',
-        code: 'REQUIRED',
+        field: "data",
+        message: "Dados da notificação são obrigatórios",
+        code: "REQUIRED",
       });
     }
 

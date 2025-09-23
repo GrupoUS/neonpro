@@ -1,25 +1,25 @@
-import { resolve } from 'path';
-import { defineConfig } from 'vitest/config';
+import { resolve } from "path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     // Test environment configuration
-    environment: 'jsdom',
+    environment: "jsdom",
     globals: true,
-    setupFiles: ['./src/core/setup.ts'],
+    setupFiles: ["./src/core/setup.ts"],
 
     // Coverage configuration following quality gates
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
       exclude: [
-        'node_modules/',
-        'dist/',
-        'tests/',
-        '**/*.d.ts',
-        '**/*.config.*',
-        '**/fixtures/**',
-        '**/mocks/**',
+        "node_modules/",
+        "dist/",
+        "tests/",
+        "**/*.d.ts",
+        "**/*.config.*",
+        "**/fixtures/**",
+        "**/mocks/**",
       ],
       thresholds: {
         global: {
@@ -29,13 +29,13 @@ export default defineConfig({
           statements: 85,
         },
         // Critical paths require higher coverage
-        'src/compliance/**': {
+        "src/compliance/**": {
           branches: 95,
           functions: 95,
           lines: 95,
           statements: 95,
         },
-        'src/agents/**': {
+        "src/agents/**": {
           branches: 90,
           functions: 90,
           lines: 90,
@@ -50,7 +50,7 @@ export default defineConfig({
     teardownTimeout: 5000,
 
     // Parallel execution for performance
-    pool: 'threads',
+    pool: "threads",
     poolOptions: {
       threads: {
         singleThread: false,
@@ -61,20 +61,20 @@ export default defineConfig({
 
     // Test file patterns
     include: [
-      'src/**/*.{test,spec}.{js,ts,jsx,tsx}',
-      'tests/**/*.{test,spec}.{js,ts,jsx,tsx}',
+      "src/**/*.{test,spec}.{js,ts,jsx,tsx}",
+      "tests/**/*.{test,spec}.{js,ts,jsx,tsx}",
     ],
     exclude: [
-      'node_modules/',
-      'dist/',
-      'src/**/*.e2e.{test,spec}.{js,ts,jsx,tsx}',
+      "node_modules/",
+      "dist/",
+      "src/**/*.e2e.{test,spec}.{js,ts,jsx,tsx}",
     ],
 
     // Reporter configuration
-    reporters: ['verbose', 'json', 'html'],
+    reporters: ["verbose", "json", "html"],
     outputFile: {
-      json: './coverage/test-results.json',
-      html: './coverage/test-results.html',
+      json: "./coverage/test-results.json",
+      html: "./coverage/test-results.html",
     },
 
     // Mock configuration
@@ -94,18 +94,18 @@ export default defineConfig({
   // Resolve configuration for imports
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
-      '@core': resolve(__dirname, './src/core'),
-      '@agents': resolve(__dirname, './src/agents'),
-      '@compliance': resolve(__dirname, './src/compliance'),
-      '@fixtures': resolve(__dirname, './src/fixtures'),
-      '@utils': resolve(__dirname, './src/utils'),
+      "@": resolve(__dirname, "./src"),
+      "@core": resolve(__dirname, "./src/core"),
+      "@agents": resolve(__dirname, "./src/agents"),
+      "@compliance": resolve(__dirname, "./src/compliance"),
+      "@fixtures": resolve(__dirname, "./src/fixtures"),
+      "@utils": resolve(__dirname, "./src/utils"),
     },
   },
 
   // Define configuration for different environments
   define: {
-    __TEST_ENV__: JSON.stringify('test'),
+    __TEST_ENV__: JSON.stringify("test"),
     __HEALTHCARE_COMPLIANCE__: JSON.stringify(true),
     __AGENT_COORDINATION__: JSON.stringify(true),
   },

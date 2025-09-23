@@ -16,6 +16,7 @@ This guide provides step-by-step validation scenarios for the Financial Dashboar
 ## Test Environment Setup
 
 ### 1. HTTPS Verification
+
 ```bash
 # Verify HTTPS configuration
 curl -I https://localhost:3000/api/health
@@ -31,6 +32,7 @@ curl -I https://localhost:3000/api/financial/metrics
 ```
 
 ### 2. Authentication Setup
+
 ```bash
 # Create test users with financial permissions
 # - admin@clinic.com (admin role, full financial access)
@@ -40,9 +42,10 @@ curl -I https://localhost:3000/api/financial/metrics
 ```
 
 ### 3. Test Data Preparation
+
 ```sql
 -- Insert test financial transactions
-INSERT INTO financial_transactions (amount, type, date, patient_id) VALUES 
+INSERT INTO financial_transactions (amount, type, date, patient_id) VALUES
   (500.00, 'treatment', '2025-09-20', 'patient_001'),
   (1200.00, 'consultation', '2025-09-19', 'patient_002'),
   (800.00, 'procedure', '2025-09-18', 'patient_003');
@@ -57,22 +60,26 @@ INSERT INTO clinic_metrics (metric_name, value, date) VALUES
 ## Validation Scenarios
 
 ### Scenario 1: Dashboard Loading Performance
+
 **Acceptance Criteria**: Dashboard loads within 2 seconds with all financial metrics
 
 **Test Steps**:
+
 1. Navigate to `/financeiro` page
 2. Start performance timer
 3. Wait for all charts to render
 4. Verify load time ≤ 2 seconds
 
 **Expected Results**:
+
 - Page loads within 2 seconds
 - All financial metrics display correctly
 - Charts render with proper data
 - No console errors
 
 **Validation Commands**:
-```bash
+
+````bash
 # Lighthouse performance test
 lighthouse https://localhost:3000/financeiro --only-categories=performance
 # Should score ≥ 90
@@ -86,7 +93,7 @@ curl -w "@curl-format.txt" -o /dev/null -s https://localhost:3000/api/financial/
 **Test Steps**:
 1. Login as admin@clinic.com
 2. Verify access to all financial metrics
-3. Login as manager@clinic.com  
+3. Login as manager@clinic.com
 4. Verify read/export access only
 5. Login as receptionist@clinic.com
 6. Verify basic view only
@@ -213,9 +220,10 @@ artillery quick --count 50 --num 10 https://localhost:3000/api/financial/metrics
 # Database query performance
 EXPLAIN ANALYZE SELECT * FROM financial_metrics WHERE date >= NOW() - INTERVAL '30 days';
 # Should execute in <100ms
-```
+````
 
 ### Browser Performance
+
 ```bash
 # Core Web Vitals validation
 lighthouse https://localhost:3000/financeiro --only-categories=performance
@@ -231,26 +239,31 @@ npm run build && npm run analyze
 ### Common Issues
 
 **Dashboard not loading**:
+
 - Check HTTPS configuration
 - Verify authentication tokens
 - Check browser console for errors
 
 **Charts not rendering**:
+
 - Verify Shadcn MCP components are installed
 - Check API endpoints are returning data
 - Validate chart data format
 
 **Performance issues**:
+
 - Check database query performance
 - Verify CDN configuration
 - Test network latency
 
 **HTTPS certificate errors**:
+
 - Verify certificate validity
 - Check TLS configuration
 - Validate domain name matching
 
 ### Debug Commands
+
 ```bash
 # Check API health
 curl https://localhost:3000/api/health
@@ -265,7 +278,7 @@ curl -H "Authorization: Bearer $JWT_TOKEN" https://localhost:3000/api/financial/
 ## Success Criteria Checklist
 
 - [ ] Dashboard loads within 2 seconds
-- [ ] All chart interactions respond within 500ms  
+- [ ] All chart interactions respond within 500ms
 - [ ] Mobile experience is fully functional
 - [ ] HTTPS properly configured with TLS 1.3
 - [ ] Role-based access control enforced

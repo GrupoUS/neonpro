@@ -16,10 +16,10 @@ import { WeekView } from '@/components/event-calendar/week-view';
 
 ```typescript
 interface WeekViewProps {
-  currentDate: Date;                    // Current date to display
-  events: CalendarEvent[];             // Array of events to display
-  onEventSelect: (event: CalendarEvent) => void;  // Callback when event is selected
-  onEventCreate: (startTime: Date) => void;       // Callback when creating new event
+  currentDate: Date; // Current date to display
+  events: CalendarEvent[]; // Array of events to display
+  onEventSelect: (event: CalendarEvent) => void; // Callback when event is selected
+  onEventCreate: (startTime: Date) => void; // Callback when creating new event
 }
 ```
 
@@ -77,7 +77,7 @@ function WeeklySchedule() {
 ```typescript
 function WeeklyScheduleWithNavigation() {
   const [currentDate, setCurrentDate] = useState(new Date());
-  
+
   const goToPreviousWeek = () => {
     const prevWeek = new Date(currentDate);
     prevWeek.setDate(prevWeek.getDate() - 7);
@@ -112,7 +112,7 @@ function WeeklyScheduleWithNavigation() {
           </button>
         </div>
       </div>
-      
+
       <WeekView
         currentDate={currentDate}
         events={weeklyEvents}
@@ -127,6 +127,7 @@ function WeeklyScheduleWithNavigation() {
 ## Features
 
 ### 🎯 Core Functionality
+
 - **7-Day Week Display**: Complete week overview with day headers
 - **Hourly Time Slots**: 24-hour time grid with 30-minute intervals
 - **Drag & Drop**: Interactive event rescheduling
@@ -134,12 +135,14 @@ function WeeklyScheduleWithNavigation() {
 - **Click-to-Create**: Create events by clicking on time slots
 
 ### 🏥 Healthcare Optimizations
+
 - **15-Minute Snapping**: Events automatically snap to clinical time intervals
 - **Appointment Blocks**: Visual distinction for different appointment types
 - **Practitioner View**: Optimized for healthcare provider workflows
 - **Time Slot Validation**: Prevents conflicting appointments
 
 ### 💻 User Experience
+
 - **Responsive Design**: Adapts to different screen sizes
 - **Keyboard Navigation**: Full keyboard support for accessibility
 - **Touch Support**: Mobile-friendly interactions
@@ -152,11 +155,11 @@ The WeekView uses intelligent positioning algorithm for overlapping events:
 ```typescript
 interface PositionedEvent {
   event: CalendarEvent;
-  top: number;        // Position from top of time grid
-  left: number;       // Position from left of day column
-  width: number;      // Width based on overlapping events
-  height: number;     // Height based on event duration
-  zIndex: number;     // Z-index for stacking order
+  top: number; // Position from top of time grid
+  left: number; // Position from left of day column
+  width: number; // Width based on overlapping events
+  height: number; // Height based on event duration
+  zIndex: number; // Z-index for stacking order
 }
 ```
 
@@ -165,29 +168,30 @@ interface PositionedEvent {
 ```typescript
 // Calculate position for overlapping events
 const calculateEventPositions = (events: CalendarEvent[]) => {
-  const positionedEvents = events.map(event => {
+  const positionedEvents = events.map((event) => {
     const startMinutes = event.start.getHours() * 60 + event.start.getMinutes();
     const endMinutes = event.end.getHours() * 60 + event.end.getMinutes();
     const duration = endMinutes - startMinutes;
-    
+
     // Find overlapping events
-    const overlapping = events.filter(other => 
-      other.id !== event.id &&
-      !(other.end <= event.start || other.start >= event.end)
+    const overlapping = events.filter(
+      (other) =>
+        other.id !== event.id &&
+        !(other.end <= event.start || other.start >= event.end),
     );
-    
+
     // Calculate width based on number of overlapping events
     const width = 100 / (overlapping.length + 1);
-    
+
     return {
       event,
       top: (startMinutes / 1440) * 100, // 1440 minutes in a day
       height: (duration / 1440) * 100,
       width,
-      zIndex: overlapping.length + 1
+      zIndex: overlapping.length + 1,
     };
   });
-  
+
   return positionedEvents;
 };
 ```
@@ -199,13 +203,13 @@ const calculateEventPositions = (events: CalendarEvent[]) => {
 ```typescript
 // Week starts on Sunday (0) by default
 const weekDays = [
-  { date: startOfWeek(currentDate), label: 'Sun' },
-  { date: addDays(startOfWeek(currentDate), 1), label: 'Mon' },
-  { date: addDays(startOfWeek(currentDate), 2), label: 'Tue' },
-  { date: addDays(startOfWeek(currentDate), 3), label: 'Wed' },
-  { date: addDays(startOfWeek(currentDate), 4), label: 'Thu' },
-  { date: addDays(startOfWeek(currentDate), 5), label: 'Fri' },
-  { date: addDays(startOfWeek(currentDate), 6), label: 'Sat' }
+  { date: startOfWeek(currentDate), label: "Sun" },
+  { date: addDays(startOfWeek(currentDate), 1), label: "Mon" },
+  { date: addDays(startOfWeek(currentDate), 2), label: "Tue" },
+  { date: addDays(startOfWeek(currentDate), 3), label: "Wed" },
+  { date: addDays(startOfWeek(currentDate), 4), label: "Thu" },
+  { date: addDays(startOfWeek(currentDate), 5), label: "Fri" },
+  { date: addDays(startOfWeek(currentDate), 6), label: "Sat" },
 ];
 ```
 
@@ -215,8 +219,8 @@ const weekDays = [
 // Generate 24-hour time slots
 const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
   hour,
-  label: format(new Date().setHours(hour, 0, 0, 0), 'h a'),
-  time: new Date().setHours(hour, 0, 0, 0)
+  label: format(new Date().setHours(hour, 0, 0, 0), "h a"),
+  time: new Date().setHours(hour, 0, 0, 0),
 }));
 ```
 
@@ -224,13 +228,13 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
 
 ### Keyboard Navigation
 
-| Key | Action |
-|-----|--------|
-| `Tab` | Navigate between interactive elements |
-| `Enter` | Select event or create new event |
-| `Space` | Toggle event selection |
-| `Escape` | Close dialogs or cancel actions |
-| `Arrow Keys` | Navigate within time grid |
+| Key          | Action                                |
+| ------------ | ------------------------------------- |
+| `Tab`        | Navigate between interactive elements |
+| `Enter`      | Select event or create new event      |
+| `Space`      | Toggle event selection                |
+| `Escape`     | Close dialogs or cancel actions       |
+| `Arrow Keys` | Navigate within time grid             |
 
 ### ARIA Attributes
 
@@ -243,7 +247,7 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
 >
   {/* Time column header */}
   <div role="columnheader" aria-label="Time">Time</div>
-  
+
   {/* Day headers */}
   {weekDays.map((day, index) => (
     <div
@@ -254,7 +258,7 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
       {format(day.date, 'EEE MM/d')}
     </div>
   ))}
-  
+
   {/* Time slots */}
   {timeSlots.map((slot, hourIndex) => (
     <React.Fragment key={hourIndex}>
@@ -262,7 +266,7 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
       <div role="rowheader" aria-label={`${slot.label}`}>
         {slot.label}
       </div>
-      
+
       {/* Day cells */}
       {weekDays.map((day, dayIndex) => (
         <div
@@ -388,9 +392,9 @@ const visibleTimeSlots = useMemo(() => {
 const weekEvents = useMemo(() => {
   const weekStart = startOfWeek(currentDate);
   const weekEnd = endOfWeek(currentDate);
-  
-  return events.filter(event => 
-    event.start >= weekStart && event.end <= weekEnd
+
+  return events.filter(
+    (event) => event.start >= weekStart && event.end <= weekEnd,
   );
 }, [events, currentDate]);
 ```
@@ -404,24 +408,23 @@ const handleEventCreate = (startTime: Date) => {
   try {
     // Validate time slot
     if (isWeekend(startTime)) {
-      throw new Error('Cannot create appointments on weekends');
+      throw new Error("Cannot create appointments on weekends");
     }
-    
+
     if (isOutsideBusinessHours(startTime)) {
-      throw new Error('Appointment must be during business hours');
+      throw new Error("Appointment must be during business hours");
     }
-    
+
     // Check for conflicts
     const conflictingEvents = checkForConflicts(startTime);
     if (conflictingEvents.length > 0) {
-      throw new Error('This time slot conflicts with existing appointments');
+      throw new Error("This time slot conflicts with existing appointments");
     }
-    
+
     // Create event
     onEventCreate(startTime);
-    
   } catch (error) {
-    console.error('Failed to create event:', error);
+    console.error("Failed to create event:", error);
     showErrorToast(error.message);
   }
 };
@@ -560,6 +563,7 @@ When contributing to WeekView:
 ## Changelog
 
 ### v1.0.0
+
 - Initial release with basic week view functionality
 - Drag-and-drop event positioning
 - Smart overlapping event handling

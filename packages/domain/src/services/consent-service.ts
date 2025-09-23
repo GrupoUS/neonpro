@@ -6,14 +6,17 @@ import {
   ConsentValidator,
   ConsentFactory,
   ConsentAction,
-  ConsentStatus
-} from '../entities/consent.js';
-import { type ConsentRepository, type ConsentQueryRepository } from '../repositories/consent-repository.js';
+  ConsentStatus,
+} from "../entities/consent.js";
+import {
+  type ConsentRepository,
+  type ConsentQueryRepository,
+} from "../repositories/consent-repository.js";
 
 /**
  * Domain Service for Consent Management
  * Handles business logic for LGPD compliance and consent management
- * 
+ *
  * This service contains the business logic that was previously in the database layer
  */
 export class ConsentDomainService {
@@ -22,7 +25,7 @@ export class ConsentDomainService {
 
   constructor(
     repository: ConsentRepository,
-    queryRepository: ConsentQueryRepository
+    queryRepository: ConsentQueryRepository,
   ) {
     this.repository = repository;
     this.queryRepository = queryRepository;
@@ -34,11 +37,16 @@ export class ConsentDomainService {
    * @param grantedBy User who granted the consent
    * @returns Created consent record
    */
-  async createConsent(_request: ConsentRequest, grantedBy: string): Promise<ConsentRecord> {
+  async createConsent(
+    _request: ConsentRequest,
+    grantedBy: string,
+  ): Promise<ConsentRecord> {
     // Validate request
     const validationErrors = ConsentValidator.validateRequest(_request);
     if (validationErrors.length > 0) {
-      throw new Error(`Invalid consent request: ${validationErrors.join(', ')}`);
+      throw new Error(
+        `Invalid consent request: ${validationErrors.join(", ")}`,
+      );
     }
 
     // Create consent record
@@ -50,10 +58,10 @@ export class ConsentDomainService {
       _request.patientId,
       grantedBy,
       {
-        consentType: request.consentType,
-        purpose: request.purpose,
-        dataTypesCount: request.dataTypes.length,
-      }
+        consentType: _request.consentType,
+        purpose: _request.purpose,
+        dataTypesCount: _request.dataTypes.length,
+      },
     );
     consent.auditTrail.push(grantEvent);
 
@@ -67,9 +75,15 @@ export class ConsentDomainService {
    * @param includeExpired Include expired consents
    * @returns Array of consent records
    */
-  async getConsent(patientId: string, includeExpired = false): Promise<ConsentRecord[]> {
-    const consents = await this.repository.findByPatientId(patientId, includeExpired);
-    
+  async getConsent(
+    patientId: string,
+    includeExpired = false,
+  ): Promise<ConsentRecord[]> {
+    const consents = await this.repository.findByPatientId(
+      patientId,
+      includeExpired,
+    );
+
     // Log access for audit trail
     // TODO: Implement audit logging - ConsentFactory.createAuditEvent(
     //   ConsentAction.ACCESSED,
@@ -95,20 +109,28 @@ export class ConsentDomainService {
    * @param reason Revocation reason
    * @returns Updated consent record
    */
-  async revokeConsent(consentId: string, revokedBy: string, reason?: string): Promise<ConsentRecord> {
+  async revokeConsent(
+    consentId: string,
+    revokedBy: string,
+    reason?: string,
+  ): Promise<ConsentRecord> {
     // Get existing consent
     const existingConsent = await this.repository.findById(consentId);
-    if (!existingConsent) {`
+    if (!existingConsent) {
       throw new Error(`Consent with ID ${consentId} not found`);
     }
 
     // Check if consent is already revoked
-    if (existingConsent.status === 'REVOKED') {`
+    if (existingConsent.status === "REVOKED") {
       throw new Error(`Consent ${consentId} is already revoked`);
     }
 
     // Revoke the consent
-    const revokedConsent = await this.repository.revoke(consentId, revokedBy, reason);
+    const revokedConsent = await this.repository.revoke(
+      consentId,
+      revokedBy,
+      reason,
+    );
 
     // Create audit trail entry
     const auditEvent = ConsentFactory.createAuditEvent(
@@ -118,13 +140,15 @@ export class ConsentDomainService {
       {
         revokedAt: revokedConsent.revokedAt,
         reason,
-        previousStatus: existingConsent.status
-      }
+        previousStatus: existingConsent.status,
+      },
     );
 
     // Add audit event to repository
     revokedConsent.auditTrail.push(auditEvent);
-    await this.repository.update(consentId, { auditTrail: revokedConsent.auditTrail });
+    await this.repository.update(consentId, {
+      auditTrail: revokedConsent.auditTrail,
+    });
 
     return revokedConsent;
   }
@@ -136,8 +160,16 @@ export class ConsentDomainService {
    * @param dataTypes Required data types
    * @returns True if patient has valid consent
    */
-  async hasValidConsent(patientId: string, consentType: string, dataTypes: string[]): Promise<boolean> {
-    return await this.repository.hasValidConsent(patientId, consentType, dataTypes);
+  async hasValidConsent(
+    patientId: string,
+    consentType: string,
+    dataTypes: string[],
+  ): Promise<boolean> {
+    return await this.repository.hasValidConsent(
+      patientId,
+      consentType,
+      dataTypes,
+    );
   }
 
   /**
@@ -148,87 +180,94 @@ export class ConsentDomainService {
   async checkCompliance(patientId: string): Promise<ComplianceCheck> {
     // Get all consents for patient
     const consents = await this.repository.findByPatientId(patientId, true);
-    
+
     const violations: ComplianceViolation[] = [];
     const now = new Date();
     let isCompliant = true;
-    let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW';
+    let riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" = "LOW";
 
     // Check for expired consents that should be renewed
     for (const consent of consents) {
       if (consent.expiresAt && new Date(consent.expiresAt) < now) {
-        if (consent.status !== 'EXPIRED') {
-          violations.push({`
+        if (consent.status !== "EXPIRED") {
+          violations.push({
             id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            type: 'EXPIRED_CONSENT_NOT_MARKED',
-            severity: 'MEDIUM',`
+            type: "EXPIRED_CONSENT_NOT_MARKED",
+            severity: "MEDIUM",
             description: `Consent ${consent.id} has expired but is not marked as expired`,
             affectedConsentId: consent.id,
-            recommendation: 'Mark consent as expired or renew consent',
-            resolved: false
+            recommendation: "Mark consent as expired or renew consent",
+            resolved: false,
           });
-          riskLevel = 'MEDIUM';
+          riskLevel = "MEDIUM";
         }
       }
     }
 
     // Check for consents expiring soon (within 30 days)
-    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-    const expiringSoon = consents.filter(consent =>
-      consent.expiresAt &&
-      new Date(consent.expiresAt) < thirtyDaysFromNow &&
-      consent.status === 'ACTIVE'
+    const thirtyDaysFromNow = new Date(
+      now.getTime() + 30 * 24 * 60 * 60 * 1000,
+    );
+    const expiringSoon = consents.filter(
+      (consent) =>
+        consent.expiresAt &&
+        new Date(consent.expiresAt) < thirtyDaysFromNow &&
+        consent.status === "ACTIVE",
     );
 
     if (expiringSoon.length > 0) {
-      violations.push({`
+      violations.push({
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type: 'CONSENT_EXPIRING_SOON',
-        severity: 'LOW',`
+        type: "CONSENT_EXPIRING_SOON",
+        severity: "LOW",
         description: `${expiringSoon.length} consent(s) expiring within 30 days`,
-        recommendation: 'Renew expiring consents',
-        resolved: false
+        recommendation: "Renew expiring consents",
+        resolved: false,
       });
     }
 
     // Check for missing essential consents (data processing)
-    const hasDataProcessingConsent = consents.some(consent =>
-      consent.consentType === 'data_processing' &&
-      consent.status === 'ACTIVE'
+    const hasDataProcessingConsent = consents.some(
+      (consent) =>
+        consent.consentType === "data_processing" &&
+        consent.status === "ACTIVE",
     );
 
     if (!hasDataProcessingConsent) {
-      violations.push({`
+      violations.push({
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type: 'MISSING_DATA_PROCESSING_CONSENT',
-        severity: 'HIGH',
-        description: 'Patient does not have active data processing consent',
-        recommendation: 'Obtain data processing consent immediately',
-        resolved: false
+        type: "MISSING_DATA_PROCESSING_CONSENT",
+        severity: "HIGH",
+        description: "Patient does not have active data processing consent",
+        recommendation: "Obtain data processing consent immediately",
+        resolved: false,
       });
-      riskLevel = 'HIGH';
+      riskLevel = "HIGH";
       isCompliant = false;
     }
 
     // Determine overall compliance status
-    let status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT' = 'COMPLIANT';
-    if (violations.some(v => v.severity === 'HIGH' || v.severity === 'CRITICAL')) {
-      status = 'NON_COMPLIANT';
+    let status: "COMPLIANT" | "NON_COMPLIANT" | "PARTIALLY_COMPLIANT" =
+      "COMPLIANT";
+    if (
+      violations.some((v) => v.severity === "HIGH" || v.severity === "CRITICAL")
+    ) {
+      status = "NON_COMPLIANT";
       isCompliant = false;
     } else if (violations.length > 0) {
-      status = 'PARTIALLY_COMPLIANT';
+      status = "PARTIALLY_COMPLIANT";
     }
 
     // Generate recommendations
     const recommendations: string[] = [];
-    if (expiringSoon.length > 0) {`
+    if (expiringSoon.length > 0) {
       recommendations.push(`Renew ${expiringSoon.length} expiring consent(s)`);
     }
     if (!hasDataProcessingConsent) {
-      recommendations.push('Obtain data processing consent');
+      recommendations.push("Obtain data processing consent");
     }
-    recommendations.push('Regular review of consent status');
-    recommendations.push('Update consent documentation');
+    recommendations.push("Regular review of consent status");
+    recommendations.push("Update consent documentation");
 
     return {
       patientId,
@@ -238,7 +277,7 @@ export class ConsentDomainService {
       violations,
       isCompliant,
       lastChecked: now.toISOString(),
-      recommendations
+      recommendations,
     };
   }
 
@@ -258,8 +297,16 @@ export class ConsentDomainService {
    * @param endDate End date
    * @returns Compliance report
    */
-  async generateComplianceReport(clinicId: string, startDate: string, endDate: string) {
-    return await this.queryRepository.generateComplianceReport(clinicId, startDate, endDate);
+  async generateComplianceReport(
+    clinicId: string,
+    startDate: string,
+    endDate: string,
+  ) {
+    return await this.queryRepository.generateComplianceReport(
+      clinicId,
+      startDate,
+      endDate,
+    );
   }
 
   /**
@@ -269,21 +316,25 @@ export class ConsentDomainService {
    * @param renewedBy User who renewed the consent
    * @returns Updated consent record
    */
-  async renewConsent(consentId: string, newExpiration: string, renewedBy: string): Promise<ConsentRecord> {
+  async renewConsent(
+    consentId: string,
+    newExpiration: string,
+    renewedBy: string,
+  ): Promise<ConsentRecord> {
     const existingConsent = await this.repository.findById(consentId);
-    if (!existingConsent) {`
+    if (!existingConsent) {
       throw new Error(`Consent with ID ${consentId} not found`);
     }
 
     // Validate new expiration date
     if (new Date(newExpiration) <= new Date()) {
-      throw new Error('New expiration date must be in the future');
+      throw new Error("New expiration date must be in the future");
     }
 
     // Update consent
     const updatedConsent = await this.repository.update(consentId, {
       expiresAt: newExpiration,
-      status: ConsentStatus.ACTIVE
+      status: ConsentStatus.ACTIVE,
     });
 
     // Add renewal audit event
@@ -292,11 +343,11 @@ export class ConsentDomainService {
       existingConsent.patientId,
       renewedBy,
       {
-        action: 'renewed',
+        action: "renewed",
         previousExpiration: existingConsent.expiresAt,
         newExpiration,
-        reason: 'Consent renewal'
-      }
+        reason: "Consent renewal",
+      },
     );
 
     // Add audit event to repository
@@ -304,4 +355,4 @@ export class ConsentDomainService {
 
     return updatedConsent;
   }
-}`
+}

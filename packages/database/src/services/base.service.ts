@@ -59,10 +59,22 @@ export abstract class BaseService {
 
   // Create audit log entry
   protected async createAuditLog(
-    action: "VIEW" | "CREATE" | "READ" | "UPDATE" | "DELETE" | "EXPORT" | "LOGIN" | "LOGOUT" | "AI_CHAT" | "AI_PREDICTION" | "AI_ANALYSIS" | "AI_RECOMMENDATION",
+    action:
+      | "VIEW"
+      | "CREATE"
+      | "READ"
+      | "UPDATE"
+      | "DELETE"
+      | "EXPORT"
+      | "LOGIN"
+      | "LOGOUT"
+      | "AI_CHAT"
+      | "AI_PREDICTION"
+      | "AI_ANALYSIS"
+      | "AI_RECOMMENDATION",
     resource: string,
     additionalInfo?: Record<string, unknown>,
-    _userId?: string
+    _userId?: string,
   ): Promise<void> {
     try {
       const prisma = await this.getPrisma();
@@ -72,7 +84,9 @@ export abstract class BaseService {
           action,
           resource,
           resourceType: "SYSTEM_CONFIG",
-          additionalInfo: additionalInfo ? JSON.stringify(additionalInfo) : undefined,
+          additionalInfo: additionalInfo
+            ? JSON.stringify(additionalInfo)
+            : undefined,
           ipAddress: "127.0.0.1",
           userAgent: "NeonPro-Service",
           status: "SUCCESS",
@@ -87,10 +101,10 @@ export abstract class BaseService {
   protected async createWithAudit<T>(
     model: string,
     data: T,
-    _userId?: string
+    _userId?: string,
   ): Promise<T> {
     const prisma = await this.getPrisma();
-    
+
     try {
       const result = await (prisma as any)[model].create({
         data,
@@ -100,7 +114,7 @@ export abstract class BaseService {
         "CREATE",
         model,
         { id: (result as any).id, data },
-        userId
+        userId,
       );
 
       return result;
@@ -108,12 +122,12 @@ export abstract class BaseService {
       await this.createAuditLog(
         "CREATE",
         model,
-        { 
+        {
           action: "CREATE",
           error: (error as Error).message,
-          data 
+          data,
         },
-        userId
+        userId,
       );
       throw error;
     }
@@ -124,35 +138,30 @@ export abstract class BaseService {
     model: string,
     id: string,
     data: Partial<T>,
-    _userId?: string
+    _userId?: string,
   ): Promise<T> {
     const prisma = await this.getPrisma();
-    
+
     try {
       const result = await (prisma as any)[model].update({
         where: { id },
         data,
       });
 
-      await this.createAuditLog(
-        "UPDATE",
-        model,
-        { id, data },
-        userId
-      );
+      await this.createAuditLog("UPDATE", model, { id, data }, userId);
 
       return result;
     } catch (error) {
       await this.createAuditLog(
         "UPDATE",
         model,
-        { 
+        {
           action: "UPDATE",
           id,
           error: (error as Error).message,
-          data 
+          data,
         },
-        userId
+        userId,
       );
       throw error;
     }
@@ -162,43 +171,35 @@ export abstract class BaseService {
   protected async deleteWithAudit(
     model: string,
     id: string,
-    _userId?: string
+    _userId?: string,
   ): Promise<void> {
     const prisma = await this.getPrisma();
-    
+
     try {
       await (prisma as any)[model].delete({
         where: { id },
       });
 
-      await this.createAuditLog(
-        "DELETE",
-        model,
-        { id },
-        userId
-      );
+      await this.createAuditLog("DELETE", model, { id }, userId);
     } catch (error) {
       await this.createAuditLog(
         "DELETE",
         model,
-        { 
+        {
           action: "DELETE",
           id,
-          error: (error as Error).message
+          error: (error as Error).message,
         },
-        userId
+        userId,
       );
       throw error;
     }
   }
 
   // Generic find method with error handling
-  protected async findById<T>(
-    model: string,
-    id: string
-  ): Promise<T | null> {
+  protected async findById<T>(model: string, id: string): Promise<T | null> {
     const prisma = await this.getPrisma();
-    
+
     try {
       const result = await (prisma as any)[model].findUnique({
         where: { id },
@@ -213,10 +214,10 @@ export abstract class BaseService {
   // Generic find many method with error handling
   protected async findMany<T>(
     model: string,
-    options: Record<string, unknown> = {}
+    options: Record<string, unknown> = {},
   ): Promise<T[]> {
     const prisma = await this.getPrisma();
-    
+
     try {
       const result = await (prisma as any)[model].findMany(options);
       return result;
@@ -227,7 +228,11 @@ export abstract class BaseService {
   }
 
   // Health check method
-  async healthCheck(): Promise<{ status: string; timestamp: Date; _service: string }> {
+  async healthCheck(): Promise<{
+    status: string;
+    timestamp: Date;
+    _service: string;
+  }> {
     try {
       await this.getPrisma();
       return {

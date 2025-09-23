@@ -76,7 +76,11 @@ export class CFMComplianceService {
           crmState,
           specialties: localLicense.specialties || [],
           isValid,
-          status: localLicense.license_status as "active" | "expired" | "suspended" | "revoked",
+          status: localLicense.license_status as
+            | "active"
+            | "expired"
+            | "suspended"
+            | "revoked",
           expiryDate: localLicense.license_expiry_date
             ? new Date(localLicense.license_expiry_date)
             : undefined,
@@ -458,7 +462,8 @@ export class CFMComplianceService {
 
       const averageComplianceScore =
         sessions?.length > 0
-          ? sessions.reduce((sum,_s) => sum + (s.ngs2_compliance_score || 0),
+          ? sessions.reduce(
+              (sum, _s) => sum + (s.ngs2_compliance_score || 0),
               0,
             ) / sessions.length
           : 100;
@@ -514,9 +519,9 @@ export class CFMComplianceService {
     // In production, this would use proper key management (HSM)
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(_array,(byte) => byte.toString(16).padStart(2, "0")).join(
-      "",
-    );
+    return Array.from(_array, (byte) =>
+      byte.toString(16).padStart(2, "0"),
+    ).join("");
   }
 
   private generateRoomId(): string {
@@ -664,7 +669,9 @@ export class CFMComplianceService {
   /**
    * Get session audit trail for compliance reporting
    */
-  async getSessionAuditTrail(sessionId: string): Promise<Record<string, unknown>> {
+  async getSessionAuditTrail(
+    sessionId: string,
+  ): Promise<Record<string, unknown>> {
     try {
       const { data, error } = await this.supabase
         .from("telemedicine_sessions")

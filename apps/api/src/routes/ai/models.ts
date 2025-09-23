@@ -4,10 +4,10 @@
  * Integration with AIChatService for model management
  */
 
-import { zValidator } from '@hono/zod-validator';
-import { Context, Hono, Next } from 'hono';
-import { z } from 'zod';
-import { AIChatService } from '../../services/ai-chat-service.js';
+import { zValidator } from "@hono/zod-validator";
+import { Context, Hono, Next } from "hono";
+import { z } from "zod";
+import { AIChatService } from "../../services/ai-chat-service.js";
 
 // Type definitions
 interface AuditServiceInterface {
@@ -21,17 +21,17 @@ interface ServiceInterface {
 
 // Mock middleware for testing
 const mockAuthMiddleware = (c: Context, next: Next) => {
-  const authHeader = c.req.header('authorization');
+  const authHeader = c.req.header("authorization");
   if (!authHeader) {
     return c.json(
       {
         success: false,
-        error: 'Não autorizado. Token de acesso necessário.',
+        error: "Não autorizado. Token de acesso necessário.",
       },
       401,
     );
   }
-  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
+  c.set("user", { id: "user-123", _role: "healthcare_professional" });
   return next();
 };
 
@@ -44,28 +44,28 @@ const modelsQuerySchema = z.object({
   status: z.string().optional(),
   includeDetails: z
     .string()
-    .transform(val => val === 'true')
+    .transform((val) => val === "true")
     .optional(),
   includeHealth: z
     .string()
-    .transform(val => val === 'true')
+    .transform((val) => val === "true")
     .optional(),
   includeMetrics: z
     .string()
-    .transform(val => val === 'true')
+    .transform((val) => val === "true")
     .optional(),
   useCase: z.string().optional(),
   includeFallbacks: z
     .string()
-    .transform(val => val === 'true')
+    .transform((val) => val === "true")
     .optional(),
   healthcareContext: z
     .string()
-    .transform(val => val === 'true')
+    .transform((val) => val === "true")
     .optional(),
   monitorHealth: z
     .string()
-    .transform(val => val === 'true')
+    .transform((val) => val === "true")
     .optional(),
 }) as unknown as z.ZodTypeAny; // <-- cast to ZodTypeAny to satisfy zValidator typing
 
@@ -86,26 +86,33 @@ const getServices = async (): Promise<ServiceInterface> => {
   let auditService: AuditServiceInterface;
 
   try {
-    const mod = await import('../../services/audit-service.js');
+    const mod = await import("../../services/audit-service.js");
     // support: named export AuditService, default export, or exported singleton
-    const AuditCtor = mod.AuditService || mod.default?.AuditService || mod.default
-      || mod.auditService;
-    if (typeof AuditCtor === 'function') {
+    const AuditCtor =
+      mod.AuditService ||
+      mod.default?.AuditService ||
+      mod.default ||
+      mod.auditService;
+    if (typeof AuditCtor === "function") {
       // constructor -> instantiate
       auditService = new AuditCtor();
-    } else if (AuditCtor && typeof AuditCtor.logActivity === 'function') {
+    } else if (AuditCtor && typeof AuditCtor.logActivity === "function") {
       // already an object with logActivity
       auditService = AuditCtor;
     } else {
       // fallback stub
       auditService = {
-        logActivity: async () => {/* noop fallback */},
+        logActivity: async () => {
+          /* noop fallback */
+        },
       };
     }
   } catch (e) {
     // fallback stub if import fails
     auditService = {
-      logActivity: async () => {/* noop fallback */},
+      logActivity: async () => {
+        /* noop fallback */
+      },
     };
   }
 
@@ -116,55 +123,58 @@ const getServices = async (): Promise<ServiceInterface> => {
 };
 
 app.get(
-  '/',
+  "/",
   mockAuthMiddleware,
-  zValidator('query', modelsQuerySchema),
-  async c => {
+  zValidator("query", modelsQuerySchema),
+  async (c) => {
     const startTime = Date.now();
-    const user = c.get('user');
-    const queryParams = c.req.valid('query');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
-    const healthcareProfessional = c.req.header('X-Healthcare-Professional');
+    const user = c.get("user");
+    const queryParams = c.req.valid("query");
+    const ipAddress =
+      c.req.header("X-Real-IP") || c.req.header("X-Forwarded-For") || "unknown";
+    const userAgent = c.req.header("User-Agent") || "unknown";
+    const healthcareProfessional = c.req.header("X-Healthcare-Professional");
 
     try {
       const currentServices = await getServices(); // changed to await
 
       // Validate filter parameters
-      const validProviders = ['openai', 'anthropic', 'google'];
+      const validProviders = ["openai", "anthropic", "google"];
       const validCapabilities = [
-        'chat',
-        'analysis',
-        'insights',
-        'image_analysis',
-        'medical_imaging',
-        'reasoning',
+        "chat",
+        "analysis",
+        "insights",
+        "image_analysis",
+        "medical_imaging",
+        "reasoning",
       ];
-      const validStatuses = ['available', 'limited', 'degraded', 'unavailable'];
+      const validStatuses = ["available", "limited", "degraded", "unavailable"];
 
       if (
-        queryParams.provider
-        && !validProviders.includes(queryParams.provider)
+        queryParams.provider &&
+        !validProviders.includes(queryParams.provider)
       ) {
         return c.json(
           {
             success: false,
-            error: 'Parâmetros de filtro inválidos. Provedores válidos: '
-              + validProviders.join(', '),
+            error:
+              "Parâmetros de filtro inválidos. Provedores válidos: " +
+              validProviders.join(", "),
           },
           400,
         );
       }
 
       if (
-        queryParams.capability
-        && !validCapabilities.includes(queryParams.capability)
+        queryParams.capability &&
+        !validCapabilities.includes(queryParams.capability)
       ) {
         return c.json(
           {
             success: false,
-            error: 'Parâmetros de filtro inválidos. Capacidades válidas: '
-              + validCapabilities.join(', '),
+            error:
+              "Parâmetros de filtro inválidos. Capacidades válidas: " +
+              validCapabilities.join(", "),
           },
           400,
         );
@@ -174,8 +184,9 @@ app.get(
         return c.json(
           {
             success: false,
-            error: 'Parâmetros de filtro inválidos. Status válidos: '
-              + validStatuses.join(', '),
+            error:
+              "Parâmetros de filtro inválidos. Status válidos: " +
+              validStatuses.join(", "),
           },
           400,
         );
@@ -188,9 +199,9 @@ app.get(
 
       // Add filters if provided
       if (
-        queryParams.provider
-        || queryParams.capability
-        || queryParams.status
+        queryParams.provider ||
+        queryParams.capability ||
+        queryParams.status
       ) {
         modelsRequest.filters = {};
         if (queryParams.provider) {
@@ -216,15 +227,16 @@ app.get(
       }
 
       // Get available models
-      const modelsResponse = await currentServices.aiChatService.getAvailableModels(modelsRequest);
+      const modelsResponse =
+        await currentServices.aiChatService.getAvailableModels(modelsRequest);
 
       if (!modelsResponse.success) {
-        if (modelsResponse.error?.includes('unavailable')) {
+        if (modelsResponse.error?.includes("unavailable")) {
           return c.json(
             {
               success: false,
               error:
-                'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
+                "Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.",
             },
             503,
           );
@@ -233,8 +245,9 @@ app.get(
         return c.json(
           {
             success: false,
-            error: modelsResponse.error
-              || 'Erro interno do serviço de modelos de IA',
+            error:
+              modelsResponse.error ||
+              "Erro interno do serviço de modelos de IA",
           },
           500,
         );
@@ -245,14 +258,16 @@ app.get(
       let metrics = null;
 
       if (queryParams.includeHealth) {
-        const healthResponse = await currentServices.aiChatService.getModelHealth();
+        const healthResponse =
+          await currentServices.aiChatService.getModelHealth();
         if (healthResponse.success) {
           healthSummary = healthResponse.data;
         }
       }
 
       if (queryParams.includeMetrics) {
-        const metricsResponse = await currentServices.aiChatService.getModelMetrics();
+        const metricsResponse =
+          await currentServices.aiChatService.getModelMetrics();
         if (metricsResponse.success) {
           metrics = metricsResponse.data;
         }
@@ -262,9 +277,9 @@ app.get(
       const processingTime = Date.now() - startTime;
       await currentServices.auditService.logActivity({
         _userId: user.id,
-        action: 'ai_models_access',
-        resourceType: 'ai_models',
-        resourceId: 'models_list',
+        action: "ai_models_access",
+        resourceType: "ai_models",
+        resourceId: "models_list",
         details: {
           includeMetrics: queryParams.includeMetrics || false,
           modelsReturned: modelsResponse.data.models?.length || 0,
@@ -273,38 +288,39 @@ app.get(
         },
         ipAddress,
         userAgent,
-        complianceContext: 'LGPD',
-        sensitivityLevel: 'medium',
+        complianceContext: "LGPD",
+        sensitivityLevel: "medium",
       });
 
       // Prepare response headers
       const responseHeaders: Record<string, string> = {
-        'X-Response-Time': `${processingTime}ms`,
-        'X-CFM-Compliant': 'true',
-        'X-AI-Models-Listed': 'true',
-        'X-LGPD-Compliant': 'true',
-        'Cache-Control': 'public, max-age=300',
-        'X-Database-Queries': '1',
+        "X-Response-Time": `${processingTime}ms`,
+        "X-CFM-Compliant": "true",
+        "X-AI-Models-Listed": "true",
+        "X-LGPD-Compliant": "true",
+        "Cache-Control": "public, max-age=300",
+        "X-Database-Queries": "1",
       };
 
       // Add model-specific headers
       if (modelsResponse.data.summary) {
-        responseHeaders['X-Total-Models'] = (
+        responseHeaders["X-Total-Models"] = (
           modelsResponse.data.summary.totalModels || 0
         ).toString();
-        responseHeaders['X-Available-Models'] = (
+        responseHeaders["X-Available-Models"] = (
           modelsResponse.data.summary.availableModels || 0
         ).toString();
-        responseHeaders['X-Healthy-Models'] = (
+        responseHeaders["X-Healthy-Models"] = (
           modelsResponse.data.summary.healthyModels || 0
         ).toString();
-        responseHeaders['X-Model-Providers'] = (
+        responseHeaders["X-Model-Providers"] = (
           modelsResponse.data.summary.providers || []
-        ).join(',');
+        ).join(",");
       }
 
       if (modelsResponse.data.metadata) {
-        responseHeaders['X-Last-Updated'] = modelsResponse.data.metadata.lastUpdated || 'unknown';
+        responseHeaders["X-Last-Updated"] =
+          modelsResponse.data.metadata.lastUpdated || "unknown";
       }
 
       // Set all headers
@@ -328,30 +344,30 @@ app.get(
 
       return c.json(finalResponse);
     } catch (error) {
-      console.error('AI Models endpoint error:', error);
+      console.error("AI Models endpoint error:", error);
 
       // Log error for audit
       const currentServices = await getServices(); // changed to await
       await currentServices.auditService.logActivity({
         _userId: user.id,
-        action: 'ai_models_error',
-        resourceType: 'ai_models',
-        resourceId: 'error',
+        action: "ai_models_error",
+        resourceType: "ai_models",
+        resourceId: "error",
         details: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
         },
         ipAddress,
         userAgent,
-        complianceContext: 'LGPD',
-        sensitivityLevel: 'medium',
+        complianceContext: "LGPD",
+        sensitivityLevel: "medium",
       });
 
-      if (error instanceof Error && error.message.includes('unavailable')) {
+      if (error instanceof Error && error.message.includes("unavailable")) {
         return c.json(
           {
             success: false,
             error:
-              'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
+              "Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.",
           },
           503,
         );
@@ -360,7 +376,7 @@ app.get(
       return c.json(
         {
           success: false,
-          error: 'Erro interno do servidor. Tente novamente mais tarde.',
+          error: "Erro interno do servidor. Tente novamente mais tarde.",
         },
         500,
       );

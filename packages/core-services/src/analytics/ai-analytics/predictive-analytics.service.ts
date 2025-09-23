@@ -99,7 +99,8 @@ function anonymizeEmail(email: string): string {
 
   const anonymizedLocal =
     localPart && localPart.length > 2
-      ? localPart.substring(0, 2) + "*".repeat(Math.max(1, localPart.length - 2))
+      ? localPart.substring(0, 2) +
+        "*".repeat(Math.max(1, localPart.length - 2))
       : "*".repeat(localPart?.length || 1);
 
   return `${anonymizedLocal}@${domainPart}`;
@@ -152,8 +153,11 @@ export class PredictiveAnalyticsService {
     this.enableLGPDCompliance = enableLGPDCompliance;
 
     // Initialize the provider asynchronously
-    this.initializeProvider().catch(error => {
-      console.warn("Failed to initialize ML provider during construction:", error);
+    this.initializeProvider().catch((error) => {
+      console.warn(
+        "Failed to initialize ML provider during construction:",
+        error,
+      );
     });
   }
 
@@ -423,7 +427,8 @@ export class PredictiveAnalyticsService {
       );
 
       // If no valid insights were generated, throw an error
-      if (validInsights.length === 0 &&
+      if (
+        validInsights.length === 0 &&
         insights.some((insight) => insight === null)
       ) {
         throw new Error("Failed to generate predictive insights");

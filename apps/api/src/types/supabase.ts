@@ -8,27 +8,28 @@
 import type {
   Database as DatabaseType,
   Json as JsonType,
-} from '../../../../packages/database/src/types/supabase';
+} from "../../../../packages/database/src/types/supabase";
 
 // Re-export the main types with explicit aliases to avoid conflicts
 export type { DatabaseType as SupabaseDatabase, JsonType as SupabaseJson };
 
 // Type aliases for commonly used tables
-export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T];
-export type TableRow<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Row'];
-export type TableInsert<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Insert'];
-export type TableUpdate<T extends keyof Database['public']['Tables']> =
-  Database['public']['Tables'][T]['Update'];
+export type Tables<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T];
+export type TableRow<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Row"];
+export type TableInsert<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Insert"];
+export type TableUpdate<T extends keyof Database["public"]["Tables"]> =
+  Database["public"]["Tables"][T]["Update"];
 
 // Specific table type exports for common use cases
-export type Patient = TableRow<'patients'>;
-export type Appointment = TableRow<'appointments'>;
-export type Clinic = TableRow<'clinics'>;
-export type Doctor = TableRow<'professionals'>;
-export type AuditLog = TableRow<'audit_logs'>;
-export type PatientConsent = TableRow<'consent_records'>;
+export type Patient = TableRow<"patients">;
+export type Appointment = TableRow<"appointments">;
+export type Clinic = TableRow<"clinics">;
+export type Doctor = TableRow<"professionals">;
+export type AuditLog = TableRow<"audit_logs">;
+export type PatientConsent = TableRow<"consent_records">;
 // export type MessageDeliveryLog = TableRow<'message_delivery_log'>; // Table doesn't exist in schema
 
 // Function types for Supabase edge functions
@@ -46,6 +47,6 @@ export type DeletePatientDataFunction = SupabaseFunction<
 >;
 
 export type ExportPatientDataFunction = SupabaseFunction<
-  { patient_id: string; clinic_id: string; format?: 'json' | 'csv' },
+  { patient_id: string; clinic_id: string; format?: "json" | "csv" },
   { success: boolean; export_url: string; expires_at: string }
 >;

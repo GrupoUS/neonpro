@@ -955,10 +955,12 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
         result: {
           cleanupId: job.jobId,
           cleanupResults,
-          totalRecordsFound: cleanupResults.reduce((sum,_r) => sum + r.recordsFound,
+          totalRecordsFound: cleanupResults.reduce(
+            (sum, _r) => sum + r.recordsFound,
             0,
           ),
-          totalRecordsProcessed: cleanupResults.reduce((sum,_r) => sum + r.recordsProcessed,
+          totalRecordsProcessed: cleanupResults.reduce(
+            (sum, _r) => sum + r.recordsProcessed,
             0,
           ),
           dryRun,
@@ -967,12 +969,14 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
         auditEvents,
         metrics: {
           executionTime: dataTypes.length * 2000,
-          bytesProcessed: cleanupResults.reduce((sum,_r) => sum + r.recordsProcessed * 1024,
+          bytesProcessed: cleanupResults.reduce(
+            (sum, _r) => sum + r.recordsProcessed * 1024,
             0,
           ),
         },
         metadata: {
-          totalRecordsProcessed: cleanupResults.reduce((sum,_r) => sum + r.recordsProcessed,
+          totalRecordsProcessed: cleanupResults.reduce(
+            (sum, _r) => sum + r.recordsProcessed,
             0,
           ),
         },

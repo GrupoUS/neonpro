@@ -219,7 +219,10 @@ export class RetryPolicy {
 
   constructor(private readonly config: ResilienceConfig["retry"]) {}
 
-  async shouldRetry(error: Error, _context: ExecutionContext): Promise<boolean> {
+  async shouldRetry(
+    error: Error,
+    _context: ExecutionContext,
+  ): Promise<boolean> {
     this.attempts++;
 
     // Don't retry on certain errors
@@ -310,7 +313,7 @@ export class TimeoutManager {
     operation: () => Promise<T>,
     _context: ExecutionContext,
   ): Promise<T> {
-    return new Promise((resolve,_reject) => {
+    return new Promise((resolve, _reject) => {
       const timeoutId = setTimeout(() => {
         reject(
           new ResilienceError(
@@ -385,7 +388,8 @@ export class HealthMonitor {
       const isHealthy = await Promise.race([
         healthCheck(),
         new Promise<boolean>((_resolve, reject) =>
-          setTimeout(() => reject(new Error("Health check timeout")),
+          setTimeout(
+            () => reject(new Error("Health check timeout")),
             this.config.timeoutMs,
           ),
         ),

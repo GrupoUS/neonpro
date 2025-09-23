@@ -10,7 +10,7 @@
  * - Data anonymization and audit trail helpers
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma';
+import { type HealthcarePrismaClient } from "../clients/prisma";
 
 // Brazilian healthcare regulatory validation
 export class BrazilianHealthcareValidator {
@@ -21,7 +21,7 @@ export class BrazilianHealthcareValidator {
     if (!cpf) return false;
 
     // Remove non-numeric characters
-    const cleanCPF = cpf.replace(/[^\d]/g, '');
+    const cleanCPF = cpf.replace(/[^\d]/g, "");
 
     // Check basic format
     if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) {
@@ -55,7 +55,7 @@ export class BrazilianHealthcareValidator {
   static validateBrazilianPhone(phone: string): boolean {
     if (!phone) return false;
 
-    const cleanPhone = phone.replace(/[^\d]/g, '');
+    const cleanPhone = phone.replace(/[^\d]/g, "");
 
     // Mobile: 11 digits (2 digit area code + 9 + 8 digits)
     // Landline: 10 digits (2 digit area code + 8 digits)
@@ -68,7 +68,7 @@ export class BrazilianHealthcareValidator {
   static validateCFM(cfmNumber: string, state?: string): boolean {
     if (!cfmNumber) return false;
 
-    const cleanCFM = cfmNumber.replace(/[^\d]/g, '');
+    const cleanCFM = cfmNumber.replace(/[^\d]/g, "");
 
     // CFM numbers are typically 4-6 digits
     if (cleanCFM.length < 4 || cleanCFM.length > 6) {
@@ -85,7 +85,7 @@ export class BrazilianHealthcareValidator {
   static validateRG(rg: string): boolean {
     if (!rg) return false;
 
-    const cleanRG = rg.replace(/[^\dXx]/g, '');
+    const cleanRG = rg.replace(/[^\dXx]/g, "");
 
     // RG format varies by state, but generally 7-9 characters
     return cleanRG.length >= 7 && cleanRG.length <= 9;
@@ -105,31 +105,31 @@ export class LGPDComplianceHelper {
     // Remove CPF patterns
     sanitized = sanitized.replace(
       /\d{3}\.\d{3}\.\d{3}-\d{2}/g,
-      '[CPF_REMOVED]',
+      "[CPF_REMOVED]",
     );
-    sanitized = sanitized.replace(/\d{11}/g, '[CPF_REMOVED]');
+    sanitized = sanitized.replace(/\d{11}/g, "[CPF_REMOVED]");
 
     // Remove phone patterns
     sanitized = sanitized.replace(
       /\(\d{2}\)\s*\d{4,5}-\d{4}/g,
-      '[PHONE_REMOVED]',
+      "[PHONE_REMOVED]",
     );
-    sanitized = sanitized.replace(/\d{2}\s*\d{4,5}-\d{4}/g, '[PHONE_REMOVED]');
+    sanitized = sanitized.replace(/\d{2}\s*\d{4,5}-\d{4}/g, "[PHONE_REMOVED]");
 
     // Remove email patterns
     sanitized = sanitized.replace(
       /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g,
-      '[EMAIL_REMOVED]',
+      "[EMAIL_REMOVED]",
     );
 
     // Remove RG patterns
     sanitized = sanitized.replace(
       /\d{1,2}\.\d{3}\.\d{3}-\d{1}/g,
-      '[RG_REMOVED]',
+      "[RG_REMOVED]",
     );
 
     // Remove addresses (basic patterns)
-    sanitized = sanitized.replace(/\b\d{5}-?\d{3}\b/g, '[CEP_REMOVED]');
+    sanitized = sanitized.replace(/\b\d{5}-?\d{3}\b/g, "[CEP_REMOVED]");
 
     return sanitized;
   }
@@ -152,7 +152,7 @@ export class LGPDComplianceHelper {
         where: {
           patientId,
           purpose,
-          status: 'given',
+          status: "given",
           OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
         },
       });
@@ -163,10 +163,10 @@ export class LGPDComplianceHelper {
 
       // Check if all required data categories are covered
       const consentedCategories = consentRecords.flatMap(
-        record => record.dataCategories,
+        (record) => record.dataCategories,
       );
       const missingCategories = dataCategories.filter(
-        category => !consentedCategories.includes(category),
+        (category) => !consentedCategories.includes(category),
       );
 
       const isValid = missingCategories.length === 0;
@@ -177,7 +177,7 @@ export class LGPDComplianceHelper {
         missingCategories: isValid ? undefined : missingCategories,
       };
     } catch (error) {
-      console.error('Consent validity check failed:', error);
+      console.error("Consent validity check failed:", error);
       return { isValid: false };
     }
   }
@@ -208,7 +208,7 @@ export class LGPDComplianceHelper {
           consentType: consentData.consentType,
           purpose: consentData.purpose,
           legalBasis: consentData.legalBasis,
-          status: 'given',
+          status: "given",
           givenAt: new Date(),
           expiresAt: consentData.expiresAt,
           collectionMethod: consentData.collectionMethod,
@@ -225,8 +225,8 @@ export class LGPDComplianceHelper {
 
       // Create audit log for consent recording
       await prisma.createAuditLog(
-        'CREATE',
-        'CONSENT_RECORD',
+        "CREATE",
+        "CONSENT_RECORD",
         consentRecord.id,
         {
           consentType: consentData.consentType,
@@ -237,7 +237,7 @@ export class LGPDComplianceHelper {
 
       return consentRecord;
     } catch (error) {
-      console.error('Consent recording failed:', error);
+      console.error("Consent recording failed:", error);
       throw error;
     }
   }
@@ -254,7 +254,7 @@ export class LGPDComplianceHelper {
       await prisma.consentRecord.update({
         where: { id: consentId },
         data: {
-          status: 'withdrawn',
+          status: "withdrawn",
           withdrawnAt: new Date(),
           evidence: {
             withdrawalReason: reason,
@@ -264,12 +264,12 @@ export class LGPDComplianceHelper {
       });
 
       // Create audit log for consent withdrawal
-      await prisma.createAuditLog('UPDATE', 'CONSENT_RECORD', consentId, {
-        action: 'consent_withdrawn',
+      await prisma.createAuditLog("UPDATE", "CONSENT_RECORD", consentId, {
+        action: "consent_withdrawn",
         reason,
       });
     } catch (error) {
-      console.error('Consent withdrawal failed:', error);
+      console.error("Consent withdrawal failed:", error);
       throw error;
     }
   }
@@ -292,7 +292,7 @@ export class HealthcareAppointmentHelper {
             include: {
               appointments: {
                 where: {
-                  status: 'no_show',
+                  status: "no_show",
                   createdAt: {
                     gte: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000),
                   },
@@ -324,8 +324,9 @@ export class HealthcareAppointmentHelper {
       }
 
       // Short notice appointments (+15 points)
-      const hoursUntilAppointment = (new Date(appointment.startTime).getTime() - Date.now())
-        / (1000 * 60 * 60);
+      const hoursUntilAppointment =
+        (new Date(appointment.startTime).getTime() - Date.now()) /
+        (1000 * 60 * 60);
       if (hoursUntilAppointment < 24) {
         riskScore += 15;
       }
@@ -340,7 +341,7 @@ export class HealthcareAppointmentHelper {
 
       return Math.min(riskScore, 100); // Cap at 100
     } catch (error) {
-      console.error('No-show risk calculation failed:', error);
+      console.error("No-show risk calculation failed:", error);
       return 0;
     }
   }
@@ -360,7 +361,7 @@ export class HealthcareAppointmentHelper {
         where: {
           professionalId,
           id: excludeAppointmentId ? { not: excludeAppointmentId } : undefined,
-          status: { not: 'cancelled' },
+          status: { not: "cancelled" },
           OR: [
             {
               AND: [
@@ -400,7 +401,7 @@ export class HealthcareAppointmentHelper {
 
       return conflicts;
     } catch (error) {
-      console.error('Appointment conflict check failed:', error);
+      console.error("Appointment conflict check failed:", error);
       return [];
     }
   }
@@ -439,14 +440,14 @@ export class HealthcareAppointmentHelper {
           professionalId,
           startTime: { gte: startOfDay },
           endTime: { lte: endOfDay },
-          status: { not: 'cancelled' },
+          status: { not: "cancelled" },
         },
         select: {
           startTime: true,
           endTime: true,
         },
         orderBy: {
-          startTime: 'asc',
+          startTime: "asc",
         },
       });
 
@@ -458,7 +459,7 @@ export class HealthcareAppointmentHelper {
 
       return availableSlots;
     } catch (error) {
-      console.error('Available time slots calculation failed:', error);
+      console.error("Available time slots calculation failed:", error);
       return [];
     }
   }
@@ -475,24 +476,24 @@ export class PatientDataHelper {
     warnings: string[];
   } {
     const requiredFields = [
-      'givenNames',
-      'familyName',
-      'birthDate',
-      'gender',
-      'lgpdConsentGiven',
+      "givenNames",
+      "familyName",
+      "birthDate",
+      "gender",
+      "lgpdConsentGiven",
     ];
 
-    const missingFields = requiredFields.filter(field => !patientData[field]);
+    const missingFields = requiredFields.filter((field) => !patientData[field]);
 
     const warnings: string[] = [];
 
     // Check for Brazilian-specific requirements
     if (!patientData.cpf && !patientData.passportNumber) {
-      warnings.push('Either CPF or passport number should be provided');
+      warnings.push("Either CPF or passport number should be provided");
     }
 
     if (!patientData.phonePrimary && !patientData.email) {
-      warnings.push('At least one contact method should be provided');
+      warnings.push("At least one contact method should be provided");
     }
 
     return {
@@ -510,7 +511,7 @@ export class PatientDataHelper {
     const timestamp = Date.now().toString().slice(-6);
     const random = Math.floor(Math.random() * 1000)
       .toString()
-      .padStart(3, '0');
+      .padStart(3, "0");
 
     return `${prefix}${timestamp}${random}`;
   }
@@ -521,16 +522,16 @@ export class PatientDataHelper {
   static anonymizePatientData(patientData: any): any {
     return {
       ...patientData,
-      givenNames: ['[ANONYMIZED]'],
-      familyName: '[ANONYMIZED]',
-      fullName: '[ANONYMIZED]',
+      givenNames: ["[ANONYMIZED]"],
+      familyName: "[ANONYMIZED]",
+      fullName: "[ANONYMIZED]",
       preferredName: null,
       phonePrimary: null,
       phoneSecondary: null,
       email: null,
       addressLine1: null,
       addressLine2: null,
-      city: '[ANONYMIZED]',
+      city: "[ANONYMIZED]",
       postalCode: null,
       cpf: null,
       rg: null,

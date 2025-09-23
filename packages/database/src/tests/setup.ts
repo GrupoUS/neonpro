@@ -26,14 +26,14 @@ afterAll(() => {
     familyName: "Patient",
     fullName: "Test Patient",
     createdBy: "test-user",
-    lgpdConsentGiven: true
+    lgpdConsentGiven: true,
   }),
 
   createMockConsentRequest: () => ({
     patientId: "test-patient-id",
     consentType: "DATA_PROCESSING" as const,
     purpose: "Healthcare treatment",
-    dataTypes: ["medical_records", "personal_data"]
+    dataTypes: ["medical_records", "personal_data"],
   }),
 
   createMockAppointment: () => ({
@@ -42,6 +42,6 @@ afterAll(() => {
     professionalId: "test-professional-id",
     startTime: new Date().toISOString(),
     endTime: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-    createdBy: "test-user"
-  })
+    createdBy: "test-user",
+  }),
 };

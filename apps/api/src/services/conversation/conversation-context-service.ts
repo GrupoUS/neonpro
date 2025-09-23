@@ -5,20 +5,25 @@
  * in Supabase with LGPD compliance and healthcare data protection.
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
-import { Database } from '../../../packages/database/src/types/database';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { v4 as uuidv4 } from "uuid";
+import { Database } from "../../../packages/database/src/types/database";
 
 export interface ConversationMessage {
   id: string;
   sessionId: string;
-  _role: 'user' | 'assistant' | 'system';
+  _role: "user" | "assistant" | "system";
   content: string;
-  type: 'text' | 'structured' | 'error';
+  type: "text" | "structured" | "error";
   metadata?: {
     sources?: Array<{
       id: string;
-      type: 'patient_data' | 'medical_knowledge' | 'appointment' | 'financial' | 'document';
+      type:
+        | "patient_data"
+        | "medical_knowledge"
+        | "appointment"
+        | "financial"
+        | "document";
       title: string;
       snippet?: string;
       relevanceScore?: number;
@@ -33,7 +38,7 @@ export interface ConversationMessage {
   _userId: string;
   patientId?: string;
   encryptionKey?: string; // For sensitive healthcare data
-  dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
+  dataClassification: "public" | "internal" | "confidential" | "restricted";
 }
 
 export interface ConversationContext {
@@ -45,12 +50,12 @@ export interface ConversationContext {
     entities: string[];
     lastQueryIntent?: string;
     patientFocus?: string;
-    conversationFlow: 'initial' | 'follow_up' | 'clarification' | 'resolution';
+    conversationFlow: "initial" | "follow_up" | "clarification" | "resolution";
   };
   userPreferences?: {
-    language: 'pt-BR' | 'en-US';
-    detailLevel: 'basic' | 'detailed' | 'comprehensive';
-    responseFormat: 'text' | 'structured' | 'mixed';
+    language: "pt-BR" | "en-US";
+    detailLevel: "basic" | "detailed" | "comprehensive";
+    responseFormat: "text" | "structured" | "mixed";
     accessibilityNeeds?: string[];
   };
   sessionMetadata: {
@@ -76,12 +81,12 @@ export interface ContextSearchOptions {
     start: string;
     end: string;
   };
-  messageTypes?: ConversationMessage['type'][];
-  roles?: ConversationMessage['role'][];
+  messageTypes?: ConversationMessage["type"][];
+  roles?: ConversationMessage["role"][];
   limit?: number;
   offset?: number;
   includeMetadata?: boolean;
-  dataClassification?: ConversationMessage['dataClassification'][];
+  dataClassification?: ConversationMessage["dataClassification"][];
 }
 
 export interface ContextAnalytics {
@@ -124,13 +129,18 @@ export class ConversationContextService {
   /**
    * Store a conversation message in the database
    */
-  async storeMessage(message: Omit<ConversationMessage, 'id' | 'timestamp'>): Promise<string> {
+  async storeMessage(
+    message: Omit<ConversationMessage, "id" | "timestamp">,
+  ): Promise<string> {
     try {
       const messageId = uuidv4();
       const timestamp = new Date().toISOString();
 
       // Prepare message for storage with LGPD compliance
-      const sanitizedContent = this.sanitizeContent(message.content, message.dataClassification);
+      const sanitizedContent = this.sanitizeContent(
+        message.content,
+        message.dataClassification,
+      );
 
       const messageData = {
         id: messageId,
@@ -149,13 +159,15 @@ export class ConversationContextService {
       };
 
       const { data, error } = await this.supabase
-        .from('agent_messages')
+        .from("agent_messages")
         .insert(messageData)
         .select()
         .single();
 
       if (error) {
-        throw new Error(`Failed to store conversation message: ${error.message}`);
+        throw new Error(
+          `Failed to store conversation message: ${error.message}`,
+        );
       }
 
       // Update session activity
@@ -166,7 +178,7 @@ export class ConversationContextService {
 
       return messageId;
     } catch (error) {
-      console.error('[ConversationContext] Error storing message:', error);
+      console.error("[ConversationContext] Error storing message:", error);
       throw error;
     }
   }
@@ -191,9 +203,9 @@ export class ConversationContextService {
 
       // Get session information
       const { data: session, error: sessionError } = await this.supabase
-        .from('agent_sessions')
-        .select('*')
-        .eq('id', sessionId)
+        .from("agent_sessions")
+        .select("*")
+        .eq("id", sessionId)
         .single();
 
       if (sessionError || !session) {
@@ -202,13 +214,13 @@ export class ConversationContextService {
 
       // Get messages for the session
       let query = this.supabase
-        .from('agent_messages')
-        .select('*')
-        .eq('session_id', sessionId)
-        .order('timestamp', { ascending: true });
+        .from("agent_messages")
+        .select("*")
+        .eq("session_id", sessionId)
+        .order("timestamp", { ascending: true });
 
       if (!options.includeSystemMessages) {
-        query = query.neq('role', 'system');
+        query = query.neq("role", "system");
       }
 
       if (options.messageLimit) {
@@ -218,23 +230,27 @@ export class ConversationContextService {
       const { data: messages, error: messagesError } = await query;
 
       if (messagesError) {
-        throw new Error(`Failed to retrieve messages: ${messagesError.message}`);
+        throw new Error(
+          `Failed to retrieve messages: ${messagesError.message}`,
+        );
       }
 
       // Convert database messages to ConversationMessage format
-      const conversationMessages: ConversationMessage[] = (messages || []).map(msg => ({
-        id: msg.id,
-        sessionId: msg.session_id,
-        _role: msg.role,
-        content: msg.content,
-        type: msg.message_type,
-        metadata: msg.metadata as ConversationMessage['metadata'],
-        timestamp: msg.timestamp,
-        _userId: msg.user_id,
-        patientId: msg.patient_id || undefined,
-        encryptionKey: msg.encryption_key || undefined,
-        dataClassification: msg.data_classification,
-      }));
+      const conversationMessages: ConversationMessage[] = (messages || []).map(
+        (msg) => ({
+          id: msg.id,
+          sessionId: msg.session_id,
+          _role: msg.role,
+          content: msg.content,
+          type: msg.message_type,
+          metadata: msg.metadata as ConversationMessage["metadata"],
+          timestamp: msg.timestamp,
+          _userId: msg.user_id,
+          patientId: msg.patient_id || undefined,
+          encryptionKey: msg.encryption_key || undefined,
+          dataClassification: msg.data_classification,
+        }),
+      );
 
       // Generate context summary
       const contextSummary = this.generateContextSummary(conversationMessages);
@@ -250,7 +266,8 @@ export class ConversationContextService {
           startedAt: session.created_at,
           lastActivity: session.last_activity,
           messageCount: conversationMessages.length,
-          averageResponseTime: this.calculateAverageResponseTime(conversationMessages),
+          averageResponseTime:
+            this.calculateAverageResponseTime(conversationMessages),
           complianceFlags: session.context?.complianceFlags || [],
         },
         retentionPolicy: {
@@ -265,7 +282,7 @@ export class ConversationContextService {
 
       return context;
     } catch (error) {
-      console.error('[ConversationContext] Error retrieving _context:', error);
+      console.error("[ConversationContext] Error retrieving _context:", error);
       throw error;
     }
   }
@@ -280,32 +297,32 @@ export class ConversationContextService {
   }> {
     try {
       let query = this.supabase
-        .from('agent_messages')
-        .select('*', { count: 'exact' });
+        .from("agent_messages")
+        .select("*", { count: "exact" });
 
       // Apply filters
       if (options.sessionId) {
-        query = query.eq('session_id', options.sessionId);
+        query = query.eq("session_id", options.sessionId);
       }
       if (options._userId) {
-        query = query.eq('user_id', options._userId);
+        query = query.eq("user_id", options._userId);
       }
       if (options.patientId) {
-        query = query.eq('patient_id', options.patientId);
+        query = query.eq("patient_id", options.patientId);
       }
       if (options.dateRange) {
         query = query
-          .gte('timestamp', options.dateRange.start)
-          .lte('timestamp', options.dateRange.end);
+          .gte("timestamp", options.dateRange.start)
+          .lte("timestamp", options.dateRange.end);
       }
       if (options.messageTypes?.length) {
-        query = query.in('message_type', options.messageTypes);
+        query = query.in("message_type", options.messageTypes);
       }
       if (options.roles?.length) {
-        query = query.in('role', options.roles);
+        query = query.in("role", options.roles);
       }
       if (options.dataClassification?.length) {
-        query = query.in('data_classification', options.dataClassification);
+        query = query.in("data_classification", options.dataClassification);
       }
 
       // Apply pagination
@@ -313,22 +330,27 @@ export class ConversationContextService {
         query = query.limit(options.limit);
       }
       if (options.offset) {
-        query = query.range(options.offset, (options.offset || 0) + (options.limit || 10) - 1);
+        query = query.range(
+          options.offset,
+          (options.offset || 0) + (options.limit || 10) - 1,
+        );
       }
 
-      const { data, error, count } = await query.order('timestamp', { ascending: false });
+      const { data, error, count } = await query.order("timestamp", {
+        ascending: false,
+      });
 
       if (error) {
         throw new Error(`Failed to search conversations: ${error.message}`);
       }
 
-      const messages: ConversationMessage[] = (data || []).map(msg => ({
+      const messages: ConversationMessage[] = (data || []).map((msg) => ({
         id: msg.id,
         sessionId: msg.session_id,
         _role: msg.role,
         content: msg.content,
         type: msg.message_type,
-        metadata: msg.metadata as ConversationMessage['metadata'],
+        metadata: msg.metadata as ConversationMessage["metadata"],
         timestamp: msg.timestamp,
         _userId: msg.user_id,
         patientId: msg.patient_id || undefined,
@@ -342,7 +364,10 @@ export class ConversationContextService {
         hasMore: (options.limit || 10) === messages.length,
       };
     } catch (error) {
-      console.error('[ConversationContext] Error searching conversations:', error);
+      console.error(
+        "[ConversationContext] Error searching conversations:",
+        error,
+      );
       throw error;
     }
   }
@@ -352,16 +377,14 @@ export class ConversationContextService {
    */
   async updateContextSummary(
     sessionId: string,
-    summary: Partial<ConversationContext['contextSummary']>,
+    summary: Partial<ConversationContext["contextSummary"]>,
   ): Promise<void> {
     try {
-      const { error } = await this.supabase
-        .from('agent_context')
-        .upsert({
-          session_id: sessionId,
-          context_summary: summary,
-          updated_at: new Date().toISOString(),
-        });
+      const { error } = await this.supabase.from("agent_context").upsert({
+        session_id: sessionId,
+        context_summary: summary,
+        updated_at: new Date().toISOString(),
+      });
 
       if (error) {
         throw new Error(`Failed to update context summary: ${error.message}`);
@@ -370,7 +393,10 @@ export class ConversationContextService {
       // Invalidate cache
       this.invalidateCache(sessionId);
     } catch (error) {
-      console.error('[ConversationContext] Error updating context summary:', error);
+      console.error(
+        "[ConversationContext] Error updating context summary:",
+        error,
+      );
       throw error;
     }
   }
@@ -386,20 +412,18 @@ export class ConversationContextService {
     } = {},
   ): Promise<ContextAnalytics> {
     try {
-      let query = this.supabase
-        .from('agent_messages')
-        .select('*');
+      let query = this.supabase.from("agent_messages").select("*");
 
       if (options._userId) {
-        query = query.eq('user_id', options._userId);
+        query = query.eq("user_id", options._userId);
       }
       if (options.patientId) {
-        query = query.eq('patient_id', options.patientId);
+        query = query.eq("patient_id", options.patientId);
       }
       if (options.dateRange) {
         query = query
-          .gte('timestamp', options.dateRange.start)
-          .lte('timestamp', options.dateRange.end);
+          .gte("timestamp", options.dateRange.start)
+          .lte("timestamp", options.dateRange.end);
       }
 
       const { data: messages, error } = await query;
@@ -409,20 +433,22 @@ export class ConversationContextService {
       }
 
       // Get sessions count
-      let sessionsQuery = this.supabase.from('agent_sessions').select('*', { count: 'exact' });
+      let sessionsQuery = this.supabase
+        .from("agent_sessions")
+        .select("*", { count: "exact" });
       if (options._userId) {
-        sessionsQuery = sessionsQuery.eq('user_id', options._userId);
+        sessionsQuery = sessionsQuery.eq("user_id", options._userId);
       }
       if (options.dateRange) {
         sessionsQuery = sessionsQuery
-          .gte('created_at', options.dateRange.start)
-          .lte('created_at', options.dateRange.end);
+          .gte("created_at", options.dateRange.start)
+          .lte("created_at", options.dateRange.end);
       }
       const { count: sessionCount } = await sessionsQuery;
 
       return this.calculateAnalytics(messages || [], sessionCount || 0);
     } catch (error) {
-      console.error('[ConversationContext] Error generating analytics:', error);
+      console.error("[ConversationContext] Error generating analytics:", error);
       throw error;
     }
   }
@@ -441,10 +467,10 @@ export class ConversationContextService {
 
       // Archive old sessions
       const { data: sessionsToArchive } = await this.supabase
-        .from('agent_sessions')
-        .select('id')
-        .lt('created_at', cutoffDate.toISOString())
-        .eq('is_active', false);
+        .from("agent_sessions")
+        .select("id")
+        .lt("created_at", cutoffDate.toISOString())
+        .eq("is_active", false);
 
       let archivedSessions = 0;
       for (const session of sessionsToArchive || []) {
@@ -457,22 +483,22 @@ export class ConversationContextService {
       archivalCutoff.setDate(archivalCutoff.getDate() - 90); // 90-day archival
 
       const { data: sessionsToDelete } = await this.supabase
-        .from('agent_sessions')
-        .select('id')
-        .lt('created_at', archivalCutoff.toISOString());
+        .from("agent_sessions")
+        .select("id")
+        .lt("created_at", archivalCutoff.toISOString());
 
       let deletedSessions = 0;
       let deletedMessages = 0;
       for (const session of sessionsToDelete || []) {
         const { count } = await this.supabase
-          .from('agent_messages')
-          .delete({ count: 'exact' })
-          .eq('session_id', session.id);
+          .from("agent_messages")
+          .delete({ count: "exact" })
+          .eq("session_id", session.id);
 
         await this.supabase
-          .from('agent_sessions')
+          .from("agent_sessions")
           .delete()
-          .eq('id', session.id);
+          .eq("id", session.id);
 
         deletedSessions++;
         deletedMessages += count || 0;
@@ -484,7 +510,10 @@ export class ConversationContextService {
         archivedSessions,
       };
     } catch (error) {
-      console.error('[ConversationContext] Error applying retention policies:', error);
+      console.error(
+        "[ConversationContext] Error applying retention policies:",
+        error,
+      );
       throw error;
     }
   }
@@ -495,18 +524,18 @@ export class ConversationContextService {
   private async archiveSession(sessionId: string): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('agent_sessions')
+        .from("agent_sessions")
         .update({
           is_archived: true,
           archived_at: new Date().toISOString(),
         })
-        .eq('id', sessionId);
+        .eq("id", sessionId);
 
       if (error) {
         throw new Error(`Failed to archive session: ${error.message}`);
       }
     } catch (error) {
-      console.error('[ConversationContext] Error archiving session:', error);
+      console.error("[ConversationContext] Error archiving session:", error);
       throw error;
     }
   }
@@ -516,9 +545,9 @@ export class ConversationContextService {
    */
   private sanitizeContent(
     content: string,
-    classification: ConversationMessage['dataClassification'],
+    classification: ConversationMessage["dataClassification"],
   ): string {
-    if (classification === 'public' || classification === 'internal') {
+    if (classification === "public" || classification === "internal") {
       return content;
     }
 
@@ -533,8 +562,8 @@ export class ConversationContextService {
       /\d{2}\/\d{2}\/\d{4}/g, // Dates
     ];
 
-    piiPatterns.forEach(pattern => {
-      sanitized = sanitized.replace(pattern, '[REDACTED]');
+    piiPatterns.forEach((pattern) => {
+      sanitized = sanitized.replace(pattern, "[REDACTED]");
     });
 
     return sanitized;
@@ -545,16 +574,16 @@ export class ConversationContextService {
    */
   private generateContextSummary(
     messages: ConversationMessage[],
-  ): ConversationContext['contextSummary'] {
+  ): ConversationContext["contextSummary"] {
     if (messages.length === 0) {
       return {
         topics: [],
         entities: [],
-        conversationFlow: 'initial',
+        conversationFlow: "initial",
       };
     }
 
-    const userMessages = messages.filter(m => m.role === 'user');
+    const userMessages = messages.filter((m) => m.role === "user");
     const lastUserMessage = userMessages[userMessages.length - 1];
 
     // Simple topic extraction (in production, use NLP)
@@ -574,31 +603,34 @@ export class ConversationContextService {
    * Extract topics from messages
    */
   private extractTopics(messages: ConversationMessage[]): string[] {
-    const allContent = messages.map(m => m.content).join(' ').toLowerCase();
+    const allContent = messages
+      .map((m) => m.content)
+      .join(" ")
+      .toLowerCase();
     const healthcareTopics = [
-      'agendamento',
-      'consulta',
-      'exame',
-      'tratamento',
-      'medicamento',
-      'paciente',
-      'médico',
-      'clinica',
-      'hospital',
-      'saúde',
-      'appointment',
-      'consultation',
-      'exam',
-      'treatment',
-      'medicine',
-      'patient',
-      'doctor',
-      'clinic',
-      'hospital',
-      'health',
+      "agendamento",
+      "consulta",
+      "exame",
+      "tratamento",
+      "medicamento",
+      "paciente",
+      "médico",
+      "clinica",
+      "hospital",
+      "saúde",
+      "appointment",
+      "consultation",
+      "exam",
+      "treatment",
+      "medicine",
+      "patient",
+      "doctor",
+      "clinic",
+      "hospital",
+      "health",
     ];
 
-    return healthcareTopics.filter(topic => allContent.includes(topic));
+    return healthcareTopics.filter((topic) => allContent.includes(topic));
   }
 
   /**
@@ -607,9 +639,9 @@ export class ConversationContextService {
   private extractEntities(messages: ConversationMessage[]): string[] {
     const entities = new Set<string>();
 
-    messages.forEach(message => {
+    messages.forEach((message) => {
       if (message.metadata?.entitiesExtracted) {
-        message.metadata.entitiesExtracted.forEach(entity => {
+        message.metadata.entitiesExtracted.forEach((entity) => {
           entities.add(entity);
         });
       }
@@ -621,8 +653,10 @@ export class ConversationContextService {
   /**
    * Extract patient focus from messages
    */
-  private extractPatientFocus(messages: ConversationMessage[]): string | undefined {
-    const patientMessages = messages.filter(m => m.patientId);
+  private extractPatientFocus(
+    messages: ConversationMessage[],
+  ): string | undefined {
+    const patientMessages = messages.filter((m) => m.patientId);
     if (patientMessages.length > 0) {
       return patientMessages[0].patientId;
     }
@@ -634,39 +668,43 @@ export class ConversationContextService {
    */
   private determineConversationFlow(
     messages: ConversationMessage[],
-  ): ConversationContext['contextSummary']['conversationFlow'] {
-    const userMessages = messages.filter(m => m.role === 'user');
-    const assistantMessages = messages.filter(m => m.role === 'assistant');
+  ): ConversationContext["contextSummary"]["conversationFlow"] {
+    const userMessages = messages.filter((m) => m.role === "user");
+    const assistantMessages = messages.filter((m) => m.role === "assistant");
 
     if (userMessages.length === 1 && assistantMessages.length === 0) {
-      return 'initial';
+      return "initial";
     } else if (
-      userMessages.some(m =>
-        m.content.toLowerCase().includes('esclarecer')
-        || m.content.toLowerCase().includes('clarify')
+      userMessages.some(
+        (m) =>
+          m.content.toLowerCase().includes("esclarecer") ||
+          m.content.toLowerCase().includes("clarify"),
       )
     ) {
-      return 'clarification';
+      return "clarification";
     } else if (userMessages.length > 1 && assistantMessages.length > 0) {
-      return 'follow_up';
+      return "follow_up";
     } else {
-      return 'resolution';
+      return "resolution";
     }
   }
 
   /**
    * Calculate average response time
    */
-  private calculateAverageResponseTime(messages: ConversationMessage[]): number | undefined {
+  private calculateAverageResponseTime(
+    messages: ConversationMessage[],
+  ): number | undefined {
     const responseTimes: number[] = [];
 
     for (let i = 1; i < messages.length; i++) {
       const current = messages[i];
       const previous = messages[i - 1];
 
-      if (current.role === 'assistant' && previous.role === 'user') {
-        const responseTime = new Date(current.timestamp).getTime()
-          - new Date(previous.timestamp).getTime();
+      if (current.role === "assistant" && previous.role === "user") {
+        const responseTime =
+          new Date(current.timestamp).getTime() -
+          new Date(previous.timestamp).getTime();
         responseTimes.push(responseTime);
       }
     }
@@ -675,7 +713,9 @@ export class ConversationContextService {
       return undefined;
     }
 
-    return responseTimes.reduce((sum, _time) => sum + time, 0) / responseTimes.length;
+    return (
+      responseTimes.reduce((sum, _time) => sum + time, 0) / responseTimes.length
+    );
   }
 
   /**
@@ -687,15 +727,17 @@ export class ConversationContextService {
   ): ContextAnalytics {
     // Calculate response time analytics
     const responseTimes = this.extractResponseTimes(messages);
-    const avgResponseTime = responseTimes.length > 0
-      ? responseTimes.reduce((sum, _time) => sum + time, 0) / responseTimes.length
-      : 0;
+    const avgResponseTime =
+      responseTimes.length > 0
+        ? responseTimes.reduce((sum, _time) => sum + time, 0) /
+          responseTimes.length
+        : 0;
 
     // Calculate topics frequency
     const topicCounts = new Map<string, number>();
-    messages.forEach(message => {
+    messages.forEach((message) => {
       const topics = this.extractTopics([message]);
-      topics.forEach(topic => {
+      topics.forEach((topic) => {
         topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1);
       });
     });
@@ -708,7 +750,8 @@ export class ConversationContextService {
     return {
       totalSessions: sessionCount,
       totalMessages: messages.length,
-      averageMessagesPerSession: sessionCount > 0 ? messages.length / sessionCount : 0,
+      averageMessagesPerSession:
+        sessionCount > 0 ? messages.length / sessionCount : 0,
       topTopics,
       responseTimeAnalytics: {
         average: avgResponseTime,
@@ -718,7 +761,9 @@ export class ConversationContextService {
       },
       satisfactionTrends: [], // Would need satisfaction ratings in metadata
       complianceMetrics: {
-        flaggedContent: messages.filter(m => m.dataClassification === 'restricted').length,
+        flaggedContent: messages.filter(
+          (m) => m.dataClassification === "restricted",
+        ).length,
         dataBreaches: 0, // Would need breach tracking
         accessViolations: 0, // Would need access violation tracking
       },
@@ -735,9 +780,10 @@ export class ConversationContextService {
       const current = messages[i];
       const previous = messages[i - 1];
 
-      if (current.role === 'assistant' && previous.role === 'user') {
-        const responseTime = new Date(current.timestamp).getTime()
-          - new Date(previous.timestamp).getTime();
+      if (current.role === "assistant" && previous.role === "user") {
+        const responseTime =
+          new Date(current.timestamp).getTime() -
+          new Date(previous.timestamp).getTime();
         times.push(responseTime);
       }
     }
@@ -762,18 +808,24 @@ export class ConversationContextService {
   private async updateSessionActivity(sessionId: string): Promise<void> {
     try {
       const { error } = await this.supabase
-        .from('agent_sessions')
+        .from("agent_sessions")
         .update({
           last_activity: new Date().toISOString(),
-          message_count: this.supabase.rpc('increment', { x: 1 }),
+          message_count: this.supabase.rpc("increment", { x: 1 }),
         })
-        .eq('id', sessionId);
+        .eq("id", sessionId);
 
       if (error) {
-        console.error('[ConversationContext] Error updating session activity:', error);
+        console.error(
+          "[ConversationContext] Error updating session activity:",
+          error,
+        );
       }
     } catch (error) {
-      console.error('[ConversationContext] Error updating session activity:', error);
+      console.error(
+        "[ConversationContext] Error updating session activity:",
+        error,
+      );
     }
   }
 

@@ -472,7 +472,8 @@ export class OperationLog {
 
     // Apply user filters
     if (filters.userIds && filters.userIds.length > 0) {
-      entries = entries.filter((e) => e._userId && filters.userIds!.includes(e._userId),
+      entries = entries.filter(
+        (e) => e._userId && filters.userIds!.includes(e._userId),
       );
     }
 
@@ -502,7 +503,8 @@ export class OperationLog {
 
     // Apply error filter
     if (filters.errorOnly) {
-      entries = entries.filter((e) =>
+      entries = entries.filter(
+        (e) =>
           e.severity === "error" || e.severity === "critical" || e.errorDetails,
       );
     }
@@ -517,7 +519,8 @@ export class OperationLog {
     // Apply text search
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
-      entries = entries.filter((e) =>
+      entries = entries.filter(
+        (e) =>
           e.operation.toLowerCase().includes(query) ||
           e.description.toLowerCase().includes(query) ||
           e.tags.some((tag) => tag.toLowerCase().includes(query)),

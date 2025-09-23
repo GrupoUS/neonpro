@@ -17,17 +17,22 @@
 
 /* Core gradient border implementation */
 .hover-border-gradient::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: calc(-1 * var(--border-width, 2px));
   border-radius: inherit;
   background: conic-gradient(
-    from var(--gradient-angle, 0deg) at var(--gradient-x, 50%) var(--gradient-y, 50%),
+    from var(--gradient-angle, 0deg) at var(--gradient-x, 50%)
+      var(--gradient-y, 50%),
     var(--gradient-colors, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b)
   );
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: xor;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   opacity: var(--gradient-opacity, 0.8);
   filter: blur(var(--gradient-blur, 0px));
@@ -75,7 +80,8 @@
 
 /* Alternating rotation animation */
 @keyframes gradient-rotate-alternate {
-  0%, 50% {
+  0%,
+  50% {
     transform: rotate(0deg) translateZ(0);
   }
   25% {
@@ -120,13 +126,15 @@
 
 /* Glow effect variant */
 .hover-border-gradient--glow::before {
-  box-shadow: 0 0 var(--glow-size, 20px) var(--glow-color, rgba(255, 255, 255, 0.3));
+  box-shadow: 0 0 var(--glow-size, 20px)
+    var(--glow-color, rgba(255, 255, 255, 0.3));
 }
 
 /* Pulsate on hover variant */
 .hover-border-gradient--pulsate:hover::before {
-  animation: gradient-rotate var(--gradient-duration, 3s) linear infinite,
-             gradient-pulse var(--pulse-duration, 1s) ease-in-out infinite alternate;
+  animation:
+    gradient-rotate var(--gradient-duration, 3s) linear infinite,
+    gradient-pulse var(--pulse-duration, 1s) ease-in-out infinite alternate;
 }
 
 @keyframes gradient-pulse {

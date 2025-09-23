@@ -15,7 +15,7 @@ export function cn(...inputs: ClassValue[]) {
 
 // Format phone numbers for Brazil healthcare standards
 export function formatBrazilianPhone(phone: string): string {
-  const cleaned = phone.replace(/\D/g, '');
+  const cleaned = phone.replace(/\D/g, "");
   if (cleaned.length === 11) {
     return `+55 (${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7)}`;
   }
@@ -27,7 +27,7 @@ export function formatBrazilianPhone(phone: string): string {
 
 // Format CPF for display
 export function formatCPF(cpf: string): string {
-  const cleaned = cpf.replace(/\D/g, '');
+  const cleaned = cpf.replace(/\D/g, "");
   if (cleaned.length === 11) {
     return `${cleaned.slice(0, 3)}.${cleaned.slice(3, 6)}.${cleaned.slice(6, 9)}-${cleaned.slice(9)}`;
   }
@@ -36,20 +36,23 @@ export function formatCPF(cpf: string): string {
 
 // Format currency for Brazilian Real
 export function formatBRL(amount: number): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
   }).format(amount);
 }
 
 // Accessibility helpers
-export function generateId(prefix: string = 'element'): string {
+export function generateId(prefix: string = "element"): string {
   return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
 // LGPD compliance helpers
-export function maskSensitiveData(data: string, visibleChars: number = 4): string {
+export function maskSensitiveData(
+  data: string,
+  visibleChars: number = 4,
+): string {
   if (data.length <= visibleChars) return data;
-  const masked = '*'.repeat(data.length - visibleChars);
+  const masked = "*".repeat(data.length - visibleChars);
   return data.slice(0, visibleChars) + masked;
 }

@@ -27,7 +27,10 @@ export class ErrorMapper {
   /**
    * Maps internal errors to user-safe responses
    */
-  static mapError(error: Error | unknown, _context?: ErrorContext): MappedError {
+  static mapError(
+    error: Error | unknown,
+    _context?: ErrorContext,
+  ): MappedError {
     const timestamp = new Date().toISOString();
 
     // Handle known error types
@@ -291,7 +294,10 @@ export class ErrorMapper {
 export const createRateLimitError = (userId?: string) => {
   const error = new Error("Rate limit exceeded for user");
   error.name = "RateLimitError";
-  return ErrorMapper.mapError(error, { _userId: userId, action: "rate_limit_check" });
+  return ErrorMapper.mapError(error, {
+    _userId: userId,
+    action: "rate_limit_check",
+  });
 };
 
 export const createConsentError = (userId?: string, clinicId?: string) => {

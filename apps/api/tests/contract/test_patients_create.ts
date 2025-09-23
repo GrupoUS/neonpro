@@ -9,9 +9,9 @@
  * - Performance requirements (<500ms)
  */
 
-import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { app } from '../../src/app';
+import request from "supertest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { app } from "../../src/app";
 
 // Request schema validation
 const CreatePatientRequestSchema = z.object({
@@ -20,7 +20,7 @@ const CreatePatientRequestSchema = z.object({
   phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/),
   email: z.string().email(),
   dateOfBirth: z.string().datetime(),
-  gender: z.enum(['male', 'female', 'other']),
+  gender: z.enum(["male", "female", "other"]),
   address: z.object({
     street: z.string().min(1),
     number: z.string().min(1),
@@ -52,8 +52,8 @@ const CreatePatientResponseSchema = z.object({
   phone: z.string(),
   email: z.string().email(),
   dateOfBirth: z.string().datetime(),
-  gender: z.enum(['male', 'female', 'other']),
-  status: z.literal('active'),
+  gender: z.enum(["male", "female", "other"]),
+  status: z.literal("active"),
   address: z.object({
     street: z.string(),
     number: z.string(),
@@ -83,39 +83,39 @@ const CreatePatientResponseSchema = z.object({
   }),
 });
 
-describe('POST /api/v2/patients - Contract Tests', () => {
+describe("POST /api/v2/patients - Contract Tests", () => {
   const testAuthHeaders = {
-    Authorization: 'Bearer test-token',
-    'Content-Type': 'application/json',
+    Authorization: "Bearer test-token",
+    "Content-Type": "application/json",
   };
 
   const validPatientData = {
-    name: 'Maria Silva Santos',
-    cpf: '123.456.789-01',
-    phone: '(11) 99999-9999',
-    email: 'maria.silva@example.com',
-    dateOfBirth: '1990-05-15T00:00:00.000Z',
-    gender: 'female' as const,
+    name: "Maria Silva Santos",
+    cpf: "123.456.789-01",
+    phone: "(11) 99999-9999",
+    email: "maria.silva@example.com",
+    dateOfBirth: "1990-05-15T00:00:00.000Z",
+    gender: "female" as const,
     address: {
-      street: 'Rua das Flores',
-      number: '123',
-      complement: 'Apto 45',
-      neighborhood: 'Centro',
-      city: 'São Paulo',
-      state: 'SP',
-      zipCode: '01234-567',
+      street: "Rua das Flores",
+      number: "123",
+      complement: "Apto 45",
+      neighborhood: "Centro",
+      city: "São Paulo",
+      state: "SP",
+      zipCode: "01234-567",
     },
     emergencyContact: {
-      name: 'João Silva Santos',
-      relationship: 'Spouse',
-      phone: '(11) 88888-8888',
+      name: "João Silva Santos",
+      relationship: "Spouse",
+      phone: "(11) 88888-8888",
     },
     lgpdConsent: {
       dataProcessing: true,
       marketingCommunications: false,
       thirdPartySharing: false,
       consentDate: new Date().toISOString(),
-      ipAddress: '127.0.0.1',
+      ipAddress: "127.0.0.1",
     },
   };
 
@@ -127,10 +127,10 @@ describe('POST /api/v2/patients - Contract Tests', () => {
     // Cleanup test data
   });
 
-  describe('Successful Creation', () => {
-    it('should create patient with valid data and correct schema', async () => {
+  describe("Successful Creation", () => {
+    it("should create patient with valid data and correct schema", async () => {
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(validPatientData)
         .expect(201);
@@ -143,17 +143,17 @@ describe('POST /api/v2/patients - Contract Tests', () => {
       expect(response.body.name).toBe(validPatientData.name);
       expect(response.body.cpf).toBe(validPatientData.cpf);
       expect(response.body.email).toBe(validPatientData.email);
-      expect(response.body.status).toBe('active');
+      expect(response.body.status).toBe("active");
       expect(response.body.lgpdConsent.consentId).toBeDefined();
     });
 
-    it('should handle minimal required data', async () => {
+    it("should handle minimal required data", async () => {
       const minimalData = {
         ...validPatientData,
         emergencyContact: {
-          name: 'Emergency Contact',
-          relationship: 'Friend',
-          phone: '(11) 77777-7777',
+          name: "Emergency Contact",
+          relationship: "Friend",
+          phone: "(11) 77777-7777",
         },
         address: {
           ...validPatientData.address,
@@ -162,12 +162,12 @@ describe('POST /api/v2/patients - Contract Tests', () => {
         lgpdConsent: {
           dataProcessing: true,
           consentDate: new Date().toISOString(),
-          ipAddress: '127.0.0.1',
+          ipAddress: "127.0.0.1",
         },
       };
 
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(minimalData)
         .expect(201);
@@ -177,81 +177,81 @@ describe('POST /api/v2/patients - Contract Tests', () => {
     });
   });
 
-  describe('Brazilian Data Validation', () => {
-    it('should validate CPF format', async () => {
+  describe("Brazilian Data Validation", () => {
+    it("should validate CPF format", async () => {
       const invalidCpfData = {
         ...validPatientData,
-        cpf: '123456789-01', // Missing dots
+        cpf: "123456789-01", // Missing dots
       };
 
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(invalidCpfData)
         .expect(400);
     });
 
-    it('should validate CPF checksum', async () => {
+    it("should validate CPF checksum", async () => {
       const invalidChecksumData = {
         ...validPatientData,
-        cpf: '123.456.789-00', // Invalid checksum
+        cpf: "123.456.789-00", // Invalid checksum
       };
 
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(invalidChecksumData)
         .expect(400);
     });
 
-    it('should validate Brazilian phone format', async () => {
+    it("should validate Brazilian phone format", async () => {
       const invalidPhoneData = {
         ...validPatientData,
-        phone: '11999999999', // Missing formatting
+        phone: "11999999999", // Missing formatting
       };
 
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(invalidPhoneData)
         .expect(400);
     });
 
-    it('should validate Brazilian CEP format', async () => {
+    it("should validate Brazilian CEP format", async () => {
       const invalidCepData = {
         ...validPatientData,
         address: {
           ...validPatientData.address,
-          zipCode: '01234567', // Missing dash
+          zipCode: "01234567", // Missing dash
         },
       };
 
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(invalidCepData)
         .expect(400);
     });
 
-    it('should validate Brazilian state code', async () => {
+    it("should validate Brazilian state code", async () => {
       const invalidStateData = {
         ...validPatientData,
         address: {
           ...validPatientData.address,
-          state: 'SAO', // Invalid state code
+          state: "SAO", // Invalid state code
         },
       };
 
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(invalidStateData)
         .expect(400);
     });
   });
 
-  describe('LGPD Consent Requirements', () => {
-    it('should require LGPD data processing consent', async () => {
+  describe("LGPD Consent Requirements", () => {
+    it("should require LGPD data processing consent", async () => {
       const noConsentData = {
         ...validPatientData,
         lgpdConsent: {
@@ -261,13 +261,13 @@ describe('POST /api/v2/patients - Contract Tests', () => {
       };
 
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(noConsentData)
         .expect(400);
     });
 
-    it('should require consent date and IP address', async () => {
+    it("should require consent date and IP address", async () => {
       const incompleteConsentData = {
         ...validPatientData,
         lgpdConsent: {
@@ -276,15 +276,15 @@ describe('POST /api/v2/patients - Contract Tests', () => {
       };
 
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(incompleteConsentData)
         .expect(400);
     });
 
-    it('should generate consent ID in response', async () => {
+    it("should generate consent ID in response", async () => {
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(validPatientData)
         .expect(201);
@@ -295,11 +295,11 @@ describe('POST /api/v2/patients - Contract Tests', () => {
     });
   });
 
-  describe('Duplicate Prevention', () => {
-    it('should prevent duplicate CPF registration', async () => {
+  describe("Duplicate Prevention", () => {
+    it("should prevent duplicate CPF registration", async () => {
       // First creation should succeed
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(validPatientData)
         .expect(201);
@@ -307,27 +307,27 @@ describe('POST /api/v2/patients - Contract Tests', () => {
       // Second creation with same CPF should fail
       const duplicateData = {
         ...validPatientData,
-        email: 'different.email@example.com',
+        email: "different.email@example.com",
       };
 
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(duplicateData)
         .expect(409);
 
-      expect(response.body.error).toContain('CPF');
+      expect(response.body.error).toContain("CPF");
     });
 
-    it('should prevent duplicate email registration', async () => {
+    it("should prevent duplicate email registration", async () => {
       const uniqueData = {
         ...validPatientData,
-        cpf: '987.654.321-09',
+        cpf: "987.654.321-09",
       };
 
       // First creation should succeed
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(uniqueData)
         .expect(201);
@@ -335,30 +335,30 @@ describe('POST /api/v2/patients - Contract Tests', () => {
       // Second creation with same email should fail
       const duplicateEmailData = {
         ...validPatientData,
-        cpf: '111.222.333-44',
+        cpf: "111.222.333-44",
       };
 
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(duplicateEmailData)
         .expect(409);
 
-      expect(response.body.error).toContain('email');
+      expect(response.body.error).toContain("email");
     });
   });
 
-  describe('Performance Requirements', () => {
-    it('should create patient within 500ms', async () => {
+  describe("Performance Requirements", () => {
+    it("should create patient within 500ms", async () => {
       const startTime = Date.now();
 
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send({
           ...validPatientData,
-          cpf: '555.666.777-88',
-          email: 'performance.test@example.com',
+          cpf: "555.666.777-88",
+          email: "performance.test@example.com",
         })
         .expect(201);
 
@@ -370,22 +370,22 @@ describe('POST /api/v2/patients - Contract Tests', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should return 401 for missing authentication', async () => {
+  describe("Error Handling", () => {
+    it("should return 401 for missing authentication", async () => {
       await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .send(validPatientData)
         .expect(401);
     });
 
-    it('should return 400 for missing required fields', async () => {
+    it("should return 400 for missing required fields", async () => {
       const incompleteData = {
-        name: 'Test Patient',
+        name: "Test Patient",
         // Missing required fields
       };
 
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(incompleteData)
         .expect(400);
@@ -394,18 +394,18 @@ describe('POST /api/v2/patients - Contract Tests', () => {
       expect(response.body.details).toBeDefined();
     });
 
-    it('should return detailed validation errors', async () => {
+    it("should return detailed validation errors", async () => {
       const invalidData = {
-        name: '', // Invalid: empty name
-        cpf: 'invalid-cpf',
-        phone: 'invalid-phone',
-        email: 'not-an-email',
-        dateOfBirth: 'invalid-date',
-        gender: 'invalid-gender',
+        name: "", // Invalid: empty name
+        cpf: "invalid-cpf",
+        phone: "invalid-phone",
+        email: "not-an-email",
+        dateOfBirth: "invalid-date",
+        gender: "invalid-gender",
       };
 
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send(invalidData)
         .expect(400);
@@ -415,20 +415,20 @@ describe('POST /api/v2/patients - Contract Tests', () => {
     });
   });
 
-  describe('Audit Trail', () => {
-    it('should create audit log entry for patient creation', async () => {
+  describe("Audit Trail", () => {
+    it("should create audit log entry for patient creation", async () => {
       const response = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send({
           ...validPatientData,
-          cpf: '999.888.777-66',
-          email: 'audit.test@example.com',
+          cpf: "999.888.777-66",
+          email: "audit.test@example.com",
         })
         .expect(201);
 
-      expect(response.headers['x-audit-id']).toBeDefined();
-      expect(response.headers['x-lgpd-processed']).toBeDefined();
+      expect(response.headers["x-audit-id"]).toBeDefined();
+      expect(response.headers["x-lgpd-processed"]).toBeDefined();
     });
   });
 });

@@ -393,7 +393,7 @@ describe("T010: Chat Session Expiration Logic", () => {
 
       // All sessions should be created successfully
       expect(sessions).toHaveLength(5);
-      sessions.forEach(({ sessionId,_session }) => {
+      sessions.forEach(({ sessionId, _session }) => {
         expect(sessionId).toBeDefined();
         expect(session.userId).toBe("user-123");
       });

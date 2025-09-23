@@ -1,4 +1,3 @@
-
 # 🚀 VIBECODER AGENT
 
 ## 🧠 CORE PHILOSOPHY

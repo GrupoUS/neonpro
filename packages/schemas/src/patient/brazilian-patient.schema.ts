@@ -23,7 +23,8 @@ export const CPFSchema = z
   .string()
   .transform((val) => val.replace(/[^\d]/g, ""))
   .refine((val) => val.length === 11, "CPF deve ter 11 dígitos")
-  .refine((val) => !/^(\d)\1{10}$/.test(val),
+  .refine(
+    (val) => !/^(\d)\1{10}$/.test(val),
     "CPF inválido - todos os dígitos iguais",
   )
   .refine((val) => validateCPF(val), "CPF inválido")
@@ -39,7 +40,8 @@ export const CNPJSchema = z
   .string()
   .transform((val) => val.replace(/[^\d]/g, ""))
   .refine((val) => val.length === 14, "CNPJ deve ter 14 dígitos")
-  .refine((val) => !/^(\d)\1{13}$/.test(val),
+  .refine(
+    (val) => !/^(\d)\1{13}$/.test(val),
     "CNPJ inválido - todos os dígitos iguais",
   )
   .refine((val) => validateCNPJ(val), "CNPJ inválido")
@@ -54,7 +56,8 @@ export const CNPJSchema = z
 export const BrazilianPhoneSchema = z
   .string()
   .transform((val) => val.replace(/[^\d]/g, ""))
-  .refine((val) => [10, 11].includes(val.length),
+  .refine(
+    (val) => [10, 11].includes(val.length),
     "Telefone deve ter 10 ou 11 dígitos",
   )
   .refine((val) => validatePhone(val), "Telefone inválido")

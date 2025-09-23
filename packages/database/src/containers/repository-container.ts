@@ -10,7 +10,7 @@ import {
   AppointmentRepository as IAppointmentRepository,
   ConsentDomainService,
   AuditDomainService,
-  MedicalLicenseDomainService
+  MedicalLicenseDomainService,
 } from "@neonpro/domain";
 
 /**
@@ -50,7 +50,9 @@ export class RepositoryContainer {
    */
   static getInstance(): RepositoryContainer {
     if (!RepositoryContainer.instance) {
-      throw new Error("RepositoryContainer not initialized. Call initialize() first.");
+      throw new Error(
+        "RepositoryContainer not initialized. Call initialize() first.",
+      );
     }
     return RepositoryContainer.instance;
   }
@@ -91,7 +93,8 @@ export class RepositoryContainer {
   getAuditService(): AuditDomainService {
     if (!this.auditService) {
       const auditInfrastructureService = new AuditService(this.supabase);
-      this.auditService = auditInfrastructureService as unknown as AuditDomainService;
+      this.auditService =
+        auditInfrastructureService as unknown as AuditDomainService;
     }
     return this.auditService;
   }
@@ -102,7 +105,8 @@ export class RepositoryContainer {
   getConsentService(): ConsentDomainService {
     if (!this.consentService) {
       const consentInfrastructureService = new ConsentService();
-      this.consentService = consentInfrastructureService as unknown as ConsentDomainService;
+      this.consentService =
+        consentInfrastructureService as unknown as ConsentDomainService;
     }
     return this.consentService;
   }
@@ -113,7 +117,9 @@ export class RepositoryContainer {
   getMedicalLicenseService(): MedicalLicenseDomainService {
     if (!this.medicalLicenseService) {
       // This would need to be implemented in the database layer
-      throw new Error("MedicalLicenseService not implemented in database layer");
+      throw new Error(
+        "MedicalLicenseService not implemented in database layer",
+      );
     }
     return this.medicalLicenseService;
   }
@@ -137,7 +143,7 @@ export class RepositoryContainer {
     return {
       patient: this.getPatientRepository(),
       consent: this.getConsentRepository(),
-      appointment: this.getAppointmentRepository()
+      appointment: this.getAppointmentRepository(),
     };
   }
 
@@ -148,7 +154,7 @@ export class RepositoryContainer {
     return {
       audit: this.getAuditService(),
       consent: this.getConsentService(),
-      medicalLicense: this.getMedicalLicenseService()
+      medicalLicense: this.getMedicalLicenseService(),
     };
   }
 
@@ -158,7 +164,7 @@ export class RepositoryContainer {
   getDependencies() {
     return {
       repositories: this.getRepositories(),
-      services: this.getServices()
+      services: this.getServices(),
     };
   }
 }

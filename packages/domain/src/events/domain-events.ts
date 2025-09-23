@@ -15,8 +15,8 @@ export interface DomainEvent {
  * Patient domain events
  */
 export interface PatientCreatedEvent extends DomainEvent {
-  eventType: 'PatientCreated;'
-  aggregateType: 'Patient;
+  eventType: "PatientCreated";
+  aggregateType: "Patient";
   data: {
     patientId: string;
     clinicId: string;
@@ -27,9 +27,9 @@ export interface PatientCreatedEvent extends DomainEvent {
   };
 }
 
-export interface PatientUpdatedEvent extends DomainEvent {'
-  eventType: 'PatientUpdated'
-  aggregateType: 'Patient;
+export interface PatientUpdatedEvent extends DomainEvent {
+  eventType: "PatientUpdated";
+  aggregateType: "Patient";
   data: {
     patientId: string;
     updatedFields: string[];
@@ -37,9 +37,9 @@ export interface PatientUpdatedEvent extends DomainEvent {'
   };
 }
 
-export interface PatientDeletedEvent extends DomainEvent {'
-  eventType: 'PatientDeleted'
-  aggregateType: 'Patient;
+export interface PatientDeletedEvent extends DomainEvent {
+  eventType: "PatientDeleted";
+  aggregateType: "Patient";
   data: {
     patientId: string;
     deletedBy: string;
@@ -47,22 +47,22 @@ export interface PatientDeletedEvent extends DomainEvent {'
   };
 }
 
-export interface PatientAnonymizedEvent extends DomainEvent {'
-  eventType: 'PatientAnonymized'
-  aggregateType: 'Patient;
+export interface PatientAnonymizedEvent extends DomainEvent {
+  eventType: "PatientAnonymized";
+  aggregateType: "Patient";
   data: {
     patientId: string;
-    anonymizedBy: string;'
-    reason: 'gdpr_request' | 'data_retention' | 'other
+    anonymizedBy: string;
+    reason: "gdpr_request" | "data_retention" | "other";
   };
 }
 
 /**
  * Appointment domain events
  */
-export interface AppointmentCreatedEvent extends DomainEvent {'
-  eventType: 'AppointmentCreated'
-  aggregateType: 'Appointment;
+export interface AppointmentCreatedEvent extends DomainEvent {
+  eventType: "AppointmentCreated";
+  aggregateType: "Appointment";
   data: {
     appointmentId: string;
     patientId: string;
@@ -75,9 +75,9 @@ export interface AppointmentCreatedEvent extends DomainEvent {'
   };
 }
 
-export interface AppointmentUpdatedEvent extends DomainEvent {'
-  eventType: 'AppointmentUpdated'
-  aggregateType: 'Appointment;
+export interface AppointmentUpdatedEvent extends DomainEvent {
+  eventType: "AppointmentUpdated";
+  aggregateType: "Appointment";
   data: {
     appointmentId: string;
     updatedFields: string[];
@@ -85,9 +85,9 @@ export interface AppointmentUpdatedEvent extends DomainEvent {'
   };
 }
 
-export interface AppointmentCancelledEvent extends DomainEvent {'
-  eventType: 'AppointmentCancelled'
-  aggregateType: 'Appointment;
+export interface AppointmentCancelledEvent extends DomainEvent {
+  eventType: "AppointmentCancelled";
+  aggregateType: "Appointment";
   data: {
     appointmentId: string;
     patientId: string;
@@ -98,9 +98,9 @@ export interface AppointmentCancelledEvent extends DomainEvent {'
   };
 }
 
-export interface AppointmentRescheduledEvent extends DomainEvent {'
-  eventType: 'AppointmentRescheduled'
-  aggregateType: 'Appointment;
+export interface AppointmentRescheduledEvent extends DomainEvent {
+  eventType: "AppointmentRescheduled";
+  aggregateType: "Appointment";
   data: {
     appointmentId: string;
     patientId: string;
@@ -113,9 +113,9 @@ export interface AppointmentRescheduledEvent extends DomainEvent {'
   };
 }
 
-export interface AppointmentCompletedEvent extends DomainEvent {'
-  eventType: 'AppointmentCompleted'
-  aggregateType: 'Appointment;
+export interface AppointmentCompletedEvent extends DomainEvent {
+  eventType: "AppointmentCompleted";
+  aggregateType: "Appointment";
   data: {
     appointmentId: string;
     patientId: string;
@@ -128,9 +128,9 @@ export interface AppointmentCompletedEvent extends DomainEvent {'
   };
 }
 
-export interface AppointmentNoShowEvent extends DomainEvent {'
-  eventType: 'AppointmentNoShow'
-  aggregateType: 'Appointment;
+export interface AppointmentNoShowEvent extends DomainEvent {
+  eventType: "AppointmentNoShow";
+  aggregateType: "Appointment";
   data: {
     appointmentId: string;
     patientId: string;
@@ -143,9 +143,9 @@ export interface AppointmentNoShowEvent extends DomainEvent {'
 /**
  * Consent domain events
  */
-export interface ConsentCreatedEvent extends DomainEvent {'
-  eventType: 'ConsentCreated'
-  aggregateType: 'Consent;
+export interface ConsentCreatedEvent extends DomainEvent {
+  eventType: "ConsentCreated";
+  aggregateType: "Consent";
   data: {
     consentId: string;
     patientId: string;
@@ -158,9 +158,9 @@ export interface ConsentCreatedEvent extends DomainEvent {'
   };
 }
 
-export interface ConsentGrantedEvent extends DomainEvent {'
-  eventType: 'ConsentGranted'
-  aggregateType: 'Consent;
+export interface ConsentGrantedEvent extends DomainEvent {
+  eventType: "ConsentGranted";
+  aggregateType: "Consent";
   data: {
     consentId: string;
     patientId: string;
@@ -169,9 +169,9 @@ export interface ConsentGrantedEvent extends DomainEvent {'
   };
 }
 
-export interface ConsentRevokedEvent extends DomainEvent {'
-  eventType: 'ConsentRevoked'
-  aggregateType: 'Consent;
+export interface ConsentRevokedEvent extends DomainEvent {
+  eventType: "ConsentRevoked";
+  aggregateType: "Consent";
   data: {
     consentId: string;
     patientId: string;
@@ -181,9 +181,9 @@ export interface ConsentRevokedEvent extends DomainEvent {'
   };
 }
 
-export interface ConsentExpiredEvent extends DomainEvent {'
-  eventType: 'ConsentExpired'
-  aggregateType: 'Consent;
+export interface ConsentExpiredEvent extends DomainEvent {
+  eventType: "ConsentExpired";
+  aggregateType: "Consent";
   data: {
     consentId: string;
     patientId: string;
@@ -192,9 +192,9 @@ export interface ConsentExpiredEvent extends DomainEvent {'
   };
 }
 
-export interface ConsentRenewedEvent extends DomainEvent {'
-  eventType: 'ConsentRenewed'
-  aggregateType: 'Consent;
+export interface ConsentRenewedEvent extends DomainEvent {
+  eventType: "ConsentRenewed";
+  aggregateType: "Consent";
   data: {
     consentId: string;
     patientId: string;
@@ -205,26 +205,26 @@ export interface ConsentRenewedEvent extends DomainEvent {'
   };
 }
 
-export interface ComplianceCheckedEvent extends DomainEvent {'
-  eventType: 'ComplianceChecked'
-  aggregateType: 'Patient;
+export interface ComplianceCheckedEvent extends DomainEvent {
+  eventType: "ComplianceChecked";
+  aggregateType: "Patient";
   data: {
-    patientId: string;'
-    status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT'
-    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL;
+    patientId: string;
+    status: "COMPLIANT" | "NON_COMPLIANT" | "PARTIALLY_COMPLIANT";
+    riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     violationCount: number;
     checkedBy: string;
     checkedAt: string;
   };
 }
 
-export interface ComplianceViolationEvent extends DomainEvent {'
-  eventType: 'ComplianceViolation'
-  aggregateType: 'Patient;
+export interface ComplianceViolationEvent extends DomainEvent {
+  eventType: "ComplianceViolation";
+  aggregateType: "Patient";
   data: {
     patientId: string;
-    violationType: string;'
-    severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL;
+    violationType: string;
+    severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
     description: string;
     detectedAt: string;
     detectedBy: string;
@@ -254,9 +254,12 @@ export interface DomainEventBus {
   publishBatch(events: DomainEvent[]): Promise<void>;
   subscribe<T extends DomainEvent>(
     eventType: string,
-    handler: DomainEventHandler<T>
+    handler: DomainEventHandler<T>,
   ): Promise<void>;
-  unsubscribe(eventType: string, handler: DomainEventHandler<DomainEvent>): Promise<void>;
+  unsubscribe(
+    eventType: string,
+    handler: DomainEventHandler<DomainEvent>,
+  ): Promise<void>;
 }
 
 /**
@@ -289,7 +292,7 @@ export class EventFactory {
     aggregateId: string,
     aggregateType: string,
     data: T extends { data: infer D } ? D : never,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): T {
     return {
       id: this.createEventId(),
@@ -300,8 +303,8 @@ export class EventFactory {
       version: 1,
       metadata: {
         ...metadata,
-        data
-      }
+        data,
+      },
     } as unknown as T;
   }
-}`'
+}

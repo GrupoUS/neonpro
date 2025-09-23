@@ -5,11 +5,13 @@
 The test suite is organized into the following categories:
 
 ### Unit Tests (`tests/test_*.py`)
+
 - `test_database_service.py` - Database operations and caching
 - `test_websocket_manager.py` - WebSocket connection management
 - `test_agent_service.py` - AI query processing and intent detection
 
 ### Integration Tests (`tests/test_integration.py`)
+
 - Full workflow testing (query → processing → response)
 - WebSocket real-time communication
 - Database caching integration
@@ -22,6 +24,7 @@ The test suite is organized into the following categories:
 ## Running Tests
 
 ### Quick Test Run
+
 ```bash
 # Run all tests
 python -m pytest
@@ -31,6 +34,7 @@ python -m pytest --cov=services
 ```
 
 ### Using Test Runner Script
+
 ```bash
 # Run complete test suite
 ./run_tests.sh
@@ -41,6 +45,7 @@ python -m pytest --cov=services
 ```
 
 ### Test Categories
+
 ```bash
 # Unit tests only
 python -m pytest tests/ -m "unit"
@@ -61,6 +66,7 @@ python -m pytest tests/ -m "slow"
 ## Test Coverage
 
 The test suite aims for:
+
 - **Unit Tests**: 95%+ code coverage
 - **Integration Tests**: 80%+ feature coverage
 - **Edge Cases**: All major error conditions
@@ -69,12 +75,14 @@ The test suite aims for:
 ## Key Test Scenarios
 
 ### 1. Query Processing
+
 - Intent detection for Portuguese queries
 - Entity extraction (names, CPFs, dates)
 - Context-aware responses
 - Memory integration
 
 ### 2. Database Operations
+
 - Patient search with caching
 - Appointment queries
 - Financial data access
@@ -82,6 +90,7 @@ The test suite aims for:
 - Consent validation
 
 ### 3. WebSocket Communication
+
 - Connection management
 - Real-time updates
 - Subscription handling
@@ -89,6 +98,7 @@ The test suite aims for:
 - Rate limiting
 
 ### 4. Error Handling
+
 - Database connection failures
 - API rate limiting
 - Invalid query formats
@@ -96,6 +106,7 @@ The test suite aims for:
 - WebSocket disconnections
 
 ### 5. Compliance
+
 - LGPD audit trail
 - Data retention policies
 - Consent management
@@ -105,6 +116,7 @@ The test suite aims for:
 ## Mock Data
 
 Tests use realistic mock data:
+
 - Brazilian patient records (with CPFs)
 - Healthcare appointments
 - Financial transactions
@@ -114,6 +126,7 @@ Tests use realistic mock data:
 ## CI/CD Integration
 
 The test suite is designed for CI/CD:
+
 - Fast unit tests for quick feedback
 - Integration tests for full workflow validation
 - Coverage reports for quality metrics
@@ -127,15 +140,16 @@ The test suite is designed for CI/CD:
 4. **Performance Tests**: For load and concurrency
 
 Example:
+
 ```python
 @pytest.mark.asyncio
 async def test_new_feature(self):
     # Arrange
     # Set up test data
-    
+
     # Act
     # Execute feature
-    
+
     # Assert
     # Verify expected behavior
 ```

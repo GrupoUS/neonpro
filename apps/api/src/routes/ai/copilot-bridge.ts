@@ -3,46 +3,46 @@
  * Connects CopilotKit frontend to AG-UI protocol backend with UI/UX optimizations
  */
 
-import { Hono } from 'hono';
-import type { Context, Next } from 'hono';
-import { cors } from 'hono/cors';
-import { streamText } from 'hono/streaming';
-import { logger } from '../../lib/logger';
+import { Hono } from "hono";
+import type { Context, Next } from "hono";
+import { cors } from "hono/cors";
+import { streamText } from "hono/streaming";
+import { logger } from "../../lib/logger";
 
 // Create dedicated router for CopilotKit bridge
 const copilotBridge = new Hono();
 
 // CORS configuration for CopilotKit
 copilotBridge.use(
-  '*',
+  "*",
   cors({
     origin: [
-      'http://localhost:3000',
-      'http://localhost:5173',
-      'https://neonpro.com',
-      'https://www.neonpro.com',
-      'https://neonpro.vercel.app',
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "https://neonpro.com",
+      "https://www.neonpro.com",
+      "https://neonpro.vercel.app",
     ],
-    allowMethods: ['GET', 'POST', 'OPTIONS'],
+    allowMethods: ["GET", "POST", "OPTIONS"],
     allowHeaders: [
-      'Content-Type',
-      'Authorization',
-      'X-Requested-With',
-      'X-Healthcare-Platform',
-      'X-LGPD-Compliance',
-      'X-Request-Source',
+      "Content-Type",
+      "Authorization",
+      "X-Requested-With",
+      "X-Healthcare-Platform",
+      "X-LGPD-Compliance",
+      "X-Request-Source",
     ],
     credentials: true,
   }),
 );
 
 // Security headers middleware
-copilotBridge.use('*', async (c: Context, next: Next) => {
+copilotBridge.use("*", async (c: Context, next: Next) => {
   // Apply healthcare security headers
-  c.header('X-Healthcare-Platform', 'NeonPro');
-  c.header('X-LGPD-Compliance', 'true');
-  c.header('X-Content-Type-Options', 'nosniff');
-  c.header('X-Frame-Options', 'DENY');
+  c.header("X-Healthcare-Platform", "NeonPro");
+  c.header("X-LGPD-Compliance", "true");
+  c.header("X-Content-Type-Options", "nosniff");
+  c.header("X-Frame-Options", "DENY");
 
   await next();
 });
@@ -51,7 +51,7 @@ copilotBridge.use('*', async (c: Context, next: Next) => {
  * CopilotKit Chat Completions Endpoint
  * Handles streaming chat responses from AG-UI backend
  */
-copilotBridge.post('/chat/completions', async c => {
+copilotBridge.post("/chat/completions", async (c) => {
   const requestId = crypto.randomUUID();
   const startTime = Date.now();
 
@@ -62,58 +62,71 @@ copilotBridge.post('/chat/completions', async c => {
 
     // Extract the latest user message
     const latestMessage = messages[messages.length - 1];
-    if (!latestMessage || latestMessage.role !== 'user') {
-      return c.json({
-        error: {
-          type: 'invalid_request',
-          message: 'No user message found in request',
+    if (!latestMessage || latestMessage.role !== "user") {
+      return c.json(
+        {
+          error: {
+            type: "invalid_request",
+            message: "No user message found in request",
+          },
         },
-      }, 400);
+        400,
+      );
     }
 
     const userQuery = latestMessage.content;
 
     // Extract user context from headers or default
     const userContext = {
-      _userId: c.req.header('X-User-ID') || 'anonymous',
-      domain: c.req.header('X-User-Domain') || 'default',
-      _role: c.req.header('X-User-Role') || 'receptionist',
-      sessionId: c.req.header('X-Session-ID') || requestId,
+      _userId: c.req.header("X-User-ID") || "anonymous",
+      domain: c.req.header("X-User-Domain") || "default",
+      _role: c.req.header("X-User-Role") || "receptionist",
+      sessionId: c.req.header("X-Session-ID") || requestId,
     };
 
-    logger.info('CopilotKit request received', {
+    logger.info("CopilotKit request received", {
       requestId,
-      userQuery: userQuery.substring(0, 100) + '...',
+      userQuery: userQuery.substring(0, 100) + "...",
       userContext,
       messageCount: messages.length,
     });
 
     // Call AG-UI backend agent
-    const agentResponse = await callAGUIAgent(userQuery, userContext, requestId);
+    const agentResponse = await callAGUIAgent(
+      userQuery,
+      userContext,
+      requestId,
+    );
 
     if (stream) {
       // Return streaming response for real-time UI updates
-      return streamText(c, async stream => {
+      return streamText(c, async (stream) => {
         // Send initial response
-        const response = formatCopilotResponse(agentResponse, requestId, startTime);
+        const response = formatCopilotResponse(
+          agentResponse,
+          requestId,
+          startTime,
+        );
         await stream.write(`data: ${JSON.stringify(response)}\n\n`);
 
         // If agent response has actions, send them as follow-up
         if (agentResponse.actions && agentResponse.actions.length > 0) {
           const actionsResponse = {
             id: `${requestId}-actions`,
-            object: 'chat.completion.chunk',
+            object: "chat.completion.chunk",
             created: Math.floor(Date.now() / 1000),
-            model: model || 'neonpro-healthcare-agent',
-            choices: [{
-              index: 0,
-              delta: {
-                _role: 'assistant',
-                content: `\n\n**Ações disponíveis:**`,
-                actions: agentResponse.actions,
+            model: model || "neonpro-healthcare-agent",
+            choices: [
+              {
+                index: 0,
+                delta: {
+                  _role: "assistant",
+                  content: `\n\n**Ações disponíveis:**`,
+                  actions: agentResponse.actions,
+                },
+                finish_reason: null,
               },
-              finish_reason: null,
-            }],
+            ],
           };
           await stream.write(`data: ${JSON.stringify(actionsResponse)}\n\n`);
         }
@@ -121,63 +134,76 @@ copilotBridge.post('/chat/completions', async c => {
         // Send final completion
         const finalResponse = {
           id: requestId,
-          object: 'chat.completion.chunk',
+          object: "chat.completion.chunk",
           created: Math.floor(Date.now() / 1000),
-          model: model || 'neonpro-healthcare-agent',
-          choices: [{
-            index: 0,
-            delta: {},
-            finish_reason: 'stop',
-          }],
+          model: model || "neonpro-healthcare-agent",
+          choices: [
+            {
+              index: 0,
+              delta: {},
+              finish_reason: "stop",
+            },
+          ],
         };
         await stream.write(`data: ${JSON.stringify(finalResponse)}\n\n`);
-        await stream.write('data: [DONE]\n\n');
+        await stream.write("data: [DONE]\n\n");
       });
     } else {
       // Return non-streaming response
-      const response = formatCopilotResponse(agentResponse, requestId, startTime);
+      const response = formatCopilotResponse(
+        agentResponse,
+        requestId,
+        startTime,
+      );
       return c.json(response);
     }
   } catch (error) {
-    logger.error('CopilotKit bridge error', {
+    logger.error("CopilotKit bridge error", {
       requestId,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
       stack: error instanceof Error ? error.stack : undefined,
     });
 
-    return c.json({
-      error: {
-        type: 'internal_error',
-        message:
-          'Ocorreu um erro ao processar sua solicitação. Tente novamente em alguns momentos.',
-        code: 'HEALTHCARE_AGENT_ERROR',
+    return c.json(
+      {
+        error: {
+          type: "internal_error",
+          message:
+            "Ocorreu um erro ao processar sua solicitação. Tente novamente em alguns momentos.",
+          code: "HEALTHCARE_AGENT_ERROR",
+        },
       },
-    }, 500);
+      500,
+    );
   }
 });
 
 /**
  * Call AG-UI Agent Backend
  */
-async function callAGUIAgent(_query: string, userContext: any, requestId: string) {
-  const agentUrl = process.env.AGUI_AGENT_URL || 'http://127.0.0.1:8000';
+async function callAGUIAgent(
+  _query: string,
+  userContext: any,
+  requestId: string,
+) {
+  const agentUrl = process.env.AGUI_AGENT_URL || "http://127.0.0.1:8000";
 
   try {
     const response = await fetch(`${agentUrl}/agui/http`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'X-Request-ID': requestId,
-        'X-Healthcare-Platform': 'NeonPro',
+        "Content-Type": "application/json",
+        "X-Request-ID": requestId,
+        "X-Healthcare-Platform": "NeonPro",
       },
       body: JSON.stringify({
         id: requestId,
-        type: 'message',
+        type: "message",
         data: {
           message: {
             id: requestId,
             content: query,
-            type: 'text',
+            type: "text",
             user_context: userContext,
             timestamp: new Date().toISOString(),
           },
@@ -197,21 +223,22 @@ async function callAGUIAgent(_query: string, userContext: any, requestId: string
     const agentData = await response.json();
     return agentData;
   } catch (error) {
-    logger.error('AG-UI Agent call failed', {
+    logger.error("AG-UI Agent call failed", {
       requestId,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: error instanceof Error ? error.message : "Unknown error",
       agentUrl,
     });
 
     // Return fallback response
     return {
       id: requestId,
-      content: 'Desculpe, estou temporariamente indisponível. Tente novamente em alguns momentos.',
-      type: 'error',
+      content:
+        "Desculpe, estou temporariamente indisponível. Tente novamente em alguns momentos.",
+      type: "error",
       metadata: {
         error: true,
         fallback: true,
-        agent_error: error instanceof Error ? error.message : 'Unknown error',
+        agent_error: error instanceof Error ? error.message : "Unknown error",
       },
     };
   }
@@ -220,35 +247,38 @@ async function callAGUIAgent(_query: string, userContext: any, requestId: string
 /**
  * Format AG-UI response for CopilotKit compatibility
  */
-function formatCopilotResponse(agentResponse: any, requestId: string, startTime: number) {
+function formatCopilotResponse(
+  agentResponse: any,
+  requestId: string,
+  startTime: number,
+) {
   const processingTime = Date.now() - startTime;
 
   // Format content based on response type
-  let content = agentResponse.content || 'Resposta processada com sucesso.';
+  let content = agentResponse.content || "Resposta processada com sucesso.";
 
   // Add structured data formatting for healthcare responses
   if (agentResponse.data) {
     const data = agentResponse.data;
 
-    if (data.type === 'appointments_list') {
+    if (data.type === "appointments_list") {
       content += `\n\n📅 **${data.title}**\n${data.summary}`;
 
       if (data.data && data.data.length > 0) {
-        content += '\n\n**Próximos agendamentos:**';
+        content += "\n\n**Próximos agendamentos:**";
         data.data.slice(0, 5).forEach((apt: any) => {
-          content +=
-            `\n• ${apt.displayDate} às ${apt.displayTime} - ${apt.clientName} (${apt.statusBadge.label})`;
+          content += `\n• ${apt.displayDate} às ${apt.displayTime} - ${apt.clientName} (${apt.statusBadge.label})`;
         });
 
         if (data.data.length > 5) {
           content += `\n... e mais ${data.data.length - 5} agendamentos.`;
         }
       }
-    } else if (data.type === 'clients_list') {
+    } else if (data.type === "clients_list") {
       content += `\n\n👥 **${data.title}**\n${data.summary}`;
 
       if (data.data && data.data.length > 0) {
-        content += '\n\n**Clientes encontrados:**';
+        content += "\n\n**Clientes encontrados:**";
         data.data.slice(0, 5).forEach((client: any) => {
           content += `\n• ${client.name} - ${client.phone} (membro desde ${client.memberSince})`;
         });
@@ -257,7 +287,7 @@ function formatCopilotResponse(agentResponse: any, requestId: string, startTime:
           content += `\n... e mais ${data.data.length - 5} clientes.`;
         }
       }
-    } else if (data.type === 'financial_summary') {
+    } else if (data.type === "financial_summary") {
       const financialData = data.data;
       content += `\n\n💰 **${data.title}**`;
       content += `\n📈 Receita Total: **${financialData.totalRevenue.formatted}**`;
@@ -273,21 +303,23 @@ function formatCopilotResponse(agentResponse: any, requestId: string, startTime:
 
   return {
     id: requestId,
-    object: 'chat.completion',
+    object: "chat.completion",
     created: Math.floor(Date.now() / 1000),
-    model: 'neonpro-healthcare-agent',
-    choices: [{
-      index: 0,
-      message: {
-        _role: 'assistant',
-        content: content,
-        // Include structured data for rich UI rendering
-        healthcare_data: agentResponse.data,
-        actions: agentResponse.actions,
-        accessibility: agentResponse.accessibility,
+    model: "neonpro-healthcare-agent",
+    choices: [
+      {
+        index: 0,
+        message: {
+          _role: "assistant",
+          content: content,
+          // Include structured data for rich UI rendering
+          healthcare_data: agentResponse.data,
+          actions: agentResponse.actions,
+          accessibility: agentResponse.accessibility,
+        },
+        finish_reason: "stop",
       },
-      finish_reason: 'stop',
-    }],
+    ],
     usage: {
       prompt_tokens: 0, // Estimated
       completion_tokens: content.length / 4, // Rough estimate
@@ -308,11 +340,11 @@ function formatCopilotResponse(agentResponse: any, requestId: string, startTime:
 /**
  * Health check endpoint for CopilotKit bridge
  */
-copilotBridge.get('/health', c => {
+copilotBridge.get("/health", (c) => {
   return c.json({
-    status: 'healthy',
-    _service: 'copilot-bridge',
-    version: '1.0.0',
+    status: "healthy",
+    _service: "copilot-bridge",
+    version: "1.0.0",
     healthcare_compliance: {
       lgpd: true,
       anvisa: true,
@@ -331,31 +363,33 @@ copilotBridge.get('/health', c => {
 /**
  * Models endpoint for CopilotKit compatibility
  */
-copilotBridge.get('/models', c => {
+copilotBridge.get("/models", (c) => {
   return c.json({
-    object: 'list',
+    object: "list",
     data: [
       {
-        id: 'neonpro-healthcare-agent',
-        object: 'model',
+        id: "neonpro-healthcare-agent",
+        object: "model",
         created: Math.floor(Date.now() / 1000),
-        owned_by: 'neonpro',
-        permission: [{
-          id: 'modelperm-healthcare',
-          object: 'model_permission',
-          created: Math.floor(Date.now() / 1000),
-          allow_create_engine: false,
-          allow_sampling: true,
-          allow_logprobs: false,
-          allow_search_indices: false,
-          allow_view: true,
-          allow_fine_tuning: false,
-          organization: '*',
-          group: null,
-          is_blocking: false,
-        }],
+        owned_by: "neonpro",
+        permission: [
+          {
+            id: "modelperm-healthcare",
+            object: "model_permission",
+            created: Math.floor(Date.now() / 1000),
+            allow_create_engine: false,
+            allow_sampling: true,
+            allow_logprobs: false,
+            allow_search_indices: false,
+            allow_view: true,
+            allow_fine_tuning: false,
+            organization: "*",
+            group: null,
+            is_blocking: false,
+          },
+        ],
         description:
-          'NeonPro Healthcare Data Agent with LGPD compliance and Portuguese language support',
+          "NeonPro Healthcare Data Agent with LGPD compliance and Portuguese language support",
         capabilities: {
           healthcare_data: true,
           brazilian_portuguese: true,

@@ -3,8 +3,8 @@
  * Provides query optimization, caching, and performance monitoring for healthcare workloads
  */
 
-import { SupabaseClient } from '@supabase/supabase-js';
-import { ErrorMapper } from '@neonpro/shared/errors';
+import { SupabaseClient } from "@supabase/supabase-js";
+import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface QueryPerformanceMetrics {
   _query: string;
@@ -13,7 +13,7 @@ export interface QueryPerformanceMetrics {
   success: boolean;
   error?: string;
   table: string;
-  operation: 'select' | 'insert' | 'update' | 'delete';
+  operation: "select" | "insert" | "update" | "delete";
 }
 
 export interface CacheEntry<T> {
@@ -42,7 +42,7 @@ export class DatabasePerformanceService {
 
   constructor(
     private supabase: SupabaseClient,
-    config: Partial<PerformanceConfig> = {}
+    config: Partial<PerformanceConfig> = {},
   ) {
     this.config = {
       enableQueryCaching: true,
@@ -59,19 +59,26 @@ export class DatabasePerformanceService {
    */
   async optimizedQuery<T>(
     table: string,
-    operation: 'select' | 'insert' | 'update' | 'delete',
+    operation: "select" | "insert" | "update" | "delete",
     queryBuilder: (client: SupabaseClient) => Promise<any>,
     options: {
       cacheKey?: string;
       columns?: string;
       forceRefresh?: boolean;
-    } = {}
+    } = {},
   ): Promise<T> {
     const startTime = performance.now();
-    const cacheKey = options.cacheKey ? `${table}:${operation}:${options.cacheKey}` : null;
+    const cacheKey = options.cacheKey
+      ? `${table}:${operation}:${options.cacheKey}`
+      : null;
 
     // Check cache first for SELECT operations
-    if (operation === 'select' && cacheKey && this.config.enableQueryCaching && !options.forceRefresh) {
+    if (
+      operation === "select" &&
+      cacheKey &&
+      this.config.enableQueryCaching &&
+      !options.forceRefresh
+    ) {
       const cached = this.getFromCache<T>(cacheKey);
       if (cached) {
         this.logPerformance({
@@ -89,9 +96,13 @@ export class DatabasePerformanceService {
     try {
       // Execute query with specific column selection for better performance
       let result;
-      if (options.columns && operation === 'select') {
+      if (options.columns && operation === "select") {
         // Modify query to use specific columns
-        result = await this.executeQueryWithColumns(table, queryBuilder, options.columns);
+        result = await this.executeQueryWithColumns(
+          table,
+          queryBuilder,
+          options.columns,
+        );
       } else {
         result = await queryBuilder(this.supabase);
       }
@@ -99,7 +110,11 @@ export class DatabasePerformanceService {
       const duration = performance.now() - startTime;
 
       // Cache SELECT results
-      if (operation === 'select' && cacheKey && this.config.enableQueryCaching) {
+      if (
+        operation === "select" &&
+        cacheKey &&
+        this.config.enableQueryCaching
+      ) {
         this.setToCache(cacheKey, result.data || result, this.config.cacheTTL);
       }
 
@@ -126,14 +141,14 @@ export class DatabasePerformanceService {
       return result.data || result;
     } catch (error) {
       const duration = performance.now() - startTime;
-      
+
       // Log failed query
       this.logPerformance({
         _query: cacheKey || `${table}:${operation}`,
         duration,
         timestamp: new Date().toISOString(),
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         table,
         operation,
       });
@@ -158,14 +173,14 @@ export class DatabasePerformanceService {
       batchSize?: number;
       conflictTarget?: string;
       onUpdate?: string;
-    } = {}
+    } = {},
   ): Promise<{ success: number; errors: any[] }> {
     const batchSize = options.batchSize || 100;
     const results = { success: 0, errors: [] as any[] };
 
     for (let i = 0; i < data.length; i += batchSize) {
       const batch = data.slice(i, i + batchSize);
-      
+
       try {
         let query;
         if (options.conflictTarget) {
@@ -177,16 +192,16 @@ export class DatabasePerformanceService {
         }
 
         const { error } = await query;
-        
+
         if (error) {
           results.errors.push({ batch: i / batchSize, error: error.message });
         } else {
           results.success += batch.length;
         }
       } catch (error) {
-        results.errors.push({ 
-          batch: i / batchSize, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+        results.errors.push({
+          batch: i / batchSize,
+          error: error instanceof Error ? error.message : "Unknown error",
         });
       }
     }
@@ -199,37 +214,39 @@ export class DatabasePerformanceService {
    */
   async optimizeExpirationCheck(
     table: string,
-    dateColumn: string = 'expires_at',
-    statusColumn: string = 'status',
-    activeStatus: string = 'ACTIVE',
-    expiredStatus: string = 'EXPIRED'
+    dateColumn: string = "expires_at",
+    statusColumn: string = "status",
+    activeStatus: string = "ACTIVE",
+    expiredStatus: string = "EXPIRED",
   ): Promise<{ updatedCount: number; expiredIds: string[] }> {
     const startTime = performance.now();
-    
+
     try {
       const now = new Date().toISOString();
-      
+
       // Single operation: find and update expired records in one query
       const { data, error } = await this.supabase
         .from(table)
         .update({ [statusColumn]: expiredStatus })
         .lte(dateColumn, now)
         .eq(statusColumn, activeStatus)
-        .select('id');
+        .select("id");
 
       const duration = performance.now() - startTime;
 
       if (error) {
-        throw new Error(`Failed to optimize expiration check: ${error.message}`);
+        throw new Error(
+          `Failed to optimize expiration check: ${error.message}`,
+        );
       }
 
       this.logPerformance({
-        query: 'optimize_expiration_check',
+        query: "optimize_expiration_check",
         duration,
         timestamp: new Date().toISOString(),
         success: true,
         table,
-        operation: 'update',
+        operation: "update",
       });
 
       return {
@@ -238,15 +255,15 @@ export class DatabasePerformanceService {
       };
     } catch (error) {
       const duration = performance.now() - startTime;
-      
+
       this.logPerformance({
-        query: 'optimize_expiration_check',
+        query: "optimize_expiration_check",
         duration,
         timestamp: new Date().toISOString(),
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         table,
-        operation: 'update',
+        operation: "update",
       });
 
       throw error;
@@ -256,7 +273,10 @@ export class DatabasePerformanceService {
   /**
    * Get performance metrics for monitoring
    */
-  getPerformanceMetrics(timeRange?: { start: string; end: string }): QueryPerformanceMetrics[] {
+  getPerformanceMetrics(timeRange?: {
+    start: string;
+    end: string;
+  }): QueryPerformanceMetrics[] {
     if (!timeRange) {
       return [...this.metrics];
     }
@@ -264,7 +284,7 @@ export class DatabasePerformanceService {
     const start = new Date(timeRange.start).getTime();
     const end = new Date(timeRange.end).getTime();
 
-    return this.metrics.filter(metric => {
+    return this.metrics.filter((metric) => {
       const metricTime = new Date(metric.timestamp).getTime();
       return metricTime >= start && metricTime <= end;
     });
@@ -275,7 +295,7 @@ export class DatabasePerformanceService {
    */
   getPerformanceStats() {
     const relevantMetrics = this.getPerformanceMetrics();
-    
+
     if (relevantMetrics.length === 0) {
       return {
         totalQueries: 0,
@@ -286,10 +306,15 @@ export class DatabasePerformanceService {
       };
     }
 
-    const totalDuration = relevantMetrics.reduce((sum,_metric) => sum + metric.duration, 0);
-    const slowQueries = relevantMetrics.filter(metric => metric.duration > this.config.slowQueryThreshold);
-    const errors = relevantMetrics.filter(metric => !metric.success);
-    
+    const totalDuration = relevantMetrics.reduce(
+      (sum, _metric) => sum + metric.duration,
+      0,
+    );
+    const slowQueries = relevantMetrics.filter(
+      (metric) => metric.duration > this.config.slowQueryThreshold,
+    );
+    const errors = relevantMetrics.filter((metric) => !metric.success);
+
     return {
       totalQueries: relevantMetrics.length,
       averageDuration: totalDuration / relevantMetrics.length,
@@ -321,7 +346,7 @@ export class DatabasePerformanceService {
    */
   cleanup(): void {
     const now = Date.now();
-    
+
     for (const [key, entry] of this.cache) {
       if (now - new Date(entry.timestamp).getTime() > entry.ttl) {
         this.cache.delete(key);
@@ -330,7 +355,9 @@ export class DatabasePerformanceService {
 
     // Keep only recent metrics (last 24 hours)
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    this.metrics = this.metrics.filter(metric => metric.timestamp > oneDayAgo);
+    this.metrics = this.metrics.filter(
+      (metric) => metric.timestamp > oneDayAgo,
+    );
   }
 
   /**
@@ -375,9 +402,9 @@ export class DatabasePerformanceService {
   private async executeQueryWithColumns(
     _table: string,
     queryBuilder: (client: SupabaseClient) => Promise<any>,
-    _columns: string
+    _columns: string,
   ): Promise<any> {
-    // This is a simplified implementation - in practice, you'd need to 
+    // This is a simplified implementation - in practice, you'd need to
     // modify the query builder to use specific columns
     return queryBuilder(this.supabase);
   }
@@ -389,7 +416,7 @@ export class DatabasePerformanceService {
     if (!this.config.enablePerformanceLogging) return;
 
     this.metrics.push(metric);
-    
+
     // Keep metrics array manageable
     if (this.metrics.length > 10000) {
       this.metrics = this.metrics.slice(-5000);
@@ -405,11 +432,14 @@ export class DatabasePerformanceService {
     table: string;
     operation: string;
   }): void {
-    console.warn(`[SLOW QUERY] ${queryInfo.table}:${queryInfo.operation} took ${queryInfo.duration.toFixed(2)}ms`, {
-      _query: queryInfo.query,
-      duration: queryInfo.duration,
-      threshold: this.config.slowQueryThreshold,
-    });
+    console.warn(
+      `[SLOW QUERY] ${queryInfo.table}:${queryInfo.operation} took ${queryInfo.duration.toFixed(2)}ms`,
+      {
+        _query: queryInfo.query,
+        duration: queryInfo.duration,
+        threshold: this.config.slowQueryThreshold,
+      },
+    );
   }
 
   /**
@@ -425,7 +455,7 @@ export class DatabasePerformanceService {
 // Factory function for creating performance service instances
 export const createDatabasePerformanceService = (
   supabase: SupabaseClient,
-  config?: Partial<PerformanceConfig>
+  config?: Partial<PerformanceConfig>,
 ) => {
   return new DatabasePerformanceService(supabase, config);
 };

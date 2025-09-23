@@ -5,13 +5,13 @@
  * with healthcare compliance and security filtering.
  */
 
-import { RealtimeChannel, RealtimeClient } from '@supabase/supabase-js';
-import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
+import { RealtimeChannel, RealtimeClient } from "@supabase/supabase-js";
+import { EventEmitter } from "events";
+import { v4 as uuidv4 } from "uuid";
 
 export interface RealtimeEvent {
   id: string;
-  type: 'message' | 'session_update' | 'context_change' | 'system_event';
+  type: "message" | "session_update" | "context_change" | "system_event";
   sessionId?: string;
   _userId?: string;
   patientId?: string;
@@ -19,9 +19,9 @@ export interface RealtimeEvent {
   timestamp: string;
   eventType: string;
   metadata?: {
-    source: 'user' | 'assistant' | 'system';
-    urgency: 'low' | 'medium' | 'high' | 'critical';
-    dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
+    source: "user" | "assistant" | "system";
+    urgency: "low" | "medium" | "high" | "critical";
+    dataClassification: "public" | "internal" | "confidential" | "restricted";
   };
 }
 
@@ -29,12 +29,12 @@ export interface SubscriptionOptions {
   sessionId?: string;
   _userId?: string;
   patientId?: string;
-  eventTypes?: RealtimeEvent['type'][];
-  dataClassification?: RealtimeEvent['metadata']['dataClassification'][];
+  eventTypes?: RealtimeEvent["type"][];
+  dataClassification?: RealtimeEvent["metadata"]["dataClassification"][];
   filters?: {
     messageTypes?: string[];
-    roles?: ('user' | 'assistant' | 'system')[];
-    urgency?: RealtimeEvent['metadata']['urgency'][];
+    roles?: ("user" | "assistant" | "system")[];
+    urgency?: RealtimeEvent["metadata"]["urgency"][];
   };
   includeSystemEvents?: boolean;
   heartbeatInterval?: number;
@@ -46,7 +46,7 @@ export interface SubscriptionHandle {
   _userId: string;
   sessionId?: string;
   channels: Map<string, RealtimeChannel>;
-  eventTypes: Set<RealtimeEvent['type']>;
+  eventTypes: Set<RealtimeEvent["type"]>;
   options: SubscriptionOptions;
   isActive: boolean;
   lastActivity: Date;
@@ -101,11 +101,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
 
       // Default event types
       const eventTypes = new Set(
-        options.eventTypes || [
-          'message',
-          'session_update',
-          'context_change',
-        ],
+        options.eventTypes || ["message", "session_update", "context_change"],
       );
 
       // Create channels for each event type
@@ -115,30 +111,38 @@ export class RealtimeSubscriptionService extends EventEmitter {
 
         // Set up channel event handlers
         channel
-          .on('broadcast', { event: eventType }, payload => {
+          .on("broadcast", { event: eventType }, (payload) => {
             this.handleRealtimeEvent(payload.payload, eventType);
           })
-          .on('presence', { event: 'sync' }, () => {
+          .on("presence", { event: "sync" }, () => {
             this.handlePresenceSync(channelName);
           })
-          .on('system', event => {
+          .on("system", (event) => {
             this.handleSystemEvent(event, channelName);
           });
 
         channels.set(channelName, channel);
 
         // Subscribe to the channel
-        await channel.subscribe(status => {
-          if (status === 'SUBSCRIBED') {
-            this.emit('subscribed', { subscriptionId, channelName, eventType });
-            this.logEvent('subscription_created', { subscriptionId, eventType, userId });
-          } else if (status === 'CHANNEL_ERROR') {
-            this.emit('error', {
+        await channel.subscribe((status) => {
+          if (status === "SUBSCRIBED") {
+            this.emit("subscribed", { subscriptionId, channelName, eventType });
+            this.logEvent("subscription_created", {
+              subscriptionId,
+              eventType,
+              userId,
+            });
+          } else if (status === "CHANNEL_ERROR") {
+            this.emit("error", {
               subscriptionId,
               channelName,
-              error: 'Channel subscription failed',
+              error: "Channel subscription failed",
             });
-            this.logError('subscription_error', { subscriptionId, channelName, status });
+            this.logError("subscription_error", {
+              subscriptionId,
+              channelName,
+              status,
+            });
           }
         });
       }
@@ -162,10 +166,10 @@ export class RealtimeSubscriptionService extends EventEmitter {
         this.startHeartbeat(subscriptionId, options.heartbeatInterval);
       }
 
-      this.emit('subscription_created', subscription);
+      this.emit("subscription_created", subscription);
       return subscription;
     } catch (error) {
-      this.logError('create_subscription_failed', { userId, options, error });
+      this.logError("create_subscription_failed", { userId, options, error });
       throw new Error(`Failed to create subscription: ${error.message}`);
     }
   }
@@ -188,10 +192,10 @@ export class RealtimeSubscriptionService extends EventEmitter {
       subscription.isActive = false;
       this.subscriptions.delete(subscriptionId);
 
-      this.emit('subscription_removed', { subscriptionId });
-      this.logEvent('subscription_removed', { subscriptionId });
+      this.emit("subscription_removed", { subscriptionId });
+      this.logEvent("subscription_removed", { subscriptionId });
     } catch (error) {
-      this.logError('remove_subscription_failed', { subscriptionId, error });
+      this.logError("remove_subscription_failed", { subscriptionId, error });
       throw new Error(`Failed to remove subscription: ${error.message}`);
     }
   }
@@ -200,7 +204,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Broadcast a real-time event
    */
   async broadcastEvent(
-    event: Omit<RealtimeEvent, 'id' | 'timestamp'>,
+    event: Omit<RealtimeEvent, "id" | "timestamp">,
     targetFilter?: {
       userIds?: string[];
       sessionIds?: string[];
@@ -216,12 +220,15 @@ export class RealtimeSubscriptionService extends EventEmitter {
 
       // Validate event
       if (!this.validateEvent(fullEvent)) {
-        throw new Error('Invalid event structure');
+        throw new Error("Invalid event structure");
       }
 
       // Apply security filtering
       if (!this.isEventAllowed(fullEvent)) {
-        this.logError('event_blocked_security', { eventId: fullEvent.id, type: fullEvent.type });
+        this.logError("event_blocked_security", {
+          eventId: fullEvent.id,
+          type: fullEvent.type,
+        });
         return;
       }
 
@@ -231,23 +238,25 @@ export class RealtimeSubscriptionService extends EventEmitter {
       // Broadcast to appropriate channels
       const channels = this.getTargetChannels(fullEvent, targetFilter);
       for (const channelName of channels) {
-        const channel = this.supabase.getChannels().find(c => c.topic === channelName);
+        const channel = this.supabase
+          .getChannels()
+          .find((c) => c.topic === channelName);
         if (channel) {
           await channel.send({
-            type: 'broadcast',
+            type: "broadcast",
             event: fullEvent.type,
             _payload: fullEvent,
           });
         }
       }
 
-      this.logEvent('event_broadcast', {
+      this.logEvent("event_broadcast", {
         eventId: fullEvent.id,
         type: fullEvent.type,
         channelsCount: channels.length,
       });
     } catch (error) {
-      this.logError('broadcast_failed', { event, error });
+      this.logError("broadcast_failed", { event, error });
       throw new Error(`Failed to broadcast event: ${error.message}`);
     }
   }
@@ -256,8 +265,10 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Get subscription analytics
    */
   getAnalytics(): RealtimeAnalytics {
-    const activeSubscriptions = Array.from(this.subscriptions.values()).filter(s => s.isActive);
-    const usersOnline = new Set(activeSubscriptions.map(s => s._userId)).size;
+    const activeSubscriptions = Array.from(this.subscriptions.values()).filter(
+      (s) => s.isActive,
+    );
+    const usersOnline = new Set(activeSubscriptions.map((s) => s._userId)).size;
 
     return {
       activeSubscriptions: activeSubscriptions.length,
@@ -273,22 +284,26 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Get user subscriptions
    */
   getUserSubscriptions(_userId: string): SubscriptionHandle[] {
-    return Array.from(this.subscriptions.values())
-      .filter(sub => sub.userId === userId && sub.isActive);
+    return Array.from(this.subscriptions.values()).filter(
+      (sub) => sub.userId === userId && sub.isActive,
+    );
   }
 
   /**
    * Get session subscriptions
    */
   getSessionSubscriptions(sessionId: string): SubscriptionHandle[] {
-    return Array.from(this.subscriptions.values())
-      .filter(sub => sub.sessionId === sessionId && sub.isActive);
+    return Array.from(this.subscriptions.values()).filter(
+      (sub) => sub.sessionId === sessionId && sub.isActive,
+    );
   }
 
   /**
    * Clean up inactive subscriptions
    */
-  async cleanupInactiveSubscriptions(maxInactiveTime: number = 30 * 60 * 1000): Promise<number> {
+  async cleanupInactiveSubscriptions(
+    maxInactiveTime: number = 30 * 60 * 1000,
+  ): Promise<number> {
     const now = Date.now();
     const toRemove: string[] = [];
 
@@ -317,7 +332,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       };
 
       if (!this.validateEvent(event)) {
-        this.logError('invalid_event_received', { payload, eventType });
+        this.logError("invalid_event_received", { payload, eventType });
         return;
       }
 
@@ -327,13 +342,13 @@ export class RealtimeSubscriptionService extends EventEmitter {
       for (const subscription of relevantSubscriptions) {
         if (this.eventPassesFilters(event, subscription.options)) {
           subscription.lastActivity = new Date();
-          this.emit('event', { subscriptionId: subscription.id, event });
+          this.emit("event", { subscriptionId: subscription.id, event });
         }
       }
 
       this.updateAnalytics(eventType);
     } catch (error) {
-      this.logError('event_handling_failed', { payload, eventType, error });
+      this.logError("event_handling_failed", { payload, eventType, error });
     }
   }
 
@@ -341,22 +356,26 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Get relevant subscriptions for an event
    */
   private getRelevantSubscriptions(event: RealtimeEvent): SubscriptionHandle[] {
-    return Array.from(this.subscriptions.values()).filter(sub =>
-      sub.isActive
-      && sub.eventTypes.has(event.type)
-      && (!event.userId || sub.userId === event._userId)
-      && (!event.sessionId || sub.sessionId === event.sessionId)
+    return Array.from(this.subscriptions.values()).filter(
+      (sub) =>
+        sub.isActive &&
+        sub.eventTypes.has(event.type) &&
+        (!event.userId || sub.userId === event._userId) &&
+        (!event.sessionId || sub.sessionId === event.sessionId),
     );
   }
 
   /**
    * Check if event passes subscription filters
    */
-  private eventPassesFilters(event: RealtimeEvent, options: SubscriptionOptions): boolean {
+  private eventPassesFilters(
+    event: RealtimeEvent,
+    options: SubscriptionOptions,
+  ): boolean {
     // Check data classification filter
     if (
-      options.dataClassification?.length
-      && !options.dataClassification.includes(event.metadata?.dataClassification)
+      options.dataClassification?.length &&
+      !options.dataClassification.includes(event.metadata?.dataClassification)
     ) {
       return false;
     }
@@ -386,7 +405,11 @@ export class RealtimeSubscriptionService extends EventEmitter {
   /**
    * Generate channel name for subscription
    */
-  private getChannelName(eventType: string, _userId: string, options: SubscriptionOptions): string {
+  private getChannelName(
+    eventType: string,
+    _userId: string,
+    options: SubscriptionOptions,
+  ): string {
     const parts = [eventType, userId];
 
     if (options.sessionId) {
@@ -397,13 +420,16 @@ export class RealtimeSubscriptionService extends EventEmitter {
       parts.push(options.patientId);
     }
 
-    return parts.join(':');
+    return parts.join(":");
   }
 
   /**
    * Get target channels for event broadcasting
    */
-  private getTargetChannels(event: RealtimeEvent, targetFilter?: any): string[] {
+  private getTargetChannels(
+    event: RealtimeEvent,
+    targetFilter?: any,
+  ): string[] {
     const channels: string[] = [];
 
     if (targetFilter?.userIds?.length) {
@@ -435,12 +461,12 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   private validateEvent(event: RealtimeEvent): boolean {
     return (
-      event.id
-      && event.type
-      && event.timestamp
-      && event.eventType
-      && event.payload
-      && (event.metadata ? event.metadata.dataClassification : true)
+      event.id &&
+      event.type &&
+      event.timestamp &&
+      event.eventType &&
+      event.payload &&
+      (event.metadata ? event.metadata.dataClassification : true)
     );
   }
 
@@ -449,14 +475,15 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   private isEventAllowed(event: RealtimeEvent): boolean {
     // Check for sensitive data in public events
-    if (event.metadata?.dataClassification === 'restricted') {
+    if (event.metadata?.dataClassification === "restricted") {
       // Restricted data should not be broadcast to public channels
       return false;
     }
 
     // Validate payload size (prevent large payloads)
     const payloadSize = JSON.stringify(event._payload).length;
-    if (payloadSize > 1024 * 1024) { // 1MB limit
+    if (payloadSize > 1024 * 1024) {
+      // 1MB limit
       return false;
     }
 
@@ -475,9 +502,12 @@ export class RealtimeSubscriptionService extends EventEmitter {
       this.isProcessing = true;
       const batch = this.eventQueue.splice(0, 100); // Process up to 100 events at once
 
-      Promise.all(batch.map(event => this.processEvent(event)))
-        .catch(error => {
-          this.logError('event_batch_failed', { error, batchSize: batch.length });
+      Promise.all(batch.map((event) => this.processEvent(event)))
+        .catch((error) => {
+          this.logError("event_batch_failed", {
+            error,
+            batchSize: batch.length,
+          });
         })
         .finally(() => {
           this.isProcessing = false;
@@ -504,7 +534,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       }
     } catch (error) {
       this.analytics.errors++;
-      this.logError('event_processing_failed', { eventId: event.id, error });
+      this.logError("event_processing_failed", { eventId: event.id, error });
     }
   }
 
@@ -512,17 +542,20 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Start cleanup task
    */
   private startCleanupTask(): void {
-    setInterval(() => {
-      this.cleanupInactiveSubscriptions()
-        .then(count => {
-          if (count > 0) {
-            this.logEvent('cleanup_completed', { removedCount: count });
-          }
-        })
-        .catch(error => {
-          this.logError('cleanup_failed', { error });
-        });
-    }, 5 * 60 * 1000); // Run every 5 minutes
+    setInterval(
+      () => {
+        this.cleanupInactiveSubscriptions()
+          .then((count) => {
+            if (count > 0) {
+              this.logEvent("cleanup_completed", { removedCount: count });
+            }
+          })
+          .catch((error) => {
+            this.logError("cleanup_failed", { error });
+          });
+      },
+      5 * 60 * 1000,
+    ); // Run every 5 minutes
   }
 
   /**
@@ -539,12 +572,12 @@ export class RealtimeSubscriptionService extends EventEmitter {
       }
 
       this.broadcastEvent({
-        type: 'system_event',
-        _payload: { type: 'heartbeat', subscriptionId },
+        type: "system_event",
+        _payload: { type: "heartbeat", subscriptionId },
         metadata: {
-          source: 'system',
-          urgency: 'low',
-          dataClassification: 'public',
+          source: "system",
+          urgency: "low",
+          dataClassification: "public",
         },
       });
     }, interval);
@@ -558,13 +591,13 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   private setupErrorHandling(): void {
     this.supabase.onClose(() => {
-      this.emit('connection_lost');
-      this.logError('connection_lost', {});
+      this.emit("connection_lost");
+      this.logError("connection_lost", {});
     });
 
-    this.supabase.onError(error => {
-      this.emit('connection_error', error);
-      this.logError('connection_error', { error });
+    this.supabase.onError((error) => {
+      this.emit("connection_error", error);
+      this.logError("connection_error", { error });
     });
   }
 
@@ -572,14 +605,14 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Handle presence sync
    */
   private handlePresenceSync(channelName: string): void {
-    this.logEvent('presence_sync', { channelName });
+    this.logEvent("presence_sync", { channelName });
   }
 
   /**
    * Handle system events
    */
   private handleSystemEvent(event: any, channelName: string): void {
-    this.logEvent('system_event', { event, channelName });
+    this.logEvent("system_event", { event, channelName });
   }
 
   /**
@@ -587,7 +620,8 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   private updateAnalytics(eventType: string): void {
     this.analytics.totalEvents++;
-    this.analytics.eventsByType[eventType] = (this.analytics.eventsByType[eventType] || 0) + 1;
+    this.analytics.eventsByType[eventType] =
+      (this.analytics.eventsByType[eventType] || 0) + 1;
   }
 
   /**
@@ -596,7 +630,10 @@ export class RealtimeSubscriptionService extends EventEmitter {
   private calculateAverageLatency(): number {
     if (this.analytics.latencies.length === 0) return 0;
 
-    const sum = this.analytics.latencies.reduce((acc, _latency) => acc + latency, 0);
+    const sum = this.analytics.latencies.reduce(
+      (acc, _latency) => acc + latency,
+      0,
+    );
     return sum / this.analytics.latencies.length;
   }
 
@@ -612,14 +649,14 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Log event for analytics
    */
   private logEvent(type: string, data: any): void {
-    this.emit('log', { type, data, timestamp: new Date().toISOString() });
+    this.emit("log", { type, data, timestamp: new Date().toISOString() });
   }
 
   /**
    * Log error
    */
   private logError(type: string, data: any): void {
-    this.emit('error_log', { type, data, timestamp: new Date().toISOString() });
+    this.emit("error_log", { type, data, timestamp: new Date().toISOString() });
   }
 
   /**
@@ -629,14 +666,16 @@ export class RealtimeSubscriptionService extends EventEmitter {
     try {
       // Remove all subscriptions
       const subscriptionIds = Array.from(this.subscriptions.keys());
-      await Promise.all(subscriptionIds.map(id => this.removeSubscription(id)));
+      await Promise.all(
+        subscriptionIds.map((id) => this.removeSubscription(id)),
+      );
 
       // Close Supabase connection
       this.supabase.close();
 
-      this.emit('shutdown');
+      this.emit("shutdown");
     } catch (error) {
-      this.logError('shutdown_failed', { error });
+      this.logError("shutdown_failed", { error });
       throw error;
     }
   }

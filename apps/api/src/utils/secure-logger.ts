@@ -21,23 +21,23 @@ const SENSITIVE_PATTERNS = {
 };
 
 const SENSITIVE_KEYS = [
-  'password',
-  'senha',
-  'token',
-  'secret',
-  'key',
-  'authorization',
-  'bearer',
-  'cpf',
-  'cnpj',
-  'rg',
-  'passport',
-  'credit_card',
-  'card_number',
-  'cvv',
-  'pin',
-  'otp',
-  'medical_record',
+  "password",
+  "senha",
+  "token",
+  "secret",
+  "key",
+  "authorization",
+  "bearer",
+  "cpf",
+  "cnpj",
+  "rg",
+  "passport",
+  "credit_card",
+  "card_number",
+  "cvv",
+  "pin",
+  "otp",
+  "medical_record",
 ];
 
 interface LoggerConfig {
@@ -66,38 +66,46 @@ class SecureLogger {
 
   constructor(config: LoggerConfig = {}) {
     this.config = {
-      level: config.level || (process.env.NODE_ENV === 'production' ? 'warn' : 'debug'),
+      level:
+        config.level ||
+        (process.env.NODE_ENV === "production" ? "warn" : "debug"),
       maskSensitiveData: config.maskSensitiveData ?? true,
       lgpdCompliant: config.lgpdCompliant ?? true,
       auditTrail: config.auditTrail ?? true,
-      _service: config.service || 'neonpro-api',
+      _service: config.service || "neonpro-api",
     };
   }
 
-  private formatLog(level: string, message: string, _context?: LogContext): void {
+  private formatLog(
+    level: string,
+    message: string,
+    _context?: LogContext,
+  ): void {
     const timestamp = new Date().toISOString();
     const logEntry = {
       timestamp,
       level,
       _service: this.config.service,
-      environment: process.env.NODE_ENV || 'development',
-      message: this.config.maskSensitiveData ? this.maskSensitiveData(message) : message,
+      environment: process.env.NODE_ENV || "development",
+      message: this.config.maskSensitiveData
+        ? this.maskSensitiveData(message)
+        : message,
       ...this.maskObjectData(context || {}),
     };
 
     const formattedMessage = JSON.stringify(logEntry);
 
     switch (level) {
-      case 'debug':
+      case "debug":
         console.debug(formattedMessage);
         break;
-      case 'info':
+      case "info":
         console.info(formattedMessage);
         break;
-      case 'warn':
+      case "warn":
         console.warn(formattedMessage);
         break;
-      case 'error':
+      case "error":
         console.error(formattedMessage);
         break;
       default:
@@ -106,7 +114,7 @@ class SecureLogger {
   }
 
   private maskSensitiveData(text: string): string {
-    if (!this.config.maskSensitiveData || typeof text !== 'string') {
+    if (!this.config.maskSensitiveData || typeof text !== "string") {
       return text;
     }
 
@@ -114,9 +122,12 @@ class SecureLogger {
 
     // Apply pattern-based masking
     Object.entries(SENSITIVE_PATTERNS).forEach(([, pattern]) => {
-      maskedText = maskedText.replace(pattern, match => {
+      maskedText = maskedText.replace(pattern, (match) => {
         const visibleChars = Math.min(3, Math.floor(match.length * 0.3));
-        return match.substring(0, visibleChars) + '*'.repeat(match.length - visibleChars);
+        return (
+          match.substring(0, visibleChars) +
+          "*".repeat(match.length - visibleChars)
+        );
       });
     });
 
@@ -124,12 +135,12 @@ class SecureLogger {
   }
 
   private maskObjectData(obj: any): any {
-    if (!this.config.maskSensitiveData || !obj || typeof obj !== 'object') {
+    if (!this.config.maskSensitiveData || !obj || typeof obj !== "object") {
       return obj;
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => this.maskObjectData(item));
+      return obj.map((item) => this.maskObjectData(item));
     }
 
     const masked: any = {};
@@ -137,11 +148,13 @@ class SecureLogger {
     Object.entries(obj).forEach(([key, value]) => {
       const lowerKey = key.toLowerCase();
 
-      if (SENSITIVE_KEYS.some(sensitiveKey => lowerKey.includes(sensitiveKey))) {
+      if (
+        SENSITIVE_KEYS.some((sensitiveKey) => lowerKey.includes(sensitiveKey))
+      ) {
         masked[key] = this.maskValue(value);
-      } else if (typeof value === 'object' && value !== null) {
+      } else if (typeof value === "object" && value !== null) {
         masked[key] = this.maskObjectData(value);
-      } else if (typeof value === 'string') {
+      } else if (typeof value === "string") {
         masked[key] = this.maskSensitiveData(value);
       } else {
         masked[key] = value;
@@ -152,34 +165,36 @@ class SecureLogger {
   }
 
   private maskValue(value: any): string {
-    if (typeof value !== 'string') {
-      return '[MASKED]';
+    if (typeof value !== "string") {
+      return "[MASKED]";
     }
 
     if (value.length <= 3) {
-      return '*'.repeat(value.length);
+      return "*".repeat(value.length);
     }
 
     const visibleChars = Math.min(3, Math.floor(value.length * 0.3));
-    return value.substring(0, visibleChars) + '*'.repeat(value.length - visibleChars);
+    return (
+      value.substring(0, visibleChars) + "*".repeat(value.length - visibleChars)
+    );
   }
 
   // Public logging methods
   debug(message: string, _context?: LogContext): void {
-    if (this.shouldLog('debug')) {
-      this.formatLog('debug', message, this.enrichContext(_context));
+    if (this.shouldLog("debug")) {
+      this.formatLog("debug", message, this.enrichContext(_context));
     }
   }
 
   info(message: string, _context?: LogContext): void {
-    if (this.shouldLog('info')) {
-      this.formatLog('info', message, this.enrichContext(_context));
+    if (this.shouldLog("info")) {
+      this.formatLog("info", message, this.enrichContext(_context));
     }
   }
 
   warn(message: string, _context?: LogContext): void {
-    if (this.shouldLog('warn')) {
-      this.formatLog('warn', message, this.enrichContext(_context));
+    if (this.shouldLog("warn")) {
+      this.formatLog("warn", message, this.enrichContext(_context));
     }
   }
 
@@ -192,15 +207,15 @@ class SecureLogger {
         message: this.config.maskSensitiveData
           ? this.maskSensitiveData(error.message)
           : error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        stack: process.env.NODE_ENV === "development" ? error.stack : undefined,
       };
     }
 
-    this.formatLog('error', message, enrichedContext);
+    this.formatLog("error", message, enrichedContext);
   }
 
   private shouldLog(level: string): boolean {
-    const levels = ['debug', 'info', 'warn', 'error'];
+    const levels = ["debug", "info", "warn", "error"];
     const currentLevelIndex = levels.indexOf(this.config.level);
     const messageLevelIndex = levels.indexOf(level);
     return messageLevelIndex >= currentLevelIndex;
@@ -218,29 +233,29 @@ class SecureLogger {
   }): void {
     if (!this.config.auditTrail) return;
 
-    this.formatLog('info', 'LGPD_DATA_ACCESS_AUDIT', {
+    this.formatLog("info", "LGPD_DATA_ACCESS_AUDIT", {
       ...context,
-      auditType: 'data_access',
+      auditType: "data_access",
       timestamp: new Date().toISOString(),
-      compliance: 'LGPD',
+      compliance: "LGPD",
     });
   }
 
   auditDataModification(_context: {
     _userId: string;
     patientId?: string;
-    operation: 'CREATE' | 'UPDATE' | 'DELETE';
+    operation: "CREATE" | "UPDATE" | "DELETE";
     dataType: string;
     recordId?: string;
     changes?: string[];
   }): void {
     if (!this.config.auditTrail) return;
 
-    this.formatLog('info', 'LGPD_DATA_MODIFICATION_AUDIT', {
+    this.formatLog("info", "LGPD_DATA_MODIFICATION_AUDIT", {
       ...context,
-      auditType: 'data_modification',
+      auditType: "data_modification",
       timestamp: new Date().toISOString(),
-      compliance: 'LGPD',
+      compliance: "LGPD",
     });
   }
 
@@ -253,11 +268,11 @@ class SecureLogger {
   }): void {
     if (!this.config.auditTrail) return;
 
-    this.formatLog('info', 'LGPD_CONSENT_CHANGE_AUDIT', {
+    this.formatLog("info", "LGPD_CONSENT_CHANGE_AUDIT", {
       ...context,
-      auditType: 'consent_change',
+      auditType: "consent_change",
       timestamp: new Date().toISOString(),
-      compliance: 'LGPD',
+      compliance: "LGPD",
     });
   }
 
@@ -281,7 +296,7 @@ export function createLogger(config?: LoggerConfig): SecureLogger {
 
 // Default logger instance
 export const logger = createLogger({
-  _service: 'neonpro-api',
+  _service: "neonpro-api",
   maskSensitiveData: true,
   lgpdCompliant: true,
   auditTrail: true,

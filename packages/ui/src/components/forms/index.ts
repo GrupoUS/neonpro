@@ -10,16 +10,16 @@ export { HealthcareSelect } from "./healthcare-select";
 
 export type {
   HealthcareFormProps,
-  HealthcareFormContext as HealthcareFormContextType
+  HealthcareFormContext as HealthcareFormContextType,
 } from "./healthcare-form";
 
 export type {
   HealthcareTextFieldProps,
-  HealthcareFieldType as TextFieldType
+  HealthcareFieldType as TextFieldType,
 } from "./healthcare-text-field";
 
 export type {
   HealthcareSelectProps,
   HealthcareSelectOption,
-  HealthcareSelectType
+  HealthcareSelectType,
 } from "./healthcare-select";

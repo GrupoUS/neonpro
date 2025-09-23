@@ -1,6 +1,7 @@
 # 🏥 NeonPro Healthcare Platform - Backup and Recovery Procedures
 
 ## 📋 Table of Contents
+
 1. [Emergency Rollback Procedures](#emergency-rollback-procedures)
 2. [Backup Strategies](#backup-strategies)
 3. [Disaster Recovery](#disaster-recovery)
@@ -11,19 +12,21 @@
 ## 🚨 Emergency Rollback Procedures
 
 ### Immediate Actions
+
 1. **Assess the Situation**
    - Identify the scope and impact of the issue
    - Determine if rollback is necessary
    - Document the reason for rollback
 
 2. **Execute Emergency Rollback**
+
    ```bash
    # Full rollback (production)
    ./scripts/emergency-rollback.sh production "Critical bug causing data corruption" full
-   
+
    # Partial rollback (configuration only)
    ./scripts/emergency-rollback.sh production "Configuration issue" partial
-   
+
    # Test rollback (dry run)
    ./scripts/emergency-rollback.sh test "Testing rollback procedure" full
    ```
@@ -36,17 +39,18 @@
 
 ### Rollback Types
 
-| Type | Description | Use Case | Downtime |
-|------|-------------|----------|----------|
-| Full | Complete deployment rollback | Critical bugs, data corruption | 5-15 minutes |
-| Partial | Component-specific rollback | Configuration issues, feature bugs | 2-5 minutes |
-| Config-only | Configuration rollback | Environment variables, settings | 1-2 minutes |
+| Type        | Description                  | Use Case                           | Downtime     |
+| ----------- | ---------------------------- | ---------------------------------- | ------------ |
+| Full        | Complete deployment rollback | Critical bugs, data corruption     | 5-15 minutes |
+| Partial     | Component-specific rollback  | Configuration issues, feature bugs | 2-5 minutes  |
+| Config-only | Configuration rollback       | Environment variables, settings    | 1-2 minutes  |
 
 ## 💾 Backup Strategies
 
 ### Automated Backups
 
 #### Database Backups
+
 - **Frequency**: Daily at 2:00 AM (BRT)
 - **Retention**: 90 days
 - **Encryption**: AES-256 at rest and in transit
@@ -61,6 +65,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ```
 
 #### Application Backups
+
 - **Code**: Git repository with automated tagging
 - **Configuration**: Version-controlled configuration files
 - **Assets**: S3 with versioning enabled
@@ -69,12 +74,14 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### Backup Verification
 
 #### Daily Checks
+
 - [ ] Backup completion verification
 - [ ] Backup integrity checks
 - [ ] Storage capacity monitoring
 - [ ] Encryption validation
 
 #### Weekly Tests
+
 - [ ] Restore procedure testing
 - [ ] Data consistency verification
 - [ ] Performance validation
@@ -83,12 +90,14 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ## 🌪️ Disaster Recovery
 
 ### Recovery Point Objective (RPO)
+
 - **Critical Data**: 15 minutes
 - **Patient Data**: 5 minutes
 - **Configuration**: 1 minute
 - **Static Assets**: 24 hours
 
 ### Recovery Time Objective (RTO)
+
 - **Critical Services**: 1 hour
 - **Full System**: 4 hours
 - **Data Recovery**: 2 hours
@@ -97,24 +106,28 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### Disaster Scenarios
 
 #### 1. Data Center Outage
+
 - **Detection**: Automated monitoring alerts
 - **Response**: Failover to secondary region
 - **Recovery**: DNS redirection, database promotion
 - **Validation**: Health checks, data consistency
 
 #### 2. Database Corruption
+
 - **Detection**: Data integrity checks, error monitoring
 - **Response**: Failover to standby database
 - **Recovery**: Point-in-time recovery from backups
 - **Validation**: Data consistency, application functionality
 
 #### 3. Security Incident
+
 - **Detection**: Security monitoring, anomaly detection
 - **Response**: Isolation, investigation, containment
 - **Recovery**: System cleanup, security hardening
 - **Validation**: Security scans, compliance validation
 
 #### 4. Deployment Failure
+
 - **Detection**: Health check failures, error monitoring
 - **Response**: Emergency rollback procedures
 - **Recovery**: Previous deployment restoration
@@ -124,23 +137,25 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 
 ### Data Classification
 
-| Classification | Description | Protection Level | Retention |
-|---------------|-------------|-----------------|-----------|
-| PHI (Protected Health Information) | Patient medical records, diagnoses | Maximum | 25 years |
-| PII (Personally Identifiable Information) | Patient contact information, demographics | High | 10 years |
-| Financial | Payment information, billing records | High | 7 years |
-| Operational | System logs, configuration | Medium | 2 years |
-| Public | Marketing materials, public content | Standard | 1 year |
+| Classification                            | Description                               | Protection Level | Retention |
+| ----------------------------------------- | ----------------------------------------- | ---------------- | --------- |
+| PHI (Protected Health Information)        | Patient medical records, diagnoses        | Maximum          | 25 years  |
+| PII (Personally Identifiable Information) | Patient contact information, demographics | High             | 10 years  |
+| Financial                                 | Payment information, billing records      | High             | 7 years   |
+| Operational                               | System logs, configuration                | Medium           | 2 years   |
+| Public                                    | Marketing materials, public content       | Standard         | 1 year    |
 
 ### Encryption Standards
 
 #### At Rest
+
 - **Database**: AES-256 with TDE
 - **Files**: AES-256 with individual file encryption
 - **Backups**: AES-256 with compressed encryption
 - **Storage**: AWS KMS with customer-managed keys
 
 #### In Transit
+
 - **API**: TLS 1.3 with perfect forward secrecy
 - **Database**: TLS 1.3 with certificate validation
 - **Email**: PGP encryption for sensitive communications
@@ -149,12 +164,14 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### Access Controls
 
 #### Authentication
+
 - Multi-factor authentication (MFA) required
 - Password complexity: 12+ characters, mixed types
 - Session timeout: 30 minutes inactivity
 - Account lockout: 5 failed attempts
 
 #### Authorization
+
 - Role-based access control (RBAC)
 - Principle of least privilege
 - Just-in-time access for sensitive operations
@@ -165,6 +182,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### LGPD (Lei Geral de Proteção de Dados)
 
 #### Key Requirements
+
 - [ ] Data processing consent
 - [ ] Data subject rights implementation
 - [ ] Data protection officer (DPO) designation
@@ -173,6 +191,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 - [ ] International transfer safeguards
 
 #### Implementation
+
 - Automated consent management system
 - Data subject rights portal
 - Breach detection and notification
@@ -182,6 +201,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### ANVISA (Agência Nacional de Vigilância Sanitária)
 
 #### Medical Device Requirements
+
 - [ ] Software classification (Class IIa)
 - [ ] Risk management system (ISO 14971)
 - [ ] Quality management system (ISO 13485)
@@ -189,6 +209,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 - [ ] Labeling and instructions
 
 #### Implementation
+
 - Automated risk assessment
 - Quality management documentation
 - Adverse event reporting
@@ -198,6 +219,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### CFM (Conselho Federal de Medicina)
 
 #### Telemedicine Requirements
+
 - [ ] Resolution 2266 compliance
 - [ ] Professional standards adherence
 - [ ] Patient confidentiality protection
@@ -205,6 +227,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 - [ ] Documentation standards
 
 #### Implementation
+
 - Telemedicine platform validation
 - Professional verification system
 - Audit logging for all interactions
@@ -216,24 +239,28 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### Regular Testing Schedule
 
 #### Daily
+
 - [ ] Backup completion verification
 - [ ] Health check execution
 - [ ] Security scan results review
 - [ ] Performance metrics monitoring
 
 #### Weekly
+
 - [ ] Restore procedure testing
 - [ ] Compliance validation
 - [ ] Security patch testing
 - [ ] Performance benchmarking
 
 #### Monthly
+
 - [ ] Full disaster recovery drill
 - [ ] Compliance audit
 - [ ] Security penetration testing
 - [ ] Capacity planning review
 
 #### Quarterly
+
 - [ ] Business impact analysis
 - [ ] Risk assessment update
 - [ ] Training program review
@@ -242,6 +269,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### Test Scenarios
 
 #### Scenario 1: Database Failure
+
 1. Simulate database outage
 2. Execute failover to standby
 3. Verify data consistency
@@ -249,6 +277,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 5. Document lessons learned
 
 #### Scenario 2: Security Incident
+
 1. Simulate security breach
 2. Execute incident response
 3. Contain and investigate
@@ -256,6 +285,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 5. Validate compliance
 
 #### Scenario 3: Regional Outage
+
 1. Simulate regional failure
 2. Execute geo-failover
 3. Validate service continuity
@@ -263,6 +293,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 5. Measure performance impact
 
 #### Scenario 4: Compliance Violation
+
 1. Identify compliance gap
 2. Implement corrective actions
 3. Validate compliance restoration
@@ -272,18 +303,21 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ## 📞 Emergency Contacts
 
 ### Primary Contacts
+
 - **DevOps Lead**: devops@neonpro.healthcare
 - **Security Team**: security@neonpro.healthcare
 - **Compliance Officer**: compliance@neonpro.healthcare
 - **Healthcare Director**: medical@neonpro.healthcare
 
 ### External Contacts
+
 - **Vercel Support**: support@vercel.com
 - **Supabase Support**: support@supabase.io
 - **AWS Support**: aws-support@neonpro.healthcare
 - **Legal Counsel**: legal@neonpro.healthcare
 
 ### escalation Matrix
+
 1. **Level 1**: DevOps team (0-30 minutes)
 2. **Level 2**: Security + Compliance (30-60 minutes)
 3. **Level 3**: Executive team (60+ minutes)
@@ -294,21 +328,25 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### Key Performance Indicators
 
 #### Availability
+
 - **Target**: 99.9% uptime
 - **Measurement**: Continuous monitoring
 - **Alert Threshold**: <99.5% for 5 minutes
 
 #### Recovery Time
+
 - **Target**: <1 hour for critical services
 - **Measurement**: Time from detection to resolution
 - **Alert Threshold**: >2 hours
 
 #### Data Integrity
+
 - **Target**: 100% data consistency
 - **Measurement**: Daily checksum validation
 - **Alert Threshold**: Any data corruption
 
 #### Compliance
+
 - **Target**: 100% compliance adherence
 - **Measurement**: Automated compliance scans
 - **Alert Threshold**: Any compliance violation
@@ -316,18 +354,21 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ### Reporting
 
 #### Daily Reports
+
 - Backup status summary
 - Health check results
 - Security incident log
 - Performance metrics
 
 #### Weekly Reports
+
 - Compliance validation results
 - Testing and drill outcomes
 - Capacity utilization
 - Risk assessment updates
 
 #### Monthly Reports
+
 - Business continuity status
 - Compliance audit results
 - Performance trends
@@ -336,6 +377,7 @@ gunzip -c backup-20250922.sql.gz | psql "$DATABASE_URL"
 ---
 
 **📝 Document Control**
+
 - **Version**: 1.0
 - **Effective Date**: 2025-09-22
 - **Review Date**: 2025-12-22

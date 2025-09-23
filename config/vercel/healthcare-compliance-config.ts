@@ -3,11 +3,11 @@ export const healthcareComplianceConfig = {
   // LGPD (Lei Geral de Proteção de Dados) - Brazil
   lgpd: {
     enabled: true,
-    region: 'BR',
+    region: "BR",
     dataResidency: {
       enabled: true,
-      region: 'gru1', // São Paulo
-      backupRegion: 'iad1', // Virginia (backup)
+      region: "gru1", // São Paulo
+      backupRegion: "iad1", // Virginia (backup)
     },
     consentManagement: {
       required: true,
@@ -31,7 +31,7 @@ export const healthcareComplianceConfig = {
     },
     breachNotification: {
       enabled: true,
-      timeframe: '24h', // 24 hours for healthcare data
+      timeframe: "24h", // 24 hours for healthcare data
       authorityNotification: true,
       subjectNotification: true,
     },
@@ -43,7 +43,7 @@ export const healthcareComplianceConfig = {
     },
     internationalTransfers: {
       enabled: false, // Keep data in Brazil for compliance
-      mechanisms: ['standard_contractual_clauses'],
+      mechanisms: ["standard_contractual_clauses"],
     },
   },
 
@@ -51,11 +51,11 @@ export const healthcareComplianceConfig = {
   anvisa: {
     enabled: true,
     medicalDevice: {
-      classification: 'Class IIa', // Software as medical device
+      classification: "Class IIa", // Software as medical device
       registration: {
         required: true,
-        number: 'ANVISA_REG_NUMBER',
-        validityPeriod: '10y',
+        number: "ANVISA_REG_NUMBER",
+        validityPeriod: "10y",
       },
       riskManagement: {
         enabled: true,
@@ -121,20 +121,20 @@ export const healthcareComplianceConfig = {
     encryption: {
       atRest: {
         enabled: true,
-        algorithm: 'AES-256',
-        keyManagement: 'hsm',
-        rotation: '90d',
+        algorithm: "AES-256",
+        keyManagement: "hsm",
+        rotation: "90d",
       },
       inTransit: {
         enabled: true,
-        tlsVersion: '1.3',
+        tlsVersion: "1.3",
         certificateValidation: true,
         hsts: true,
       },
       endToEnd: {
         enabled: true,
-        algorithm: 'AES-256-GCM',
-        keyExchange: 'ECDH',
+        algorithm: "AES-256-GCM",
+        keyExchange: "ECDH",
       },
     },
     accessControl: {
@@ -145,7 +145,7 @@ export const healthcareComplianceConfig = {
       passwordPolicy: {
         minLength: 12,
         complexity: true,
-        rotation: '90d',
+        rotation: "90d",
         history: 12,
       },
     },
@@ -153,17 +153,17 @@ export const healthcareComplianceConfig = {
       enabled: true,
       comprehensive: true,
       immutable: true,
-      retention: '10y',
+      retention: "10y",
       realTimeMonitoring: true,
       alerting: true,
     },
     backup: {
       enabled: true,
-      frequency: 'daily',
+      frequency: "daily",
       encryption: true,
       geoRedundancy: true,
-      retention: '90d',
-      testing: 'monthly',
+      retention: "90d",
+      testing: "monthly",
     },
   },
 
@@ -181,8 +181,8 @@ export const healthcareComplianceConfig = {
 
   // Risk Assessment
   riskAssessment: {
-    methodology: 'iso27005',
-    frequency: 'quarterly',
+    methodology: "iso27005",
+    frequency: "quarterly",
     documentation: true,
     treatmentPlan: true,
     residualRisk: true,
@@ -192,15 +192,15 @@ export const healthcareComplianceConfig = {
   // Business Continuity
   businessContinuity: {
     disasterRecovery: {
-      rto: '1h', // Recovery Time Objective
-      rpo: '15m', // Recovery Point Objective
-      testing: 'quarterly',
+      rto: "1h", // Recovery Time Objective
+      rpo: "15m", // Recovery Point Objective
+      testing: "quarterly",
     },
     incidentResponse: {
       plan: true,
       team: true,
       training: true,
-      simulation: 'semiannually',
+      simulation: "semiannually",
     },
     backup: {
       onsite: true,
@@ -217,13 +217,13 @@ export const healthcareComplianceConfig = {
     procedures: true,
     training: true,
     versionControl: true,
-    retention: '10y',
+    retention: "10y",
   },
 
   // Training and Awareness
   training: {
     mandatory: true,
-    frequency: 'annually',
+    frequency: "annually",
     privacy: true,
     security: true,
     compliance: true,

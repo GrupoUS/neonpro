@@ -1,16 +1,6 @@
 {
-  "workspaces": [
-    "apps/*",
-    "packages/*",
-    "tools/*"
-  ],
-  "ignore": [
-    "node_modules",
-    "dist",
-    "build",
-    ".git",
-    "*.log"
-  ],
+  "workspaces": ["apps/*", "packages/*", "tools/*"],
+  "ignore": ["node_modules", "dist", "build", ".git", "*.log"],
   "hoist": [
     "typescript",
     "react",

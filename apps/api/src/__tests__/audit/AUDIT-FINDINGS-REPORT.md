@@ -93,7 +93,8 @@ function sanitizeForAI(data: any): string {
 ```typescript
 // Missing consent validation
 const hasValidConsent = patientData.consentRecords.some(
-  consent => consent.type === 'DATA_PROCESSING' && consent.status === 'ACTIVE', // Always returns false
+  (consent) =>
+    consent.type === "DATA_PROCESSING" && consent.status === "ACTIVE", // Always returns false
 );
 ```
 

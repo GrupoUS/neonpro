@@ -702,12 +702,14 @@ export class InMemoryCacheBackend implements CacheBackend {
   }
 
   private updateSensitivityStats(): void {
-    this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter((entry) =>
+    this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter(
+      (entry) =>
         entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL ||
         entry.sensitivity === CacheDataSensitivity.RESTRICTED,
     ).length;
 
-    this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter((entry) => entry.lgpdCompliant,
+    this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter(
+      (entry) => entry.lgpdCompliant,
     ).length;
   }
 }

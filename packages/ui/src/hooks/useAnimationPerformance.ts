@@ -98,7 +98,8 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
 
   const hasTouch =
     hasWindow && hasNavigator
-      ? "ontouchstart" in window || ((navigator as NavigatorWithTouch).maxTouchPoints || 0) > 0
+      ? "ontouchstart" in window ||
+        ((navigator as NavigatorWithTouch).maxTouchPoints || 0) > 0
       : false;
 
   const userAgent = hasNavigator ? navigator.userAgent : "";
@@ -116,7 +117,8 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
   let hasGPU = false;
   // Avoid calling canvas.getContext in test/jsdom where it throws a Not implemented error
   const isTestEnv =
-    (typeof process !== "undefined" && (process as ProcessWithEnv).env?.VITEST) ||
+    (typeof process !== "undefined" &&
+      (process as ProcessWithEnv).env?.VITEST) ||
     (hasNavigator && /jsdom/i.test(navigator.userAgent || ""));
   if (hasDocument && !isTestEnv) {
     try {
@@ -137,7 +139,9 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
     const cores = hasNavigator
       ? (navigator as NavigatorWithDeviceCapabilities).hardwareConcurrency || 4
       : 4;
-    const memory = hasNavigator ? (navigator as NavigatorWithDeviceCapabilities).deviceMemory || 4 : 4;
+    const memory = hasNavigator
+      ? (navigator as NavigatorWithDeviceCapabilities).deviceMemory || 4
+      : 4;
     if (isMobile) return Math.min(cores + memory - 2, 6);
     return Math.min(cores + memory - 1, 10);
   })();

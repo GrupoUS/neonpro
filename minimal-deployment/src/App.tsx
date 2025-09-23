@@ -1,4 +1,4 @@
-import * as React from 'react'
+import * as React from "react";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
             Modern healthcare platform for Brazilian aesthetic clinics
           </p>
         </header>
-        
+
         <main className="max-w-4xl mx-auto">
           <div className="bg-white rounded-lg shadow-lg p-8">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">
@@ -32,7 +32,9 @@ function App() {
                 </ul>
               </div>
               <div className="bg-green-50 p-6 rounded-lg">
-                <h3 className="font-semibold text-green-800 mb-2">Technology</h3>
+                <h3 className="font-semibold text-green-800 mb-2">
+                  Technology
+                </h3>
                 <ul className="text-green-700 space-y-1">
                   <li>• React 19</li>
                   <li>• TypeScript</li>
@@ -45,7 +47,7 @@ function App() {
         </main>
       </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

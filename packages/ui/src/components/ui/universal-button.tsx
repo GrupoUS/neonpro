@@ -6,7 +6,7 @@ import { forwardRef } from "react";
 import {
   useAnimationPerformance,
   useHoverBorderGradient,
-  useShineBorderAnimation
+  useShineBorderAnimation,
 } from "../../hooks";
 import { cn } from "../../utils";
 import "./universal-button.css";
@@ -28,19 +28,19 @@ const universalButtonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline"
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-10 px-4 py-2 rounded-md",
         sm: "h-9 px-3 py-2 text-xs rounded-md",
         lg: "h-11 px-8 py-3 text-base rounded-md",
-        icon: "h-10 w-10 rounded-md"
-      }
+        icon: "h-10 w-10 rounded-md",
+      },
     },
     defaultVariants: {
       variant: "default",
-      size: "default"
-    }
+      size: "default",
+    },
   },
 );
 
@@ -159,8 +159,8 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       handlers: {
         onMouseEnter: handleHoverBorderMouseEnter,
         onMouseLeave: handleHoverBorderMouseLeave,
-        onMouseMove: handleHoverBorderMouseMove
-      }
+        onMouseMove: handleHoverBorderMouseMove,
+      },
     } = useHoverBorderGradient({
       enabled: hoverBorderGradientEnabled,
       intensity: hoverBorderGradientConfig?.intensity || "normal",
@@ -168,7 +168,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       theme: hoverBorderGradientConfig?.theme || "blue",
       speed: hoverBorderGradientConfig?.speed || "normal",
       borderWidth: hoverBorderGradientConfig?.borderWidth || 2,
-      colors: hoverBorderGradientConfig?.colors
+      colors: hoverBorderGradientConfig?.colors,
     });
 
     // Enhanced shine border animation
@@ -180,7 +180,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       elementRef: shineBorderRef,
       classNames: shineBorderClasses,
       start: startShine,
-      stop: stopShine
+      stop: stopShine,
     } = useShineBorderAnimation({
       enabled: shineBorderEnabled,
       pattern: shineBorderConfig?.pattern || "linear",
@@ -191,7 +191,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       color: shineBorderConfig?.color,
       duration: shineBorderConfig?.duration || 2000,
       autoStart: shineBorderConfig?.autoStart ?? true,
-      hoverOnly: shineBorderConfig?.hoverOnly ?? false
+      hoverOnly: shineBorderConfig?.hoverOnly ?? false,
     });
 
     // Combine all CSS classes
@@ -214,7 +214,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
           : {}),
         ...(legacyBorderGradientEnabled && clockwise === false
           ? { "before:animate-reverse-spin": true }
-          : {})
+          : {}),
       },
       // Animation classes (strings)
       hoverBorderClasses,
@@ -283,11 +283,11 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
       ...(hoverBorderGradientEnabled &&
         mousePosition && {
           "--mouse-x": `${mousePosition.x}px`,
-          "--mouse-y": `${mousePosition.y}px`
+          "--mouse-y": `${mousePosition.y}px`,
         }),
       ...(legacyBorderGradientEnabled && duration !== undefined
         ? { ["--animation-duration" as any]: `${duration}s` }
-        : {})
+        : {}),
     };
 
     // If asChild, we need to clone the only valid React element child and inject button props
@@ -320,7 +320,7 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
           child.props?.onClick?.(e);
           onClick?.(e as any);
         },
-        ...props
+        ...props,
       };
       return React.cloneElement(child, mergedProps);
     }

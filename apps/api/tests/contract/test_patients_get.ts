@@ -9,9 +9,9 @@
  * - Detailed patient data structure
  */
 
-import request from 'supertest';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { app } from '../../src/app';
+import request from "supertest";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { app } from "../../src/app";
 
 // Response schema validation for detailed patient view
 const GetPatientResponseSchema = z.object({
@@ -21,8 +21,8 @@ const GetPatientResponseSchema = z.object({
   phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/),
   email: z.string().email(),
   dateOfBirth: z.string().datetime(),
-  gender: z.enum(['male', 'female', 'other']),
-  status: z.enum(['active', 'inactive', 'archived']),
+  gender: z.enum(["male", "female", "other"]),
+  status: z.enum(["active", "inactive", "archived"]),
   address: z.object({
     street: z.string(),
     number: z.string(),
@@ -69,10 +69,10 @@ const GetPatientResponseSchema = z.object({
   }),
 });
 
-describe('GET /api/v2/patients/{id} - Contract Tests', () => {
+describe("GET /api/v2/patients/{id} - Contract Tests", () => {
   const testAuthHeaders = {
-    Authorization: 'Bearer test-token',
-    'Content-Type': 'application/json',
+    Authorization: "Bearer test-token",
+    "Content-Type": "application/json",
   };
 
   let testPatientId: string;
@@ -80,32 +80,32 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
   beforeAll(async () => {
     // Create a test patient for retrieval tests
     const createResponse = await request(app)
-      .post('/api/v2/patients')
+      .post("/api/v2/patients")
       .set(testAuthHeaders)
       .send({
-        name: 'Test Patient for Retrieval',
-        cpf: '123.456.789-01',
-        phone: '(11) 99999-9999',
-        email: 'test.retrieval@example.com',
-        dateOfBirth: '1990-05-15T00:00:00.000Z',
-        gender: 'male',
+        name: "Test Patient for Retrieval",
+        cpf: "123.456.789-01",
+        phone: "(11) 99999-9999",
+        email: "test.retrieval@example.com",
+        dateOfBirth: "1990-05-15T00:00:00.000Z",
+        gender: "male",
         address: {
-          street: 'Rua Teste',
-          number: '123',
-          neighborhood: 'Centro',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567',
+          street: "Rua Teste",
+          number: "123",
+          neighborhood: "Centro",
+          city: "São Paulo",
+          state: "SP",
+          zipCode: "01234-567",
         },
         emergencyContact: {
-          name: 'Emergency Contact',
-          relationship: 'Family',
-          phone: '(11) 88888-8888',
+          name: "Emergency Contact",
+          relationship: "Family",
+          phone: "(11) 88888-8888",
         },
         lgpdConsent: {
           dataProcessing: true,
           consentDate: new Date().toISOString(),
-          ipAddress: '127.0.0.1',
+          ipAddress: "127.0.0.1",
         },
       });
 
@@ -116,8 +116,8 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
     // Cleanup test data
   });
 
-  describe('Successful Retrieval', () => {
-    it('should retrieve patient with correct schema and complete data', async () => {
+  describe("Successful Retrieval", () => {
+    it("should retrieve patient with correct schema and complete data", async () => {
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
@@ -129,39 +129,39 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
 
       // Validate specific fields
       expect(response.body.id).toBe(testPatientId);
-      expect(response.body.name).toBe('Test Patient for Retrieval');
-      expect(response.body.cpf).toBe('123.456.789-01');
-      expect(response.body.email).toBe('test.retrieval@example.com');
+      expect(response.body.name).toBe("Test Patient for Retrieval");
+      expect(response.body.cpf).toBe("123.456.789-01");
+      expect(response.body.email).toBe("test.retrieval@example.com");
     });
 
-    it('should include complete address information', async () => {
+    it("should include complete address information", async () => {
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
         .expect(200);
 
       expect(response.body.address).toBeDefined();
-      expect(response.body.address.street).toBe('Rua Teste');
-      expect(response.body.address.number).toBe('123');
-      expect(response.body.address.neighborhood).toBe('Centro');
-      expect(response.body.address.city).toBe('São Paulo');
-      expect(response.body.address.state).toBe('SP');
-      expect(response.body.address.zipCode).toBe('01234-567');
+      expect(response.body.address.street).toBe("Rua Teste");
+      expect(response.body.address.number).toBe("123");
+      expect(response.body.address.neighborhood).toBe("Centro");
+      expect(response.body.address.city).toBe("São Paulo");
+      expect(response.body.address.state).toBe("SP");
+      expect(response.body.address.zipCode).toBe("01234-567");
     });
 
-    it('should include emergency contact information', async () => {
+    it("should include emergency contact information", async () => {
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
         .expect(200);
 
       expect(response.body.emergencyContact).toBeDefined();
-      expect(response.body.emergencyContact.name).toBe('Emergency Contact');
-      expect(response.body.emergencyContact.relationship).toBe('Family');
-      expect(response.body.emergencyContact.phone).toBe('(11) 88888-8888');
+      expect(response.body.emergencyContact.name).toBe("Emergency Contact");
+      expect(response.body.emergencyContact.relationship).toBe("Family");
+      expect(response.body.emergencyContact.phone).toBe("(11) 88888-8888");
     });
 
-    it('should include LGPD consent information', async () => {
+    it("should include LGPD consent information", async () => {
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
@@ -174,22 +174,22 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
     });
   });
 
-  describe('Medical History', () => {
-    it('should include medical history when available', async () => {
+  describe("Medical History", () => {
+    it("should include medical history when available", async () => {
       // Update patient with medical history
       await request(app)
         .put(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
         .send({
           medicalHistory: {
-            allergies: ['Penicillin', 'Latex'],
-            medications: ['Metformin', 'Losartan'],
-            conditions: ['Diabetes Type 2', 'Hypertension'],
+            allergies: ["Penicillin", "Latex"],
+            medications: ["Metformin", "Losartan"],
+            conditions: ["Diabetes Type 2", "Hypertension"],
             surgeries: [
               {
-                procedure: 'Appendectomy',
-                date: '2020-03-15T10:00:00.000Z',
-                hospital: 'Hospital São Paulo',
+                procedure: "Appendectomy",
+                date: "2020-03-15T10:00:00.000Z",
+                hospital: "Hospital São Paulo",
               },
             ],
           },
@@ -201,18 +201,18 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
         .expect(200);
 
       expect(response.body.medicalHistory).toBeDefined();
-      expect(response.body.medicalHistory.allergies).toContain('Penicillin');
-      expect(response.body.medicalHistory.medications).toContain('Metformin');
+      expect(response.body.medicalHistory.allergies).toContain("Penicillin");
+      expect(response.body.medicalHistory.medications).toContain("Metformin");
       expect(response.body.medicalHistory.conditions).toContain(
-        'Diabetes Type 2',
+        "Diabetes Type 2",
       );
       expect(response.body.medicalHistory.surgeries).toHaveLength(1);
       expect(response.body.medicalHistory.surgeries[0].procedure).toBe(
-        'Appendectomy',
+        "Appendectomy",
       );
     });
 
-    it('should handle patients without medical history', async () => {
+    it("should handle patients without medical history", async () => {
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
@@ -220,13 +220,13 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
 
       // Medical history should be optional or empty object
       if (response.body.medicalHistory) {
-        expect(typeof response.body.medicalHistory).toBe('object');
+        expect(typeof response.body.medicalHistory).toBe("object");
       }
     });
   });
 
-  describe('Performance Requirements', () => {
-    it('should respond within 500ms', async () => {
+  describe("Performance Requirements", () => {
+    it("should respond within 500ms", async () => {
       const startTime = Date.now();
 
       const response = await request(app)
@@ -241,7 +241,7 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
       expect(response.body.performanceMetrics.duration).toBeLessThan(500);
     });
 
-    it('should minimize database queries', async () => {
+    it("should minimize database queries", async () => {
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
@@ -252,38 +252,38 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should return 404 for non-existent patient', async () => {
-      const nonExistentId = '123e4567-e89b-12d3-a456-426614174000';
+  describe("Error Handling", () => {
+    it("should return 404 for non-existent patient", async () => {
+      const nonExistentId = "123e4567-e89b-12d3-a456-426614174000";
 
       const response = await request(app)
         .get(`/api/v2/patients/${nonExistentId}`)
         .set(testAuthHeaders)
         .expect(404);
 
-      expect(response.body.error).toContain('Patient not found');
+      expect(response.body.error).toContain("Patient not found");
       expect(response.body.patientId).toBe(nonExistentId);
     });
 
-    it('should return 400 for invalid UUID format', async () => {
-      const invalidId = 'invalid-uuid';
+    it("should return 400 for invalid UUID format", async () => {
+      const invalidId = "invalid-uuid";
 
       const response = await request(app)
         .get(`/api/v2/patients/${invalidId}`)
         .set(testAuthHeaders)
         .expect(400);
 
-      expect(response.body.error).toContain('Invalid patient ID format');
+      expect(response.body.error).toContain("Invalid patient ID format");
     });
 
-    it('should return 401 for missing authentication', async () => {
+    it("should return 401 for missing authentication", async () => {
       await request(app).get(`/api/v2/patients/${testPatientId}`).expect(401);
     });
 
-    it('should return 403 for insufficient permissions', async () => {
+    it("should return 403 for insufficient permissions", async () => {
       const restrictedHeaders = {
-        Authorization: 'Bearer restricted-token',
-        'Content-Type': 'application/json',
+        Authorization: "Bearer restricted-token",
+        "Content-Type": "application/json",
       };
 
       await request(app)
@@ -293,49 +293,49 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
     });
   });
 
-  describe('LGPD Data Protection', () => {
-    it('should include LGPD audit headers', async () => {
+  describe("LGPD Data Protection", () => {
+    it("should include LGPD audit headers", async () => {
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)
         .expect(200);
 
-      expect(response.headers['x-lgpd-processed']).toBeDefined();
-      expect(response.headers['x-audit-id']).toBeDefined();
-      expect(response.headers['x-data-access-logged']).toBe('true');
+      expect(response.headers["x-lgpd-processed"]).toBeDefined();
+      expect(response.headers["x-audit-id"]).toBeDefined();
+      expect(response.headers["x-data-access-logged"]).toBe("true");
     });
 
-    it('should respect data masking based on consent level', async () => {
+    it("should respect data masking based on consent level", async () => {
       // Create patient with limited consent
       const limitedConsentResponse = await request(app)
-        .post('/api/v2/patients')
+        .post("/api/v2/patients")
         .set(testAuthHeaders)
         .send({
-          name: 'Limited Consent Patient',
-          cpf: '987.654.321-09',
-          phone: '(11) 77777-7777',
-          email: 'limited@example.com',
-          dateOfBirth: '1985-10-20T00:00:00.000Z',
-          gender: 'female',
+          name: "Limited Consent Patient",
+          cpf: "987.654.321-09",
+          phone: "(11) 77777-7777",
+          email: "limited@example.com",
+          dateOfBirth: "1985-10-20T00:00:00.000Z",
+          gender: "female",
           address: {
-            street: 'Rua Limitada',
-            number: '456',
-            neighborhood: 'Vila Nova',
-            city: 'Rio de Janeiro',
-            state: 'RJ',
-            zipCode: '20000-000',
+            street: "Rua Limitada",
+            number: "456",
+            neighborhood: "Vila Nova",
+            city: "Rio de Janeiro",
+            state: "RJ",
+            zipCode: "20000-000",
           },
           emergencyContact: {
-            name: 'Limited Emergency',
-            relationship: 'Friend',
-            phone: '(21) 66666-6666',
+            name: "Limited Emergency",
+            relationship: "Friend",
+            phone: "(21) 66666-6666",
           },
           lgpdConsent: {
             dataProcessing: true,
             marketingCommunications: false,
             thirdPartySharing: false,
             consentDate: new Date().toISOString(),
-            ipAddress: '127.0.0.1',
+            ipAddress: "127.0.0.1",
           },
         });
 
@@ -353,8 +353,8 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
     });
   });
 
-  describe('Brazilian Data Compliance', () => {
-    it('should return properly formatted Brazilian data', async () => {
+  describe("Brazilian Data Compliance", () => {
+    it("should return properly formatted Brazilian data", async () => {
       const response = await request(app)
         .get(`/api/v2/patients/${testPatientId}`)
         .set(testAuthHeaders)

@@ -370,7 +370,7 @@ export function generateCSRFToken(): string {
       array[i] = Math.floor(Math.random() * 256);
     }
   }
-  return Array.from(_array,(byte) => byte.toString(16).padStart(2, "0")).join(
+  return Array.from(_array, (byte) => byte.toString(16).padStart(2, "0")).join(
     "",
   );
 }
@@ -652,12 +652,14 @@ export class SessionManagementService {
       const existingSessions = await this.store.getUserSessions(
         validatedRequest.userId,
       );
-      const activeSessions = existingSessions.filter((s) => s.status === SessionStatus.ACTIVE,
+      const activeSessions = existingSessions.filter(
+        (s) => s.status === SessionStatus.ACTIVE,
       );
 
       if (activeSessions.length >= config.maxConcurrentSessions) {
         // Terminate oldest session
-        const oldestSession = activeSessions.sort((a,_b) => a.createdAt.getTime() - b.createdAt.getTime(),
+        const oldestSession = activeSessions.sort(
+          (a, _b) => a.createdAt.getTime() - b.createdAt.getTime(),
         )[0];
 
         await this.terminateSession(
@@ -1032,7 +1034,8 @@ export class SessionManagementService {
     reason?: string,
   ): Promise<void> {
     const sessions = await this.store.getUserSessions(userId);
-    const activeSessions = sessions.filter((s) => s.status === SessionStatus.ACTIVE,
+    const activeSessions = sessions.filter(
+      (s) => s.status === SessionStatus.ACTIVE,
     );
 
     for (const session of activeSessions) {

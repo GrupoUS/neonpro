@@ -57,7 +57,7 @@ const defaultMotion: Required<NonNullable<SharedAnimatedListProps["motion"]>> =
     initial: { opacity: 0, y: 6 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -6 },
-    transition: { duration: 0.15 }
+    transition: { duration: 0.15 },
   };
 
 /**
@@ -80,7 +80,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
     emptyMessage = (
       <span className="text-xs text-muted-foreground">Nada para exibir</span>
     ),
-    keyboardNavigation = true
+    keyboardNavigation = true,
   } = props;
 
   const listRef = React.useRef<HTMLUListElement | null>(null);
@@ -89,7 +89,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
   const isEmpty = !loading && !error && (!items || items.length === 0);
   const motionCfg: Required<NonNullable<SharedAnimatedListProps["motion"]>> = {
     ...defaultMotion,
-    ...motionOverrides
+    ...motionOverrides,
   };
 
   // Keyboard navigation (SSR safe: only runs on client)
@@ -171,7 +171,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
       )}
 
       <AnimatePresence initial={false}>
-        {(items ?? []).map((item,idx) => {
+        {(items ?? []).map((item, idx) => {
           const key = (item as any)?.id ?? idx;
           return (
             <motion.li
@@ -213,7 +213,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
                         "pt-BR",
                         {
                           hour: "2-digit",
-                          minute: "2-digit"
+                          minute: "2-digit",
                         },
                       )}
                     </time>

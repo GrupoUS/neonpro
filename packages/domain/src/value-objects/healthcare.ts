@@ -9,12 +9,10 @@ export interface HealthcareInfo {
   allergies: string[];
   medications: string[];
   medicalConditions: string[];
-  bloodType?: import('./gender.js').BloodType;
+  bloodType?: import("./gender.js").BloodType;
   organDonor: boolean;
   medicalNotes?: string;
 }
-
-
 
 /**
  * Brazilian CPF validation

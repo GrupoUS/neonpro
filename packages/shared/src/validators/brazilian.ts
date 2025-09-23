@@ -432,7 +432,9 @@ export function validatePatientData(data: PatientData): ValidationResult {
 }
 
 // Validate Brazilian address
-export function validateBrazilianAddress(address: BrazilianAddress): ValidationResult {
+export function validateBrazilianAddress(
+  address: BrazilianAddress,
+): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Required fields
@@ -480,11 +482,14 @@ export function createValidationSchema(fields: Record<string, any>): {
     validate: (data: PatientData | BrazilianAddress): ValidationResult => {
       const errors: ValidationError[] = [];
 
-      Object.entries(fields).forEach(([fieldName,_config]) => {
+      Object.entries(fields).forEach(([fieldName, _config]) => {
         const value = data[fieldName];
 
         // Required field validation
-        if (_config.required && (!value || (typeof value === 'string' && value.trim() === ""))) {
+        if (
+          _config.required &&
+          (!value || (typeof value === "string" && value.trim() === ""))
+        ) {
           errors.push({
             field: fieldName,
             message: getValidationMessage(fieldName, "required"),
@@ -499,7 +504,7 @@ export function createValidationSchema(fields: Record<string, any>): {
         // Field-specific validation
         switch (fieldName) {
           case "cpf":
-            if (typeof value === 'string' && !validateCPF(value)) {
+            if (typeof value === "string" && !validateCPF(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),

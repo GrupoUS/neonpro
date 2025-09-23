@@ -32,6 +32,7 @@ Frontend (React)
 ## WebSocket vs REST
 
 ### WebSocket
+
 - **Real-time communication**
 - Lower latency for ongoing conversations
 - Automatic reconnection
@@ -39,6 +40,7 @@ Frontend (React)
 - Better for chat applications
 
 ### REST API
+
 - Simpler to implement
 - Stateless
 - Better for one-off queries
@@ -47,18 +49,22 @@ Frontend (React)
 ## Implementation Details
 
 ### Frontend WebSocket Service
+
 Location: `apps/web/src/services/websocket-agent-service.ts`
 
 Features:
+
 - Automatic reconnection
 - Message queuing
 - Request/response correlation
 - Connection health monitoring
 
 ### Python WebSocket Server
+
 Location: `services/ai-agent/main.py`
 
 Features:
+
 - AG-UI protocol support
 - Connection management
 - Health checks
@@ -67,19 +73,20 @@ Features:
 ## Usage
 
 ### Basic WebSocket Connection
+
 ```typescript
 import { useWebSocketAgent } from "@/services/websocket-agent-service";
 
 function ChatComponent() {
   const { isConnected, sendQuery } = useWebSocketAgent();
-  
+
   const handleSubmit = async (message: string) => {
     if (isConnected) {
       const response = await sendQuery(message, { userId: user.id });
       console.log(response);
     }
   };
-  
+
   return (
     <div>
       Connection: {isConnected ? "Connected" : "Disconnected"}
@@ -90,6 +97,7 @@ function ChatComponent() {
 ```
 
 ### Message Format
+
 ```typescript
 // Query message
 {
@@ -115,6 +123,7 @@ function ChatComponent() {
 ## Deployment
 
 ### Docker
+
 The Python agent service includes Docker configuration:
 
 ```bash
@@ -124,6 +133,7 @@ docker-compose up --build
 ```
 
 ### Manual Deployment
+
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -139,26 +149,33 @@ uvicorn main:app --host 0.0.0.0 --port 8001
 ## Security
 
 ### CORS Configuration
+
 Ensure your ALLOWED_ORIGINS includes your frontend URL:
+
 ```bash
 ALLOWED_ORIGINS=["http://localhost:3000", "https://your-domain.com"]
 ```
 
 ### Authentication
+
 WebSocket connections should include JWT tokens for authentication:
+
 ```typescript
-const ws = new WebSocket('ws://localhost:8001/ws/agent?token=YOUR_JWT_TOKEN');
+const ws = new WebSocket("ws://localhost:8001/ws/agent?token=YOUR_JWT_TOKEN");
 ```
 
 ## Monitoring
 
 ### Health Check
+
 ```bash
 curl http://localhost:8001/health
 ```
 
 ### Connection Metrics
+
 The service provides connection statistics at:
+
 ```bash
 ws://localhost:8001/ws/stats
 ```
@@ -183,7 +200,9 @@ ws://localhost:8001/ws/stats
    - Monitor error logs
 
 ### Debug Logging
+
 Enable debug logging:
+
 ```bash
 LOG_LEVEL=DEBUG uvicorn main:app --reload
 ```

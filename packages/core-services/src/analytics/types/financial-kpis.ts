@@ -606,8 +606,8 @@ export function calculatePayerMixDiversity(
   concentration: number;
   riskLevel: RiskLevel;
 } {
-  const total = Object.values(payerMix).reduce((sum,value) => sum + value, 0);
-  const proportions = Object.entries(payerMix).map(([payer,amount]) => ({
+  const total = Object.values(payerMix).reduce((sum, value) => sum + value, 0);
+  const proportions = Object.entries(payerMix).map(([payer, amount]) => ({
     payer: payer as PaymentSource,
     proportion: amount / total,
   }));
@@ -615,11 +615,11 @@ export function calculatePayerMixDiversity(
   // Calculate Herfindahl-Hirschman Index for concentration
   const hhi = proportions.reduce(
     (sum, { proportion }) => sum + proportion * proportion,
-    0
+    0,
   );
   const diversityScore = (1 - hhi) * 100;
 
-  const dominantPayer = proportions.reduce((max,current) =>
+  const dominantPayer = proportions.reduce((max, current) =>
     current.proportion > max.proportion ? current : max,
   ).payer;
 

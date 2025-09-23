@@ -1,32 +1,32 @@
-import { Command } from 'commander';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { runAudit } from '../auditRunner.js';
-import { formatAuditReport } from '../core/reportGenerator.js';
-import { AuditOptions } from '../types.js';
+import { Command } from "commander";
+import { promises as fs } from "fs";
+import path from "path";
+import { runAudit } from "../auditRunner.js";
+import { formatAuditReport } from "../core/reportGenerator.js";
+import { AuditOptions } from "../types.js";
 
 export function createAuditCommand(): Command {
-  const command = new Command('audit');
+  const command = new Command("audit");
 
   command
-    .description('Run a lightweight audit across the repository')
-    .option('-r, --root <path>', 'Directory to audit', process.cwd())
-    .option('-i, --include <patterns>', 'Comma separated substrings to include')
-    .option('-e, --exclude <patterns>', 'Comma separated substrings to exclude')
+    .description("Run a lightweight audit across the repository")
+    .option("-r, --root <path>", "Directory to audit", process.cwd())
+    .option("-i, --include <patterns>", "Comma separated substrings to include")
+    .option("-e, --exclude <patterns>", "Comma separated substrings to exclude")
     .option(
-      '-d, --max-depth <number>',
-      'Maximum directory depth to traverse',
+      "-d, --max-depth <number>",
+      "Maximum directory depth to traverse",
       parseNumber,
     )
-    .option('-o, --output <file>', 'Write report to file')
+    .option("-o, --output <file>", "Write report to file")
     .option(
-      '-f, --format <format>',
-      'Output format (json|text)',
+      "-f, --format <format>",
+      "Output format (json|text)",
       toOutputFormat,
-      'text',
+      "text",
     )
-    .option('-v, --verbose', 'Enable verbose logging', false)
-    .action(async rawOptions => {
+    .option("-v, --verbose", "Enable verbose logging", false)
+    .action(async (rawOptions) => {
       const options = normaliseOptions(rawOptions);
 
       if (options.verbose) {
@@ -35,7 +35,7 @@ export function createAuditCommand(): Command {
 
       try {
         const report = await runAudit(options);
-        if (options.outputFormat === 'json') {
+        if (options.outputFormat === "json") {
           const json = JSON.stringify(report, null, 2);
           if (options.output) {
             await writeOutput(options.output, json);
@@ -58,7 +58,7 @@ export function createAuditCommand(): Command {
         }
       } catch (error) {
         console.error(
-          '❌ Audit failed:',
+          "❌ Audit failed:",
           error instanceof Error ? error.message : error,
         );
         process.exit(1);
@@ -69,26 +69,28 @@ export function createAuditCommand(): Command {
 }
 
 function normaliseOptions(raw: any): AuditOptions {
-  const include = typeof raw.include === 'string'
-    ? raw.include
-      .split(',')
-      .map((p: string) => p.trim())
-      .filter(Boolean)
-    : undefined;
-  const exclude = typeof raw.exclude === 'string'
-    ? raw.exclude
-      .split(',')
-      .map((p: string) => p.trim())
-      .filter(Boolean)
-    : undefined;
+  const include =
+    typeof raw.include === "string"
+      ? raw.include
+          .split(",")
+          .map((p: string) => p.trim())
+          .filter(Boolean)
+      : undefined;
+  const exclude =
+    typeof raw.exclude === "string"
+      ? raw.exclude
+          .split(",")
+          .map((p: string) => p.trim())
+          .filter(Boolean)
+      : undefined;
 
   return {
     root: path.resolve(raw.root ?? process.cwd()),
     include,
     exclude,
-    maxDepth: typeof raw.maxDepth === 'number' ? raw.maxDepth : undefined,
+    maxDepth: typeof raw.maxDepth === "number" ? raw.maxDepth : undefined,
     outputFormat: raw.format,
-    output: typeof raw.output === 'string' ? raw.output : undefined,
+    output: typeof raw.output === "string" ? raw.output : undefined,
     verbose: Boolean(raw.verbose),
   };
 }
@@ -104,11 +106,11 @@ function parseNumber(value: string | undefined): number | undefined {
   return parsed;
 }
 
-function toOutputFormat(value: string): 'json' | 'text' {
-  return value === 'json' ? 'json' : 'text';
+function toOutputFormat(value: string): "json" | "text" {
+  return value === "json" ? "json" : "text";
 }
 
 async function writeOutput(filePath: string, content: string): Promise<void> {
   await fs.mkdir(path.dirname(path.resolve(filePath)), { recursive: true });
-  await fs.writeFile(filePath, content, 'utf-8');
+  await fs.writeFile(filePath, content, "utf-8");
 }

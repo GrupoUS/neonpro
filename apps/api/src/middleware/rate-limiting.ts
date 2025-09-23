@@ -1,5 +1,5 @@
-import { Context, Next } from 'hono';
-import { logger } from '../lib/logger';
+import { Context, Next } from "hono";
+import { logger } from "../lib/logger";
 
 /**
  * Simple in-memory rate limiting store
@@ -70,10 +70,11 @@ interface RateLimitConfig {
  * Default key generator using IP address
  */
 function defaultKeyGenerator(c: Context): string {
-  const ip = c.req.header('x-forwarded-for')
-    || c.req.header('x-real-ip')
-    || c.req.header('cf-connecting-ip')
-    || 'unknown';
+  const ip =
+    c.req.header("x-forwarded-for") ||
+    c.req.header("x-real-ip") ||
+    c.req.header("cf-connecting-ip") ||
+    "unknown";
 
   return `rate_limit:${ip}`;
 }
@@ -102,27 +103,27 @@ function createRateLimit(config: RateLimitConfig) {
       const resetTime = current ? current.resetTime : Date.now() + windowMs;
       const retryAfter = Math.ceil((resetTime - Date.now()) / 1000);
 
-      logger.warn('Rate limit exceeded', {
+      logger.warn("Rate limit exceeded", {
         key,
         count,
         maxRequests,
         retryAfter,
         path: c.req.path,
         method: c.req.method,
-        ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+        ip: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
       });
 
       // Set rate limit headers
-      c.header('X-RateLimit-Limit', maxRequests.toString());
-      c.header('X-RateLimit-Remaining', '0');
-      c.header('X-RateLimit-Reset', Math.ceil(resetTime / 1000).toString());
-      c.header('Retry-After', retryAfter.toString());
+      c.header("X-RateLimit-Limit", maxRequests.toString());
+      c.header("X-RateLimit-Remaining", "0");
+      c.header("X-RateLimit-Reset", Math.ceil(resetTime / 1000).toString());
+      c.header("Retry-After", retryAfter.toString());
 
       return c.json(
         {
           error: {
-            message: 'Too many requests',
-            code: 'RATE_LIMIT_EXCEEDED',
+            message: "Too many requests",
+            code: "RATE_LIMIT_EXCEEDED",
             retryAfter,
           },
         },
@@ -155,9 +156,9 @@ function createRateLimit(config: RateLimitConfig) {
         const resetTime = current?.resetTime || Date.now() + windowMs;
 
         // Set rate limit headers
-        c.header('X-RateLimit-Limit', maxRequests.toString());
-        c.header('X-RateLimit-Remaining', remaining.toString());
-        c.header('X-RateLimit-Reset', Math.ceil(resetTime / 1000).toString());
+        c.header("X-RateLimit-Limit", maxRequests.toString());
+        c.header("X-RateLimit-Remaining", remaining.toString());
+        c.header("X-RateLimit-Reset", Math.ceil(resetTime / 1000).toString());
       }
     }
 
@@ -176,7 +177,7 @@ export function rateLimitMiddleware() {
     const path = c.req.path;
 
     // Healthcare data endpoints - very restrictive
-    if (path.includes('/patients') || path.includes('/medical-records')) {
+    if (path.includes("/patients") || path.includes("/medical-records")) {
       const healthcareLimit = createRateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutes
         maxRequests: 50, // 50 requests per 15 minutes
@@ -185,7 +186,7 @@ export function rateLimitMiddleware() {
     }
 
     // AI/Chat endpoints - moderate limits
-    if (path.includes('/chat') || path.includes('/ai')) {
+    if (path.includes("/chat") || path.includes("/ai")) {
       const aiLimit = createRateLimit({
         windowMs: 60 * 1000, // 1 minute
         maxRequests: 20, // 20 requests per minute
@@ -194,7 +195,7 @@ export function rateLimitMiddleware() {
     }
 
     // Authentication endpoints - strict limits
-    if (path.includes('/auth') || path.includes('/login')) {
+    if (path.includes("/auth") || path.includes("/login")) {
       const authLimit = createRateLimit({
         windowMs: 15 * 60 * 1000, // 15 minutes
         maxRequests: 10, // 10 attempts per 15 minutes

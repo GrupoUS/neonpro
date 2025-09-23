@@ -138,8 +138,8 @@ export function validateCNS(cns: string): boolean {
   // Check if it's a "definitive" CNS (starts with 1, 2, 7, 8, or 9)
   // or "provisional" CNS (starts with 7, 8, 9, or 0)
   const firstDigit = cleanCNS.charAt(0);
-  const isValidStart = ['1', '2', '7', '8', '9'].includes(firstDigit);
-  
+  const isValidStart = ["1", "2", "7", "8", "9"].includes(firstDigit);
+
   if (!isValidStart) {
     return false;
   }
@@ -162,10 +162,10 @@ export function validateTUSS(tussCode: string): boolean {
 
   // TUSS codes can vary in length but typically follow these patterns:
   // - 5 digits (basic procedure codes)
-  // - 8 digits (detailed procedure codes) 
+  // - 8 digits (detailed procedure codes)
   // - 10 digits (complete classification codes)
   const validLengths = [5, 8, 10];
-  
+
   if (!validLengths.includes(cleanTUSS.length)) {
     return false;
   }
@@ -178,8 +178,18 @@ export function validateTUSS(tussCode: string): boolean {
   // Validate common TUSS code ranges (simplified validation)
   // In practice, TUSS codes have specific ranges for different medical specialties
   const firstDigit = cleanTUSS.charAt(0);
-  const isValidFirstDigit = ['1', '2', '3', '4', '5', '6', '7', '8', '9'].includes(firstDigit);
-  
+  const isValidFirstDigit = [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+  ].includes(firstDigit);
+
   if (!isValidFirstDigit) {
     return false;
   }
@@ -188,23 +198,23 @@ export function validateTUSS(tussCode: string): boolean {
   if (cleanTUSS.length >= 5) {
     const firstTwoDigits = cleanTUSS.substring(0, 2);
     const validRanges = [
-      '10', // Medical procedures
-      '20', // Surgical procedures  
-      '30', // Diagnostic procedures
-      '40', // Therapeutic procedures
-      '50', // Clinical analysis
-      '60', // Image diagnostic
-      '70', // Functional tests
-      '80', // Rehabilitation
-      '90', // Other procedures
+      "10", // Medical procedures
+      "20", // Surgical procedures
+      "30", // Diagnostic procedures
+      "40", // Therapeutic procedures
+      "50", // Clinical analysis
+      "60", // Image diagnostic
+      "70", // Functional tests
+      "80", // Rehabilitation
+      "90", // Other procedures
     ];
 
     // Check if the code starts with a valid range (loose validation)
-    const isValidRange = validRanges.some(range => {
+    const isValidRange = validRanges.some((range) => {
       const firstChar = range.charAt(0);
       return firstTwoDigits.startsWith(firstChar);
     });
-    
+
     if (!isValidRange) {
       return false;
     }
@@ -214,7 +224,7 @@ export function validateTUSS(tussCode: string): boolean {
 }
 
 /**
- * Validates Brazilian medical council registration (CRM)
+ * Validates Brazilian medical council registration (CRM) - Medical Doctors
  * Format: CRM/UF XXXXXX where UF is state abbreviation and XXXXXX is registration number
  */
 export function validateCRM(crm: string): boolean {
@@ -225,7 +235,7 @@ export function validateCRM(crm: string): boolean {
 
   // CRM should match pattern: CRM/UF followed by 4-10 digits
   const crmPattern = /^CRM\/[A-Z]{2}\d{4,10}$/;
-  
+
   if (!crmPattern.test(cleanCRM)) {
     return false;
   }
@@ -238,11 +248,336 @@ export function validateCRM(crm: string): boolean {
 
   const stateCode = stateMatch[1];
   const validStates = [
-    'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG',
-    'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
   ];
 
   return validStates.includes(stateCode);
+}
+
+/**
+ * Validates Brazilian nursing council registration (COREN) - Nurses and Nursing Professionals
+ * Format: COREN/UF XXXXXX where UF is state abbreviation and XXXXXX is registration number
+ */
+export function validateCOREN(coren: string): boolean {
+  if (!coren) return false;
+
+  // Remove spaces and convert to uppercase
+  const cleanCOREN = coren.toUpperCase().replace(/\s/g, "");
+
+  // COREN should match pattern: COREN/UF followed by 6-9 digits
+  const corenPattern = /^COREN\/[A-Z]{2}\d{6,9}$/;
+
+  if (!corenPattern.test(cleanCOREN)) {
+    return false;
+  }
+
+  // Extract state code and validate it's a valid Brazilian state
+  const stateMatch = cleanCOREN.match(/^COREN\/([A-Z]{2})/);
+  if (!stateMatch || !stateMatch[1]) {
+    return false;
+  }
+
+  const stateCode = stateMatch[1];
+  const validStates = [
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
+  ];
+
+  return validStates.includes(stateCode);
+}
+
+/**
+ * Validates Brazilian pharmacy council registration (CFF) - Pharmacists and Biochemists
+ * Format: CFF/UF XXXXXX where UF is state abbreviation and XXXXXX is registration number
+ */
+export function validateCFF(cff: string): boolean {
+  if (!cff) return false;
+
+  // Remove spaces and convert to uppercase
+  const cleanCFF = cff.toUpperCase().replace(/\s/g, "");
+
+  // CFF should match pattern: CFF/UF followed by 6-8 digits
+  const cffPattern = /^CFF\/[A-Z]{2}\d{6,8}$/;
+
+  if (!cffPattern.test(cleanCFF)) {
+    return false;
+  }
+
+  // Extract state code and validate it's a valid Brazilian state
+  const stateMatch = cleanCFF.match(/^CFF\/([A-Z]{2})/);
+  if (!stateMatch || !stateMatch[1]) {
+    return false;
+  }
+
+  const stateCode = stateMatch[1];
+  const validStates = [
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
+  ];
+
+  return validStates.includes(stateCode);
+}
+
+/**
+ * Validates Brazilian aesthetic professional council registration (CNEP) - Aesthetic Professionals
+ * Format: CNEP/UF XXXXXX where UF is state abbreviation and XXXXXX is registration number
+ */
+export function validateCNEP(cnep: string): boolean {
+  if (!cnep) return false;
+
+  // Remove spaces and convert to uppercase
+  const cleanCNEP = cnep.toUpperCase().replace(/\s/g, "");
+
+  // CNEP should match pattern: CNEP/UF followed by 6-8 digits
+  const cnepPattern = /^CNEP\/[A-Z]{2}\d{6,8}$/;
+
+  if (!cnepPattern.test(cleanCNEP)) {
+    return false;
+  }
+
+  // Extract state code and validate it's a valid Brazilian state
+  const stateMatch = cleanCNEP.match(/^CNEP\/([A-Z]{2})/);
+  if (!stateMatch || !stateMatch[1]) {
+    return false;
+  }
+
+  const stateCode = stateMatch[1];
+  const validStates = [
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
+  ];
+
+  return validStates.includes(stateCode);
+}
+
+/**
+ * Validates any Brazilian aesthetic health professional council registration
+ * Supports CFM (doctors), COREN (nurses), CFF (pharmacists), CNEP (aesthetic professionals)
+ */
+export function validateProfessionalLicense(license: string): boolean {
+  if (!license) return false;
+
+  // Remove spaces and convert to uppercase
+  const cleanLicense = license.toUpperCase().replace(/\s/g, "");
+
+  // Try to match any of the supported council patterns
+  const councilPatterns = [
+    /^CRM\/[A-Z]{2}\d{4,10}$/, // Medical Council
+    /^COREN\/[A-Z]{2}\d{6,9}$/, // Nursing Council
+    /^CFF\/[A-Z]{2}\d{6,8}$/, // Pharmacy Council
+    /^CNEP\/[A-Z]{2}\d{6,8}$/, // Aesthetic Professional Council
+  ];
+
+  return councilPatterns.some((pattern) => pattern.test(cleanLicense));
+}
+
+/**
+ * Validates aesthetic clinic professional licenses with enhanced validation
+ * Specifically designed for aesthetic medicine professionals including doctors, nurses, 
+ * pharmacists, and aesthetic specialists who perform advanced aesthetic procedures
+ * @param license Professional license string to validate
+ * @returns Enhanced validation result with professional category information
+ */
+export interface AestheticProfessionalValidationResult {
+  isValid: boolean;
+  license: string;
+  councilType: 'CRM' | 'COREN' | 'CFF' | 'CNEP' | 'UNKNOWN';
+  stateCode: string;
+  registrationNumber: string;
+  professionalCategory: string;
+  normalized: string;
+  errors: string[];
+}
+
+export function validateAestheticProfessionalLicense(
+  license: string,
+): AestheticProfessionalValidationResult {
+  const errors: string[] = [];
+  let councilType: 'CRM' | 'COREN' | 'CFF' | 'CNEP' | 'UNKNOWN' = 'UNKNOWN';
+  let stateCode = '';
+  let registrationNumber = '';
+  let professionalCategory = '';
+  let isValid = false;
+
+  // Remove spaces and convert to uppercase
+  const normalized = license.toUpperCase().replace(/\s/g, "");
+
+  // CRM - Medical Doctors (including aesthetic medicine specialists)
+  if (/^CRM\/([A-Z]{2})(\d{4,10})$/.test(normalized)) {
+    councilType = 'CRM';
+    const match = normalized.match(/^CRM\/([A-Z]{2})(\d{4,10})$/);
+    if (match) {
+      stateCode = match[1];
+      registrationNumber = match[2];
+      professionalCategory = 'Médico Esteta';
+      isValid = validateCRM(license);
+    }
+  }
+  // COREN - Nursing Professionals (aesthetic nurses and technicians)
+  else if (/^COREN\/([A-Z]{2})(\d{6,9})$/.test(normalized)) {
+    councilType = 'COREN';
+    const match = normalized.match(/^COREN\/([A-Z]{2})(\d{6,9})$/);
+    if (match) {
+      stateCode = match[1];
+      registrationNumber = match[2];
+      professionalCategory = 'Enfermeiro Esteta';
+      isValid = validateCOREN(license);
+    }
+  }
+  // CFF - Pharmacy/Biochemistry Professionals (aesthetic pharmacists)
+  else if (/^CFF\/([A-Z]{2})(\d{6,8})$/.test(normalized)) {
+    councilType = 'CFF';
+    const match = normalized.match(/^CFF\/([A-Z]{2})(\d{6,8})$/);
+    if (match) {
+      stateCode = match[1];
+      registrationNumber = match[2];
+      professionalCategory = 'Farmacêutico Esteta';
+      isValid = validateCFF(license);
+    }
+  }
+  // CNEP - Aesthetic Professionals (specialized aesthetic technicians)
+  else if (/^CNEP\/([A-Z]{2})(\d{6,8})$/.test(normalized)) {
+    councilType = 'CNEP';
+    const match = normalized.match(/^CNEP\/([A-Z]{2})(\d{6,8})$/);
+    if (match) {
+      stateCode = match[1];
+      registrationNumber = match[2];
+      professionalCategory = 'Profissional de Estética';
+      isValid = validateCNEP(license);
+    }
+  }
+
+  // Validate Brazilian state codes
+  const validStates = [
+    "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
+    "RS", "RO", "RR", "SC", "SP", "SE", "TO",
+  ];
+
+  if (stateCode && !validStates.includes(stateCode)) {
+    errors.push(`Invalid Brazilian state code: ${stateCode}`);
+    isValid = false;
+  }
+
+  if (!isValid) {
+    if (councilType === 'UNKNOWN') {
+      errors.push('Invalid professional license format or unsupported council');
+    } else {
+      errors.push(`Invalid ${councilType} license format or state code`);
+    }
+  }
+
+  return {
+    isValid,
+    license,
+    councilType,
+    stateCode,
+    registrationNumber,
+    professionalCategory,
+    normalized,
+    errors,
+  };
 }
 
 /**
@@ -251,7 +586,7 @@ export function validateCRM(crm: string): boolean {
  * @returns true if checksum is valid
  */
 function calculateCNSChecksum(cns: string): boolean {
-  const digits = cns.split('').map(Number);
+  const digits = cns.split("").map(Number);
 
   // CNS uses specific weights: [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
   const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
@@ -264,9 +599,9 @@ function calculateCNSChecksum(cns: string): boolean {
       sum += digit * weight;
     }
   }
-  
+
   const remainder = sum % 11;
-  
+
   // For CNS, the result should be 0 or 1 for valid checksums
   return remainder === 0 || remainder === 1;
 }
@@ -284,14 +619,25 @@ export interface HealthcareValidationResult {
 }
 
 /**
- * Validate any Brazilian healthcare document
+ * Validate any Brazilian healthcare-related document
  * @param documentValue The document value to validate
- * @param documentType Type of document ('cpf', 'cns', 'tuss', 'crm', 'cep', 'phone')
+ * @param documentType Type of document ('cpf', 'cnpj', 'cns', 'tuss', 'crm', 'coren', 'cff', 'cnep', 'professional', 'cep', 'phone')
  * @returns Validation result with detailed information
  */
 export function validateHealthcareDocument(
-  documentValue: string, 
-  documentType: 'cpf' | 'cns' | 'tuss' | 'crm' | 'cep' | 'phone'
+  documentValue: string,
+  documentType:
+    | "cpf"
+    | "cnpj"
+    | "cns"
+    | "tuss"
+    | "crm"
+    | "coren"
+    | "cff"
+    | "cnep"
+    | "professional"
+    | "cep"
+    | "phone",
 ): HealthcareValidationResult {
   const errors: string[] = [];
   let isValid = false;
@@ -299,48 +645,81 @@ export function validateHealthcareDocument(
 
   try {
     switch (documentType) {
-      case 'cpf':
+      case "cpf":
         isValid = validateCPF(documentValue);
-        if (!isValid) errors.push('Invalid CPF format or checksum');
+        if (!isValid) errors.push("Invalid CPF format or checksum");
         normalized = documentValue.replace(/[^\d]/g, "");
         break;
-        
-      case 'cns':
+
+      case "cns":
         isValid = validateCNS(documentValue);
-        if (!isValid) errors.push('Invalid CNS format or checksum');
+        if (!isValid) errors.push("Invalid CNS format or checksum");
         normalized = documentValue.replace(/[^\d]/g, "");
         break;
-        
-      case 'tuss':
+
+      case "tuss":
         isValid = validateTUSS(documentValue);
-        if (!isValid) errors.push('Invalid TUSS code format or range');
+        if (!isValid) errors.push("Invalid TUSS code format or range");
         normalized = documentValue.replace(/[^\d]/g, "");
         break;
-        
-      case 'crm':
+
+      case "crm":
         isValid = validateCRM(documentValue);
-        if (!isValid) errors.push('Invalid CRM format or state code');
+        if (!isValid) errors.push("Invalid CRM format or state code");
         normalized = documentValue.toUpperCase().replace(/\s/g, "");
         break;
-        
-      case 'cep':
+
+      case "coren":
+        isValid = validateCOREN(documentValue);
+        if (!isValid) errors.push("Invalid COREN format or state code");
+        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        break;
+
+      case "cff":
+        isValid = validateCFF(documentValue);
+        if (!isValid) errors.push("Invalid CFF format or state code");
+        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        break;
+
+      case "cnep":
+        isValid = validateCNEP(documentValue);
+        if (!isValid) errors.push("Invalid CNEP format or state code");
+        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        break;
+
+      case "professional":
+        isValid = validateProfessionalLicense(documentValue);
+        if (!isValid)
+          errors.push("Invalid professional license format or council");
+        normalized = documentValue.toUpperCase().replace(/\s/g, "");
+        break;
+
+      case "cnpj":
+        isValid = validateCNPJ(documentValue);
+        if (!isValid) errors.push("Invalid CNPJ format or checksum");
+        normalized = documentValue.replace(/[^\d]/g, "");
+        break;
+
+      case "cep":
         isValid = validateCEP(documentValue);
-        if (!isValid) errors.push('Invalid CEP format');
+        if (!isValid) errors.push("Invalid CEP format");
         normalized = documentValue.replace(/[^\d]/g, "");
         break;
-        
-      case 'phone':
+
+      case "phone":
         isValid = validatePhone(documentValue);
-        if (!isValid) errors.push('Invalid phone number format');
+        if (!isValid) errors.push("Invalid phone number format");
         normalized = documentValue.replace(/[^\d]/g, "");
         break;
-        
+
       default:
-        errors.push('Unsupported document type');
+        errors.push("Unsupported document type");
         break;
     }
   } catch (error) {
-    errors.push(`Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    errors.push(
+      `Validation error: ${error instanceof Error ? error.message : "Unknown error"}`,
+    );
     isValid = false;
   }
 
@@ -349,7 +728,7 @@ export function validateHealthcareDocument(
     documentType,
     value: documentValue,
     errors,
-    ...(normalized && { normalized })
+    ...(normalized && { normalized }),
   };
 }
 
@@ -359,36 +738,55 @@ export function validateHealthcareDocument(
  * @returns Array of validation results
  */
 export function validateHealthcareDocuments(
-  documents: Array<{ value: string; type: 'cpf' | 'cns' | 'tuss' | 'crm' | 'cep' | 'phone' }>
+  documents: Array<{
+    value: string;
+    type:
+      | "cpf"
+      | "cnpj"
+      | "cns"
+      | "tuss"
+      | "crm"
+      | "coren"
+      | "cff"
+      | "cnep"
+      | "professional"
+      | "cep"
+      | "phone";
+  }>,
 ): HealthcareValidationResult[] {
-  return documents.map(doc => validateHealthcareDocument(doc.value, doc.type));
+  return documents.map((doc) =>
+    validateHealthcareDocument(doc.value, doc.type),
+  );
 }
 
 /**
  * Sanitize healthcare data for safe logging and storage
  * Removes or masks sensitive information while maintaining validation capability
  */
-export function sanitizeHealthcareData(data: string, dataType: 'cpf' | 'cns' | 'phone' | 'email'): string {
-  if (!data) return '';
+export function sanitizeHealthcareData(
+  data: string,
+  dataType: "cpf" | "cns" | "phone" | "email",
+): string {
+  if (!data) return "";
 
   switch (dataType) {
-    case 'cpf':
+    case "cpf":
       // Show only first 3 and last 2 digits: XXX.XXX.XXX-XX → XXX.XXX.XX*-XX
-      return data.replace(/(\d{3})\.\d{3}\.(\d{3})-(\d{2})/, '$1.$2.*-$3');
-      
-    case 'cns':
+      return data.replace(/(\d{3})\.\d{3}\.(\d{3})-(\d{2})/, "$1.$2.*-$3");
+
+    case "cns":
       // Show only first 3 and last 3 digits: XXX XXXXXXX XX → XXX XXXXX*-XX
-      return data.replace(/(\d{3})\s*(\d{5})\s*(\d{2})/, '$1 $2*-$3');
-      
-    case 'phone':
+      return data.replace(/(\d{3})\s*(\d{5})\s*(\d{2})/, "$1 $2*-$3");
+
+    case "phone":
       // Show only area code and last 2 digits: (XX) XXXXX-XXXX → (XX) XXX*-XX
-      return data.replace(/\((\d{2})\)\s*(\d{5})-(\d{4})/, '($1) $2*-$3');
-      
-    case 'email':
+      return data.replace(/\((\d{2})\)\s*(\d{5})-(\d{4})/, "($1) $2*-$3");
+
+    case "email":
       // Show only first 3 characters and domain: user@domain.com → use***@domain.com
-      return data.replace(/(\w{3})[\w.-]*@([\w.-]+)/, '$1***@$2');
-      
+      return data.replace(/(\w{3})[\w.-]*@([\w.-]+)/, "$1***@$2");
+
     default:
-      return '[REDACTED]';
+      return "[REDACTED]";
   }
 }

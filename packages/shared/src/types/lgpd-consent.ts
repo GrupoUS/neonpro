@@ -358,9 +358,10 @@ export function getConsentByPatientId(
   patientId: string,
 ): LGPDConsent | undefined {
   return consents
-    .filter((consent) => consent.patientId === patientId && !consent.withdrawalDate,
+    .filter(
+      (consent) => consent.patientId === patientId && !consent.withdrawalDate,
     )
-    .sort((a,_b) => b.consentDate.getTime() - a.consentDate.getTime())[0];
+    .sort((a, _b) => b.consentDate.getTime() - a.consentDate.getTime())[0];
 }
 
 // Get expired consents

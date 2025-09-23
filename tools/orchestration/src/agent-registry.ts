@@ -1,5 +1,3 @@
-
-
 /**
  * Agent capability definition for TDD orchestration
  */
@@ -72,7 +70,11 @@ const DEFAULT_AGENTS: AgentCapability[] = [
     type: "tdd-orchestrator",
     name: "TDD Orchestrator",
     description: "Main orchestrator for TDD workflow coordination",
-    capabilities: ["workflow-coordination", "phase-management", "quality-control"],
+    capabilities: [
+      "workflow-coordination",
+      "phase-management",
+      "quality-control",
+    ],
     specializations: ["tdd-workflow", "multi-agent-coordination"],
     priority: "primary",
     phases: ["red", "green", "refactor"],
@@ -88,8 +90,16 @@ const DEFAULT_AGENTS: AgentCapability[] = [
     type: "architect-review",
     name: "Architecture Review Agent",
     description: "Reviews system architecture and design patterns",
-    capabilities: ["architecture-validation", "design-patterns", "scalability-analysis"],
-    specializations: ["microservices-architecture", "system-design", "scalability"],
+    capabilities: [
+      "architecture-validation",
+      "design-patterns",
+      "scalability-analysis",
+    ],
+    specializations: [
+      "microservices-architecture",
+      "system-design",
+      "scalability",
+    ],
     priority: "secondary",
     phases: ["red", "refactor"],
     triggers: ["architecture-review", "design-validation"],
@@ -105,7 +115,11 @@ const DEFAULT_AGENTS: AgentCapability[] = [
     name: "Code Review Agent",
     description: "Performs code quality analysis and review",
     capabilities: ["code-quality-analysis", "static-analysis", "linting"],
-    specializations: ["code-quality", "best-practices", "performance-optimization"],
+    specializations: [
+      "code-quality",
+      "best-practices",
+      "performance-optimization",
+    ],
     priority: "secondary",
     phases: ["green", "refactor"],
     triggers: ["code-review", "quality-check"],
@@ -119,9 +133,18 @@ const DEFAULT_AGENTS: AgentCapability[] = [
   {
     type: "security-auditor",
     name: "Security Audit Agent",
-    description: "Performs security vulnerability scanning and compliance checks",
-    capabilities: ["security-vulnerability-scanning", "compliance-validation", "penetration-testing"],
-    specializations: ["security-analysis", "vulnerability-assessment", "compliance"],
+    description:
+      "Performs security vulnerability scanning and compliance checks",
+    capabilities: [
+      "security-vulnerability-scanning",
+      "compliance-validation",
+      "penetration-testing",
+    ],
+    specializations: [
+      "security-analysis",
+      "vulnerability-assessment",
+      "compliance",
+    ],
     priority: "secondary",
     phases: ["red", "green"],
     triggers: ["security-scan", "compliance-check"],
@@ -136,7 +159,11 @@ const DEFAULT_AGENTS: AgentCapability[] = [
     type: "test",
     name: "Test Coordination Agent",
     description: "Manages test execution and validation",
-    capabilities: ["test-pattern-enforcement", "test-execution", "coverage-analysis"],
+    capabilities: [
+      "test-pattern-enforcement",
+      "test-execution",
+      "coverage-analysis",
+    ],
     specializations: ["testing", "test-automation", "quality-assurance"],
     priority: "primary",
     phases: ["red", "green"],
@@ -217,12 +244,15 @@ export class TDDAgentRegistry {
   /**
    * Get agents for specific TDD phase
    */
-  getAgentsForPhase(phase: TDDPhase, context: OrchestrationContext): AgentCapability[] {
+  getAgentsForPhase(
+    phase: TDDPhase,
+    context: OrchestrationContext,
+  ): AgentCapability[] {
     // Handle undefined or empty context gracefully
     if (!context || !context.healthcareCompliance) {
       // Return all agents that support the phase if context is invalid
-      return Array.from(this.agents.values()).filter((agent) => 
-        agent.phases.includes(phase)
+      return Array.from(this.agents.values()).filter((agent) =>
+        agent.phases.includes(phase),
       );
     }
 
@@ -235,13 +265,25 @@ export class TDDAgentRegistry {
       // Filter based on healthcare compliance requirements
       if (context.healthcareCompliance.required) {
         if (!agent.healthcareCompliance) return false;
-        if (context.healthcareCompliance.lgpd && !agent.healthcareCompliance.lgpd) return false;
-        if (context.healthcareCompliance.anvisa && !agent.healthcareCompliance.anvisa) return false;
-        if (context.healthcareCompliance.cfm && !agent.healthcareCompliance.cfm) return false;
+        if (
+          context.healthcareCompliance.lgpd &&
+          !agent.healthcareCompliance.lgpd
+        )
+          return false;
+        if (
+          context.healthcareCompliance.anvisa &&
+          !agent.healthcareCompliance.anvisa
+        )
+          return false;
+        if (context.healthcareCompliance.cfm && !agent.healthcareCompliance.cfm)
+          return false;
       }
 
       // Filter based on criticality level (exclude tertiary agents for critical features)
-      if (context.criticalityLevel === "critical" && agent.priority === "tertiary") {
+      if (
+        context.criticalityLevel === "critical" &&
+        agent.priority === "tertiary"
+      ) {
         return false;
       }
 
@@ -256,7 +298,7 @@ export class TDDAgentRegistry {
    */
   getAgentsForCapability(capability: string): AgentCapability[] {
     return Array.from(this.agents.values()).filter((agent) =>
-      agent.capabilities.includes(capability)
+      agent.capabilities.includes(capability),
     );
   }
 
@@ -265,7 +307,11 @@ export class TDDAgentRegistry {
    */
   selectOptimalAgents(context: OrchestrationContext): AgentCapability[] {
     // Handle undefined or incomplete context gracefully
-    if (!context || !context.requirements || !Array.isArray(context.requirements)) {
+    if (
+      !context ||
+      !context.requirements ||
+      !Array.isArray(context.requirements)
+    ) {
       // Return all agents in default order if context is invalid
       return this.getAllAgents();
     }
@@ -287,7 +333,10 @@ export class TDDAgentRegistry {
   /**
    * Calculate agent relevance score
    */
-  private calculateAgentScore(agent: AgentCapability, context: OrchestrationContext): number {
+  private calculateAgentScore(
+    agent: AgentCapability,
+    context: OrchestrationContext,
+  ): number {
     let score = 0;
 
     // Base score by priority
@@ -304,25 +353,35 @@ export class TDDAgentRegistry {
     }
 
     // Bonus for matching triggers
-    const matchingTriggers = agent.triggers.filter((trigger) =>
-      context.featureName.toLowerCase().includes(trigger.toLowerCase()) ||
-      context.requirements.some((req) => req.toLowerCase().includes(trigger.toLowerCase()))
+    const matchingTriggers = agent.triggers.filter(
+      (trigger) =>
+        context.featureName.toLowerCase().includes(trigger.toLowerCase()) ||
+        context.requirements.some((req) =>
+          req.toLowerCase().includes(trigger.toLowerCase()),
+        ),
     );
     score += matchingTriggers.length * 10;
 
     // Bonus for matching specializations
-    const matchingSpecializations = agent.specializations.filter((spec) =>
-      context.featureName.toLowerCase().includes(spec.toLowerCase()) ||
-      context.featureType.toLowerCase().includes(spec.toLowerCase())
+    const matchingSpecializations = agent.specializations.filter(
+      (spec) =>
+        context.featureName.toLowerCase().includes(spec.toLowerCase()) ||
+        context.featureType.toLowerCase().includes(spec.toLowerCase()),
     );
     score += matchingSpecializations.length * 15;
 
     // Bonus for healthcare compliance when required
     if (context.healthcareCompliance.required && agent.healthcareCompliance) {
       let complianceScore = 0;
-      if (context.healthcareCompliance.lgpd && agent.healthcareCompliance.lgpd) complianceScore += 25;
-      if (context.healthcareCompliance.anvisa && agent.healthcareCompliance.anvisa) complianceScore += 25;
-      if (context.healthcareCompliance.cfm && agent.healthcareCompliance.cfm) complianceScore += 25;
+      if (context.healthcareCompliance.lgpd && agent.healthcareCompliance.lgpd)
+        complianceScore += 25;
+      if (
+        context.healthcareCompliance.anvisa &&
+        agent.healthcareCompliance.anvisa
+      )
+        complianceScore += 25;
+      if (context.healthcareCompliance.cfm && agent.healthcareCompliance.cfm)
+        complianceScore += 25;
       score += complianceScore;
     }
 
@@ -368,7 +427,10 @@ export class TDDAgentRegistry {
   /**
    * Update agent configuration
    */
-  updateAgentConfiguration(type: AgentType, config: Record<string, any>): boolean {
+  updateAgentConfiguration(
+    type: AgentType,
+    config: Record<string, any>,
+  ): boolean {
     const agent = this.agents.get(type);
     if (!agent) return false;
 
@@ -380,12 +442,14 @@ export class TDDAgentRegistry {
    * Get agent statistics
    */
   getAgentStats(type: AgentType): AgentStats {
-    return this.agentStats.get(type) || {
-      executionCount: 0,
-      successRate: 0,
-      averageExecutionTime: 0,
-      lastExecution: null,
-    };
+    return (
+      this.agentStats.get(type) || {
+        executionCount: 0,
+        successRate: 0,
+        averageExecutionTime: 0,
+        lastExecution: null,
+      }
+    );
   }
 
   /**

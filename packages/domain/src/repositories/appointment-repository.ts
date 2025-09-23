@@ -3,8 +3,8 @@ import {
   AppointmentStatus,
   AppointmentType,
   AppointmentPriority,
-  type AppointmentCalendarView
-} from '../entities/appointment.js';
+  type AppointmentCalendarView,
+} from "../entities/appointment.js";
 
 /**
  * Appointment Repository Interface
@@ -24,7 +24,10 @@ export interface AppointmentRepository {
    * @param includePast Include past appointments
    * @returns Array of appointments
    */
-  findByPatientId(patientId: string, includePast?: boolean): Promise<Appointment[]>;
+  findByPatientId(
+    patientId: string,
+    includePast?: boolean,
+  ): Promise<Appointment[]>;
 
   /**
    * Find appointments by professional ID
@@ -36,7 +39,7 @@ export interface AppointmentRepository {
   findByProfessionalId(
     professionalId: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<Appointment[]>;
 
   /**
@@ -49,7 +52,7 @@ export interface AppointmentRepository {
   findByClinicId(
     clinicId: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<Appointment[]>;
 
   /**
@@ -62,7 +65,7 @@ export interface AppointmentRepository {
   findByRoomId(
     roomId: string,
     startDate?: string,
-    endDate?: string
+    endDate?: string,
   ): Promise<Appointment[]>;
 
   /**
@@ -71,7 +74,10 @@ export interface AppointmentRepository {
    * @param clinicId Optional clinic ID
    * @returns Array of appointments
    */
-  findByStatus(status: AppointmentStatus, clinicId?: string): Promise<Appointment[]>;
+  findByStatus(
+    status: AppointmentStatus,
+    clinicId?: string,
+  ): Promise<Appointment[]>;
 
   /**
    * Find appointments by date range
@@ -83,7 +89,7 @@ export interface AppointmentRepository {
   findByDateRange(
     startDate: string,
     endDate: string,
-    clinicId?: string
+    clinicId?: string,
   ): Promise<Appointment[]>;
 
   /**
@@ -98,7 +104,7 @@ export interface AppointmentRepository {
     startDate: string,
     endDate: string,
     clinicId?: string,
-    professionalId?: string
+    professionalId?: string,
   ): Promise<AppointmentCalendarView[]>;
 
   /**
@@ -113,7 +119,7 @@ export interface AppointmentRepository {
     professionalId: string,
     startTime: string,
     endTime: string,
-    excludeAppointmentId?: string
+    excludeAppointmentId?: string,
   ): Promise<boolean>;
 
   /**
@@ -121,7 +127,9 @@ export interface AppointmentRepository {
    * @param appointment Appointment data
    * @returns Created appointment
    */
-  create(appointment: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): Promise<Appointment>;
+  create(
+    appointment: Omit<Appointment, "id" | "createdAt" | "updatedAt">,
+  ): Promise<Appointment>;
 
   /**
    * Update an existing appointment
@@ -143,7 +151,7 @@ export interface AppointmentRepository {
     id: string,
     cancelledBy: string,
     reason: string,
-    notes?: string
+    notes?: string,
   ): Promise<Appointment>;
 
   /**
@@ -158,7 +166,7 @@ export interface AppointmentRepository {
     id: string,
     newStartTime: string,
     newEndTime: string,
-    rescheduledBy: string
+    rescheduledBy: string,
   ): Promise<Appointment>;
 
   /**
@@ -175,7 +183,11 @@ export interface AppointmentRepository {
    * @param endDate Optional end date
    * @returns Appointment count
    */
-  countByClinic(clinicId: string, startDate?: string, endDate?: string): Promise<number>;
+  countByClinic(
+    clinicId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<number>;
 
   /**
    * Get appointment statistics
@@ -184,7 +196,11 @@ export interface AppointmentRepository {
    * @param endDate Optional end date
    * @returns Appointment statistics
    */
-  getStatistics(clinicId: string, startDate?: string, endDate?: string): Promise<AppointmentStatistics>;
+  getStatistics(
+    clinicId: string,
+    startDate?: string,
+    endDate?: string,
+  ): Promise<AppointmentStatistics>;
 }
 
 /**
@@ -213,7 +229,11 @@ export interface AppointmentQueryRepository {
    * @param endDate End date
    * @returns Timeline data
    */
-  getTimeline(patientId: string, startDate: string, endDate: string): Promise<AppointmentTimeline[]>;
+  getTimeline(
+    patientId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<AppointmentTimeline[]>;
 
   /**
    * Get daily appointment counts
@@ -222,7 +242,11 @@ export interface AppointmentQueryRepository {
    * @param endDate End date
    * @returns Daily appointment counts
    */
-  getDailyCounts(clinicId: string, startDate: string, endDate: string): Promise<DailyAppointmentCount[]>;
+  getDailyCounts(
+    clinicId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<DailyAppointmentCount[]>;
 }
 
 /**
@@ -243,7 +267,7 @@ export interface AppointmentFilters {
   limit?: number;
   offset?: number;
   sortBy?: keyof Appointment;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 /**

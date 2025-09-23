@@ -1,8 +1,8 @@
-import * as React from 'react'
-import { createRootRoute, Outlet } from '@tanstack/react-router'
-import { Toaster } from 'sonner'
-import { TRPCProvider } from '../components/providers/TRPCProvider'
-import { ErrorBoundary } from '../components/ErrorBoundary'
+import * as React from "react";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { Toaster } from "sonner";
+import { TRPCProvider } from "../components/providers/TRPCProvider";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 
 export const Route = createRootRoute({
   component: () => (
@@ -15,4 +15,4 @@ export const Route = createRootRoute({
       </TRPCProvider>
     </ErrorBoundary>
   ),
-})
+});

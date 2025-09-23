@@ -5,10 +5,10 @@
  * Handles real-time agent communication with proper authentication and rate limiting.
  */
 
-import { Server as HttpServer } from 'http';
-import { Server as WebSocketServer } from 'ws';
-import { AguiService, createAguiService } from '../services/agui-protocol';
-import { logger } from '../utils/secure-logger';
+import { Server as HttpServer } from "http";
+import { Server as WebSocketServer } from "ws";
+import { AguiService, createAguiService } from "../services/agui-protocol";
+import { logger } from "../utils/secure-logger";
 
 export interface WebSocketServerConfig {
   port: number;
@@ -54,12 +54,14 @@ export class WebSocketServerMiddleware {
       await this.aguiService.initialize();
 
       this.isInitialized = true;
-      logger.info('WebSocket server middleware initialized', {
+      logger.info("WebSocket server middleware initialized", {
         port: this.config.port,
         path: this.config.path,
       });
     } catch (error) {
-      logger.error('Failed to initialize WebSocket server middleware', { error });
+      logger.error("Failed to initialize WebSocket server middleware", {
+        error,
+      });
       throw error;
     }
   }
@@ -68,11 +70,11 @@ export class WebSocketServerMiddleware {
    * Attach to HTTP server for upgrade handling
    */
   attachToServer(server: HttpServer): void {
-    server.on('upgrade', (request, socket, head) => {
+    server.on("upgrade", (request, socket, head) => {
       this.handleUpgrade(request, socket, head);
     });
 
-    logger.info('WebSocket server attached to HTTP server', {
+    logger.info("WebSocket server attached to HTTP server", {
       path: this.config.path,
     });
   }
@@ -81,24 +83,28 @@ export class WebSocketServerMiddleware {
    * Handle WebSocket upgrade requests
    */
   private handleUpgrade(_request: any, socket: any, head: Buffer): void {
-    const pathname = new URL(request.url, `http://${request.headers.host}`).pathname;
+    const pathname = new URL(request.url, `http://${request.headers.host}`)
+      .pathname;
 
     // Check if the request matches our WebSocket path
     if (pathname === this.config.path) {
       // Check connection limit
-      if (this.config.maxConnections && this.wss.clients.size >= this.config.maxConnections) {
-        socket.write('HTTP/1.1 503 Service Unavailable\r\n\r\n');
+      if (
+        this.config.maxConnections &&
+        this.wss.clients.size >= this.config.maxConnections
+      ) {
+        socket.write("HTTP/1.1 503 Service Unavailable\r\n\r\n");
         socket.destroy();
         return;
       }
 
       // Handle the upgrade
-      this.wss.handleUpgrade(request, socket, head, ws => {
-        this.wss.emit('connection', ws, _request);
+      this.wss.handleUpgrade(request, socket, head, (ws) => {
+        this.wss.emit("connection", ws, _request);
       });
     } else {
       // Path not found
-      socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+      socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
       socket.destroy();
     }
   }
@@ -108,18 +114,18 @@ export class WebSocketServerMiddleware {
    */
   private setupEventHandlers(): void {
     // Handle new connections
-    this.wss.on('connection', (ws, _request) => {
+    this.wss.on("connection", (ws, _request) => {
       this.aguiService.getProtocolInstance().handleConnection(ws, _request);
     });
 
     // Handle server errors
-    this.wss.on('error', error => {
-      logger.error('WebSocket server error', { error });
+    this.wss.on("error", (error) => {
+      logger.error("WebSocket server error", { error });
     });
 
     // Handle server close
-    this.wss.on('close', () => {
-      logger.info('WebSocket server closed');
+    this.wss.on("close", () => {
+      logger.info("WebSocket server closed");
     });
 
     // Setup AGUI service event handlers
@@ -131,61 +137,64 @@ export class WebSocketServerMiddleware {
    */
   private setupServiceEventHandlers(): void {
     // Service lifecycle events
-    this.aguiService.on('initialized', () => {
-      logger.info('AGUI service initialized');
+    this.aguiService.on("initialized", () => {
+      logger.info("AGUI service initialized");
     });
 
-    this.aguiService.on('initializationError', error => {
-      logger.error('AGUI service initialization error', { error });
+    this.aguiService.on("initializationError", (error) => {
+      logger.error("AGUI service initialization error", { error });
     });
 
-    this.aguiService.on('shuttingDown', () => {
-      logger.info('AGUI service shutting down');
+    this.aguiService.on("shuttingDown", () => {
+      logger.info("AGUI service shutting down");
     });
 
-    this.aguiService.on('shutdown', () => {
-      logger.info('AGUI service shutdown completed');
+    this.aguiService.on("shutdown", () => {
+      logger.info("AGUI service shutdown completed");
     });
 
     // Query events
-    this.aguiService.on('queryCompleted', data => {
-      logger.debug('Query completed', data);
+    this.aguiService.on("queryCompleted", (data) => {
+      logger.debug("Query completed", data);
     });
 
-    this.aguiService.on('queryError', data => {
-      logger.warn('Query error', data);
+    this.aguiService.on("queryError", (data) => {
+      logger.warn("Query error", data);
     });
 
-    this.aguiService.on('queryAborted', data => {
-      logger.info('Query aborted', data);
+    this.aguiService.on("queryAborted", (data) => {
+      logger.info("Query aborted", data);
     });
 
     // Session events
-    this.aguiService.on('sessionCreated', session => {
-      logger.debug('Session created', { sessionId: session.id, _userId: session.userId });
+    this.aguiService.on("sessionCreated", (session) => {
+      logger.debug("Session created", {
+        sessionId: session.id,
+        _userId: session.userId,
+      });
     });
 
-    this.aguiService.on('sessionUpdated', data => {
-      logger.debug('Session updated', data);
+    this.aguiService.on("sessionUpdated", (data) => {
+      logger.debug("Session updated", data);
     });
 
-    this.aguiService.on('sessionError', data => {
-      logger.warn('Session error', data);
+    this.aguiService.on("sessionError", (data) => {
+      logger.warn("Session error", data);
     });
 
     // Feedback events
-    this.aguiService.on('feedbackSubmitted', feedback => {
-      logger.debug('Feedback submitted', feedback);
+    this.aguiService.on("feedbackSubmitted", (feedback) => {
+      logger.debug("Feedback submitted", feedback);
     });
 
-    this.aguiService.on('feedbackError', data => {
-      logger.warn('Feedback error', data);
+    this.aguiService.on("feedbackError", (data) => {
+      logger.warn("Feedback error", data);
     });
 
     // Metrics events
     if (this.config.enableMetrics) {
-      this.aguiService.on('metrics', metrics => {
-        logger.debug('Service metrics', metrics);
+      this.aguiService.on("metrics", (metrics) => {
+        logger.debug("Service metrics", metrics);
       });
     }
   }
@@ -205,17 +214,20 @@ export class WebSocketServerMiddleware {
       return {
         websocketServer: serverStats,
         aguiService: aguiHealth,
-        overall: aguiHealth.status === 'healthy' && this.isInitialized ? 'healthy' : 'degraded',
+        overall:
+          aguiHealth.status === "healthy" && this.isInitialized
+            ? "healthy"
+            : "degraded",
       };
     } catch (error) {
-      logger.error('Failed to get health status', { error });
+      logger.error("Failed to get health status", { error });
       return {
         websocketServer: {
           connectedClients: this.wss.clients.size,
           isInitialized: this.isInitialized,
         },
-        aguiService: { status: 'unhealthy', error: error.message },
-        overall: 'unhealthy',
+        aguiService: { status: "unhealthy", error: error.message },
+        overall: "unhealthy",
       };
     }
   }
@@ -245,7 +257,7 @@ export class WebSocketServerMiddleware {
    * Broadcast message to all connected clients
    */
   broadcast(message: any): void {
-    this.wss.clients.forEach(client => {
+    this.wss.clients.forEach((client) => {
       if (client.readyState === client.OPEN) {
         client.send(JSON.stringify(message));
       }
@@ -263,13 +275,13 @@ export class WebSocketServerMiddleware {
    * Close all connections and shutdown
    */
   async shutdown(): Promise<void> {
-    logger.info('Shutting down WebSocket server middleware');
+    logger.info("Shutting down WebSocket server middleware");
 
     try {
       // Close all client connections
-      this.wss.clients.forEach(client => {
+      this.wss.clients.forEach((client) => {
         if (client.readyState === client.OPEN) {
-          client.close(1001, 'Server shutting down');
+          client.close(1001, "Server shutting down");
         }
       });
 
@@ -281,9 +293,9 @@ export class WebSocketServerMiddleware {
 
       this.isInitialized = false;
 
-      logger.info('WebSocket server middleware shutdown completed');
+      logger.info("WebSocket server middleware shutdown completed");
     } catch (error) {
-      logger.error('Error during WebSocket server shutdown', { error });
+      logger.error("Error during WebSocket server shutdown", { error });
       throw error;
     }
   }

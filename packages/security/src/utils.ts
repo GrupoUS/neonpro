@@ -4,7 +4,7 @@
  * @version 1.0.0
  */
 
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
 /**
  * Input sanitization utilities for preventing XSS and injection attacks
@@ -16,17 +16,17 @@ export class SecurityUtils {
    * @returns Sanitized string
    */
   static sanitizeInput(input: string): string {
-    if (typeof input !== 'string') {
-      return '';
+    if (typeof input !== "string") {
+      return "";
     }
 
     // Remove potentially dangerous characters
     return input
-      .replace(/</g, '<')
-      .replace(/>/g, '>')
+      .replace(/</g, "<")
+      .replace(/>/g, ">")
       .replace(/"/g, '"')
-      .replace(/'/g, '&#x27;')
-      .replace(/\//g, '&#x2F;');
+      .replace(/'/g, "&#x27;")
+      .replace(/\//g, "&#x2F;");
   }
 
   /**
@@ -35,16 +35,16 @@ export class SecurityUtils {
    * @returns Sanitized HTML string
    */
   static sanitizeHTML(html: string): string {
-    if (typeof html !== 'string') {
-      return '';
+    if (typeof html !== "string") {
+      return "";
     }
 
     // Remove script tags and event handlers
     return html
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/on\w+\s*=/gi, '')
-      .replace(/javascript:/gi, '')
-      .replace(/vbscript:/gi, '');
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      .replace(/on\w+\s*=/gi, "")
+      .replace(/javascript:/gi, "")
+      .replace(/vbscript:/gi, "");
   }
 
   /**
@@ -53,14 +53,14 @@ export class SecurityUtils {
    * @returns Sanitized email or empty string if invalid
    */
   static sanitizeEmail(email: string): string {
-    if (typeof email !== 'string') {
-      return '';
+    if (typeof email !== "string") {
+      return "";
     }
 
     // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      return '';
+      return "";
     }
 
     return email.toLowerCase().trim();
@@ -72,19 +72,19 @@ export class SecurityUtils {
    * @returns Sanitized phone number
    */
   static sanitizePhone(phone: string): string {
-    if (typeof phone !== 'string') {
-      return '';
+    if (typeof phone !== "string") {
+      return "";
     }
 
     // Remove all non-digit characters
-    const digitsOnly = phone.replace(/\D/g, '');
+    const digitsOnly = phone.replace(/\D/g, "");
 
     // Validate Brazilian phone number length
     if (digitsOnly.length === 10 || digitsOnly.length === 11) {
       return digitsOnly;
     }
 
-    return '';
+    return "";
   }
 
   /**
@@ -93,16 +93,16 @@ export class SecurityUtils {
    * @returns Sanitized CPF or empty string if invalid
    */
   static sanitizeCPF(cpf: string): string {
-    if (typeof cpf !== 'string') {
-      return '';
+    if (typeof cpf !== "string") {
+      return "";
     }
 
     // Remove all non-digit characters
-    const digitsOnly = cpf.replace(/\D/g, '');
+    const digitsOnly = cpf.replace(/\D/g, "");
 
     // Validate CPF length
     if (digitsOnly.length !== 11) {
-      return '';
+      return "";
     }
 
     return digitsOnly;
@@ -152,12 +152,12 @@ export class SecurityUtils {
    * @returns Sanitized RG
    */
   static sanitizeRG(rg: string): string {
-    if (typeof rg !== 'string') {
-      return '';
+    if (typeof rg !== "string") {
+      return "";
     }
 
     // Remove all non-digit and non-X characters
-    return rg.replace(/[^0-9X]/gi, '').toUpperCase();
+    return rg.replace(/[^0-9X]/gi, "").toUpperCase();
   }
 
   /**
@@ -166,7 +166,7 @@ export class SecurityUtils {
    * @returns Hex-encoded random token
    */
   static generateToken(length: number = 32): string {
-    return randomUUID().replace(/-/g, '').substring(0, length);
+    return randomUUID().replace(/-/g, "").substring(0, length);
   }
 
   /**
@@ -175,8 +175,9 @@ export class SecurityUtils {
    * @returns Random nonce string
    */
   static generateNonce(length: number = 16): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
     for (let i = 0; i < length; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
@@ -189,7 +190,7 @@ export class SecurityUtils {
    * @returns True if suspicious patterns are found
    */
   static containsSuspiciousPatterns(input: string): boolean {
-    if (typeof input !== 'string') {
+    if (typeof input !== "string") {
       return false;
     }
 
@@ -218,7 +219,7 @@ export class SecurityUtils {
       /bash/i,
     ];
 
-    return suspiciousPatterns.some(pattern => pattern.test(input));
+    return suspiciousPatterns.some((pattern) => pattern.test(input));
   }
 
   /**
@@ -227,9 +228,9 @@ export class SecurityUtils {
    * @param maskChar Character to use for masking (default: '*')
    * @returns Masked data
    */
-  static maskSensitiveData(data: string, maskChar: string = '*'): string {
-    if (typeof data !== 'string' || data.length === 0) {
-      return '';
+  static maskSensitiveData(data: string, maskChar: string = "*"): string {
+    if (typeof data !== "string" || data.length === 0) {
+      return "";
     }
 
     // Don't mask very short strings
@@ -259,45 +260,45 @@ export class SecurityUtils {
     const feedback: string[] = [];
     let score = 0;
 
-    if (typeof password !== 'string') {
+    if (typeof password !== "string") {
       return {
         isValid: false,
         score: 0,
-        feedback: ['Password must be a string'],
+        feedback: ["Password must be a string"],
       };
     }
 
     // Length check
     if (password.length < 8) {
-      feedback.push('Password must be at least 8 characters long');
+      feedback.push("Password must be at least 8 characters long");
     } else {
       score += 2;
     }
 
     // Contains lowercase
     if (!/[a-z]/.test(password)) {
-      feedback.push('Password must contain lowercase letters');
+      feedback.push("Password must contain lowercase letters");
     } else {
       score += 1;
     }
 
     // Contains uppercase
     if (!/[A-Z]/.test(password)) {
-      feedback.push('Password must contain uppercase letters');
+      feedback.push("Password must contain uppercase letters");
     } else {
       score += 1;
     }
 
     // Contains numbers
     if (!/\d/.test(password)) {
-      feedback.push('Password must contain numbers');
+      feedback.push("Password must contain numbers");
     } else {
       score += 1;
     }
 
     // Contains special characters
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-      feedback.push('Password must contain special characters');
+      feedback.push("Password must contain special characters");
     } else {
       score += 1;
     }
@@ -313,8 +314,8 @@ export class SecurityUtils {
       /welcome/i,
     ];
 
-    if (commonPatterns.some(pattern => pattern.test(password))) {
-      feedback.push('Password contains common patterns');
+    if (commonPatterns.some((pattern) => pattern.test(password))) {
+      feedback.push("Password contains common patterns");
       score -= 1;
     }
 
@@ -331,13 +332,13 @@ export class SecurityUtils {
    * @returns Generated secure password
    */
   static generateSecurePassword(length: number = 12): string {
-    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
-    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numbers = '0123456789';
-const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const numbers = "0123456789";
+    const special = "!@#$%^&*()_+-=[]{}|;:,.<>?";
 
     const allChars = lowercase + uppercase + numbers + special;
-    let password = '';
+    let password = "";
 
     // Ensure at least one character from each category
     password += lowercase.charAt(Math.floor(Math.random() * lowercase.length));
@@ -352,9 +353,9 @@ const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
 
     // Shuffle the password
     return password
-      .split('')
+      .split("")
       .sort(() => Math.random() - 0.5)
-      .join('');
+      .join("");
   }
 }
 
@@ -362,7 +363,8 @@ const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
  * Rate limiting utilities for preventing brute force attacks
  */
 export class RateLimiter {
-  private attempts: Map<string, { count: number; resetTime: number }> = new Map();
+  private attempts: Map<string, { count: number; resetTime: number }> =
+    new Map();
 
   /**
    * Check if request is allowed
@@ -479,7 +481,7 @@ export class SecureLogger {
    * Secure log method that sanitizes sensitive data
    */
   private static secureLog = (...args: any[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.log(...sanitizedArgs);
   };
 
@@ -487,7 +489,7 @@ export class SecureLogger {
    * Secure error method that sanitizes sensitive data
    */
   private static secureError = (...args: any[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.error(...sanitizedArgs);
   };
 
@@ -495,7 +497,7 @@ export class SecureLogger {
    * Secure warn method that sanitizes sensitive data
    */
   private static secureWarn = (...args: any[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.warn(...sanitizedArgs);
   };
 
@@ -503,7 +505,7 @@ export class SecureLogger {
    * Secure info method that sanitizes sensitive data
    */
   private static secureInfo = (...args: any[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.info(...sanitizedArgs);
   };
 
@@ -511,7 +513,7 @@ export class SecureLogger {
    * Secure debug method that sanitizes sensitive data
    */
   private static secureDebug = (...args: any[]): void => {
-    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg));
     this.originalConsole.debug(...sanitizedArgs);
   };
 
@@ -519,9 +521,9 @@ export class SecureLogger {
    * Sanitize a single log argument
    */
   private static sanitizeLogArgument(arg: any): any {
-    if (typeof arg === 'string') {
+    if (typeof arg === "string") {
       return this.sanitizeString(arg);
-    } else if (typeof arg === 'object' && arg !== null) {
+    } else if (typeof arg === "object" && arg !== null) {
       return this.sanitizeObject(arg);
     }
     return arg;
@@ -534,11 +536,14 @@ export class SecureLogger {
     let sanitized = str;
 
     // Mask database connection strings
-    sanitized = sanitized.replace(/(postgresql|mysql|mongodb):\/\/([^:]+):([^@]+)@/gi, '$1://***:***@');
+    sanitized = sanitized.replace(
+      /(postgresql|mysql|mongodb):\/\/([^:]+):([^@]+)@/gi,
+      "$1://***:***@",
+    );
 
     // Mask passwords in connection strings
-    sanitized = sanitized.replace(/password=([^&\s]+)/gi, 'password=***');
-    sanitized = sanitized.replace(/:([^@:@]+)@/g, ':***@');
+    sanitized = sanitized.replace(/password=([^&\s]+)/gi, "password=***");
+    sanitized = sanitized.replace(/:([^@:@]+)@/g, ":***@");
 
     // Sanitize SQL injection patterns
     const sqlPatterns = [
@@ -557,8 +562,8 @@ export class SecureLogger {
       /;\s*SELECT/gi,
     ];
 
-    sqlPatterns.forEach(pattern => {
-      sanitized = sanitized.replace(pattern, '[SQL_QUERY_REDACTED]');
+    sqlPatterns.forEach((pattern) => {
+      sanitized = sanitized.replace(pattern, "[SQL_QUERY_REDACTED]");
     });
 
     // Sanitize XSS patterns
@@ -572,8 +577,8 @@ export class SecureLogger {
       /<[^>]*on\w+\s*=[^>]*>/gi,
     ];
 
-    xssPatterns.forEach(pattern => {
-      sanitized = sanitized.replace(pattern, '[XSS_PAYLOAD_REDACTED]');
+    xssPatterns.forEach((pattern) => {
+      sanitized = sanitized.replace(pattern, "[XSS_PAYLOAD_REDACTED]");
     });
 
     // Mask sensitive data patterns
@@ -589,8 +594,8 @@ export class SecureLogger {
       /api[_-]?key[\s"':]*=[^\s"']*/gi,
     ];
 
-    sensitivePatterns.forEach(pattern => {
-      sanitized = sanitized.replace(pattern, '[SENSITIVE_DATA_REDACTED]');
+    sensitivePatterns.forEach((pattern) => {
+      sanitized = sanitized.replace(pattern, "[SENSITIVE_DATA_REDACTED]");
     });
 
     return sanitized;
@@ -600,12 +605,12 @@ export class SecureLogger {
    * Sanitize object recursively
    */
   private static sanitizeObject(obj: any): any {
-    if (obj === null || typeof obj !== 'object') {
+    if (obj === null || typeof obj !== "object") {
       return obj;
     }
 
     if (Array.isArray(obj)) {
-      return obj.map(item => this.sanitizeLogArgument(item));
+      return obj.map((item) => this.sanitizeLogArgument(item));
     }
 
     const sanitized: any = {};
@@ -626,15 +631,36 @@ export class SecureLogger {
    */
   private static isSensitiveKey(key: string): boolean {
     const sensitiveKeys = [
-      'password', 'secret', 'token', 'key', 'authorization',
-      'credential', 'credit', 'card', 'cvv', 'expiry',
-      'ssn', 'social', 'security', 'private', 'confidential',
-      'cpf', 'rg', 'cnh', 'passport', 'birthdate', 'birthDate',
-      'phone', 'email', 'address', 'zip', 'postal',
+      "password",
+      "secret",
+      "token",
+      "key",
+      "authorization",
+      "credential",
+      "credit",
+      "card",
+      "cvv",
+      "expiry",
+      "ssn",
+      "social",
+      "security",
+      "private",
+      "confidential",
+      "cpf",
+      "rg",
+      "cnh",
+      "passport",
+      "birthdate",
+      "birthDate",
+      "phone",
+      "email",
+      "address",
+      "zip",
+      "postal",
     ];
 
-    return sensitiveKeys.some(sensitive =>
-      key.toLowerCase().includes(sensitive.toLowerCase())
+    return sensitiveKeys.some((sensitive) =>
+      key.toLowerCase().includes(sensitive.toLowerCase()),
     );
   }
 }

@@ -714,7 +714,7 @@ export class InMemoryJobQueue implements JobQueue {
       const queue = this.priorityQueues.get(pri);
       if (queue && queue.length > 0) {
         // Sort by priority score
-        queue.sort((a,_b) => {
+        queue.sort((a, _b) => {
           const jobA = this.jobs.get(a);
           const jobB = this.jobs.get(b);
           if (!jobA || !jobB) return 0;
@@ -844,15 +844,19 @@ export class InMemoryJobQueue implements JobQueue {
         .length,
 
       priorityDistribution: {
-        [JobPriority.CRITICAL]: allJobs.filter((j) => j.priority === JobPriority.CRITICAL,
+        [JobPriority.CRITICAL]: allJobs.filter(
+          (j) => j.priority === JobPriority.CRITICAL,
         ).length,
-        [JobPriority.HIGH]: allJobs.filter((j) => j.priority === JobPriority.HIGH,
+        [JobPriority.HIGH]: allJobs.filter(
+          (j) => j.priority === JobPriority.HIGH,
         ).length,
-        [JobPriority.MEDIUM]: allJobs.filter((j) => j.priority === JobPriority.MEDIUM,
+        [JobPriority.MEDIUM]: allJobs.filter(
+          (j) => j.priority === JobPriority.MEDIUM,
         ).length,
         [JobPriority.LOW]: allJobs.filter((j) => j.priority === JobPriority.LOW)
           .length,
-        [JobPriority.BACKGROUND]: allJobs.filter((j) => j.priority === JobPriority.BACKGROUND,
+        [JobPriority.BACKGROUND]: allJobs.filter(
+          (j) => j.priority === JobPriority.BACKGROUND,
         ).length,
       },
 
@@ -860,11 +864,14 @@ export class InMemoryJobQueue implements JobQueue {
       throughputPerMinute: this.calculateThroughput(allJobs),
       errorRate: this.calculateErrorRate(allJobs),
 
-      emergencyJobsProcessed: allJobs.filter((j) => j.healthcareContext?.urgencyLevel === "emergency",
+      emergencyJobsProcessed: allJobs.filter(
+        (j) => j.healthcareContext?.urgencyLevel === "emergency",
       ).length,
-      patientSafetyJobsProcessed: allJobs.filter((j) => j.config.patientSafetyRelevant,
+      patientSafetyJobsProcessed: allJobs.filter(
+        (j) => j.config.patientSafetyRelevant,
       ).length,
-      complianceJobsCompleted: allJobs.filter((j) =>
+      complianceJobsCompleted: allJobs.filter(
+        (j) =>
           j.type === HealthcareJobType.COMPLIANCE_AUDIT ||
           j.type === HealthcareJobType.ANVISA_REPORTING ||
           j.type === HealthcareJobType.LGPD_DATA_PROCESSING,
@@ -882,7 +889,8 @@ export class InMemoryJobQueue implements JobQueue {
     const completedJobs = jobs.filter((j) => j.executionTime);
     if (completedJobs.length === 0) return 0;
 
-    const totalTime = completedJobs.reduce((sum,_job) => sum + (job.executionTime || 0),
+    const totalTime = completedJobs.reduce(
+      (sum, _job) => sum + (job.executionTime || 0),
       0,
     );
     return totalTime / completedJobs.length;
@@ -890,14 +898,16 @@ export class InMemoryJobQueue implements JobQueue {
 
   private calculateThroughput(jobs: JobData[]): number {
     const lastHour = new Date(Date.now() - 60 * 60 * 1000);
-    const recentJobs = jobs.filter((j) => j.completedAt && j.completedAt > lastHour,
+    const recentJobs = jobs.filter(
+      (j) => j.completedAt && j.completedAt > lastHour,
     );
 
     return recentJobs.length;
   }
 
   private calculateErrorRate(jobs: JobData[]): number {
-    const totalJobs = jobs.filter((j) =>
+    const totalJobs = jobs.filter(
+      (j) =>
         j.status === JobStatus.COMPLETED ||
         j.status === JobStatus.FAILED ||
         j.status === JobStatus.DEAD_LETTER,
@@ -905,7 +915,8 @@ export class InMemoryJobQueue implements JobQueue {
 
     if (totalJobs === 0) return 0;
 
-    const failedJobs = jobs.filter((j) =>
+    const failedJobs = jobs.filter(
+      (j) =>
         j.status === JobStatus.FAILED || j.status === JobStatus.DEAD_LETTER,
     ).length;
 

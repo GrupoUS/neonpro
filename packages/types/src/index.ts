@@ -1,4 +1,4 @@
-export * from './aesthetic-data';
+export * from "./aesthetic-data";
 
 // AI Agent types (primary)
 export type {
@@ -24,13 +24,13 @@ export type {
   DataScope,
   AgentQueryRequest,
   AgentAction,
-} from './ai-agent';
+} from "./ai-agent.ts";
 
 // AI Agent Chat types (with prefixes to avoid conflicts)
 export type {
   ChatSession as AgentChatSession,
   ChatMessage as AgentChatMessage,
-} from './ai-agent';
+} from "./ai-agent";
 
 // AI Chat types (legacy, with prefixes)
 export type {
@@ -44,14 +44,14 @@ export type {
   AuditOutcome,
   ConsentStatus,
   AuditEvent,
-} from './ai-chat';
+} from "./ai-chat.ts";
 
-export * from './ai-provider';
-export * from './api/contracts';
-export * from './enhanced-ai';
-export * from './governance.types';
-export * from './healthcare-governance.types';
-export * from './webrtc';
+export * from "./ai-provider.ts";
+export * from "./api/contracts.ts";
+export * from "./enhanced-ai.ts";
+export * from "./governance.types.ts";
+export * from "./healthcare-governance.types.ts";
+export * from "./webrtc.ts";
 
 // Export specific types from ai-enhanced to avoid conflicts
 export type {
@@ -80,13 +80,13 @@ export type {
   UsageAggregation,
   UsageCounter,
   UsageCounterData,
-} from './ai-enhanced';
+} from "./ai-enhanced";
 
 // Valibot Validation Schemas for Brazilian Healthcare
-export * from './appointment.valibot';
-export * from './lgpd.valibot';
-export * from './patient.valibot';
-export * from './prescription.valibot';
+export * from "./appointment.valibot.ts";
+export * from "./lgpd.valibot.ts";
+export * from "./patient.valibot.ts";
+export * from "./prescription.valibot.ts";
 // Healthcare types
 export interface Patient {
   id: string;

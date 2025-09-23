@@ -1,5 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { 
+import {
   ConsentRepository as IConsentRepository,
   ConsentRecord,
   ConsentRequest,
@@ -7,7 +7,7 @@ import {
   ConsentType,
   ConsentFilter,
   ConsentSearchResult,
-  ConsentQueryOptions 
+  ConsentQueryOptions,
 } from "@neonpro/domain";
 import { DatabasePerformanceService } from "../services/database-performance.service.js";
 
@@ -29,15 +29,20 @@ export class ConsentRepository implements IConsentRepository {
 
   async findById(id: string): Promise<ConsentRecord | null> {
     try {
-      return await this.performanceService.optimizedQuery("consent_records","select",async (client) => {
+      return await this.performanceService.optimizedQuery(
+        "consent_records",
+        "select",
+        async (client) => {
           const { data, error } = await client
             .from("consent_records")
-            .select(`
+            .select(
+              `
               id, patient_id, clinic_id, consent_type, purpose, legal_basis, status,
               given_at, withdrawn_at, expires_at, collection_method, ip_address,
               user_agent, evidence, data_categories, created_at, updated_at,
               patient:patients(id, full_name, cpf)
-            `)
+            `,
+            )
             .eq("id", id)
             .single();
 
@@ -47,8 +52,9 @@ export class ConsentRepository implements IConsentRepository {
         },
         {
           cacheKey: `findById:${id}`,
-          columns: "id, patient_id, consent_type, status, expires_at, patient:patients(id, full_name, cpf)",
-        }
+          columns:
+            "id, patient_id, consent_type, status, expires_at, patient:patients(id, full_name, cpf)",
+        },
       );
     } catch (error) {
       console.error("ConsentRepository.findById error:", error);
@@ -78,7 +84,10 @@ export class ConsentRepository implements IConsentRepository {
     }
   }
 
-  async findWithFilter(filter: ConsentFilter, options?: ConsentQueryOptions): Promise<ConsentSearchResult> {
+  async findWithFilter(
+    filter: ConsentFilter,
+    options?: ConsentQueryOptions,
+  ): Promise<ConsentSearchResult> {
     try {
       let query = this.supabase
         .from("consent_records")
@@ -109,7 +118,10 @@ export class ConsentRepository implements IConsentRepository {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1,
+        );
       }
 
       // Apply sorting
@@ -133,7 +145,7 @@ export class ConsentRepository implements IConsentRepository {
         consents,
         total: count || 0,
         limit: options?.limit || 10,
-        offset: options?.offset || 0
+        offset: options?.offset || 0,
       };
     } catch (error) {
       console.error("ConsentRepository.findWithFilter error:", error);
@@ -141,7 +153,10 @@ export class ConsentRepository implements IConsentRepository {
     }
   }
 
-  async create(consentData: ConsentRequest, grantedBy: string): Promise<ConsentRecord> {
+  async create(
+    consentData: ConsentRequest,
+    grantedBy: string,
+  ): Promise<ConsentRecord> {
     try {
       const dbConsent = {
         patient_id: consentData.patientId,
@@ -152,7 +167,7 @@ export class ConsentRepository implements IConsentRepository {
         metadata: consentData.metadata,
         granted_by: grantedBy,
         granted_at: new Date().toISOString(),
-        status: ConsentStatus.ACTIVE
+        status: ConsentStatus.ACTIVE,
       };
 
       const { data, error } = await this.supabase
@@ -173,7 +188,10 @@ export class ConsentRepository implements IConsentRepository {
     }
   }
 
-  async update(id: string, updateData: Partial<ConsentRecord>): Promise<ConsentRecord> {
+  async update(
+    id: string,
+    updateData: Partial<ConsentRecord>,
+  ): Promise<ConsentRecord> {
     try {
       const dbUpdate = this.mapUpdateRequestToDatabase(updateData);
 
@@ -203,7 +221,7 @@ export class ConsentRepository implements IConsentRepository {
         .update({
           status: ConsentStatus.REVOKED,
           revoked_at: new Date().toISOString(),
-          revoked_by: revokedBy
+          revoked_by: revokedBy,
         })
         .eq("id", id)
         .select()
@@ -248,7 +266,7 @@ export class ConsentRepository implements IConsentRepository {
         "expires_at",
         "status",
         ConsentStatus.ACTIVE,
-        ConsentStatus.EXPIRED
+        ConsentStatus.EXPIRED,
       );
 
       if (result.updatedCount === 0) {
@@ -256,13 +274,18 @@ export class ConsentRepository implements IConsentRepository {
       }
 
       // Fetch the updated records
-      return await this.performanceService.optimizedQuery("consent_records","select",async (client) => {
+      return await this.performanceService.optimizedQuery(
+        "consent_records",
+        "select",
+        async (client) => {
           const { data, error } = await client
             .from("consent_records")
-            .select(`
+            .select(
+              `
               id, patient_id, consent_type, purpose, status, 
               given_at, expires_at, withdrawn_at, created_at
-            `)
+            `,
+            )
             .in("id", result.expiredIds)
             .order("expires_at", { ascending: false });
 
@@ -272,7 +295,7 @@ export class ConsentRepository implements IConsentRepository {
         {
           cacheKey: `checkExpiration:${Date.now()}`,
           columns: "id, patient_id, consent_type, status, expires_at",
-        }
+        },
       );
     } catch (error) {
       console.error("ConsentRepository.checkExpiration error:", error);
@@ -282,14 +305,19 @@ export class ConsentRepository implements IConsentRepository {
 
   async getActiveConsents(patientId: string): Promise<ConsentRecord[]> {
     try {
-      return await this.performanceService.optimizedQuery("consent_records","select",async (client) => {
+      return await this.performanceService.optimizedQuery(
+        "consent_records",
+        "select",
+        async (client) => {
           const now = new Date().toISOString();
           const { data, error } = await client
             .from("consent_records")
-            .select(`
+            .select(
+              `
               id, patient_id, consent_type, purpose, status, 
               granted_at, expires_at, created_at, data_types
-            `)
+            `,
+            )
             .eq("patient_id", patientId)
             .eq("status", ConsentStatus.ACTIVE)
             .or("expires_at.is.null,expires_at.gt." + now)
@@ -300,8 +328,9 @@ export class ConsentRepository implements IConsentRepository {
         },
         {
           cacheKey: `getActiveConsents:${patientId}`,
-          columns: "id, patient_id, consent_type, status, expires_at, granted_at",
-        }
+          columns:
+            "id, patient_id, consent_type, status, expires_at, granted_at",
+        },
       );
     } catch (error) {
       console.error("ConsentRepository.getActiveConsents error:", error);
@@ -309,9 +338,15 @@ export class ConsentRepository implements IConsentRepository {
     }
   }
 
-  async hasActiveConsent(patientId: string, consentType: ConsentType): Promise<boolean> {
+  async hasActiveConsent(
+    patientId: string,
+    consentType: ConsentType,
+  ): Promise<boolean> {
     try {
-      return await this.performanceService.optimizedQuery("consent_records","select",async (client) => {
+      return await this.performanceService.optimizedQuery(
+        "consent_records",
+        "select",
+        async (client) => {
           const now = new Date().toISOString();
           const { data, error } = await client
             .from("consent_records")
@@ -322,16 +357,17 @@ export class ConsentRepository implements IConsentRepository {
             .or("expires_at.is.null,expires_at.gt." + now)
             .single();
 
-          if (error && error.code !== 'PGRST116') { // PGRST116 = not found
+          if (error && error.code !== "PGRST116") {
+            // PGRST116 = not found
             throw error;
           }
-          
+
           return !!data;
         },
         {
           cacheKey: `hasActiveConsent:${patientId}:${consentType}`,
           columns: "id",
-        }
+        },
       );
     } catch (error) {
       console.error("ConsentRepository.hasActiveConsent error:", error);
@@ -356,7 +392,7 @@ export class ConsentRepository implements IConsentRepository {
       grantedBy: dbConsent.granted_by,
       revokedBy: dbConsent.revoked_by,
       metadata: dbConsent.metadata || {},
-      auditTrail: dbConsent.audit_trail || []
+      auditTrail: dbConsent.audit_trail || [],
     };
   }
 
@@ -367,9 +403,12 @@ export class ConsentRepository implements IConsentRepository {
     const dbUpdate: any = {};
 
     if (updateData.purpose !== undefined) dbUpdate.purpose = updateData.purpose;
-    if (updateData.dataTypes !== undefined) dbUpdate.data_types = updateData.dataTypes;
-    if (updateData.expiresAt !== undefined) dbUpdate.expires_at = updateData.expiresAt;
-    if (updateData.metadata !== undefined) dbUpdate.metadata = updateData.metadata;
+    if (updateData.dataTypes !== undefined)
+      dbUpdate.data_types = updateData.dataTypes;
+    if (updateData.expiresAt !== undefined)
+      dbUpdate.expires_at = updateData.expiresAt;
+    if (updateData.metadata !== undefined)
+      dbUpdate.metadata = updateData.metadata;
     if (updateData.status !== undefined) dbUpdate.status = updateData.status;
 
     return dbUpdate;

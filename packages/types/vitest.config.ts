@@ -7,13 +7,13 @@ export default defineConfig({
     globals: false,
     environment: "node",
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      reporter: ["text", "json", "html"],
       exclude: [
-        'node_modules/',
-        'dist/',
-        '**/*.d.ts',
-        '**/*.config.ts',
-        '**/types/**',
+        "node_modules/",
+        "dist/",
+        "**/*.d.ts",
+        "**/*.config.ts",
+        "**/types/**",
       ],
       thresholds: {
         global: {

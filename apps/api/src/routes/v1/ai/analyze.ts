@@ -4,12 +4,12 @@
  * Routes to V2 implementation with backward compatibility
  */
 
-import { zValidator } from '@hono/zod-validator';
-import { Context, Hono, Next } from 'hono';
-import { AIChatService } from '../../../services/ai-chat-service.js';
-import { ComprehensiveAuditService } from '../../../services/audit-service.js';
-import { LGPDService } from '../../../services/lgpd-service.js';
-import { PatientService } from '../../../services/patient-service.js';
+import { zValidator } from "@hono/zod-validator";
+import { Context, Hono, Next } from "hono";
+import { AIChatService } from "../../../services/ai-chat-service.js";
+import { ComprehensiveAuditService } from "../../../services/audit-service.js";
+import { LGPDService } from "../../../services/lgpd-service.js";
+import { PatientService } from "../../../services/patient-service.js";
 
 // Type definitions
 interface ServiceInterface {
@@ -21,17 +21,17 @@ interface ServiceInterface {
 
 // Mock middleware for testing
 const mockAuthMiddleware = (c: Context, next: Next) => {
-  const authHeader = c.req.header('authorization');
+  const authHeader = c.req.header("authorization");
   if (!authHeader) {
     return c.json(
       {
         success: false,
-        error: 'Não autorizado. Token de acesso necessário.',
+        error: "Não autorizado. Token de acesso necessário.",
       },
       401,
     );
   }
-  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
+  c.set("user", { id: "user-123", _role: "healthcare_professional" });
   return next();
 };
 
@@ -45,40 +45,40 @@ const v1AnalyzeRequestSchema = z
     patientId: z.string(),
     analysisType: z
       .enum([
-        'aesthetic_consultation',
-        'structured_data',
-        'medical_image',
-        'patient_feedback',
-        'multi_modal',
-        'diagnostic_support',
-        'complex_aesthetic_case',
-        'lgpd_compliant_analysis',
-        'cfm_ethical_analysis',
-        'standard_aesthetic_analysis',
-        'cost_estimate_analysis',
-        'quick_analysis',
-        'automated_analysis',
-        'unethical_request',
-        'inappropriate_procedure',
-        'fraudulent_request',
-        'unethical_recommendation',
-        'conflict_of_interest',
-        'unsupervised_medical_ai',
-        'self_medication_ai',
-        'basic_aesthetic_analysis',
-        'complex_aesthetic_analysis',
-        'advanced_aesthetic_analysis',
-        'multi_model_analysis',
-        'standard_analysis',
-        'premium_analysis',
-        'routine_assessment',
-        'latency_optimized_analysis',
-        'emergency_medical_analysis',
-        'compliance_tracked_analysis',
-        'quality_benchmark_analysis',
-        'semantic_consistency_analysis',
-        'patient_safety_analysis',
-        'emergency_assessment',
+        "aesthetic_consultation",
+        "structured_data",
+        "medical_image",
+        "patient_feedback",
+        "multi_modal",
+        "diagnostic_support",
+        "complex_aesthetic_case",
+        "lgpd_compliant_analysis",
+        "cfm_ethical_analysis",
+        "standard_aesthetic_analysis",
+        "cost_estimate_analysis",
+        "quick_analysis",
+        "automated_analysis",
+        "unethical_request",
+        "inappropriate_procedure",
+        "fraudulent_request",
+        "unethical_recommendation",
+        "conflict_of_interest",
+        "unsupervised_medical_ai",
+        "self_medication_ai",
+        "basic_aesthetic_analysis",
+        "complex_aesthetic_analysis",
+        "advanced_aesthetic_analysis",
+        "multi_model_analysis",
+        "standard_analysis",
+        "premium_analysis",
+        "routine_assessment",
+        "latency_optimized_analysis",
+        "emergency_medical_analysis",
+        "compliance_tracked_analysis",
+        "quality_benchmark_analysis",
+        "semantic_consistency_analysis",
+        "patient_safety_analysis",
+        "emergency_assessment",
       ])
       .optional(),
     medicalData: z
@@ -236,33 +236,34 @@ const getServices = () => {
 const convertV1ToV2Request = (v1Request: any) => {
   // Map V1 analysis types to V2 types
   const analysisTypeMapping: Record<string, string> = {
-    aesthetic_consultation: 'structured_data',
-    complex_aesthetic_case: 'multi_modal',
-    lgpd_compliant_analysis: 'structured_data',
-    cfm_ethical_analysis: 'structured_data',
-    standard_aesthetic_analysis: 'structured_data',
-    cost_estimate_analysis: 'structured_data',
-    quick_analysis: 'structured_data',
-    automated_analysis: 'structured_data',
-    basic_aesthetic_analysis: 'structured_data',
-    complex_aesthetic_analysis: 'multi_modal',
-    advanced_aesthetic_analysis: 'multi_modal',
-    multi_model_analysis: 'multi_modal',
-    standard_analysis: 'structured_data',
-    premium_analysis: 'multi_modal',
-    routine_assessment: 'structured_data',
-    latency_optimized_analysis: 'structured_data',
-    emergency_medical_analysis: 'diagnostic_support',
-    compliance_tracked_analysis: 'structured_data',
-    quality_benchmark_analysis: 'structured_data',
-    semantic_consistency_analysis: 'structured_data',
-    patient_safety_analysis: 'diagnostic_support',
-    emergency_assessment: 'diagnostic_support',
+    aesthetic_consultation: "structured_data",
+    complex_aesthetic_case: "multi_modal",
+    lgpd_compliant_analysis: "structured_data",
+    cfm_ethical_analysis: "structured_data",
+    standard_aesthetic_analysis: "structured_data",
+    cost_estimate_analysis: "structured_data",
+    quick_analysis: "structured_data",
+    automated_analysis: "structured_data",
+    basic_aesthetic_analysis: "structured_data",
+    complex_aesthetic_analysis: "multi_modal",
+    advanced_aesthetic_analysis: "multi_modal",
+    multi_model_analysis: "multi_modal",
+    standard_analysis: "structured_data",
+    premium_analysis: "multi_modal",
+    routine_assessment: "structured_data",
+    latency_optimized_analysis: "structured_data",
+    emergency_medical_analysis: "diagnostic_support",
+    compliance_tracked_analysis: "structured_data",
+    quality_benchmark_analysis: "structured_data",
+    semantic_consistency_analysis: "structured_data",
+    patient_safety_analysis: "diagnostic_support",
+    emergency_assessment: "diagnostic_support",
   };
 
-  const v2AnalysisType = analysisTypeMapping[v1Request.analysisType]
-    || v1Request.analysisType
-    || 'structured_data';
+  const v2AnalysisType =
+    analysisTypeMapping[v1Request.analysisType] ||
+    v1Request.analysisType ||
+    "structured_data";
 
   return {
     analysisType: v2AnalysisType,
@@ -300,9 +301,9 @@ const convertV2ToV1Response = (v2Response: any, originalRequest: any) => {
   if (!v2Response.success) {
     return {
       ...baseResponse,
-      error: v2Response.error || 'Erro interno do servidor',
-      code: v2Response.code || 'INTERNAL_ERROR',
-      locale: 'pt-BR',
+      error: v2Response.error || "Erro interno do servidor",
+      code: v2Response.code || "INTERNAL_ERROR",
+      locale: "pt-BR",
     };
   }
 
@@ -313,14 +314,14 @@ const convertV2ToV1Response = (v2Response: any, originalRequest: any) => {
     ...baseResponse,
     recommendations: v2Response.data?.recommendations || [
       {
-        procedure: 'Consulta inicial de estética',
+        procedure: "Consulta inicial de estética",
         confidence: metadata.confidence || 0.85,
-        reasoning: 'Análise baseada em IA multi-modelo',
+        reasoning: "Análise baseada em IA multi-modelo",
         contraindications: [],
         estimatedCost: {
-          currency: 'BRL',
+          currency: "BRL",
           amount: 150.0,
-          paymentMethods: ['PIX', 'cartao_credito', 'cartao_debito'],
+          paymentMethods: ["PIX", "cartao_credito", "cartao_debito"],
         },
       },
     ],
@@ -331,7 +332,7 @@ const convertV2ToV1Response = (v2Response: any, originalRequest: any) => {
       auditTrail: v2Response.data?.auditTrail || `audit-${Date.now()}`,
     },
     portugueseContent: true,
-    modelUsed: metadata.model || 'gpt-3.5-turbo',
+    modelUsed: metadata.model || "gpt-3.5-turbo",
     modelFallbackUsed: false,
     analysisQuality: metadata.confidence || 0.85,
     processingTime: metadata.processingTime || 1000,
@@ -340,7 +341,7 @@ const convertV2ToV1Response = (v2Response: any, originalRequest: any) => {
       pseudonymized: originalRequest.pseudonymization || false,
       dataMinimized: originalRequest.dataMinimization || false,
       consentVerified: true,
-      retentionPeriod: '5 years',
+      retentionPeriod: "5 years",
     },
     cfmCompliance: {
       ethicallyApproved: true,
@@ -352,16 +353,17 @@ const convertV2ToV1Response = (v2Response: any, originalRequest: any) => {
 };
 
 app.post(
-  '/',
+  "/",
   mockAuthMiddleware,
   mockLGPDMiddleware,
-  zValidator('json', v1AnalyzeRequestSchema),
-  async c => {
+  zValidator("json", v1AnalyzeRequestSchema),
+  async (c) => {
     const startTime = Date.now();
-    const user = c.get('user');
-    const v1RequestData = c.req.valid('json');
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
+    const user = c.get("user");
+    const v1RequestData = c.req.valid("json");
+    const ipAddress =
+      c.req.header("X-Real-IP") || c.req.header("X-Forwarded-For") || "unknown";
+    const userAgent = c.req.header("User-Agent") || "unknown";
 
     try {
       const currentServices = getServices();
@@ -370,21 +372,22 @@ app.post(
       const v2RequestData = convertV1ToV2Request(v1RequestData);
 
       // LGPD validation
-      const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
-        _userId: user.id,
-        dataType: 'ai_data_analysis',
-        purpose: 'healthcare_analysis',
-        legalBasis: 'legitimate_interest',
-        analysisType: v2RequestData.analysisType,
-      });
+      const lgpdValidation =
+        await currentServices.lgpdService.validateDataAccess({
+          _userId: user.id,
+          dataType: "ai_data_analysis",
+          purpose: "healthcare_analysis",
+          legalBasis: "legitimate_interest",
+          analysisType: v2RequestData.analysisType,
+        });
 
       if (!lgpdValidation.success) {
         return c.json(
           {
             success: false,
             error: lgpdValidation.error,
-            code: lgpdValidation.code || 'LGPD_AI_ANALYSIS_DENIED',
-            locale: 'pt-BR',
+            code: lgpdValidation.code || "LGPD_AI_ANALYSIS_DENIED",
+            locale: "pt-BR",
           },
           403,
         );
@@ -396,30 +399,35 @@ app.post(
         analysisType: v2RequestData.analysisType,
         data: v2RequestData.data,
         options: v2RequestData.options,
-        healthcareProfessional: c.req.header('X-Healthcare-Professional'),
-        healthcareContext: c.req.header('X-Healthcare-Context'),
+        healthcareProfessional: c.req.header("X-Healthcare-Professional"),
+        healthcareContext: c.req.header("X-Healthcare-Context"),
       };
 
       // Perform analysis using V2 logic
       let analysisResponse;
       switch (v2RequestData.analysisType) {
-        case 'structured_data':
-        case 'diagnostic_support':
-          analysisResponse = await currentServices.aiChatService.analyzeData(analysisRequest);
+        case "structured_data":
+        case "diagnostic_support":
+          analysisResponse =
+            await currentServices.aiChatService.analyzeData(analysisRequest);
           break;
-        case 'medical_image':
-          analysisResponse = await currentServices.aiChatService.analyzeImage(analysisRequest);
+        case "medical_image":
+          analysisResponse =
+            await currentServices.aiChatService.analyzeImage(analysisRequest);
           break;
-        case 'patient_feedback':
-          analysisResponse = await currentServices.aiChatService.analyzeText(analysisRequest);
+        case "patient_feedback":
+          analysisResponse =
+            await currentServices.aiChatService.analyzeText(analysisRequest);
           break;
-        case 'multi_modal':
-          analysisResponse = await currentServices.aiChatService.analyzeMultiModal(
-            analysisRequest,
-          );
+        case "multi_modal":
+          analysisResponse =
+            await currentServices.aiChatService.analyzeMultiModal(
+              analysisRequest,
+            );
           break;
         default:
-          analysisResponse = await currentServices.aiChatService.analyzeData(analysisRequest);
+          analysisResponse =
+            await currentServices.aiChatService.analyzeData(analysisRequest);
           break;
       }
 
@@ -427,10 +435,11 @@ app.post(
         return c.json(
           {
             success: false,
-            error: analysisResponse.error
-              || 'Erro interno do serviço de análise de IA',
-            code: 'AI_SERVICE_ERROR',
-            locale: 'pt-BR',
+            error:
+              analysisResponse.error ||
+              "Erro interno do serviço de análise de IA",
+            code: "AI_SERVICE_ERROR",
+            locale: "pt-BR",
           },
           500,
         );
@@ -442,78 +451,78 @@ app.post(
       // Log activity for audit trail
       await currentServices.auditService.logActivity({
         _userId: user.id,
-        action: 'ai_data_analysis_v1',
-        resourceType: 'ai_analysis',
+        action: "ai_data_analysis_v1",
+        resourceType: "ai_analysis",
         resourceId: analysisResponse.data.analysisId,
         details: {
           analysisType: v1RequestData.analysisType,
           v2AnalysisType: v2RequestData.analysisType,
-          model: analysisResponse.data.metadata?.model || 'unknown',
+          model: analysisResponse.data.metadata?.model || "unknown",
           confidence: analysisResponse.data.metadata?.confidence || 0,
           processingTime,
-          apiVersion: 'v1',
+          apiVersion: "v1",
         },
         ipAddress,
         userAgent,
-        complianceContext: 'LGPD',
-        sensitivityLevel: 'high',
+        complianceContext: "LGPD",
+        sensitivityLevel: "high",
       });
 
       // Convert V2 response to V1 format
       const v1Response = convertV2ToV1Response(analysisResponse, v1RequestData);
 
       // Set V1-compatible headers
-      c.header('X-Response-Time', `${processingTime}ms`);
-      c.header('X-CFM-Compliant', 'true');
-      c.header('X-AI-Medical-Analysis', 'performed');
-      c.header('X-LGPD-Compliant', 'true');
-      c.header('X-Medical-AI-Logged', 'true');
-      c.header('X-API-Version', 'v1');
-      c.header('X-Backend-Version', 'v2');
+      c.header("X-Response-Time", `${processingTime}ms`);
+      c.header("X-CFM-Compliant", "true");
+      c.header("X-AI-Medical-Analysis", "performed");
+      c.header("X-LGPD-Compliant", "true");
+      c.header("X-Medical-AI-Logged", "true");
+      c.header("X-API-Version", "v1");
+      c.header("X-Backend-Version", "v2");
 
       if (analysisResponse.data.metadata) {
         c.header(
-          'X-AI-Model',
-          analysisResponse.data.metadata.model || 'unknown',
+          "X-AI-Model",
+          analysisResponse.data.metadata.model || "unknown",
         );
         c.header(
-          'X-AI-Confidence',
+          "X-AI-Confidence",
           (analysisResponse.data.metadata.confidence || 0).toString(),
         );
         c.header(
-          'X-AI-Processing-Time',
+          "X-AI-Processing-Time",
           `${analysisResponse.data.metadata.processingTime || 0}ms`,
         );
       }
 
       return c.json(v1Response);
     } catch (error) {
-      console.error('V1 AI Analyze endpoint error:', error);
+      console.error("V1 AI Analyze endpoint error:", error);
 
       // Log error for audit
       const currentServices = getServices();
       await currentServices.auditService.logActivity({
         _userId: user.id,
-        action: 'ai_analysis_error_v1',
-        resourceType: 'ai_analysis',
-        resourceId: 'error',
+        action: "ai_analysis_error_v1",
+        resourceType: "ai_analysis",
+        resourceId: "error",
         details: {
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error: error instanceof Error ? error.message : "Unknown error",
           analysisType: v1RequestData.analysisType,
-          apiVersion: 'v1',
+          apiVersion: "v1",
         },
         ipAddress,
         userAgent,
-        complianceContext: 'LGPD',
-        sensitivityLevel: 'high',
+        complianceContext: "LGPD",
+        sensitivityLevel: "high",
       });
 
       return c.json(
         {
           success: false,
-          error: 'Erro interno do servidor. Tente novamente mais tarde.',
-          code: 'INTERNAL_SERVER_ERROR',
-          locale: 'pt-BR',
+          error: "Erro interno do servidor. Tente novamente mais tarde.",
+          code: "INTERNAL_SERVER_ERROR",
+          locale: "pt-BR",
         },
         500,
       );

@@ -9,7 +9,7 @@ export interface LGPDConsent {
   withdrawalDate?: Date;
   ipAddress: string;
   userAgent: string;
-  legalBasis: import('./gender.js').LegalBasis | string;
+  legalBasis: import("./gender.js").LegalBasis | string;
   consentVersion?: string;
   processingPurposes: string[];
 }
@@ -41,8 +41,8 @@ export interface AuditTrail {
  * Data anonymization for LGPD compliance
  */
 export function anonymizePatientData(
-  patient: Partial<import('../entities/patient.js').Patient>,
-): Partial<import('../entities/patient.js').Patient> {
+  patient: Partial<import("../entities/patient.js").Patient>,
+): Partial<import("../entities/patient.js").Patient> {
   const anonymized = { ...patient };
 
   if (anonymized.fullName) {

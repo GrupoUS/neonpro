@@ -207,7 +207,8 @@ export class StubModelProvider implements ModelProvider {
 
     // Check required features
     const requiredFeatures = this._metadata.requiredFeatures;
-    const missingFeatures = requiredFeatures.filter((feature) => !(feature in input.features),
+    const missingFeatures = requiredFeatures.filter(
+      (feature) => !(feature in input.features),
     );
 
     if (missingFeatures.length > 0) {
@@ -346,11 +347,11 @@ export class StubModelProvider implements ModelProvider {
 
     return features
       .slice(0, 5)
-      .map((feature,_index) => ({
+      .map((feature, _index) => ({
         feature,
         importance: Math.max(0.1, Math.random() * (1 - index * 0.15)),
         description: `Impact of ${feature} on ${input.type} prediction`,
       }))
-      .sort((a,_b) => b.importance - a.importance);
+      .sort((a, _b) => b.importance - a.importance);
   }
 }

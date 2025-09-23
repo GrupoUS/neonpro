@@ -6,8 +6,8 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "bun x tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "bun x tsc --noEmit",
+    "dev": "bun x tsc -w --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest --run",
     "test:watch": "vitest",

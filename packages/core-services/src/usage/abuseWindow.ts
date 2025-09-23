@@ -364,7 +364,8 @@ export class AbuseWindowTracker {
    */
   private startCleanupTimer(): void {
     // Cleanup every 5 minutes
-    this.cleanupInterval = setInterval(() => {
+    this.cleanupInterval = setInterval(
+      () => {
         this.performCleanup();
       },
       5 * 60 * 1000,

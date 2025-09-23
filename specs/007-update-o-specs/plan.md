@@ -4,6 +4,7 @@
 **Input**: Feature specification from `/specs/007-update-o-specs/spec.md`
 
 ## Execution Flow (/plan command scope)
+
 ```
 1. Load feature spec from Input path
    → If not found: ERROR "No feature spec at {path}"
@@ -26,6 +27,7 @@
 ```
 
 **IMPORTANT**: The /plan command STOPS at step 7. Phases 2-4 are executed by other commands:
+
 - Phase 2: /tasks command creates tasks.md
 - Phase 3-4: Implementation execution (manual or via tools)
 
@@ -44,9 +46,11 @@ Create a conversational AI interface for NeonPro that allows healthcare professi
 **Scale/Scope**: Multi-tenant healthcare application with role-based access control, conversational AI interface
 
 ## Constitution Check
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### Aesthetic Clinic Compliance Gates
+
 - [x] **Healthcare-First Development**: Feature prioritizes client safety and data privacy (LGPD) with RLS enforcement
 - [x] **AI-Native Architecture**: Systems designed with AI integration as core requirement using CopilotKit and ottomator-agents
 - [x] **Test-Driven Healthcare**: TDD mandatory for healthcare-critical features with proper test cases
@@ -57,17 +61,20 @@ Create a conversational AI interface for NeonPro that allows healthcare professi
 - [x] **Quality Gates**: Healthcare testing requirements, code quality standards, and performance requirements met
 
 ### Technology Stack Validation
+
 - [x] Frontend: Uses React 19, TypeScript 5.9.2, Next.js (compatible with existing stack)
 - [x] Backend: Uses Supabase with RLS, comprehensive audit logging
 - [x] Infrastructure: Uses existing monorepo structure, comprehensive testing with Vitest/Playwright
 
 ### Constitutional Compliance Assessment
+
 - [x] KISS Principle: Using proven frameworks (CopilotKit, AG-UI) rather than custom implementation
 - [x] YAGNI Principle: Building only conversational query interface, not full CRUD operations
 - [x] Chain of Thought: Clear phased approach with validation at each step
 - [x] A.P.T.E Methodology: Analysis → Planning → Thinking → Execution workflow followed## Project Structure
 
 ### Documentation (this feature)
+
 ```
 specs/007-update-o-specs/
 ├── plan.md              # This file (/plan command output)
@@ -79,6 +86,7 @@ specs/007-update-o-specs/
 ```
 
 ### Source Code (repository root)
+
 ```
 # Web application structure (existing NeonPro monorepo)
 apps/web/src/
@@ -143,7 +151,7 @@ tests/
    - Alternatives considered: [what else evaluated]
 
 **Output**: research.md with all NEEDS CLARIFICATION resolved ✅## Phase 1: Design & Contracts ✅
-*Prerequisites: research.md complete*
+_Prerequisites: research.md complete_
 
 1. **Extract entities from feature spec** → `data-model.md`:
    - ✅ User Query, AI Agent Response entities defined
@@ -177,20 +185,23 @@ tests/
    - ✅ Constitutional requirements integrated
    - ✅ Token efficiency maintained
 
-**Output**: data-model.md, /contracts/*, failing tests specs, quickstart.md, CLAUDE.md ✅
+**Output**: data-model.md, /contracts/\*, failing tests specs, quickstart.md, CLAUDE.md ✅
 
 ## Phase 2: Task Planning Approach
-*This section describes what the /tasks command will do - DO NOT execute during /plan*
+
+_This section describes what the /tasks command will do - DO NOT execute during /plan_
 
 **Task Generation Strategy**:
+
 - Load `.specify/templates/tasks-template.md` as base structure
 - Generate tasks from Phase 1 design documents (contracts, data model, quickstart)
 - Each API endpoint → contract test task [P] (parallel execution)
-- Each data entity → model creation task [P] 
+- Each data entity → model creation task [P]
 - Each user story scenario → integration test task
 - Implementation tasks organized to make tests pass (TDD approach)
 
 **Ordering Strategy**:
+
 - **TDD Principle**: All tests created before any implementation
 - **Dependency Order**: Setup → Tests → Models → Services → Endpoints → Integration → Polish
 - **Parallel Execution**: Mark [P] for tasks affecting different files
@@ -244,12 +255,14 @@ tests/
 **Estimated Output**: 75+ numbered, ordered tasks in tasks.md with clear dependencies
 
 **Parallel Execution Examples**:
+
 - Setup tasks (different config files) can run in parallel
-- Contract tests (different endpoints) can run in parallel  
+- Contract tests (different endpoints) can run in parallel
 - Data model tasks (different entities) can run in parallel
 - Frontend components (different files) can run in parallel
 
 **Dependencies to Enforce**:
+
 - Setup tasks before all other phases
 - All test tasks before implementation tasks
 - Models before services before endpoints
@@ -259,14 +272,16 @@ tests/
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
 ## Phase 3+: Future Implementation
-*These phases are beyond the scope of the /plan command*
+
+_These phases are beyond the scope of the /plan command_
 
 **Phase 3**: Task execution (/tasks command creates tasks.md)  
 **Phase 4**: Implementation (execute tasks.md following constitutional principles)  
 **Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
 
 ## Complexity Tracking
-*No constitutional violations detected - design follows constitutional principles*
+
+_No constitutional violations detected - design follows constitutional principles_
 
 - ✅ Using established frameworks (CopilotKit, AG-UI) rather than custom solutions
 - ✅ Leveraging existing NeonPro infrastructure and patterns
@@ -275,9 +290,11 @@ tests/
 - ✅ All HTTPS security requirements from constitution implemented
 
 ## Progress Tracking ✅
-*This checklist is updated during execution flow*
+
+_This checklist is updated during execution flow_
 
 **Phase Status**:
+
 - [x] Phase 0: Research complete (/plan command)
 - [x] Phase 1: Design complete (/plan command)
 - [x] Phase 2: Task planning complete (/plan command - describe approach only)
@@ -286,16 +303,19 @@ tests/
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
+
 - [x] Initial Constitution Check: PASS
 - [x] Post-Design Constitution Check: PASS
 - [x] All NEEDS CLARIFICATION resolved
 - [x] No complexity deviations documented
 
 **Artifacts Generated**:
+
 - [x] research.md - Technical decisions and HTTPS implementation approach
 - [x] data-model.md - Entity relationships and security constraints
 - [x] contracts/api.yaml - OpenAPI specification with HTTPS requirements
 - [x] quickstart.md - Validation scenarios and testing procedures
 
 ---
-*Based on Constitution v1.2.0 - See `.specify/memory/constitution.md`*
+
+_Based on Constitution v1.2.0 - See `.specify/memory/constitution.md`_

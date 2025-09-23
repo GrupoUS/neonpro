@@ -5,49 +5,54 @@
  * Provides utilities for coordinating testing with specialized agents.
  */
 
-export * from './coordinator';
-export * from './red-phase-specialist';
-export * from './types';
-export * from './validation';
+export * from "./coordinator";
+export * from "./red-phase-specialist";
+export * from "./types";
+export * from "./validation";
 
 // Agent types matching the code review agents
 export const AGENT_REGISTRY = {
-  'architect-review': {
-    name: 'architect-review',
-    description: 'Architecture and system design validation',
-    specialties: ['patterns', 'scalability', 'design'],
+  "architect-review": {
+    name: "architect-review",
+    description: "Architecture and system design validation",
+    specialties: ["patterns", "scalability", "design"],
     qualityGates: [
-      'architecture-compliance',
-      'pattern-validation',
-      'scalability-check',
+      "architecture-compliance",
+      "pattern-validation",
+      "scalability-check",
     ],
   },
-  'code-reviewer': {
-    name: 'code-reviewer',
-    description: 'Code quality and performance analysis',
-    specialties: ['quality', 'performance', 'maintainability'],
+  "code-reviewer": {
+    name: "code-reviewer",
+    description: "Code quality and performance analysis",
+    specialties: ["quality", "performance", "maintainability"],
     qualityGates: [
-      'code-quality',
-      'performance-metrics',
-      'maintainability-score',
+      "code-quality",
+      "performance-metrics",
+      "maintainability-score",
     ],
   },
-  'security-auditor': {
-    name: 'security-auditor',
-    description: 'TDD RED phase testing and auditing authority',
-    specialties: ['testing', 'error-detection', 'quality-validation', 'coverage-analysis'],
+  "security-auditor": {
+    name: "security-auditor",
+    description: "TDD RED phase testing and auditing authority",
+    specialties: [
+      "testing",
+      "error-detection",
+      "quality-validation",
+      "coverage-analysis",
+    ],
     qualityGates: [
-      'red-phase-compliance',
-      'error-detection',
-      'test-coverage',
-      'quality-validation',
+      "red-phase-compliance",
+      "error-detection",
+      "test-coverage",
+      "quality-validation",
     ],
   },
-  'tdd-orchestrator': {
-    name: 'tdd-orchestrator',
-    description: 'TDD cycle coordination and test orchestration',
-    specialties: ['tdd', 'orchestration', 'coordination'],
-    qualityGates: ['tdd-compliance', 'test-coverage', 'cycle-validation'],
+  "tdd-orchestrator": {
+    name: "tdd-orchestrator",
+    description: "TDD cycle coordination and test orchestration",
+    specialties: ["tdd", "orchestration", "coordination"],
+    qualityGates: ["tdd-compliance", "test-coverage", "cycle-validation"],
   },
 } as const;
 
@@ -55,9 +60,9 @@ export type AgentType = keyof typeof AGENT_REGISTRY;
 
 // Agent coordination patterns
 export const COORDINATION_PATTERNS = {
-  SEQUENTIAL: 'sequential',
-  PARALLEL: 'parallel',
-  HIERARCHICAL: 'hierarchical',
+  SEQUENTIAL: "sequential",
+  PARALLEL: "parallel",
+  HIERARCHICAL: "hierarchical",
 } as const;
 
 // Quality gate definitions
@@ -73,10 +78,10 @@ export const QUALITY_GATES = {
     maintainability: 85,
   },
   SECURITY: {
-    'red-phase-compliance': 95,
-    'error-detection': 100,
-    'test-coverage': 95,
-    'quality-validation': 90,
+    "red-phase-compliance": 95,
+    "error-detection": 100,
+    "test-coverage": 95,
+    "quality-validation": 90,
   },
   TDD: {
     patterns: 90,

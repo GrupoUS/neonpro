@@ -1,12 +1,16 @@
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
-    const metric = url.searchParams.get('metric') || 'revenue';
-    const period = url.searchParams.get('period') || 'monthly';
-    const limit = parseInt(url.searchParams.get('limit') || '12');
+    const metric = url.searchParams.get("metric") || "revenue";
+    const period = url.searchParams.get("period") || "monthly";
+    const limit = parseInt(url.searchParams.get("limit") || "12");
 
     // Mock trend data generation
-    const generateTrendData = (baseValue: number, periods: number, volatility: number = 0.1) => {
+    const generateTrendData = (
+      baseValue: number,
+      periods: number,
+      volatility: number = 0.1,
+    ) => {
       const data = [];
       let currentValue = baseValue;
 
@@ -20,12 +24,15 @@ export async function GET(request: Request) {
         data.push({
           period: date.toISOString().slice(0, 7), // YYYY-MM format
           value: Math.round(currentValue),
-          change: i > 0
-            ? Math.round(
-              ((currentValue - data[i - 1]?.value || currentValue)
-                / (data[i - 1]?.value || currentValue)) * 100 * 100,
-            ) / 100
-            : 0,
+          change:
+            i > 0
+              ? Math.round(
+                  ((currentValue - data[i - 1]?.value || currentValue) /
+                    (data[i - 1]?.value || currentValue)) *
+                    100 *
+                    100,
+                ) / 100
+              : 0,
         });
       }
 
@@ -36,73 +43,81 @@ export async function GET(request: Request) {
     let metadata;
 
     switch (metric) {
-      case 'revenue':
+      case "revenue":
         trendData = generateTrendData(35000, limit, 0.15);
         metadata = {
-          title: 'Revenue Trends',
-          unit: 'BRL',
-          description: 'Monthly revenue progression',
+          title: "Revenue Trends",
+          unit: "BRL",
+          description: "Monthly revenue progression",
         };
         break;
 
-      case 'expenses':
+      case "expenses":
         trendData = generateTrendData(25000, limit, 0.1);
         metadata = {
-          title: 'Expense Trends',
-          unit: 'BRL',
-          description: 'Monthly expense progression',
+          title: "Expense Trends",
+          unit: "BRL",
+          description: "Monthly expense progression",
         };
         break;
 
-      case 'profit':
+      case "profit":
         trendData = generateTrendData(10000, limit, 0.2);
         metadata = {
-          title: 'Profit Trends',
-          unit: 'BRL',
-          description: 'Monthly profit progression',
+          title: "Profit Trends",
+          unit: "BRL",
+          description: "Monthly profit progression",
         };
         break;
 
-      case 'customers':
+      case "customers":
         trendData = generateTrendData(250, limit, 0.08);
         metadata = {
-          title: 'Customer Growth',
-          unit: 'count',
-          description: 'Customer base growth over time',
+          title: "Customer Growth",
+          unit: "count",
+          description: "Customer base growth over time",
         };
         break;
 
-      case 'aov':
+      case "aov":
         trendData = generateTrendData(350, limit, 0.05);
         metadata = {
-          title: 'Average Order Value',
-          unit: 'BRL',
-          description: 'Average order value trends',
+          title: "Average Order Value",
+          unit: "BRL",
+          description: "Average order value trends",
         };
         break;
 
       default:
         trendData = generateTrendData(35000, limit, 0.15);
         metadata = {
-          title: 'General Trends',
-          unit: 'BRL',
-          description: 'General financial trends',
+          title: "General Trends",
+          unit: "BRL",
+          description: "General financial trends",
         };
     }
 
     // Calculate additional analytics
     const analytics = {
       total: trendData.reduce((sum, item) => sum + item.value, 0),
-      average: Math.round(trendData.reduce((sum, item) => sum + item.value, 0) / trendData.length),
-      growth: trendData.length > 1
-        ? Math.round(
-          ((trendData[trendData.length - 1].value - trendData[0].value) / trendData[0].value) * 100
-            * 100,
-        ) / 100
-        : 0,
-      trend: trendData.length > 1
-        ? (trendData[trendData.length - 1].value > trendData[0].value ? 'up' : 'down')
-        : 'stable',
+      average: Math.round(
+        trendData.reduce((sum, item) => sum + item.value, 0) / trendData.length,
+      ),
+      growth:
+        trendData.length > 1
+          ? Math.round(
+              ((trendData[trendData.length - 1].value - trendData[0].value) /
+                trendData[0].value) *
+                100 *
+                100,
+            ) / 100
+          : 0,
+      trend:
+        trendData.length > 1
+          ? trendData[trendData.length - 1].value > trendData[0].value
+            ? "up"
+            : "down"
+          : "stable",
     };
 
     const responseData = {
@@ -120,22 +135,22 @@ export async function GET(request: Request) {
     return new Response(JSON.stringify(responseData), {
       status: 200,
       headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=300',
+        "Content-Type": "application/json",
+        "Cache-Control": "public, max-age=300",
       },
     });
   } catch (error) {
-    console.error('Financial trends API error:', error);
+    console.error("Financial trends API error:", error);
 
     return new Response(
       JSON.stringify({
-        error: 'Internal server error',
-        message: 'Failed to fetch financial trends data',
+        error: "Internal server error",
+        message: "Failed to fetch financial trends data",
       }),
       {
         status: 500,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       },
     );

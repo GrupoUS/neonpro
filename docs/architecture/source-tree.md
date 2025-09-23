@@ -271,10 +271,11 @@ The build system follows a **dependency-first approach** where packages build in
   - Colored output for clear status reporting
 
 **Workspace Benefits**:
-  - Shared dependencies hoisted to root (PNPM-style)
-  - Consistent versions across packages
-  - Efficient CI/CD caching with Turborepo
-  - Automatic package manager detection and fallback
+
+- Shared dependencies hoisted to root (PNPM-style)
+- Consistent versions across packages
+- Efficient CI/CD caching with Turborepo
+- Automatic package manager detection and fallback
 
 ## Package Dependencies & Relationships
 

@@ -437,7 +437,9 @@ export class SupabaseGovernanceService implements GovernanceService {
     };
   }
 
-  private mapComplianceStatusFromDb(data: ComplianceStatusRecord): ComplianceStatus {
+  private mapComplianceStatusFromDb(
+    data: ComplianceStatusRecord,
+  ): ComplianceStatus {
     return {
       id: data.id,
       clinicId: data.clinic_id,
@@ -473,7 +475,9 @@ export class SupabaseGovernanceService implements GovernanceService {
     };
   }
 
-  private mapAIGovernanceFromDb(data: AIGovernanceMetricRecord): AIGovernanceMetric {
+  private mapAIGovernanceFromDb(
+    data: AIGovernanceMetricRecord,
+  ): AIGovernanceMetric {
     return {
       id: data.id,
       modelName: data.model_name,
@@ -517,7 +521,9 @@ export class SupabaseGovernanceService implements GovernanceService {
     };
   }
 
-  private mapEscalationFromDb(data: EscalationWorkflowRecord): EscalationWorkflow {
+  private mapEscalationFromDb(
+    data: EscalationWorkflowRecord,
+  ): EscalationWorkflow {
     return {
       id: data.id,
       _userId: data.user_id,
@@ -545,7 +551,8 @@ export class SupabaseGovernanceService implements GovernanceService {
     const metrics = await this.getKPIMetrics();
     const totalKPIs = metrics.length;
     const normalizedKPIs = metrics.filter((m) => m.status === "ACTIVE").length;
-    const criticalKPIs = metrics.filter((m) => m.threshold && m.currentValue < m.threshold,
+    const criticalKPIs = metrics.filter(
+      (m) => m.threshold && m.currentValue < m.threshold,
     ).length;
 
     // Calculate aggregated scores
@@ -579,10 +586,11 @@ export class SupabaseGovernanceService implements GovernanceService {
 
     const overallScore =
       statuses.length > 0
-        ? statuses.reduce((sum,_s) => sum + s.score, 0) / statuses.length
+        ? statuses.reduce((sum, _s) => sum + s.score, 0) / statuses.length
         : 0;
 
-    const criticalViolations = statuses.reduce((sum,_s) => (s.status === "CRITICAL" ? sum + s.violations : sum),
+    const criticalViolations = statuses.reduce(
+      (sum, _s) => (s.status === "CRITICAL" ? sum + s.violations : sum),
       0,
     );
 
@@ -603,7 +611,8 @@ export class SupabaseGovernanceService implements GovernanceService {
       },
       overallScore,
       criticalViolations,
-      upcomingDeadlines: statuses.filter((s) =>
+      upcomingDeadlines: statuses.filter(
+        (s) =>
           s.nextAudit &&
           s.nextAudit > new Date() &&
           s.nextAudit < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),

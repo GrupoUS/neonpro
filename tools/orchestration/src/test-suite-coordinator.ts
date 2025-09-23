@@ -39,17 +39,19 @@ export interface TestSuiteResult {
 }
 
 export class TestSuiteCoordinator {
-  async coordinateTestExecution(request: TestExecutionRequest): Promise<TestSuiteResult> {
+  async coordinateTestExecution(
+    request: TestExecutionRequest,
+  ): Promise<TestSuiteResult> {
     const startTime = Date.now();
     const results: TestResult[] = [];
-    
+
     // Simulate test execution for each test type
     for (const testType of request.testTypes) {
       const testStartTime = Date.now();
-      
+
       try {
         const success = !testType.includes("failing");
-        
+
         results.push({
           type: testType,
           success,
@@ -57,7 +59,7 @@ export class TestSuiteCoordinator {
           output: success ? { passed: true } : { error: "Test failed" },
           coverage: success ? 0.85 : 0.3,
           errors: success ? [] : [`${testType} test failed`],
-          warnings: success ? [] : [`Warning in ${testType}`]
+          warnings: success ? [] : [`Warning in ${testType}`],
         });
       } catch (error) {
         results.push({
@@ -66,24 +68,26 @@ export class TestSuiteCoordinator {
           duration: Date.now() - testStartTime,
           output: null,
           errors: [error instanceof Error ? error.message : String(error)],
-          warnings: []
+          warnings: [],
         });
       }
     }
-    
-    const complianceResults = request.healthcareMode ? {
-      lgpdCompliant: true,
-      anvisaCompliant: true,
-      cfmCompliant: true,
-      overallCompliant: true
-    } : undefined;
-    
+
+    const complianceResults = request.healthcareMode
+      ? {
+          lgpdCompliant: true,
+          anvisaCompliant: true,
+          cfmCompliant: true,
+          overallCompliant: true,
+        }
+      : undefined;
+
     return {
       results,
-      overallSuccess: results.every(r => r.success),
+      overallSuccess: results.every((r) => r.success),
       parallelExecution: request.parallel,
       totalDuration: Date.now() - startTime,
-      complianceResults
+      complianceResults,
     };
   }
 }

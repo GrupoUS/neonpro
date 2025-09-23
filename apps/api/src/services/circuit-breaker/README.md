@@ -35,7 +35,10 @@ This package provides comprehensive circuit breaker patterns designed specifical
 ### Basic Usage
 
 ```typescript
-import { CircuitBreakerService, HEALTHCARE_CIRCUIT_CONFIG } from './circuit-breaker-service';
+import {
+  CircuitBreakerService,
+  HEALTHCARE_CIRCUIT_CONFIG,
+} from "./circuit-breaker-service";
 
 // Create circuit breaker for healthcare service
 const circuitBreaker = new CircuitBreakerService(HEALTHCARE_CIRCUIT_CONFIG);
@@ -45,24 +48,27 @@ try {
   const result = await circuitBreaker.execute(
     async () => await externalApiCall(),
     {
-      userId: 'user-123',
-      patientId: 'patient-456',
-      endpoint: '/api/patients',
-      method: 'GET',
-      service: 'patient-service',
+      userId: "user-123",
+      patientId: "patient-456",
+      endpoint: "/api/patients",
+      method: "GET",
+      service: "patient-service",
       timestamp: new Date(),
     },
   );
-  console.log('Operation successful:', result);
+  console.log("Operation successful:", result);
 } catch (error) {
-  console.error('Operation failed:', error.message);
+  console.error("Operation failed:", error.message);
 }
 ```
 
 ### Healthcare-Specific Configuration
 
 ```typescript
-import { CircuitBreakerConfig, CircuitBreakerService } from './circuit-breaker-service';
+import {
+  CircuitBreakerConfig,
+  CircuitBreakerService,
+} from "./circuit-breaker-service";
 
 const healthcareConfig: CircuitBreakerConfig = {
   failureThreshold: 3, // Lower threshold for critical services
@@ -78,8 +84,8 @@ const healthcareConfig: CircuitBreakerConfig = {
   customFallback: async (error, context) => {
     // Provide safe fallback for healthcare operations
     return {
-      error: 'SERVICE_UNAVAILABLE',
-      message: 'Critical healthcare service temporarily unavailable',
+      error: "SERVICE_UNAVAILABLE",
+      message: "Critical healthcare service temporarily unavailable",
       timestamp: new Date().toISOString(),
     };
   },
@@ -95,30 +101,32 @@ import {
   ExternalServiceHealthChecker,
   HEALTHCARE_HEALTH_CONFIG,
   ServiceDependency,
-} from './health-checker';
+} from "./health-checker";
 
 // Create health checker
-const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
+const healthChecker = new ExternalServiceHealthChecker(
+  HEALTHCARE_HEALTH_CONFIG,
+);
 
 // Register services for monitoring
 healthChecker.registerService({
-  name: 'rag-agent',
-  type: 'external',
-  endpoint: 'https://rag-agent.example.com',
-  description: 'AI Agent for healthcare queries',
+  name: "rag-agent",
+  type: "external",
+  endpoint: "https://rag-agent.example.com",
+  description: "AI Agent for healthcare queries",
   healthcareCritical: true,
-  dataSensitivity: 'high',
-  requiredFor: ['ai-assistant', 'patient-queries'],
+  dataSensitivity: "high",
+  requiredFor: ["ai-assistant", "patient-queries"],
 });
 
 // Get comprehensive health status
 const healthStatus = healthChecker.getComprehensiveHealthStatus();
-console.log('Overall health:', healthStatus.overall);
-console.log('Services:', Object.keys(healthStatus.services));
+console.log("Overall health:", healthStatus.overall);
+console.log("Services:", Object.keys(healthStatus.services));
 
 // Listen for health events
-healthChecker.onEvent(event => {
-  console.log('Health event:', {
+healthChecker.onEvent((event) => {
+  console.log("Health event:", {
     type: event.type,
     service: event.serviceName,
     status: event.currentStatus,
@@ -130,18 +138,21 @@ healthChecker.onEvent(event => {
 ### Integration with Existing Services
 
 ```typescript
-import { setupHealthMonitoring, withCircuitBreakerProtection } from './integration-example';
+import {
+  setupHealthMonitoring,
+  withCircuitBreakerProtection,
+} from "./integration-example";
 
 // Protect existing API calls
 const result = await withCircuitBreakerProtection(
-  'patient-service',
+  "patient-service",
   async () => await patientService.getPatient(patientId),
   {
     userId: currentUserId,
     patientId,
-    endpoint: '/api/patients/' + patientId,
-    method: 'GET',
-    service: 'patient-service',
+    endpoint: "/api/patients/" + patientId,
+    method: "GET",
+    service: "patient-service",
     timestamp: new Date(),
   },
 );
@@ -149,22 +160,22 @@ const result = await withCircuitBreakerProtection(
 // Set up health monitoring for multiple services
 const healthChecker = setupHealthMonitoring([
   {
-    name: 'patient-service',
-    type: 'api',
-    endpoint: 'https://api.example.com/patients',
-    description: 'Patient data service',
+    name: "patient-service",
+    type: "api",
+    endpoint: "https://api.example.com/patients",
+    description: "Patient data service",
     healthcareCritical: true,
-    dataSensitivity: 'critical',
-    requiredFor: ['patient-management', 'appointments'],
+    dataSensitivity: "critical",
+    requiredFor: ["patient-management", "appointments"],
   },
   {
-    name: 'appointment-service',
-    type: 'api',
-    endpoint: 'https://api.example.com/appointments',
-    description: 'Appointment scheduling service',
+    name: "appointment-service",
+    type: "api",
+    endpoint: "https://api.example.com/appointments",
+    description: "Appointment scheduling service",
     healthcareCritical: true,
-    dataSensitivity: 'confidential',
-    requiredFor: ['scheduling', 'calendar'],
+    dataSensitivity: "confidential",
+    requiredFor: ["scheduling", "calendar"],
   },
 ]);
 ```
@@ -250,13 +261,15 @@ The system automatically classifies requests based on content:
 
 ```typescript
 // Automatic classification examples
-const classification = circuitBreaker.classifyData('Patient diagnostic information');
+const classification = circuitBreaker.classifyData(
+  "Patient diagnostic information",
+);
 // Returns: 'restricted'
 
-const classification = circuitBreaker.classifyData('Schedule appointment');
+const classification = circuitBreaker.classifyData("Schedule appointment");
 // Returns: 'confidential'
 
-const classification = circuitBreaker.classifyData('General inquiry');
+const classification = circuitBreaker.classifyData("General inquiry");
 // Returns: 'public'
 ```
 
@@ -337,17 +350,18 @@ const notificationServiceBreaker = new CircuitBreakerService({
 ```typescript
 // Provide meaningful fallbacks for healthcare operations
 const healthcareFallback = async (error, context) => {
-  if (context.dataClassification === 'restricted') {
+  if (context.dataClassification === "restricted") {
     return {
-      error: 'HEALTHCARE_SERVICE_UNAVAILABLE',
-      message: 'Critical healthcare service temporarily unavailable. Please contact support.',
+      error: "HEALTHCARE_SERVICE_UNAVAILABLE",
+      message:
+        "Critical healthcare service temporarily unavailable. Please contact support.",
       timestamp: new Date().toISOString(),
     };
   }
 
   return {
-    error: 'SERVICE_UNAVAILABLE',
-    message: 'Service temporarily unavailable. Please try again later.',
+    error: "SERVICE_UNAVAILABLE",
+    message: "Service temporarily unavailable. Please try again later.",
     timestamp: new Date().toISOString(),
   };
 };
@@ -358,17 +372,20 @@ const healthcareFallback = async (error, context) => {
 ```typescript
 // Monitor critical services
 const criticalServices = [
-  'patient-service',
-  'appointment-service',
-  'medical-records',
-  'ai-agent',
+  "patient-service",
+  "appointment-service",
+  "medical-records",
+  "ai-agent",
 ];
 
-criticalServices.forEach(serviceName => {
-  const circuitBreaker = createCircuitBreaker(serviceName, HEALTHCARE_CIRCUIT_CONFIG);
+criticalServices.forEach((serviceName) => {
+  const circuitBreaker = createCircuitBreaker(
+    serviceName,
+    HEALTHCARE_CIRCUIT_CONFIG,
+  );
 
-  circuitBreaker.onEvent(event => {
-    if (event.type === 'STATE_CHANGE' && event.toState === 'OPEN') {
+  circuitBreaker.onEvent((event) => {
+    if (event.type === "STATE_CHANGE" && event.toState === "OPEN") {
       // Alert operations team
       sendAlert(`${serviceName} circuit breaker opened`);
     }
@@ -385,15 +402,15 @@ try {
   const result = await circuitBreaker.execute(operation, context);
 } catch (error) {
   switch (error.message) {
-    case 'Service unavailable - healthcare critical operation blocked':
+    case "Service unavailable - healthcare critical operation blocked":
       // Handle healthcare service unavailability
       return safeErrorResponse();
 
-    case 'Service temporarily unavailable due to high failure rate':
+    case "Service temporarily unavailable due to high failure rate":
       // Handle circuit open state
       return fallbackResponse();
 
-    case 'Operation timeout':
+    case "Operation timeout":
       // Handle timeout scenarios
       return timeoutResponse();
 
@@ -415,9 +432,9 @@ const recoveryConfig = {
 };
 
 // Manual recovery
-if (circuitBreaker.getState() === 'OPEN') {
+if (circuitBreaker.getState() === "OPEN") {
   circuitBreaker.forceReset();
-  console.log('Circuit breaker manually reset');
+  console.log("Circuit breaker manually reset");
 }
 ```
 
@@ -427,7 +444,7 @@ if (circuitBreaker.getState() === 'OPEN') {
 
 ```typescript
 // Test circuit breaker behavior
-test('should open circuit after failure threshold', async () => {
+test("should open circuit after failure threshold", async () => {
   const circuitBreaker = new CircuitBreakerService({
     failureThreshold: 3,
     resetTimeout: 1000,
@@ -436,13 +453,15 @@ test('should open circuit after failure threshold', async () => {
   // Fail 3 times
   for (let i = 0; i < 3; i++) {
     try {
-      await circuitBreaker.execute(() => Promise.reject(new Error('Test error')));
+      await circuitBreaker.execute(() =>
+        Promise.reject(new Error("Test error")),
+      );
     } catch (e) {
       // Expected
     }
   }
 
-  expect(circuitBreaker.getState()).toBe('OPEN');
+  expect(circuitBreaker.getState()).toBe("OPEN");
 });
 ```
 
@@ -450,21 +469,23 @@ test('should open circuit after failure threshold', async () => {
 
 ```typescript
 // Test health monitoring
-test('should monitor service health', async () => {
-  const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
+test("should monitor service health", async () => {
+  const healthChecker = new ExternalServiceHealthChecker(
+    HEALTHCARE_HEALTH_CONFIG,
+  );
 
   healthChecker.registerService({
-    name: 'test-service',
-    type: 'api',
-    endpoint: 'https://httpbin.org/status/200',
-    description: 'Test service',
+    name: "test-service",
+    type: "api",
+    endpoint: "https://httpbin.org/status/200",
+    description: "Test service",
     healthcareCritical: false,
-    dataSensitivity: 'low',
-    requiredFor: ['testing'],
+    dataSensitivity: "low",
+    requiredFor: ["testing"],
   });
 
   const healthStatus = healthChecker.getComprehensiveHealthStatus();
-  expect(healthStatus.services['test-service']).toBeDefined();
+  expect(healthStatus.services["test-service"]).toBeDefined();
 });
 ```
 
@@ -510,8 +531,8 @@ test('should monitor service health', async () => {
 
 ```typescript
 // Enable detailed logging
-circuitBreaker.onEvent(event => {
-  console.log('Circuit Breaker Event:', {
+circuitBreaker.onEvent((event) => {
+  console.log("Circuit Breaker Event:", {
     type: event.type,
     timestamp: event.timestamp,
     state: event.metrics.state,
@@ -520,8 +541,8 @@ circuitBreaker.onEvent(event => {
 });
 
 // Monitor health checks
-healthChecker.onEvent(event => {
-  console.log('Health Check Event:', {
+healthChecker.onEvent((event) => {
+  console.log("Health Check Event:", {
     type: event.type,
     service: event.serviceName,
     status: event.currentStatus,

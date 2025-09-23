@@ -245,7 +245,8 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
       status: "healthy" as const,
       latency: this.simulatedLatency,
       activeChannels: this.channelStates.size,
-      totalParticipants: Array.from(this.channelStates.values()).reduce((total,_state) => total + state.participants.size,
+      totalParticipants: Array.from(this.channelStates.values()).reduce(
+        (total, _state) => total + state.participants.size,
         0,
       ),
       lastHeartbeat: new Date().toISOString(),
@@ -342,7 +343,11 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
   // Private Helper Methods
   // ============================================================================
 
-  private createRealtimeEvent: typeof createRealtimeEvent = (_type,channelId,_participant,data,
+  private createRealtimeEvent: typeof createRealtimeEvent = (
+    _type,
+    channelId,
+    _participant,
+    data,
   ) => {
     return {
       type,

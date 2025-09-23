@@ -3,20 +3,22 @@
  * Extends test setup with compliance-specific logging configurations
  */
 
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // Mock console methods globally for all compliance tests
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+const mockConsoleLog = vi.spyOn(console, "log").mockImplementation(() => {});
+const mockConsoleError = vi
+  .spyOn(console, "error")
+  .mockImplementation(() => {});
+const mockConsoleWarn = vi.spyOn(console, "warn").mockImplementation(() => {});
+const mockConsoleInfo = vi.spyOn(console, "info").mockImplementation(() => {});
 
 // Store original console methods for restoration
 const originalConsole = {
   log: console.log,
   error: console.error,
   warn: console.warn,
-  info: console.info
+  info: console.info,
 };
 
 // Test environment setup
@@ -36,7 +38,7 @@ export const setupComplianceLoggingTests = () => {
     mockConsoleError,
     mockConsoleWarn,
     mockConsoleInfo,
-    originalConsole
+    originalConsole,
   };
 };
 
@@ -46,29 +48,29 @@ export const lgpdTestUtils = {
   hasLgpdPersonalData: (output: string[][]) => {
     const lgpdPatterns = [
       // Names
-      '[A-Z][a-z]+ [A-Z][a-z]+',
+      "[A-Z][a-z]+ [A-Z][a-z]+",
       // CPF
-      '\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}',
+      "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}",
       // RG
-      '\\d{2}\\.\\d{3}\\.\\d{3}-\\d{1}',
+      "\\d{2}\\.\\d{3}\\.\\d{3}-\\d{1}",
       // Phone numbers
-      '\\+55 \\d{2} \\d{4,5}-\\d{4}',
-      '\\(\\d{2}\\) \\d{4,5}-\\d{4}',
+      "\\+55 \\d{2} \\d{4,5}-\\d{4}",
+      "\\(\\d{2}\\) \\d{4,5}-\\d{4}",
       // Email
-      '[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}',
+      "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
       // Address components
-      'Rua|Av|Rua|Travessa|Alameda',
-      'São Paulo|Rio de Janeiro|Belo Horizonte',
+      "Rua|Av|Rua|Travessa|Alameda",
+      "São Paulo|Rio de Janeiro|Belo Horizonte",
       // Birth date
-      '\\d{4}-\\d{2}-\\d{2}',
+      "\\d{4}-\\d{2}-\\d{2}",
       // Mother's name
-      'mãe|mother'
+      "mãe|mother",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log);
-      return lgpdPatterns.some(pattern => {
-        const regex = new RegExp(pattern, 'i');
+      return lgpdPatterns.some((pattern) => {
+        const regex = new RegExp(pattern, "i");
         return regex.test(logStr);
       });
     });
@@ -78,29 +80,29 @@ export const lgpdTestUtils = {
   hasLgpdSensitiveData: (output: string[][]) => {
     const sensitivePatterns = [
       // Health data
-      'diabetes|hipertensão|câncer|doença',
+      "diabetes|hipertensão|câncer|doença",
       // Genetic data
-      'dna|genético|genoma|mutação',
+      "dna|genético|genoma|mutação",
       // Biometric data
-      'digital|facial|íris|voz|biometria',
+      "digital|facial|íris|voz|biometria",
       // Religious/philosophical beliefs
-      'religião|crença|filosófico',
+      "religião|crença|filosófico",
       // Sexual orientation
-      'orientação sexual|preferência',
+      "orientação sexual|preferência",
       // Union/membership data
-      'sindicato|associação|filiação',
+      "sindicato|associação|filiação",
       // Racial/ethnic data
-      'raça|etnia|cor'
+      "raça|etnia|cor",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return sensitivePatterns.some(pattern => {
+      return sensitivePatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
     });
-  }
+  },
 };
 
 // CFM-specific test utilities
@@ -109,24 +111,24 @@ export const cfmTestUtils = {
   hasCfmProfessionalData: (output: string[][]) => {
     const cfmPatterns = [
       // CRM numbers
-      '\\d{5,6}-[A-Z]{2}',
-      'CRM\\s*\\d{5,6}',
+      "\\d{5,6}-[A-Z]{2}",
+      "CRM\\s*\\d{5,6}",
       // Medical specialties
-      'cardiologia|ortopedia|pediatria|ginecologia|neurologia',
+      "cardiologia|ortopedia|pediatria|ginecologia|neurologia",
       // Prescription data
-      'mg|ml|comprimido|cápsula|gotas',
-      'via oral|intramuscular|subcutânea',
+      "mg|ml|comprimido|cápsula|gotas",
+      "via oral|intramuscular|subcutânea",
       // Medical procedures
-      'cirurgia|consulta|exame|procedimento',
+      "cirurgia|consulta|exame|procedimento",
       // Medical certificates
-      'atestado|licença|afastamento',
+      "atestado|licença|afastamento",
       // Medical terminology
-      'diagnóstico|hipótese|conduta|tratamento'
+      "diagnóstico|hipótese|conduta|tratamento",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return cfmPatterns.some(pattern => {
+      return cfmPatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
@@ -137,22 +139,22 @@ export const cfmTestUtils = {
   hasConfidentialCommunication: (output: string[][]) => {
     const communicationPatterns = [
       // Medical consultation content
-      'paciente refere|queixa principal|história atual',
-      'exame físico|sinais vitais|diagnóstico',
-      'prescrição médica|recomendações',
+      "paciente refere|queixa principal|história atual",
+      "exame físico|sinais vitais|diagnóstico",
+      "prescrição médica|recomendações",
       // Telemedicine data
-      'telemedicina|sessão|gravação|transcrição',
-      'video conferência|chamada'
+      "telemedicina|sessão|gravação|transcrição",
+      "video conferência|chamada",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return communicationPatterns.some(pattern => {
+      return communicationPatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
     });
-  }
+  },
 };
 
 // ANVISA-specific test utilities
@@ -161,20 +163,20 @@ export const anvisaTestUtils = {
   hasAnvisaDeviceData: (output: string[][]) => {
     const devicePatterns = [
       // Device identification
-      'equipamento|device|aparelho',
-      'modelo|fabricante|número série',
-      'ANVISA\\s*\\d{11}', // ANVISA registration
+      "equipamento|device|aparelho",
+      "modelo|fabricante|número série",
+      "ANVISA\\s*\\d{11}", // ANVISA registration
       // Calibration data
-      'calibração|validação|certificação',
-      'parâmetro|especificação|tolerância',
+      "calibração|validação|certificação",
+      "parâmetro|especificação|tolerância",
       // Device types
-      'ressonância|tomografia|ultrassom',
-      'raio-x|eletrocardiógrafo|ventilador'
+      "ressonância|tomografia|ultrassom",
+      "raio-x|eletrocardiógrafo|ventilador",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return devicePatterns.some(pattern => {
+      return devicePatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
@@ -185,20 +187,20 @@ export const anvisaTestUtils = {
   hasClinicalTrialData: (output: string[][]) => {
     const trialPatterns = [
       // Trial identification
-      'protocolo|estudo|pesquisa clínica',
-      'fase I|fase II|fase III|fase IV',
+      "protocolo|estudo|pesquisa clínica",
+      "fase I|fase II|fase III|fase IV",
       // Participant data
-      'participante|voluntário|sujeito',
-      'grupo controle|grupo intervenção',
+      "participante|voluntário|sujeito",
+      "grupo controle|grupo intervenção",
       // Trial procedures
-      'randomizado|duplo-cego|placebo',
-      'eventos adversos|reações adversas',
-      'monitoramento|segurança|eficácia'
+      "randomizado|duplo-cego|placebo",
+      "eventos adversos|reações adversas",
+      "monitoramento|segurança|eficácia",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return trialPatterns.some(pattern => {
+      return trialPatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
@@ -209,25 +211,25 @@ export const anvisaTestUtils = {
   hasPharmacovigilanceData: (output: string[][]) => {
     const pharmaPatterns = [
       // Vaccine data
-      'vacina|imunização|lote|validade',
-      'fabricante|laboratório',
+      "vacina|imunização|lote|validade",
+      "fabricante|laboratório",
       // Adverse reactions
-      'reação adversa|evento adverso',
-      'notificação|farmacovigilância',
-      'sangramento|cefaleia|febre',
+      "reação adversa|evento adverso",
+      "notificação|farmacovigilância",
+      "sangramento|cefaleia|febre",
       // Blood bank data
-      'banco de sangue|doação|transfusão',
-      'tipo sanguíneo|fator RH|hemoderivados'
+      "banco de sangue|doação|transfusão",
+      "tipo sanguíneo|fator RH|hemoderivados",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return pharmaPatterns.some(pattern => {
+      return pharmaPatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
     });
-  }
+  },
 };
 
 // General compliance test utilities
@@ -235,15 +237,15 @@ export const complianceTestUtils = {
   // Check for data retention violations
   hasRetentionViolations: (output: string[][]) => {
     const retentionPatterns = [
-      'retenção excessiva|retenção prolongada',
-      'período de retenção|política de retenção',
-      'expirou|vencido|fora do prazo',
-      'backup|armazenamento|arquivo'
+      "retenção excessiva|retenção prolongada",
+      "período de retenção|política de retenção",
+      "expirou|vencido|fora do prazo",
+      "backup|armazenamento|arquivo",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return retentionPatterns.some(pattern => {
+      return retentionPatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
@@ -253,16 +255,16 @@ export const complianceTestUtils = {
   // Check for data breach notifications
   hasBreachNotificationData: (output: string[][]) => {
     const breachPatterns = [
-      'incidente de segurança|violação de dados',
-      'notificação obrigatória|comunicação',
-      'autoridade controladora|ANPD|ANVISA',
-      'pacientes afetados|registros comprometidos',
-      'ação corretiva|medida mitigação'
+      "incidente de segurança|violação de dados",
+      "notificação obrigatória|comunicação",
+      "autoridade controladora|ANPD|ANVISA",
+      "pacientes afetados|registros comprometidos",
+      "ação corretiva|medida mitigação",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return breachPatterns.some(pattern => {
+      return breachPatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
@@ -272,15 +274,15 @@ export const complianceTestUtils = {
   // Check for consent-related data
   hasConsentData: (output: string[][]) => {
     const consentPatterns = [
-      'consentimento|autorização|termo',
-      'LGPD|artigo 7|artigo 8',
-      'tratamento de dados|finalidade',
-      'direito do titular|revogação'
+      "consentimento|autorização|termo",
+      "LGPD|artigo 7|artigo 8",
+      "tratamento de dados|finalidade",
+      "direito do titular|revogação",
     ];
 
-    return output.some(log => {
+    return output.some((log) => {
       const logStr = JSON.stringify(log).toLowerCase();
-      return consentPatterns.some(pattern => {
+      return consentPatterns.some((pattern) => {
         const regex = new RegExp(pattern);
         return regex.test(logStr);
       });
@@ -290,20 +292,20 @@ export const complianceTestUtils = {
   // Check for structured compliance logging
   hasStructuredComplianceLogging: (output: string[][]) => {
     const requiredFields = [
-      'complianceFramework',
-      'regulation',
-      'article',
-      'dataType',
-      'consentStatus',
-      'retentionPeriod',
-      'dataCategory',
-      'timestamp',
-      'eventType'
+      "complianceFramework",
+      "regulation",
+      "article",
+      "dataType",
+      "consentStatus",
+      "retentionPeriod",
+      "dataCategory",
+      "timestamp",
+      "eventType",
     ];
 
-    return output.some(call => {
+    return output.some((call) => {
       const logStr = JSON.stringify(call);
-      return requiredFields.some(field => logStr.includes(field));
+      return requiredFields.some((field) => logStr.includes(field));
     });
   },
 
@@ -311,7 +313,7 @@ export const complianceTestUtils = {
     logs: mockConsoleLog.mock.calls,
     errors: mockConsoleError.mock.calls,
     warnings: mockConsoleWarn.mock.calls,
-    info: mockConsoleInfo.mock.calls
+    info: mockConsoleInfo.mock.calls,
   }),
 
   resetConsoleMocks: () => {
@@ -319,5 +321,5 @@ export const complianceTestUtils = {
     mockConsoleError.mockReset();
     mockConsoleWarn.mockReset();
     mockConsoleInfo.mockReset();
-  }
+  },
 };

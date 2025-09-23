@@ -438,16 +438,20 @@ export class UsageCounter {
    * Gets billing metrics for a specific period
    */
   getBillingMetrics(startDate: Date, endDate: Date): BillingMetrics {
-    const relevantRequests = this._recentRequests.filter((req) => req.createdAt >= startDate && req.createdAt <= endDate,
+    const relevantRequests = this._recentRequests.filter(
+      (req) => req.createdAt >= startDate && req.createdAt <= endDate,
     );
 
-    const totalCostUsd = relevantRequests.reduce((sum,_req) => sum + req.costUsd,
+    const totalCostUsd = relevantRequests.reduce(
+      (sum, _req) => sum + req.costUsd,
       0,
     );
-    const totalTokens = relevantRequests.reduce((sum,_req) => sum + req.totalTokens,
+    const totalTokens = relevantRequests.reduce(
+      (sum, _req) => sum + req.totalTokens,
       0,
     );
-    const cacheSavingsUsd = relevantRequests.reduce((sum,_req) => sum + req.cacheSavingsUsd,
+    const cacheSavingsUsd = relevantRequests.reduce(
+      (sum, _req) => sum + req.cacheSavingsUsd,
       0,
     );
 
@@ -482,7 +486,7 @@ export class UsageCounter {
   ): UsageAggregation[] {
     return Array.from(this._aggregations.values())
       .filter((agg) => agg.period === period)
-      .sort((a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .sort((a, _b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   // ================================================
@@ -534,7 +538,8 @@ export class UsageCounter {
   }
 
   private updateCacheHitRate(cacheHit: boolean): number {
-    const recentCacheHits = this._recentRequests.filter((req) => req.cacheHit,
+    const recentCacheHits = this._recentRequests.filter(
+      (req) => req.cacheHit,
     ).length;
     const totalRecent = this._recentRequests.length;
 
@@ -543,7 +548,8 @@ export class UsageCounter {
   }
 
   private updateErrorRate(hasError: boolean): number {
-    const recentErrors = this._recentRequests.filter((req) =>
+    const recentErrors = this._recentRequests.filter(
+      (req) =>
         req.safetyFlags.length > 0 || req.regulatoryFlags.includes("ERROR"),
     ).length;
     const totalRecent = this._recentRequests.length;
@@ -562,7 +568,7 @@ export class UsageCounter {
 
     const maxCount = Math.max(...hourCounts);
     return hourCounts
-      .map((count,_hour) => ({ hour, count }))
+      .map((count, _hour) => ({ hour, count }))
       .filter(({ count }) => count > maxCount * 0.7)
       .map(({ hour }) => hour);
   }
@@ -576,7 +582,7 @@ export class UsageCounter {
     });
 
     return Array.from(modelCounts.entries())
-      .sort((a,_b) => b[1] - a[1])
+      .sort((a, _b) => b[1] - a[1])
       .slice(0, 3)
       .map(([model]) => model);
   }
@@ -592,7 +598,7 @@ export class UsageCounter {
     });
 
     return Array.from(specialtyCounts.entries())
-      .sort((a,_b) => b[1] - a[1])
+      .sort((a, _b) => b[1] - a[1])
       .slice(0, 3)
       .map(([specialty]) => specialty);
   }

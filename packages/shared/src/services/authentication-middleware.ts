@@ -92,7 +92,13 @@ export interface AuthorizationRequirements {
 /**
  * JWT Algorithm type
  */
-export type JWTAlgorithm = "HS256" | "HS384" | "HS512" | "RS256" | "RS384" | "RS512";
+export type JWTAlgorithm =
+  | "HS256"
+  | "HS384"
+  | "HS512"
+  | "RS256"
+  | "RS384"
+  | "RS512";
 
 /**
  * Environment type
@@ -1457,7 +1463,13 @@ export class HealthcareAuthMiddleware {
           ),
           userAgent: c.req.header("user-agent") || "unknown",
           deviceType: this.detectDeviceType(c.req.header("user-agent")),
-          authenticationMethod: (decoded.authMethod as "password" | "mfa" | "biometric" | "smartcard" | "emergency") || "password",
+          authenticationMethod:
+            (decoded.authMethod as
+              | "password"
+              | "mfa"
+              | "biometric"
+              | "smartcard"
+              | "emergency") || "password",
           mfaVerified: decoded.mfaVerified || false,
           riskScore: 0, // Will be calculated
           workflowContext: {
@@ -1537,12 +1549,14 @@ export class HealthcareAuthMiddleware {
     }
 
     // Check concurrent session limit
-    const userSessions = Array.from(this.activeSessions.values()).filter((s) => s.userId === session.userId,
+    const userSessions = Array.from(this.activeSessions.values()).filter(
+      (s) => s.userId === session.userId,
     );
 
     if (userSessions.length > this.config.session.maxConcurrentSessions) {
       // Remove oldest session
-      const oldestSession = userSessions.sort((a,_b) =>
+      const oldestSession = userSessions.sort(
+        (a, _b) =>
           new Date(a.sessionMetadata.lastActivity).getTime() -
           new Date(b.sessionMetadata.lastActivity).getTime(),
       )[0];
@@ -1760,7 +1774,10 @@ export class HealthcareAuthMiddleware {
   /**
    * Handle authentication error
    */
-  private async handleAuthError(c: Context, error: AuthenticationError | unknown): Promise<Response> {
+  private async handleAuthError(
+    c: Context,
+    error: AuthenticationError | unknown,
+  ): Promise<Response> {
     const errorResponse = {
       error: "AUTHENTICATION_ERROR",
       message: "Internal authentication error",

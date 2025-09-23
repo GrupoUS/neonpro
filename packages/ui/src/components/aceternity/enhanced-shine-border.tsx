@@ -13,7 +13,7 @@ import {
   type ShinePattern,
   type ShineIntensity,
   type ShineTheme,
-  type ShineSpeed
+  type ShineSpeed,
 } from "../../hooks/useShineBorderAnimation";
 
 interface EnhancedShineBorderProps extends React.HTMLAttributes<HTMLElement> {
@@ -91,7 +91,7 @@ export function EnhancedShineBorder({
       hoverGradientTheme,
       hoverClockwise,
       hoverDuration,
-      hoverGradientColors
+      hoverGradientColors,
     });
 
   // Combine container classes for both effects
@@ -131,7 +131,7 @@ export function EnhancedShineBorder({
               width: "100%",
               height: "100%",
               background: hoverGradient.backgroundStyle,
-              transition: `background ${hoverDuration}s linear`
+              transition: `background ${hoverDuration}s linear`,
             }}
           />
           <div className="bg-black absolute z-1 flex-none inset-[2px] rounded-[100px]" />

@@ -16,7 +16,7 @@ export class StandardTDDWorkflow {
     agent: string,
     phase: TDDPhase,
     context: OrchestrationContext,
-    coordination: AgentCoordinationPattern
+    coordination: AgentCoordinationPattern,
   ): Promise<AgentResult> {
     // Simplified agent execution
     return {

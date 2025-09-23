@@ -1,0 +1,25 @@
+{
+  "name": "@neonpro/testing-tools",
+  "version": "1.0.0",
+  "description": "Comprehensive testing tools for NeonPro aesthetic clinic platform",
+  "type": "module",
+  "scripts": {
+    "frontend:test": "bun ./frontend-testing.sh",
+    "frontend:test:phase": "bun ./frontend-testing.sh --phase",
+    "frontend:test:workflow": "bun ./frontend-testing.sh --workflow",
+    "frontend:test:dev": "bun ./frontend-testing.sh --env=dev",
+    "test:comprehensive": "bun ./frontend-testing.sh"
+  },
+  "bin": {
+    "neonpro-frontend-test": "./frontend-testing.sh"
+  },
+  "keywords": [
+    "testing",
+    "frontend",
+    "playwright",
+    "accessibility",
+    "aesthetic-clinic"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT"
+}

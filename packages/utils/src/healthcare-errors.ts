@@ -11,29 +11,29 @@
  */
 
 // Error severity levels
-import { TRPCError } from '@trpc/server';
-import type { TRPCError as TRPCErrorType } from '@trpc/server';
+import { TRPCError } from "@trpc/server";
+import type { TRPCError as TRPCErrorType } from "@trpc/server";
 
 export enum ErrorSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 // Error categories
 export enum ErrorCategory {
-  AUTHENTICATION = 'authentication',
-  AUTHORIZATION = 'authorization',
-  VALIDATION = 'validation',
-  BUSINESS_LOGIC = 'business_logic',
-  EXTERNAL_SERVICE = 'external_service',
-  DATABASE = 'database',
-  NETWORK = 'network',
-  SYSTEM = 'system',
-  LGPD_COMPLIANCE = 'lgpd_compliance',
-  HEALTHCARE_COMPLIANCE = 'healthcare_compliance',
-  AI_SERVICE = 'ai_service',
+  AUTHENTICATION = "authentication",
+  AUTHORIZATION = "authorization",
+  VALIDATION = "validation",
+  BUSINESS_LOGIC = "business_logic",
+  EXTERNAL_SERVICE = "external_service",
+  DATABASE = "database",
+  NETWORK = "network",
+  SYSTEM = "system",
+  LGPD_COMPLIANCE = "lgpd_compliance",
+  HEALTHCARE_COMPLIANCE = "healthcare_compliance",
+  AI_SERVICE = "ai_service",
 }
 
 // Personal data patterns for sanitization
@@ -67,15 +67,15 @@ export class HealthcareError extends Error {
       code?: string;
       metadata?: Record<string, unknown>;
       cause?: Error;
-    } = {}
+    } = {},
   ) {
     super(message);
-    this.name = 'HealthcareError';
+    this.name = "HealthcareError";
 
     this.id = crypto.randomUUID();
     this.category = category;
     this.severity = severity;
-    this.code = options.code || 'HEALTHCARE_ERROR';
+    this.code = options.code || "HEALTHCARE_ERROR";
     this.healthcareContext = true;
     this.lgpdCompliant = this.checkLGPDCompliance(message);
     this.timestamp = new Date();
@@ -87,7 +87,7 @@ export class HealthcareError extends Error {
    * Check if error message is LGPD compliant
    */
   private checkLGPDCompliance(message: string): boolean {
-    return !PERSONAL_DATA_PATTERNS.some(pattern => pattern.test(message));
+    return !PERSONAL_DATA_PATTERNS.some((pattern) => pattern.test(message));
   }
 
   /**
@@ -141,12 +141,12 @@ export class HealthcareValidationError extends HealthcareError {
       field: string;
       message: string;
       code: string;
-    }> = []
+    }> = [],
   ) {
     super(message, ErrorCategory.VALIDATION, ErrorSeverity.LOW, {
-      code: 'VALIDATION_ERROR'
+      code: "VALIDATION_ERROR",
     });
-    this.name = 'HealthcareValidationError';
+    this.name = "HealthcareValidationError";
     this.validationDetails = validationDetails;
   }
 }
@@ -157,10 +157,10 @@ export class HealthcareValidationError extends HealthcareError {
 export class HealthcareAuthenticationError extends HealthcareError {
   constructor(message: string, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.AUTHENTICATION, ErrorSeverity.HIGH, {
-      code: 'AUTHENTICATION_FAILED',
-      metadata
+      code: "AUTHENTICATION_FAILED",
+      metadata,
     });
-    this.name = 'HealthcareAuthenticationError';
+    this.name = "HealthcareAuthenticationError";
   }
 }
 
@@ -170,10 +170,10 @@ export class HealthcareAuthenticationError extends HealthcareError {
 export class HealthcareAuthorizationError extends HealthcareError {
   constructor(message: string, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.AUTHORIZATION, ErrorSeverity.HIGH, {
-      code: 'INSUFFICIENT_PERMISSIONS_',
-      metadata
+      code: "INSUFFICIENT_PERMISSIONS_",
+      metadata,
     });
-    this.name = 'HealthcareAuthorizationError';
+    this.name = "HealthcareAuthorizationError";
   }
 }
 
@@ -181,23 +181,24 @@ export class HealthcareAuthorizationError extends HealthcareError {
  * Healthcare compliance error for regulatory violations
  */
 export class HealthcareComplianceError extends HealthcareError {
-  public readonly complianceFramework: 'lgpd' | 'anvisa' | 'cfm';
+  public readonly complianceFramework: "lgpd" | "anvisa" | "cfm";
 
   constructor(
     message: string,
-    complianceFramework: 'lgpd' | 'anvisa' | 'cfm',
-    metadata?: Record<string, unknown>
+    complianceFramework: "lgpd" | "anvisa" | "cfm",
+    metadata?: Record<string, unknown>,
   ) {
     // Map compliance frameworks to specific error categories
-    const category = complianceFramework === 'lgpd'
-      ? ErrorCategory.LGPD_COMPLIANCE
-      : ErrorCategory.HEALTHCARE_COMPLIANCE;
+    const category =
+      complianceFramework === "lgpd"
+        ? ErrorCategory.LGPD_COMPLIANCE
+        : ErrorCategory.HEALTHCARE_COMPLIANCE;
 
     super(message, category, ErrorSeverity.CRITICAL, {
       code: `${complianceFramework.toUpperCase()}_VIOLATION`,
-      metadata
+      metadata,
     });
-    this.name = 'HealthcareComplianceError';
+    this.name = "HealthcareComplianceError";
     this.complianceFramework = complianceFramework;
   }
 }
@@ -206,13 +207,17 @@ export class HealthcareComplianceError extends HealthcareError {
  * Healthcare system error
  */
 export class HealthcareSystemError extends HealthcareError {
-  constructor(message: string, cause?: Error, metadata?: Record<string, unknown>) {
+  constructor(
+    message: string,
+    cause?: Error,
+    metadata?: Record<string, unknown>,
+  ) {
     super(message, ErrorCategory.SYSTEM, ErrorSeverity.CRITICAL, {
-      code: 'SYSTEM_ERROR_',
+      code: "SYSTEM_ERROR_",
       cause,
-      metadata
+      metadata,
     });
-    this.name = 'HealthcareSystemError';
+    this.name = "HealthcareSystemError";
   }
 }
 
@@ -227,7 +232,7 @@ export function createHealthcareError(
     code?: string;
     metadata?: Record<string, unknown>;
     cause?: Error;
-  } = {}
+  } = {},
 ): HealthcareError {
   return new HealthcareError(message, category, severity, options);
 }
@@ -240,7 +245,7 @@ export function formatHealthcareError(
   options: {
     includeStack?: boolean;
     sanitizePersonalData?: boolean;
-  } = {}
+  } = {},
 ): {
   id: string;
   message: string;
@@ -307,25 +312,29 @@ export function sanitizeErrorMessage(message: string): string {
  */
 export function validateErrorCompliance(
   error: HealthcareError,
-  framework: 'lgpd' | 'anvisa' | 'cfm'
+  framework: "lgpd" | "anvisa" | "cfm",
 ): boolean {
   switch (framework) {
-    case 'lgpd':
+    case "lgpd":
       return error.lgpdCompliant;
 
-    case 'anvisa':
+    case "anvisa":
       // ANVISA compliance: check if error relates to medication/procedure standards
-      return error.category === ErrorCategory.HEALTHCARE_COMPLIANCE ||
-             error.message.toLowerCase().includes('medication') ||
-             error.message.toLowerCase().includes('procedure') ||
-             error.message.toLowerCase().includes('protocol');
+      return (
+        error.category === ErrorCategory.HEALTHCARE_COMPLIANCE ||
+        error.message.toLowerCase().includes("medication") ||
+        error.message.toLowerCase().includes("procedure") ||
+        error.message.toLowerCase().includes("protocol")
+      );
 
-    case 'cfm':
+    case "cfm":
       // CFM compliance: check if error relates to professional ethics
-      return error.category === ErrorCategory.HEALTHCARE_COMPLIANCE ||
-             error.message.toLowerCase().includes('professional') ||
-             error.message.toLowerCase().includes('ethics') ||
-             error.message.toLowerCase().includes('conduct');
+      return (
+        error.category === ErrorCategory.HEALTHCARE_COMPLIANCE ||
+        error.message.toLowerCase().includes("professional") ||
+        error.message.toLowerCase().includes("ethics") ||
+        error.message.toLowerCase().includes("conduct")
+      );
 
     default:
       throw new Error(`Unknown compliance framework: ${framework}`);
@@ -338,56 +347,54 @@ export function validateErrorCompliance(
 export const _HealthcareErrors = {
   patientNotFound: (patientId?: string) =>
     new HealthcareError(
-      'Patient not found',
+      "Patient not found",
       ErrorCategory.BUSINESS_LOGIC,
       ErrorSeverity.MEDIUM,
-      { code: 'PATIENT_NOT_FOUND_', metadata: { patientId } }
+      { code: "PATIENT_NOT_FOUND_", metadata: { patientId } },
     ),
 
   appointmentConflict: (appointmentId?: string) =>
     new HealthcareError(
-      'Appointment conflict detected',
+      "Appointment conflict detected",
       ErrorCategory.BUSINESS_LOGIC,
       ErrorSeverity.MEDIUM,
-      { code: 'APPOINTMENT_CONFLICT_', metadata: { appointmentId } }
+      { code: "APPOINTMENT_CONFLICT_", metadata: { appointmentId } },
     ),
 
   medicalRecordAccessDenied: (recordId?: string) =>
     new HealthcareError(
-      'Medical record access denied',
+      "Medical record access denied",
       ErrorCategory.AUTHORIZATION,
       ErrorSeverity.HIGH,
-      { code: 'RECORD_ACCESS_DENIED_', metadata: { recordId } }
+      { code: "RECORD_ACCESS_DENIED_", metadata: { recordId } },
     ),
 
   crmVerificationFailed: (crmNumber?: string) =>
     new HealthcareError(
-      'CRM verification failed',
+      "CRM verification failed",
       ErrorCategory.HEALTHCARE_COMPLIANCE,
       ErrorSeverity.HIGH,
-      { code: 'INVALID_CRM_', metadata: { crmNumber } }
+      { code: "INVALID_CRM_", metadata: { crmNumber } },
     ),
 
   lgpdConsentRequired: (dataType: string) =>
     new HealthcareComplianceError(
-      'LGPD consent required for data processing',
-      'lgpd',
-      { dataType }
+      "LGPD consent required for data processing",
+      "lgpd",
+      { dataType },
     ),
 
   anvisaRegulationViolation: (regulation: string, violation: string) =>
-    new HealthcareComplianceError(
-      'ANVISA regulation violation',
-      'anvisa',
-      { regulation, violation }
-    ),
+    new HealthcareComplianceError("ANVISA regulation violation", "anvisa", {
+      regulation,
+      violation,
+    }),
 
   cfmEthicalViolation: (ethicalCode: string, violation: string) =>
-    new HealthcareComplianceError(
-      'CFM ethical violation',
-      'cfm',
-      { ethicalCode, violation }
-    ),
+    new HealthcareComplianceError("CFM ethical violation", "cfm", {
+      ethicalCode,
+      violation,
+    }),
 };
 /**
  * Healthcare-specific tRPC error that combines TRPCError with healthcare compliance
@@ -401,13 +408,13 @@ export class HealthcareTRPCError extends TRPCError {
   public readonly metadata?: Record<string, unknown>;
 
   constructor(
-    code: TRPCErrorType['code'],
+    code: TRPCErrorType["code"],
     message: string,
     healthcareCode?: string,
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, unknown>,
   ) {
     super({ code, message });
-    
+
     this.id = crypto.randomUUID();
     this.timestamp = new Date();
     this.healthcareCode = healthcareCode;
@@ -434,7 +441,7 @@ export class HealthcareTRPCError extends TRPCError {
    * Check if error message is LGPD compliant
    */
   private checkLGPDCompliance(message: string): boolean {
-    return !PERSONAL_DATA_PATTERNS.some(pattern => pattern.test(message));
+    return !PERSONAL_DATA_PATTERNS.some((pattern) => pattern.test(message));
   }
 
   /**

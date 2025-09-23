@@ -135,7 +135,7 @@ export class CrudIntentParser {
   // Entity patterns
   private entityPatterns = {
     EMAIL: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-    PHONE: /\+?[\d\s\-\(\)]{10,}/g,
+    PHONE: /\+?[\d\s\-()]{10,}/g,
     DATE: /\b(\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}|\d{1,2}\/\d{1,2}\/\d{2,4}|today|tomorrow|yesterday|ontem|hoje|amanhã|2024-\d{2}-\d{2}|last\s+week|next\s+week|semana\s+passada|próxima\s+semana)\b/gi,
     PERSON: /\b[A-Z][a-z]+\s+[A-Z][a-z]+\b/g,
     ENTITY_TYPE:
@@ -260,7 +260,8 @@ export class CrudIntentParser {
           // Only do partial matching for longer patterns (3+ chars) to avoid false positives
           if (pattern.length >= 3) {
             // Partial word match (medium confidence)
-            const partialMatches = words.filter((word) =>
+            const partialMatches = words.filter(
+              (word) =>
                 word.length >= 3 &&
                 (word.includes(pattern) || pattern.includes(word)),
             );
@@ -270,7 +271,8 @@ export class CrudIntentParser {
             }
 
             // Start of word match (lower confidence)
-            const startMatches = words.filter((word) =>
+            const startMatches = words.filter(
+              (word) =>
                 word.length >= 3 &&
                 (word.startsWith(pattern) || pattern.startsWith(word)),
             );
@@ -364,7 +366,8 @@ export class CrudIntentParser {
           const value = match[1].trim();
 
           // Skip if this is already captured as another entity type
-          const existingEntity = entities.find((e) =>
+          const existingEntity = entities.find(
+            (e) =>
               e.value.toLowerCase() === value.toLowerCase() &&
               e.type !== "VALUE",
           );
@@ -446,7 +449,8 @@ export class CrudIntentParser {
       if (match.index !== undefined) {
         const fieldName = match[1];
         // Check if this field is already captured to avoid duplicates
-        const existingField = entities.find((e) =>
+        const existingField = entities.find(
+          (e) =>
             e.type === "FIELD" &&
             e.value.toLowerCase() === fieldName.toLowerCase(),
         );
@@ -461,7 +465,7 @@ export class CrudIntentParser {
       }
     }
 
-    return entities.sort((a,_b) => a.position[0] - b.position[0]);
+    return entities.sort((a, _b) => a.position[0] - b.position[0]);
   }
 
   private extractArguments(normalizedText: string): ParsedArguments {
@@ -530,10 +534,12 @@ export class CrudIntentParser {
       usedPositions.add(statusMatch.index);
     }
 
-    return filters.filter((filter,index,_self) =>
+    return filters.filter(
+      (filter, index, _self) =>
         // Remove duplicates based on field and value
         index ===
-        self.findIndex((f) => f.field === filter.field && f.value === filter.value,
+        self.findIndex(
+          (f) => f.field === filter.field && f.value === filter.value,
         ),
     );
   }

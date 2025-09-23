@@ -1,8 +1,8 @@
 import {
   type ConsentRecord,
   ConsentStatus,
-  type ComplianceViolation
-} from '../entities/consent.js';
+  type ComplianceViolation,
+} from "../entities/consent.js";
 
 /**
  * Consent Repository Interface
@@ -22,7 +22,10 @@ export interface ConsentRepository {
    * @param includeExpired Include expired consents
    * @returns Array of consent records
    */
-  findByPatientId(patientId: string, includeExpired?: boolean): Promise<ConsentRecord[]>;
+  findByPatientId(
+    patientId: string,
+    includeExpired?: boolean,
+  ): Promise<ConsentRecord[]>;
 
   /**
    * Find active consent records for a patient
@@ -37,7 +40,10 @@ export interface ConsentRepository {
    * @param patientId Optional patient ID
    * @returns Array of consent records
    */
-  findByConsentType(consentType: string, patientId?: string): Promise<ConsentRecord[]>;
+  findByConsentType(
+    consentType: string,
+    patientId?: string,
+  ): Promise<ConsentRecord[]>;
 
   /**
    * Find consent records by status
@@ -45,7 +51,10 @@ export interface ConsentRepository {
    * @param patientId Optional patient ID
    * @returns Array of consent records
    */
-  findByStatus(status: ConsentStatus, patientId?: string): Promise<ConsentRecord[]>;
+  findByStatus(
+    status: ConsentStatus,
+    patientId?: string,
+  ): Promise<ConsentRecord[]>;
 
   /**
    * Find expired consent records
@@ -66,7 +75,9 @@ export interface ConsentRepository {
    * @param consent Consent data
    * @returns Created consent record
    */
-  create(consent: Omit<ConsentRecord, 'id' | 'auditTrail'>): Promise<ConsentRecord>;
+  create(
+    consent: Omit<ConsentRecord, "id" | "auditTrail">,
+  ): Promise<ConsentRecord>;
 
   /**
    * Update an existing consent record
@@ -83,7 +94,11 @@ export interface ConsentRepository {
    * @param reason Revocation reason
    * @returns Updated consent record
    */
-  revoke(id: string, revokedBy: string, reason?: string): Promise<ConsentRecord>;
+  revoke(
+    id: string,
+    revokedBy: string,
+    reason?: string,
+  ): Promise<ConsentRecord>;
 
   /**
    * Delete a consent record
@@ -99,7 +114,11 @@ export interface ConsentRepository {
    * @param dataTypes Required data types
    * @returns True if patient has valid consent
    */
-  hasValidConsent(patientId: string, consentType: string, dataTypes: string[]): Promise<boolean>;
+  hasValidConsent(
+    patientId: string,
+    consentType: string,
+    dataTypes: string[],
+  ): Promise<boolean>;
 
   /**
    * Count consent records by patient
@@ -149,7 +168,11 @@ export interface ConsentQueryRepository {
    * @param endDate End date
    * @returns Compliance report
    */
-  generateComplianceReport(clinicId: string, startDate: string, endDate: string): Promise<ComplianceReport>;
+  generateComplianceReport(
+    clinicId: string,
+    startDate: string,
+    endDate: string,
+  ): Promise<ComplianceReport>;
 
   /**
    * Get consent statistics
@@ -175,7 +198,7 @@ export interface ConsentFilters {
   limit?: number;
   offset?: number;
   sortBy?: keyof ConsentRecord;
-  sortOrder?: 'asc' | 'desc';
+  sortOrder?: "asc" | "desc";
 }
 
 /**

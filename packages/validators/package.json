@@ -6,17 +6,18 @@
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "bun x tsup src/index.ts --format cjs,esm --dts",
-    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "bun x tsc",
+    "dev": "bun x tsc --watch",
     "clean": "rm -rf dist",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:coverage": "vitest --run --coverage"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^24.5.2",
     "tsup": "^8.0.0",
-    "typescript": "^5.7.2"
+    "typescript": "^5.7.2",
+    "vitest": "^3.2.4"
   },
   "keywords": [
     "validators",

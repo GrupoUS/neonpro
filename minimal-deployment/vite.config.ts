@@ -10,8 +10,8 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: true,
     rollupOptions: {
-      input: "./public/index.html"
-    }
+      input: "./public/index.html",
+    },
   },
   resolve: {
     alias: {

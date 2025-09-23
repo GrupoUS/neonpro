@@ -1,4 +1,4 @@
-import type { AgentType, AgentStats, AgentCapability } from './types';
+import type { AgentType, AgentStats, AgentCapability } from "./types";
 
 export class TDDAgentRegistry {
   private agents: Map<AgentType, AgentCapability> = new Map();
@@ -19,7 +19,7 @@ export class TDDAgentRegistry {
         priority: "primary",
         phases: ["red", "green", "refactor"],
         triggers: ["orchestrate", "coordinate"],
-        configuration: {}
+        configuration: {},
       },
       {
         type: "test",
@@ -30,7 +30,7 @@ export class TDDAgentRegistry {
         priority: "primary",
         phases: ["red", "green"],
         triggers: ["test", "validate"],
-        configuration: {}
+        configuration: {},
       },
       {
         type: "architect-review",
@@ -41,7 +41,7 @@ export class TDDAgentRegistry {
         priority: "secondary",
         phases: ["red"],
         triggers: ["architecture", "design"],
-        configuration: {}
+        configuration: {},
       },
       {
         type: "security-auditor",
@@ -52,7 +52,7 @@ export class TDDAgentRegistry {
         priority: "secondary",
         phases: ["red", "green"],
         triggers: ["security", "audit"],
-        configuration: {}
+        configuration: {},
       },
       {
         type: "code-reviewer",
@@ -63,8 +63,8 @@ export class TDDAgentRegistry {
         priority: "primary",
         phases: ["green"],
         triggers: ["review", "quality"],
-        configuration: {}
-      }
+        configuration: {},
+      },
     ];
 
     for (const agent of defaultAgents) {
@@ -78,7 +78,7 @@ export class TDDAgentRegistry {
       executionCount: 0,
       successRate: 0,
       averageExecutionTime: 0,
-      lastExecution: null
+      lastExecution: null,
     });
   }
 
@@ -92,14 +92,14 @@ export class TDDAgentRegistry {
 
   // Method names expected by tests
   getAgentsForPhase(phase: string, context?: any): AgentCapability[] {
-    return this.getAllAgents().filter(agent => 
-      agent.phases.includes(phase as any)
+    return this.getAllAgents().filter((agent) =>
+      agent.phases.includes(phase as any),
     );
   }
 
   getAgentsForCapability(capability: string): AgentCapability[] {
-    return this.getAllAgents().filter(agent =>
-      agent.capabilities.includes(capability)
+    return this.getAllAgents().filter((agent) =>
+      agent.capabilities.includes(capability),
     );
   }
 
@@ -111,11 +111,16 @@ export class TDDAgentRegistry {
 
   validateAgentCapability(agent: AgentCapability): boolean;
   validateAgentCapability(agentName: string, capability: string): boolean;
-  validateAgentCapability(agentOrName: AgentCapability | string, capability?: string): boolean {
-    if (typeof agentOrName === 'string' && capability) {
-      const agent = Array.from(this.agents.values()).find(a => a.name === agentOrName);
+  validateAgentCapability(
+    agentOrName: AgentCapability | string,
+    capability?: string,
+  ): boolean {
+    if (typeof agentOrName === "string" && capability) {
+      const agent = Array.from(this.agents.values()).find(
+        (a) => a.name === agentOrName,
+      );
       return agent?.capabilities?.includes(capability) || false;
-    } else if (typeof agentOrName === 'object') {
+    } else if (typeof agentOrName === "object") {
       // Validate if agent has all required capabilities based on context
       return true; // Simplified validation for tests
     }
@@ -123,11 +128,13 @@ export class TDDAgentRegistry {
   }
 
   getRecommendedWorkflow(context: any): string {
-    return 'standard-workflow';
+    return "standard-workflow";
   }
 
   updateAgentConfiguration(agentName: string, config: any): boolean {
-    const agent = Array.from(this.agents.values()).find(a => a.name === agentName);
+    const agent = Array.from(this.agents.values()).find(
+      (a) => a.name === agentName,
+    );
     if (agent) {
       Object.assign(agent.configuration, config);
       return true;
@@ -153,11 +160,15 @@ export class TDDAgentRegistry {
     if (stats) {
       stats.executionCount++;
       stats.lastExecution = new Date();
-      stats.averageExecutionTime = 
-        (stats.averageExecutionTime * (stats.executionCount - 1) + duration) / stats.executionCount;
-      
-      const successCount = Math.floor(stats.successRate * (stats.executionCount - 1));
-      stats.successRate = (successCount + (success ? 1 : 0)) / stats.executionCount;
+      stats.averageExecutionTime =
+        (stats.averageExecutionTime * (stats.executionCount - 1) + duration) /
+        stats.executionCount;
+
+      const successCount = Math.floor(
+        stats.successRate * (stats.executionCount - 1),
+      );
+      stats.successRate =
+        (successCount + (success ? 1 : 0)) / stats.executionCount;
     }
   }
 

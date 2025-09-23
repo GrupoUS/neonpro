@@ -1,6 +1,6 @@
-import { Context, Next } from 'hono';
-import { HTTPException } from 'hono/http-exception';
-import { logger } from '../lib/logger';
+import { Context, Next } from "hono";
+import { HTTPException } from "hono/http-exception";
+import { logger } from "../lib/logger";
 
 /**
  * Basic authentication middleware
@@ -23,10 +23,10 @@ interface User {
  * Extract token from authorization header
  */
 function extractToken(authHeader: string | undefined): string | null {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return null;
   }
-  return authHeader.replace('Bearer ', '');
+  return authHeader.replace("Bearer ", "");
 }
 
 /**
@@ -37,14 +37,14 @@ async function validateToken(token: string): Promise<User | null> {
   // This could be JWT verification, database lookup, etc.
 
   // For development/testing
-  if (token === 'test-token') {
+  if (token === "test-token") {
     return {
-      id: 'test-user-id',
-      email: 'test@example.com',
-      _role: 'admin',
-      clinicId: 'test-clinic-id',
-      name: 'Test User',
-      permissions: ['read', 'write', 'admin'],
+      id: "test-user-id",
+      email: "test@example.com",
+      _role: "admin",
+      clinicId: "test-clinic-id",
+      name: "Test User",
+      permissions: ["read", "write", "admin"],
     };
   }
 
@@ -57,41 +57,41 @@ async function validateToken(token: string): Promise<User | null> {
 export function auth() {
   return async (c: Context, next: Next) => {
     try {
-      const authHeader = c.req.header('authorization');
+      const authHeader = c.req.header("authorization");
       const token = extractToken(authHeader);
 
       if (!token) {
-        logger.warn('Missing authentication token', {
+        logger.warn("Missing authentication token", {
           path: c.req.path,
           method: c.req.method,
-          ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+          ip: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
         });
 
         throw new HTTPException(401, {
-          message: 'Authentication required',
+          message: "Authentication required",
         });
       }
 
       const user = await validateToken(token);
 
       if (!user) {
-        logger.warn('Invalid authentication token', {
+        logger.warn("Invalid authentication token", {
           path: c.req.path,
           method: c.req.method,
-          ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+          ip: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
         });
 
         throw new HTTPException(401, {
-          message: 'Invalid or expired token',
+          message: "Invalid or expired token",
         });
       }
 
       // Set user context
-      c.set('user', user);
-      c.set('userId', user.id);
-      c.set('clinicId', user.clinicId);
+      c.set("user", user);
+      c.set("userId", user.id);
+      c.set("clinicId", user.clinicId);
 
-      logger.debug('User authenticated', {
+      logger.debug("User authenticated", {
         _userId: user.id,
         _role: user.role,
         path: c.req.path,
@@ -104,14 +104,14 @@ export function auth() {
         throw error;
       }
 
-      logger.error('Authentication error', {
+      logger.error("Authentication error", {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
       });
 
       throw new HTTPException(500, {
-        message: 'Authentication failed',
+        message: "Authentication failed",
       });
     }
   };
@@ -123,22 +123,22 @@ export function auth() {
 export function optionalAuth() {
   return async (c: Context, next: Next) => {
     try {
-      const authHeader = c.req.header('authorization');
+      const authHeader = c.req.header("authorization");
       const token = extractToken(authHeader);
 
       if (token) {
         const user = await validateToken(token);
         if (user) {
-          c.set('user', user);
-          c.set('userId', user.id);
-          c.set('clinicId', user.clinicId);
+          c.set("user", user);
+          c.set("userId", user.id);
+          c.set("clinicId", user.clinicId);
         }
       }
 
       await next();
     } catch (error) {
       // Silent fail for optional auth
-      logger.debug('Optional auth failed', {
+      logger.debug("Optional auth failed", {
         error: error instanceof Error ? error.message : String(error),
       });
 
@@ -154,16 +154,16 @@ export function requireRole(allowedRoles: string | string[]) {
   const roles = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
 
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
+    const user = c.get("user");
 
     if (!user) {
       throw new HTTPException(401, {
-        message: 'Authentication required',
+        message: "Authentication required",
       });
     }
 
     if (!roles.includes(user._role)) {
-      logger.warn('Access denied - insufficient role', {
+      logger.warn("Access denied - insufficient role", {
         _userId: user.id,
         userRole: user.role,
         requiredRoles: roles,
@@ -172,7 +172,7 @@ export function requireRole(allowedRoles: string | string[]) {
       });
 
       throw new HTTPException(403, {
-        message: 'Insufficient permissions',
+        message: "Insufficient permissions",
       });
     }
 
@@ -189,18 +189,20 @@ export function requirePermission(requiredPermissions: string | string[]) {
     : [requiredPermissions];
 
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
+    const user = c.get("user");
 
     if (!user) {
       throw new HTTPException(401, {
-        message: 'Authentication required',
+        message: "Authentication required",
       });
     }
 
-    const hasPermission = permissions.some(permission => user.permissions.includes(permission));
+    const hasPermission = permissions.some((permission) =>
+      user.permissions.includes(permission),
+    );
 
     if (!hasPermission) {
-      logger.warn('Access denied - insufficient permissions', {
+      logger.warn("Access denied - insufficient permissions", {
         _userId: user.id,
         userPermissions: user.permissions,
         requiredPermissions: permissions,
@@ -209,7 +211,7 @@ export function requirePermission(requiredPermissions: string | string[]) {
       });
 
       throw new HTTPException(403, {
-        message: 'Insufficient permissions',
+        message: "Insufficient permissions",
       });
     }
 
@@ -222,17 +224,18 @@ export function requirePermission(requiredPermissions: string | string[]) {
  */
 export function requireClinicAccess() {
   return async (c: Context, next: Next) => {
-    const user = c.get('user');
-    const requestedClinicId = c.req.param('clinicId') || c.req.query('clinicId');
+    const user = c.get("user");
+    const requestedClinicId =
+      c.req.param("clinicId") || c.req.query("clinicId");
 
     if (!user) {
       throw new HTTPException(401, {
-        message: 'Authentication required',
+        message: "Authentication required",
       });
     }
 
     if (requestedClinicId && requestedClinicId !== user.clinicId) {
-      logger.warn('Access denied - clinic mismatch', {
+      logger.warn("Access denied - clinic mismatch", {
         _userId: user.id,
         userClinicId: user.clinicId,
         requestedClinicId,
@@ -241,7 +244,7 @@ export function requireClinicAccess() {
       });
 
       throw new HTTPException(403, {
-        message: 'Access denied to clinic data',
+        message: "Access denied to clinic data",
       });
     }
 
@@ -278,5 +281,5 @@ export const requireAuth = auth;
  * AI-specific access control middleware
  */
 export function requireAIAccess() {
-  return authWithPermission(['ai_access', 'admin']);
+  return authWithPermission(["ai_access", "admin"]);
 }

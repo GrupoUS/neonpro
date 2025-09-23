@@ -30,15 +30,20 @@
       "@neonpro/types/*": ["../../packages/types/src/*"],
       "@neonpro/utils": ["../../packages/utils/dist"],
       "@neonpro/utils/*": ["../../packages/utils/dist/*"]
-    }
+    },
+    "tsBuildInfoFile": "./.tsbuildinfo"
   },
   "include": ["src/**/*", ".next/types/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
     "tests/**/*",
+    "src/__tests__/**/*",
+    "**/__tests__/**",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ],
   "references": [
     { "path": "../../packages/types" },

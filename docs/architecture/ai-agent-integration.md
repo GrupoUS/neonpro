@@ -6,7 +6,7 @@ This document describes the architectural patterns and integration strategies fo
 
 **Version**: 1.0.0  
 **Last Updated**: January 15, 2024  
-**Compliance**: LGPD, ANVISA, CFM, ISO 27001  
+**Compliance**: LGPD, ANVISA, CFM, ISO 27001
 
 ## Table of Contents
 
@@ -102,36 +102,36 @@ Transport Layer (TCP)
 
 ```typescript
 interface AguiMessage {
-  id: string;                    // Unique message identifier
-  type: AguiMessageType;         // Message type (query, response, etc.)
-  timestamp: string;             // ISO timestamp
-  sessionId: string;             // Chat session identifier
-  payload: Record<string, any>;  // Message payload
+  id: string; // Unique message identifier
+  type: AguiMessageType; // Message type (query, response, etc.)
+  timestamp: string; // ISO timestamp
+  sessionId: string; // Chat session identifier
+  payload: Record<string, any>; // Message payload
   metadata?: AguiMessageMetadata; // Security and routing metadata
 }
 
-type AguiMessageType = 
-  | 'query'           // User query to AI agent
-  | 'response'        // AI agent response
-  | 'streaming_chunk' // Streaming response chunk
-  | 'error'           // Error response
-  | 'status'          // System status update
-  | 'feedback'        // User feedback on response
-  | 'context_update'  // Context update
-  | 'session_update'; // Session metadata update
+type AguiMessageType =
+  | "query" // User query to AI agent
+  | "response" // AI agent response
+  | "streaming_chunk" // Streaming response chunk
+  | "error" // Error response
+  | "status" // System status update
+  | "feedback" // User feedback on response
+  | "context_update" // Context update
+  | "session_update"; // Session metadata update
 ```
 
 #### Security Metadata
 
 ```typescript
 interface AguiMessageMetadata {
-  userId: string;                    // User identifier
-  patientId?: string;                // Patient context (if applicable)
-  requestId?: string;                // Original request ID
-  version: string;                   // Protocol version
-  compression?: 'gzip' | 'none';    // Payload compression
-  encryption?: boolean;              // End-to-end encryption flag
-  auditTrail?: string;               // Audit trail identifier
+  userId: string; // User identifier
+  patientId?: string; // Patient context (if applicable)
+  requestId?: string; // Original request ID
+  version: string; // Protocol version
+  compression?: "gzip" | "none"; // Payload compression
+  encryption?: boolean; // End-to-end encryption flag
+  auditTrail?: string; // Audit trail identifier
 }
 ```
 
@@ -142,16 +142,16 @@ interface AguiMessageMetadata {
 export class AgentProtocolService {
   private connections = new Map<string, AgentConnection>();
   private sessions = new Map<string, AgentSession>();
-  
+
   constructor(
     private securityService: SecurityService,
-    private auditService: AuditService
+    private auditService: AuditService,
   ) {}
-  
+
   async handleConnection(ws: WebSocket, request: Request) {
     const userId = this.authenticate(request);
     const connectionId = this.generateConnectionId();
-    
+
     // Create secure connection
     const connection: AgentConnection = {
       id: connectionId,
@@ -159,51 +159,50 @@ export class AgentProtocolService {
       socket: ws,
       authenticated: true,
       createdAt: new Date(),
-      lastActivity: new Date()
+      lastActivity: new Date(),
     };
-    
+
     this.connections.set(connectionId, connection);
-    
+
     // Set up message handlers
-    ws.on('message', async (data) => {
+    ws.on("message", async (data) => {
       await this.handleMessage(connectionId, data);
     });
-    
-    ws.on('close', () => {
+
+    ws.on("close", () => {
       this.handleDisconnection(connectionId);
     });
   }
-  
+
   private async handleMessage(connectionId: string, data: any) {
     const connection = this.connections.get(connectionId);
     if (!connection) return;
-    
+
     try {
       const message: AguiMessage = JSON.parse(data.toString());
-      
+
       // Validate message structure
       if (!this.validateMessage(message)) {
-        throw new Error('Invalid message structure');
+        throw new Error("Invalid message structure");
       }
-      
+
       // Security validation
       await this.securityService.validateMessage(message, connection);
-      
+
       // Route to appropriate handler
       switch (message.type) {
-        case 'query':
+        case "query":
           await this.handleQuery(connection, message);
           break;
-        case 'feedback':
+        case "feedback":
           await this.handleFeedback(connection, message);
           break;
         default:
           throw new Error(`Unsupported message type: ${message.type}`);
       }
-      
+
       // Update activity timestamp
       connection.lastActivity = new Date();
-      
     } catch (error) {
       await this.sendError(connection, error);
     }
@@ -243,80 +242,82 @@ export class QueryPipeline {
     private permissionService: PermissionService,
     private cacheService: CacheService,
     private dataService: AIDataService,
-    private responseGenerator: ResponseGenerator
+    private responseGenerator: ResponseGenerator,
   ) {}
-  
-  async processQuery(query: UserQuery, context: SecurityContext): Promise<AgentResponse> {
+
+  async processQuery(
+    query: UserQuery,
+    context: SecurityContext,
+  ): Promise<AgentResponse> {
     const startTime = performance.now();
-    
+
     try {
       // Step 1: Parse intent
       const intent = await this.intentParser.parse(query.query);
-      
+
       // Step 2: Validate permissions
       const hasPermission = await this.permissionService.checkAccess(
         context.userId,
         intent.requiredPermissions,
-        query.context
+        query.context,
       );
-      
+
       if (!hasPermission) {
-        throw new AuthorizationError('Insufficient permissions for this query');
+        throw new AuthorizationError("Insufficient permissions for this query");
       }
-      
+
       // Step 3: Check cache
       const cacheKey = this.generateCacheKey(query, context);
       const cachedResult = await this.cacheService.get(cacheKey);
-      
+
       if (cachedResult) {
         return this.formatCachedResponse(cachedResult, query);
       }
-      
+
       // Step 4: Execute data access
       const rawData = await this.dataService.execute(intent, query);
-      
+
       // Step 5: Process and filter results
       const processedData = await this.processResults(rawData, context);
-      
+
       // Step 6: Generate AI response
       const response = await this.responseGenerator.generate(
         processedData,
         query,
-        intent
+        intent,
       );
-      
+
       // Step 7: Cache results
       await this.cacheService.set(cacheKey, {
         data: processedData,
         response,
         timestamp: new Date(),
-        ttl: this.calculateTTL(intent)
+        ttl: this.calculateTTL(intent),
       });
-      
+
       const processingTime = performance.now() - startTime;
-      
+
       return {
         ...response,
         usage: {
           ...response.usage,
-          processingTimeMs: processingTime
-        }
+          processingTimeMs: processingTime,
+        },
       };
-      
     } catch (error) {
       const processingTime = performance.now() - startTime;
-      
+
       return {
         id: generateId(),
-        type: 'error',
+        type: "error",
         content: error.message,
         confidence: 0,
         usage: {
           promptTokens: 0,
           completionTokens: 0,
           totalTokens: 0,
-          processingTimeMs: processingTime
-        }
+          processingTimeMs: processingTime,
+        },
       };
     }
   }
@@ -329,61 +330,72 @@ export class QueryPipeline {
 // apps/api/src/services/ai/intent-classifier.ts
 export class IntentClassifier {
   private patterns = new Map<string, IntentPattern>([
-    ['appointment_query', {
-      keywords: ['appointment', 'schedule', 'booking', 'consultation'],
-      entities: ['date', 'time', 'patient', 'provider'],
-      requiredPermissions: ['read:appointments'],
-      dataSources: ['appointments', 'patients', 'providers']
-    }],
-    ['patient_query', {
-      keywords: ['patient', 'client', 'record', 'history'],
-      entities: ['patient', 'condition', 'medication'],
-      requiredPermissions: ['read:patients'],
-      dataSources: ['patients', 'medical_records', 'medications']
-    }],
-    ['financial_query', {
-      keywords: ['billing', 'payment', 'invoice', 'financial'],
-      entities: ['amount', 'date', 'service'],
-      requiredPermissions: ['read:billing'],
-      dataSources: ['billing', 'appointments', 'services']
-    }]
+    [
+      "appointment_query",
+      {
+        keywords: ["appointment", "schedule", "booking", "consultation"],
+        entities: ["date", "time", "patient", "provider"],
+        requiredPermissions: ["read:appointments"],
+        dataSources: ["appointments", "patients", "providers"],
+      },
+    ],
+    [
+      "patient_query",
+      {
+        keywords: ["patient", "client", "record", "history"],
+        entities: ["patient", "condition", "medication"],
+        requiredPermissions: ["read:patients"],
+        dataSources: ["patients", "medical_records", "medications"],
+      },
+    ],
+    [
+      "financial_query",
+      {
+        keywords: ["billing", "payment", "invoice", "financial"],
+        entities: ["amount", "date", "service"],
+        requiredPermissions: ["read:billing"],
+        dataSources: ["billing", "appointments", "services"],
+      },
+    ],
   ]);
-  
+
   async classify(query: string): Promise<QueryIntent> {
     const normalizedQuery = query.toLowerCase();
-    
+
     // Find matching patterns
     const matches: IntentMatch[] = [];
-    
+
     for (const [intentType, pattern] of this.patterns) {
       const score = this.calculateMatchScore(normalizedQuery, pattern);
-      if (score > 0.7) { // Confidence threshold
+      if (score > 0.7) {
+        // Confidence threshold
         matches.push({
           intentType,
           score,
-          pattern
+          pattern,
         });
       }
     }
-    
+
     // Select best match
-    const bestMatch = matches.reduce((best, current) => 
-      current.score > best.score ? current : best, matches[0]
+    const bestMatch = matches.reduce(
+      (best, current) => (current.score > best.score ? current : best),
+      matches[0],
     );
-    
+
     if (!bestMatch) {
-      throw new Error('Unable to classify query intent');
+      throw new Error("Unable to classify query intent");
     }
-    
+
     // Extract entities
     const entities = await this.extractEntities(query, bestMatch.pattern);
-    
+
     return {
       type: bestMatch.intentType,
       confidence: bestMatch.score,
       entities,
       requiredPermissions: bestMatch.pattern.requiredPermissions,
-      dataSources: bestMatch.pattern.dataSources
+      dataSources: bestMatch.pattern.dataSources,
     };
   }
 }
@@ -419,55 +431,83 @@ Audit Logging (Compliance)
 // apps/api/src/services/security/permission-matrix.ts
 export class PermissionMatrix {
   private rolePermissions = new Map<string, Set<string>>([
-    ['admin', new Set([
-      'read:patients', 'write:patients', 'delete:patients',
-      'read:appointments', 'write:appointments', 'delete:appointments',
-      'read:billing', 'write:billing', 'delete:billing',
-      'read:medical_records', 'write:medical_records',
-      'admin:users', 'admin:system', 'admin:security'
-    ])],
-    ['healthcare_provider', new Set([
-      'read:patients', 'write:patients',
-      'read:appointments', 'write:appointments',
-      'read:billing', 'read:medical_records', 'write:medical_records'
-    ])],
-    ['patient', new Set([
-      'read:own_patients', 'write:own_patients',
-      'read:own_appointments', 'write:own_appointments',
-      'read:own_billing'
-    ])]
+    [
+      "admin",
+      new Set([
+        "read:patients",
+        "write:patients",
+        "delete:patients",
+        "read:appointments",
+        "write:appointments",
+        "delete:appointments",
+        "read:billing",
+        "write:billing",
+        "delete:billing",
+        "read:medical_records",
+        "write:medical_records",
+        "admin:users",
+        "admin:system",
+        "admin:security",
+      ]),
+    ],
+    [
+      "healthcare_provider",
+      new Set([
+        "read:patients",
+        "write:patients",
+        "read:appointments",
+        "write:appointments",
+        "read:billing",
+        "read:medical_records",
+        "write:medical_records",
+      ]),
+    ],
+    [
+      "patient",
+      new Set([
+        "read:own_patients",
+        "write:own_patients",
+        "read:own_appointments",
+        "write:own_appointments",
+        "read:own_billing",
+      ]),
+    ],
   ]);
-  
-  checkPermission(role: string, permission: string, context?: AccessContext): boolean {
+
+  checkPermission(
+    role: string,
+    permission: string,
+    context?: AccessContext,
+  ): boolean {
     const rolePermissions = this.rolePermissions.get(role);
     if (!rolePermissions) return false;
-    
+
     // Check base permission
     if (!rolePermissions.has(permission)) return false;
-    
+
     // Check contextual constraints
     if (context) {
       return this.checkContextualConstraints(role, permission, context);
     }
-    
+
     return true;
   }
-  
+
   private checkContextualConstraints(
-    role: string, 
-    permission: string, 
-    context: AccessContext
+    role: string,
+    permission: string,
+    context: AccessContext,
   ): boolean {
     // Patient can only access own data
-    if (role === 'patient' && context.resourceOwnerId) {
+    if (role === "patient" && context.resourceOwnerId) {
       return context.userId === context.resourceOwnerId;
     }
-    
+
     // Healthcare provider needs patient relationship
-    if (role === 'healthcare_provider' && context.patientId) {
+    if (role === "healthcare_provider" && context.patientId) {
       return this.hasPatientRelationship(context.userId, context.patientId);
     }
-    
+
     return true;
   }
 }
@@ -479,58 +519,57 @@ export class PermissionMatrix {
 // apps/api/src/services/security/encryption-service.ts
 export class EncryptionService {
   private dataKey: string;
-  private algorithm = 'aes-256-gcm';
-  
+  private algorithm = "aes-256-gcm";
+
   constructor() {
     this.dataKey = process.env.ENCRYPTION_KEY || this.generateKey();
   }
-  
-  async encryptSensitiveData(data: any, context: EncryptionContext): Promise<EncryptedData> {
+
+  async encryptSensitiveData(
+    data: any,
+    context: EncryptionContext,
+  ): Promise<EncryptedData> {
     const serialized = JSON.stringify(data);
     const iv = crypto.randomBytes(12); // GCM recommended IV size
-    
-    const cipher = crypto.createCipheriv(
-      this.algorithm,
-      this.dataKey,
-      iv
-    );
-    
+
+    const cipher = crypto.createCipheriv(this.algorithm, this.dataKey, iv);
+
     const encrypted = Buffer.concat([
-      cipher.update(serialized, 'utf8'),
-      cipher.final()
+      cipher.update(serialized, "utf8"),
+      cipher.final(),
     ]);
-    
+
     const authTag = cipher.getAuthTag();
-    
+
     return {
-      data: encrypted.toString('base64'),
-      iv: iv.toString('base64'),
-      authTag: authTag.toString('base64'),
+      data: encrypted.toString("base64"),
+      iv: iv.toString("base64"),
+      authTag: authTag.toString("base64"),
       algorithm: this.algorithm,
       keyId: this.dataKey.substring(0, 8), // Key identifier
       context: {
         dataType: context.dataType,
         userId: context.userId,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     };
   }
-  
+
   async decryptSensitiveData(encrypted: EncryptedData): Promise<any> {
     const decipher = crypto.createDecipheriv(
       encrypted.algorithm,
       this.dataKey,
-      Buffer.from(encrypted.iv, 'base64')
+      Buffer.from(encrypted.iv, "base64"),
     );
-    
-    decipher.setAuthTag(Buffer.from(encrypted.authTag, 'base64'));
-    
+
+    decipher.setAuthTag(Buffer.from(encrypted.authTag, "base64"));
+
     const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(encrypted.data, 'base64')),
-      decipher.final()
+      decipher.update(Buffer.from(encrypted.data, "base64")),
+      decipher.final(),
     ]);
-    
-    return JSON.parse(decrypted.toString('utf8'));
+
+    return JSON.parse(decrypted.toString("utf8"));
   }
 }
 ```
@@ -559,37 +598,37 @@ export class MultiTierCache {
   constructor(
     private redisCache: RedisCacheBackend,
     private localCache: LocalCache,
-    private metrics: CacheMetrics
+    private metrics: CacheMetrics,
   ) {}
-  
+
   async get(key: string): Promise<CacheEntry | null> {
     // Try local cache first (fastest)
     const localEntry = await this.localCache.get(key);
     if (localEntry && !this.isExpired(localEntry)) {
-      this.metrics.recordHit('local');
+      this.metrics.recordHit("local");
       return localEntry;
     }
-    
+
     // Try Redis cache
     const redisEntry = await this.redisCache.get(key);
     if (redisEntry) {
       // Populate local cache
       await this.localCache.set(key, redisEntry);
-      this.metrics.recordHit('redis');
+      this.metrics.recordHit("redis");
       return redisEntry;
     }
-    
+
     this.metrics.recordMiss();
     return null;
   }
-  
+
   async set(key: string, entry: CacheEntry): Promise<void> {
     // Set in both caches with different TTLs
     await this.localCache.set(key, {
       ...entry,
-      ttl: Math.min(entry.ttl || 300, 300) // Max 5 minutes local
+      ttl: Math.min(entry.ttl || 300, 300), // Max 5 minutes local
     });
-    
+
     await this.redisCache.set(key, entry);
   }
 }
@@ -601,36 +640,45 @@ export class MultiTierCache {
 // apps/api/src/services/ai/query-optimizer.ts
 export class QueryOptimizer {
   private queryPatterns = new Map([
-    ['patient_search', {
-      indexes: ['patients_full_text_search', 'patients_active_status'],
-      joinStrategies: ['use_nested_loops_for_small_sets'],
-      cacheStrategy: 'cache_by_patient_id'
-    }],
-    ['appointment_aggregation', {
-      indexes: ['appointments_date_range', 'appointments_provider_index'],
-      joinStrategies: ['use_hash_aggregation'],
-      cacheStrategy: 'cache_by_date_range'
-    }]
+    [
+      "patient_search",
+      {
+        indexes: ["patients_full_text_search", "patients_active_status"],
+        joinStrategies: ["use_nested_loops_for_small_sets"],
+        cacheStrategy: "cache_by_patient_id",
+      },
+    ],
+    [
+      "appointment_aggregation",
+      {
+        indexes: ["appointments_date_range", "appointments_provider_index"],
+        joinStrategies: ["use_hash_aggregation"],
+        cacheStrategy: "cache_by_date_range",
+      },
+    ],
   ]);
-  
+
   optimizeQuery(intent: QueryIntent, context: QueryContext): OptimizedQuery {
     const pattern = this.queryPatterns.get(intent.type);
     if (!pattern) {
       throw new Error(`No optimization pattern for intent: ${intent.type}`);
     }
-    
+
     return {
       sql: this.generateOptimizedSQL(intent, pattern),
       parameters: this.extractParameters(intent),
       cacheKey: this.generateCacheKey(intent, context),
       estimatedCost: this.estimateCost(intent, pattern),
-      indexes: pattern.indexes
+      indexes: pattern.indexes,
     };
   }
-  
-  private generateOptimizedSQL(intent: QueryIntent, pattern: QueryPattern): string {
+
+  private generateOptimizedSQL(
+    intent: QueryIntent,
+    pattern: QueryPattern,
+  ): string {
     switch (intent.type) {
-      case 'patient_search':
+      case "patient_search":
         return `
           SELECT p.id, p.name, p.email, p.phone, p.status
           FROM patients p
@@ -643,8 +691,8 @@ export class QueryOptimizer {
           ORDER BY p.name
           LIMIT $4
         `;
-      
-      case 'appointment_aggregation':
+
+      case "appointment_aggregation":
         return `
           SELECT 
             DATE_TRUNC('day', a.start_time) as appointment_date,
@@ -658,7 +706,7 @@ export class QueryOptimizer {
           GROUP BY DATE_TRUNC('day', a.start_time)
           ORDER BY appointment_date
         `;
-      
+
       default:
         throw new Error(`Unsupported query type: ${intent.type}`);
     }
@@ -695,7 +743,7 @@ export class AuditLogger {
     action: DataAccessAction,
     userId: string,
     resource: DataResource,
-    context: AuditContext
+    context: AuditContext,
   ): Promise<void> {
     const auditEntry: AuditEntry = {
       id: generateAuditId(),
@@ -708,26 +756,26 @@ export class AuditLogger {
         lgpdCompliant: this.validateLGPDCompliance(action, resource),
         purposeSpecified: !!context.purpose,
         dataMinimized: this.validateDataMinimization(resource),
-        retentionPolicy: this.checkRetentionPolicy(resource.type)
+        retentionPolicy: this.checkRetentionPolicy(resource.type),
       },
       metadata: {
         userAgent: context.userAgent,
         ipAddress: context.ipAddress,
         sessionId: context.sessionId,
-        requestPath: context.requestPath
-      }
+        requestPath: context.requestPath,
+      },
     };
-    
+
     // Store in audit database
     await this.storeAuditEntry(auditEntry);
-    
+
     // Check for suspicious patterns
     await this.detectAnomalies(auditEntry);
   }
-  
+
   private validateLGPDCompliance(
-    action: DataAccessAction, 
-    resource: DataResource
+    action: DataAccessAction,
+    resource: DataResource,
   ): boolean {
     // Validate that access follows LGPD principles
     const requiredConsent = this.getRequiredConsentLevel(resource.type);
@@ -742,38 +790,38 @@ export class AuditLogger {
 // apps/api/src/services/compliance/retention-policy.ts
 export class RetentionPolicyService {
   private retentionRules = new Map([
-    ['patient_data', { duration: 365 * 10, unit: 'days' }],      // 10 years
-    ['medical_records', { duration: 365 * 25, unit: 'days' }],     // 25 years
-    ['appointment_data', { duration: 365 * 5, unit: 'days' }],     // 5 years
-    ['billing_data', { duration: 365 * 7, unit: 'days' }],         // 7 years
-    ['audit_logs', { duration: 365 * 2, unit: 'days' }],          // 2 years
-    ['system_logs', { duration: 90, unit: 'days' }]               // 90 days
+    ["patient_data", { duration: 365 * 10, unit: "days" }], // 10 years
+    ["medical_records", { duration: 365 * 25, unit: "days" }], // 25 years
+    ["appointment_data", { duration: 365 * 5, unit: "days" }], // 5 years
+    ["billing_data", { duration: 365 * 7, unit: "days" }], // 7 years
+    ["audit_logs", { duration: 365 * 2, unit: "days" }], // 2 years
+    ["system_logs", { duration: 90, unit: "days" }], // 90 days
   ]);
-  
+
   async scheduleDataDeletion(): Promise<void> {
     for (const [dataType, rule] of this.retentionRules) {
       const cutoffDate = this.calculateCutoffDate(rule);
-      
+
       await this.deleteExpiredData(dataType, cutoffDate);
-      
+
       // Generate deletion report
       await this.generateDeletionReport(dataType, cutoffDate);
     }
   }
-  
+
   async handleDataSubjectRequest(
-    request: DataSubjectRequest
+    request: DataSubjectRequest,
   ): Promise<DataSubjectResponse> {
     switch (request.type) {
-      case 'access':
+      case "access":
         return this.provideDataAccess(request.userId, request.dataTypes);
-      
-      case 'deletion':
+
+      case "deletion":
         return this.executeDataDeletion(request.userId, request.dataTypes);
-      
-      case 'portability':
+
+      case "portability":
         return this.exportUserData(request.userId, request.dataTypes);
-      
+
       default:
         throw new Error(`Unsupported request type: ${request.type}`);
     }
@@ -805,52 +853,52 @@ export class AgentMetricsCollector {
   private metrics = {
     // Performance metrics
     queryLatency: new Histogram({
-      name: 'agent_query_latency_seconds',
-      help: 'AI agent query processing time',
-      buckets: [0.1, 0.5, 1, 2, 5, 10]
+      name: "agent_query_latency_seconds",
+      help: "AI agent query processing time",
+      buckets: [0.1, 0.5, 1, 2, 5, 10],
     }),
-    
+
     // Security metrics
     authenticationFailures: new Counter({
-      name: 'agent_authentication_failures_total',
-      help: 'Total authentication failures'
+      name: "agent_authentication_failures_total",
+      help: "Total authentication failures",
     }),
-    
+
     authorizationFailures: new Counter({
-      name: 'agent_authorization_failures_total',
-      help: 'Total authorization failures'
+      name: "agent_authorization_failures_total",
+      help: "Total authorization failures",
     }),
-    
+
     // Business metrics
     queriesByType: new Counter({
-      name: 'agent_queries_by_type_total',
-      help: 'Total queries by type',
-      labels: ['type']
+      name: "agent_queries_by_type_total",
+      help: "Total queries by type",
+      labels: ["type"],
     }),
-    
+
     // Error metrics
     errorsByType: new Counter({
-      name: 'agent_errors_by_type_total',
-      help: 'Total errors by type',
-      labels: ['type']
-    })
+      name: "agent_errors_by_type_total",
+      help: "Total errors by type",
+      labels: ["type"],
+    }),
   };
-  
+
   recordQuery(duration: number, type: string, success: boolean): void {
     this.metrics.queryLatency.observe(duration);
     this.metrics.queriesByType.labels(type).inc();
-    
+
     if (!success) {
       this.metrics.errorsByType.labels(type).inc();
     }
   }
-  
+
   recordSecurityEvent(event: SecurityEvent): void {
     switch (event.type) {
-      case 'authentication_failure':
+      case "authentication_failure":
         this.metrics.authenticationFailures.inc();
         break;
-      case 'authorization_failure':
+      case "authorization_failure":
         this.metrics.authorizationFailures.inc();
         break;
     }
@@ -869,47 +917,49 @@ export class AgentHealthCheck {
       this.checkRedis(),
       this.checkAIService(),
       this.checkWebSocket(),
-      this.checkSecurity()
+      this.checkSecurity(),
     ]);
-    
+
     const results = checks.map((check, index) => {
-      const name = ['database', 'redis', 'ai_service', 'websocket', 'security'][index];
+      const name = ["database", "redis", "ai_service", "websocket", "security"][
+        index
+      ];
       return {
         name,
-        status: check.status === 'fulfilled' ? 'healthy' : 'unhealthy',
-        details: check.status === 'fulfilled' ? check.value : check.reason
+        status: check.status === "fulfilled" ? "healthy" : "unhealthy",
+        details: check.status === "fulfilled" ? check.value : check.reason,
       };
     });
-    
-    const overallStatus = results.every(r => r.status === 'healthy') 
-      ? 'healthy' 
-      : results.some(r => r.status === 'healthy') 
-        ? 'degraded' 
-        : 'unhealthy';
-    
+
+    const overallStatus = results.every((r) => r.status === "healthy")
+      ? "healthy"
+      : results.some((r) => r.status === "healthy")
+        ? "degraded"
+        : "unhealthy";
+
     return {
       status: overallStatus,
       checks: results,
       timestamp: new Date().toISOString(),
-      version: process.env.npm_package_version || '1.0.0'
+      version: process.env.npm_package_version || "1.0.0",
     };
   }
-  
+
   private async checkAIService(): Promise<HealthCheckResult> {
     const startTime = Date.now();
-    
+
     try {
       // Test AI service connectivity
       const response = await fetch(`${process.env.AI_SERVICE_URL}/health`, {
-        timeout: 5000
+        timeout: 5000,
       });
-      
+
       if (response.ok) {
         const data = await response.json();
         return {
           healthy: true,
           responseTime: Date.now() - startTime,
-          details: data
+          details: data,
         };
       } else {
         throw new Error(`AI service returned ${response.status}`);
@@ -918,7 +968,7 @@ export class AgentHealthCheck {
       return {
         healthy: false,
         responseTime: Date.now() - startTime,
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -946,47 +996,47 @@ spec:
         app: ai-agent
     spec:
       containers:
-      - name: ai-agent
-        image: neonpro/ai-agent:1.0.0
-        ports:
-        - containerPort: 3001
-        env:
-        - name: NODE_ENV
-          value: "production"
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: database-secret
-              key: url
-        - name: REDIS_URL
-          valueFrom:
-            secretKeyRef:
-              name: redis-secret
-              key: url
-        - name: AI_SERVICE_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: ai-service-secret
-              key: api-key
-        resources:
-          requests:
-            memory: "512Mi"
-            cpu: "500m"
-          limits:
-            memory: "1Gi"
-            cpu: "1000m"
-        livenessProbe:
-          httpGet:
-            path: /v1/health
-            port: 3001
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /v1/ready
-            port: 3001
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        - name: ai-agent
+          image: neonpro/ai-agent:1.0.0
+          ports:
+            - containerPort: 3001
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: database-secret
+                  key: url
+            - name: REDIS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: url
+            - name: AI_SERVICE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-service-secret
+                  key: api-key
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /v1/health
+              port: 3001
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /v1/ready
+              port: 3001
+            initialDelaySeconds: 5
+            periodSeconds: 5
 ---
 apiVersion: v1
 kind: Service
@@ -996,8 +1046,8 @@ spec:
   selector:
     app: ai-agent
   ports:
-  - port: 443
-    targetPort: 3001
+    - port: 443
+      targetPort: 3001
   type: ClusterIP
 ```
 
@@ -1017,25 +1067,25 @@ spec:
   minReplicas: 3
   maxReplicas: 10
   metrics:
-  - type: Resource
-    resource:
-      name: cpu
-      target:
-        type: Utilization
-        averageUtilization: 70
-  - type: Resource
-    resource:
-      name: memory
-      target:
-        type: Utilization
-        averageUtilization: 80
-  - type: Pods
-    pods:
-      metric:
-        name: http_requests_per_second
-      target:
-        type: AverageValue
-        averageValue: 100
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Pods
+      pods:
+        metric:
+          name: http_requests_per_second
+        target:
+          type: AverageValue
+          averageValue: 100
 ```
 
 ## Best Practices
@@ -1097,4 +1147,4 @@ spec:
 
 ---
 
-*This architecture document is maintained by the NeonPro engineering team. For questions or contributions, please contact engineering@neonpro.com.br*
+_This architecture document is maintained by the NeonPro engineering team. For questions or contributions, please contact engineering@neonpro.com.br_

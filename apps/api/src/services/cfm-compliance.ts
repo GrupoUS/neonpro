@@ -13,21 +13,22 @@
 
 // CFM Compliance Levels
 export const CFM_COMPLIANCE_LEVELS = {
-  COMPLIANT: 'compliant',
-  PARTIAL: 'partial',
-  NON_COMPLIANT: 'non_compliant',
-  UNDER_REVIEW: 'under_review',
+  COMPLIANT: "compliant",
+  PARTIAL: "partial",
+  NON_COMPLIANT: "non_compliant",
+  UNDER_REVIEW: "under_review",
 } as const;
 
-export type CFMComplianceLevel = (typeof CFM_COMPLIANCE_LEVELS)[keyof typeof CFM_COMPLIANCE_LEVELS];
+export type CFMComplianceLevel =
+  (typeof CFM_COMPLIANCE_LEVELS)[keyof typeof CFM_COMPLIANCE_LEVELS];
 
 // CFM Professional Categories
 export const CFM_PROFESSIONAL_CATEGORIES = {
-  PHYSICIAN: 'physician',
-  SPECIALIST: 'specialist',
-  RESIDENT: 'resident',
-  MEDICAL_STUDENT: 'medical_student',
-  HEALTHCARE_PROFESSIONAL: 'healthcare_professional',
+  PHYSICIAN: "physician",
+  SPECIALIST: "specialist",
+  RESIDENT: "resident",
+  MEDICAL_STUDENT: "medical_student",
+  HEALTHCARE_PROFESSIONAL: "healthcare_professional",
 } as const;
 
 export type CFMProfessionalCategory =
@@ -35,16 +36,17 @@ export type CFMProfessionalCategory =
 
 // CFM Compliance Requirements
 export const CFM_REQUIREMENTS = {
-  CONFIDENTIALITY: 'confidentiality',
-  RECORD_INTEGRITY: 'record_integrity',
-  TELEMEDICINE: 'telemedicine',
-  PROFESSIONAL_ETHICS: 'professional_ethics',
-  LICENSING: 'licensing',
-  CLINICAL_DECISION: 'clinical_decision',
-  PATIENT_SAFETY: 'patient_safety',
+  CONFIDENTIALITY: "confidentiality",
+  RECORD_INTEGRITY: "record_integrity",
+  TELEMEDICINE: "telemedicine",
+  PROFESSIONAL_ETHICS: "professional_ethics",
+  LICENSING: "licensing",
+  CLINICAL_DECISION: "clinical_decision",
+  PATIENT_SAFETY: "patient_safety",
 } as const;
 
-export type CFMRequirement = (typeof CFM_REQUIREMENTS)[keyof typeof CFM_REQUIREMENTS];
+export type CFMRequirement =
+  (typeof CFM_REQUIREMENTS)[keyof typeof CFM_REQUIREMENTS];
 
 // CFM Medical Professional Schema
 export const CFMMedicalProfessionalSchema = z.object({
@@ -54,7 +56,7 @@ export const CFMMedicalProfessionalSchema = z.object({
   fullName: z.string(),
   specialties: z.array(z.string()),
   category: z.nativeEnum(CFM_PROFESSIONAL_CATEGORIES),
-  licenseStatus: z.enum(['active', 'suspended', 'revoked', 'expired']),
+  licenseStatus: z.enum(["active", "suspended", "revoked", "expired"]),
   licenseExpiryDate: z.date(),
   ethicsTrainingCompleted: z.boolean(),
   telemedicineAuthorized: z.boolean(),
@@ -72,7 +74,7 @@ export type CFMMedicalProfessional = z.infer<
 export interface CFMComplianceIssue {
   id: string;
   requirement: CFMRequirement;
-  severity: 'critical' | 'high' | 'medium' | 'low';
+  severity: "critical" | "high" | "medium" | "low";
   title: string;
   description: string;
   recommendation: string;
@@ -218,23 +220,24 @@ export class CFMComplianceService {
     // Check for missing encryption
     if (!dataEncryption) {
       issues.push({
-        id: 'missing-data-encryption',
+        id: "missing-data-encryption",
         requirement: CFM_REQUIREMENTS.CONFIDENTIALITY,
-        severity: 'critical',
-        title: 'Criptografia de dados ausente',
-        description: 'Dados médicos não estão adequadamente criptografados',
-        recommendation: 'Implementar criptografia end-to-end para todos os dados médicos',
-        affectedProfessionals: ['all'],
-        cfmReference: 'Resolução CFM 1.821/2007 - Sigilo Médico',
+        severity: "critical",
+        title: "Criptografia de dados ausente",
+        description: "Dados médicos não estão adequadamente criptografados",
+        recommendation:
+          "Implementar criptografia end-to-end para todos os dados médicos",
+        affectedProfessionals: ["all"],
+        cfmReference: "Resolução CFM 1.821/2007 - Sigilo Médico",
         remediation: {
           steps: [
-            'Implementar criptografia AES-256 para dados em repouso',
-            'Configurar TLS 1.3 para dados em trânsito',
-            'Estabelecer gerenciamento seguro de chaves',
-            'Treinar equipe sobre proteção de dados',
+            "Implementar criptografia AES-256 para dados em repouso",
+            "Configurar TLS 1.3 para dados em trânsito",
+            "Estabelecer gerenciamento seguro de chaves",
+            "Treinar equipe sobre proteção de dados",
           ],
-          timeframe: '30 dias',
-          responsible: 'Equipe de Segurança + DPO',
+          timeframe: "30 dias",
+          responsible: "Equipe de Segurança + DPO",
           ethicsImplications: true,
         },
         detectedAt: new Date(),
@@ -244,12 +247,12 @@ export class CFMComplianceService {
     this.issues.push(...issues);
 
     const level = issues.some(
-        i => i.severity === 'critical' || i.severity === 'high',
-      )
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? CFM_COMPLIANCE_LEVELS.PARTIAL
-      : CFM_COMPLIANCE_LEVELS.COMPLIANT;
+        ? CFM_COMPLIANCE_LEVELS.PARTIAL
+        : CFM_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -276,23 +279,24 @@ export class CFMComplianceService {
     // Check for missing digital signatures
     if (!digitalSignatures) {
       issues.push({
-        id: 'missing-digital-signatures',
+        id: "missing-digital-signatures",
         requirement: CFM_REQUIREMENTS.RECORD_INTEGRITY,
-        severity: 'high',
-        title: 'Assinaturas digitais ausentes',
-        description: 'Prontuários médicos não possuem assinaturas digitais válidas',
-        recommendation: 'Implementar sistema de assinatura digital ICP-Brasil',
-        affectedProfessionals: ['physicians', 'specialists'],
-        cfmReference: 'Resolução CFM 1.638/2002 - Prontuário Médico',
+        severity: "high",
+        title: "Assinaturas digitais ausentes",
+        description:
+          "Prontuários médicos não possuem assinaturas digitais válidas",
+        recommendation: "Implementar sistema de assinatura digital ICP-Brasil",
+        affectedProfessionals: ["physicians", "specialists"],
+        cfmReference: "Resolução CFM 1.638/2002 - Prontuário Médico",
         remediation: {
           steps: [
-            'Implementar certificados digitais ICP-Brasil',
-            'Configurar assinatura digital automática',
-            'Treinar profissionais no uso de certificados',
-            'Estabelecer políticas de assinatura',
+            "Implementar certificados digitais ICP-Brasil",
+            "Configurar assinatura digital automática",
+            "Treinar profissionais no uso de certificados",
+            "Estabelecer políticas de assinatura",
           ],
-          timeframe: '45 dias',
-          responsible: 'Equipe Médica + TI',
+          timeframe: "45 dias",
+          responsible: "Equipe Médica + TI",
           ethicsImplications: true,
         },
         detectedAt: new Date(),
@@ -302,12 +306,12 @@ export class CFMComplianceService {
     this.issues.push(...issues);
 
     const level = issues.some(
-        i => i.severity === 'critical' || i.severity === 'high',
-      )
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? CFM_COMPLIANCE_LEVELS.PARTIAL
-      : CFM_COMPLIANCE_LEVELS.COMPLIANT;
+        ? CFM_COMPLIANCE_LEVELS.PARTIAL
+        : CFM_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -335,23 +339,25 @@ export class CFMComplianceService {
     // Check for missing emergency protocols (intentionally set to false for testing)
     if (!emergencyProtocols) {
       issues.push({
-        id: 'missing-emergency-protocols',
+        id: "missing-emergency-protocols",
         requirement: CFM_REQUIREMENTS.TELEMEDICINE,
-        severity: 'medium',
-        title: 'Protocolos de emergência ausentes',
-        description: 'Sistema de telemedicina não possui protocolos de emergência definidos',
-        recommendation: 'Implementar protocolos de emergência para consultas remotas',
-        affectedProfessionals: ['physicians', 'specialists'],
-        cfmReference: 'Resolução CFM 2.314/2022 - Telemedicina',
+        severity: "medium",
+        title: "Protocolos de emergência ausentes",
+        description:
+          "Sistema de telemedicina não possui protocolos de emergência definidos",
+        recommendation:
+          "Implementar protocolos de emergência para consultas remotas",
+        affectedProfessionals: ["physicians", "specialists"],
+        cfmReference: "Resolução CFM 2.314/2022 - Telemedicina",
         remediation: {
           steps: [
-            'Definir protocolos de emergência médica',
-            'Implementar sistema de encaminhamento urgente',
-            'Treinar profissionais em protocolos remotos',
-            'Estabelecer rede de apoio presencial',
+            "Definir protocolos de emergência médica",
+            "Implementar sistema de encaminhamento urgente",
+            "Treinar profissionais em protocolos remotos",
+            "Estabelecer rede de apoio presencial",
           ],
-          timeframe: '60 dias',
-          responsible: 'Comitê Médico',
+          timeframe: "60 dias",
+          responsible: "Comitê Médico",
           ethicsImplications: false,
         },
         detectedAt: new Date(),
@@ -361,12 +367,12 @@ export class CFMComplianceService {
     this.issues.push(...issues);
 
     const level = issues.some(
-        i => i.severity === 'critical' || i.severity === 'high',
-      )
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? CFM_COMPLIANCE_LEVELS.PARTIAL
-      : CFM_COMPLIANCE_LEVELS.COMPLIANT;
+        ? CFM_COMPLIANCE_LEVELS.PARTIAL
+        : CFM_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -394,12 +400,12 @@ export class CFMComplianceService {
     this.issues.push(...issues);
 
     const level = issues.some(
-        i => i.severity === 'critical' || i.severity === 'high',
-      )
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? CFM_COMPLIANCE_LEVELS.PARTIAL
-      : CFM_COMPLIANCE_LEVELS.COMPLIANT;
+        ? CFM_COMPLIANCE_LEVELS.PARTIAL
+        : CFM_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -426,12 +432,12 @@ export class CFMComplianceService {
     this.issues.push(...issues);
 
     const level = issues.some(
-        i => i.severity === 'critical' || i.severity === 'high',
-      )
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? CFM_COMPLIANCE_LEVELS.PARTIAL
-      : CFM_COMPLIANCE_LEVELS.COMPLIANT;
+        ? CFM_COMPLIANCE_LEVELS.PARTIAL
+        : CFM_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -458,12 +464,12 @@ export class CFMComplianceService {
     this.issues.push(...issues);
 
     const level = issues.some(
-        i => i.severity === 'critical' || i.severity === 'high',
-      )
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? CFM_COMPLIANCE_LEVELS.PARTIAL
-      : CFM_COMPLIANCE_LEVELS.COMPLIANT;
+        ? CFM_COMPLIANCE_LEVELS.PARTIAL
+        : CFM_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -495,16 +501,17 @@ export class CFMComplianceService {
    */
   private calculateComplianceScore(): number {
     const criticalIssues = this.issues.filter(
-      i => i.severity === 'critical',
+      (i) => i.severity === "critical",
     ).length;
-    const highIssues = this.issues.filter(i => i.severity === 'high').length;
+    const highIssues = this.issues.filter((i) => i.severity === "high").length;
     const mediumIssues = this.issues.filter(
-      i => i.severity === 'medium',
+      (i) => i.severity === "medium",
     ).length;
-    const lowIssues = this.issues.filter(i => i.severity === 'low').length;
+    const lowIssues = this.issues.filter((i) => i.severity === "low").length;
 
     // Calculate penalty based on issue severity
-    const penalty = criticalIssues * 25 + highIssues * 15 + mediumIssues * 8 + lowIssues * 3;
+    const penalty =
+      criticalIssues * 25 + highIssues * 15 + mediumIssues * 8 + lowIssues * 3;
 
     return Math.max(0, 100 - penalty);
   }
@@ -516,18 +523,21 @@ export class CFMComplianceService {
     const recommendations: string[] = [];
 
     // Group issues by requirement and generate recommendations
-    const issuesByRequirement = this.issues.reduce((acc, _issue) => {
-      if (!acc[issue.requirement]) acc[issue.requirement] = [];
-      acc[issue.requirement].push(issue);
-      return acc;
-    }, {} as Record<string, CFMComplianceIssue[]>);
+    const issuesByRequirement = this.issues.reduce(
+      (acc, _issue) => {
+        if (!acc[issue.requirement]) acc[issue.requirement] = [];
+        acc[issue.requirement].push(issue);
+        return acc;
+      },
+      {} as Record<string, CFMComplianceIssue[]>,
+    );
 
     Object.entries(issuesByRequirement).forEach(([requirement, _issues]) => {
       const criticalCount = issues.filter(
-        i => i.severity === 'critical',
+        (i) => i.severity === "critical",
       ).length;
-      const highCount = issues.filter(i => i.severity === 'high').length;
-      const mediumCount = issues.filter(i => i.severity === 'medium').length;
+      const highCount = issues.filter((i) => i.severity === "high").length;
+      const mediumCount = issues.filter((i) => i.severity === "medium").length;
 
       if (criticalCount > 0) {
         recommendations.push(
@@ -548,9 +558,9 @@ export class CFMComplianceService {
 
     // Add general recommendations
     if (this.issues.length === 0) {
-      recommendations.push('Manter conformidade com as resoluções do CFM');
-      recommendations.push('Realizar auditorias éticas regulares');
-      recommendations.push('Manter treinamento ético atualizado');
+      recommendations.push("Manter conformidade com as resoluções do CFM");
+      recommendations.push("Realizar auditorias éticas regulares");
+      recommendations.push("Manter treinamento ético atualizado");
     }
 
     return recommendations;
@@ -560,7 +570,7 @@ export class CFMComplianceService {
    * Check if ethics committee review is required
    */
   private requiresEthicsReview(): boolean {
-    return this.issues.some(issue => issue.remediation.ethicsImplications);
+    return this.issues.some((issue) => issue.remediation.ethicsImplications);
   }
 }
 

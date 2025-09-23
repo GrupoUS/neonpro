@@ -1,17 +1,11 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import { 
-  Patient, 
+import {
+  Patient,
   PatientRepository as IPatientRepository,
-  PatientFilters
+  PatientFilters,
 } from "@neonpro/domain";
-import {
-  CreatePatientRequest,
-  UpdatePatientRequest
-} from "@neonpro/types";
-import {
-  PatientQueryOptions,
-  PatientSearchResult
-} from "../types/index.js";
+import { CreatePatientRequest, UpdatePatientRequest } from "@neonpro/types";
+import { PatientQueryOptions, PatientSearchResult } from "../types/index.js";
 import { DatabasePatient } from "../types/supabase.js";
 
 /**
@@ -25,11 +19,13 @@ export class PatientRepository implements IPatientRepository {
     try {
       const { data, error } = await this.supabase
         .from("patients")
-        .select(`
+        .select(
+          `
           *,
           clinic:clinics(id, name),
           appointments(count)
-        `)
+        `,
+        )
         .eq("id", id)
         .single();
 
@@ -47,7 +43,9 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async findByMedicalRecordNumber(medicalRecordNumber: string): Promise<Patient | null> {
+  async findByMedicalRecordNumber(
+    medicalRecordNumber: string,
+  ): Promise<Patient | null> {
     try {
       const { data, error } = await this.supabase
         .from("patients")
@@ -59,7 +57,10 @@ export class PatientRepository implements IPatientRepository {
 
       return this.mapDatabasePatientToDomain(data);
     } catch (error) {
-      console.error("PatientRepository.findByMedicalRecordNumber error:", error);
+      console.error(
+        "PatientRepository.findByMedicalRecordNumber error:",
+        error,
+      );
       return null;
     }
   }
@@ -73,14 +74,17 @@ export class PatientRepository implements IPatientRepository {
 
       if (error || !data) return [];
 
-      return data.map(patient => this.mapDatabasePatientToDomain(patient));
+      return data.map((patient) => this.mapDatabasePatientToDomain(patient));
     } catch (error) {
       console.error("PatientRepository.findByCPF error:", error);
       return [];
     }
   }
 
-  async findByClinicId(clinicId: string, options?: PatientQueryOptions): Promise<PatientSearchResult> {
+  async findByClinicId(
+    clinicId: string,
+    options?: PatientQueryOptions,
+  ): Promise<PatientSearchResult> {
     try {
       let query = this.supabase
         .from("patients")
@@ -94,7 +98,7 @@ export class PatientRepository implements IPatientRepository {
 
       if (options?.search) {
         query = query.or(
-          `full_name.ilike.%${options.search}%,email.ilike.%${options.search}%,cpf.ilike.%${options.search}%`
+          `full_name.ilike.%${options.search}%,email.ilike.%${options.search}%,cpf.ilike.%${options.search}%`,
         );
       }
 
@@ -104,7 +108,10 @@ export class PatientRepository implements IPatientRepository {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1,
+        );
       }
 
       // Apply sorting
@@ -128,7 +135,7 @@ export class PatientRepository implements IPatientRepository {
         patients,
         total: count || 0,
         limit: options?.limit || 10,
-        offset: options?.offset || 0
+        offset: options?.offset || 0,
       };
     } catch (error) {
       console.error("PatientRepository.findByClinicId error:", error);
@@ -136,7 +143,10 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async findWithFilter(filter: PatientFilters, options?: PatientQueryOptions): Promise<PatientSearchResult> {
+  async findWithFilter(
+    filter: PatientFilters,
+    options?: PatientQueryOptions,
+  ): Promise<PatientSearchResult> {
     try {
       let query = this.supabase
         .from("patients")
@@ -163,7 +173,7 @@ export class PatientRepository implements IPatientRepository {
 
       if (filter.search) {
         query = query.or(
-          `full_name.ilike.%${filter.search}%,email.ilike.%${filter.search}%,cpf.ilike.%${filter.search}%`
+          `full_name.ilike.%${filter.search}%,email.ilike.%${filter.search}%,cpf.ilike.%${filter.search}%`,
         );
       }
 
@@ -173,7 +183,10 @@ export class PatientRepository implements IPatientRepository {
       }
 
       if (options?.offset) {
-        query = query.range(options.offset, options.offset + (options.limit || 10) - 1);
+        query = query.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1,
+        );
       }
 
       // Apply sorting
@@ -197,7 +210,7 @@ export class PatientRepository implements IPatientRepository {
         patients,
         total: count || 0,
         limit: options?.limit || 10,
-        offset: options?.offset || 0
+        offset: options?.offset || 0,
       };
     } catch (error) {
       console.error("PatientRepository.findWithFilter error:", error);
@@ -227,7 +240,10 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async update(id: string, patientData: UpdatePatientRequest): Promise<Patient> {
+  async update(
+    id: string,
+    patientData: UpdatePatientRequest,
+  ): Promise<Patient> {
     try {
       const updateData = this.mapUpdateRequestToDatabase(patientData);
 
@@ -269,7 +285,11 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async search(_query: string, clinicId?: string, options?: PatientQueryOptions): Promise<PatientSearchResult> {
+  async search(
+    _query: string,
+    clinicId?: string,
+    options?: PatientQueryOptions,
+  ): Promise<PatientSearchResult> {
     try {
       let dbQuery = this.supabase
         .from("patients")
@@ -277,7 +297,7 @@ export class PatientRepository implements IPatientRepository {
 
       // Build search query
       const searchCondition = `full_name.ilike.%${_query}%,email.ilike.%${_query}%,cpf.ilike.%${_query}%,medical_record_number.ilike.%${_query}%`;
-      
+
       if (clinicId) {
         dbQuery = dbQuery.eq("clinic_id", clinicId);
       }
@@ -290,7 +310,10 @@ export class PatientRepository implements IPatientRepository {
       }
 
       if (options?.offset) {
-        dbQuery = dbQuery.range(options.offset, options.offset + (options.limit || 10) - 1);
+        dbQuery = dbQuery.range(
+          options.offset,
+          options.offset + (options.limit || 10) - 1,
+        );
       }
 
       // Apply sorting
@@ -314,7 +337,7 @@ export class PatientRepository implements IPatientRepository {
         patients,
         total: count || 0,
         limit: options?.limit || 10,
-        offset: options?.offset || 0
+        offset: options?.offset || 0,
       };
     } catch (error) {
       console.error("PatientRepository.search error:", error);
@@ -410,15 +433,18 @@ export class PatientRepository implements IPatientRepository {
       insurancePlan: dbPatient.insurance_plan || undefined,
       emergencyContactName: dbPatient.emergency_contact_name || undefined,
       emergencyContactPhone: dbPatient.emergency_contact_phone || undefined,
-      emergencyContactRelationship: dbPatient.emergency_contact_relationship || undefined,
-      lgpdConsentGiven: dbPatient.lgpd_consent_given || false
+      emergencyContactRelationship:
+        dbPatient.emergency_contact_relationship || undefined,
+      lgpdConsentGiven: dbPatient.lgpd_consent_given || false,
     };
   }
 
   /**
    * Maps create request to database format
    */
-  private mapCreateRequestToDatabase(_request: CreatePatientRequest): Partial<DatabasePatient> {
+  private mapCreateRequestToDatabase(
+    _request: CreatePatientRequest,
+  ): Partial<DatabasePatient> {
     return {
       clinic_id: request.clinicId,
       medical_record_number: request.medicalRecordNumber,
@@ -462,51 +488,83 @@ export class PatientRepository implements IPatientRepository {
       emergency_contact_name: request.emergencyContactName,
       emergency_contact_phone: request.emergencyContactPhone,
       emergency_contact_relationship: request.emergencyContactRelationship,
-      lgpd_consent_given: request.lgpdConsentGiven || false
+      lgpd_consent_given: request.lgpdConsentGiven || false,
     };
   }
 
   /**
    * Maps update request to database format
    */
-  private mapUpdateRequestToDatabase(_request: UpdatePatientRequest): Partial<DatabasePatient> {
+  private mapUpdateRequestToDatabase(
+    _request: UpdatePatientRequest,
+  ): Partial<DatabasePatient> {
     const updateData: Partial<DatabasePatient> = {};
 
-    if (_request.familyName !== undefined) updateData.family_name = _request.familyName;
-    if (_request.fullName !== undefined) updateData.full_name = _request.fullName;
-    if (_request.preferredName !== undefined) updateData.preferred_name = _request.preferredName;
-    if (_request.phonePrimary !== undefined) updateData.phone_primary = _request.phonePrimary;
-    if (_request.phoneSecondary !== undefined) updateData.phone_secondary = _request.phoneSecondary;
+    if (_request.familyName !== undefined)
+      updateData.family_name = _request.familyName;
+    if (_request.fullName !== undefined)
+      updateData.full_name = _request.fullName;
+    if (_request.preferredName !== undefined)
+      updateData.preferred_name = _request.preferredName;
+    if (_request.phonePrimary !== undefined)
+      updateData.phone_primary = _request.phonePrimary;
+    if (_request.phoneSecondary !== undefined)
+      updateData.phone_secondary = _request.phoneSecondary;
     if (_request.email !== undefined) updateData.email = _request.email;
-    if (_request.addressLine1 !== undefined) updateData.address_line1 = _request.addressLine1;
-    if (_request.addressLine2 !== undefined) updateData.address_line2 = _request.addressLine2;
+    if (_request.addressLine1 !== undefined)
+      updateData.address_line1 = _request.addressLine1;
+    if (_request.addressLine2 !== undefined)
+      updateData.address_line2 = _request.addressLine2;
     if (_request.city !== undefined) updateData.city = _request.city;
     if (_request.state !== undefined) updateData.state = _request.state;
-    if (_request.postalCode !== undefined) updateData.postal_code = _request.postalCode;
+    if (_request.postalCode !== undefined)
+      updateData.postal_code = _request.postalCode;
     if (_request.country !== undefined) updateData.country = _request.country;
     if (_request.gender !== undefined) updateData.gender = _request.gender;
-    if (_request.maritalStatus !== undefined) updateData.marital_status = _request.maritalStatus;
-    if (_request.isActive !== undefined) updateData.is_active = _request.isActive;
-    if (_request.deceasedIndicator !== undefined) updateData.deceased_indicator = _request.deceasedIndicator;
-    if (_request.deceasedDate !== undefined) updateData.deceased_date = _request.deceasedDate;
-    if (_request.dataConsentStatus !== undefined) updateData.data_consent_status = _request.dataConsentStatus;
-    if (_request.dataConsentDate !== undefined) updateData.data_consent_date = _request.dataConsentDate;
-    if (_request.dataRetentionUntil !== undefined) updateData.data_retention_until = _request.dataRetentionUntil;
-    if (_request.photoUrl !== undefined) updateData.photo_url = _request.photoUrl;
+    if (_request.maritalStatus !== undefined)
+      updateData.marital_status = _request.maritalStatus;
+    if (_request.isActive !== undefined)
+      updateData.is_active = _request.isActive;
+    if (_request.deceasedIndicator !== undefined)
+      updateData.deceased_indicator = _request.deceasedIndicator;
+    if (_request.deceasedDate !== undefined)
+      updateData.deceased_date = _request.deceasedDate;
+    if (_request.dataConsentStatus !== undefined)
+      updateData.data_consent_status = _request.dataConsentStatus;
+    if (_request.dataConsentDate !== undefined)
+      updateData.data_consent_date = _request.dataConsentDate;
+    if (_request.dataRetentionUntil !== undefined)
+      updateData.data_retention_until = _request.dataRetentionUntil;
+    if (_request.photoUrl !== undefined)
+      updateData.photo_url = _request.photoUrl;
     if (_request.rg !== undefined) updateData.rg = _request.rg;
-    if (_request.passportNumber !== undefined) updateData.passport_number = _request.passportNumber;
-    if (_request.preferredContactMethod !== undefined) updateData.preferred_contact_method = _request.preferredContactMethod;
-    if (_request.bloodType !== undefined) updateData.blood_type = _request.bloodType;
-    if (_request.allergies !== undefined) updateData.allergies = _request.allergies;
-    if (_request.chronicConditions !== undefined) updateData.chronic_conditions = _request.chronicConditions;
-    if (_request.currentMedications !== undefined) updateData.current_medications = _request.currentMedications;
-    if (_request.insuranceProvider !== undefined) updateData.insurance_provider = _request.insuranceProvider;
-    if (_request.insuranceNumber !== undefined) updateData.insurance_number = _request.insuranceNumber;
-    if (_request.insurancePlan !== undefined) updateData.insurance_plan = _request.insurancePlan;
-    if (_request.emergencyContactName !== undefined) updateData.emergency_contact_name = _request.emergencyContactName;
-    if (_request.emergencyContactPhone !== undefined) updateData.emergency_contact_phone = _request.emergencyContactPhone;
-    if (_request.emergencyContactRelationship !== undefined) updateData.emergency_contact_relationship = _request.emergencyContactRelationship;
-    if (_request.lgpdConsentGiven !== undefined) updateData.lgpd_consent_given = _request.lgpdConsentGiven;
+    if (_request.passportNumber !== undefined)
+      updateData.passport_number = _request.passportNumber;
+    if (_request.preferredContactMethod !== undefined)
+      updateData.preferred_contact_method = _request.preferredContactMethod;
+    if (_request.bloodType !== undefined)
+      updateData.blood_type = _request.bloodType;
+    if (_request.allergies !== undefined)
+      updateData.allergies = _request.allergies;
+    if (_request.chronicConditions !== undefined)
+      updateData.chronic_conditions = _request.chronicConditions;
+    if (_request.currentMedications !== undefined)
+      updateData.current_medications = _request.currentMedications;
+    if (_request.insuranceProvider !== undefined)
+      updateData.insurance_provider = _request.insuranceProvider;
+    if (_request.insuranceNumber !== undefined)
+      updateData.insurance_number = _request.insuranceNumber;
+    if (_request.insurancePlan !== undefined)
+      updateData.insurance_plan = _request.insurancePlan;
+    if (_request.emergencyContactName !== undefined)
+      updateData.emergency_contact_name = _request.emergencyContactName;
+    if (_request.emergencyContactPhone !== undefined)
+      updateData.emergency_contact_phone = _request.emergencyContactPhone;
+    if (_request.emergencyContactRelationship !== undefined)
+      updateData.emergency_contact_relationship =
+        _request.emergencyContactRelationship;
+    if (_request.lgpdConsentGiven !== undefined)
+      updateData.lgpd_consent_given = _request.lgpdConsentGiven;
 
     return updateData;
   }

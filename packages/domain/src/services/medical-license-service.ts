@@ -2,7 +2,7 @@
  * Medical License Verification Domain Service
  * Implements CFM Resolution 2314/2022 requirements for
  * verifying physician licenses and authorizations
- * 
+ *
  * This service contains the business logic that was previously in the database layer
  */
 
@@ -137,7 +137,9 @@ export class MedicalLicenseDomainService {
    * @param request License verification request
    * @returns License verification result
    */
-  async verifyMedicalLicense(_request: LicenseVerificationRequest): Promise<LicenseVerificationResult> {
+  async verifyMedicalLicense(
+    _request: LicenseVerificationRequest,
+  ): Promise<LicenseVerificationResult> {
     try {
       // Validate request
       this.validateVerificationRequest(_request);
@@ -174,7 +176,8 @@ export class MedicalLicenseDomainService {
       );
 
       // Calculate next verification date
-      const nextVerificationDue = this.calculateNextVerificationDate(cfmRegistration);
+      const nextVerificationDue =
+        this.calculateNextVerificationDate(cfmRegistration);
 
       const result: LicenseVerificationResult = {
         cfmRegistration,
@@ -201,7 +204,9 @@ export class MedicalLicenseDomainService {
    * Validates verification request
    * @param request Verification request
    */
-  private validateVerificationRequest(request: LicenseVerificationRequest): void {
+  private validateVerificationRequest(
+    request: LicenseVerificationRequest,
+  ): void {
     if (!request.cfmNumber || !request.cfmNumber.trim()) {
       throw new Error("CFM number is required");
     }
@@ -236,7 +241,10 @@ export class MedicalLicenseDomainService {
    * @param state Physician's state
    * @returns CFM registration data
    */
-  private async getCFMRegistration(cfmNumber: string, state: string): Promise<CFMRegistration> {
+  private async getCFMRegistration(
+    cfmNumber: string,
+    state: string,
+  ): Promise<CFMRegistration> {
     try {
       // First, try to get from cache if recent
       const cached = await this.getCachedRegistration(cfmNumber, state);
@@ -270,7 +278,10 @@ export class MedicalLicenseDomainService {
    * @param state Physician's state
    * @returns CFM registration data or null if API unavailable
    */
-  private async fetchFromCFMAPI(cfmNumber: string, state: string): Promise<CFMRegistration | null> {
+  private async fetchFromCFMAPI(
+    cfmNumber: string,
+    state: string,
+  ): Promise<CFMRegistration | null> {
     try {
       // This would be the actual CFM API call
       // In production, this would make an HTTP request to CFM's official API
@@ -316,7 +327,10 @@ export class MedicalLicenseDomainService {
    * @param state Physician's state
    * @returns CFM registration data
    */
-  private async performManualVerification(cfmNumber: string, state: string): Promise<CFMRegistration> {
+  private async performManualVerification(
+    cfmNumber: string,
+    state: string,
+  ): Promise<CFMRegistration> {
     try {
       // Implement manual verification using repository
       // TODO: Implement manual verification logic - await this.licenseRepository.getManualVerification(cfmNumber, state);
@@ -353,11 +367,12 @@ export class MedicalLicenseDomainService {
   private async getTelemedicineAuthorization(
     cfmNumber: string,
     state: string,
-    requestedStates: string[]
+    requestedStates: string[],
   ): Promise<TelemedicineAuthorization> {
     try {
       // Check state-specific telemedicine regulations
-      const stateCouncil = this.stateCouncils.find((council) => council.state === state,
+      const stateCouncil = this.stateCouncils.find(
+        (council) => council.state === state,
       );
 
       if (!stateCouncil) {
@@ -370,20 +385,26 @@ export class MedicalLicenseDomainService {
       let authorization: TelemedicineAuthorization;
 
       // if (!authData) {
-        // Create default authorization based on CFM Resolution 2314/2022
-        authorization = {
-          cfmNumber,
-          authorizedStates: this.calculateAuthorizedStates(state, requestedStates),
-          authorizedSpecialties: ["Clínica Médica"], // Default specialty
-          restrictions: this.calculateAuthorizationRestrictions(state, requestedStates),
-          emergencyOnly: this.isEmergencyOnly(state, requestedStates),
-          requiresSuperVision: this.requiresSupervision(state, requestedStates),
-          authorizationDate: new Date(),
-          isValid: stateCouncil.telemedicineRegulations.allowed,
-        };
+      // Create default authorization based on CFM Resolution 2314/2022
+      authorization = {
+        cfmNumber,
+        authorizedStates: this.calculateAuthorizedStates(
+          state,
+          requestedStates,
+        ),
+        authorizedSpecialties: ["Clínica Médica"], // Default specialty
+        restrictions: this.calculateAuthorizationRestrictions(
+          state,
+          requestedStates,
+        ),
+        emergencyOnly: this.isEmergencyOnly(state, requestedStates),
+        requiresSuperVision: this.requiresSupervision(state, requestedStates),
+        authorizationDate: new Date(),
+        isValid: stateCouncil.telemedicineRegulations.allowed,
+      };
 
-        // Store the default authorization
-        // await this.licenseRepository.storeTelemedicineAuthorization(authorization);
+      // Store the default authorization
+      // await this.licenseRepository.storeTelemedicineAuthorization(authorization);
       // } else {
       //   authorization = this.mapToTelemedicineAuthorization(authData);
       // }
@@ -409,7 +430,7 @@ export class MedicalLicenseDomainService {
     telemedicineAuth: TelemedicineAuthorization,
     state: string,
     requestedSpecialty?: string,
-    requestedStates?: string[]
+    requestedStates?: string[],
   ): {
     cfmCompliant: boolean;
     stateCompliant: boolean;
@@ -423,8 +444,8 @@ export class MedicalLicenseDomainService {
 
     // State compliance: Authorized in the requested states
     const requestedStatesList = requestedStates || [state];
-    const stateCompliant = requestedStatesList.every(requestedState =>
-      telemedicineAuth.authorizedStates.includes(requestedState)
+    const stateCompliant = requestedStatesList.every((requestedState) =>
+      telemedicineAuth.authorizedStates.includes(requestedState),
     );
 
     // Specialty compliance: Authorized for the requested specialty
@@ -461,7 +482,7 @@ export class MedicalLicenseDomainService {
     telemedicineAuth: TelemedicineAuthorization,
     state: string,
     requestedSpecialty?: string,
-    requestedStates?: string[]
+    requestedStates?: string[],
   ): string[] {
     const indicators: string[] = [];
 
@@ -497,16 +518,21 @@ export class MedicalLicenseDomainService {
 
     // State authorization risks
     const requestedStatesList = requestedStates || [state];
-    const unauthorizedStates = requestedStatesList.filter(s => 
-      !telemedicineAuth.authorizedStates.includes(s)
+    const unauthorizedStates = requestedStatesList.filter(
+      (s) => !telemedicineAuth.authorizedStates.includes(s),
     );
-    
+
     if (unauthorizedStates.length > 0) {
-      indicators.push(`Not authorized for telemedicine in states: ${unauthorizedStates.join(', ')}`);
+      indicators.push(
+        `Not authorized for telemedicine in states: ${unauthorizedStates.join(", ")}`,
+      );
     }
 
     // Specialty authorization risks
-    if (requestedSpecialty && !telemedicineAuth.authorizedSpecialties.includes(requestedSpecialty)) {
+    if (
+      requestedSpecialty &&
+      !telemedicineAuth.authorizedSpecialties.includes(requestedSpecialty)
+    ) {
       indicators.push(`Not authorized for specialty: ${requestedSpecialty}`);
     }
 
@@ -546,7 +572,9 @@ export class MedicalLicenseDomainService {
    * @param cfmRegistration CFM registration
    * @returns Next verification date
    */
-  private calculateNextVerificationDate(cfmRegistration: CFMRegistration): Date {
+  private calculateNextVerificationDate(
+    cfmRegistration: CFMRegistration,
+  ): Date {
     const lastVerification = cfmRegistration.lastVerification;
     const nextVerification = new Date(lastVerification);
 
@@ -585,7 +613,9 @@ export class MedicalLicenseDomainService {
    * @returns True if state is supported
    */
   private isValidState(state: string): boolean {
-    return this.stateCouncils.some(council => council.state === state.toUpperCase());
+    return this.stateCouncils.some(
+      (council) => council.state === state.toUpperCase(),
+    );
   }
 
   /**
@@ -594,9 +624,14 @@ export class MedicalLicenseDomainService {
    * @param requestedStates Requested states
    * @returns Authorized states
    */
-  private calculateAuthorizedStates(state: string, _requestedStates: string[]): string[] {
-    const stateCouncil = this.stateCouncils.find(council => council.state === state.toUpperCase());
-    
+  private calculateAuthorizedStates(
+    state: string,
+    _requestedStates: string[],
+  ): string[] {
+    const stateCouncil = this.stateCouncils.find(
+      (council) => council.state === state.toUpperCase(),
+    );
+
     if (!stateCouncil || !stateCouncil.telemedicineRegulations.allowed) {
       return [];
     }
@@ -618,9 +653,14 @@ export class MedicalLicenseDomainService {
    * @param requestedStates Requested states
    * @returns Authorization restrictions
    */
-  private calculateAuthorizationRestrictions(state: string, requestedStates: string[]): string[] {
-    const stateCouncil = this.stateCouncils.find(council => council.state === state.toUpperCase());
-    
+  private calculateAuthorizationRestrictions(
+    state: string,
+    requestedStates: string[],
+  ): string[] {
+    const stateCouncil = this.stateCouncils.find(
+      (council) => council.state === state.toUpperCase(),
+    );
+
     if (!stateCouncil) {
       return ["State not supported"];
     }
@@ -629,10 +669,14 @@ export class MedicalLicenseDomainService {
 
     // Add restrictions for interstate practice
     const requestedStatesList = requestedStates || [state];
-    const unauthorizedStates = requestedStatesList.filter(s => s.toUpperCase() !== state.toUpperCase());
-    
+    const unauthorizedStates = requestedStatesList.filter(
+      (s) => s.toUpperCase() !== state.toUpperCase(),
+    );
+
     if (unauthorizedStates.length > 0) {
-      restrictions.push(`Not authorized for practice in: ${unauthorizedStates.join(', ')}`);
+      restrictions.push(
+        `Not authorized for practice in: ${unauthorizedStates.join(", ")}`,
+      );
     }
 
     return restrictions;
@@ -647,14 +691,14 @@ export class MedicalLicenseDomainService {
   private isEmergencyOnly(state: string, requestedStates: string[]): boolean {
     // Check if any requested state has emergency-only restrictions
     const requestedStatesList = requestedStates || [state];
-    
-    return requestedStatesList.some(requestedState => {
-      const stateCouncil = this.stateCouncils.find(council => 
-        council.state === requestedState.toUpperCase()
+
+    return requestedStatesList.some((requestedState) => {
+      const stateCouncil = this.stateCouncils.find(
+        (council) => council.state === requestedState.toUpperCase(),
       );
-      
-      return stateCouncil?.telemedicineRegulations.restrictions.some(restriction =>
-        restriction.toLowerCase().includes("emergency")
+
+      return stateCouncil?.telemedicineRegulations.restrictions.some(
+        (restriction) => restriction.toLowerCase().includes("emergency"),
       );
     });
   }
@@ -665,7 +709,10 @@ export class MedicalLicenseDomainService {
    * @param requestedStates Requested states
    * @returns True if supervision is required
    */
-  private requiresSupervision(_state: string, _requestedStates: string[]): boolean {
+  private requiresSupervision(
+    _state: string,
+    _requestedStates: string[],
+  ): boolean {
     // This would be based on state regulations and physician experience
     // For now, return false as default
     return false;
@@ -677,16 +724,27 @@ export class MedicalLicenseDomainService {
    * @param state Physician's state
    * @returns Cached registration data or null
    */
-  private async getCachedRegistration(cfmNumber: string, state: string): Promise<CFMRegistration | null> {
+  private async getCachedRegistration(
+    cfmNumber: string,
+    state: string,
+  ): Promise<CFMRegistration | null> {
     if (!this.licenseRepository?.getCachedRegistration) {
-      console.warn('License repository not available for cached registration lookup');
+      console.warn(
+        "License repository not available for cached registration lookup",
+      );
       return null;
     }
-    
+
     try {
-      return await this.licenseRepository.getCachedRegistration(cfmNumber, state);
+      return await this.licenseRepository.getCachedRegistration(
+        cfmNumber,
+        state,
+      );
     } catch (error) {
-      console.warn(`Failed to get cached registration for ${cfmNumber}:`, error);
+      console.warn(
+        `Failed to get cached registration for ${cfmNumber}:`,
+        error,
+      );
       return null;
     }
   }
@@ -699,7 +757,8 @@ export class MedicalLicenseDomainService {
   private isCacheValid(lastVerification: Date): boolean {
     const cacheValidityHours = 24; // Cache is valid for 24 hours
     const now = new Date();
-    const diffHours = (now.getTime() - lastVerification.getTime()) / (1000 * 60 * 60);
+    const diffHours =
+      (now.getTime() - lastVerification.getTime()) / (1000 * 60 * 60);
     return diffHours < cacheValidityHours;
   }
 
@@ -707,16 +766,21 @@ export class MedicalLicenseDomainService {
    * Updates registration cache
    * @param registration CFM registration data
    */
-  private async updateRegistrationCache(registration: CFMRegistration): Promise<void> {
+  private async updateRegistrationCache(
+    registration: CFMRegistration,
+  ): Promise<void> {
     if (!this.licenseRepository?.updateRegistrationCache) {
-      console.warn('License repository not available for cache update');
+      console.warn("License repository not available for cache update");
       return;
     }
-    
+
     try {
       await this.licenseRepository.updateRegistrationCache(registration);
     } catch (error) {
-      console.warn(`Failed to update cache for ${registration.cfmNumber}:`, error);
+      console.warn(
+        `Failed to update cache for ${registration.cfmNumber}:`,
+        error,
+      );
     }
   }
 
@@ -725,12 +789,15 @@ export class MedicalLicenseDomainService {
    * @param cfmNumber CFM registration number
    * @param state Physician's state
    */
-  private async flagForManualReview(cfmNumber: string, state: string): Promise<void> {
+  private async flagForManualReview(
+    cfmNumber: string,
+    state: string,
+  ): Promise<void> {
     if (!this.licenseRepository?.flagForManualReview) {
-      console.warn('License repository not available for manual review flag');
+      console.warn("License repository not available for manual review flag");
       return;
     }
-    
+
     try {
       await this.licenseRepository.flagForManualReview(cfmNumber, state);
     } catch (error) {
@@ -743,7 +810,9 @@ export class MedicalLicenseDomainService {
    * @param request License verification request
    * @returns Authorization status
    */
-  async isAuthorizedForTelemedicine(_request: LicenseVerificationRequest): Promise<{
+  async isAuthorizedForTelemedicine(
+    _request: LicenseVerificationRequest,
+  ): Promise<{
     authorized: boolean;
     restrictions: string[];
     requiresSupervision: boolean;
@@ -769,7 +838,7 @@ export class MedicalLicenseDomainService {
         restrictions: verification.telemedicineAuth.restrictions,
         requiresSupervision: verification.telemedicineAuth.requiresSuperVision,
         emergencyOnly: verification.telemedicineAuth.emergencyOnly,
-        complianceDetails: verification.complianceStatus
+        complianceDetails: verification.complianceStatus,
       };
     } catch (error) {
       console.error("Error checking telemedicine authorization:", error);
@@ -782,8 +851,8 @@ export class MedicalLicenseDomainService {
           cfmCompliant: false,
           stateCompliant: false,
           specialtyCompliant: false,
-          telemedicineCompliant: false
-        }
+          telemedicineCompliant: false,
+        },
       };
     }
   }
@@ -794,15 +863,21 @@ export class MedicalLicenseDomainService {
    * @param state Physician's state
    * @returns Array of specialties
    */
-  async getPhysicianSpecialties(cfmNumber: string, state: string): Promise<string[]> {
+  async getPhysicianSpecialties(
+    cfmNumber: string,
+    state: string,
+  ): Promise<string[]> {
     try {
       const registration = await this.getCFMRegistration(cfmNumber, state);
-      
+
       // Get additional specialties from repository
-      const additionalSpecialties = await this.licenseRepository.getPhysicianSpecialties(cfmNumber, state);
-      
-      const specialties = registration.specialty ? [registration.specialty] : [];
-      
+      const additionalSpecialties =
+        await this.licenseRepository.getPhysicianSpecialties(cfmNumber, state);
+
+      const specialties = registration.specialty
+        ? [registration.specialty]
+        : [];
+
       return [...specialties, ...additionalSpecialties];
     } catch (error) {
       console.error("Error getting physician specialties:", error);

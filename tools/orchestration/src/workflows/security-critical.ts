@@ -16,7 +16,7 @@ export class SecurityCriticalWorkflow {
     agent: string,
     phase: TDDPhase,
     context: OrchestrationContext,
-    coordination: AgentCoordinationPattern
+    coordination: AgentCoordinationPattern,
   ): Promise<AgentResult> {
     // Enhanced security validation
     const securityScore = context.healthcareCompliance.required ? 95 : 90;
@@ -30,7 +30,7 @@ export class SecurityCriticalWorkflow {
         agent,
         coordination,
         securityValidated: true,
-        complianceScore: securityScore
+        complianceScore: securityScore,
       },
       duration: 150,
       quality: {

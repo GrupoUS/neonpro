@@ -6,14 +6,14 @@
 
 export {
   HealthcareThemeProvider,
-  useHealthcareTheme
+  useHealthcareTheme,
 } from "./healthcare-theme-provider";
 export { LGPDConsentBanner, useLGPDConsent } from "./lgpd-consent-banner";
 
 export type {
   HealthcareThemeProviderProps,
   HealthcareThemeConfig as HealthcareTheme,
-  HealthcareThemeContextValue as HealthcareThemeContextType
+  HealthcareThemeContextValue as HealthcareThemeContextType,
 } from "./healthcare-theme-provider";
 
 export type { LGPDConsentBannerProps } from "./lgpd-consent-banner";

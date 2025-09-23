@@ -244,7 +244,8 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
 export class TelemetryEventValidator {
   static validate(event: Partial<TelemetryEvent>): boolean {
     const required = ["id", "eventType", "timestamp", "severity", "_service"];
-    return required.every((field) => event[field as keyof TelemetryEvent] !== undefined,
+    return required.every(
+      (field) => event[field as keyof TelemetryEvent] !== undefined,
     );
   }
 

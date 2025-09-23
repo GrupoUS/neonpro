@@ -28,13 +28,7 @@ export {
   cleanDocument,
 } from "./br/identifiers";
 
-export {
-  cn,
-  formatDate,
-  formatDateTime,
-  debounce,
-  throttle,
-} from "./utils";
+export { cn, formatDate, formatDateTime, debounce, throttle } from "./utils";
 
 // Placeholder exports - will be populated with actual utilities
 export const _auth = {};

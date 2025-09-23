@@ -1,54 +1,55 @@
-import { anthropic } from '@ai-sdk/anthropic';
-import { google } from '@ai-sdk/google';
-import { openai } from '@ai-sdk/openai';
-import type { CoreMessage } from 'ai';
-import { generateText, streamText } from 'ai';
+import { anthropic } from "@ai-sdk/anthropic";
+import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
+import type { CoreMessage } from "ai";
+import { generateText, streamText } from "ai";
 
-export type Provider = 'openai' | 'google' | 'anthropic';
+export type Provider = "openai" | "google" | "anthropic";
 
 export const MODEL_REGISTRY = {
-  'gpt-5-mini': {
-    provider: 'openai' as Provider,
+  "gpt-5-mini": {
+    provider: "openai" as Provider,
     active: true,
-    label: 'ChatGPT 5 Mini',
+    label: "ChatGPT 5 Mini",
   },
-  'gemini-2.5-flash': {
-    provider: 'google' as Provider,
+  "gemini-2.5-flash": {
+    provider: "google" as Provider,
     active: true,
-    label: 'Gemini Flash 2.5',
+    label: "Gemini Flash 2.5",
   },
-  'claude-3-5-sonnet': {
-    provider: 'anthropic' as Provider,
+  "claude-3-5-sonnet": {
+    provider: "anthropic" as Provider,
     active: true,
-    label: 'Claude 3.5 Sonnet',
+    label: "Claude 3.5 Sonnet",
   },
-  'gpt-4o-mini': {
-    provider: 'openai' as Provider,
+  "gpt-4o-mini": {
+    provider: "openai" as Provider,
     active: false,
-    label: 'GPT-4o Mini',
+    label: "GPT-4o Mini",
   },
-  'o4-mini': {
-    provider: 'openai' as Provider,
+  "o4-mini": {
+    provider: "openai" as Provider,
     active: false,
-    label: 'o4-mini',
+    label: "o4-mini",
   },
-  'gemini-1.5-pro': {
-    provider: 'google' as Provider,
+  "gemini-1.5-pro": {
+    provider: "google" as Provider,
     active: false,
-    label: 'Gemini 1.5 Pro',
+    label: "Gemini 1.5 Pro",
   },
 } as const;
 
-export const DEFAULT_PRIMARY = 'gpt-5-mini' as const;
-export const DEFAULT_SECONDARY = 'gemini-2.5-flash' as const;
+export const DEFAULT_PRIMARY = "gpt-5-mini" as const;
+export const DEFAULT_SECONDARY = "gemini-2.5-flash" as const;
 
 export function resolveProvider(model: keyof typeof MODEL_REGISTRY) {
   const entry = MODEL_REGISTRY[model];
-  const adapter = entry.provider === 'google'
-    ? google
-    : entry.provider === 'anthropic'
-    ? anthropic
-    : openai;
+  const adapter =
+    entry.provider === "google"
+      ? google
+      : entry.provider === "anthropic"
+        ? anthropic
+        : openai;
   return { provider: entry.provider, adapter };
 }
 
@@ -76,9 +77,9 @@ export async function streamWithFailover(opts: {
     const stream = new ReadableStream({
       start(controller) {
         const chunks = [
-          'Olá! ',
-          'Sou o assistente da NeonPro. ',
-          'Como posso ajudar você hoje?',
+          "Olá! ",
+          "Sou o assistente da NeonPro. ",
+          "Como posso ajudar você hoje?",
         ];
         let i = 0;
         const id = setInterval(() => {
@@ -93,9 +94,9 @@ export async function streamWithFailover(opts: {
     });
     return new Response(stream, {
       headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'X-Chat-Model': 'mock:model',
-        'X-Data-Freshness': 'as-of-now',
+        "Content-Type": "text/plain; charset=utf-8",
+        "X-Chat-Model": "mock:model",
+        "X-Data-Freshness": "as-of-now",
       },
     });
   }
@@ -110,12 +111,12 @@ export async function streamWithFailover(opts: {
     });
     return result.toTextStreamResponse({
       headers: {
-        'X-Chat-Model': `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
-        'X-Data-Freshness': 'as-of-now',
+        "X-Chat-Model": `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
+        "X-Data-Freshness": "as-of-now",
       },
     });
   } catch (primaryError) {
-    console.error('Primary AI provider failed:', primaryError);
+    console.error("Primary AI provider failed:", primaryError);
     try {
       const { adapter } = resolveProvider(DEFAULT_SECONDARY);
       const result = await streamText({
@@ -125,11 +126,11 @@ export async function streamWithFailover(opts: {
         maxOutputTokens,
       });
       return result.toTextStreamResponse({
-        headers: { 'X-Chat-Model': `google:${DEFAULT_SECONDARY}` },
+        headers: { "X-Chat-Model": `google:${DEFAULT_SECONDARY}` },
       });
     } catch (fallbackError) {
-      console.error('Secondary AI provider failed:', fallbackError);
-      throw new Error('Serviço de IA temporariamente indisponível');
+      console.error("Secondary AI provider failed:", fallbackError);
+      throw new Error("Serviço de IA temporariamente indisponível");
     }
   }
 }
@@ -159,8 +160,8 @@ export async function generateWithFailover(opts: {
     return {
       text,
       headers: new Headers({
-        'X-Chat-Model': 'mock:model',
-        'X-Data-Freshness': 'as-of-now',
+        "X-Chat-Model": "mock:model",
+        "X-Data-Freshness": "as-of-now",
       }),
     };
   }
@@ -176,11 +177,11 @@ export async function generateWithFailover(opts: {
     return {
       text: result.text,
       headers: new Headers({
-        'X-Chat-Model': `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
+        "X-Chat-Model": `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
       }),
     };
   } catch (primaryError) {
-    console.error('Primary AI provider failed:', primaryError);
+    console.error("Primary AI provider failed:", primaryError);
     try {
       const { adapter } = resolveProvider(DEFAULT_SECONDARY);
       const result = await generateText({
@@ -191,11 +192,11 @@ export async function generateWithFailover(opts: {
       });
       return {
         text: result.text,
-        headers: new Headers({ 'X-Chat-Model': `google:${DEFAULT_SECONDARY}` }),
+        headers: new Headers({ "X-Chat-Model": `google:${DEFAULT_SECONDARY}` }),
       };
     } catch (fallbackError) {
-      console.error('Secondary AI provider failed:', fallbackError);
-      throw new Error('Serviço de IA temporariamente indisponível');
+      console.error("Secondary AI provider failed:", fallbackError);
+      throw new Error("Serviço de IA temporariamente indisponível");
     }
   }
 }
@@ -203,17 +204,14 @@ export async function generateWithFailover(opts: {
 export async function getSuggestionsFromAI(_query: string, webHints: string[]) {
   const result = await generateText({
     model: openai(DEFAULT_PRIMARY),
-    prompt:
-      `Com base na consulta "${_query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${
-        webHints.join(
-          '; ',
-        )
-      }. Responda apenas com lista separada por vírgulas, sem numeração.`,
+    prompt: `Com base na consulta "${_query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${webHints.join(
+      "; ",
+    )}. Responda apenas com lista separada por vírgulas, sem numeração.`,
     maxOutputTokens: 100,
   });
   return result.text
-    .split(',')
-    .map(s => s.trim())
+    .split(",")
+    .map((s) => s.trim())
     .filter(Boolean)
     .slice(0, 5);
 }

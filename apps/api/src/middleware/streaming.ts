@@ -1,5 +1,5 @@
-import { Context, Next } from 'hono';
-import { logger } from '../lib/logger';
+import { Context, Next } from "hono";
+import { logger } from "../lib/logger";
 
 /**
  * Server-Sent Events (SSE) middleware and utilities
@@ -9,19 +9,19 @@ import { logger } from '../lib/logger';
  * Standard SSE headers for streaming responses
  */
 export const sseHeaders = {
-  'Content-Type': 'text/event-stream',
-  'Cache-Control': 'no-cache',
-  Connection: 'keep-alive',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'X-Accel-Buffering': 'no', // Disable nginx buffering
+  "Content-Type": "text/event-stream",
+  "Cache-Control": "no-cache",
+  Connection: "keep-alive",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "X-Accel-Buffering": "no", // Disable nginx buffering
 };
 
 /**
  * Formats data for SSE transmission
  */
 export function formatSSEData(data: any, event?: string, id?: string): string {
-  let result = '';
+  let result = "";
 
   if (id) {
     result += `id: ${id}\n`;
@@ -31,21 +31,23 @@ export function formatSSEData(data: any, event?: string, id?: string): string {
     result += `event: ${event}\n`;
   }
 
-  const dataStr = typeof data === 'string' ? data : JSON.stringify(data);
-  const lines = dataStr.split('\n');
+  const dataStr = typeof data === "string" ? data : JSON.stringify(data);
+  const lines = dataStr.split("\n");
 
   for (const line of lines) {
     result += `data: ${line}\n`;
   }
 
-  result += '\n';
+  result += "\n";
   return result;
 }
 
 /**
  * Creates an SSE stream from async chunks
  */
-export function sseStreamFromChunks(chunks: AsyncIterable<any>): ReadableStream<Uint8Array> {
+export function sseStreamFromChunks(
+  chunks: AsyncIterable<any>,
+): ReadableStream<Uint8Array> {
   return new ReadableStream({
     async start(controller) {
       try {
@@ -55,21 +57,18 @@ export function sseStreamFromChunks(chunks: AsyncIterable<any>): ReadableStream<
         }
 
         // Send final event to indicate completion
-        const finalEvent = formatSSEData('[DONE]', 'complete');
+        const finalEvent = formatSSEData("[DONE]", "complete");
         controller.enqueue(new TextEncoder().encode(finalEvent));
 
         controller.close();
       } catch (error) {
         // Error caught but not used - handled by surrounding logic
-        logger.error('SSE streaming error', {
+        logger.error("SSE streaming error", {
           error: error instanceof Error ? error.message : String(error),
         });
 
         // Send error event
-        const errorEvent = formatSSEData(
-          { error: 'Stream failed' },
-          'error',
-        );
+        const errorEvent = formatSSEData({ error: "Stream failed" }, "error");
         controller.enqueue(new TextEncoder().encode(errorEvent));
         controller.close();
       }
@@ -94,19 +93,19 @@ export function createSSEStream(
         }
 
         // Send completion event
-        const doneEvent = formatSSEData('[DONE]', 'complete');
+        const doneEvent = formatSSEData("[DONE]", "complete");
         controller.enqueue(new TextEncoder().encode(doneEvent));
 
         controller.close();
       } catch (error) {
         // Error caught but not used - handled by surrounding logic
-        logger.error('SSE generator error', {
+        logger.error("SSE generator error", {
           error: error instanceof Error ? error.message : String(error),
         });
 
         const errorEvent = formatSSEData(
-          { error: 'Stream generation failed' },
-          'error',
+          { error: "Stream generation failed" },
+          "error",
         );
         controller.enqueue(new TextEncoder().encode(errorEvent));
         controller.close();
@@ -127,8 +126,8 @@ export function streamingMiddleware() {
       });
 
       // Add streaming context
-      c.set('isStreaming', true);
-      c.set('streamStartTime', Date.now());
+      c.set("isStreaming", true);
+      c.set("streamStartTime", Date.now());
 
       await next();
 
@@ -136,7 +135,7 @@ export function streamingMiddleware() {
       return;
     } catch (error) {
       // Error caught but not used - handled by surrounding logic
-      logger.error('Streaming middleware error', {
+      logger.error("Streaming middleware error", {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
@@ -145,10 +144,10 @@ export function streamingMiddleware() {
       // Send error as SSE event
       const errorEvent = formatSSEData(
         {
-          error: 'Streaming failed',
+          error: "Streaming failed",
           message: error instanceof Error ? error.message : String(error),
         },
-        'error',
+        "error",
       );
 
       return c.body(errorEvent, 500, sseHeaders);
@@ -159,12 +158,14 @@ export function streamingMiddleware() {
 /**
  * Creates a heartbeat stream to keep SSE connections alive
  */
-export function createHeartbeatStream(intervalMs: number = 30000): ReadableStream<Uint8Array> {
+export function createHeartbeatStream(
+  intervalMs: number = 30000,
+): ReadableStream<Uint8Array> {
   return new ReadableStream({
     start(controller) {
       const interval = setInterval(() => {
         try {
-          const heartbeat = formatSSEData('heartbeat', 'ping');
+          const heartbeat = formatSSEData("heartbeat", "ping");
           controller.enqueue(new TextEncoder().encode(heartbeat));
         } catch (error) {
           // Error caught but not used - handled by surrounding logic
@@ -190,7 +191,7 @@ export function mergeSSEStreams(
   return new ReadableStream({
     async start(controller) {
       try {
-        const readers = streams.map(stream => stream.getReader());
+        const readers = streams.map((stream) => stream.getReader());
 
         const readPromises = readers.map(async (reader, index) => {
           try {
@@ -213,7 +214,7 @@ export function mergeSSEStreams(
         controller.close();
       } catch (error) {
         // Error caught but not used - handled by surrounding logic
-        logger.error('Stream merge error', {
+        logger.error("Stream merge error", {
           error: error instanceof Error ? error.message : String(error),
         });
         controller.close();

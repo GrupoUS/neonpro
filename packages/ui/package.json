@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "bun x tsup",
+    "build": "bun x tsc --noEmit",
     "dev": "bun x tsc -w -p tsconfig.json",
     "lint": "oxlint src --fix",
     "type-check": "bun x tsc --noEmit",

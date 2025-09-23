@@ -1,27 +1,31 @@
 #!/usr/bin/env node
 
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 function fixUnderscoreSyntaxErrors() {
-  console.log('🔧 Fixing underscore syntax errors...');
-  
-  const packagesDir = path.join(__dirname, '..', 'packages');
-  const appsDir = path.join(__dirname, '..', 'apps');
-  
+  console.log("🔧 Fixing underscore syntax errors...");
+
+  const packagesDir = path.join(__dirname, "..", "packages");
+  const appsDir = path.join(__dirname, "..", "apps");
+
   let totalFilesFixed = 0;
   let totalErrorsFixed = 0;
 
   function processDirectory(dir) {
     if (!fs.existsSync(dir)) return;
-    
+
     const files = fs.readdirSync(dir, { withFileTypes: true });
-    
+
     for (const file of files) {
       const fullPath = path.join(dir, file.name);
-      
+
       if (file.isDirectory()) {
-        if (!['node_modules', 'dist', '.git', 'build', 'coverage'].includes(file.name)) {
+        if (
+          !["node_modules", "dist", ".git", "build", "coverage"].includes(
+            file.name,
+          )
+        ) {
           processDirectory(fullPath);
         }
       } else if (file.isFile() && /\.(ts|tsx|js|jsx)$/.test(file.name)) {
@@ -36,7 +40,7 @@ function fixUnderscoreSyntaxErrors() {
 
   function fixFile(filePath) {
     try {
-      const content = fs.readFileSync(filePath, 'utf8');
+      const content = fs.readFileSync(filePath, "utf8");
       let newContent = content;
       let errorsFixed = 0;
 
@@ -47,7 +51,7 @@ function fixUnderscoreSyntaxErrors() {
       const funcParamRegex = /\(\s*_\s*\{/g;
       const funcParamMatches = [...content.matchAll(funcParamRegex)];
       if (funcParamMatches.length > 0) {
-        newContent = newContent.replace(funcParamRegex, '({');
+        newContent = newContent.replace(funcParamRegex, "({");
         changes.push(`Function parameters: ${funcParamMatches.length} fixes`);
         errorsFixed += funcParamMatches.length;
       }
@@ -56,7 +60,7 @@ function fixUnderscoreSyntaxErrors() {
       const jsxRegex = /\(\s*_\s*</g;
       const jsxMatches = [...newContent.matchAll(jsxRegex)];
       if (jsxMatches.length > 0) {
-        newContent = newContent.replace(jsxRegex, '(<');
+        newContent = newContent.replace(jsxRegex, "(<");
         changes.push(`JSX expressions: ${jsxMatches.length} fixes`);
         errorsFixed += jsxMatches.length;
       }
@@ -74,7 +78,7 @@ function fixUnderscoreSyntaxErrors() {
       const typeRegex = /Record<string,\s*_\(\)/g;
       const typeMatches = [...newContent.matchAll(typeRegex)];
       if (typeMatches.length > 0) {
-        newContent = newContent.replace(typeRegex, 'Record<string, ()');
+        newContent = newContent.replace(typeRegex, "Record<string, ()");
         changes.push(`Type definitions: ${typeMatches.length} fixes`);
         errorsFixed += typeMatches.length;
       }
@@ -92,8 +96,10 @@ function fixUnderscoreSyntaxErrors() {
       const destructuringRegex = /,\s*_([a-zA-Z][a-zA-Z0-9]*)\s*,/g;
       const destructuringMatches = [...newContent.matchAll(destructuringRegex)];
       if (destructuringMatches.length > 0) {
-        newContent = newContent.replace(destructuringRegex, ',$1,');
-        changes.push(`Destructuring vars: ${destructuringMatches.length} fixes`);
+        newContent = newContent.replace(destructuringRegex, ",$1,");
+        changes.push(
+          `Destructuring vars: ${destructuringMatches.length} fixes`,
+        );
         errorsFixed += destructuringMatches.length;
       }
 
@@ -101,7 +107,7 @@ function fixUnderscoreSyntaxErrors() {
       const arrowRegex = /=>\s*_\s*\(/g;
       const arrowMatches = [...newContent.matchAll(arrowRegex)];
       if (arrowMatches.length > 0) {
-        newContent = newContent.replace(arrowRegex, '=> (');
+        newContent = newContent.replace(arrowRegex, "=> (");
         changes.push(`Arrow functions: ${arrowMatches.length} fixes`);
         errorsFixed += arrowMatches.length;
       }
@@ -120,9 +126,9 @@ function fixUnderscoreSyntaxErrors() {
 
       // Write file only if changes were made
       if (errorsFixed > 0) {
-        fs.writeFileSync(filePath, newContent, 'utf8');
+        fs.writeFileSync(filePath, newContent, "utf8");
         console.log(`✅ Fixed ${filePath}:`);
-        changes.forEach(change => console.log(`   - ${change}`));
+        changes.forEach((change) => console.log(`   - ${change}`));
         console.log(`   Total errors fixed: ${errorsFixed}\n`);
       }
 
@@ -137,10 +143,10 @@ function fixUnderscoreSyntaxErrors() {
   processDirectory(packagesDir);
   processDirectory(appsDir);
 
-  console.log('\n📊 Summary:');
+  console.log("\n📊 Summary:");
   console.log(`Files fixed: ${totalFilesFixed}`);
   console.log(`Total errors fixed: ${totalErrorsFixed}`);
-  
+
   return { totalFilesFixed, totalErrorsFixed };
 }
 

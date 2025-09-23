@@ -5,7 +5,9 @@ import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
 export default defineConfig({
   plugins: [
+    // @ts-ignore - Ignore TanStackRouterVite type mismatch due to monorepo version differences
     TanStackRouterVite(),
+    // @ts-ignore - Ignore react plugin type mismatch due to monorepo version differences
     react(),
   ],
   root: ".",
@@ -44,6 +46,8 @@ export default defineConfig({
       "sonner",
       "@radix-ui/react-slot",
       "class-variance-authority",
+      "@copilotkit/react-core",
+      "@copilotkit/react-ui",
     ],
   },
 });

@@ -128,7 +128,9 @@ export class Logger {
     if (typeof obj === "object" && obj !== null) {
       const redacted = { ...obj };
       for (const key of Object.keys(redacted)) {
-        if (_piiFields.some((field: string) => key.toLowerCase().includes(field))) {
+        if (
+          _piiFields.some((field: string) => key.toLowerCase().includes(field))
+        ) {
           redacted[key] = "[REDACTED]";
         } else if (typeof redacted[key] === "object") {
           redacted[key] = this.redactPII(redacted[key]);

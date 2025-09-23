@@ -2,7 +2,8 @@
 
 /* Gradient animation for KokonutUI style */
 @keyframes gradient-x {
-  0%, 100% {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
@@ -52,7 +53,8 @@
 
 /* Pulse animation for active states */
 @keyframes pulse-glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
   }
   50% {
@@ -80,25 +82,34 @@
 /* Border gradient rotation with custom duration */
 .border-gradient-spin {
   position: relative;
-  background: linear-gradient(var(--bg-color, #ffffff), var(--bg-color, #ffffff)) padding-box,
-              linear-gradient(var(--gradient-angle, 45deg), 
-                              var(--gradient-from, #3b82f6), 
-                              var(--gradient-via, #8b5cf6), 
-                              var(--gradient-to, #ec4899)) border-box;
+  background:
+    linear-gradient(var(--bg-color, #ffffff), var(--bg-color, #ffffff))
+      padding-box,
+    linear-gradient(
+        var(--gradient-angle, 45deg),
+        var(--gradient-from, #3b82f6),
+        var(--gradient-via, #8b5cf6),
+        var(--gradient-to, #ec4899)
+      )
+      border-box;
   border: 2px solid transparent;
 }
 
 .border-gradient-spin::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   padding: 2px;
-  background: linear-gradient(var(--gradient-angle, 45deg), 
-                              var(--gradient-from, #3b82f6), 
-                              var(--gradient-via, #8b5cf6), 
-                              var(--gradient-to, #ec4899));
+  background: linear-gradient(
+    var(--gradient-angle, 45deg),
+    var(--gradient-from, #3b82f6),
+    var(--gradient-via, #8b5cf6),
+    var(--gradient-to, #ec4899)
+  );
   border-radius: inherit;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: xor;
   -webkit-mask-composite: xor;
   z-index: -1;
@@ -115,7 +126,7 @@
   .border-gradient-spin::before {
     animation: none;
   }
-  
+
   .neumorph-hover {
     transition: none;
   }

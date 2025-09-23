@@ -1,9 +1,9 @@
-import { exec } from 'child_process';
-import fs from 'fs';
-import path from 'path';
-import { promisify } from 'util';
-import { TLSConfigManager } from '../config/tls-config';
-import { HealthcareLogger } from '../logging/healthcare-logger';
+import { exec } from "child_process";
+import fs from "fs";
+import path from "path";
+import { promisify } from "util";
+import { TLSConfigManager } from "../config/tls-config";
+import { HealthcareLogger } from "../logging/healthcare-logger";
 
 const execAsync = promisify(exec);
 
@@ -34,7 +34,7 @@ export interface CertificateMonitorConfig {
 }
 
 export interface CertificateAlert {
-  type: 'warning' | 'critical' | 'expired' | 'renewed' | 'error';
+  type: "warning" | "critical" | "expired" | "renewed" | "error";
   certificate: CertificateInfo;
   message: string;
   timestamp: Date;
@@ -72,15 +72,15 @@ export class CertificateMonitor {
         this.config.checkIntervalHours * 60 * 60 * 1000,
       );
 
-      this.logger.logSystemEvent('certificate_monitor_started', {
+      this.logger.logSystemEvent("certificate_monitor_started", {
         checkInterval: this.config.checkIntervalHours,
         renewalThreshold: this.config.renewalThresholdDays,
         certificatePath: this.config.certificatePath,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      this.logger.logError('certificate_monitor_start_failed', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger.logError("certificate_monitor_start_failed", {
+        error: error instanceof Error ? error.message : "Unknown error",
         config: this.config,
         timestamp: new Date().toISOString(),
       });
@@ -94,7 +94,7 @@ export class CertificateMonitor {
       this.checkInterval = undefined;
     }
 
-    this.logger.logSystemEvent('certificate_monitor_stopped', {
+    this.logger.logSystemEvent("certificate_monitor_stopped", {
       timestamp: new Date().toISOString(),
     });
   }
@@ -133,7 +133,7 @@ export class CertificateMonitor {
       const certInfo = await this.getCertificateInfo();
       const daysUntilExpiry = this.calculateDaysUntilExpiry(certInfo.validTo);
 
-      await this.logger.logSystemEvent('certificate_check_completed', {
+      await this.logger.logSystemEvent("certificate_check_completed", {
         subject: certInfo.subject,
         issuer: certInfo.issuer,
         validFrom: certInfo.validFrom.toISOString(),
@@ -146,18 +146,18 @@ export class CertificateMonitor {
       // Determine alert level based on expiry
       await this.handleCertificateExpiry(certInfo, daysUntilExpiry);
     } catch (error) {
-      await this.logger.logError('certificate_check_failed', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      await this.logger.logError("certificate_check_failed", {
+        error: error instanceof Error ? error.message : "Unknown error",
         certificatePath: this.config.certificatePath,
         timestamp: new Date().toISOString(),
       });
 
       // Send error alert
       await this.sendAlert({
-        type: 'error',
+        type: "error",
         certificate: {} as CertificateInfo,
         message: `Certificate check failed: ${
-          error instanceof Error ? error.message : 'Unknown error'
+          error instanceof Error ? error.message : "Unknown error"
         }`,
         timestamp: new Date(),
       });
@@ -177,14 +177,16 @@ export class CertificateMonitor {
     } catch (error) {
       throw new Error(
         `Failed to get certificate info: ${
-          error instanceof Error ? error.message : 'Unknown error'
+          error instanceof Error ? error.message : "Unknown error"
         }`,
       );
     }
   }
 
-  private async parseCertificateOutput(opensslOutput: string): Promise<CertificateInfo> {
-    const lines = opensslOutput.split('\n');
+  private async parseCertificateOutput(
+    opensslOutput: string,
+  ): Promise<CertificateInfo> {
+    const lines = opensslOutput.split("\n");
 
     const certInfo: Partial<CertificateInfo> = {};
 
@@ -192,25 +194,31 @@ export class CertificateMonitor {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
 
-      if (line.startsWith('Subject:')) {
-        certInfo.subject = line.replace('Subject:', '').trim();
-      } else if (line.startsWith('Issuer:')) {
-        certInfo.issuer = line.replace('Issuer:', '').trim();
-      } else if (line.startsWith('Not Before:')) {
-        certInfo.validFrom = new Date(line.replace('Not Before:', '').trim());
-      } else if (line.startsWith('Not After:')) {
-        certInfo.validTo = new Date(line.replace('Not After:', '').trim());
-      } else if (line.startsWith('Signature Algorithm:')) {
-        certInfo.signatureAlgorithm = line.replace('Signature Algorithm:', '').trim();
-      } else if (line.startsWith('Public Key Algorithm:')) {
-        certInfo.publicKeyAlgorithm = line.replace('Public Key Algorithm:', '').trim();
-      } else if (line.includes('Public-Key:')) {
+      if (line.startsWith("Subject:")) {
+        certInfo.subject = line.replace("Subject:", "").trim();
+      } else if (line.startsWith("Issuer:")) {
+        certInfo.issuer = line.replace("Issuer:", "").trim();
+      } else if (line.startsWith("Not Before:")) {
+        certInfo.validFrom = new Date(line.replace("Not Before:", "").trim());
+      } else if (line.startsWith("Not After:")) {
+        certInfo.validTo = new Date(line.replace("Not After:", "").trim());
+      } else if (line.startsWith("Signature Algorithm:")) {
+        certInfo.signatureAlgorithm = line
+          .replace("Signature Algorithm:", "")
+          .trim();
+      } else if (line.startsWith("Public Key Algorithm:")) {
+        certInfo.publicKeyAlgorithm = line
+          .replace("Public Key Algorithm:", "")
+          .trim();
+      } else if (line.includes("Public-Key:")) {
         const keySizeMatch = line.match(/(\d+) bit/);
         if (keySizeMatch) {
           certInfo.publicKeySize = parseInt(keySizeMatch[1]);
         }
-      } else if (line.startsWith('X509v3 Subject Alternative Name:')) {
-        const sansLine = line.replace('X509v3 Subject Alternative Name:', '').trim();
+      } else if (line.startsWith("X509v3 Subject Alternative Name:")) {
+        const sansLine = line
+          .replace("X509v3 Subject Alternative Name:", "")
+          .trim();
         certInfo.sans = this.parseSANs(sansLine);
       }
     }
@@ -220,7 +228,9 @@ export class CertificateMonitor {
       const { stdout: fingerprintOutput } = await execAsync(
         `openssl x509 -in "${this.config.certificatePath}" -fingerprint -noout`,
       );
-      certInfo.fingerprint = fingerprintOutput.replace('SHA1 Fingerprint=', '').trim();
+      certInfo.fingerprint = fingerprintOutput
+        .replace("SHA1 Fingerprint=", "")
+        .trim();
     } catch (error) {
       // Fingerprint is optional
     }
@@ -229,21 +239,21 @@ export class CertificateMonitor {
       const { stdout: serialOutput } = await execAsync(
         `openssl x509 -in "${this.config.certificatePath}" -serial -noout`,
       );
-      certInfo.serialNumber = serialOutput.replace('serial=', '').trim();
+      certInfo.serialNumber = serialOutput.replace("serial=", "").trim();
     } catch (error) {
       // Serial number is optional
     }
 
     return {
-      subject: certInfo.subject || 'Unknown',
-      issuer: certInfo.issuer || 'Unknown',
+      subject: certInfo.subject || "Unknown",
+      issuer: certInfo.issuer || "Unknown",
       validFrom: certInfo.validFrom || new Date(),
       validTo: certInfo.validTo || new Date(),
-      fingerprint: certInfo.fingerprint || 'Unknown',
-      serialNumber: certInfo.serialNumber || 'Unknown',
+      fingerprint: certInfo.fingerprint || "Unknown",
+      serialNumber: certInfo.serialNumber || "Unknown",
       version: certInfo.version || 3,
-      signatureAlgorithm: certInfo.signatureAlgorithm || 'Unknown',
-      publicKeyAlgorithm: certInfo.publicKeyAlgorithm || 'Unknown',
+      signatureAlgorithm: certInfo.signatureAlgorithm || "Unknown",
+      publicKeyAlgorithm: certInfo.publicKeyAlgorithm || "Unknown",
       publicKeySize: certInfo.publicKeySize || 0,
       sans: certInfo.sans || [],
     };
@@ -259,16 +269,16 @@ export class CertificateMonitor {
     const ipMatches = sansLine.match(/IP Address:([^,\s]+)/g);
 
     if (dnsMatches) {
-      sans.push(...dnsMatches.map(match => match.replace('DNS:', '')));
+      sans.push(...dnsMatches.map((match) => match.replace("DNS:", "")));
     }
     if (emailMatches) {
-      sans.push(...emailMatches.map(match => match.replace('email:', '')));
+      sans.push(...emailMatches.map((match) => match.replace("email:", "")));
     }
     if (uriMatches) {
-      sans.push(...uriMatches.map(match => match.replace('URI:', '')));
+      sans.push(...uriMatches.map((match) => match.replace("URI:", "")));
     }
     if (ipMatches) {
-      sans.push(...ipMatches.map(match => match.replace('IP Address:', '')));
+      sans.push(...ipMatches.map((match) => match.replace("IP Address:", "")));
     }
 
     return sans;
@@ -284,20 +294,20 @@ export class CertificateMonitor {
     certInfo: CertificateInfo,
     daysUntilExpiry: number,
   ): Promise<void> {
-    let alertType: CertificateAlert['type'] = 'warning';
-    let message = '';
+    let alertType: CertificateAlert["type"] = "warning";
+    let message = "";
 
     if (daysUntilExpiry < 0) {
-      alertType = 'expired';
+      alertType = "expired";
       message = `Certificate expired ${Math.abs(daysUntilExpiry)} days ago`;
     } else if (daysUntilExpiry === 0) {
-      alertType = 'critical';
-      message = 'Certificate expires today';
+      alertType = "critical";
+      message = "Certificate expires today";
     } else if (daysUntilExpiry <= 7) {
-      alertType = 'critical';
+      alertType = "critical";
       message = `Certificate expires in ${daysUntilExpiry} days`;
     } else if (daysUntilExpiry <= this.config.renewalThresholdDays) {
-      alertType = 'warning';
+      alertType = "warning";
       message = `Certificate expires in ${daysUntilExpiry} days`;
     } else {
       // Certificate is valid, no alert needed
@@ -315,7 +325,11 @@ export class CertificateMonitor {
     await this.sendAlert(alert);
 
     // Attempt auto-renewal if configured
-    if (this.config.autoRenew && alertType === 'critical' && this.config.renewalCommand) {
+    if (
+      this.config.autoRenew &&
+      alertType === "critical" &&
+      this.config.renewalCommand
+    ) {
       await this.attemptAutoRenewal(alert);
     }
   }
@@ -323,7 +337,7 @@ export class CertificateMonitor {
   private async sendAlert(alert: CertificateAlert): Promise<void> {
     try {
       // Log the alert
-      this.logger.logSystemEvent('certificate_alert', {
+      this.logger.logSystemEvent("certificate_alert", {
         type: alert.type,
         message: alert.message,
         certificate: {
@@ -346,8 +360,8 @@ export class CertificateMonitor {
         await this.sendWebhookAlert(alert);
       }
     } catch (error) {
-      await this.logger.logError('certificate_alert_failed', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      await this.logger.logError("certificate_alert_failed", {
+        error: error instanceof Error ? error.message : "Unknown error",
         alert,
         timestamp: new Date().toISOString(),
       });
@@ -357,7 +371,7 @@ export class CertificateMonitor {
   private async sendEmailAlert(alert: CertificateAlert): Promise<void> {
     // Placeholder for email alert implementation
     // In a real implementation, you would use a service like SendGrid, AWS SES, or nodemailer
-    this.logger.logSystemEvent('email_alert_sent', {
+    this.logger.logSystemEvent("email_alert_sent", {
       to: this.config.notificationEmail,
       type: alert.type,
       message: alert.message,
@@ -368,7 +382,7 @@ export class CertificateMonitor {
   private async sendWebhookAlert(alert: CertificateAlert): Promise<void> {
     try {
       const payload = {
-        type: 'certificate_alert',
+        type: "certificate_alert",
         alert: {
           type: alert.type,
           message: alert.message,
@@ -385,14 +399,14 @@ export class CertificateMonitor {
 
       // Use fetch or axios to send webhook
       // This is a placeholder implementation
-      this.logger.logSystemEvent('webhook_alert_sent', {
+      this.logger.logSystemEvent("webhook_alert_sent", {
         url: this.config.webhookUrl,
         type: alert.type,
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
       throw new Error(
-        `Failed to send webhook alert: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Failed to send webhook alert: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   }
@@ -403,7 +417,7 @@ export class CertificateMonitor {
         return;
       }
 
-      this.logger.logSystemEvent('auto_renewal_attempt', {
+      this.logger.logSystemEvent("auto_renewal_attempt", {
         certificate: alert.certificate.subject,
         command: this.config.renewalCommand,
         timestamp: new Date().toISOString(),
@@ -416,10 +430,10 @@ export class CertificateMonitor {
       }
 
       // Check if renewal was successful by verifying certificate again
-      await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for renewal
+      await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for renewal
       await this.checkCertificate();
 
-      this.logger.logSystemEvent('auto_renewal_success', {
+      this.logger.logSystemEvent("auto_renewal_success", {
         certificate: alert.certificate.subject,
         output: stdout,
         timestamp: new Date().toISOString(),
@@ -427,14 +441,14 @@ export class CertificateMonitor {
 
       // Send renewal success alert
       await this.sendAlert({
-        type: 'renewed',
+        type: "renewed",
         certificate: alert.certificate,
-        message: 'Certificate automatically renewed successfully',
+        message: "Certificate automatically renewed successfully",
         timestamp: new Date(),
       });
     } catch (error) {
-      await this.logger.logError('auto_renewal_failed', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      await this.logger.logError("auto_renewal_failed", {
+        error: error instanceof Error ? error.message : "Unknown error",
         certificate: alert.certificate.subject,
         command: this.config.renewalCommand,
         timestamp: new Date().toISOString(),
@@ -442,10 +456,10 @@ export class CertificateMonitor {
 
       // Send failure alert
       await this.sendAlert({
-        type: 'error',
+        type: "error",
         certificate: alert.certificate,
         message: `Automatic renewal failed: ${
-          error instanceof Error ? error.message : 'Unknown error'
+          error instanceof Error ? error.message : "Unknown error"
         }`,
         timestamp: new Date(),
       });
@@ -455,20 +469,20 @@ export class CertificateMonitor {
   public async getCertificateStatus(): Promise<{
     certificate: CertificateInfo | null;
     daysUntilExpiry: number | null;
-    status: 'valid' | 'expiring' | 'expired' | 'error';
+    status: "valid" | "expiring" | "expired" | "error";
     lastCheck: Date | null;
   }> {
     try {
       const certInfo = await this.getCertificateInfo();
       const daysUntilExpiry = this.calculateDaysUntilExpiry(certInfo.validTo);
 
-      let status: 'valid' | 'expiring' | 'expired' | 'error';
+      let status: "valid" | "expiring" | "expired" | "error";
       if (daysUntilExpiry < 0) {
-        status = 'expired';
+        status = "expired";
       } else if (daysUntilExpiry <= this.config.renewalThresholdDays) {
-        status = 'expiring';
+        status = "expiring";
       } else {
-        status = 'valid';
+        status = "valid";
       }
 
       return {
@@ -481,7 +495,7 @@ export class CertificateMonitor {
       return {
         certificate: null,
         daysUntilExpiry: null,
-        status: 'error',
+        status: "error",
         lastCheck: new Date(),
       };
     }
@@ -490,16 +504,16 @@ export class CertificateMonitor {
   public updateConfig(newConfig: Partial<CertificateMonitorConfig>): void {
     this.config = { ...this.config, ...newConfig };
 
-    this.logger.logSystemEvent('certificate_monitor_config_updated', {
+    this.logger.logSystemEvent("certificate_monitor_config_updated", {
       newConfig,
       timestamp: new Date().toISOString(),
     });
 
     // Restart monitoring with new config
     this.stop();
-    this.start().catch(async error => {
-      await this.logger.logError('certificate_monitor_restart_failed', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+    this.start().catch(async (error) => {
+      await this.logger.logError("certificate_monitor_restart_failed", {
+        error: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date().toISOString(),
       });
     });
