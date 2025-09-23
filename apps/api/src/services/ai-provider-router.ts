@@ -15,11 +15,11 @@
  */
 
 import {
-  AIProviderOpt,
+  
   HealthcareAIOptimizationUtils,
   HealthcareAIUseCase,
-  HealthcareDataClassification,
-  LGPDDataCategory,
+  
+  
 } from '@neonpro/shared';
 import { AuditTrailService } from './audit-trail';
 import { SemanticCacheService } from './semantic-cache';
@@ -31,7 +31,7 @@ import { AISecurityManager } from './ai-provider/security';
 import {
   ProviderConfig,
   ProviderHealthCheck,
-  ProviderStatus,
+  
   RoutingRequest,
   RoutingResponse,
   RoutingStrategy,

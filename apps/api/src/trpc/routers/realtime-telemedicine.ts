@@ -168,7 +168,7 @@ export const realtimeTelemedicineRouter = router({
             emergencyProtocolsEnabled: true,
           },
         };
-      } catch (_error: any) {
+      } catch (error: any) {
         console.error('❌ Failed to create telemedicine session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -477,10 +477,10 @@ export const realtimeTelemedicineRouter = router({
   /**
    * Get real-time connection health check
    */
-  healthCheck: protectedProcedure.query(async ({ ctx }) => {
+  healthCheck: protectedProcedure.query(async ({ _ctx }) => {
     try {
       // Check if service is initialized and working
-      const service = await initializeRealtimeService();
+      const _service = await initializeRealtimeService(); void _service;
 
       return {
         status: 'healthy',

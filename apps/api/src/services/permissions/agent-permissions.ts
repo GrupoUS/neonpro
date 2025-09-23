@@ -171,7 +171,7 @@ export class AgentPermissionService {
       });
 
       return denialResult;
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Permission check error:', error);
 
       // Fail secure - deny permission on error
@@ -264,7 +264,7 @@ export class AgentPermissionService {
       }
 
       return roles;
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Error fetching user roles:', error);
       // Return empty array on error - fail secure
       return [];
@@ -516,7 +516,7 @@ export class AgentPermissionService {
           error: details.error,
         },
       });
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Failed to log permission check:', error);
     }
   }
@@ -535,7 +535,7 @@ export class AgentPermissionService {
 
       // Clean up oversized cache
       this.enforceCacheSizeLimit();
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Error clearing cache:', error);
     }
   }
@@ -594,7 +594,7 @@ export class AgentPermissionService {
         .single();
 
       return !!data;
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Error checking LGPD consent:', error);
       // Fail secure - no consent on error
       return false;
@@ -649,7 +649,7 @@ export class AgentPermissionService {
       }
 
       return { valid: true, session };
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Error validating session access:', error);
       return { valid: false, reason: 'Validation error' };
     }
@@ -689,7 +689,7 @@ export class AgentPermissionService {
             cache_version: this.cacheVersion,
           },
         });
-      } catch (error) {
+      } catch (_error) { void _error;
         console.error('Failed to log permission check:', error);
       }
     });
@@ -717,7 +717,7 @@ export class AgentPermissionService {
           await logFunction();
         }
       }
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Error processing audit log queue:', error);
     } finally {
       this.isProcessingAuditLog = false;
@@ -737,7 +737,7 @@ export class AgentPermissionService {
    * Cleanup expired cache entries
    */
   private cleanupExpiredCache(): void {
-    const now = Date.now();
+    const _now = Date.now();
     for (const [key, entry] of this.cache.entries()) {
       if (entry.expires <= now) {
         this.cache.delete(key);
@@ -847,9 +847,9 @@ export class AgentPermissionService {
    */
   private async checkRateLimit(_userId: string): Promise<boolean> {
     // Enhanced rate limiting with security considerations
-    const rateLimitKey = `rate_limit_${this.sanitizeString(userId)}`;
-    const now = Date.now();
-    const windowMs = 60000; // 1 minute
+    const _rateLimitKey = `rate_limit_${this.sanitizeString(userId)}`;
+    const _now = Date.now();
+    const _windowMs = 60000; // 1 minute
     const maxRequests = 50; // Reduced for security
 
     // Check if user is in security blocklist
@@ -906,7 +906,7 @@ export class AgentPermissionService {
 
       // Store channel for cleanup
       (this as any).realtimeChannel = channel;
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Failed to setup real-time cache invalidation:', error);
     }
   }
@@ -923,7 +923,7 @@ export class AgentPermissionService {
           this.logCacheInvalidation('role_change', _userId);
         }
       }
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Error handling role change:', error);
     }
   }
@@ -936,7 +936,7 @@ export class AgentPermissionService {
       // When permissions change, increment cache version to force refresh
       this.cacheVersion++;
       this.logCacheInvalidation('permission_change', 'global');
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Error handling permission change:', error);
     }
   }
@@ -955,7 +955,7 @@ export class AgentPermissionService {
         .single();
 
       return !!data;
-    } catch (error) {
+    } catch (_error) { void _error;
       return false;
     }
   }
@@ -979,7 +979,7 @@ export class AgentPermissionService {
           user_agent: 'unknown', // Would be extracted from request
         },
       });
-    } catch (error) {
+    } catch (_error) { void _error;
       console.error('Failed to log suspicious activity:', error);
     }
   }

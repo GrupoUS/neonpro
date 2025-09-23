@@ -301,7 +301,7 @@ app.get(
       }
 
       // Generate patient insights
-      const insightsRequest = {
+      const _insightsRequest = {
         patientId,
         _userId: user.id,
         analysisType: queryParams.analysisType,

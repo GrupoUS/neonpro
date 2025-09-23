@@ -113,7 +113,7 @@ export const monitoringConfig = {
 
           maskData(data);
           event.request.data = JSON.stringify(data);
-        } catch (e) {
+        } catch (_e) { void _e;
           // If parsing fails, leave as is
         }
       }

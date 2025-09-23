@@ -33,7 +33,7 @@ export const performanceConfig = {
     algorithm: "gzip",
     level: 6,
     threshold: 10240, // 10KB
-    filter: (req, res) => {
+    filter: (req, _res) => {
       if (req.headers["x-no-compression"]) {
         return false;
       }

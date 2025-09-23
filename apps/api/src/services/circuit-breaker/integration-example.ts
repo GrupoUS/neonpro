@@ -54,7 +54,7 @@ export class AguiServiceWithCircuitBreaker {
   async processQueryWithCircuitBreaker(
     _query: string,
     _context: any,
-    options?: any,
+    _options?: any,
   ): Promise<any> {
     const requestContext: RequestContext = {
       _userId: context.userId,

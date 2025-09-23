@@ -11,7 +11,7 @@ import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import { ConversationContextService } from '../conversation/conversation-context-service';
 import { RealtimeSubscriptionService } from '../realtime/realtime-subscription-service';
-import { AguiService, AguiServiceConfig, QueryContext, QueryResult } from './agui-protocol/service';
+import { AguiService, AguiServiceConfig, QueryContext } from './agui-protocol/service';
 import {
   AguiClientAnalyticsMessage,
   AguiClientAnalyticsResponse,
@@ -198,7 +198,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processClientRegistration(
     message: AguiClientRegistrationMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiClientRegistrationResponse> {
     const startTime = Date.now();
     const sessionId = uuidv4();
@@ -287,7 +287,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         );
       }
 
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       // Update metrics
       this.metrics.totalRegistrations++;
@@ -323,7 +323,7 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       return response;
     } catch (error) {
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       this.loggingService.error('Client registration failed', {
         sessionId,
@@ -344,7 +344,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processClientProfileUpdate(
     message: AguiClientProfileUpdateMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiClientProfileUpdateResponse> {
     const startTime = Date.now();
     const sessionId = uuidv4();
@@ -390,7 +390,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         await this.triggerRetentionPrediction(message.clientId, context);
       }
 
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       const response: AguiClientProfileUpdateResponse = {
         clientId: message.clientId,
@@ -423,7 +423,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processClientSearch(
     message: AguiClientSearchMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiClientSearchResponse> {
     const startTime = Date.now();
 
@@ -489,7 +489,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processClientAnalytics(
     message: AguiClientAnalyticsMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiClientAnalyticsResponse> {
     const startTime = Date.now();
 
@@ -524,7 +524,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         context,
       );
 
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       const response: AguiClientAnalyticsResponse = {
         analyticsType: message.analyticsType,
@@ -553,7 +553,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processClientRetentionPrediction(
     message: AguiClientRetentionPredictionMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiClientRetentionPredictionResponse> {
     const startTime = Date.now();
 
@@ -585,7 +585,7 @@ export class EnhancedClientAgentService extends EventEmitter {
       // Step 4: Schedule next review
       const nextReviewDate = this.scheduleNextReview(prediction.riskLevel);
 
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       // Update metrics
       this.metrics.retentionRiskPredictions++;
@@ -618,7 +618,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processClientCommunication(
     message: AguiClientCommunicationMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiClientCommunicationResponse> {
     const startTime = Date.now();
 
@@ -658,7 +658,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         context,
       );
 
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       // Update metrics
       this.metrics.communicationSuccessRate = (this.metrics.communicationSuccessRate * 99
@@ -693,7 +693,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processDocumentOCR(
     message: AguiDocumentOCRMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiDocumentOCRResponse> {
     const startTime = Date.now();
 
@@ -732,7 +732,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         context,
       );
 
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       // Update metrics
       this.metrics.ocrProcessingTime = (this.metrics.ocrProcessingTime * 99 + processingTime) / 100;
@@ -763,7 +763,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processConsentManagement(
     message: AguiConsentManagementMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiConsentManagementResponse> {
     const startTime = Date.now();
 
@@ -814,7 +814,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         );
       }
 
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       // Update metrics
       this.metrics.consentManagementEvents++;
@@ -849,7 +849,7 @@ export class EnhancedClientAgentService extends EventEmitter {
    */
   async processClientValidation(
     message: AguiClientValidationMessage,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AguiClientValidationResponse> {
     const startTime = Date.now();
 
@@ -889,7 +889,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         result => result.isValid || result.severity === 'info',
       );
 
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       // Update metrics
       this.metrics.dataValidationAccuracy = (this.metrics.dataValidationAccuracy * 99
@@ -936,7 +936,7 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async testDatabaseConnectivity(): Promise<void> {
-    const { data, error } = await this.supabase
+    const { data: _data, error } = await this.supabase
       .from('clinics')
       .select('count')
       .limit(1);
@@ -980,46 +980,46 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   // Placeholder methods for core functionality
   private async validateClientData(
-    clientData: ClientRegistrationData,
-    validationRules: ValidationRule[],
-    consent?: ClientConsentData,
+    _clientData: ClientRegistrationData,
+    _validationRules: ValidationRule[],
+    _consent?: ClientConsentData,
   ): Promise<ValidationResult[]> {
     // Implement client data validation
     return [];
   }
 
   private async internalProcessDocumentOCR(
-    documents: any[],
-    context: ClientAgentContext,
+    _documents: any[],
+    _context: ClientAgentContext,
   ): Promise<OCRResult[]> {
     // Implement document OCR processing
     return [];
   }
 
   private async applyLGPDCompliance(
-    clientData: ClientRegistrationData,
-    consent?: ClientConsentData,
+    _clientData: ClientRegistrationData,
+    _consent?: ClientConsentData,
   ): Promise<ClientRegistrationData> {
     // Apply LGPD compliance rules
     return this.dataMaskingService.maskSensitiveData(clientData);
   }
 
   private async generateRegistrationSuggestions(
-    clientData: ClientRegistrationData,
-    validationResults: ValidationResult[],
-    ocrResults: OCRResult[],
+    _clientData: ClientRegistrationData,
+    _validationResults: ValidationResult[],
+    _ocrResults: OCRResult[],
   ): Promise<AISuggestion[]> {
     // Generate AI suggestions for registration improvement
     return [];
   }
 
   private async createClientInDatabase(
-    clientData: ClientRegistrationData,
-    context: ClientAgentContext,
-    consent?: ClientConsentData,
+    _clientData: ClientRegistrationData,
+    _context: ClientAgentContext,
+    _consent?: ClientConsentData,
   ): Promise<string> {
     // Create client record in database
-    const { data, error } = await this.supabase
+    const { data: _data, error } = await this.supabase
       .from('patients')
       .insert({
         clinic_id: context.clinicId,
@@ -1042,10 +1042,10 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async processClientDocuments(
-    clientId: string,
-    documents: any[],
-    ocrResults: OCRResult[],
-    context: ClientAgentContext,
+    _clientId: string,
+    _documents: any[],
+    _ocrResults: OCRResult[],
+    _context: ClientAgentContext,
   ): Promise<any[]> {
     // Process and store client documents
     return [];
@@ -1053,8 +1053,8 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async createConsentRecords(
     clientId: string,
-    context: ClientAgentContext,
-    consent?: ClientConsentData,
+    _context: ClientAgentContext,
+    _consent?: ClientConsentData,
   ): Promise<string[]> {
     // Create consent records in database
     return [];
@@ -1062,16 +1062,16 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async sendWelcomeCommunication(
     clientId: string,
-    clientData: ClientRegistrationData,
-    context: ClientAgentContext,
+    _clientData: ClientRegistrationData,
+    _context: ClientAgentContext,
   ): Promise<void> {
     // Send welcome message to client
   }
 
   private async validateClientUpdate(
-    clientId: string,
-    updates: Partial<ClientRegistrationData>,
-    context: ClientAgentContext,
+    _clientId: string,
+    _updates: Partial<ClientRegistrationData>,
+    _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Validate client update data
     return [];
@@ -1080,26 +1080,26 @@ export class EnhancedClientAgentService extends EventEmitter {
   private async applyLGPDComplianceForUpdates(
     clientId: string,
     updates: Partial<ClientRegistrationData>,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<Partial<ClientRegistrationData>> {
     // Apply LGPD compliance for updates
     return updates;
   }
 
   private async generateProfileUpdateRecommendations(
-    clientId: string,
-    updates: Partial<ClientRegistrationData>,
-    validationResults: ValidationResult[],
-    context: ClientAgentContext,
+    _clientId: string,
+    _updates: Partial<ClientRegistrationData>,
+    _validationResults: ValidationResult[],
+    _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI recommendations for profile updates
     return [];
   }
 
   private async updateClientInDatabase(
-    clientId: string,
-    updates: Partial<ClientRegistrationData>,
-    context: ClientAgentContext,
+    _clientId: string,
+    _updates: Partial<ClientRegistrationData>,
+    _context: ClientAgentContext,
   ): Promise<Record<string, any>> {
     // Update client record in database
     return {};
@@ -1113,43 +1113,43 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async triggerRetentionPrediction(
-    clientId: string,
-    context: ClientAgentContext,
+    _clientId: string,
+    _context: ClientAgentContext,
   ): Promise<void> {
     // Trigger retention prediction analysis
   }
 
   private buildClientSearchQuery(
-    searchCriteria: any,
-    filters: any,
-    context: ClientAgentContext,
+    _searchCriteria: any,
+    _filters: any,
+    _context: ClientAgentContext,
   ): any {
     // Build database search query
     return {};
   }
 
   private async executeClientSearch(
-    searchQuery: any,
-    pagination: any,
-    context: ClientAgentContext,
+    _searchQuery: any,
+    _pagination: any,
+    _context: ClientAgentContext,
   ): Promise<any> {
     // Execute client search
     return { clients: [], total: 0, pagination: {} };
   }
 
   private async rankSearchResults(
-    clients: any[],
-    searchCriteria: any,
-    context: ClientAgentContext,
+    _clients: any[],
+    _searchCriteria: any,
+    _context: ClientAgentContext,
   ): Promise<any[]> {
     // Apply AI-powered ranking to search results
     return clients;
   }
 
   private async generateSearchInsights(
-    results: any[],
-    searchCriteria: any,
-    context: ClientAgentContext,
+    _results: any[],
+    _searchCriteria: any,
+    _context: ClientAgentContext,
   ): Promise<string> {
     // Generate AI insights from search results
     return '';
@@ -1167,27 +1167,27 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async generateAnalyticsInsights(
-    data: any,
-    analyticsType: string,
-    context: ClientAgentContext,
+    _data: any,
+    _analyticsType: string,
+    _context: ClientAgentContext,
   ): Promise<string[]> {
     // Generate AI insights from analytics data
     return [];
   }
 
   private async generateAnalyticsRecommendations(
-    data: any,
-    insights: string[],
-    analyticsType: string,
-    context: ClientAgentContext,
+    _data: any,
+    _insights: string[],
+    _analyticsType: string,
+    _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI recommendations from analytics
     return [];
   }
 
   private async gatherRetentionFeatures(
-    clientId: string,
-    context: ClientAgentContext,
+    _clientId: string,
+    _context: ClientAgentContext,
   ): Promise<RetentionFeatures> {
     // Gather features for retention prediction
     return {
@@ -1200,10 +1200,10 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async predictRetentionRisk(
-    clientId: string,
-    features: RetentionFeatures,
-    modelVersion: string,
-    context: ClientAgentContext,
+    _clientId: string,
+    _features: RetentionFeatures,
+    _modelVersion: string,
+    _context: ClientAgentContext,
   ): Promise<any> {
     // Apply ML model for retention prediction
     return {
@@ -1215,9 +1215,9 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async generateRetentionRecommendations(
-    clientId: string,
-    prediction: any,
-    context: ClientAgentContext,
+    _clientId: string,
+    _prediction: any,
+    _context: ClientAgentContext,
   ): Promise<any[]> {
     // Generate retention recommendations
     return [];
@@ -1240,36 +1240,36 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async storePredictionResult(
-    clientId: string,
-    prediction: any,
-    context: ClientAgentContext,
+    _clientId: string,
+    _prediction: any,
+    _context: ClientAgentContext,
   ): Promise<void> {
     // Store prediction result for model improvement
   }
 
   private async validateCommunicationPermissions(
-    clientId: string,
-    context: ClientAgentContext,
+    _clientId: string,
+    _context: ClientAgentContext,
   ): Promise<void> {
     // Validate communication permissions
   }
 
   private async personalizeCommunicationContent(
     content: string,
-    personalization: any,
-    clientId: string,
-    context: ClientAgentContext,
+    _personalization: any,
+    _clientId: string,
+    _context: ClientAgentContext,
   ): Promise<string> {
     // Personalize communication content using AI
     return content;
   }
 
   private async sendCommunication(
-    clientId: string,
+    _clientId: string,
     content: string,
     channel: string,
-    scheduledFor?: string,
-    context?: ClientAgentContext,
+    _scheduledFor?: string,
+    _context?: ClientAgentContext,
   ): Promise<any> {
     // Send communication via specified channel
     return {
@@ -1281,31 +1281,31 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async trackCommunication(
-    clientId: string,
-    communicationId: string,
-    communicationType: string,
-    context: ClientAgentContext,
+    _clientId: string,
+    _communicationId: string,
+    _communicationType: string,
+    _context: ClientAgentContext,
   ): Promise<void> {
     // Track communication for analytics
   }
 
   private async validateDocumentAccess(
-    documentId: string,
-    context: ClientAgentContext,
+    _documentId: string,
+    _context: ClientAgentContext,
   ): Promise<void> {
     // Validate document access permissions
   }
 
-  private async preprocessDocument(documentUrl: string): Promise<any> {
+  private async preprocessDocument(_documentUrl: string): Promise<any> {
     // Download and preprocess document
     return {};
   }
 
   private async extractDocumentText(
-    documentData: any,
-    documentType: string,
-    context: ClientAgentContext,
-    extractionFields?: string[],
+    _documentData: any,
+    _documentType: string,
+    _context: ClientAgentContext,
+    _extractionFields?: string[],
   ): Promise<OCRResult> {
     // Extract text using OCR
     return {
@@ -1317,35 +1317,35 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private async validateExtractedData(
-    ocrResult: OCRResult,
-    validationRules: ValidationRule[],
-    context: ClientAgentContext,
+    _ocrResult: OCRResult,
+    _validationRules: ValidationRule[],
+    _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Validate OCR extracted data
     return [];
   }
 
   private async generateOCRSuggestions(
-    ocrResult: OCRResult,
-    validationResults: ValidationResult[],
-    context: ClientAgentContext,
+    _ocrResult: OCRResult,
+    _validationResults: ValidationResult[],
+    _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI suggestions for OCR improvements
     return [];
   }
 
   private async validateConsentPermissions(
-    clientId: string,
-    context: ClientAgentContext,
+    _clientId: string,
+    _context: ClientAgentContext,
   ): Promise<void> {
     // Validate consent management permissions
   }
 
   private async applyLGPDConsentRules(
-    clientId: string,
-    consentType: string,
-    consentAction: string,
-    context: ClientAgentContext,
+    _clientId: string,
+    _consentType: string,
+    _consentAction: string,
+    _context: ClientAgentContext,
     consentData?: ClientConsentData,
   ): Promise<ClientConsentData> {
     // Apply LGPD consent rules
@@ -1357,7 +1357,7 @@ export class EnhancedClientAgentService extends EventEmitter {
     consentType: string,
     consentAction: string,
     consentData: ClientConsentData,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<any> {
     // Execute consent action in database
     return {
@@ -1382,15 +1382,15 @@ export class EnhancedClientAgentService extends EventEmitter {
   private async handleConsentRevocation(
     clientId: string,
     consentType: string,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<void> {
     // Handle consent revocation actions
   }
 
   private async executeValidationRules(
     data: Record<string, any>,
-    validationRules: ValidationRule[],
-    context: ClientAgentContext,
+    _validationRules: ValidationRule[],
+    _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Execute validation rules
     return [];
@@ -1399,16 +1399,16 @@ export class EnhancedClientAgentService extends EventEmitter {
   private async applyAIValidation(
     data: Record<string, any>,
     validationType: string,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<ValidationResult[]> {
     // Apply AI-powered validation
     return [];
   }
 
   private async generateValidationSuggestions(
-    validationResults: ValidationResult[],
+    _validationResults: ValidationResult[],
     validationType: string,
-    context: ClientAgentContext,
+    _context: ClientAgentContext,
   ): Promise<AISuggestion[]> {
     // Generate AI suggestions for validation improvements
     return [];

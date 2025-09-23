@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require("fs");
-const path = require("path");
+// const path = require("path");
 
 function fixUnterminatedStrings(filePath) {
   let content = fs.readFileSync(filePath, "utf8");

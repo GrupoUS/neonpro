@@ -258,8 +258,8 @@ export class CircuitBreakerService {
           context,
         );
       } catch (fallbackError) {
-        // Error caught but not used - handled by surrounding logic
         // Fallback failed, use default behavior
+        logger?.warn?.('Custom fallback failed', { message: fallbackError instanceof Error ? fallbackError.message : String(fallbackError) });
       }
     }
 
@@ -305,8 +305,8 @@ export class CircuitBreakerService {
         this.metrics.fallbackActivations++;
         return fallbackResult;
       } catch (fallbackError) {
-        // Error caught but not used - handled by surrounding logic
         // Fallback failed, continue with default handling
+        logger?.warn?.('Custom fallback failed', { message: fallbackError instanceof Error ? fallbackError.message : String(fallbackError) });
       }
     }
 

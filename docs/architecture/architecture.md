@@ -2,7 +2,7 @@
 title: "NeonPro System Architecture"
 last_updated: 2025-09-09
 form: explanation
-tags: [architecture, system-design, healthcare, brazilian-compliance]
+tags: [architecture, system-design, aesthetic-clinic, brazilian-compliance]
 related:
   - ../AGENTS.md
   - ./source-tree.md
@@ -22,9 +22,9 @@ This document defines the high-level system architecture for **NeonPro AI-First 
 
 ### Architectural Context
 
-**Project Type**: Greenfield healthcare platform with regulatory compliance requirements
+**Project Type**: Greenfield aesthetic clinic platform with regulatory compliance requirements
 **Domain**: Brazilian aesthetic clinic operations (botox, fillers, facial harmonization, laser treatments)
-**Compliance**: LGPD data protection, ANVISA medical device regulations, CFM professional standards
+**Compliance**: LGPD data protection, ANVISA cosmetic regulations, aesthetic professional council standards
 **Scale**: Multi-clinic platform with real-time operations and AI-driven insights
 
 ### Change Log
@@ -40,21 +40,21 @@ This document defines the high-level system architecture for **NeonPro AI-First 
 
 ### Architectural Philosophy
 
-NeonPro employs a **domain-driven, compliance-first architecture** specifically designed for Brazilian healthcare operations. The system prioritizes data protection, real-time clinical workflows, and AI-enhanced decision making while maintaining strict regulatory compliance.
+NeonPro employs a **domain-driven, compliance-first architecture** specifically designed for Brazilian aesthetic clinic operations. The system prioritizes data protection, real-time aesthetic workflows, and AI-enhanced decision making while maintaining strict regulatory compliance.
 
 **Core Principles**:
 
-- **Compliance by Design**: LGPD, ANVISA, and CFM requirements embedded in architectural decisions
-- **Real-time First**: Live updates essential for clinic operations and patient safety
+- **Compliance by Design**: LGPD, ANVISA, and aesthetic professional council requirements embedded in architectural decisions
+- **Real-time First**: Live updates essential for clinic operations and client satisfaction
 - **AI-Enhanced**: Predictive analytics and conversational AI integrated throughout
 - **Multi-tenant Ready**: Designed for multiple clinics with data isolation
-- **Audit-Complete**: Comprehensive logging for healthcare regulatory requirements
+- **Audit-Complete**: Comprehensive logging for aesthetic clinic regulatory requirements
 
 ### System Architecture Style
 
 **Primary Pattern**: **Event-Driven Microservices with Shared Database**
 
-The architecture combines the benefits of microservices modularity with the consistency guarantees of a shared database, optimized for healthcare compliance and real-time operations.
+The architecture combines the benefits of microservices modularity with the consistency guarantees of a shared database, optimized for aesthetic clinic compliance and real-time operations.
 
 **Key Characteristics**:
 
@@ -144,9 +144,9 @@ graph TB
 
 **1. Event-Driven Architecture**
 
-- **Purpose**: Real-time clinic operations and patient communication
+- **Purpose**: Real-time clinic operations and client communication
 - **Implementation**: WebSocket subscriptions for live appointment updates, notifications, and status changes
-- **Benefits**: Immediate response to critical healthcare events, improved patient experience
+- **Benefits**: Immediate response to critical aesthetic clinic events, improved client experience
 - **Compliance**: Supports audit trail requirements with event sourcing
 
 **2. API Gateway Pattern**
@@ -158,10 +158,10 @@ graph TB
 
 **3. CQRS (Command Query Responsibility Segregation)**
 
-- **Purpose**: Separate read and write operations for healthcare compliance
+- **Purpose**: Separate read and write operations for aesthetic clinic compliance
 - **Implementation**: Distinct models for data modification vs. data retrieval
 - **Benefits**: Optimized performance, comprehensive audit trails, regulatory compliance
-- **Compliance**: Required for LGPD data access logging and healthcare audit requirements
+- **Compliance**: Required for LGPD data access logging and aesthetic clinic audit requirements
 
 **4. Multi-Tenant Architecture with RLS**
 
@@ -184,7 +184,7 @@ graph TB
 
 **Saga Pattern**
 
-- **Purpose**: Distributed transaction management for complex healthcare workflows
+- **Purpose**: Distributed transaction management for complex aesthetic clinic workflows
 - **Benefits**: Data consistency across services, compensation for failed operations
 
 ## System Components
@@ -207,16 +207,16 @@ graph TB
 
 **3. AI Chat Service**
 
-- **Responsibility**: Portuguese-optimized conversational AI for appointment scheduling and patient inquiries
+- **Responsibility**: Portuguese-optimized conversational AI for appointment scheduling and client inquiries
 - **Key Interfaces**: Chat message API, streaming responses, context management
-- **Dependencies**: AI providers (OpenAI, Anthropic), patient context, audit logging
+- **Dependencies**: AI providers (OpenAI, Anthropic), client context, audit logging
 - **Patterns**: Strategy pattern for AI providers, circuit breaker, PII sanitization
 
 **4. Anti-No-Show Prediction Service**
 
 - **Responsibility**: Machine learning-based prediction of appointment no-shows with intervention recommendations
 - **Key Interfaces**: Risk score calculation, intervention recommendations, model training
-- **Dependencies**: Patient history, appointment patterns, communication preferences
+- **Dependencies**: Client history, appointment patterns, communication preferences
 - **Patterns**: Prediction pipeline, feature engineering, model versioning
 
 **5. Compliance Engine**
@@ -228,7 +228,7 @@ graph TB
 
 **6. External Integration Service**
 
-- **Responsibility**: Communication with WhatsApp Business API, Brazilian SMS providers, ANVISA systems
+- **Responsibility**: Communication with WhatsApp Business API, Brazilian SMS providers, aesthetic regulatory systems
 - **Key Interfaces**: Message sending, webhook handling, device validation
 - **Dependencies**: External service credentials, rate limiting, error handling
 - **Patterns**: Adapter pattern, webhook processing, retry mechanisms
@@ -245,34 +245,34 @@ graph TB
 
 **2. Event Sourcing for Audit**
 
-- **Implementation**: Critical healthcare events stored as immutable event log
-- **Events**: Patient data changes, appointment modifications, consent updates
+- **Implementation**: Critical aesthetic clinic events stored as immutable event log
+- **Events**: Client data changes, appointment modifications, consent updates
 - **Benefits**: Complete audit trail, regulatory compliance, data recovery capabilities
 
 **3. Real-time Data Synchronization**
 
 - **Pattern**: WebSocket subscriptions for live updates
-- **Use Cases**: Appointment status changes, new patient registrations, emergency alerts
-- **Benefits**: Immediate clinic workflow updates, improved patient experience
+- **Use Cases**: Appointment status changes, new client registrations, procedure guidance alerts
+- **Benefits**: Immediate clinic workflow updates, improved client experience
 
 ### Data Security Architecture
 
 **1. Encryption Strategy**
 
-- **At Rest**: AES-256 encryption for sensitive data (CPF, medical records)
+- **At Rest**: AES-256 encryption for sensitive data (CPF, client treatment records)
 - **In Transit**: TLS 1.3 for all communications
 - **Key Management**: Separate encryption keys per clinic for data isolation
 
 **2. Row Level Security (RLS)**
 
 - **Implementation**: PostgreSQL RLS policies for automatic data filtering
-- **Scope**: All patient data, appointments, and clinic information
+- **Scope**: All client data, appointments, and clinic information
 - **Benefits**: Database-level security, simplified application logic, regulatory compliance
 
 **3. Data Classification**
 
 - **PII (Personally Identifiable Information)**: CPF, RG, contact information
-- **PHI (Protected Health Information)**: Medical records, treatment history
+- **Client Treatment Information**: Aesthetic treatment records, procedure history
 - **Operational Data**: Appointments, schedules, clinic information
 - **Audit Data**: Access logs, data modifications, consent records
 
@@ -289,29 +289,29 @@ graph TB
 
 **2. Communication Platform Integration**
 
-- **WhatsApp Business API**: High-priority patient communications
+- **WhatsApp Business API**: High-priority client communications
 - **Brazilian SMS Providers**: Fallback communication method
 - **Pattern**: Adapter pattern for unified messaging interface
 - **Features**: Message queuing, delivery confirmation, rate limiting
 
 **3. Regulatory System Integration**
 
-- **ANVISA API**: Medical device validation and compliance checking
+- **ANVISA API**: Cosmetic product validation and compliance checking
 - **Pattern**: External service adapter with caching
-- **Features**: Device registration validation, compliance status checking
+- **Features**: Product registration validation, compliance status checking
 
 ### API Design Principles
 
 **1. RESTful Design**
 
-- **Resource-based URLs**: `/patients/{id}`, `/appointments/{id}`
+- **Resource-based URLs**: `/clients/{id}`, `/appointments/{id}`
 - **HTTP Methods**: Proper use of GET, POST, PUT, DELETE
 - **Status Codes**: Meaningful HTTP status codes for different scenarios
 
 **2. Real-time Capabilities**
 
 - **WebSocket Subscriptions**: Live updates for critical clinic operations
-- **Event Broadcasting**: Appointment changes, patient updates, emergency alerts
+- **Event Broadcasting**: Appointment changes, client updates, procedure guidance alerts
 - **Connection Management**: Automatic reconnection, heartbeat monitoring
 
 **3. API Versioning**
@@ -332,7 +332,7 @@ graph TB
 
 **2. Consent Management Architecture**
 
-- **Granular Consent**: Separate consent for data processing, marketing, medical photos
+- **Granular Consent**: Separate consent for data processing, marketing, aesthetic procedure photos
 - **Consent Versioning**: Track consent changes over time with audit trail
 - **Withdrawal Mechanism**: Easy consent withdrawal with automatic data handling
 
@@ -343,17 +343,17 @@ graph TB
 - **Right to Erasure**: Secure data deletion with compliance verification
 - **Data Portability**: Standardized data export formats
 
-### ANVISA (Medical Device) Compliance
+### ANVISA (Cosmetic Product) Compliance
 
-**1. Device Registration Validation**
+**1. Product Registration Validation**
 
-- **Real-time Validation**: Automatic checking of medical device registration numbers
-- **Compliance Monitoring**: Continuous monitoring of device compliance status
-- **Alert System**: Notifications for expired or invalid device registrations
+- **Real-time Validation**: Automatic checking of cosmetic product registration numbers
+- **Compliance Monitoring**: Continuous monitoring of product compliance status
+- **Alert System**: Notifications for expired or invalid product registrations
 
 **2. Audit Trail Requirements**
 
-- **Complete Logging**: All device usage and patient interactions logged
+- **Complete Logging**: All product usage and client interactions logged
 - **Immutable Records**: Audit logs protected from modification
 - **Regulatory Reporting**: Automated compliance report generation
 
@@ -383,7 +383,7 @@ graph TB
 
 **1. Response Time Optimization**
 
-- **Target**: <200ms for critical healthcare operations
+- **Target**: <200ms for critical aesthetic clinic operations
 - **Implementation**: Optimized database queries, efficient caching, CDN usage
 - **Monitoring**: Real-time performance monitoring and alerting
 
@@ -433,35 +433,35 @@ graph TB
 
 - **Appointment Success Rate**: Tracking of successful appointment completions
 - **No-Show Prediction Accuracy**: ML model performance monitoring
-- **Patient Satisfaction**: Indirect metrics through system usage patterns
+- **Client Satisfaction**: Indirect metrics through system usage patterns
 
 ## Architectural Decision Records (ADRs)
 
 ### ADR-001: Event-Driven Architecture for Real-time Operations
 
 **Decision**: Implement event-driven architecture using WebSocket subscriptions
-**Rationale**: Healthcare operations require immediate updates for patient safety and clinic efficiency
-**Consequences**: Increased complexity but essential for healthcare workflows
+**Rationale**: Aesthetic clinic operations require immediate updates for client satisfaction and clinic efficiency
+**Consequences**: Increased complexity but essential for aesthetic clinic workflows
 **Status**: Accepted
 
 ### ADR-002: Multi-Tenant Architecture with Row Level Security
 
 **Decision**: Use PostgreSQL RLS for data isolation between clinics
-**Rationale**: Database-level security provides strongest guarantee for healthcare data protection
+**Rationale**: Database-level security provides strongest guarantee for aesthetic clinic data protection
 **Consequences**: Simplified application logic, regulatory compliance, potential performance considerations
 **Status**: Accepted
 
 ### ADR-003: CQRS Pattern for Audit Compliance
 
-**Decision**: Separate read and write operations for healthcare data
-**Rationale**: Required for LGPD audit trails and healthcare regulatory compliance
+**Decision**: Separate read and write operations for aesthetic clinic data
+**Rationale**: Required for LGPD audit trails and aesthetic clinic regulatory compliance
 **Consequences**: Additional complexity but necessary for compliance
 **Status**: Accepted
 
 ### ADR-004: AI Provider Strategy Pattern
 
 **Decision**: Implement strategy pattern with multiple AI providers (OpenAI, Anthropic)
-**Rationale**: Redundancy for critical healthcare communications, cost optimization
+**Rationale**: Redundancy for critical aesthetic clinic communications, cost optimization
 **Consequences**: Additional integration complexity but improved reliability
 **Status**: Accepted
 
@@ -472,7 +472,7 @@ graph TB
 - **Authentication**: Multi-factor authentication with WebAuthn support
 - **Authorization**: Role-based access control with database-level enforcement
 - **Data Protection**: End-to-end encryption with key management per clinic
-- **Audit Logging**: Comprehensive logging for all healthcare data access
+- **Audit Logging**: Comprehensive logging for all aesthetic clinic data access
 
 ### Performance
 
@@ -492,14 +492,14 @@ graph TB
 
 ### Development Principles
 
-- **Domain-Driven Design**: Organize code around business domains (patients, appointments, compliance)
-- **Test-Driven Development**: Write tests first for critical healthcare functionality
+- **Domain-Driven Design**: Organize code around business domains (clients, appointments, compliance)
+- **Test-Driven Development**: Write tests first for critical aesthetic clinic functionality
 - **Security First**: Security considerations in every architectural decision
 - **Compliance by Design**: LGPD and ANVISA requirements embedded from the start
 
 ### Quality Attributes
 
-- **Reliability**: 99.9% uptime for critical healthcare operations
+- **Reliability**: 99.9% uptime for critical aesthetic clinic operations
 - **Performance**: <200ms response time for patient-facing operations
 - **Security**: Healthcare-grade security with comprehensive audit trails
 - **Scalability**: Support for 1000+ concurrent users per clinic
@@ -526,6 +526,6 @@ The NeonPro system architecture provides a robust, scalable, and compliant found
 ---
 
 **Document Status**: ✅ **Architecture Complete**
-**Compliance**: LGPD + ANVISA + CFM Ready
+**Compliance**: LGPD + ANVISA + Professional Council Ready
 **Target**: Brazilian Aesthetic Clinics
 **Last Updated**: September 2025

@@ -121,7 +121,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const data = await response.json();
+      const _data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -143,7 +143,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const data = await response.json();
+      const _data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -167,7 +167,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const data = await response.json();
+      const _data = await response.json();
 
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
@@ -192,7 +192,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const data = await response.json();
+      const _data = await response.json();
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
@@ -256,7 +256,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const data = await response.json();
+      const _data = await response.json();
 
       expect(response.status).toBe(200);
       expect(response.headers.get("X-Response-Time")).toBeDefined();
@@ -277,7 +277,7 @@ describe("GET /api/v2/ai/models endpoint (T054)", () => {
         }),
       );
 
-      const data = await response.json();
+      const _data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data.metadata.monitoringEnabled).toBe(true);

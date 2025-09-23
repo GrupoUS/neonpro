@@ -339,7 +339,7 @@ app.get(
   validateClinicAccess,
   async c => {
     const query = c.req.valid('query');
-    const userId = c.get('userId'); // Now properly typed
+    const _userId = c.get('userId'); // Now properly typed
 
     try {
       const result = await patientService.getPatients(query.clinicId, userId, {
@@ -378,7 +378,7 @@ app.get(
   validateClinicAccess,
   async c => {
     const patientId = c.req.param('id');
-    const userId = c.get('userId'); // Now properly typed
+    const _userId = c.get('userId'); // Now properly typed
 
     try {
       const patient = await patientService.getPatientById(patientId, _userId);
@@ -411,7 +411,7 @@ app.post(
   validateClinicAccess,
   async c => {
     const data = c.req.valid('json');
-    const userId = c.get('userId'); // Now properly typed
+    const _userId = c.get('userId'); // Now properly typed
 
     try {
       const patient = await patientService.createPatient(data, _userId);

@@ -13,7 +13,7 @@
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
-import { Patient } from '../../../../../../packages/types/src/patient.valibot';
+// import { Patient } from '../../../../../../packages/types/src/patient.valibot';
 import {
   CreatePatientSchema,
   GetPatientSchema,
@@ -574,7 +574,7 @@ export const patientsRouter = router({
     )
     .mutation(async ({ ctx, _input }) => {
       try {
-        const { patientId, reason, digitalSignature } = input;
+        const { patientId, reason, digitalSignature: _digitalSignature } = input;
 
         // Generate cryptographic proof for consent withdrawal
         const withdrawalProof = generateCryptographicProof(
@@ -586,7 +586,7 @@ export const patientsRouter = router({
           },
         );
 
-        const result = await ctx.prisma.$transaction(async prisma => {
+        const _result = await ctx.prisma.$transaction(async prisma => {
           // Update consent status
           await prisma.lGPDConsent.updateMany({
             where: {

@@ -21,10 +21,10 @@ import {
 } from '../../../shared/src/services/cache-management';
 import { RedisCacheBackend } from '../../../shared/src/services/redis-cache-backend';
 
-const QueryCacheKeySchema = z.string().min(1).max(1000);
+// const QueryCacheKeySchema = z.string().min(1).max(1000);
 const UserIdSchema = z.string().min(1).max(255);
-const QueryTTLSchema = z.number().min(1).max(86400); // Max 24 hours
-const CacheSizeSchema = z.number().min(1).max(10000);
+// const QueryTTLSchema = z.number().min(1).max(86400); // Max 24 hours
+// const CacheSizeSchema = z.number().min(1).max(10000);
 
 /**
  * Enhanced query cache configuration

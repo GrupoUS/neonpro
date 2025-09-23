@@ -16,7 +16,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CopilotProvider } from "@copilotkit/react-core";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { ClientManagementDashboard } from "../ClientManagementDashboard";
+import { ClientManagementDashboard } from "../../../components/clients/ClientManagementDashboard";
 import {
   AguiClientSearchResponse,
   AguiClientAnalyticsResponse,

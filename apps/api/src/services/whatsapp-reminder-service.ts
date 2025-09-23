@@ -1074,7 +1074,7 @@ export class WhatsAppReminderService {
       const fallbackUsed = logs.filter(log => log.fallback_used).length;
 
       // Get response count
-      const { data: responses, error: responseError } = await this.supabase
+      const { data: responses } = await this.supabase
         .from('patient_responses')
         .select('appointment_id')
         .eq('clinic_id', clinicId)

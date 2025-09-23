@@ -395,7 +395,7 @@ export class HealthcareSensitiveFieldAnalyzer {
   }
 
   // Check if encryption is applied (placeholder for actual encryption detection)
-  private isEncryptionApplied(value: any): boolean {
+  private isEncryptionApplied(_value: any): boolean {
     // This would integrate with actual encryption detection
     return false; // Placeholder
   }

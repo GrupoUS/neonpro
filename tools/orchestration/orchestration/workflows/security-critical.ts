@@ -1,7 +1,7 @@
 import type { OrchestrationContext, TDDCycleResult } from "../../types";
 
 export class SecurityCriticalWorkflow {
-  async execute(context: OrchestrationContext): Promise<TDDCycleResult> {
+  async execute(_context: OrchestrationContext): Promise<TDDCycleResult> {
     return {
       success: true,
       phases: ["red", "green", "refactor"],

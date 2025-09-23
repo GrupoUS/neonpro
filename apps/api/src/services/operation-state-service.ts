@@ -106,7 +106,7 @@ export class OperationStateService {
   async updateState(
     operationId: string,
     updates: Partial<OperationStateData>,
-    changeReason?: string,
+    _changeReason?: string,
   ): Promise<OperationState> {
     const currentState = await this.getStateByOperationId(operationId);
     if (!currentState) {

@@ -272,7 +272,7 @@ export class OttomatorAgentBridge extends EventEmitter {
 
   private async sendQueryToAgent(
     queryId: string,
-    _query: OttomatorQuery,
+    query: OttomatorQuery,
   ): Promise<void> {
     if (!this.agentProcess || !this.agentProcess.stdin) {
       throw new Error('Agent process not available');
@@ -297,6 +297,7 @@ export class OttomatorAgentBridge extends EventEmitter {
         const message = JSON.parse(line);
         this.handleAgentMessage(message);
       } catch (error) {
+        // Non-JSON agent output is handled as info below
         if (this.config.enableLogging) {
           logger.info('Agent output (non-JSON)', { output: line });
         }

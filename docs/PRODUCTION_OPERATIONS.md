@@ -1,24 +1,24 @@
-# NeonPro Healthcare Platform - Production Operations Guide
+# NeonPro Aesthetic Clinic Platform - Production Operations Guide
 
 ## Overview
 
-This document provides comprehensive operational procedures for the NeonPro Healthcare Platform in production environments. It covers deployment, monitoring, compliance, and emergency procedures to ensure continuous, compliant operation of healthcare services.
+This document provides comprehensive operational procedures for the NeonPro Aesthetic Clinic Platform in production environments. It covers deployment, monitoring, compliance, and emergency procedures to ensure continuous, compliant operation of aesthetic clinic services.
 
-## 🏥 Healthcare Compliance Requirements
+## 🏥 Aesthetic Clinic Compliance Requirements
 
 ### Regulatory Framework
 
 - **LGPD (Lei Geral de Proteção de Dados)**: Brazilian data protection law
-- **ANVISA**: National Health Surveillance Agency regulations
-- **CFM**: Federal Council of Medicine standards
-- **HIPAA-equivalent**: Healthcare data protection standards
+- **ANVISA**: National Health Surveillance Agency cosmetic regulations
+- **Professional Councils**: CNEP/COREN/CFF aesthetic professional standards
+- **Data Protection Standards**: Client data protection standards
 
 ### Compliance Responsibilities
 
-- **Data Protection Officer (DPO)**: `dpo@neonpro.healthcare`
-- **Compliance Team**: `compliance@neonpro.healthcare`
-- **Security Team**: `security@neonpro.healthcare`
-- **Medical Director**: `medical.director@neonpro.healthcare`
+- **Data Protection Officer (DPO)**: `dpo@neonpro.aesthetic`
+- **Compliance Team**: `compliance@neonpro.aesthetic`
+- **Security Team**: `security@neonpro.aesthetic`
+- **Clinic Director**: `clinic.director@neonpro.aesthetic`
 
 ## 🚀 Deployment Procedures
 
@@ -48,7 +48,7 @@ bun run deploy:prod
 
 # 5. Post-deployment validation
 ./monitoring/scripts/health-check.sh
-curl -f https://api.neonpro.healthcare/health
+curl -f https://api.neonpro.aesthetic/health
 ```
 
 ### Deployment Environment Variables
@@ -58,7 +58,7 @@ All production environment variables must be set in Vercel:
 ```bash
 # Application
 NEXT_PUBLIC_APP_ENV=production
-NEXT_PUBLIC_API_URL=https://api.neonpro.healthcare
+NEXT_PUBLIC_API_URL=https://api.neonpro.aesthetic
 NEXT_PUBLIC_SUPABASE_URL=https://neonpro-db.supabase.co
 
 # Security
@@ -68,8 +68,8 @@ SESSION_SECRET=your_session_secret
 
 # Compliance
 LGPD_CONSENT_REQUIRED=true
-ANVISA_MEDICAL_DEVICE_COMPLIANCE=true
-CFM_PROFESSIONAL_STANDARDS=true
+ANVISA_COSMETIC_COMPLIANCE=true
+PROFESSIONAL_COUNCIL_STANDARDS=true
 
 # Monitoring
 SENTRY_DSN=your_sentry_dsn
@@ -80,9 +80,9 @@ LOG_LEVEL=info
 
 ### Dashboard Access
 
-- **Grafana**: `https://monitoring.neonpro.healthcare`
-- **Kibana**: `https://logs.neonpro.healthcare`
-- **Sentry**: `https://sentry.neonpro.healthcare`
+- **Grafana**: `https://monitoring.neonpro.aesthetic`
+- **Kibana**: `https://logs.neonpro.aesthetic`
+- **Sentry**: `https://sentry.neonpro.aesthetic`
 
 ### Key Metrics to Monitor
 
@@ -93,11 +93,11 @@ LOG_LEVEL=info
 - Availability > 99.9%
 - Database Response Time < 500ms
 
-#### Healthcare-Specific Metrics
+#### Aesthetic Clinic-Specific Metrics
 
-- Active Patient Count
-- Appointment Success Rate
-- Medical Record Access Frequency
+- Active Client Count
+- Treatment Appointment Success Rate
+- Client Record Access Frequency
 - Compliance Validation Status
 
 #### Security Metrics
@@ -131,10 +131,10 @@ LOG_LEVEL=info
 
 ```bash
 # Check for security incidents
-curl -s https://api.neonpro.healthcare/api/security/incidents/recent | jq '.incidents'
+curl -s https://api.neonpro.aesthetic/api/security/incidents/recent | jq '.incidents'
 
 # Review audit logs
-curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
+curl -s https://api.neonpro.aesthetic/api/audit/recent | jq '.events'
 ```
 
 #### Step 2: Assessment
@@ -142,7 +142,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 - Determine impact scope
 - Classify incident severity
 - Identify affected systems
-- Estimate patient impact
+- Estimate client impact
 
 #### Step 3: Containment
 
@@ -167,12 +167,12 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 
 ### Security Contacts
 
-- **Security Team**: `security@neonpro.healthcare`
+- **Security Team**: `security@neonpro.aesthetic`
 - **On-call Security**: `+5511999999999`
-- **DPO (Data Protection Officer)**: `dpo@neonpro.healthcare`
-- **Legal Counsel**: `legal@neonpro.healthcare`
+- **DPO (Data Protection Officer)**: `dpo@neonpro.aesthetic`
+- **Legal Counsel**: `legal@neonpro.aesthetic`
 
-## 🏥 Healthcare Compliance Operations
+## 🏥 Aesthetic Clinic Compliance Operations
 
 ### LGPD Compliance
 
@@ -186,27 +186,27 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 #### Data Breach Notification
 
 - **Notification Timeline**: Within 48 hours of discovery
-- **ANVISA Notification**: For medical data breaches
+- **ANVISA Notification**: For cosmetic product data breaches
 - **Affected Individuals**: Direct notification required
 - **Documentation**: Maintain breach records for 5 years
 
 ### ANVISA Compliance
 
-#### Medical Device Requirements
+#### Cosmetic Product Requirements
 
-- **Registration**: Valid ANVISA registration required
-- **Quality Management**: ISO 13485 compliance
-- **Vigilance System**: Adverse event reporting
-- **Risk Management**: ISO 14971 compliance
+- **Registration**: Valid ANVISA cosmetic registration required
+- **Quality Management**: ISO 22716 compliance
+- **Product Safety**: Adverse reaction reporting
+- **Risk Management**: Cosmetic product safety compliance
 
 #### Reporting Requirements
 
-- **Adverse Events**: Report within 15 days
-- **Field Safety Corrective Actions**: Immediate reporting
+- **Adverse Reactions**: Report within 15 days
+- **Product Recalls**: Immediate reporting
 - **Annual Reports**: Submit by March 31st
 - **Audits**: Bi-external audits required
 
-### CFM Compliance
+### Professional Council Compliance
 
 #### Professional Standards
 
@@ -215,12 +215,12 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 - **Continuing Education**: Track completion
 - **Supervision Requirements**: Enforce protocols
 
-#### Telemedicine Standards
+#### Virtual Consultation Standards
 
 - **Video Quality**: Minimum 720p resolution
 - **Connection Stability**: < 2% failure rate
 - **Documentation**: Complete session records
-- **Prescription Validation**: Electronic signature required
+- **Treatment Validation**: Professional confirmation required
 
 ## 🚨 Emergency Procedures
 
@@ -230,7 +230,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 
 1. **Declare Emergency**: Notify all stakeholders
 2. **Activate DR Plan**: Initiate disaster recovery
-3. **Patient Safety**: Ensure continuity of care
+3. **Client Safety**: Ensure continuity of care
 4. **Communication**: Inform clinic partners
 
 #### Recovery Phase (15-60 minutes)
@@ -259,8 +259,8 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 #### Regulatory Compliance (2-48 hours)
 
 1. **LGPD Notification**: Report to ANPD
-2. **ANVISA Notification**: Report medical data breaches
-3. **Patient Notification**: Direct communication
+2. **ANVISA Notification**: Report cosmetic product data breaches
+3. **Client Notification**: Direct communication
 4. **Documentation**: Complete breach records
 
 #### Recovery (48 hours+)
@@ -299,7 +299,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 
 #### Approval Process
 
-1. **Impact Assessment**: Evaluate patient risk
+1. **Impact Assessment**: Evaluate client risk
 2. **Stakeholder Approval**: Get necessary sign-offs
 3. **Communication Plan**: Notify affected parties
 4. **Rollback Strategy**: Prepare backout plan
@@ -308,7 +308,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 
 - **Maintenance Window**: 2:00 AM - 6:00 AM BRT
 - **Maximum Duration**: 4 hours
-- **Patient Impact**: Minimal to none
+- **Client Impact**: Minimal to none
 - **Fallback Plan**: Immediate rollback capability
 
 ## 📊 Performance Management
@@ -332,7 +332,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 #### Reliability
 
 - **Error Rate**: < 1%
-- **Failed Appointments**: < 0.5%
+- **Failed Treatment Appointments**: < 0.5%
 - **Data Loss**: Zero tolerance
 - **Recovery Time**: < 1 hour
 
@@ -347,7 +347,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 
 #### Planning Timeline
 
-- **3 Months**: Patient volume projections
+- **3 Months**: Client volume projections
 - **6 Months**: Feature growth planning
 - **12 Months**: Infrastructure roadmap
 - **24 Months**: Strategic capacity plan
@@ -383,15 +383,15 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 
 - **On-call Engineer**: `+5511999999999`
 - **Security Lead**: `+5511888888888`
-- **Medical Director**: `+5511777777777`
+- **Clinic Director**: `+5511777777777`
 - **CEO**: `+5511666666666`
 
 #### Business Hours Contacts
 
-- **Support Desk**: `support@neonpro.healthcare`
-- **Technical Support**: `tech@neonpro.healthcare`
-- **Compliance Office**: `compliance@neonpro.healthcare`
-- **Sales Support**: `sales@neonpro.healthcare`
+- **Support Desk**: `support@neonpro.aesthetic`
+- **Technical Support**: `tech@neonpro.aesthetic`
+- **Compliance Office**: `compliance@neonpro.aesthetic`
+- **Sales Support**: `sales@neonpro.aesthetic`
 
 ## 📈 Reporting and Analytics
 
@@ -399,7 +399,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 
 - **System Health Summary**
 - **Security Incident Report**
-- **Patient Activity Metrics**
+- **Client Activity Metrics**
 - **Compliance Status Update**
 
 ### Weekly Reports
@@ -441,7 +441,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 
 ### Compliance Evolution
 
-- **Regulatory Monitoring**: Track changes in healthcare regulations
+- **Regulatory Monitoring**: Track changes in aesthetic clinic regulations
 - **Compliance Gap Analysis**: Identify areas for improvement
 - **Training Programs**: Ensure staff understanding
 - **Audit Preparation**: Continuous readiness for audits
@@ -453,7 +453,7 @@ curl -s https://api.neonpro.healthcare/api/audit/recent | jq '.events'
 - **Version**: 1.0.0
 - **Owner**: Head of Operations
 - **Review Date**: Quarterly
-- **Approval**: CTO, Compliance Officer, Medical Director
+- **Approval**: CTO, Compliance Officer, Clinic Director
 - **Distribution**: All Operations Staff, Leadership Team
 
 **Last Updated**: September 22, 2025

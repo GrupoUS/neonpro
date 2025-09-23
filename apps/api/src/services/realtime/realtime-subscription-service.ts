@@ -185,7 +185,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       }
 
       // Unsubscribe from all channels
-      for (const [channelName, channel] of subscription.channels) {
+      for (const [_channelName, channel] of subscription.channels) {
         await this.supabase.removeChannel(channel);
       }
 

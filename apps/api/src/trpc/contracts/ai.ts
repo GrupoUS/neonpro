@@ -3,7 +3,7 @@
  * Comprehensive AI integration with health compliance and error handling
  */
 
-import { auditLogger } from '@neonpro/security';
+// import { auditLogger } from '@neonpro/security';
 import {
   AIChatResponseSchema,
   AIHealthcheckResponseSchema,
@@ -11,11 +11,11 @@ import {
   HealthcareTRPCError,
   PaginationSchema,
 } from '@neonpro/types/api/contracts';
-import { LGPDComplianceMiddleware } from '../../middleware/lgpd-compliance';
+// import { LGPDComplianceMiddleware } from '../../middleware/lgpd-compliance';
 import {
   aiSecurityService,
   sanitizeForAI,
-  shouldRetainAIData,
+  // shouldRetainAIData,
   validateAIOutputSafety,
   validatePromptSecurity,
 } from '../../services/ai-security-service';
@@ -23,7 +23,7 @@ import { DataCategory } from '../../services/lgpd-audit-service';
 import { lgpdAuditService } from '../../services/lgpd-audit-service';
 import { lgpdConsentService } from '../../services/lgpd-consent-service';
 import { ConsentPurpose } from '../../services/lgpd-consent-service';
-import { lgpdDataSubjectService } from '../../services/lgpd-data-subject-service';
+// import { lgpdDataSubjectService } from '../../services/lgpd-data-subject-service';
 import { protectedProcedure, router } from '../trpc';
 
 // Health analysis service
@@ -181,12 +181,12 @@ export const aiRouter = router({
       });
 
       // Build healthcare context (simplified)
-      const systemContext = {
+      const _systemContext = {
         _userId: ctx.userId,
         clinicId: input.clinicId,
         patientId: input.patientId,
         timestamp: new Date().toISOString(),
-      };
+      }; void _systemContext;
 
       // Get conversation history if requested
       let conversationHistory: any[] = [];
@@ -386,8 +386,8 @@ export const aiRouter = router({
         };
       } catch (_error: unknown) {
         // Handle AI service errors
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        const errorCode = (error as any)?.code;
+        const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
+        const errorCode = (_error as any)?.code;
 
         if (errorCode === 'insufficient_quota') {
           throw new HealthcareTRPCError(
@@ -1109,15 +1109,15 @@ export const aiRouter = router({
 });
 
 // Helper functions
-async function sanitizeHealthcareMessage(
+async function _sanitizeHealthcareMessage(
   message: string,
-  patientId?: string,
+  _patientId?: string,
 ): Promise<string> {
   // Implementation for LGPD-compliant message sanitization
   return message; // Placeholder
 }
 
-async function buildHealthcareContext(_context: any): Promise<string> {
+async function _buildHealthcareContext(_context: any): Promise<string> {
   // Build context-aware system prompt for healthcare AI
   return 'Healthcare AI assistant context'; // Placeholder
 }
@@ -1132,7 +1132,7 @@ async function callAIServiceWithRetry(_request: any): Promise<any> {
   };
 }
 
-async function checkAIUsageLimit(
+async function _checkAIUsageLimit(
   _userId: string,
   _clinicId: string,
 ): Promise<any> {

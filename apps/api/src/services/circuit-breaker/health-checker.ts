@@ -316,7 +316,7 @@ export class ExternalServiceHealthChecker {
       // For database services, we'd typically use a connection pool or ORM
       // This is a simplified implementation
       return true; // Assume healthy for demo purposes
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       return false;
     }
@@ -331,7 +331,7 @@ export class ExternalServiceHealthChecker {
     try {
       // For cache services, try a simple GET/SET operation
       return true; // Assume healthy for demo purposes
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       return false;
     }
@@ -350,7 +350,7 @@ export class ExternalServiceHealthChecker {
         timeout: this.config.timeout,
       });
       return response.ok;
-    } catch (error) {
+    } catch {
       // Error caught but not used - handled by surrounding logic
       return false;
     }

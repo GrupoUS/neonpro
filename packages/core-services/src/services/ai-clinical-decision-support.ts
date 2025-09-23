@@ -5,11 +5,11 @@
  */
 
 import { prisma } from '../../../apps/api/src/lib/prisma';
-import { EnhancedAestheticSchedulingService } from './enhanced-aesthetic-scheduling-service.js';
+import { EnhancedAestheticSchedulingService } from './enhanced-aesthetic-scheduling-service';
 import type {
   AestheticProcedureDetails,
   TreatmentPackage
-} from './enhanced-aesthetic-scheduling-service.js';
+} from './enhanced-aesthetic-scheduling-service';
 
 export interface PatientAssessment {
   id: string;

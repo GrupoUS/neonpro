@@ -1,6 +1,53 @@
 import { beforeAll, vi } from 'vitest';
 import { setupServer } from 'msw/node';
 import { handlers } from './mocks/handlers';
+import { JSDOM } from 'jsdom';
+
+// Setup JSDOM environment for global setup
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  url: 'http://localhost:8080',
+});
+
+// Set global DOM objects before any tests run (with proper handling of read-only properties)
+global.document = dom.window.document;
+global.window = dom.window;
+
+// Use Object.defineProperty for read-only properties
+Object.defineProperty(global, 'navigator', {
+  value: dom.window.navigator,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'localStorage', {
+  value: dom.window.localStorage,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'sessionStorage', {
+  value: dom.window.sessionStorage,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'location', {
+  value: dom.window.location,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'history', {
+  value: dom.window.history,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'URL', {
+  value: dom.window.URL,
+  writable: false,
+  configurable: true
+});
 
 // Setup MSW server for API mocking
 export const server = setupServer(...handlers);
@@ -8,12 +55,12 @@ export const server = setupServer(...handlers);
 beforeAll(() => {
   // Enable API mocking before all tests
   server.listen({ onUnhandledRequest: 'error' });
-  
+
   // Setup global test configurations
   console.log('🧪 Test environment setup complete');
-  
+
   // Mock global APIs for consistent testing
-  Object.defineProperty(window, 'matchMedia', {
+  Object.defineProperty(global.window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation((query) => ({
       matches: false,
@@ -26,7 +73,7 @@ beforeAll(() => {
       dispatchEvent: vi.fn(),
     })),
   });
-  
+
   // Mock performance API
   global.performance = {
     ...global.performance,

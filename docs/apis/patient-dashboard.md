@@ -1,34 +1,35 @@
-# Patient Dashboard API Documentation (T081)
+# Client Dashboard API Documentation (T081)
 
 ## Overview
 
-The Patient Dashboard API provides comprehensive patient management capabilities with Brazilian healthcare compliance (LGPD, ANVISA, CFM), AI integration, and real-time features.
+The Client Dashboard API provides comprehensive client management capabilities with Brazilian aesthetic clinic compliance (LGPD, ANVISA, Professional Councils), AI integration, and real-time features.
 
 **Base URL**: `/api/v2`
 
 ## Authentication
 
-All endpoints require authentication with a valid JWT token. Healthcare professionals must have valid CFM/CRM number.
+All endpoints require authentication with a valid JWT token. Aesthetic professionals must have valid professional council license.
 
 ```
 Authorization: Bearer <jwt-token>
-CFM-Number: <professional-license>
+License-Number: <professional-license>
+License-Type: <council-type>
 ```
 
-## Patient Management
+## Client Management
 
-### List Patients
+### List Clients
 
-**GET** `/patients`
+**GET** `/clients`
 
-Retrieve a paginated list of patients with filtering and search capabilities.
+Retrieve a paginated list of clients with filtering and search capabilities.
 
 **Query Parameters**:
 
 - `page` (number, default: 1) - Page number
 - `limit` (number, default: 20) - Items per page
 - `search` (string) - Search term for name, CPF, or email
-- `status` (string) - Filter by patient status
+- `status` (string) - Filter by client status
 - `dateFrom` (string) - Filter by registration date (ISO format)
 - `dateTo` (string) - Filter by registration date (ISO format)
 
@@ -38,7 +39,7 @@ Retrieve a paginated list of patients with filtering and search capabilities.
 {
   "success": true,
   "data": {
-    "patients": [
+    "clients": [
       {
         "id": "uuid",
         "name": "Maria Silva",
@@ -60,11 +61,11 @@ Retrieve a paginated list of patients with filtering and search capabilities.
 }
 ```
 
-### Create Patient
+### Create Client
 
-**POST** `/patients`
+**POST** `/clients`
 
-Register a new patient with comprehensive validation and LGPD consent.
+Register a new client with comprehensive validation and LGPD consent.
 
 **Request Body**:
 
@@ -85,10 +86,11 @@ Register a new patient with comprehensive validation and LGPD consent.
     "state": "SP",
     "cep": "05432-100"
   },
-  "healthInsurance": {
-    "provider": "Unimed",
-    "plan": "Plano Ouro",
-    "cardNumber": "1234567890"
+  "preferences": {
+    "contactMethod": "whatsapp",
+    "notificationFrequency": "weekly",
+    "skinType": "mixed",
+    "concerns": ["acne", "aging"]
   },
   "emergencyContact": {
     "name": "José Silva",
@@ -118,11 +120,11 @@ Register a new patient with comprehensive validation and LGPD consent.
 }
 ```
 
-### Get Patient
+### Get Client
 
-**GET** `/patients/{id}`
+**GET** `/clients/{id}`
 
-Retrieve detailed information about a specific patient.
+Retrieve detailed information about a specific client.
 
 **Response**:
 
@@ -146,26 +148,28 @@ Retrieve detailed information about a specific patient.
       "state": "SP",
       "cep": "05432-100"
     },
-    "healthInsurance": {
-      "provider": "Unimed",
-      "plan": "Plano Ouro"
+    "preferences": {
+      "skinType": "mixed",
+      "concerns": ["acne", "aging"],
+      "contactMethod": "whatsapp"
     },
     "registeredAt": "2024-01-15T10:30:00Z",
     "lastVisit": "2024-01-20T14:00:00Z",
-    "medicalSummary": {
-      "conditions": ["Hipertensão"],
-      "allergies": ["Penicilina"],
-      "medications": ["Losartana 50mg"]
+    "aestheticSummary": {
+      "skinConditions": ["acne"],
+      "previousTreatments": ["chemical_peel"],
+      "productPreferences": ["hypoallergenic"],
+      "contraindications": ["pregnancy"]
     }
   }
 }
 ```
 
-### Update Patient
+### Update Client
 
-**PUT** `/patients/{id}`
+**PUT** `/clients/{id}`
 
-Update patient information with audit trail.
+Update client information with audit trail.
 
 **Request Body**:
 
@@ -184,11 +188,11 @@ Update patient information with audit trail.
 }
 ```
 
-### Delete Patient
+### Delete Client
 
-**DELETE** `/patients/{id}`
+**DELETE** `/clients/{id}`
 
-Soft delete a patient with LGPD compliance.
+Soft delete a client with LGPD compliance.
 
 **Response**:
 
@@ -203,11 +207,11 @@ Soft delete a patient with LGPD compliance.
 }
 ```
 
-### Search Patients
+### Search Clients
 
-**POST** `/patients/search`
+**POST** `/clients/search`
 
-Advanced patient search with multiple filters.
+Advanced client search with multiple filters.
 
 **Request Body**:
 
@@ -220,7 +224,7 @@ Advanced patient search with multiple filters.
     "phone": "99999",
     "city": "São Paulo",
     "state": "SP",
-    "insuranceProvider": "Unimed"
+    "skinType": "mixed"
   },
   "dateRange": {
     "registeredFrom": "2024-01-01",
@@ -235,26 +239,26 @@ Advanced patient search with multiple filters.
 
 ### Bulk Actions
 
-**POST** `/patients/bulk-actions`
+**POST** `/clients/bulk-actions`
 
-Perform bulk operations on multiple patients.
+Perform bulk operations on multiple clients.
 
 **Request Body**:
 
 ```json
 {
   "action": "export",
-  "patientIds": ["uuid1", "uuid2", "uuid3"],
+  "clientIds": ["uuid1", "uuid2", "uuid3"],
   "format": "csv",
   "fields": ["name", "cpf", "email", "phone", "status"]
 }
 ```
 
-### Patient History
+### Client History
 
-**GET** `/patients/{id}/history`
+**GET** `/clients/{id}/history`
 
-Retrieve patient audit trail and history.
+Retrieve client audit trail and history.
 
 **Response**:
 
@@ -269,8 +273,9 @@ Retrieve patient audit trail and history.
         "timestamp": "2024-01-20T14:30:00Z",
         "performedBy": {
           "id": "user123",
-          "name": "Dr. João Santos",
-          "cfm": "123456/SP"
+          "name": "João Santos",
+          "license": "123456/SP",
+          "councilType": "CNEP"
         },
         "changes": {
           "phone": {
@@ -297,11 +302,11 @@ Initiate or continue a chat session with AI assistant.
 ```json
 {
   "sessionId": "optional-session-id",
-  "message": "Paciente apresenta dor abdominal há 3 dias",
+  "message": "Cliente apresenta acne inflamatória há 3 dias",
   "context": {
-    "patientId": "optional-patient-id",
-    "medicalHistory": true,
-    "currentMedications": true
+    "clientId": "optional-client-id",
+    "aestheticHistory": true,
+    "currentTreatments": true
   },
   "model": "gpt-4",
   "streaming": true
@@ -315,16 +320,16 @@ Initiate or continue a chat session with AI assistant.
   "type": "message",
   "sessionId": "session-uuid",
   "messageId": "msg-uuid",
-  "content": "Analisando os sintomas...",
+  "content": "Analisando as condições da pele...",
   "timestamp": "2024-01-20T15:00:00Z"
 }
 ```
 
-### Get Patient Insights
+### Get Client Insights
 
-**GET** `/ai/insights/{patientId}`
+**GET** `/ai/insights/{clientId}`
 
-Retrieve AI-generated insights for a patient.
+Retrieve AI-generated insights for a client.
 
 **Response**:
 
@@ -332,16 +337,16 @@ Retrieve AI-generated insights for a patient.
 {
   "success": true,
   "data": {
-    "patientId": "uuid",
+    "clientId": "uuid",
     "insights": [
       {
-        "type": "risk_alert",
-        "title": "Risco de Diabetes Tipo 2",
-        "description": "Paciente apresenta múltiplos fatores de risco",
+        "type": "treatment_recommendation",
+        "title": "Recomendação de Tratamento para Pele Acneica",
+        "description": "Cliente apresenta múltiplos fatores para tratamento combinado",
         "confidence": 0.85,
         "recommendations": [
-          "Solicitar exame de glicemia de jejum",
-          "Orientar sobre dieta e exercícios"
+          "Sugerir protocolo de limpeza profunda",
+          "Recomendar sérum com ácido salicílico"
         ]
       }
     ],
@@ -361,9 +366,9 @@ Perform multi-modal AI analysis.
 ```json
 {
   "type": "text",
-  "data": "Relatório de exames do paciente",
-  "patientId": "optional-patient-id",
-  "analysisType": "medical_summary"
+  "data": "Análise de condições da pele do cliente",
+  "clientId": "optional-client-id",
+  "analysisType": "aesthetic_assessment"
 }
 ```
 
@@ -384,7 +389,7 @@ Retrieve available AI models.
         "id": "gpt-4",
         "name": "GPT-4",
         "provider": "OpenAI",
-        "capabilities": ["text", "medical_analysis"],
+        "capabilities": ["text", "aesthetic_analysis"],
         "status": "available",
         "latency": 1500
       },
@@ -423,15 +428,15 @@ All endpoints return standardized error responses:
 
 ## Rate Limiting
 
-- Healthcare professionals: 1000 requests/hour
+- Aesthetic professionals: 1000 requests/hour
 - AI features: 100 requests/hour
 - Bulk operations: 10 requests/hour
 
 ## Compliance
 
-- **LGPD**: All patient data is handled according to Brazilian data protection laws
-- **ANVISA**: Compliance with medical device regulations
-- **CFM**: Professional license validation and audit logging
+- **LGPD**: All client data is handled according to Brazilian data protection laws
+- **ANVISA**: Compliance with cosmetic product regulations
+- **Professional Councils**: Professional license validation and audit logging
 - **Audit Trail**: All actions are logged with professional identification
 
 ## WebSockets
@@ -439,7 +444,7 @@ All endpoints return standardized error responses:
 Real-time features available at:
 
 - `wss://api.example.com/ws/chat` - AI chat streaming
-- `wss://api.example.com/ws/patients` - Patient data updates
+- `wss://api.example.com/ws/clients` - Client data updates
 - `wss://api.example.com/ws/notifications` - Real-time notifications
 
 ## SDK Examples
@@ -447,22 +452,23 @@ Real-time features available at:
 ### JavaScript/TypeScript
 
 ```typescript
-import { PatientAPI } from "@neonpro/api";
+import { ClientAPI } from "@neonpro/api";
 
-const api = new PatientAPI({
+const api = new ClientAPI({
   baseURL: "https://api.example.com/api/v2",
   token: "your-jwt-token",
-  cfmNumber: "123456/SP",
+  licenseNumber: "123456/SP",
+  licenseType: "CNEP",
 });
 
-// List patients
-const patients = await api.patients.list({
+// List clients
+const clients = await api.clients.list({
   search: "Maria",
   limit: 10,
 });
 
-// Create patient
-const patient = await api.patients.create({
+// Create client
+const client = await api.clients.create({
   name: "Maria Silva",
   cpf: "123.456.789-09",
   email: "maria.silva@email.com",
@@ -470,8 +476,8 @@ const patient = await api.patients.create({
 
 // Chat with AI
 const response = await api.ai.chat({
-  message: "Paciente apresenta dor abdominal",
-  context: { patientId: patient.id },
+  message: "Cliente apresenta acne inflamatória",
+  context: { clientId: client.id },
 });
 ```
 
@@ -479,6 +485,6 @@ const response = await api.ai.chat({
 
 Contract tests available in `/apps/api/tests/contract/`:
 
-- Patient API tests: `test_patients_*.ts`
+- Client API tests: `test_clients_*.ts`
 - AI API tests: `test_ai_*.ts`
 - Integration tests: `/tests/integration/`

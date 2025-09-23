@@ -141,7 +141,7 @@ const RLS_POLICIES = {
   professional_access: (
     ctx: RLSContext,
     model: string,
-    operation: string,
+    _operation: string,
   ): RLSPolicyResult => {
     if (ctx.userRole !== 'professional' || !ctx.professionalId) {
       return {

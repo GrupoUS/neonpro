@@ -20,16 +20,16 @@
       "@/services/*": ["./src/services/*"],
       "@/types/*": ["./src/types/*"],
       "@/utils/*": ["./src/utils/*"],
-      "@neonpro/security": ["../../packages/security/dist"],
-      "@neonpro/security/*": ["../../packages/security/dist/*"],
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"],
       "@neonpro/shared": ["../../packages/shared/src"],
       "@neonpro/shared/*": ["../../packages/shared/src/*"],
       "@neonpro/database": ["../../packages/database/src"],
       "@neonpro/database/*": ["../../packages/database/src/*"],
       "@neonpro/types": ["../../packages/types/src"],
       "@neonpro/types/*": ["../../packages/types/src/*"],
-      "@neonpro/utils": ["../../packages/utils/dist"],
-      "@neonpro/utils/*": ["../../packages/utils/dist/*"]
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/utils/*": ["../../packages/utils/src/*"]
     },
     "tsBuildInfoFile": "./.tsbuildinfo"
   },

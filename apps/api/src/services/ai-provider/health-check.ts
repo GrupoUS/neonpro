@@ -19,7 +19,7 @@ export class ProviderHealthMonitor {
    */
   initializeProviderHealth(
     provider: AIProviderOpt,
-    config: ProviderConfig,
+    _config: ProviderConfig,
   ): void {
     // Initialize health status
     this.provider_health.set(provider, {
@@ -97,7 +97,7 @@ export class ProviderHealthMonitor {
    */
   async performProviderHealthCheck(
     provider: AIProviderOpt,
-    config: ProviderConfig,
+    _config: ProviderConfig,
   ): Promise<void> {
     try {
       const start_time = Date.now();

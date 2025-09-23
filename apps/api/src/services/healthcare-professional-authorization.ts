@@ -241,7 +241,7 @@ export class HealthcareProfessionalAuthorizationService {
   async validateAuthorization(
     professionalId: string,
     operation: string,
-    entityType?: string,
+    _entityType?: string,
     _context?: {
       patientId?: string;
       clinicId?: string;
@@ -463,10 +463,10 @@ export class HealthcareProfessionalAuthorizationService {
   private validateOperationPermissions(
     authorization: ProfessionalAuthorizationResult,
     operation: string,
-    entityType?: string,
+    _entityType?: string,
     _context?: { patientId?: string; clinicId?: string; emergency?: boolean },
   ): ProfessionalAuthorizationResult {
-    const { permissions, restrictions, _role: role } = authorization;
+    const { permissions, restrictions, _role: _roleAlias } = authorization;
 
     // Emergency access override
     if (context?.emergency && permissions.includes('emergency_access')) {

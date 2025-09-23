@@ -249,7 +249,7 @@ export class DataRetentionService {
    */
   async scheduleCleanup(
     policyId: string,
-    dataSource: string,
+    _dataSource: string,
     _dataIdentifier: string,
     patientId?: string,
     customRetentionDate?: Date,
@@ -610,8 +610,8 @@ export class DataRetentionService {
    * Estimate record count for cleanup job
    */
   private async estimateRecordCount(
-    dataSource: string,
-    dataIdentifier: string,
+    _dataSource: string,
+    _dataIdentifier: string,
   ): Promise<number> {
     // This would query your database to estimate record count
     // For now, return a mock estimate
@@ -622,8 +622,8 @@ export class DataRetentionService {
    * Simulate data deletion
    */
   private async simulateDataDeletion(
-    dataSource: string,
-    dataIdentifier: string,
+    _dataSource: string,
+    _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would execute actual DELETE operations
     console.log(
@@ -636,8 +636,8 @@ export class DataRetentionService {
    * Simulate data anonymization
    */
   private async simulateDataAnonymization(
-    dataSource: string,
-    dataIdentifier: string,
+    _dataSource: string,
+    _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would execute UPDATE operations to anonymize data
     console.log(
@@ -650,8 +650,8 @@ export class DataRetentionService {
    * Simulate data archival
    */
   private async simulateDataArchival(
-    dataSource: string,
-    dataIdentifier: string,
+    _dataSource: string,
+    _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would move data to archival storage
     console.log(
@@ -664,8 +664,8 @@ export class DataRetentionService {
    * Simulate data flagging
    */
   private async simulateDataFlagging(
-    dataSource: string,
-    dataIdentifier: string,
+    _dataSource: string,
+    _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would add flags to records for review
     console.log(

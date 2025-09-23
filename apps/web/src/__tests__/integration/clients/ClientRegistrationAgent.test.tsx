@@ -16,7 +16,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { CopilotProvider } from "@copilotkit/react-core";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { ClientRegistrationAgent } from "../ClientRegistrationAgent";
+import { ClientRegistrationAgent } from "../../../components/clients/ClientRegistrationAgent";
 import {
   AguiMessageType,
   AguiClientRegistrationMessage,
@@ -66,7 +66,7 @@ describe("ClientRegistrationAgent", () => {
     onError: vi.fn(),
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },

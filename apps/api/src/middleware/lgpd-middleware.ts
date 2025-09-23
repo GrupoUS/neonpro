@@ -413,7 +413,8 @@ export function dataErasureMiddleware() {
 /**
  * Export all user data following LGPD Article 18 requirements
  */
-async function exportUserData(supabase: any, _userId: string): Promise<any> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function exportUserData(_supabase: any, _userId: string): Promise<any> {
   try {
     const exportedData: any = {
       userId,
@@ -429,7 +430,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
     };
 
     // Export user profile data
-    const { data: profile } = await supabase
+    const { data: profile } = await _supabase
       .from('users')
       .select('*')
       .eq('id', _userId)
@@ -448,7 +449,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
     }
 
     // Export patient data if user is a patient
-    const { data: patientData } = await supabase
+    const { data: patientData } = await _supabase
       .from('patients')
       .select('*')
       .eq('user_id', _userId);
@@ -479,7 +480,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
     }
 
     // Export appointments
-    const { data: appointments } = await supabase
+    const { data: appointments } = await _supabase
       .from('appointments')
       .select(
         `
@@ -503,7 +504,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
     }
 
     // Export medical records (with sensitive data redacted)
-    const { data: medicalRecords } = await supabase
+    const { data: medicalRecords } = await _supabase
       .from('medical_records')
       .select(
         `
@@ -525,7 +526,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
     }
 
     // Export consent records
-    const { data: consents } = await supabase
+    const { data: consents } = await _supabase
       .from('lgpd_consents')
       .select('*')
       .eq('user_id', _userId);
@@ -535,7 +536,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
     }
 
     // Export audit logs related to this user
-    const { data: auditLogs } = await supabase
+    const { data: auditLogs } = await _supabase
       .from('audit_events')
       .select('*')
       .eq('user_id', _userId)
@@ -572,7 +573,8 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
 /**
  * Delete/anonymize user data following LGPD Article 18 requirements
  */
-async function deleteUserData(supabase: any, _userId: string): Promise<void> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function deleteUserData(_supabase: any, _userId: string): Promise<void> {
   try {
     const deletionTimestamp = new Date().toISOString();
     let totalRecordsAffected = 0;
@@ -590,7 +592,7 @@ async function deleteUserData(supabase: any, _userId: string): Promise<void> {
           address: null,
           notes: 'DATA_REDACTED_LGPD_ART18',
         },
-        condition: { user_id: userId },
+        condition: { user_id: _userId },
       },
       {
         table: 'users',
@@ -598,12 +600,12 @@ async function deleteUserData(supabase: any, _userId: string): Promise<void> {
           email: `deleted_${userId}@redacted.local`,
           name: 'REDACTED',
         },
-        condition: { id: userId },
+        condition: { id: _userId },
       },
     ];
 
     for (const operation of anonymizationOperations) {
-      const { data, error } = await supabase
+      const { data, error } = await _supabase
         .from(operation.table)
         .update(operation.updates)
         .match(operation.condition)
@@ -622,12 +624,12 @@ async function deleteUserData(supabase: any, _userId: string): Promise<void> {
 
     // Step 2: Delete consents and audit logs (these can be permanently deleted)
     const deletionOperations = [
-      { table: 'lgpd_consents', condition: { user_id: userId } },
-      { table: 'audit_events', condition: { user_id: userId } },
+      { table: 'lgpd_consents', condition: { user_id: _userId } },
+      { table: 'audit_events', condition: { user_id: _userId } },
     ];
 
     for (const operation of deletionOperations) {
-      const { error } = await supabase
+      const { error } = await _supabase
         .from(operation.table)
         .delete()
         .match(operation.condition);
@@ -644,7 +646,7 @@ async function deleteUserData(supabase: any, _userId: string): Promise<void> {
     }
 
     // Step 3: Create audit record of the data deletion
-    await supabase.from('audit_events').insert({
+    await _supabase.from('audit_events').insert({
       user_id: userId,
       event_type: 'data_erasure',
       resource_type: 'user',

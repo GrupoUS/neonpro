@@ -181,7 +181,7 @@ export function logSecurityEvent(data: AuditEventData): AuditEvent {
  * Get audit logs with filtering
  */
 export function getAuditLogs(
-  filters: {
+  _filters: {
     _userId?: string;
     category?: string;
     severity?: AuditSeverity;

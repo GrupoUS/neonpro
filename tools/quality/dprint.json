@@ -1,0 +1,68 @@
+{
+  "lineWidth": 100,
+  "indentWidth": 2,
+  "useTabs": false,
+  "newLineKind": "lf",
+  "quoteStyle": "alwaysDouble",
+  "semiColons": "asi",
+  "trailingCommas": "es5",
+  "forceMultiLine": true,
+  "preferSingleLine": false,
+  "nextControlFlowPosition": "sameLine",
+  "arrowFunction.useParentheses": "force",
+  "arrayExpression.preferSingleLine": false,
+  "arrayPattern.preferSingleLine": false,
+  "argumentFormatting": {
+    "useTrailingCommas": true
+  },
+  "binaryExpression.linePerExpression": false,
+  "conditionalExpression.linePerExpression": false,
+  "ignoreNodeCommentText": "dprint-ignore",
+  "ignoreFileCommentText": "dprint-ignore-file",
+  "includes": ["**/*.{ts,tsx,js,jsx,json,md}"],
+  "excludes": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "test-results",
+    "playwright-report",
+    ".next",
+    ".turbo",
+    "*.min.js",
+    "tools/**/node_modules",
+    "packages/**/dist",
+    "apps/**/dist"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.91.5.wasm",
+    "https://plugins.dprint.dev/json-0.19.3.wasm",
+    "https://plugins.dprint.dev/markdown-0.17.8.wasm",
+    "https://plugins.dprint.dev/toml-0.6.2.wasm"
+  ],
+  "typescript": {
+    "semiColons": "asi",
+    "quoteStyle": "alwaysDouble",
+    "useBraces": "always",
+    "bracePosition": "sameLineUnlessMultiLine",
+    "nextControlFlowPosition": "sameLine",
+    "operatorPosition": "nextLine",
+    "trailingCommas": "es5",
+    "arrowFunction.useParentheses": "force",
+    "binaryExpression.linePerExpression": false,
+    "memberExpression.linePerExpression": false,
+    "typeLiteral.separatorKind": "semiColon",
+    "enumDeclaration.memberSpacing": "newLine",
+    "typeDefinition.separatorKind": "semiColon"
+  },
+  "json": {
+    "trailingCommas": "es5"
+  },
+  "markdown": {
+    "emphasisKind": "underscore",
+    "strongKind": "asterisk",
+    "bulletListMarker": "-"
+  },
+  "incremental": true,
+  "maxWidth": 120
+}

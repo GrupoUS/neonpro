@@ -28,6 +28,8 @@ function Dashboard() {
     { icon: Calendar, label: "Agendamentos", href: "/appointments" },
     { icon: DollarSign, label: "Financeiro", href: "/financial" },
     { icon: Activity, label: "Prontuários", href: "/records" },
+    { icon: Calendar, label: "Agendamento Estético", href: "/aesthetic-scheduling" },
+    { icon: Activity, label: "Suporte Clínico IA", href: "/ai-clinical-support" },
   ];
 
   const stats = [

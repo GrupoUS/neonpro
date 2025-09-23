@@ -294,7 +294,7 @@ export class MonitoringService {
       const startTime = Date.now();
 
       // This would be implemented with actual database health checks
-      const dbHealthy = true; // Placeholder
+      const _dbHealthy = true; // Placeholder
 
       const responseTime = Date.now() - startTime;
 
@@ -332,7 +332,7 @@ export class MonitoringService {
    */
   private async checkSecurityHealth(): Promise<void> {
     try {
-      const errorTracking = getErrorTrackingHealth();
+      const _errorTracking = getErrorTrackingHealth();
 
       // Check for recent security events
       const recentEvents = this.securityEvents.filter(

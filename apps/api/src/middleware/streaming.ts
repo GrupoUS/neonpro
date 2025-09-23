@@ -134,7 +134,7 @@ export function streamingMiddleware() {
       // Return the response after next() completes
       return;
     } catch (error) {
-      // Error caught but not used - handled by surrounding logic
+      // Log streaming error context
       logger.error('Streaming middleware error', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
@@ -168,7 +168,7 @@ export function createHeartbeatStream(
           const heartbeat = formatSSEData('heartbeat', 'ping');
           controller.enqueue(new TextEncoder().encode(heartbeat));
         } catch (error) {
-          // Error caught but not used - handled by surrounding logic
+          // Stop heartbeat on error
           clearInterval(interval);
           controller.close();
         }
@@ -200,8 +200,8 @@ export function mergeSSEStreams(
               if (done) break;
               controller.enqueue(value);
             }
-          } catch (error) {
-            // Error caught but not used - handled by surrounding logic
+          } catch {
+            // Log individual stream errors
             logger.error(`Stream ${index} error`, {
               error: error instanceof Error ? error.message : String(error),
             });
@@ -213,7 +213,7 @@ export function mergeSSEStreams(
         await Promise.all(readPromises);
         controller.close();
       } catch (error) {
-        // Error caught but not used - handled by surrounding logic
+        // Log merge error details
         logger.error('Stream merge error', {
           error: error instanceof Error ? error.message : String(error),
         });

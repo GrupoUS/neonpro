@@ -5,12 +5,12 @@
  */
 
 import { createAdminClient } from '../clients/supabase';
-import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-compliance';
-import DataMaskingService, { MaskingContext, MaskingResult } from './data-masking-service';
+import { LGPDDataCategory } from '../middleware/lgpd-compliance';
+import DataMaskingService, { MaskingContext } from './data-masking-service';
 import DataRetentionService from './data-retention-service';
 import EnhancedLGPDConsentService, {
   ConsentStatus,
-  WithdrawalMethod,
+  // WithdrawalMethod,
 } from './enhanced-lgpd-consent';
 
 // ============================================================================
@@ -892,7 +892,7 @@ export class PatientPrivacyControlsService {
   private generateQuickActions(
     consentStats: any,
     accessStats: any,
-    patientId: string,
+    _patientId: string,
   ): Array<{
     type:
       | 'update_consent'
@@ -1030,7 +1030,7 @@ export class PatientPrivacyControlsService {
   /**
    * Get last access date for consent
    */
-  private getLastAccessDate(consentId: string): Date | undefined {
+  private getLastAccessDate(_consentId: string): Date | undefined {
     // Mock implementation - would query actual usage logs
     return new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000); // Random date within last 30 days
   }

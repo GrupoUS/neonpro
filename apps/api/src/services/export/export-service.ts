@@ -258,7 +258,7 @@ export class ExportService {
       });
     });
 
-    const csv = Papa.unparse({
+    /* const csv = */ Papa.unparse({
       fields: headers,
       data: csvData,
     });

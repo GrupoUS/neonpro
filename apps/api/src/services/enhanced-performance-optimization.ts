@@ -575,7 +575,7 @@ export class EnhancedPerformanceOptimizationService {
     try {
       // Process in batches
       for (let i = 0; i < items.length; i += batchSize) {
-        const batch = items.slice(i, i + batchSize);
+        const _batch = items.slice(i, i + batchSize);
 
         // Process batch with concurrency control
         const batchResults = await Promise.allSettled(
@@ -1102,7 +1102,7 @@ export class EnhancedPerformanceOptimizationService {
 
   private cleanupPerformanceMetrics(): void {
     // Remove old metrics data
-    const cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
+    const _cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
 
     for (const [_key, _metrics] of this.performanceMetrics.entries()) {
       // Implement cleanup logic based on your requirements

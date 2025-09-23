@@ -33,7 +33,7 @@ export class AuditTrailCompatibility {
     };
     orderBy?: any;
   }): Promise<any> {
-    const { where, orderBy } = params;
+    const { where, orderBy: _orderBy } = params;
 
     // Check if this is an operationId query (the misuse pattern)
     if (

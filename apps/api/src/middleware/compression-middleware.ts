@@ -107,7 +107,7 @@ export class CompressionMiddleware {
 
     // Override res.end to apply compression and metrics
     const originalEnd = res.end;
-    const originalWrite = res.write;
+    const _originalWrite = res.write;
 
     let responseBuffer: Buffer[] = [];
     let originalSize = 0;
@@ -521,7 +521,7 @@ export class CompressionMiddleware {
 function shouldCompress(
   buffer: Buffer,
   method: string,
-  config: CompressionConfig,
+  _config: CompressionConfig,
 ): boolean {
   if (method === 'none') return false;
 
@@ -547,7 +547,7 @@ function shouldCompress(
 function compressResponse(
   buffer: Buffer,
   method: string,
-  config: CompressionConfig,
+  _config: CompressionConfig,
 ): Buffer | null {
   try {
     // This is a placeholder implementation

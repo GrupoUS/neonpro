@@ -15,7 +15,7 @@ import * as v from 'valibot';
 import {
   healthcareProcedure,
   patientProcedure,
-  protectedProcedure,
+  // protectedProcedure,
   router,
   telemedicineProcedure,
 } from '../trpc';
@@ -27,13 +27,13 @@ import TelemedicineService from '../../services/telemedicine';
 
 // Import existing validation schemas
 import {
-  AppointmentCreateSchema,
-  LGPDConsentCreateSchema,
-  PatientCreateSchema,
+  // AppointmentCreateSchema,
+  // LGPDConsentCreateSchema,
+  // PatientCreateSchema,
 } from '@neonpro/types';
 
 // Import only used schemas
-import { ConsentWithdrawalRecordSchema } from '../../services/enhanced-lgpd-lifecycle';
+// import { ConsentWithdrawalRecordSchema } from '../../services/enhanced-lgpd-lifecycle';
 
 // Service instances (would be injected in real app)
 let lgpdService: EnhancedLGPDLifecycleService;

@@ -192,7 +192,7 @@ export class SemanticCacheService {
       return null;
     }
 
-    const startTime = Date.now();
+    const _startTime = Date.now();
     this.stats.totalRequests++;
 
     try {
@@ -665,7 +665,7 @@ export class SemanticCacheService {
     optimized: boolean;
     strategy: 'semantic' | 'exact' | 'healthcare_context';
   } {
-    const { prompt, patientId, context, maxAgeMs } = query;
+    const { prompt, patientId, context, maxAgeMs: _maxAgeMs } = query;
 
     // Estratégia baseada no contexto
     let strategy: 'semantic' | 'exact' | 'healthcare_context' = 'semantic';

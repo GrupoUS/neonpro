@@ -8,7 +8,7 @@ export default defineConfig({
     // Environment settings optimized for clinic app
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./src/test-setup.ts'],
+    setupFiles: ['./src/test/dom-environment.ts', './src/test-setup.ts'],
 
     // Performance optimization for clinic app testing
     threads: true,
@@ -25,7 +25,7 @@ export default defineConfig({
     // Memory optimization
     maxWorkers: 8,
     minWorkers: 3,
-    
+
     // Coverage configuration optimized for clinic app
     coverage: {
       provider: 'v8',
@@ -59,7 +59,7 @@ export default defineConfig({
         'src/**/*.{js,jsx,ts,tsx}',
       ],
     },
-    
+
     // Test matching optimized for clinic app structure
     include: [
       'src/**/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}',
@@ -90,12 +90,9 @@ export default defineConfig({
     restoreMocks: true,
 
     // Global test files
-    globalSetup: ['./src/test/global-setup.ts'],
-    globalTeardown: ['./src/test/global-teardown.ts'],
+    // Note: globalSetup removed due to vitest context issues
 
     // Test isolation
-    isolate: true,
-    singleThread: false,
 
     // Environment variables for testing
     env: {
@@ -104,7 +101,7 @@ export default defineConfig({
       VITE_SUPABASE_ANON_KEY: 'test-anon-key',
       VITE_API_URL: 'http://localhost:3001',
     },
-    
+
   },
   
   // Path aliases optimized for clinic app structure

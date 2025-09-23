@@ -138,10 +138,10 @@ kubectl apply -f k8s/aesthetic/
 vercel deploy --prod
 
 # Wait for deployment completion
-vercel inspect neonpro-healthcare-platform
+vercel inspect neonpro-aesthetic-platform
 
 # Verify deployment success
-curl -f https://neonpro.healthcare/health
+curl -f https://neonpro.aesthetic/health
 ```
 
 ### Step 5: Post-Deployment Validation (T+0 minutes)
@@ -153,24 +153,24 @@ curl -f https://neonpro.healthcare/health
 ./monitoring/scripts/health-check.sh
 
 # Verify all endpoints responsive
-curl -f https://api.neonpro.healthcare/health
-curl -f https://api.neonpro.healthcare/api/health/database
-curl -f https://api.neonpro.healthcare/api/health/compliance
+curl -f https://api.neonpro.aesthetic/health
+curl -f https://api.neonpro.aesthetic/api/health/database
+curl -f https://api.neonpro.aesthetic/api/health/compliance
 ```
 
-#### Healthcare Functionality
+#### Aesthetic Clinic Functionality
 
 ```bash
-# Test patient data access
-curl -X POST https://api.neonpro.healthcare/api/patients/validate \
+# Test client data access
+curl -X POST https://api.neonpro.aesthetic/api/clients/validate \
   -H "Authorization: Bearer $TEST_TOKEN"
 
-# Test appointment system
-curl -X POST https://api.neonpro.healthcare/api/appointments/test \
+# Test treatment appointment system
+curl -X POST https://api.neonpro.aesthetic/api/appointments/test \
   -H "Authorization: Bearer $TEST_TOKEN"
 
-# Test medical records
-curl -X GET https://api.neonpro.healthcare/api/medical-records/test \
+# Test treatment records
+curl -X GET https://api.neonpro.aesthetic/api/treatment-records/test \
   -H "Authorization: Bearer $TEST_TOKEN"
 ```
 
@@ -178,21 +178,21 @@ curl -X GET https://api.neonpro.healthcare/api/medical-records/test \
 
 ```bash
 # Validate LGPD compliance
-curl -f https://api.neonpro.healthcare/api/compliance/lgpd/status
+curl -f https://api.neonpro.aesthetic/api/compliance/lgpd/status
 
-# Validate ANVISA compliance
-curl -f https://api.neonpro.healthcare/api/compliance/anvisa/status
+# Validate ANVISA cosmetic compliance
+curl -f https://api.neonpro.aesthetic/api/compliance/anvisa/status
 
-# Validate CFM compliance
-curl -f https://api.neonpro.healthcare/api/compliance/cfm/status
+# Validate professional council compliance
+curl -f https://api.neonpro.aesthetic/api/compliance/professional-council/status
 ```
 
 ## 🔄 Rollback Procedures
 
 ### Immediate Rollback Triggers
 
-- **Patient Safety Risk**: Any impact on patient care
-- **Data Integrity Issues**: Corruption or loss of patient data
+- **Client Safety Risk**: Any impact on client care
+- **Data Integrity Issues**: Corruption or loss of client data
 - **Security Breach**: Unauthorized access or data exposure
 - **Compliance Violation**: Failure to meet regulatory requirements
 - **System Instability**: > 5% error rate or > 30s response times
@@ -216,7 +216,7 @@ curl -f https://api.neonpro.healthcare/api/compliance/cfm/status
 vercel rollback --prod
 
 # Restore previous configuration
-kubectl rollout undo deployment/neonpro-web
+kubectl rollout undo deployment/neonpro-aesthetic-web
 ```
 
 #### Step 3: Validation
@@ -249,34 +249,34 @@ kubectl rollout undo deployment/neonpro-web
 
 ### Real-time Monitoring Dashboards
 
-- **System Health**: https://monitoring.neonpro.healthcare/d/healthcare-overview
-- **Deployment Progress**: https://monitoring.neonpro.healthcare/d/deployment-status
-- **Error Rates**: https://monitoring.neonpro.healthcare/d/error-tracking
-- **Compliance Status**: https://monitoring.neonpro.healthcare/d/compliance-monitoring
+- **System Health**: https://monitoring.neonpro.aesthetic/d/aesthetic-overview
+- **Deployment Progress**: https://monitoring.neonpro.aesthetic/d/deployment-status
+- **Error Rates**: https://monitoring.neonpro.aesthetic/d/error-tracking
+- **Compliance Status**: https://monitoring.neonpro.aesthetic/d/compliance-monitoring
 
 ### Key Metrics to Watch
 
 - **API Response Time**: Should remain < 2s
 - **Error Rate**: Should remain < 1%
 - **Database Performance**: Queries < 500ms
-- **Patient Data Access**: No unauthorized access attempts
+- **Client Data Access**: No unauthorized access attempts
 - **Compliance Status**: All checks passing
 
 ### Alert Thresholds
 
-- **Critical**: Any patient safety impact
+- **Critical**: Any client safety impact
 - **High**: > 5% error rate or > 30s response times
 - **Medium**: > 2% error rate or > 10s response times
 - **Low**: Performance degradation within acceptable limits
 
 ## 🚨 Emergency Procedures
 
-### Patient Safety Incident
+### Client Safety Incident
 
-1. **Immediate Action**: Pause deployment, notify medical director
-2. **Assessment**: Evaluate impact on patient care
+1. **Immediate Action**: Pause deployment, notify clinic director
+2. **Assessment**: Evaluate impact on client care
 3. **Mitigation**: Implement workarounds if necessary
-4. **Communication**: Notify affected clinics and patients
+4. **Communication**: Notify affected clinics and clients
 5. **Documentation**: Record incident details for compliance
 
 ### Data Breach
@@ -335,13 +335,13 @@ kubectl rollout undo deployment/neonpro-web
 - [ ] Monitoring and alerting operational
 - [ ] Backup and recovery verified
 
-### Healthcare Success
+### Aesthetic Clinic Success
 
-- [ ] No impact on patient care or safety
-- [ ] All medical data secure and accessible
-- [ ] Healthcare compliance maintained
+- [ ] No impact on client care or safety
+- [ ] All client data secure and accessible
+- [ ] Aesthetic clinic compliance maintained
 - [ ] Clinical functionality operational
-- [ ] Telemedicine services available
+- [ ] Virtual consultation services available
 
 ### Business Success
 
@@ -404,8 +404,8 @@ kubectl rollout undo deployment/neonpro-web
 
 **Deployment Authority**: CTO and Head of Operations
 **Emergency Contact**: +5511999999999
-**Compliance Officer**: dpo@neonpro.healthcare
-**Medical Oversight**: medical.director@neonpro.healthcare
+**Compliance Officer**: dpo@neonpro.aesthetic
+**Clinic Oversight**: clinic.director@neonpro.aesthetic
 
 **Version**: 1.0.0
 **Last Updated**: September 22, 2025

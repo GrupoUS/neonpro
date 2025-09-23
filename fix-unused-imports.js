@@ -13,7 +13,7 @@ try {
     "cd /home/vibecode/neonpro/apps/web && npx oxlint src 2>&1",
     { encoding: "utf8" },
   );
-} catch (_error) {
+} catch (_error) { void _error;
   // Error caught but not used - handled by surrounding logic
   // oxlint returns exit code 1 when there are warnings, but we still get the output
   oxlintOutput = error.stdout || error.output?.[1] || "";
@@ -190,7 +190,7 @@ try {
   console.log(
     `📊 Remaining unused imports: ${remainingCount} (reduced from 524)`,
   );
-} catch (_error) {
+} catch (_error) { void _error;
   // Error caught but not used - handled by surrounding logic
   try {
     const afterOutput = execSync(
@@ -201,7 +201,7 @@ try {
     console.log(
       `📊 Remaining unused imports: ${remainingCount} (reduced from 524)`,
     );
-  } catch (_error2) {
+  } catch (_error2) { void _error2;
     // Error caught but not used - handled by surrounding logic
     console.log("ℹ️  Could not count remaining issues");
   }

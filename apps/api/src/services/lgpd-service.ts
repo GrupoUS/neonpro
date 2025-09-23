@@ -482,7 +482,7 @@ export class LGPDService {
         };
       }
 
-      const request = createDataSubjectRequest({
+      const _request = createDataSubjectRequest({
         patientId: params.patientId,
         requestType: params.requestType,
         requestedBy: params.requestedBy,

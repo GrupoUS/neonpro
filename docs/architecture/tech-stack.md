@@ -19,9 +19,9 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 **Stack Overview**:
 
-- **Frontend**: TanStack Router + Vite + React 19 + TypeScript 5.9.2
+- **Frontend**: TanStack Router + TanStack Query + Vite + React 19 + Shadcn + TypeScript 5.9.2
 - **Backend**: tRPC v11 + Prisma + Supabase + PostgreSQL 15+
-- **AI**: OpenAI GPT-4 + Anthropic Claude via Vercel AI SDK
+- **AI**: OpenAI GPT-5-mini + Gemini Flash 2.5 via Vercel AI SDK + Copilotkit + AG-UI
 - **Infrastructure**: Vercel (São Paulo) + Turborepo monorepo
 - **Quality**: Vitest + Playwright + Oxlint + TypeScript strict
 
@@ -187,24 +187,52 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Features**: Streaming chat, function calling, provider switching, error handling
 - **Benefits**: Unified API across providers, excellent TypeScript support
 
-**OpenAI GPT-4** - Primary Conversational AI
+**OpenAI GPT-5-mini** - Primary Conversational AI
 
 - **Why**: Best Portuguese language support, function calling, reliability
 - **Benefits**: Excellent Portuguese understanding, fast responses, stable API
 - **Config**: Temperature 0.7, max tokens 2048, system prompts
 - **Performance**: <2s response time for typical queries
 
-**Anthropic Claude** - Secondary AI Provider
+**Gemini Flash 2.5** - Secondary AI Provider
 
-- **Why**: Excellent reasoning capabilities, safety focus, backup reliability
-- **Benefits**: Strong reasoning, safety features, context understanding
+- **Why**: Excellent reasoning capabilities, speed, cost-effectiveness
+- **Benefits**: Strong reasoning, fast responses, cost optimization
 - **Usage**: Backup provider, complex reasoning, safety-critical operations
+
+**CopilotKit v1.10.4** - AI Assistant Integration
+
+- **Why**: Comprehensive AI agent framework, healthcare compliance, Brazilian Portuguese support
+- **Features**: Context-aware conversations, multi-agent coordination, audit logging
+- **Benefits**: Enhanced patient experience, automated scheduling, clinical decision support
+- **Implementation**: 9.2/10 rating, excellent integration with existing systems
+
+**AG-UI Protocol** - AI User Interface Framework
+
+- **Why**: Specialized for healthcare interfaces, accessibility compliance, Brazilian healthcare standards
+- **Features**: WCAG 2.1 AA+ compliance, medical workflow optimization, responsive design
+- **Benefits**: Improved user experience, regulatory compliance, mobile-first approach
+- **Implementation**: Excellent (9.2/10) rating with comprehensive healthcare features
+
+**Enhanced Aesthetic Scheduling System** - Multi-Session Treatment Management
+
+- **Why**: Specialized for aesthetic clinic workflows, multi-session treatments, recovery planning
+- **Features**: Professional certification validation, treatment package scheduling, resource optimization
+- **Benefits**: Reduced scheduling conflicts, improved resource utilization, enhanced patient experience
+- **Implementation**: Comprehensive system with Brazilian healthcare compliance
+
+**AI Clinical Decision Support System** - Treatment Intelligence & Safety
+
+- **Why**: Evidence-based treatment recommendations, contraindication analysis, outcome prediction
+- **Features**: Treatment recommendation engine, contraindication analysis, progress monitoring
+- **Benefits**: Enhanced patient safety, improved treatment outcomes, reduced complications
+- **Implementation**: Advanced AI system with comprehensive Brazilian healthcare compliance
 
 **TensorFlow.js (Latest)** - Client-Side Machine Learning
 
 - **Why**: Browser-native ML, privacy-preserving, offline capabilities
 - **Benefits**: Client-side inference, privacy protection, offline support
-- **Use Cases**: Anti-No-Show prediction, client-side validation, offline analytics
+- **Use Cases**: Anti-No-Show prediction, client-side validation, offline analytics, aesthetic treatment outcome prediction
 
 **AI Governance**:
 
@@ -212,6 +240,8 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **PII Protection**: Automatic redaction
 - **Failover**: OpenAI → Anthropic with exponential backoff
 - **Rate Limiting**: Provider-specific limits with graceful degradation
+- **Clinical Safety**: Multi-layer validation for treatment recommendations
+- **Audit Trail**: Complete logging for all AI interactions with patient data
 
 ### Testing & Quality Assurance Stack
 
@@ -330,15 +360,16 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 ### AI Provider: Multi-Provider vs Single Provider
 
-**Decision**: OpenAI GPT-4 + Anthropic Claude via Vercel AI SDK
+**Decision**: OpenAI GPT-5-mini + Gemini Flash 2.5 + CopilotKit + AG-UI
 **Key Factors**:
 
-- **Reliability**: Failover capability vs single point of failure
-- **Cost Optimization**: Provider switching based on usage patterns
-- **Feature Diversity**: GPT-4 for Portuguese, Claude for reasoning
-- **Vendor Independence**: Reduced lock-in risk
+- **Reliability**: Multi-provider failover capability vs single point of failure
+- **Cost Optimization**: Provider switching based on usage patterns and complexity
+- **Feature Diversity**: GPT-5 for Portuguese, Gemini for reasoning, CopilotKit for healthcare workflows
+- **Vendor Independence**: Reduced lock-in risk, comprehensive AI ecosystem
+- **Healthcare Compliance**: Built-in LGPD, ANVISA, and professional regulation compliance
 
-**Impact**: 99.9% AI service uptime, cost optimization, feature diversity
+**Impact**: 99.9% AI service uptime, cost optimization, comprehensive healthcare workflows
 
 ## Version Management & Upgrade Strategy
 

@@ -381,7 +381,7 @@ export class TelemedicineService {
 
       return session;
     } catch (_error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
       throw new Error(`Failed to create telemedicine session: ${errorMessage}`);
     }
   }
@@ -462,7 +462,7 @@ export class TelemedicineService {
         qualityRequirements: QUALITY_THRESHOLDS,
       };
     } catch (_error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
       throw new Error(`Failed to start session: ${errorMessage}`);
     }
   }
@@ -665,7 +665,7 @@ export class TelemedicineService {
         isValid: true,
       };
     } catch (_error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
       throw new Error(`Failed to create digital prescription: ${errorMessage}`);
     }
   } /**
@@ -783,7 +783,7 @@ export class TelemedicineService {
         nearestHospital,
       };
     } catch (_error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
       throw new Error(`Emergency escalation failed: ${errorMessage}`);
     }
   }
@@ -874,7 +874,7 @@ export class TelemedicineService {
         archivalDetails,
       };
     } catch (_error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
       throw new Error(`Failed to end session: ${errorMessage}`);
     }
   }
@@ -927,7 +927,7 @@ export class TelemedicineService {
       this.cfmCache.set(professionalId, validation);
       return validation;
     } catch (_error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage = _error instanceof Error ? _error.message : 'Unknown error';
       throw new Error(`CFM validation failed: ${errorMessage}`);
     }
   }
@@ -1229,7 +1229,7 @@ export class TelemedicineService {
     const retentionPeriod = this.getRetentionPeriod(session.sessionType);
 
     // Encrypt session data
-    const encryptedData = this.encryptSessionData(session);
+    const _encryptedData = this.encryptSessionData(session); void _encryptedData;
 
     // In real implementation, store in secure archive
     console.log(`Archiving session ${session.id} with ID ${archiveId}`);

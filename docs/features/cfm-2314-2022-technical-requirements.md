@@ -1,35 +1,35 @@
 ---
-title: "CFM Resolution 2.314/2022 - Technical Requirements Analysis"
-last_updated: 2025-01-28
+title: "Aesthetic Professional Council Virtual Consultation Requirements"
+last_updated: 2025-09-23
 tags:
-  [CFM, telemedicine, regulations, compliance, Brazil, technical-requirements]
+  [CNEP-COREN-CFF, virtual-consultation, regulations, compliance, Brazil, technical-requirements]
 related:
-  - ./telemedicine-platform-research.md
-  - ./telemedicine-platform-architecture.md
+  - ./virtual-consultation-platform-research.md
+  - ./virtual-consultation-platform-architecture.md
   - ../rules/supabase-best-practices.md
 ---
 
-# CFM Resolution 2.314/2022 - Technical Requirements Analysis
+# Aesthetic Professional Council Virtual Consultation Requirements
 
 ## Overview
 
-Detailed analysis of CFM Resolution 2.314/2022 technical requirements for telemedicine implementation in Brazil, with specific mapping to NeonPro platform technical specifications.
+Detailed analysis of aesthetic professional council requirements for virtual consultation implementation in Brazil, with specific mapping to NeonPro platform technical specifications for aesthetic clinics.
 
-## CFM Resolution 2.314/2022 Key Articles
+## Aesthetic Professional Council Key Requirements
 
-### Article 1 - Definition of Telemedicine
+### Virtual Consultation Definition
 
-**Text**: "Define telemedicine as the practice of medicine mediated by Digital Information and Communication Technologies (DICTs), for assistance, education, research, prevention of diseases and injuries, health management and promotion."
+**Definition**: "Virtual consultation in aesthetic procedures as the practice of aesthetic services mediated by Digital Information and Communication Technologies (DICTs), for consultation, education, treatment planning, procedure guidance, and aesthetic management."
 
 **Technical Implications**:
 
 - All communications must use secure digital technologies
-- Platform must support multiple use cases: assistance, education, research
-- System must enable health promotion and disease prevention workflows
+- Platform must support multiple use cases: consultation, education, treatment planning
+- System must enable aesthetic service delivery and procedure guidance workflows
 
-### Article 2 - Permitted Modalities
+### Virtual Consultation Modalities
 
-**Text**: "Telemedicine, in real-time online (synchronous) or offline (asynchronous), by multimedia in technology, is permitted within the national territory."
+**Requirements**: "Virtual consultation for aesthetic procedures, in real-time online (synchronous) or offline (asynchronous), by multimedia in technology, is permitted within the national territory."
 
 **Technical Requirements**:
 
@@ -49,13 +49,13 @@ asynchronous_support:
 multimedia_requirements:
   - video_resolution: "minimum 720p"
   - audio_quality: "22kHz sampling rate minimum"
-  - image_sharing: "medical grade quality"
+  - image_sharing: "aesthetic procedure quality"
   - document_exchange: "encrypted transmission"
 ```
 
 ### Article 3 - Data Preservation Requirements
 
-**Text**: "In services provided by telemedicine, patient data and images contained in the medical record must be preserved, obeying the legal norms and CFM pertaining to confidentiality, availability, and integrity."
+**Text**: "In services provided by virtual consultation, client data and images contained in the aesthetic record must be preserved, obeying the legal norms and professional councils pertaining to confidentiality, availability, and integrity."
 
 **Implementation Requirements**:
 
@@ -80,7 +80,7 @@ interface DataPreservationRequirements {
   };
 
   retention: {
-    medicalRecords: "20-years";
+    aestheticRecords: "20-years";
     consultationRecordings: "20-years";
     auditLogs: "10-years";
     accessLogs: "5-years";
@@ -88,26 +88,28 @@ interface DataPreservationRequirements {
 }
 ```
 
-### Article 4 - Medical Professional Requirements
+### Article 4 - Aesthetic Professional Requirements
 
-**Text**: "Telemedicine must be performed by medical professionals registered in the Regional Medical Council (CRM) and with active license."
+**Text**: "Virtual consultation must be performed by aesthetic professionals registered with their respective professional councils (CNEP, COREN, CFF, etc.) and with active license."
 
 **Technical Validation**:
 
 ```typescript
-interface CFMLicenseValidation {
-  validateDoctorLicense(
-    crmNumber: string,
+interface ProfessionalLicenseValidation {
+  validateProfessionalLicense(
+    licenseNumber: string,
+    councilType: "CNEP" | "COREN" | "CFF" | "OTHER",
     state: string,
   ): Promise<LicenseStatus>;
-  checkLicenseExpiry(doctorId: string): Promise<boolean>;
-  verifySpecialization(doctorId: string, specialty: string): Promise<boolean>;
-  updateLicenseStatus(doctorId: string): Promise<void>;
+  checkLicenseExpiry(professionalId: string): Promise<boolean>;
+  verifySpecialization(professionalId: string, specialty: string): Promise<boolean>;
+  updateLicenseStatus(professionalId: string): Promise<void>;
 }
 
 interface LicenseStatus {
   isActive: boolean;
   licenseNumber: string;
+  councilType: string;
   state: string;
   expiryDate: Date;
   specializations: string[];
@@ -115,20 +117,20 @@ interface LicenseStatus {
 }
 ```
 
-### Article 6 - Patient Identification
+### Article 6 - Client Identification
 
-**Text**: "Patient identification must be done safely and reliably, following current legal standards."
+**Text**: "Client identification must be done safely and reliably, following current legal standards."
 
 **Identity Verification Requirements**:
 
 ```typescript
-interface PatientIdentification {
+interface ClientIdentification {
   cpf: string; // Brazilian Tax ID (required)
-  cns?: string; // National Health Card (optional)
   rg: string; // State ID
   fullName: string;
   dateOfBirth: Date;
-  motherName: string; // Used for additional verification
+  phone: string; // Primary contact method
+  email: string; // For appointment confirmations
 
   // Biometric verification (recommended)
   faceVerification?: boolean;
@@ -149,15 +151,15 @@ interface PatientIdentification {
 
 ### Article 8 - Informed Consent
 
-**Text**: "Informed consent for telemedicine care must be obtained from the patient or legal representative."
+**Text**: "Informed consent for virtual consultation must be obtained from the client or legal representative."
 
 **Consent Management System**:
 
 ```typescript
-interface TelemedicineConsent {
+interface VirtualConsultationConsent {
   consentId: string;
-  patientId: string;
-  consentType: "telemedicine_consultation" | "recording" | "data_processing";
+  clientId: string;
+  consentType: "virtual_consultation" | "recording" | "data_processing" | "aesthetic_procedure";
 
   consentDetails: {
     purpose: string;
@@ -171,7 +173,7 @@ interface TelemedicineConsent {
   revokedAt?: Date;
 
   // Legal basis under LGPD
-  legalBasis: "consent" | "vital_interests" | "public_interest";
+  legalBasis: "consent" | "legitimate_interest" | "contractual_necessity";
 
   // Consent evidence
   ipAddress: string;
@@ -186,7 +188,7 @@ interface TelemedicineConsent {
 
 ### Article 10 - Technical Infrastructure
 
-**Text**: "Services provided through telemedicine must have adequate technological infrastructure and comply with CFM rules regarding storage, handling, integrity, accuracy, confidentiality, privacy, irrefutability, and professional secrecy of information."
+**Text**: "Services provided through virtual consultation must have adequate technological infrastructure and comply with professional council rules regarding storage, handling, integrity, accuracy, confidentiality, privacy, irrefutability, and professional confidentiality of information."
 
 **Infrastructure Requirements Mapping**:
 
@@ -207,7 +209,7 @@ technological_infrastructure:
 
   compliance_features:
     storage_compliance:
-      - medical_record_integration: true
+      - aesthetic_record_integration: true
       - data_lifecycle_management: true
       - secure_deletion_capabilities: true
       - geographic_restrictions: "Brazil only"
@@ -248,24 +250,24 @@ technological_infrastructure:
       - non_repudiation: true
       - legal_evidence_format: true
 
-    professional_secrecy:
-      - medical_professional_access_only: true
-      - patient_data_isolation: true
+    professional_confidentiality:
+      - aesthetic_professional_access_only: true
+      - client_data_isolation: true
       - confidentiality_agreements: true
       - breach_notification: "automatic"
 ```
 
-### Article 11 - Medical Record Integration
+### Article 11 - Aesthetic Record Integration
 
-**Text**: "Records must be made in a physical medical record or using information systems in the Electronic Health Record System (SRES) of the patient, meeting standards of representation, terminology, and interoperability."
+**Text**: "Records must be made in a physical aesthetic record or using information systems in the Electronic Aesthetic Record System (SREA) of the client, meeting standards of representation, terminology, and interoperability."
 
-**Medical Record Integration Requirements**:
+**Aesthetic Record Integration Requirements**:
 
 ```typescript
-interface MedicalRecordIntegration {
+interface AestheticRecordIntegration {
   // Standard compliance
   standards: {
-    terminology: "SNOMED-CT" | "CID-10" | "TUSS";
+    terminology: "Aesthetic Procedures" | "Cosmetic Products" | "Treatment Codes";
     representation: "HL7-FHIR";
     interoperability: "openEHR";
   };
@@ -273,45 +275,45 @@ interface MedicalRecordIntegration {
   // Record structure
   consultation_record: {
     session_id: string;
-    doctor_id: string;
-    patient_id: string;
+    professional_id: string;
+    client_id: string;
     consultation_date: Date;
-    consultation_type: "telemedicine";
+    consultation_type: "virtual_consultation";
 
-    // Clinical data
-    chief_complaint: string;
-    history_present_illness: string;
-    physical_examination: string;
-    assessment_and_plan: string;
-    prescriptions: Prescription[];
+    // Aesthetic consultation data
+    client_concerns: string;
+    aesthetic_history: string;
+    skin_assessment: string;
+    treatment_plan: string;
+    product_recommendations: Product[];
 
-    // Telemedicine specific
+    // Virtual consultation specific
     technology_used: string;
     session_quality: QualityMetrics;
     technical_issues: string[];
 
     // Legal compliance
     informed_consent_obtained: boolean;
-    patient_identification_verified: boolean;
-    cfm_license_verified: boolean;
+    client_identification_verified: boolean;
+    professional_license_verified: boolean;
   };
 
   // Integration methods
   integration_apis: {
     createConsultationRecord(record: ConsultationRecord): Promise<string>;
-    updateMedicalRecord(
-      patientId: string,
+    updateAestheticRecord(
+      clientId: string,
       updates: RecordUpdate[],
     ): Promise<void>;
-    retrievePatientHistory(patientId: string): Promise<MedicalHistory>;
-    generateClinicalSummary(sessionId: string): Promise<ClinicalSummary>;
+    retrieveClientHistory(clientId: string): Promise<AestheticHistory>;
+    generateAestheticSummary(sessionId: string): Promise<AestheticSummary>;
   };
 }
 ```
 
 ### Article 17 - Legal Entity Requirements
 
-**Text**: "Legal entities that provide telemedicine services, communication platforms, and data archiving must have headquarters established in Brazilian territory and be registered with the Regional Medical Council of the state where they are based."
+**Text**: "Legal entities that provide virtual consultation services, communication platforms, and data archiving must have headquarters established in Brazilian territory and be registered with the relevant professional councils of the state where they are based."
 
 **Company Registration Requirements**:
 
@@ -319,22 +321,22 @@ interface MedicalRecordIntegration {
 legal_entity_requirements:
   business_registration:
     headquarters_location: "Brazil mandatory"
-    crm_registration: "Required in operational state"
-    technical_responsibility: "Licensed physician required"
-    anvisa_registration: "Medical device software"
+    professional_council_registration: "Required in operational state"
+    technical_responsibility: "Licensed aesthetic professional required"
+    anvisa_registration: "Cosmetic product software"
 
   compliance_documentation:
     - company_registration: "CNPJ required"
-    - crm_technical_responsibility: "Active physician"
-    - anvisa_medical_device: "SaMD Class I registration"
+    - professional_council_technical_responsibility: "Active aesthetic professional"
+    - anvisa_cosmetic_registration: "Cosmetic software registration"
     - data_protection_officer: "LGPD compliance"
-    - quality_management_system: "ISO 13485"
+    - quality_management_system: "ISO 9001"
 
   operational_requirements:
     data_processing_location: "Brazil only"
     customer_support: "Portuguese language"
     legal_jurisdiction: "Brazilian law"
-    regulatory_compliance: "CFM + ANVISA + LGPD"
+    regulatory_compliance: "Professional Councils + ANVISA + LGPD"
 ```
 
 ## Technical Implementation Mapping
@@ -342,33 +344,35 @@ legal_entity_requirements:
 ### 1. Authentication and Authorization System
 
 ```typescript
-class CFMAuthenticationService {
-  async validateDoctorCredentials(
-    credentials: DoctorCredentials,
+class ProfessionalCouncilAuthenticationService {
+  async validateProfessionalCredentials(
+    credentials: ProfessionalCredentials,
   ): Promise<AuthResult> {
-    // Validate CRM license with CFM API
-    const licenseStatus = await this.cfmApi.validateLicense(
-      credentials.crmNumber,
+    // Validate professional license with relevant council API
+    const licenseStatus = await this.councilApi.validateLicense(
+      credentials.licenseNumber,
+      credentials.councilType,
       credentials.state,
     );
 
     if (!licenseStatus.isActive) {
-      throw new Error("Invalid or inactive medical license");
+      throw new Error("Invalid or inactive professional license");
     }
 
     // Create authenticated session
     return {
-      userId: credentials.doctorId,
-      role: "doctor",
-      crmNumber: credentials.crmNumber,
+      userId: credentials.professionalId,
+      role: "aesthetic_professional",
+      licenseNumber: credentials.licenseNumber,
+      councilType: credentials.councilType,
       specializations: licenseStatus.specializations,
       sessionToken: this.generateSecureToken(),
       expiresAt: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours
     };
   }
 
-  async validatePatientIdentity(
-    identity: PatientIdentity,
+  async validateClientIdentity(
+    identity: ClientIdentity,
   ): Promise<IdentityResult> {
     // Validate CPF format and check digit
     if (!this.validateCPF(identity.cpf)) {
@@ -376,7 +380,6 @@ class CFMAuthenticationService {
     }
 
     // Optional: Integrate with Receita Federal for CPF validation
-    // Optional: Validate CNS with DATASUS
 
     return {
       verified: true,
@@ -392,21 +395,21 @@ class CFMAuthenticationService {
 ### 2. Session Management and Recording
 
 ```typescript
-class TelemedicineSessionService {
+class VirtualConsultationSessionService {
   async createSession(
     params: CreateSessionParams,
-  ): Promise<TelemedicineSession> {
-    // Validate all CFM requirements
-    await this.validateCFMCompliance(params);
+  ): Promise<VirtualConsultationSession> {
+    // Validate all professional council requirements
+    await this.validateCompliance(params);
 
-    const session = await this.database.telemedicine_sessions.create({
+    const session = await this.database.virtual_consultation_sessions.create({
       data: {
-        doctor_id: params.doctorId,
-        patient_id: params.patientId,
+        professional_id: params.professionalId,
+        client_id: params.clientId,
         session_type: params.type,
         status: "scheduled",
         webrtc_room_id: this.generateRoomId(),
-        cfm_verified: true,
+        license_verified: true,
         lgpd_consent_obtained: params.consentObtained,
         compliance_verified: true,
         scheduled_at: params.scheduledTime,
@@ -417,9 +420,9 @@ class TelemedicineSessionService {
     await this.auditService.logEvent({
       event_type: "session_created",
       session_id: session.id,
-      doctor_id: params.doctorId,
-      patient_id: params.patientId,
-      compliance_status: "cfm_verified",
+      professional_id: params.professionalId,
+      client_id: params.clientId,
+      compliance_status: "council_verified",
     });
 
     return session;
@@ -428,8 +431,8 @@ class TelemedicineSessionService {
   async startRecording(sessionId: string): Promise<void> {
     // Verify recording consent
     const session = await this.getSession(sessionId);
-    if (!session.patient_consent_recording) {
-      throw new Error("Patient consent for recording not obtained");
+    if (!session.client_consent_recording) {
+      throw new Error("Client consent for recording not obtained");
     }
 
     // Start encrypted recording
@@ -437,7 +440,7 @@ class TelemedicineSessionService {
       encryption: "AES-256-GCM",
       storage: "brazilian-servers-only",
       retention: "20-years",
-      format: "medical-grade-quality",
+      format: "consultation-grade-quality",
     };
 
     await this.recordingService.startRecording(sessionId, recordingConfig);
@@ -481,7 +484,7 @@ class DataPreservationService {
           signing_algorithm: "RSA-PSS",
           geographic_location: "brazil",
           retention_period: "20-years",
-          cfm_compliant: true,
+          council_compliant: true,
         },
         created_at: new Date(),
       },
@@ -526,23 +529,23 @@ class DataPreservationService {
 ### 4. Compliance Monitoring Dashboard
 
 ```typescript
-interface CFMComplianceStatus {
+interface ProfessionalCouncilComplianceStatus {
   // Real-time compliance monitoring
   active_sessions: {
     total: number;
-    cfm_verified: number;
+    license_verified: number;
     consent_obtained: number;
     recording_compliant: number;
   };
 
-  // Doctor verification status
-  doctor_compliance: {
+  // Professional verification status
+  professional_compliance: {
     active_licenses: number;
     expired_licenses: number;
     pending_verification: number;
   };
 
-  // Patient consent tracking
+  // Client consent tracking
   consent_status: {
     granted: number;
     pending: number;
@@ -569,12 +572,12 @@ interface CFMComplianceStatus {
 
 ## Implementation Checklist
 
-### Phase 1: Core CFM Compliance
+### Phase 1: Core Professional Council Compliance
 
-- [ ] CFM license validation API integration
-- [ ] Patient identity verification system
+- [ ] Professional council license validation API integration
+- [ ] Client identity verification system
 - [ ] Informed consent management
-- [ ] Medical record integration (HL7-FHIR)
+- [ ] Aesthetic record integration (HL7-FHIR)
 - [ ] Audit logging system
 
 ### Phase 2: Technical Infrastructure
@@ -596,7 +599,7 @@ interface CFMComplianceStatus {
 ### Phase 4: Quality Assurance
 
 - [ ] Security audit and penetration testing
-- [ ] CFM compliance validation
+- [ ] Professional council compliance validation
 - [ ] Documentation and training
 - [ ] Incident response procedures
 - [ ] Continuous monitoring setup
@@ -605,12 +608,12 @@ interface CFMComplianceStatus {
 
 ### 1. License Validation Failures
 
-- **Risk**: Doctor license expires or becomes invalid
+- **Risk**: Professional license expires or becomes invalid
 - **Mitigation**: Daily license status checks, automated alerts, grace period with manual verification
 
-### 2. Patient Consent Issues
+### 2. Client Consent Issues
 
-- **Risk**: Patient withdraws consent during session
+- **Risk**: Client withdraws consent during session
 - **Mitigation**: Real-time consent status checking, immediate session termination procedures, data anonymization
 
 ### 3. Technical Infrastructure Failures
@@ -620,12 +623,12 @@ interface CFMComplianceStatus {
 
 ### 4. Data Breach or Security Issues
 
-- **Risk**: Unauthorized access to patient data
+- **Risk**: Unauthorized access to client data
 - **Mitigation**: Zero-trust security model, encryption everywhere, immediate breach detection and notification
 
 ### 5. Regulatory Changes
 
-- **Risk**: CFM updates regulations
+- **Risk**: Professional councils update regulations
 - **Mitigation**: Regular regulatory monitoring, flexible architecture, compliance team engagement
 
 ---
@@ -633,5 +636,5 @@ interface CFMComplianceStatus {
 **Compliance Status**: ✅ Requirements mapped to technical specifications
 **Implementation Status**: 🟡 Ready for development
 **Legal Review**: 🟡 Pending legal team validation
-**Next Phase**: Database schema implementation with CFM compliance features
-**Last Updated**: 2025-01-28
+**Next Phase**: Database schema implementation with professional council compliance features
+**Last Updated**: 2025-09-23

@@ -231,7 +231,7 @@ export class IntentParserService {
   private extractParameters(
     _query: string,
     intent: QueryIntent,
-    userRole: UserRole,
+    _userRole: UserRole,
   ): QueryParameters {
     const parameters: QueryParameters = {
       rawEntities: {},

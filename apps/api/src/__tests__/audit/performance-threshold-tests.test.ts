@@ -195,12 +195,12 @@ describe("AI Processing Performance", () => {
     it("should handle 100 concurrent AI requests without degradation", async () => {
       // RED: Healthcare system must handle peak loads
       const concurrentRequests = 100;
-      const responseTimes = [];
+      const _responseTimes: number[] = [];
 
       // Simulate concurrent processing
       const requests = Array(concurrentRequests)
         .fill(0)
-        .map(async (_, i) => {
+        .map(async (_, _i) => {
           const startTime = Date.now();
           await new Promise((resolve) =>
             setTimeout(resolve, 100 + Math.random() * 200),

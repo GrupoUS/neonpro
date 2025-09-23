@@ -289,7 +289,7 @@ export class NotificationService {
       const timestamp = new Date();
 
       // Mock database insert (in real implementation, this would use Supabase)
-      const notificationRecord = {
+      const _notificationRecord = {
         id: notificationId,
         recipient_id: params.recipientId,
         channel: params.channel,
@@ -517,7 +517,7 @@ export class NotificationService {
       this.templates.set(template.templateId, template);
 
       // Mock database insert
-      const templateRecord = {
+      const _templateRecord = {
         id: template.templateId,
         name: template.name,
         description: template.description,

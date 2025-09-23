@@ -1,8 +1,8 @@
-# Healthcare API Documentation - NeonPro tRPC Endpoints
+# Aesthetic Clinic API Documentation - NeonPro tRPC Endpoints
 
 ## Overview
 
-This document provides comprehensive documentation for all tRPC procedures in the NeonPro healthcare platform, with specific focus on Brazilian healthcare compliance (LGPD, CFM, ANVISA) and international standards.
+This document provides comprehensive documentation for all tRPC procedures in the NeonPro aesthetic clinic platform, with specific focus on Brazilian aesthetic clinic compliance (LGPD, Professional Councils, ANVISA) and international standards.
 
 ## Base URL & Authentication
 
@@ -17,61 +17,60 @@ Development: http://localhost:3000/api/trpc
 ```typescript
 {
   "Authorization": "Bearer <jwt_token>",
-  "X-Healthcare-Platform": "neonpro",
+  "X-Aesthetic-Platform": "neonpro",
   "X-Compliance-Version": "v1.0",
   "X-Clinic-ID": "<clinic_uuid>",
   "Content-Type": "application/json"
 }
 ```
 
-## Brazilian Healthcare Compliance Framework
+## Brazilian Aesthetic Clinic Compliance Framework
 
 ### LGPD (Lei Geral de Proteção de Dados) Compliance
 
 - **Article 7º**: Legal basis for personal data processing
-- **Article 11º**: Enhanced protection for sensitive health data
+- **Article 11º**: Enhanced protection for sensitive aesthetic client data
 - **Right to be forgotten**: Automatic anonymization on consent withdrawal
 - **Data minimization**: Role-based data filtering
-- **Audit trails**: Comprehensive logging for all patient data operations
+- **Audit trails**: Comprehensive logging for all client data operations
 
-### CFM (Conselho Federal de Medicina) Compliance
+### Professional Council Compliance
 
-- **Resolution 2,314/2022**: Telemedicine standards
-- **Real-time license validation**: Portal integration with portal.cfm.org.br
+- **CNEP, COREN, CFF**: Virtual consultation and aesthetic procedure standards
+- **Real-time license validation**: Portal integration with respective council portals
 - **ICP-Brasil certificates**: Digital signature validation
-- **NGS2 security standards**: Government-level security requirements
+- **Professional standards**: Ethical guidelines for aesthetic procedures
 
 ### ANVISA (Agência Nacional de Vigilância Sanitária) Compliance
 
-- **RDC 657/2022**: Medical device software classification
-- **SaMD compliance**: Software as Medical Device regulations
-- **Adverse event reporting**: Automated detection and reporting
-- **Post-market surveillance**: Continuous monitoring requirements
+- **Cosmetic regulations**: Product safety and labeling requirements
+- **Equipment compliance**: Aesthetic device regulations
+- **Product registration**: Cosmetic product tracking
+- **Safety monitoring**: Adverse reaction reporting
 
 ---
 
-## 🏥 Patients Router
+## 👥 Clients Router
 
 ### Overview
 
-LGPD-compliant patient data management with cryptographic consent and audit trails.
+LGPD-compliant client data management with cryptographic consent and audit trails.
 
-### Base Path: `/patients`
+### Base Path: `/clients`
 
-### 1. Create Patient
+### 1. Create Client
 
-**Endpoint**: `patients.create`
+**Endpoint**: `clients.create`
 **Method**: `Mutation`
-**Middleware**: `healthcareProcedure` (RLS + Auth + CFM + LGPD audit)
+**Middleware**: `aestheticProcedure` (RLS + Auth + Professional Council + LGPD audit)
 
 #### Input Schema
 
 ```typescript
-interface CreatePatientInput {
+interface CreateClientInput {
   fullName: string;
   cpf: string; // Brazilian individual taxpayer ID
   rg?: string; // Brazilian identity document
-  cns?: string; // Brazilian health card (SUS)
   email: string;
   phone: string;
   dateOfBirth: Date;
@@ -92,21 +91,21 @@ interface CreatePatientInput {
   };
   lgpdConsentGiven: boolean; // Required for LGPD compliance
   lgpdConsentVersion: string; // Consent form version
-  insuranceProvider?: string;
-  insurancePolicyNumber?: string;
-  allergies?: string[];
-  chronicConditions?: string[];
-  currentMedications?: string[];
+  skinType?: "oily" | "dry" | "combination" | "sensitive" | "normal";
+  concerns?: string[]; // acne, aging, pigmentation, etc.
+  previousTreatments?: string[];
+  productPreferences?: string[];
+  contraindications?: string[];
 }
 ```
 
 #### Response
 
 ```typescript
-interface CreatePatientResponse {
+interface CreateClientResponse {
   id: string;
   fullName: string;
-  medicalRecordNumber: string;
+  clientRecordNumber: string;
   consentStatus: "active" | "inactive";
   consentProof: string; // SHA-256 cryptographic proof
   createdAt: Date;
@@ -118,14 +117,14 @@ interface CreatePatientResponse {
 
 - ✅ Cryptographic consent verification (SHA-256)
 - ✅ Automatic audit trail generation
-- ✅ Legal basis documentation (legitimate healthcare interest)
+- ✅ Legal basis documentation (legitimate aesthetic service interest)
 - ✅ Data category classification
 - ✅ Consent version tracking
 
 #### Code Example
 
 ```typescript
-const newPatient = await trpc.patients.create.mutate({
+const newClient = await trpc.clients.create.mutate({
   fullName: "Maria Silva Santos",
   cpf: "123.456.789-00",
   email: "maria@example.com",
@@ -147,28 +146,29 @@ const newPatient = await trpc.patients.create.mutate({
   },
   lgpdConsentGiven: true,
   lgpdConsentVersion: "v2.1",
-  allergies: ["penicillin"],
-  chronicConditions: ["diabetes_type_2"],
+  skinType: "combination",
+  concerns: ["acne", "aging"],
+  previousTreatments: ["chemical_peel"],
 });
 ```
 
-### 2. Get Patient
+### 2. Get Client
 
-**Endpoint**: `patients.get`
+**Endpoint**: `clients.get`
 **Method**: `Query`
-**Middleware**: `patientProcedure` (RLS + Auth + LGPD audit + Consent)
+**Middleware**: `clientProcedure` (RLS + Auth + LGPD audit + Consent)
 
 #### LGPD Data Minimization
 
-- **Basic User**: Name, medical record number only
-- **Healthcare Professional**: Full medical data
+- **Basic User**: Name, client record number only
+- **Aesthetic Professional**: Full aesthetic data
 - **Administrator**: All data including audit information
 
 ### 3. Withdraw LGPD Consent
 
-**Endpoint**: `patients.withdrawConsent`
+**Endpoint**: `clients.withdrawConsent`
 **Method**: `Mutation`
-**Middleware**: `patientProcedure`
+**Middleware**: `clientProcedure`
 
 #### LGPD "Right to be Forgotten" Implementation
 
@@ -183,7 +183,7 @@ const newPatient = await trpc.patients.create.mutate({
 
 ### Overview
 
-AI-powered appointment management with no-show prediction, CFM validation, and multi-channel reminders.
+AI-powered appointment management with no-show prediction, professional council validation, and multi-channel reminders.
 
 ### Base Path: `/appointments`
 
@@ -191,12 +191,12 @@ AI-powered appointment management with no-show prediction, CFM validation, and m
 
 **Endpoint**: `appointments.create`
 **Method**: `Mutation`
-**Middleware**: `healthcareProcedure`
+**Middleware**: `aestheticProcedure`
 
 #### AI-Powered Features
 
 - **No-show risk prediction**: Brazilian behavior pattern analysis
-- **CFM license validation**: Real-time verification with CFM portal
+- **Professional council license validation**: Real-time verification with council portals
 - **Adaptive reminders**: Multi-channel scheduling based on risk level
 
 ### 2. AI No-Show Risk Prediction
@@ -207,7 +207,7 @@ AI-powered appointment management with no-show prediction, CFM validation, and m
 #### Brazilian Behavior Factors
 
 - **Cultural factors**: Carnival season, regional holidays
-- **Socioeconomic patterns**: SUS dependency, transportation
+- **Socioeconomic patterns**: Transportation access, work schedules
 - **Weather impact**: Rain, heat wave effects
 - **Urban mobility**: Traffic patterns, public transport
 
@@ -217,32 +217,32 @@ AI-powered appointment management with no-show prediction, CFM validation, and m
 
 ### Overview
 
-Multi-provider AI routing with Portuguese healthcare support and patient data anonymization.
+Multi-provider AI routing with Portuguese aesthetic terminology support and client data anonymization.
 
 ### Base Path: `/ai`
 
-### 1. Healthcare Chat
+### 1. Aesthetic Consultation Chat
 
 **Endpoint**: `ai.chat`
 **Method**: `Mutation`
 
-#### Portuguese Medical Terminology Support
+#### Portuguese Aesthetic Terminology Support
 
-- **50+ medical terms**: Automatic translation and validation
-- **Brazilian healthcare context**: CFM, ANVISA, SUS integration
-- **Patient data anonymization**: Automatic before AI processing
+- **50+ aesthetic terms**: Automatic translation and validation
+- **Brazilian aesthetic context**: Professional councils, ANVISA cosmetic integration
+- **Client data anonymization**: Automatic before AI processing
 
 #### Multi-Provider Routing
 
 - **Primary**: OpenAI GPT-4 (conversational excellence)
 - **Fallback**: Anthropic Claude (cost optimization)
-- **Health monitoring**: Provider performance tracking
+- **Performance monitoring**: Provider performance tracking
 
 ---
 
-## 🏥 Healthcare Services Router
+## 💆 Aesthetic Services Router
 
-### Base Path: `/healthcareServices`
+### Base Path: `/aestheticServices`
 
 ### 1. LGPD Data Lifecycle Management
 
@@ -250,27 +250,27 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 - `revokeConsent`: Withdraw consent with anonymization
 - `generateComplianceReport`: Full LGPD audit report
 
-### 2. Telemedicine Session Management
+### 2. Virtual Consultation Session Management
 
-- `createSession`: Initialize secure telemedicine session
+- `createSession`: Initialize secure virtual consultation session
 - `validateCertificate`: ICP-Brasil certificate validation
 - `monitorQuality`: Real-time session quality metrics
 
 ---
 
-## 📡 Real-Time Telemedicine Router
+## 📡 Real-Time Virtual Consultation Router
 
-### Base Path: `/realtimeTelemedicine`
+### Base Path: `/realtimeVirtualConsultation`
 
 ### 1. Session Subscriptions
 
 **Method**: `Subscription`
 **Protocol**: `WebSocket`
 
-#### Healthcare Quality Standards
+#### Aesthetic Consultation Quality Standards
 
-- **Video quality**: 720p minimum, medical grade
-- **Audio quality**: 48kHz medical grade
+- **Video quality**: 720p minimum, consultation grade
+- **Audio quality**: 48kHz consultation grade
 - **Latency**: <150ms for critical operations
 
 ---
@@ -285,9 +285,9 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 
 ### LGPD Data Subject Rights
 
-1. **Right to Access** (Art. 9º): `patients.get` with data export
-2. **Right to Rectification** (Art. 16º): `patients.update`
-3. **Right to Erasure** (Art. 18º): `patients.withdrawConsent`
+1. **Right to Access** (Art. 9º): `clients.get` with data export
+2. **Right to Rectification** (Art. 16º): `clients.update`
+3. **Right to Erasure** (Art. 18º): `clients.withdrawConsent`
 4. **Right to Portability** (Art. 20º): Data export functionality
 
 ---
@@ -296,11 +296,11 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 
 ### Response Time Requirements
 
-- **Critical operations**: <100ms (patient lookup, emergency)
+- **Critical operations**: <100ms (client lookup, consultation)
 - **Standard operations**: <500ms (appointments, updates)
 - **AI operations**: <2s (predictions, insights)
 
-### Mobile Healthcare Users
+### Mobile Aesthetic Clinic Users
 
 - **3G networks**: <2s page load time
 - **Cache optimization**: 85%+ hit rate
@@ -314,14 +314,14 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 - **14 Brazilian time zones**: America/Sao_Paulo default
 - **Regional holidays**: Calendar integration
 
-### Healthcare Terminology
+### Aesthetic Terminology
 
-- **TUSS codes**: Procedure billing codes
-- **CFM specialties**: Medical specialty validation
-- **SUS integration**: Public healthcare compatibility
+- **Procedure codes**: Aesthetic procedure billing codes
+- **Professional council specialties**: Aesthetic specialty validation
+- **Product catalog**: Cosmetic product integration
 
 ---
 
-**Last Updated**: 2025-09-18  
+**Last Updated**: 2025-09-23  
 **API Version**: v1.0  
-**Compliance Version**: LGPD v2.1, CFM 2,314/2022, ANVISA RDC 657/2022
+**Compliance Version**: LGPD v2.1, Professional Council Standards, ANVISA Cosmetic Regulations

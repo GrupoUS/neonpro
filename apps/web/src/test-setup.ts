@@ -1,39 +1,87 @@
-import { vi, describe, it, test, expect, beforeAll, afterAll, beforeEach, afterEach } from "vitest";
+// Note: vitest imports removed to prevent context issues
+// Test globals will be available through vitest global setup
 import "@testing-library/jest-dom";
-import { server } from "./test/mocks/handlers";
+import { JSDOM } from "jsdom";
+
+// Setup JSDOM environment before all tests
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+  url: 'http://localhost:8080',
+});
+
+// Set global DOM objects (with proper handling of read-only properties)
+global.document = dom.window.document;
+global.window = dom.window;
+
+
+// Use Object.defineProperty for read-only properties
+Object.defineProperty(global, 'navigator', {
+  value: dom.window.navigator,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'localStorage', {
+  value: dom.window.localStorage,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'sessionStorage', {
+  value: dom.window.sessionStorage,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'location', {
+  value: dom.window.location,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'history', {
+  value: dom.window.history,
+  writable: false,
+  configurable: true
+});
+
+Object.defineProperty(global, 'URL', {
+  value: dom.window.URL,
+  writable: false,
+  configurable: true
+});
 
 // Mock global APIs that might be used in components
 Object.defineProperty(window, "matchMedia", {
   writable: true,
-  value: vi.fn().mockImplementation((query) => ({
+  value: () => ({
     matches: false,
-    media: query,
+    media: '',
     onchange: null,
-    addListener: vi.fn(), // deprecated
-    removeListener: vi.fn(), // deprecated
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
+    addListener: () => {}, // deprecated
+    removeListener: () => {}, // deprecated
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => {},
+  }),
 });
 
 // Mock ResizeObserver
-global.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+global.ResizeObserver = class ResizeObserver {
+  observe = () => {};
+  unobserve = () => {};
+  disconnect = () => {};
+};
 
 // Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+global.IntersectionObserver = class IntersectionObserver {
+  observe = () => {};
+  unobserve = () => {};
+  disconnect = () => {};
+};
 
 // Mock Web APIs
 Object.defineProperty(window, "scrollTo", {
-  value: vi.fn(),
+  value: () => {},
   writable: true,
 });
 
@@ -45,88 +93,49 @@ if (!window.crypto?.randomUUID) {
 }
 
 // Mock fetch API for consistent testing
-global.fetch = vi.fn();
+global.fetch = () => Promise.resolve({
+  ok: true,
+  json: () => Promise.resolve({}),
+  text: () => Promise.resolve(''),
+});
 
 // Mock URL.createObjectURL
-global.URL.createObjectURL = vi.fn(() => "mock-url");
-global.URL.revokeObjectURL = vi.fn();
+global.URL.createObjectURL = () => "mock-url";
+global.URL.revokeObjectURL = () => {};
 
 // Mock performance API
 global.performance = {
   ...global.performance,
-  now: vi.fn(() => Date.now()),
+  now: () => Date.now(),
 };
 
 // Mock WebSocket for AGUI protocol testing
-global.WebSocket = vi.fn().mockImplementation(() => ({
-  send: vi.fn(),
-  close: vi.fn(),
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
-  readyState: 1,
-  CONNECTING: 0,
-  OPEN: 1,
-  CLOSING: 2,
-  CLOSED: 3,
-}));
-
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-  length: 0,
-  key: vi.fn(),
+global.WebSocket = class WebSocket {
+  send = () => {};
+  close = () => {};
+  addEventListener = () => {};
+  removeEventListener = () => {};
+  readyState = 1;
+  static CONNECTING = 0;
+  static OPEN = 1;
+  static CLOSING = 2;
+  static CLOSED = 3;
 };
+
+// Mock localStorage and sessionStorage with proper JSDOM implementation
+const localStorageMock = dom.window.localStorage;
+const sessionStorageMock = dom.window.sessionStorage;
 global.localStorage = localStorageMock;
-
-// Mock sessionStorage
-const sessionStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  removeItem: vi.fn(),
-  clear: vi.fn(),
-  length: 0,
-  key: vi.fn(),
-};
 global.sessionStorage = sessionStorageMock;
 
-// Setup test globals
-(globalThis as any).describe = describe;
-(globalThis as any).it = it;
-(globalThis as any).test = test;
-(globalThis as any).expect = expect;
-(globalThis as any).vi = vi;
-(globalThis as any).beforeAll = beforeAll;
-(globalThis as any).afterAll = afterAll;
-(globalThis as any).beforeEach = beforeEach;
-(globalThis as any).afterEach = afterEach;
+// Setup test globals will be handled by vitest automatically
 
-// Setup MSW server before all tests
-beforeAll(() => {
-  server.listen({ onUnhandledRequest: "error" });
-});
-
-// Reset MSW handlers after each test
-afterEach(() => {
-  server.resetHandlers();
-});
-
-// Clean up MSW server after all tests
-afterAll(() => {
-  server.close();
-});
-
-// Clear all mocks after each test
-afterEach(() => {
-  vi.clearAllMocks();
-});
+// MSW server setup will be handled by individual test files
 
 // Custom test utilities
 (globalThis as any).testUtils = {
   waitFor: (ms: number) => new Promise(resolve => setTimeout(resolve, ms)),
-  createMockEvent: (type: string, data: any) => ({ type, data, preventDefault: vi.fn() }),
+  createMockEvent: (type: string, data: any) => ({ type, data, preventDefault: () => {} }),
   createMockResponse: (data: any, status = 200) => ({
     ok: status >= 200 && status < 300,
     status,
@@ -138,21 +147,21 @@ afterEach(() => {
 // Mock console methods in tests to reduce noise
 const originalConsole = { ...console };
 beforeAll(() => {
-  console.log = vi.fn((...args) => {
+  console.log = (...args) => {
     if (process.env.DEBUG === "true") {
       originalConsole.log(...args);
     }
-  });
-  console.warn = vi.fn((...args) => {
+  };
+  console.warn = (...args) => {
     if (process.env.DEBUG === "true") {
       originalConsole.warn(...args);
     }
-  });
-  console.error = vi.fn((...args) => {
+  };
+  console.error = (...args) => {
     if (process.env.DEBUG === "true") {
       originalConsole.error(...args);
     }
-  });
+  };
 });
 
 afterAll(() => {

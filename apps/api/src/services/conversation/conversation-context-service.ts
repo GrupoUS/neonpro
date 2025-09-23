@@ -158,7 +158,7 @@ export class ConversationContextService {
         updated_at: timestamp,
       };
 
-      const { data, error } = await this.supabase
+      const { data: _data, error } = await this.supabase
         .from('agent_messages')
         .insert(messageData)
         .select()
