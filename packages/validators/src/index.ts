@@ -438,13 +438,20 @@ export function validateProfessionalLicense(license: string | null | undefined):
 
   // Try to match any of the supported council patterns
   const councilPatterns = [
-    /^CRM\/[A-Z]{2}\d{4,10}$/, // Medical Council
-    /^COREN\/[A-Z]{2}\d{6,9}$/, // Nursing Council
-    /^CFF\/[A-Z]{2}\d{6,8}$/, // Pharmacy Council
-    /^CNEP\/[A-Z]{2}\d{6,8}$/, // Aesthetic Professional Council
+    { pattern: /^CRM\/([A-Z]{2})(\d{4,10})$/, validator: validateCRM },
+    { pattern: /^COREN\/([A-Z]{2})(\d{6,9})$/, validator: validateCOREN },
+    { pattern: /^CFF\/([A-Z]{2})(\d{6,8})$/, validator: validateCFF },
+    { pattern: /^CNEP\/([A-Z]{2})(\d{6,8})$/, validator: validateCNEP },
   ];
 
-  return councilPatterns.some((pattern) => pattern.test(cleanLicense));
+  return councilPatterns.some(({ pattern, validator }) => {
+    const match = cleanLicense.match(pattern);
+    if (match) {
+      // Use the specific validator function which includes state validation
+      return validator(cleanLicense);
+    }
+    return false;
+  });
 }
 
 /**

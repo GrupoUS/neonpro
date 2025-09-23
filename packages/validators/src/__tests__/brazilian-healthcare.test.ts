@@ -347,8 +347,8 @@ describe("Brazilian Healthcare Validators", () => {
 
     test("should validate patient registration for aesthetic clinic", () => {
       const patientData = [
-        { value: "123.456.789-01", type: "cpf" as const },
-        { value: "712345678901234", type: "cns" as const },
+        { value: "928.270.196-47", type: "cpf" as const }, // Valid CPF
+        { value: "132508191525186", type: "cns" as const }, // Valid CNS
         { value: "(11) 98765-4321", type: "phone" as const },
         { value: "01234-567", type: "cep" as const },
       ];
@@ -364,7 +364,7 @@ describe("Brazilian Healthcare Validators", () => {
 
     test("should identify and report invalid aesthetic clinic data", () => {
       const invalidData = [
-        { value: "123.456.789-01", type: "cpf" as const }, // Valid
+        { value: "928.270.196-47", type: "cpf" as const }, // Valid
         { value: "12345678901234", type: "cns" as const }, // Invalid CNS
         { value: "CRM/XX123456", type: "crm" as const }, // Invalid CRM state
         { value: "COREN/SP123", type: "coren" as const }, // Invalid COREN (too short)
