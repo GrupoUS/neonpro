@@ -120,7 +120,7 @@ describe("Client AI Workflow Integration", () => {
     mockAction = vi.fn();
     
     // Mock AI service functions
-    const mockAIService = {
+    const _mockAIService = {
       validateClientData: vi.fn(),
       generateAISuggestions: vi.fn(),
     };

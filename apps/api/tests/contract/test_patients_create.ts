@@ -14,7 +14,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { app } from "../../src/app";
 
 // Request schema validation
-const CreatePatientRequestSchema = z.object({
+const _CreatePatientRequestSchema = z.object({
   name: z.string().min(2).max(100),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
   phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/),

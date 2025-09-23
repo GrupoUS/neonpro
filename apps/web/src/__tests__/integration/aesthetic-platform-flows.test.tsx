@@ -1,5 +1,5 @@
 import React from 'react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@/test/utils';
 
 // Mock Aesthetic Platform Components and Services
@@ -199,7 +199,7 @@ const ClientRegistrationForm = ({ onSuccess, onError }) => {
 
 const AppointmentSchedulingInterface = ({ clientId, professionalId, onSuccess, onError }) => {
   const [selectedProcedure, setSelectedProcedure] = React.useState('');
-  const [preferredTime, setPreferredTime] = React.useState('');
+  const [preferredTime, _setPreferredTime] = React.useState('');
   const [availableSlots, setAvailableSlots] = React.useState([]);
   const [isScheduling, setIsScheduling] = React.useState(false);
 
@@ -933,7 +933,7 @@ describe('Aesthetic Platform Flows Integration Tests', () => {
     it('should have proper ARIA labels for consent checkboxes', () => {
       render(<ClientRegistrationForm onSuccess={mockOnSuccess} onError={mockOnError} />);
       
-      const lgpdLabel = screen.getByTestId('lgpd-consent-label');
+      const _lgpdLabel = screen.getByTestId('lgpd-consent-label');
       const lgpdCheckbox = screen.getByTestId('lgpd-consent-checkbox');
       
       expect(lgdpLabel).toHaveAttribute('for', lgpdCheckbox.id);

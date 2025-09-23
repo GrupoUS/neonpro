@@ -1,5 +1,5 @@
 import { Database } from '@neonpro/database';
-import { DateRange, PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types';
+import { PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { getOttomatorBridge, OttomatorQuery, OttomatorResponse } from './ottomator-agent-bridge';
 
@@ -32,7 +32,7 @@ export class AIDataService {
    * Validate user has permission for the requested operation
    */
   private validatePermission(intent: QueryIntent): void {
-    const { role, permissions, domain } = this.permissionContext;
+    const { /* role, */ permissions, /* domain */ } = this.permissionContext;
 
     switch (intent) {
       case 'client_data':
@@ -87,7 +87,8 @@ export class AIDataService {
         domain: this.permissionContext.domain,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch (_error) {
+  void _error;
       console.error('Failed to log audit entry:', error);
       // Don't throw - audit logging failures shouldn't block operations
     }
@@ -370,7 +371,7 @@ export class AIDataService {
     permissions: string[];
     dataScope: string;
   }> {
-    const { userId } = this.permissionContext;
+    const { /* userId */ } = this.permissionContext;
 
     const { data, error } = await this.supabase
       .from('user_permissions')
@@ -420,7 +421,8 @@ export class AIDataService {
         timestamp: new Date().toISOString(),
         database: 'connected',
       };
-    } catch (error) {
+    } catch (_error) {
+  void _error;
       return {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
@@ -480,7 +482,8 @@ export class AIDataService {
       await this.logAccess('general', { query, sessionId }, 1);
 
       return response;
-    } catch (error) {
+    } catch (_error) {
+  void _error;
       console.error('Ottomator agent query failed:', error);
 
       // Fallback to direct processing
@@ -510,7 +513,8 @@ export class AIDataService {
         case 'client_data':
           try {
             result = await this.getClientsByName({ clientNames: [query] });
-          } catch (error) {
+          } catch (_error) {
+  void _error;
             result = {
               message: 'Erro ao buscar clientes: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -525,7 +529,8 @@ export class AIDataService {
             result = await this.getAppointmentsByDate({
               dateRanges: [{ start: today, end: tomorrow }],
             });
-          } catch (error) {
+          } catch (_error) {
+  void _error;
             result = {
               message: 'Erro ao buscar agendamentos: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -537,7 +542,8 @@ export class AIDataService {
             result = await this.getFinancialSummary({
               financial: { period: 'today', type: 'all' },
             });
-          } catch (error) {
+          } catch (_error) {
+  void _error;
             result = {
               message: 'Erro ao buscar dados financeiros: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -567,7 +573,8 @@ export class AIDataService {
           model: 'fallback',
         },
       };
-    } catch (error) {
+    } catch (_error) {
+  void _error;
       return {
         success: false,
         error: {

@@ -19,7 +19,7 @@ async function api(path: string, init?: RequestInit) {
 }
 
 // Response schema validation
-const PatientListResponseSchema = z.object({
+const _PatientListResponseSchema = z.object({
   data: z.array(
     z.object({
       id: z.string().uuid(),

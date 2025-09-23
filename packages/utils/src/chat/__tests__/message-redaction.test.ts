@@ -2,8 +2,8 @@
 // Purpose: Test PII detection and redaction in chat messages for LGPD compliance
 // File: packages/utils/src/chat/__tests__/message-redaction.test.ts
 
-import { describe, expect, it, beforeEach, vi } from "vitest";
-import type { ChatMessage, RedactionResult } from "@neonpro/types/ai-chat";
+import { describe, expect, it, vi } from "vitest";
+import type { ChatMessage } from "@neonpro/types/ai-chat";
 
 // Import the functions we'll be testing
 import {

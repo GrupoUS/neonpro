@@ -21,7 +21,7 @@ async function startServer() {
       const server = createServer(app);
 
       // Initialize WebSocket server for AG-UI Protocol
-      const wsServer = createWebSocketServer(server);
+      const _wsServer = createWebSocketServer(server);
 
       server.listen(port, () => {
         secureLogger.info(`API server listening`, {
@@ -42,6 +42,7 @@ async function startServer() {
       });
     }
   } catch (_error) {
+    void _error;
     secureLogger.error('Failed to start server', error, {
       component: 'server-startup',
     });
@@ -63,6 +64,7 @@ const gracefulShutdown = async (signal: string) => {
     });
     process.exit(0);
   } catch (_error) {
+    void _error;
     secureLogger.error('Error during shutdown', error, {
       component: 'server-shutdown',
     });

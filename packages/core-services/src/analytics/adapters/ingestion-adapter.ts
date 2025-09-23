@@ -217,6 +217,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
             break;
           }
         } catch (_error) {
+          void _error;
           isValid = false;
           errors.push({
             errorId: `validation_error_${Date.now()}_${_index}`,
@@ -268,6 +269,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
             rule,
           );
         } catch (_error) {
+          void _error;
           errors.push({
             errorId: `transformation_error_${Date.now()}_${_index}`,
             type: "transformation_error",

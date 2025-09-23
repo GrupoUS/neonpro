@@ -14,7 +14,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { app } from "../../src/app";
 
 // Search request schema validation
-const SearchPatientsRequestSchema = z.object({
+const _SearchPatientsRequestSchema = z.object({
   _query: z.string().optional(),
   filters: z
     .object({

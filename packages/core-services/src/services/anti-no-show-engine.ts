@@ -12,8 +12,8 @@
  * - WhatsApp integration
  */
 
-import { ModelProvider, PredictionInput, PredictionResult, PredictionType } from '@neonpro/analytics';
-import { WhatsAppService } from './chat-service';
+import { ModelProvider } from '@neonpro/analytics';
+// import { WhatsAppService } from './chat-service';
 
 // ============================================================================
 // Core Types for Aesthetic Clinic No-Show Prediction
@@ -221,7 +221,7 @@ export class AntiNoShowEngine {
       
       // Convert ML prediction to no-show risk result
       return this.convertToRiskResult(prediction, input);
-    } catch (error) {
+    } catch (_error) { void _error;
       // Fallback to default risk if ML service fails
       return {
         patientId: input.patientId,
@@ -360,7 +360,7 @@ export class AntiNoShowEngine {
         },
         timestamp: new Date()
       };
-    } catch (error) {
+    } catch (_error) { void _error;
       return {
         status: 'unhealthy',
         services: {
@@ -442,7 +442,7 @@ export class AntiNoShowEngine {
     return 'low';
   }
 
-  private identifyRiskFactors(input: NoShowPredictionInput, riskScore: number): ContributingFactor[] {
+  private identifyRiskFactors(input: NoShowPredictionInput, _riskScore: number): ContributingFactor[] {
     const factors: ContributingFactor[] = [];
     const historicalNoShowRate = input.patientHistory.totalAppointments > 0
       ? input.patientHistory.noShows / input.patientHistory.totalAppointments
@@ -486,7 +486,7 @@ export class AntiNoShowEngine {
     return factors;
   }
 
-  private generateRecommendations(riskLevel: RiskLevel, input: NoShowPredictionInput): string[] {
+  private generateRecommendations(riskLevel: RiskLevel, _input: NoShowPredictionInput): string[] {
     switch (riskLevel) {
       case 'high':
         return [

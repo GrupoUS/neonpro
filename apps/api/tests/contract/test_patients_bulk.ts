@@ -14,7 +14,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { app } from "../../src/app";
 
 // Bulk action request schema validation
-const BulkActionRequestSchema = z.object({
+const _BulkActionRequestSchema = z.object({
   action: z.enum(["update", "delete", "updateStatus", "export", "merge"]),
   patientIds: z.array(z.string().uuid()).min(1).max(100),
   data: z
@@ -434,7 +434,7 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
         .send(bulkRequest)
         .expect(200);
 
-      const duration = Date.now() - startTime;
+      const _duration = Date.now() - startTime;
 
       expect(response.body.summary.totalRequested).toBe(testPatientIds.length);
       expect(response.body.performanceMetrics.batchesProcessed).toBeGreaterThan(

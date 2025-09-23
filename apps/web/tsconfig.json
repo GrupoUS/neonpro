@@ -3,14 +3,25 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "noEmit": false,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "noEmit": true,
     "outDir": "./dist",
     "rootDir": ".",
-    "types": ["node", "vitest", "vitest/globals", "vite/client"],
+    "types": [
+      "node",
+      "vitest",
+      "vitest/globals",
+      "vite/client"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "composite": true,
     "declaration": true,
@@ -26,7 +37,11 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx"
   },
-  "include": ["src/**/*", "*.ts", "*.tsx"],
+  "include": [
+    "src/**/*",
+    "*.ts",
+    "*.tsx"
+  ],
   "exclude": [
     "node_modules",
     "dist",

@@ -22,7 +22,7 @@ const mockDatabase = {
   transaction: jest.fn(),
 };
 
-const mockWebSocketServer = {
+const _mockWebSocketServer = {
   handleConnection: jest.fn(),
   broadcast: jest.fn(),
 };
@@ -800,13 +800,13 @@ describe("AI Agent System Integration", () => {
         { date: "2024-02-01", status: "COMPLETED" },
       ]);
 
-      const startTime = Date.now();
+      const _startTime = Date.now();
       const result = await analyticsService.generateBatchAnalytics(
         clientIds,
         "retention_risk",
         { start: "2024-01-01", end: "2024-12-31" },
       );
-      const endTime = Date.now();
+      const _endTime = Date.now();
 
       expect(result.success).toBe(true);
       expect(result.processedCount).toBe(100);

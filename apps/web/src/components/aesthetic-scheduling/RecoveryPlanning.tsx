@@ -1,25 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { 
   RecoveryPlan,
   RecoveryPhase,
-  RecoveryInstruction,
-  AestheticAppointment 
+  // RecoveryInstruction,
+  // AestheticAppointment 
 } from '@/types/aesthetic-scheduling';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
+// import { Progress } from '@/components/ui/progress';
+// import { Textarea } from '@/components/ui/textarea';
+// import { Input } from '@/components/ui/input';
+// import { Label } from '@/components/ui/label';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// import { Separator } from '@/components/ui/separator';
 import { 
   Calendar, 
   Clock,
@@ -33,22 +33,22 @@ import {
   Snowflake,
   Droplets,
   Coffee,
-  Moon,
-  Zap,
-  RefreshCw,
-  Download,
-  Share2,
-  Plus,
-  Edit,
-  Save,
+  // Moon,
+  // Zap,
+  // RefreshCw,
+  // Download,
+  // Share2,
+  // Plus,
+  // Edit,
+  // Save,
   X,
   Users,
-  MessageCircle,
+  // MessageCircle,
   Phone,
-  Video,
+  // Video,
   MapPin
 } from 'lucide-react';
-import { format, addDays, addWeeks, isAfter, isBefore, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 interface RecoveryPlanningProps {
@@ -56,7 +56,7 @@ interface RecoveryPlanningProps {
   treatmentPlanId?: string;
   procedureIds?: string[];
   patientId?: string;
-  onRecoveryPlanCreate?: (plan: RecoveryPlan) => void;
+  _onRecoveryPlanCreate?: (plan: RecoveryPlan) => void;
 }
 
 export function RecoveryPlanning({ 
@@ -68,8 +68,8 @@ export function RecoveryPlanning({
 }: RecoveryPlanningProps) {
   const [selectedProcedure, setSelectedProcedure] = useState<string>('');
   const [activeTab, setActiveTab] = useState('planning');
-  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
-  const [customInstructions, setCustomInstructions] = useState({
+  // const [isCreatingPlan, setIsCreatingPlan] = useState(false);
+  const [customInstructions] = useState({
     phase: '',
     title: '',
     description: '',
@@ -107,7 +107,8 @@ export function RecoveryPlanning({
     },
   });
 
-  const handleCreatePlan = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const _handleCreatePlan = () => {
     if (!recoveryPlan || !patientId) return;
 
     createRecoveryPlan.mutate({

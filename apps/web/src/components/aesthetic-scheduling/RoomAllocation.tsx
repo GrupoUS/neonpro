@@ -1,53 +1,53 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { 
-  Room,
+  // Room,
   RoomAllocation,
-  RoomSchedule,
-  OptimizationResult,
-  AestheticAppointment 
+  // RoomSchedule,
+  // OptimizationResult,
+  // AestheticAppointment 
 } from '@/types/aesthetic-scheduling';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
+// import { Label } from '@/components/ui/label';
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+// import { Separator } from '@/components/ui/separator';
 import { 
   DoorOpen, 
   Users,
   Clock,
   Calendar,
-  AlertTriangle,
-  CheckCircle,
+  // AlertTriangle,
+  // CheckCircle,
   Settings,
-  Zap,
-  Wifi,
-  Shield,
+  // Zap,
+  // Wifi,
+  // Shield,
   Activity,
-  TrendingUp,
-  RefreshCw,
-  Plus,
-  Edit,
-  Save,
+  // TrendingUp,
+  // RefreshCw,
+  // Plus,
+  // Edit,
+  // Save,
   X,
-  MapPin,
-  Phone,
-  Monitor,
-  Heart,
-  Thermometer,
+  // MapPin,
+  // Phone,
+  // Monitor,
+  // Heart,
+  // Thermometer,
   Lightbulb,
-  Coffee,
-  Car,
-  Accessibility,
-  Volume2
+  // Coffee,
+  // Car,
+  // Accessibility,
+  // Volume2
 } from 'lucide-react';
 import { format, addDays, addHours, isAfter, isBefore, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -147,7 +147,7 @@ export function RoomAllocation({
 
   const generateTimeSlots = () => {
     const slots = [];
-    const start = new Date(selectedDate);
+    let start = new Date(selectedDate);
     start.setHours(8, 0, 0, 0);
     const end = new Date(selectedDate);
     end.setHours(20, 0, 0, 0);

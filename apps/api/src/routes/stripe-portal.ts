@@ -50,7 +50,7 @@ const supabase = createClient(
 app.post('/create-portal-session', async c => {
   try {
     // Get user ID from request body
-    const { userId } = await c.req.json();
+    const { userId: _userId } = await c.req.json();
 
     if (!_userId) {
       return c.json({ error: 'User ID is required' }, 400);

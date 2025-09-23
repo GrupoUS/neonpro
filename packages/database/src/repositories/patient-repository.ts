@@ -7,6 +7,7 @@ import {
 import { CreatePatientRequest, UpdatePatientRequest } from "@neonpro/types";
 import { PatientQueryOptions, PatientSearchResult } from "../types/index.js";
 import { DatabasePatient } from "../types/supabase.js";
+import { databaseLogger, logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
 
 /**
  * Supabase implementation of PatientRepository
@@ -30,7 +31,7 @@ export class PatientRepository implements IPatientRepository {
         .single();
 
       if (error) {
-        console.error("PatientRepository.findById error:", error);
+        logHealthcareError('database', error, { method: 'findById', patientId: id });
         return null;
       }
 
@@ -38,7 +39,7 @@ export class PatientRepository implements IPatientRepository {
 
       return this.mapDatabasePatientToDomain(data);
     } catch (error) {
-      console.error("PatientRepository.findById error:", error);
+      logHealthcareError('database', error, { method: 'findById', patientId: id });
       return null;
     }
   }
@@ -57,10 +58,7 @@ export class PatientRepository implements IPatientRepository {
 
       return this.mapDatabasePatientToDomain(data);
     } catch (error) {
-      console.error(
-        "PatientRepository.findByMedicalRecordNumber error:",
-        error,
-      );
+      logHealthcareError('database', error, { method: 'findByMedicalRecordNumber', medicalRecordNumber });
       return null;
     }
   }
@@ -76,7 +74,7 @@ export class PatientRepository implements IPatientRepository {
 
       return data.map((patient) => this.mapDatabasePatientToDomain(patient));
     } catch (error) {
-      console.error("PatientRepository.findByCPF error:", error);
+      logHealthcareError('database', error, { method: 'findByCPF' });
       return [];
     }
   }
@@ -125,7 +123,7 @@ export class PatientRepository implements IPatientRepository {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error("PatientRepository.findByClinicId error:", error);
+        logHealthcareError('database', error, { method: 'findByClinicId', clinicId });
         return { patients: [], total: 0 };
       }
 
@@ -138,7 +136,7 @@ export class PatientRepository implements IPatientRepository {
         offset: options?.offset || 0,
       };
     } catch (error) {
-      console.error("PatientRepository.findByClinicId error:", error);
+      logHealthcareError('database', error, { method: 'findByClinicId', clinicId });
       return { patients: [], total: 0 };
     }
   }
@@ -200,7 +198,7 @@ export class PatientRepository implements IPatientRepository {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error("PatientRepository.findWithFilter error:", error);
+        logHealthcareError('database', error, { method: 'findWithFilter' });
         return { patients: [], total: 0 };
       }
 
@@ -213,7 +211,7 @@ export class PatientRepository implements IPatientRepository {
         offset: options?.offset || 0,
       };
     } catch (error) {
-      console.error("PatientRepository.findWithFilter error:", error);
+      logHealthcareError('database', error, { method: 'findWithFilter' });
       return { patients: [], total: 0 };
     }
   }
@@ -229,13 +227,13 @@ export class PatientRepository implements IPatientRepository {
         .single();
 
       if (error) {
-        console.error("PatientRepository.create error:", error);
+        logHealthcareError('database', error, { method: 'create' });
         throw new Error(`Failed to create patient: ${error.message}`);
       }
 
       return this.mapDatabasePatientToDomain(data);
     } catch (error) {
-      console.error("PatientRepository.create error:", error);
+      logHealthcareError('database', error, { method: 'create' });
       throw error;
     }
   }
@@ -255,13 +253,13 @@ export class PatientRepository implements IPatientRepository {
         .single();
 
       if (error) {
-        console.error("PatientRepository.update error:", error);
+        logHealthcareError('database', error, { method: 'update', patientId: id });
         throw new Error(`Failed to update patient: ${error.message}`);
       }
 
       return this.mapDatabasePatientToDomain(data);
     } catch (error) {
-      console.error("PatientRepository.update error:", error);
+      logHealthcareError('database', error, { method: 'update', patientId: id });
       throw error;
     }
   }
@@ -274,13 +272,13 @@ export class PatientRepository implements IPatientRepository {
         .eq("id", id);
 
       if (error) {
-        console.error("PatientRepository.delete error:", error);
+        logHealthcareError('database', error, { method: 'delete', patientId: id });
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error("PatientRepository.delete error:", error);
+      logHealthcareError('database', error, { method: 'delete', patientId: id });
       return false;
     }
   }
@@ -327,7 +325,7 @@ export class PatientRepository implements IPatientRepository {
       const { data, error, count } = await dbQuery;
 
       if (error) {
-        console.error("PatientRepository.search error:", error);
+        logHealthcareError('database', error, { method: 'search', query: _query, clinicId });
         return { patients: [], total: 0 };
       }
 
@@ -340,7 +338,7 @@ export class PatientRepository implements IPatientRepository {
         offset: options?.offset || 0,
       };
     } catch (error) {
-      console.error("PatientRepository.search error:", error);
+      logHealthcareError('database', error, { method: 'search', query: _query, clinicId });
       return { patients: [], total: 0 };
     }
   }
@@ -372,13 +370,13 @@ export class PatientRepository implements IPatientRepository {
       const { count, error } = await query;
 
       if (error) {
-        console.error("PatientRepository.count error:", error);
+        logHealthcareError('database', error, { method: 'count' });
         return 0;
       }
 
       return count || 0;
     } catch (error) {
-      console.error("PatientRepository.count error:", error);
+      logHealthcareError('database', error, { method: 'count' });
       return 0;
     }
   }
@@ -443,7 +441,7 @@ export class PatientRepository implements IPatientRepository {
    * Maps create request to database format
    */
   private mapCreateRequestToDatabase(
-    _request: CreatePatientRequest,
+    request: CreatePatientRequest,
   ): Partial<DatabasePatient> {
     return {
       clinic_id: request.clinicId,

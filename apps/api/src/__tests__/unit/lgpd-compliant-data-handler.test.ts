@@ -7,7 +7,7 @@
 
 import { describe, it, expect, beforeEach, jest, afterEach } from "vitest";
 import { LGPDCompliantDataHandler } from "../../services/lgpd-compliant-data-handler";
-import { AguiMessageType } from "../../services/agui-protocol/types";
+// import { AguiMessageType } from "../../services/agui-protocol/types";
 
 // Mock external dependencies
 const mockDatabase = {
@@ -875,11 +875,11 @@ describe("LGPDCompliantDataHandler", () => {
 
   describe("Performance and Metrics", () => {
     it("should track processing metrics", async () => {
-      const startTime = Date.now();
+      const _startTime = Date.now();
       const testData = { email: "test@email.com" };
 
       lgpdService.detectAndRedactPII(testData);
-      const endTime = Date.now();
+      const _endTime = Date.now();
 
       const metrics = lgpdService.getMetrics();
 

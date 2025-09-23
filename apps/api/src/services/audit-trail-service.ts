@@ -866,12 +866,12 @@ export class AuditTrailService {
     });
   }
 
-  private async detectAnomalies(event: AuditEvent): Promise<void> {
+  private async detectAnomalies(_event: AuditEvent): Promise<void> {
     // Implement anomaly detection logic
     // This could include pattern recognition, unusual behavior detection, etc.
   }
 
-  private groupBy<T>(events: AuditEvent[], key: keyof AuditEvent): Record<string, number> {
+  private groupBy(events: AuditEvent[], key: keyof AuditEvent): Record<string, number> {
     return events.reduce((acc, event) => {
       const value = String(event[key]);
       acc[value] = (acc[value] || 0) + 1;

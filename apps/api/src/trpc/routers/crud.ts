@@ -185,7 +185,7 @@ const crudRequestSchema = v.union([
 /**
  * CRUD Intent Response Schema
  */
-const crudIntentResponseSchema = v.object({
+const _crudIntentResponseSchema = v.object({
   intentId: v.string(),
   step: v.literal('intent'),
   status: v.string([
@@ -244,7 +244,7 @@ const crudIntentResponseSchema = v.object({
 /**
  * CRUD Confirm Response Schema
  */
-const crudConfirmResponseSchema = v.object({
+const _crudConfirmResponseSchema = v.object({
   confirmationId: v.string(),
   intentId: v.string(),
   step: v.literal('confirm'),
@@ -283,7 +283,7 @@ const crudConfirmResponseSchema = v.object({
 /**
  * CRUD Execute Response Schema
  */
-const crudExecuteResponseSchema = v.object({
+const _crudExecuteResponseSchema = v.object({
   executionId: v.string(),
   intentId: v.string(),
   confirmationId: v.string(),
@@ -366,6 +366,7 @@ async function validateWithAI(
       transformedData: validationResult.transformedData || data,
     };
   } catch (_error) {
+  void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'VALIDATION_ERROR',
@@ -427,6 +428,7 @@ async function generatePreview(
 
     return preview;
   } catch (_error) {
+  void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -473,6 +475,7 @@ async function getCurrentData(
         return null;
     }
   } catch (_error) {
+  void _error;
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -523,6 +526,7 @@ export const crudRouter = router({
             });
         }
       } catch (_error) {
+  void _error; void _error;
         console.error('CRUD operation error:', error);
 
         // Create error audit trail
@@ -594,6 +598,7 @@ export const crudRouter = router({
           metadata: operationState.metadata,
         };
       } catch (_error) {
+  void _error; void _error;
         if (error instanceof TRPCError) {
           throw error;
         }

@@ -4,6 +4,7 @@
  */
 
 import { supabase, prisma } from '../client';
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
 import {
   AestheticClientProfile,
   AestheticTreatment,
@@ -175,7 +176,7 @@ export class AestheticRepository {
 
       return aestheticProfile;
     } catch (error) {
-      console.error('Error creating aesthetic client:', error);
+      logHealthcareError('database', error, { method: 'createAestheticClient', clinicId });
       throw this.handleError(error, 'createAestheticClient');
     }
   }
@@ -205,7 +206,7 @@ export class AestheticRepository {
       this.setCache(cacheKey, data, 300000); // 5 minutes cache
       return data;
     } catch (error) {
-      console.error('Error getting aesthetic client:', error);
+      logHealthcareError('database', error, { method: 'getAestheticClientById', clientId, clinicId });
       throw this.handleError(error, 'getAestheticClientById');
     }
   }
@@ -275,7 +276,7 @@ export class AestheticRepository {
       this.setCache(cacheKey, result, 120000); // 2 minutes cache
       return result;
     } catch (error) {
-      console.error('Error searching aesthetic clients:', error);
+      logHealthcareError('database', error, { method: 'searchAestheticClients', criteria, clinicId });
       throw this.handleError(error, 'searchAestheticClients');
     }
   }
@@ -322,7 +323,7 @@ export class AestheticRepository {
 
       return data;
     } catch (error) {
-      console.error('Error updating aesthetic client:', error);
+      logHealthcareError('database', error, { method: 'updateAestheticClient', clientId, clinicId });
       throw this.handleError(error, 'updateAestheticClient');
     }
   }
@@ -375,7 +376,7 @@ export class AestheticRepository {
 
       return treatment;
     } catch (error) {
-      console.error('Error creating aesthetic treatment:', error);
+      logHealthcareError('database', error, { method: 'createAestheticTreatment', clinicId });
       throw this.handleError(error, 'createAestheticTreatment');
     }
   }
@@ -399,7 +400,7 @@ export class AestheticRepository {
       if (error) throw error;
       return data;
     } catch (error) {
-      console.error('Error getting aesthetic treatment:', error);
+      logHealthcareError('database', error, { method: 'getAestheticTreatmentById', treatmentId, clinicId });
       throw this.handleError(error, 'getAestheticTreatmentById');
     }
   }
@@ -441,7 +442,7 @@ export class AestheticRepository {
       if (error) throw error;
       return data || [];
     } catch (error) {
-      console.error('Error getting client treatments:', error);
+      logHealthcareError('database', error, { method: 'getAestheticClientTreatments', clientId, clinicId });
       throw this.handleError(error, 'getAestheticClientTreatments');
     }
   }
@@ -473,7 +474,7 @@ export class AestheticRepository {
       this.setCache(cacheKey, data, 600000); // 10 minutes cache
       return data || [];
     } catch (error) {
-      console.error('Error getting treatment catalog:', error);
+      logHealthcareError('database', error, { method: 'getAestheticTreatmentCatalog', clinicId, category });
       throw this.handleError(error, 'getAestheticTreatmentCatalog');
     }
   }
@@ -542,7 +543,7 @@ export class AestheticRepository {
       this.setCache(cacheKey, result, 300000); // 5 minutes cache
       return result;
     } catch (error) {
-      console.error('Error getting aesthetic analytics:', error);
+      logHealthcareError('database', error, { method: 'getAestheticClinicAnalytics', clinicId });
       throw this.handleError(error, 'getAestheticClinicAnalytics');
     }
   }
@@ -633,7 +634,7 @@ export class AestheticRepository {
         cfmScore
       };
     } catch (error) {
-      console.error('Error calculating compliance scores:', error);
+      logHealthcareError('database', error, { method: 'getComplianceScores', clinicId });
       return {
         lgpdScore: 85,
         anvisaScore: 85,
@@ -708,7 +709,7 @@ export class AestheticRepository {
           created_at: new Date().toISOString()
         }]);
     } catch (error) {
-      console.error('Error logging audit trail:', error);
+      logHealthcareError('database', error, { method: 'logAuditTrail', auditData });
     }
   }
 
@@ -719,16 +720,16 @@ export class AestheticRepository {
   }
 
   private handleError(error: any, operation: string): Error {
-    console.error(`Database error in ${operation}:`, error);
-    
+    logHealthcareError('database', error, { method: 'handleError', operation });
+
     if (error.code === 'PGRST116') {
       return new Error('Resource not found');
     }
-    
+
     if (error.code === 'PGRST301') {
       return new Error('Permission denied');
     }
-    
+
     return new Error(`Database operation failed: ${error.message}`);
   }
 

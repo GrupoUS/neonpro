@@ -728,7 +728,7 @@ describe("PredictiveClientAnalyticsService", () => {
     describe("generateBatchAnalytics", () => {
       it("should process analytics for multiple clients successfully", async () => {
         const clientIds = ["client-123", "client-456", "client-789"];
-        const mockAnalyticsResults = [
+        const _mockAnalyticsResults = [
           {
             clientId: "client-123",
             riskScore: 0.2,
@@ -1001,7 +1001,8 @@ describe("PredictiveClientAnalyticsService", () => {
           "client-123",
           mockFeatures,
         );
-      } catch (error) {
+      } catch (_error) {
+      void _error;
         // Expected to fail
       }
 

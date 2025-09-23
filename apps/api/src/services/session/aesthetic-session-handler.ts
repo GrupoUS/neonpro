@@ -5,9 +5,9 @@
  * treatment workflow management, and Brazilian healthcare compliance.
  */
 
-import { EnhancedAgentSessionService, EnhancedSessionData, EnhancedSessionContext } from './enhanced-agent-session-service';
+import { EnhancedAgentSessionService } from './enhanced-agent-session-service';
 import { CopilotKitSessionIntegration } from './copilotkit-session-integration';
-import { AestheticAguiService, AestheticAguiMessage, AestheticTreatmentData, AestheticClientProfile } from '../agui-protocol/aesthetic-service';
+import { AestheticAguiService, AestheticTreatmentData, AestheticClientProfile } from '../agui-protocol/aesthetic-service';
 import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
 import { AestheticComplianceService } from '../agui-protocol/aesthetic-compliance-service';
 
@@ -1553,7 +1553,7 @@ export class AestheticSessionHandler {
 
     const completedSteps = workflow.steps.filter(s => s.status === 'completed').length;
     const estimatedTimePerStep = 30; // minutes
-    const actualTime = Date.now() - workflow.estimatedCompletion.getTime() + (workflow.steps.length * estimatedTimePerStep * 60 * 1000);
+    const _actualTime = Date.now() - workflow.estimatedCompletion.getTime() + (workflow.steps.length * estimatedTimePerStep * 60 * 1000);
     
     return Math.min(100, (completedSteps / workflow.steps.length) * 100);
   }

@@ -10,6 +10,7 @@ import {
   ConsentQueryOptions,
 } from "@neonpro/domain";
 import { DatabasePerformanceService } from "../services/database-performance.service.js";
+import { databaseLogger, logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
 
 /**
  * Supabase implementation of ConsentRepository
@@ -57,7 +58,7 @@ export class ConsentRepository implements IConsentRepository {
         },
       );
     } catch (error) {
-      console.error("ConsentRepository.findById error:", error);
+      logHealthcareError('database', error, { method: 'findById', consentId: id });
       return null;
     }
   }
@@ -71,7 +72,7 @@ export class ConsentRepository implements IConsentRepository {
         .order("granted_at", { ascending: false });
 
       if (error) {
-        console.error("ConsentRepository.findByPatientId error:", error);
+        logHealthcareError('database', error, { method: 'findByPatientId', patientId });
         return [];
       }
 
@@ -79,7 +80,7 @@ export class ConsentRepository implements IConsentRepository {
 
       return data.map(this.mapDatabaseConsentToDomain);
     } catch (error) {
-      console.error("ConsentRepository.findByPatientId error:", error);
+      logHealthcareError('database', error, { method: 'findByPatientId', patientId });
       return [];
     }
   }
@@ -135,7 +136,7 @@ export class ConsentRepository implements IConsentRepository {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error("ConsentRepository.findWithFilter error:", error);
+        logHealthcareError('database', error, { method: 'findWithFilter', filter });
         return { consents: [], total: 0 };
       }
 
@@ -148,7 +149,7 @@ export class ConsentRepository implements IConsentRepository {
         offset: options?.offset || 0,
       };
     } catch (error) {
-      console.error("ConsentRepository.findWithFilter error:", error);
+      logHealthcareError('database', error, { method: 'findWithFilter', filter });
       return { consents: [], total: 0 };
     }
   }
@@ -177,13 +178,13 @@ export class ConsentRepository implements IConsentRepository {
         .single();
 
       if (error) {
-        console.error("ConsentRepository.create error:", error);
+        logHealthcareError('database', error, { method: 'create', consentData });
         throw new Error(`Failed to create consent: ${error.message}`);
       }
 
       return this.mapDatabaseConsentToDomain(data);
     } catch (error) {
-      console.error("ConsentRepository.create error:", error);
+      logHealthcareError('database', error, { method: 'create', consentData });
       throw error;
     }
   }
@@ -203,13 +204,13 @@ export class ConsentRepository implements IConsentRepository {
         .single();
 
       if (error) {
-        console.error("ConsentRepository.update error:", error);
+        logHealthcareError('database', error, { method: 'update', consentId: id });
         throw new Error(`Failed to update consent: ${error.message}`);
       }
 
       return this.mapDatabaseConsentToDomain(data);
     } catch (error) {
-      console.error("ConsentRepository.update error:", error);
+      logHealthcareError('database', error, { method: 'update', consentId: id });
       throw error;
     }
   }
@@ -228,13 +229,13 @@ export class ConsentRepository implements IConsentRepository {
         .single();
 
       if (error) {
-        console.error("ConsentRepository.revoke error:", error);
+        logHealthcareError('database', error, { method: 'revoke', consentId: id });
         throw new Error(`Failed to revoke consent: ${error.message}`);
       }
 
       return this.mapDatabaseConsentToDomain(data);
     } catch (error) {
-      console.error("ConsentRepository.revoke error:", error);
+      logHealthcareError('database', error, { method: 'revoke', consentId: id });
       throw error;
     }
   }
@@ -247,13 +248,13 @@ export class ConsentRepository implements IConsentRepository {
         .eq("id", id);
 
       if (error) {
-        console.error("ConsentRepository.delete error:", error);
+        logHealthcareError('database', error, { method: 'delete', consentId: id });
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error("ConsentRepository.delete error:", error);
+      logHealthcareError('database', error, { method: 'delete', consentId: id });
       return false;
     }
   }
@@ -298,7 +299,7 @@ export class ConsentRepository implements IConsentRepository {
         },
       );
     } catch (error) {
-      console.error("ConsentRepository.checkExpiration error:", error);
+      logHealthcareError('database', error, { method: 'checkExpiration' });
       return [];
     }
   }
@@ -333,7 +334,7 @@ export class ConsentRepository implements IConsentRepository {
         },
       );
     } catch (error) {
-      console.error("ConsentRepository.getActiveConsents error:", error);
+      logHealthcareError('database', error, { method: 'getActiveConsents', patientId });
       return [];
     }
   }
@@ -370,7 +371,7 @@ export class ConsentRepository implements IConsentRepository {
         },
       );
     } catch (error) {
-      console.error("ConsentRepository.hasActiveConsent error:", error);
+      logHealthcareError('database', error, { method: 'hasActiveConsent', patientId, consentType });
       return false;
     }
   }

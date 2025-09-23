@@ -781,7 +781,7 @@ export class AIAppointmentRepository {
       .sort((a, b) => b.efficiency - a.efficiency);
   }
 
-  private generatePredictiveInsights(appointments: any[], dateRange?: { start: Date; end: Date }) {
+  private generatePredictiveInsights(appointments: any[], _dateRange?: { start: Date; end: Date }) {
     const highRiskAppointments = appointments.filter(apt => (apt.noShowRiskScore || 0) > 70);
     
     return {
@@ -835,7 +835,7 @@ export class AIAppointmentRepository {
     );
   }
 
-  private calculateSlotEfficiency(slot: { start: Date; end: Date }, appointments: any[]): number {
+  private calculateSlotEfficiency(slot: { start: Date; end: Date }, _appointments: any[]): number {
     const hour = slot.start.getHours();
     const dayOfWeek = slot.start.getDay();
     
@@ -849,7 +849,7 @@ export class AIAppointmentRepository {
     return Math.max(0.1, Math.min(1, efficiency));
   }
 
-  private predictDemand(slot: { start: Date; end: Date }, appointments: any[]): number {
+  private predictDemand(slot: { start: Date; end: Date }, _appointments: any[]): number {
     // Simple demand prediction based on historical patterns
     const hour = slot.start.getHours();
     const dayOfWeek = slot.start.getDay();
@@ -970,7 +970,7 @@ export class AIAppointmentRepository {
     return alerts;
   }
 
-  private async getHighVolumeDays(clinicId: string, dateRange: { start: Date; end: Date }) {
+  private async getHighVolumeDays(_clinicId: string, _dateRange: { start: Date; end: Date }) {
     // Implementation for detecting high-volume days
     return [];
   }

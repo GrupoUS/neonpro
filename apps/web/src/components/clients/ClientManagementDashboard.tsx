@@ -26,7 +26,7 @@ import {
   Target,
   BarChart3,
   UserPlus,
-  Search,
+  /* Search, */
   Filter,
 } from "lucide-react";
 import { createClient } from "@/integrations/supabase/client";
@@ -107,10 +107,10 @@ export const ClientManagementDashboard: React.FC = () => {
     "7d" | "30d" | "90d" | "1y"
   >("30d");
 
-  const supabase = createClient();
+  const _supabase = createClient();
 
   // CopilotKit integration
-  const { state, setState } = useCoAgent({
+  const { state: _state, setState } = useCoAgent({
     name: "clientAnalyticsAgent",
     initialState: {
       currentView: "overview",
@@ -132,7 +132,7 @@ export const ClientManagementDashboard: React.FC = () => {
       },
       { name: "metrics", type: "object", description: "Current metrics data" },
     ],
-    handler: async ({ timeRange, metrics }) => {
+    handler: async ({ timeRange: _timeRange, metrics: _metrics }) => {
       // AI insights generation would be handled by backend
       return { insights: [] };
     },

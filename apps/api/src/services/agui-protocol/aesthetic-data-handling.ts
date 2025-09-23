@@ -6,8 +6,8 @@
  * with Brazilian General Data Protection Law (Lei Geral de Proteção de Dados).
  */
 
-import { createHash, randomBytes, createCipher, createDecipher, createCipheriv, createDecipheriv } from 'crypto';
-import { AestheticComplianceService } from './aesthetic-compliance-service';
+import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
+// import { AestheticComplianceService } from './aesthetic-compliance-service';
 
 export interface AestheticDataHandlingConfig {
   encryptionKey: string;
@@ -771,7 +771,7 @@ export class AestheticDataHandlingService {
       let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
       encrypted += cipher.final('hex');
       
-      const authTag = cipher.getAuthTag();
+      const _authTag = cipher.getAuthTag();
       
       const result: EncryptionResult = {
         encryptedData: encrypted,
@@ -1118,7 +1118,7 @@ export class AestheticDataHandlingService {
     return decryptedData;
   }
 
-  private async processDataUpdates(updates: Partial<DataSubject>, requestingUser: { id: string; role: string }): Promise<Partial<DataSubject>> {
+  private async processDataUpdates(updates: Partial<DataSubject>, _requestingUser: { id: string; role: string }): Promise<Partial<DataSubject>> {
     const processedUpdates: Partial<DataSubject> = {};
 
     for (const [key, value] of Object.entries(updates)) {

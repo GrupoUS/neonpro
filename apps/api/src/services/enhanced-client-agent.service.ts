@@ -84,6 +84,7 @@ export interface ClientAgentContext extends QueryContext {
   workflowStep?: string;
   documents?: any[];
   validationRules?: ValidationRule[];
+  userId: string;
 }
 
 export interface ClientAgentMetrics {
@@ -1019,17 +1020,17 @@ export class EnhancedClientAgentService extends EventEmitter {
     _consent?: ClientConsentData,
   ): Promise<string> {
     // Create client record in database
-    const { data: _data, error } = await this.supabase
+    const { data, error } = await this.supabase
       .from('patients')
       .insert({
-        clinic_id: context.clinicId,
-        full_name: clientData.fullName,
-        cpf: clientData.cpf,
-        date_of_birth: clientData.dateOfBirth,
-        email: clientData.email,
-        phone: clientData.phone,
-        lgpd_consent_given: consent?.treatmentConsent || false,
-        lgpd_consent_date: consent?.consentDate,
+        clinic_id: _context.clinicId,
+        full_name: _clientData.fullName,
+        cpf: _clientData.cpf,
+        date_of_birth: _clientData.dateOfBirth,
+        email: _clientData.email,
+        phone: _clientData.phone,
+        lgpd_consent_given: _consent?.treatmentConsent || false,
+        lgpd_consent_date: _consent?.consentDate,
       })
       .select()
       .single();
@@ -1464,6 +1465,7 @@ export class EnhancedClientAgentService extends EventEmitter {
         metrics: this.metrics,
       };
     } catch (_error) {
+      void _error;
       return {
         status: 'unhealthy',
         components: {

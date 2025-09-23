@@ -19,7 +19,7 @@ async function api(path: string, init?: RequestInit) {
 }
 
 // No-show prediction request schema
-const NoShowRequestSchema = z.object({
+const _NoShowRequestSchema = z.object({
   appointments: z.array(
     z.object({
       id: z.string().uuid(),
@@ -67,7 +67,7 @@ const NoShowRequestSchema = z.object({
 });
 
 // No-show prediction response schema
-const NoShowResponseSchema = z.object({
+const _NoShowResponseSchema = z.object({
   predictions: z.array(
     z.object({
       appointmentId: z.string().uuid(),

@@ -20,7 +20,12 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Minimal stub; in real app, wire to Supabase/SSR auth
   const [user] = useState<AuthUser | null>(null);
-  const value = useMemo(() => ({ user }), [user]);
+  const [isLoading] = useState(false);
+  const value = useMemo(() => ({
+    user,
+    isAuthenticated: !!user,
+    isLoading
+  }), [user, isLoading]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

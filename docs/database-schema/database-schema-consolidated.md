@@ -4,9 +4,40 @@
 
 This document provides a comprehensive overview of the NeonPro aesthetic clinic management system database schema. The system is designed to support multi-professional collaboration, compliance management, and advanced treatment planning for aesthetic healthcare providers.
 
-## Architecture Version: 6.0.0
+## Architecture Version: 9.0.0
 
-### New in Version 6.0.0
+### New in Version 9.0.0
+- Advanced analytics and business intelligence system
+- Real-time dashboards and KPI tracking
+- Predictive analytics and machine learning
+- Data warehousing and aggregation
+- Business intelligence and reporting
+- Automated alerts and notifications
+- Scheduled reports and distribution
+- Data export and visualization
+- Performance metrics and optimization
+- Comparative analytics and benchmarking
+
+### Version 8.0.0 Features
+- Financial management system
+- Brazilian tax compliance (ISS, PIS, COFINS, CSLL, IRPJ)
+- Payment processing (PIX, boleto, credit card, installments)
+- Professional commission management
+- Financial reporting and analytics
+- Revenue recognition and deferral
+- Cost management and allocation
+- Integration with accounting systems
+
+### Version 7.0.0 Features
+- Advanced patient engagement system
+- Multi-channel communication management
+- Patient journey tracking and scoring
+- Loyalty programs and rewards
+- Survey and feedback systems
+- Campaign management and automation
+- Template management and processing
+
+### Version 6.0.0 Features
 - Multi-professional coordination system
 - Cross-disciplinary team management
 - Professional referral workflows
@@ -669,7 +700,733 @@ CREATE TABLE payments (
 );
 ```
 
-### 10. System Configuration
+### 11. Patient Engagement System
+
+#### patient_communication_preferences
+Patient communication settings and preferences.
+
+```sql
+CREATE TABLE patient_communication_preferences (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id uuid REFERENCES patients(id) ON DELETE CASCADE,
+  email_enabled boolean DEFAULT true,
+  sms_enabled boolean DEFAULT true,
+  whatsapp_enabled boolean DEFAULT true,
+  push_notifications_enabled boolean DEFAULT true,
+  phone_call_enabled boolean DEFAULT false,
+  preferred_language text DEFAULT 'pt-BR',
+  contact_times jsonb DEFAULT '{"weekday": ["09:00-18:00"], "weekend": ["10:00-16:00"]}',
+  do_not_contact boolean DEFAULT false,
+  do_not_contact_reason text,
+  do_not_contact_until timestamptz,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### patient_communication_history
+Complete communication history and tracking.
+
+```sql
+CREATE TABLE patient_communication_history (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id uuid REFERENCES patients(id) ON DELETE CASCADE,
+  communication_type text NOT NULL CHECK (communication_type IN ('email', 'sms', 'whatsapp', 'push_notification', 'phone_call')),
+  channel text NOT NULL,
+  message_content text,
+  template_id uuid,
+  status text NOT NULL DEFAULT 'sent' CHECK (status IN ('sent', 'delivered', 'opened', 'clicked', 'failed', 'bounced')),
+  sent_at timestamptz DEFAULT now(),
+  delivered_at timestamptz,
+  opened_at timestamptz,
+  clicked_at timestamptz,
+  failed_reason text,
+  cost numeric(10,4),
+  metadata jsonb DEFAULT '{}'
+);
+```
+
+#### communication_templates
+Reusable communication templates with variables.
+
+```sql
+CREATE TABLE communication_templates (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  template_type text NOT NULL CHECK (template_type IN ('email', 'sms', 'whatsapp', 'push_notification', 'phone_call')),
+  content text NOT NULL,
+  variables jsonb DEFAULT '[]',
+  is_active boolean DEFAULT true,
+  version integer DEFAULT 1,
+  usage_count integer DEFAULT 0,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### patient_journey_stages
+Patient lifecycle tracking and engagement scoring.
+
+```sql
+CREATE TABLE patient_journey_stages (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id uuid REFERENCES patients(id) ON DELETE CASCADE,
+  journey_stage text NOT NULL CHECK (journey_stage IN ('lead', 'new', 'active', 'lapsed', 'loyal', 'advocate')),
+  engagement_score numeric(3,1) DEFAULT 0.0,
+  satisfaction_score numeric(3,1),
+  risk_score numeric(3,1) DEFAULT 0.0,
+  last_appointment_date timestamptz,
+  next_appointment_date timestamptz,
+  total_appointments integer DEFAULT 0,
+  total_spend numeric(10,2) DEFAULT 0.0,
+  preferred_services text[] DEFAULT '{}',
+  communication_frequency integer DEFAULT 30, -- days
+  loyalty_tier text DEFAULT 'standard' CHECK (loyalty_tier IN ('standard', 'bronze', 'silver', 'gold', 'platinum')),
+  stage_updated_at timestamptz DEFAULT now(),
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### patient_engagement_actions
+Patient interaction tracking and points earning.
+
+```sql
+CREATE TABLE patient_engagement_actions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id uuid REFERENCES patients(id) ON DELETE CASCADE,
+  action_type text NOT NULL CHECK (action_type IN ('appointment_completed', 'review_left', 'referral_made', 'survey_completed', 'campaign_responded', 'social_media_interaction', 'loyalty_redemption')),
+  action_details jsonb DEFAULT '{}',
+  points_earned integer DEFAULT 0,
+  points_multiplier numeric(3,2) DEFAULT 1.0,
+  referral_source text,
+  campaign_id uuid,
+  created_at timestamptz DEFAULT now()
+);
+```
+
+#### loyalty_programs
+Loyalty program configuration and rules.
+
+```sql
+CREATE TABLE loyalty_programs (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  start_date date,
+  end_date date,
+  is_active boolean DEFAULT true,
+  points_to_currency_rate numeric(10,4) DEFAULT 0.01,
+  tiers jsonb DEFAULT '[
+    {"name": "standard", "min_points": 0, "multiplier": 1.0, "benefits": []},
+    {"name": "bronze", "min_points": 100, "multiplier": 1.1, "benefits": []},
+    {"name": "silver", "min_points": 500, "multiplier": 1.2, "benefits": []},
+    {"name": "gold", "min_points": 1000, "multiplier": 1.3, "benefits": []},
+    {"name": "platinum", "min_points": 2500, "multiplier": 1.5, "benefits": []}
+  ]',
+  earning_rules jsonb DEFAULT '[]',
+  redemption_rules jsonb DEFAULT '[]',
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### patient_points_balance
+Individual patient points tracking and management.
+
+```sql
+CREATE TABLE patient_points_balance (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  patient_id uuid REFERENCES patients(id) ON DELETE CASCADE,
+  program_id uuid REFERENCES loyalty_programs(id) ON DELETE CASCADE,
+  current_balance integer DEFAULT 0,
+  lifetime_earned integer DEFAULT 0,
+  lifetime_redeemed integer DEFAULT 0,
+  last_earned_at timestamptz,
+  last_redeemed_at timestamptz,
+  points_expiry_date date,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### patient_surveys
+Survey creation and configuration.
+
+```sql
+CREATE TABLE patient_surveys (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  survey_type text NOT NULL CHECK (survey_type IN ('satisfaction', 'feedback', 'nps', 'experience', 'specific_treatment')),
+  questions jsonb NOT NULL,
+  trigger_conditions jsonb DEFAULT '[]',
+  is_active boolean DEFAULT true,
+  anonymous boolean DEFAULT false,
+  version integer DEFAULT 1,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### patient_survey_responses
+Survey response collection and analysis.
+
+```sql
+CREATE TABLE patient_survey_responses (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  survey_id uuid REFERENCES patient_surveys(id) ON DELETE CASCADE,
+  patient_id uuid REFERENCES patients(id) ON DELETE CASCADE,
+  appointment_id uuid REFERENCES appointments(id) ON DELETE SET NULL,
+  responses jsonb NOT NULL,
+  satisfaction_score numeric(3,1),
+  nps_score integer CHECK (nps_score BETWEEN 0 AND 10),
+  sentiment_score numeric(3,2),
+  completed_at timestamptz DEFAULT now(),
+  ip_address inet,
+  user_agent text
+);
+```
+
+#### engagement_campaigns
+Campaign management and execution.
+
+```sql
+CREATE TABLE engagement_campaigns (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  campaign_type text NOT NULL CHECK (campaign_type IN ('reactivation', 'promotion', 'education', 'reminder', 'birthday', 'loyalty')),
+  target_audience jsonb DEFAULT '{}',
+  campaign_flow jsonb NOT NULL,
+  schedule jsonb DEFAULT '{}',
+  status text NOT NULL DEFAULT 'draft' CHECK (status IN ('draft', 'scheduled', 'active', 'paused', 'completed', 'cancelled')),
+  budget numeric(10,2),
+  metrics jsonb DEFAULT '{"sent": 0, "delivered": 0, "opened": 0, "clicked": 0, "responded": 0}',
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### reengagement_triggers
+Automated reengagement workflow triggers.
+
+```sql
+CREATE TABLE reengagement_triggers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  trigger_name text NOT NULL,
+  trigger_condition jsonb NOT NULL,
+  action_workflow jsonb NOT NULL,
+  is_active boolean DEFAULT true,
+  last_triggered_at timestamptz,
+  trigger_count integer DEFAULT 0,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### campaign_analytics
+Campaign performance and effectiveness metrics.
+
+```sql
+CREATE TABLE campaign_analytics (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  campaign_id uuid REFERENCES engagement_campaigns(id) ON DELETE CASCADE,
+  metric_date date NOT NULL,
+  metrics jsonb NOT NULL,
+  audience_size integer,
+  sent_count integer,
+  delivered_count integer,
+  opened_count integer,
+  clicked_count integer,
+  responded_count integer,
+  conversion_count integer,
+  revenue_generated numeric(10,2),
+  cost numeric(10,2),
+  roi numeric(10,2),
+  created_at timestamptz DEFAULT now()
+);
+```
+
+### 12. Financial Management System
+
+#### financial_transactions
+Complete financial transaction tracking.
+
+```sql
+CREATE TABLE financial_transactions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  transaction_type text NOT NULL CHECK (transaction_type IN ('revenue', 'expense', 'transfer', 'adjustment', 'refund', 'commission')),
+  amount numeric(10,2) NOT NULL,
+  currency text DEFAULT 'BRL',
+  description text,
+  category_id uuid REFERENCES financial_categories(id) ON DELETE SET NULL,
+  cost_center_id uuid REFERENCES cost_centers(id) ON DELETE SET NULL,
+  reference_id uuid, -- appointment_id, patient_id, etc.
+  reference_type text,
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'failed', 'cancelled')),
+  transaction_date timestamptz DEFAULT now(),
+  processed_by uuid REFERENCES professionals(id) ON DELETE SET NULL,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### payment_methods
+Payment method configuration and management.
+
+```sql
+CREATE TABLE payment_methods (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  method_name text NOT NULL,
+  method_type text NOT NULL CHECK (method_type IN ('pix', 'credit_card', 'debit_card', 'boleto', 'bank_transfer', 'installment', 'cash')),
+  is_active boolean DEFAULT true,
+  provider_config jsonb DEFAULT '{}',
+  fees jsonb DEFAULT '{"percentage": 0.0, "fixed": 0.0}',
+  daily_limit numeric(10,2),
+  min_amount numeric(10,2),
+  max_amount numeric(10,2),
+  settlement_days integer DEFAULT 0,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### tax_configurations
+Brazilian tax configuration and rates.
+
+```sql
+CREATE TABLE tax_configurations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  tax_type text NOT NULL CHECK (tax_type IN ('iss', 'pis', 'cofins', 'csll', 'irpj', 'icms', 'ipi')),
+  tax_name text NOT NULL,
+  rate numeric(5,4) NOT NULL,
+  calculation_base text NOT NULL CHECK (calculation_base IN ('gross', 'net', 'specific')),
+  is_active boolean DEFAULT true,
+  valid_from date NOT NULL,
+  valid_until date,
+  description text,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### commission_rules
+Professional commission calculation rules.
+
+```sql
+CREATE TABLE commission_rules (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  commission_type text NOT NULL CHECK (commission_type IN ('percentage', 'fixed', 'tiered', 'hybrid')),
+  commission_value numeric(10,2) NOT NULL,
+  applies_to text NOT NULL CHECK (applies_to IN ('services', 'products', 'packages', 'all')),
+  professional_types text[] DEFAULT '{doctor}', -- CFM, COREN, CFF, CNEP
+  service_categories text[] DEFAULT '{}',
+  minimum_amount numeric(10,2) DEFAULT 0.0,
+  maximum_amount numeric(10,2),
+  conditions jsonb DEFAULT '[]',
+  is_active boolean DEFAULT true,
+  valid_from date NOT NULL,
+  valid_until date,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### commission_payments
+Commission payment tracking.
+
+```sql
+CREATE TABLE commission_payments (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  professional_id uuid REFERENCES professionals(id) ON DELETE CASCADE,
+  transaction_id uuid REFERENCES financial_transactions(id) ON DELETE CASCADE,
+  commission_rule_id uuid REFERENCES commission_rules(id) ON DELETE SET NULL,
+  amount numeric(10,2) NOT NULL,
+  percentage numeric(5,4),
+  calculation_base numeric(10,2),
+  period_start date NOT NULL,
+  period_end date NOT NULL,
+  status text NOT NULL DEFAULT 'calculated' CHECK (status IN ('calculated', 'approved', 'paid', 'cancelled')),
+  payment_date timestamptz,
+  payment_method text,
+  notes text,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### revenue_recognition
+Revenue recognition and deferral management.
+
+```sql
+CREATE TABLE revenue_recognition (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  transaction_id uuid REFERENCES financial_transactions(id) ON DELETE CASCADE,
+  total_amount numeric(10,2) NOT NULL,
+  recognized_amount numeric(10,2) DEFAULT 0.0,
+  deferred_amount numeric(10,2),
+  recognition_schedule jsonb NOT NULL,
+  recognition_period text NOT NULL CHECK (recognition_period IN ('immediate', 'monthly', 'quarterly', 'custom')),
+  start_date date NOT NULL,
+  end_date date,
+  is_completed boolean DEFAULT false,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### financial_categories
+Financial category and account management.
+
+```sql
+CREATE TABLE financial_categories (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  category_type text NOT NULL CHECK (category_type IN ('revenue', 'expense', 'asset', 'liability', 'equity')),
+  parent_category_id uuid REFERENCES financial_categories(id) ON DELETE SET NULL,
+  code text UNIQUE,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### cost_centers
+Cost center configuration and allocation.
+
+```sql
+CREATE TABLE cost_centers (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  manager_id uuid REFERENCES professionals(id) ON DELETE SET NULL,
+  budget numeric(10,2),
+  allocation_method text DEFAULT 'percentage' CHECK (allocation_method IN ('percentage', 'fixed', 'usage')),
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### financial_reports
+Financial report configuration.
+
+```sql
+CREATE TABLE financial_reports (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  report_type text NOT NULL CHECK (report_type IN ('income_statement', 'balance_sheet', 'cash_flow', 'trial_balance', 'custom')),
+  configuration jsonb NOT NULL,
+  schedule jsonb DEFAULT '{}',
+  last_generated_at timestamptz,
+  file_url text,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### payment_reconciliation
+Payment reconciliation tracking.
+
+```sql
+CREATE TABLE payment_reconciliation (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  reconciliation_date date NOT NULL,
+  payment_method_id uuid REFERENCES payment_methods(id) ON DELETE CASCADE,
+  expected_amount numeric(10,2) NOT NULL,
+  actual_amount numeric(10,2) NOT NULL,
+  discrepancy numeric(10,2),
+  discrepancy_reason text,
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'reconciled', 'failed')),
+  reconciled_by uuid REFERENCES professionals(id) ON DELETE SET NULL,
+  reconciled_at timestamptz,
+  notes text,
+  created_at timestamptz DEFAULT now()
+);
+```
+
+#### financial_audit_trail
+Complete financial audit trail.
+
+```sql
+CREATE TABLE financial_audit_trail (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  action text NOT NULL,
+  table_name text NOT NULL,
+  record_id uuid,
+  old_values jsonb,
+  new_values jsonb,
+  performed_by uuid REFERENCES professionals(id) ON DELETE SET NULL,
+  performed_at timestamptz DEFAULT now(),
+  ip_address inet,
+  user_agent text
+);
+```
+
+### 13. Analytics and Business Intelligence System
+
+#### analytics_configurations
+Analytics system configuration and settings.
+
+```sql
+CREATE TABLE analytics_configurations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  config_type text NOT NULL CHECK (config_type IN ('data_warehouse', 'predictive', 'reporting', 'alerting')),
+  name text NOT NULL,
+  description text,
+  configuration jsonb DEFAULT '{}',
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### kpi_definitions
+KPI definitions and threshold configurations.
+
+```sql
+CREATE TABLE kpi_definitions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  category text NOT NULL CHECK (category IN ('financial', 'clinical', 'operational', 'patient')),
+  metric_type text NOT NULL CHECK (metric_type IN ('count', 'percentage', 'currency', 'rating', 'time')),
+  target_value numeric,
+  warning_threshold numeric,
+  critical_threshold numeric,
+  calculation_method text NOT NULL,
+  aggregation_type text NOT NULL CHECK (aggregation_type IN ('sum', 'average', 'max', 'min', 'count')),
+  refresh_interval integer DEFAULT 3600,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### analytics_data_warehouse
+Centralized data warehouse for all metrics.
+
+```sql
+CREATE TABLE analytics_data_warehouse (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE NOT NULL,
+  date_date date NOT NULL,
+  hour integer,
+  metric_name text NOT NULL,
+  metric_value numeric NOT NULL,
+  metric_category text NOT NULL,
+  dimension_1 text,
+  dimension_2 text,
+  dimension_3 text,
+  source_system text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+```
+
+#### bi_dashboards
+Business intelligence dashboard configurations.
+
+```sql
+CREATE TABLE bi_dashboards (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  layout text NOT NULL CHECK (layout IN ('grid', 'freeform')),
+  filters jsonb DEFAULT '{}',
+  refresh_interval integer,
+  is_public boolean DEFAULT false,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### dashboard_widgets
+Dashboard widget definitions and layouts.
+
+```sql
+CREATE TABLE dashboard_widgets (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  dashboard_id uuid REFERENCES bi_dashboards(id) ON DELETE CASCADE,
+  widget_type text NOT NULL,
+  title text NOT NULL,
+  description text,
+  position jsonb NOT NULL,
+  configuration jsonb NOT NULL,
+  data_source jsonb NOT NULL,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### scheduled_reports
+Automated report scheduling and configuration.
+
+```sql
+CREATE TABLE scheduled_reports (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  report_type text NOT NULL CHECK (report_type IN ('kpi', 'dashboard', 'custom')),
+  configuration jsonb NOT NULL,
+  schedule jsonb NOT NULL,
+  delivery jsonb NOT NULL,
+  is_active boolean DEFAULT true,
+  last_run_at timestamptz,
+  next_run_at timestamptz,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### predictive_models
+Machine learning model configurations.
+
+```sql
+CREATE TABLE predictive_models (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  model_type text NOT NULL CHECK (model_type IN ('no_show', 'revenue', 'patient_behavior', 'treatment_outcome', 'resource_optimization')),
+  algorithm text NOT NULL,
+  features text[] NOT NULL,
+  target_variable text NOT NULL,
+  hyperparameters jsonb DEFAULT '{}',
+  training_config jsonb DEFAULT '{}',
+  model_metrics jsonb,
+  is_active boolean DEFAULT true,
+  trained_at timestamptz,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### analytics_alerts
+Alert system configuration and history.
+
+```sql
+CREATE TABLE analytics_alerts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  kpi_id uuid REFERENCES kpi_definitions(id) ON DELETE SET NULL,
+  condition jsonb NOT NULL,
+  severity text NOT NULL CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+  notification jsonb NOT NULL,
+  is_active boolean DEFAULT true,
+  last_triggered_at timestamptz,
+  trigger_count integer DEFAULT 0,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### data_export_requests
+Data export request tracking.
+
+```sql
+CREATE TABLE data_export_requests (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  description text,
+  data_source jsonb NOT NULL,
+  format text NOT NULL CHECK (format IN ('csv', 'excel', 'json', 'pdf')),
+  filters jsonb DEFAULT '{}',
+  columns text[] DEFAULT '{}',
+  schedule jsonb DEFAULT '{}',
+  status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
+  download_url text,
+  file_metadata jsonb,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+```
+
+#### analytics_events
+Analytics event tracking and logging.
+
+```sql
+CREATE TABLE analytics_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  event_type text NOT NULL,
+  event_category text NOT NULL,
+  event_data jsonb DEFAULT '{}',
+  user_id uuid,
+  session_id text,
+  timestamp timestamptz DEFAULT now(),
+  processed boolean DEFAULT false
+);
+```
+
+#### performance_metrics
+Performance metrics collection.
+
+```sql
+CREATE TABLE performance_metrics (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  metric_type text NOT NULL,
+  metric_name text NOT NULL,
+  metric_value numeric NOT NULL,
+  unit text NOT NULL,
+  timestamp timestamptz DEFAULT now(),
+  metadata jsonb DEFAULT '{}'
+);
+```
+
+#### comparative_analytics
+Benchmarking and comparative data.
+
+```sql
+CREATE TABLE comparative_analytics (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  clinic_id uuid REFERENCES clinics(id) ON DELETE CASCADE,
+  benchmark_type text NOT NULL CHECK (benchmark_type IN ('industry', 'region', 'size', 'custom')),
+  metrics jsonb NOT NULL,
+  period_start date NOT NULL,
+  period_end date NOT NULL,
+  comparison_data jsonb NOT NULL,
+  variance jsonb,
+  percentiles jsonb,
+  insights jsonb,
+  created_at timestamptz DEFAULT now()
+);
+```
+
+### 14. System Configuration
 
 #### system_settings
 System-wide configuration and settings.

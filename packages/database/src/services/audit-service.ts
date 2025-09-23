@@ -1,4 +1,5 @@
 import { SupabaseClient } from "@supabase/supabase-js";
+import { logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
 import type {
   AuditLogRequest,
   ComplianceReport,
@@ -76,13 +77,13 @@ export class AuditService {
         .single();
 
       if (error) {
-        console.error("Failed to create audit log:", error);
+        logHealthcareError('database', error, { method: 'createAuditLog', action: request.action });
         throw new Error(`Failed to create audit log: ${error.message}`);
       }
 
       return data.id;
     } catch (error) {
-      console.error("AuditService.createAuditLog error:", error);
+      logHealthcareError('database', error, { method: 'createAuditLog', action: request.action });
       throw error;
     }
   }
@@ -319,7 +320,7 @@ export class AuditService {
         .order("timestamp", { ascending: false });
 
       if (error) {
-        console.error("Failed to get session audit logs:", error);
+        logHealthcareError('database', error, { method: 'getSessionAuditLogs', sessionId });
         return [];
       }
 
@@ -331,7 +332,7 @@ export class AuditService {
         this.mapDatabaseLogToEntry(log),
       );
     } catch (error) {
-      console.error("AuditService.getSessionAuditLogs error:", error);
+      logHealthcareError('database', error, { method: 'getSessionAuditLogs', sessionId });
       return [];
     }
   }
@@ -360,7 +361,7 @@ export class AuditService {
       const { data: logs, error } = await query;
 
       if (error) {
-        console.error("Failed to get user audit logs:", error);
+        logHealthcareError('database', error, { method: 'getUserAuditLogs', userId: _userId });
         return [];
       }
 
@@ -372,7 +373,7 @@ export class AuditService {
         this.mapDatabaseLogToEntry(log),
       );
     } catch (error) {
-      console.error("AuditService.getUserAuditLogs error:", error);
+      logHealthcareError('database', error, { method: 'getUserAuditLogs', userId: _userId });
       return [];
     }
   }
@@ -409,7 +410,7 @@ export class AuditService {
       const { data: logs, error } = await query;
 
       if (error) {
-        console.error("Failed to get audit logs by date range:", error);
+        logHealthcareError('database', error, { method: 'getAuditLogsByDateRange', startDate, endDate, clinicId });
         return [];
       }
 
@@ -419,7 +420,7 @@ export class AuditService {
 
       return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
-      console.error("AuditService.getAuditLogsByDateRange error:", error);
+      logHealthcareError('database', error, { method: 'getAuditLogsByDateRange', startDate, endDate, clinicId });
       return [];
     }
   }
@@ -450,7 +451,7 @@ export class AuditService {
       const { data: logs, error } = await query;
 
       if (error) {
-        console.error("Failed to generate compliance report:", error);
+        logHealthcareError('database', error, { method: 'getComplianceReport', startDate, endDate, clinicId });
         throw new Error(
           `Failed to generate compliance report: ${error.message}`,
         );
@@ -462,7 +463,7 @@ export class AuditService {
 
       return this.generateComplianceReport(auditLogs, startDate, endDate);
     } catch (error) {
-      console.error("AuditService.getComplianceReport error:", error);
+      logHealthcareError('database', error, { method: 'getComplianceReport', startDate, endDate, clinicId });
       throw error;
     }
   }
@@ -528,7 +529,7 @@ export class AuditService {
       const { data: logs, error } = await query;
 
       if (error) {
-        console.error("Failed to search audit logs:", error);
+        logHealthcareError('database', error, { method: 'searchAuditLogs', criteria });
         return [];
       }
 
@@ -538,7 +539,7 @@ export class AuditService {
 
       return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
-      console.error("AuditService.searchAuditLogs error:", error);
+      logHealthcareError('database', error, { method: 'searchAuditLogs', criteria });
       return [];
     }
   }

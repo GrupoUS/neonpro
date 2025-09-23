@@ -9,6 +9,7 @@ import {
   AppointmentSearchResult,
   AppointmentQueryOptions,
 } from "@neonpro/domain";
+import { databaseLogger, logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
 
 /**
  * Supabase implementation of AppointmentRepository
@@ -33,7 +34,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         .single();
 
       if (error) {
-        console.error("AppointmentRepository.findById error:", error);
+        logHealthcareError('database', error, { method: 'findById', appointmentId: id });
         return null;
       }
 
@@ -41,7 +42,7 @@ export class AppointmentRepository implements IAppointmentRepository {
 
       return this.mapDatabaseAppointmentToDomain(data);
     } catch (error) {
-      console.error("AppointmentRepository.findById error:", error);
+      logHealthcareError('database', error, { method: 'findById', appointmentId: id });
       return null;
     }
   }
@@ -93,7 +94,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error("AppointmentRepository.findByPatientId error:", error);
+        logHealthcareError('database', error, { method: 'findByPatientId', patientId });
         return { appointments: [], total: 0 };
       }
 
@@ -108,7 +109,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         offset: options?.offset || 0,
       };
     } catch (error) {
-      console.error("AppointmentRepository.findByPatientId error:", error);
+      logHealthcareError('database', error, { method: 'findByPatientId', patientId });
       return { appointments: [], total: 0 };
     }
   }
@@ -160,10 +161,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error(
-          "AppointmentRepository.findByProfessionalId error:",
-          error,
-        );
+        logHealthcareError('database', error, { method: 'findByProfessionalId', professionalId });
         return { appointments: [], total: 0 };
       }
 
@@ -178,7 +176,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         offset: options?.offset || 0,
       };
     } catch (error) {
-      console.error("AppointmentRepository.findByProfessionalId error:", error);
+      logHealthcareError('database', error, { method: 'findByProfessionalId', professionalId });
       return { appointments: [], total: 0 };
     }
   }
@@ -230,7 +228,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error("AppointmentRepository.findByClinicId error:", error);
+        logHealthcareError('database', error, { method: 'findByClinicId', clinicId });
         return { appointments: [], total: 0 };
       }
 
@@ -245,7 +243,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         offset: options?.offset || 0,
       };
     } catch (error) {
-      console.error("AppointmentRepository.findByClinicId error:", error);
+      logHealthcareError('database', error, { method: 'findByClinicId', clinicId });
       return { appointments: [], total: 0 };
     }
   }
@@ -310,7 +308,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       const { data, error, count } = await query;
 
       if (error) {
-        console.error("AppointmentRepository.findWithFilter error:", error);
+        logHealthcareError('database', error, { method: 'findWithFilter', filter });
         return { appointments: [], total: 0 };
       }
 
@@ -325,7 +323,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         offset: options?.offset || 0,
       };
     } catch (error) {
-      console.error("AppointmentRepository.findWithFilter error:", error);
+      logHealthcareError('database', error, { method: 'findWithFilter', filter });
       return { appointments: [], total: 0 };
     }
   }
@@ -343,13 +341,13 @@ export class AppointmentRepository implements IAppointmentRepository {
         .single();
 
       if (error) {
-        console.error("AppointmentRepository.create error:", error);
+        logHealthcareError('database', error, { method: 'create', appointmentData });
         throw new Error(`Failed to create appointment: ${error.message}`);
       }
 
       return this.mapDatabaseAppointmentToDomain(data);
     } catch (error) {
-      console.error("AppointmentRepository.create error:", error);
+      logHealthcareError('database', error, { method: 'create', appointmentData });
       throw error;
     }
   }
@@ -369,13 +367,13 @@ export class AppointmentRepository implements IAppointmentRepository {
         .single();
 
       if (error) {
-        console.error("AppointmentRepository.update error:", error);
+        logHealthcareError('database', error, { method: 'update', appointmentId: id, appointmentData });
         throw new Error(`Failed to update appointment: ${error.message}`);
       }
 
       return this.mapDatabaseAppointmentToDomain(data);
     } catch (error) {
-      console.error("AppointmentRepository.update error:", error);
+      logHealthcareError('database', error, { method: 'update', appointmentId: id, appointmentData });
       throw error;
     }
   }
@@ -388,13 +386,13 @@ export class AppointmentRepository implements IAppointmentRepository {
         .eq("id", id);
 
       if (error) {
-        console.error("AppointmentRepository.delete error:", error);
+        logHealthcareError('database', error, { method: 'delete', appointmentId: id });
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error("AppointmentRepository.delete error:", error);
+      logHealthcareError('database', error, { method: 'delete', appointmentId: id });
       return false;
     }
   }
@@ -420,7 +418,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       const { data, error } = await query;
 
       if (error) {
-        console.error("AppointmentRepository.findByDateRange error:", error);
+        logHealthcareError('database', error, { method: 'findByDateRange', startDate, endDate, clinicId });
         return [];
       }
 
@@ -428,7 +426,7 @@ export class AppointmentRepository implements IAppointmentRepository {
 
       return data.map(this.mapDatabaseAppointmentToDomain);
     } catch (error) {
-      console.error("AppointmentRepository.findByDateRange error:", error);
+      logHealthcareError('database', error, { method: 'findByDateRange', startDate, endDate, clinicId });
       return [];
     }
   }
@@ -468,13 +466,13 @@ export class AppointmentRepository implements IAppointmentRepository {
       const { count, error } = await query;
 
       if (error) {
-        console.error("AppointmentRepository.count error:", error);
+        logHealthcareError('database', error, { method: 'count', filter });
         return 0;
       }
 
       return count || 0;
     } catch (error) {
-      console.error("AppointmentRepository.count error:", error);
+      logHealthcareError('database', error, { method: 'count', filter });
       return 0;
     }
   }
@@ -518,7 +516,7 @@ export class AppointmentRepository implements IAppointmentRepository {
   /**
    * Maps create request to database format
    */
-  private mapCreateRequestToDatabase(_request: CreateAppointmentRequest): any {
+  private mapCreateRequestToDatabase(request: CreateAppointmentRequest): any {
     return {
       clinic_id: request.clinicId,
       patient_id: request.patientId,
@@ -540,7 +538,7 @@ export class AppointmentRepository implements IAppointmentRepository {
   /**
    * Maps update request to database format
    */
-  private mapUpdateRequestToDatabase(_request: UpdateAppointmentRequest): any {
+  private mapUpdateRequestToDatabase(request: UpdateAppointmentRequest): any {
     const updateData: any = {};
 
     if (request.status !== undefined) updateData.status = request.status;

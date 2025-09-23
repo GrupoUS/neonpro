@@ -320,7 +320,7 @@ export const HealthcareSelect = forwardRef<
           if (!groups[option.group]) {
             groups[option.group] = [];
           }
-          groups[option.group].push(option);
+          groups[option.group!]!.push(option);
         } else {
           ungrouped.push(option);
         }

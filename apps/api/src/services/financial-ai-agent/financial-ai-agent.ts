@@ -13,15 +13,15 @@ import { z } from 'zod';
 import {
   BillingService,
   Billing,
-  BillingType,
-  PaymentStatus,
-  PaymentMethod,
+  // BillingType,
+  // PaymentStatus,
+  // PaymentMethod,
   FinancialSummary,
   ServiceResponse,
-  BillingSearchOptions,
-  PaymentProcessingRequest,
-  ProcedureCode,
-  TaxInfo,
+  // BillingSearchOptions,
+  // PaymentProcessingRequest,
+  // ProcedureCode,
+  // TaxInfo,
 } from '../billing-service';
 
 /**
@@ -379,7 +379,7 @@ export class FinancialAIAgent {
   /**
    * Anomaly Detection Methods
    */
-  private async detectRevenueSpike(billing: Billing): Promise<AnomalyDetection | null> {
+  private async detectRevenueSpike(_billing: Billing): Promise<AnomalyDetection | null> {
     // Implement revenue spike detection logic
     // Compare with historical patterns and detect unusual increases
     return null; // Placeholder

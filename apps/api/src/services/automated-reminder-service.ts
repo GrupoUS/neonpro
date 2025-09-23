@@ -208,7 +208,7 @@ export class AutomatedReminderService {
       }
 
       // Calculate no-show risk
-      const aiService = AIAppointmentSchedulingService.getInstance();
+      const _aiService = AIAppointmentSchedulingService.getInstance();
       const noShowRisk = appointment.noShowRiskScore || 0;
 
       // Determine reminder strategy based on risk and preferences
@@ -765,7 +765,7 @@ export class AutomatedReminderService {
     }
   }
 
-  private async deliverMessage(reminder: ReminderConfig): Promise<{
+  private async deliverMessage(_reminder: ReminderConfig): Promise<{
     status: 'delivered' | 'failed';
     timestamp: Date;
     providerMessageId?: string;
@@ -953,11 +953,11 @@ export class AutomatedReminderService {
 
   private setupProtocolHandlers(): void {
     // Set up handlers for AG-UI Protocol messages
-    aguiAppointmentProtocol.on('reminder.sent', async (message) => {
+    aguiAppointmentProtocol.on('reminder.sent', async (_message) => {
       // Handle reminder sent notifications
     });
 
-    aguiAppointmentProtocol.on('reminder.failed', async (message) => {
+    aguiAppointmentProtocol.on('reminder.failed', async (_message) => {
       // Handle reminder failure notifications
     });
   }

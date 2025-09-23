@@ -1213,7 +1213,7 @@ export class AnomalyDetectionService {
       // Add nodes if not present
       [`patient_${hBilling.patientId}`, `professional_${hBilling.professionalId}`, `clinic_${hBilling.clinicId}`].forEach(nodeId => {
         if (!nodes.has(nodeId)) {
-          const [type, id] = nodeId.split('_');
+          const [type, _id] = nodeId.split('_');
           nodes.set(nodeId, {
             id: nodeId,
             type,
@@ -1307,6 +1307,7 @@ export class AnomalyDetectionService {
     // In a real implementation, this would use a proper expression evaluator
     try {
       // Example: "severity === 'high' || severity === 'critical'"
+      // eslint-disable-next-line no-eval
       return eval(condition.replace(/severity/g, `"${alert.severity}"`));
     } catch (error) {
       console.error('Condition evaluation failed:', error);

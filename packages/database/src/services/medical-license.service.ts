@@ -5,7 +5,7 @@
  */
 
 import { createClient } from "../client";
-// import type { Database } from '../types/supabase';
+import { databaseLogger, logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
 
 export interface CFMRegistration {
   cfmNumber: string;
@@ -152,7 +152,7 @@ export class MedicalLicenseService {
 
       return result;
     } catch (error) {
-      console.error("Error verifying medical license:", error);
+      logHealthcareError('database', error, { method: 'verifyMedicalLicense', cfmNumber, physicianState });
       throw new Error(
         `License verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
@@ -186,7 +186,7 @@ export class MedicalLicenseService {
 
       return registration;
     } catch (error) {
-      console.error("Error getting CFM registration:", error);
+      logHealthcareError('database', error, { method: 'getCFMRegistration', cfmNumber, state });
       throw new Error(
         `Failed to retrieve CFM registration: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
@@ -236,7 +236,7 @@ export class MedicalLicenseService {
 
       return registration;
     } catch (error) {
-      console.error("Error fetching from CFM API:", error);
+      logHealthcareError('database', error, { method: 'fetchFromCFMAPI', cfmNumber, state });
       return null; // Fall back to manual verification
     }
   }
@@ -297,7 +297,7 @@ export class MedicalLicenseService {
 
       return registration;
     } catch (error) {
-      console.error("Error in manual verification:", error);
+      logHealthcareError('database', error, { method: 'performManualVerification', cfmNumber, state });
       throw new Error("Manual verification failed");
     }
   }
@@ -366,7 +366,7 @@ export class MedicalLicenseService {
 
       return authorization;
     } catch (error) {
-      console.error("Error getting telemedicine authorization:", error);
+      logHealthcareError('database', error, { method: 'getTelemedicineAuthorization', cfmNumber, state });
       throw new Error("Failed to get telemedicine authorization");
     }
   }
@@ -536,7 +536,7 @@ export class MedicalLicenseService {
         verificationSource: data.verification_source,
       };
     } catch (error) {
-      console.error("Error getting cached registration:", error);
+      logHealthcareError('database', error, { method: 'getCachedRegistration', cfmNumber });
       return null;
     }
   }
@@ -567,7 +567,7 @@ export class MedicalLicenseService {
         verification_source: registration.verificationSource,
       });
     } catch (error) {
-      console.error("Error updating registration cache:", error);
+      logHealthcareError('database', error, { method: 'updateRegistrationCache', cfmNumber: registration.cfmNumber });
     }
   }
 
@@ -584,7 +584,7 @@ export class MedicalLicenseService {
         priority: "high",
       });
     } catch (error) {
-      console.error("Error flagging for manual review:", error);
+      logHealthcareError('database', error, { method: 'flagForManualReview', cfmNumber, state });
     }
   }
 
@@ -604,7 +604,7 @@ export class MedicalLicenseService {
         is_valid: auth.isValid,
       });
     } catch (error) {
-      console.error("Error storing telemedicine authorization:", error);
+      logHealthcareError('database', error, { method: 'storeTelemedicineAuthorization', cfmNumber: auth.cfmNumber });
     }
   }
 
@@ -624,7 +624,7 @@ export class MedicalLicenseService {
         next_verification_due: result.nextVerificationDue.toISOString(),
       });
     } catch (error) {
-      console.error("Error storing verification record:", error);
+      logHealthcareError('database', error, { method: 'storeVerificationRecord', cfmNumber: result.cfmRegistration.cfmNumber });
     }
   }
 
@@ -662,7 +662,7 @@ export class MedicalLicenseService {
         emergencyOnly: verification.telemedicineAuth.emergencyOnly,
       };
     } catch (error) {
-      console.error("Error checking telemedicine authorization:", error);
+      logHealthcareError('database', error, { method: 'isAuthorizedForTelemedicine', cfmNumber, physicianState, consultationState: _consultationState });
       return {
         authorized: false,
         restrictions: ["Verification failed"],
@@ -710,13 +710,13 @@ export class MedicalLicenseService {
         .eq("is_active", true);
 
       if (error) {
-        console.error("Error fetching specialties:", error);
+        logHealthcareError('database', error, { method: 'getPhysicianSpecialties', crmNumber, state });
         return [];
       }
 
       return data?.map((item) => item.specialty_name) || [];
     } catch (error) {
-      console.error("Error getting physician specialties:", error);
+      logHealthcareError('database', error, { method: 'getPhysicianSpecialties', crmNumber, state });
       return [];
     }
   }

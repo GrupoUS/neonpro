@@ -4,6 +4,7 @@
  */
 
 import type { PrismaClient } from "@prisma/client";
+import { logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
 
 // Lazy load prisma to avoid test environment issues
 let _prismaInstance: PrismaClient | null = null;
@@ -92,9 +93,8 @@ export abstract class BaseService {
           status: "SUCCESS",
         },
       });
-    } catch (_error) {
-      void _error;
-      console.error("Failed to create audit log:", error);
+    } catch (error) {
+      logHealthcareError('database', error, { method: 'createAuditLog', action, resource });
     }
   }
 
@@ -209,9 +209,8 @@ export abstract class BaseService {
         where: { id },
       });
       return result;
-    } catch (_error) {
-      void _error;
-      console.error(`Error finding ${model} by id ${id}:`, error);
+    } catch (error) {
+      logHealthcareError('database', error, { method: 'findById', model, id });
       throw error;
     }
   }
@@ -226,9 +225,8 @@ export abstract class BaseService {
     try {
       const result = await (prisma as any)[model].findMany(options);
       return result;
-    } catch (_error) {
-      void _error;
-      console.error(`Error finding many ${model}:`, error);
+    } catch (error) {
+      logHealthcareError('database', error, { method: 'findMany', model, options });
       throw error;
     }
   }

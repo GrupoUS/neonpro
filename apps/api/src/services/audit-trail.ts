@@ -336,7 +336,7 @@ export class DatabaseAuditStorage implements AuditStorage {
         : event;
 
       // Add digital signature if required
-      const signedEvent = this.config.security.digitalSignatures
+      const _signedEvent = this.config.security.digitalSignatures
         ? await this.addDigitalSignature(encryptedEvent)
         : encryptedEvent;
 
@@ -350,7 +350,7 @@ export class DatabaseAuditStorage implements AuditStorage {
     }
   }
 
-  async query(filters: AuditQueryFilters): Promise<AuditEvent[]> {
+  async query(_filters: AuditQueryFilters): Promise<AuditEvent[]> {
     // Implement database query logic
     // This would use your actual database implementation
     return [];
@@ -382,7 +382,7 @@ export class DatabaseAuditStorage implements AuditStorage {
     return 0; // Return number of archived events
   }
 
-  async count(filters: AuditQueryFilters): Promise<number> {
+  async count(_filters: AuditQueryFilters): Promise<number> {
     // Implement count query
     return 0;
   }
@@ -866,7 +866,7 @@ export class AuditTrailService {
     healthcareContext?: AuditEvent['healthcareContext'],
   ): AuditEvent['compliance'] {
     const isPatientData = resource.type === 'patient' || resource.type === 'medical_record';
-    const isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
+    const _isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
 
     return {
       lgpdRelevant: isPatientData || eventType.includes('data_subject'),

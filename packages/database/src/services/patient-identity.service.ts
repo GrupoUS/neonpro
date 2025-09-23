@@ -4,6 +4,8 @@
  * for secure and reliable patient identification
  */
 
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
+
 import { createClient } from "../client";
 import type { Patient } from "@neonpro/types";
 
@@ -169,7 +171,7 @@ export class PatientIdentityService {
 
       return verificationResult;
     } catch (error) {
-      console.error("Error verifying patient identity:", error);
+      logHealthcareError('database', error, { method: 'verifyPatientIdentity', patientId });
       throw new Error(
         `Identity verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
@@ -237,7 +239,7 @@ export class PatientIdentityService {
 
       return { valid, document: verifiedDocument, reason };
     } catch (error) {
-      console.error("Error verifying document:", error);
+      logHealthcareError('database', error, { method: 'verifyDocument', documentType: document.type });
       return {
         valid: false,
         document: {
@@ -282,7 +284,7 @@ export class PatientIdentityService {
 
       return simulatedVerification;
     } catch (error) {
-      console.error("Error performing biometric verification:", error);
+      logHealthcareError('database', error, { method: 'performBiometricVerification', patientId });
 
       return {
         faceMatch: false,
@@ -411,10 +413,10 @@ export class PatientIdentityService {
         });
 
       if (error) {
-        console.error("Failed to store verification record:", error);
+        logHealthcareError('database', error, { method: 'storeVerificationRecord', patientId: result.patientId, verificationSession: result.verificationSession });
       }
     } catch (error) {
-      console.error("Error storing verification record:", error);
+      logHealthcareError('database', error, { method: 'storeVerificationRecord' });
     }
   }
 
@@ -439,10 +441,10 @@ export class PatientIdentityService {
         });
 
       if (error) {
-        console.error("Failed to store biometric record:", error);
+        logHealthcareError('database', error, { method: 'storeBiometricRecord', patientId, verificationProvider: biometric.verificationProvider });
       }
     } catch (error) {
-      console.error("Error storing biometric record:", error);
+      logHealthcareError('database', error, { method: 'storeBiometricRecord', patientId });
     }
   }
 
@@ -465,10 +467,10 @@ export class PatientIdentityService {
         .eq("id", patientId);
 
       if (error) {
-        console.error("Failed to update patient verification status:", error);
+        logHealthcareError('database', error, { method: 'updatePatientVerificationStatus', patientId, verificationLevel: result.verificationLevel });
       }
     } catch (error) {
-      console.error("Error updating patient verification status:", error);
+      logHealthcareError('database', error, { method: 'updatePatientVerificationStatus', patientId });
     }
   }
 
@@ -601,7 +603,7 @@ export class PatientIdentityService {
 
       return { verified, confidence, method };
     } catch (error) {
-      console.error("Error verifying patient address:", error);
+      logHealthcareError('database', error, { method: 'verifyPatientAddress', patientId, address: { zipCode: address.zipCode, state: address.state } });
       return { verified: false, confidence: 0, method: "error" };
     }
   }
@@ -678,7 +680,7 @@ export class PatientIdentityService {
         errors,
       };
     } catch (error) {
-      console.error("Error verifying physician identity:", error);
+      logHealthcareError('database', error, { method: 'verifyPhysicianIdentity', physicianId, crmNumber, crmState });
       return {
         isValid: false,
         verificationLevel: "basic",

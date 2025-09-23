@@ -4,32 +4,76 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "noEmit": true,
+    "composite": false,
+    "incremental": true,
     "outDir": "./dist",
     "rootDir": ".",
-    "types": ["node", "vitest", "vitest/globals"],
+    "types": [
+      "node",
+      "vitest",
+      "vitest/globals"
+    ],
     "exactOptionalPropertyTypes": false,
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@shared/*": ["packages/shared/src/*"],
-      "@neonpro/*": ["packages/*/src"],
-      "@neonpro/ui": ["packages/ui/src"],
-      "@neonpro/ui/*": ["packages/ui/src/*"],
-      "@neonpro/utils": ["packages/utils/src"],
-      "@neonpro/utils/*": ["packages/utils/src/*"],
-      "@neonpro/types": ["packages/types/src"],
-      "@neonpro/types/*": ["packages/types/src/*"],
-      "@neonpro/shared": ["packages/shared/src"],
-      "@neonpro/shared/*": ["packages/shared/src/*"],
-      "@neonpro/security": ["packages/security/src"],
-      "@neonpro/security/*": ["packages/security/src/*"],
-      "@neonpro/database": ["packages/database/src"],
-      "@neonpro/database/*": ["packages/database/src/*"],
-      "@apps/*": ["apps/*/src"],
-      "@tests/*": ["./tools/tests/*"]
+      "@/*": [
+        "./src/*"
+      ],
+      "@shared/*": [
+        "packages/shared/src/*"
+      ],
+      "@neonpro/*": [
+        "packages/*/src"
+      ],
+      "@neonpro/ui": [
+        "packages/ui/src"
+      ],
+      "@neonpro/ui/*": [
+        "packages/ui/src/*"
+      ],
+      "@neonpro/utils": [
+        "packages/utils/src"
+      ],
+      "@neonpro/utils/*": [
+        "packages/utils/src/*"
+      ],
+      "@neonpro/types": [
+        "packages/types/src"
+      ],
+      "@neonpro/types/*": [
+        "packages/types/src/*"
+      ],
+      "@neonpro/shared": [
+        "packages/shared/src"
+      ],
+      "@neonpro/shared/*": [
+        "packages/shared/src/*"
+      ],
+      "@neonpro/security": [
+        "packages/security/src"
+      ],
+      "@neonpro/security/*": [
+        "packages/security/src/*"
+      ],
+      "@neonpro/database": [
+        "packages/database/src"
+      ],
+      "@neonpro/database/*": [
+        "packages/database/src/*"
+      ],
+      "@apps/*": [
+        "apps/*/src"
+      ],
+      "@tests/*": [
+        "./tools/tests/*"
+      ]
     }
   },
   "include": [
@@ -39,18 +83,17 @@
     "*.ts",
     "*.tsx",
     "types/**/*"
-  ],
+  ]
   "exclude": [
     "node_modules",
     "dist",
-    "**/dist/**/*",
+    "**/dist/**",
     "**/*.js",
-    "**/*.test.ts",
     "**/*.test.tsx",
     "**/__tests__/**"
   ],
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
-  },
+  }
 }

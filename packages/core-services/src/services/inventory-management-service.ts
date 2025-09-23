@@ -4,11 +4,12 @@
  */
 
 import { createClient } from '@supabase/supabase-js';
-import type { 
-  InventoryCategory, 
-  Product, 
-  InventoryBatch, 
-  InventoryTransaction, 
+import { logHealthcareError, inventoryLogger } from '../../../shared/src/logging/healthcare-logger';
+import type {
+  InventoryCategory,
+  Product,
+  InventoryBatch,
+  InventoryTransaction,
   InventoryStockLevel,
   ProductUsageRecord,
   InventoryAlert,
@@ -369,7 +370,7 @@ export class InventoryManagementService {
       .insert([alert]);
 
     if (error && !error.message.includes('duplicate key')) {
-      console.error(`Failed to create inventory alert: ${error.message}`);
+      logHealthcareError('inventory', error, { method: 'createInventoryAlert', alert });
     }
   }
 
@@ -639,9 +640,13 @@ export class InventoryManagementService {
         });
       }
 
-      console.log(`Processed ${lowStockAlerts.length} low stock alerts and ${expiringBatches.length} expiry alerts`);
+      inventoryLogger.info(`Processed ${lowStockAlerts.length} low stock alerts and ${expiringBatches.length} expiry alerts`, {
+        clinicId,
+        lowStockCount: lowStockAlerts.length,
+        expiryCount: expiringBatches.length
+      });
     } catch (error) {
-      console.error('Error in daily inventory checks:', error);
+      logHealthcareError('inventory', error, { method: 'performDailyInventoryChecks', clinicId });
     }
   }
 

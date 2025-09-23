@@ -673,7 +673,7 @@ function AnalyticsDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="border border-gray-200 rounded-lg p-4">
                     <h4 className="text-sm font-medium text-gray-900 mb-2">Previsão de Receita - Próximos 7 dias</h4>
-                    <div className="text-2xl font-bold text-green-600">R$ 48.500</h4>
+                    <div className="text-2xl font-bold text-green-600">R$ 48.500</div>
                     <p className="text-sm text-gray-500">+12% em relação à semana anterior</p>
                   </div>
                   <div className="border border-gray-200 rounded-lg p-4">

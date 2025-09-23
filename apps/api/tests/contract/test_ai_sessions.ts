@@ -19,7 +19,7 @@ async function api(path: string, init?: RequestInit) {
 }
 
 // Request schema validation
-const CreateSessionRequestSchema = z.object({
+const _CreateSessionRequestSchema = z.object({
   patientId: z.string().uuid().optional(),
   model: z.enum(["gpt-4o", "claude-3-sonnet", "gemini-pro", "local-llama"]),
   provider: z.enum(["openai", "anthropic", "google", "local"]),
@@ -46,7 +46,7 @@ const CreateSessionRequestSchema = z.object({
 });
 
 // Response schema validation
-const SessionResponseSchema = z.object({
+const _SessionResponseSchema = z.object({
   sessionId: z.string().uuid(),
   model: z.string(),
   provider: z.string(),

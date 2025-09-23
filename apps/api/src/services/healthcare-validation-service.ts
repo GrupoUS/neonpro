@@ -98,6 +98,7 @@ export class HealthcareValidationService {
           aiScore -= lgpdValidation.warnings.length * 0.05;
         }
       } catch (_error) {
+  void _error;
         errors.push('Erro na validação LGPD');
         result.isValid = false;
         aiScore -= 0.2;
@@ -135,6 +136,7 @@ export class HealthcareValidationService {
             aiScore -= 0.1;
           }
         } catch (_error) {
+  void _error;
           warnings.push('Não foi possível validar conformidade ANVISA');
           aiScore -= 0.1;
         }
@@ -170,6 +172,7 @@ export class HealthcareValidationService {
 
       return result;
     } catch (_error) {
+  void _error;
       console.error('Healthcare validation error:', error);
       return {
         isValid: false,
@@ -217,6 +220,7 @@ export class HealthcareValidationService {
         licenseInfo: authorized ? licenseInfo : undefined,
       };
     } catch (_error) {
+  void _error;
       console.error('Professional authorization error:', error);
       return { authorized: false };
     }
@@ -269,6 +273,7 @@ export class HealthcareValidationService {
         warnings,
       };
     } catch (_error) {
+  void _error;
       return {
         isValid: false,
         errors: ['Erro na validação LGPD'],

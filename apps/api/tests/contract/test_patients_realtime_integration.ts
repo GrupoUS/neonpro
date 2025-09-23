@@ -6,7 +6,7 @@ import { cleanupTestDatabase, setupTestDatabase } from "../helpers/database";
 describe("Patients Real-time Integration API", () => {
   let testClient: any;
   let patientId: string;
-  let wsConnection: any;
+  let _wsConnection: any;
 
   beforeEach(async () => {
     await setupTestDatabase();

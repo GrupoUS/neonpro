@@ -4,6 +4,7 @@
  */
 
 import { createClient } from "../client";
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
 // import type { Database } from '../types/supabase';
 
 export interface WebRTCConfig {
@@ -163,7 +164,7 @@ export class WebRTCSessionService {
         sessionToken: session.session_token,
       };
     } catch (error) {
-      console.error("Error initializing WebRTC session:", error);
+      logHealthcareError('database', error, { method: 'initializeSession', telemedicineSessionId });
       throw error;
     }
   }
@@ -209,7 +210,7 @@ export class WebRTCSessionService {
         roomId,
       };
     } catch (error) {
-      console.error("Error creating WebRTC session:", error);
+      logHealthcareError('database', error, { method: 'createSession', sessionData });
       throw error;
     }
   }
@@ -247,7 +248,7 @@ export class WebRTCSessionService {
       // Initialize WebRTC connections
       await this.initializeSession(sessionId);
     } catch (error) {
-      console.error("Error starting session:", error);
+      logHealthcareError('database', error, { method: 'startSession', sessionId });
       throw error;
     }
   }
@@ -305,7 +306,7 @@ export class WebRTCSessionService {
         platform: participant.platform,
       });
     } catch (error) {
-      console.error("Error adding participant:", error);
+      logHealthcareError('database', error, { method: 'addParticipant', roomId, participantId: participant.id });
       throw error;
     }
   }
@@ -345,7 +346,7 @@ export class WebRTCSessionService {
         await this.handleQualityIssues(roomId, metrics);
       }
     } catch (error) {
-      console.error("Error updating quality metrics:", error);
+      logHealthcareError('database', error, { method: 'updateQualityMetrics', roomId });
       throw error;
     }
   }
@@ -438,7 +439,7 @@ export class WebRTCSessionService {
         storageLocation,
       };
     } catch (error) {
-      console.error("Error starting recording:", error);
+      logHealthcareError('database', error, { method: 'startRecording', roomId, consentMethod });
       throw error;
     }
   }
@@ -531,7 +532,7 @@ export class WebRTCSessionService {
         duration,
       };
     } catch (error) {
-      console.error("Error stopping recording:", error);
+      logHealthcareError('database', error, { method: 'stopRecording', roomId });
       throw error;
     }
   }
@@ -580,7 +581,7 @@ export class WebRTCSessionService {
         reason,
       });
     } catch (error) {
-      console.error("Error ending session:", error);
+      logHealthcareError('database', error, { method: 'endSession', sessionId, reason });
       throw error;
     }
   }
@@ -658,7 +659,7 @@ export class WebRTCSessionService {
         duration,
       };
     } catch (error) {
-      console.error("Error getting session status:", error);
+      logHealthcareError('database', error, { method: 'getSessionStatus', roomId });
       throw error;
     }
   }
@@ -719,11 +720,11 @@ export class WebRTCSessionService {
           .eq("room_id", roomId);
 
         if (error) {
-          console.error("Failed to log quality issues:", error);
+          logHealthcareError('database', error, { method: 'handleQualityIssues', roomId, metrics });
         }
       }
     } catch (error) {
-      console.error("Error handling quality issues:", error);
+      logHealthcareError('database', error, { method: 'handleQualityIssues', roomId });
     }
   }
 
@@ -740,7 +741,7 @@ export class WebRTCSessionService {
         .single();
 
       if (getError) {
-        console.error("Failed to get current audit events:", getError);
+        logHealthcareError('database', getError, { method: 'logSessionEvent', telemedicineSessionId, step: 'getCurrentEvents' });
         return;
       }
 
@@ -756,10 +757,10 @@ export class WebRTCSessionService {
         .eq("id", telemedicineSessionId);
 
       if (updateError) {
-        console.error("Failed to log session event:", updateError);
+        logHealthcareError('database', updateError, { method: 'logSessionEvent', telemedicineSessionId, step: 'updateEvents' });
       }
     } catch (error) {
-      console.error("Error logging session event:", error);
+      logHealthcareError('database', error, { method: 'logSessionEvent', telemedicineSessionId });
     }
   }
 
@@ -813,7 +814,7 @@ export class WebRTCSessionService {
         recording: recording || null,
       };
     } catch (error) {
-      console.error("Error getting session details:", error);
+      logHealthcareError('database', error, { method: 'getSessionDetails', sessionId });
       return null;
     }
   }
@@ -856,7 +857,7 @@ export class WebRTCSessionService {
         cancelled_at: new Date().toISOString(),
       });
     } catch (error) {
-      console.error("Error cancelling session:", error);
+      logHealthcareError('database', error, { method: 'cancelSession', sessionId, reason });
       throw error;
     }
   }
@@ -883,7 +884,7 @@ export class WebRTCSessionService {
 
       return data || null;
     } catch (error) {
-      console.error("Error getting quality metrics:", error);
+      logHealthcareError('database', error, { method: 'getQualityMetrics', sessionId });
       return null;
     }
   }

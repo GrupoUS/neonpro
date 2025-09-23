@@ -10,7 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 import {
   AguiClientAnalyticsMessage,
   AguiClientRetentionPredictionMessage,
-  AISuggestion,
+  /* AISuggestion, */
   AnalyticsData,
   RetentionFeatures,
   RetentionRecommendation,
@@ -188,7 +188,7 @@ export class PredictiveClientAnalyticsService {
       }
 
       // Generate insights
-      const insights = await this.generateInsights({
+      const _insights = await this.generateInsights({
         engagement,
         financial,
         treatment,
@@ -196,7 +196,7 @@ export class PredictiveClientAnalyticsService {
       });
 
       // Generate recommendations
-      const recommendations = await this.generateRecommendations({
+      const _recommendations = await this.generateRecommendations({
         engagement,
         financial,
         treatment,
@@ -330,7 +330,7 @@ export class PredictiveClientAnalyticsService {
     clientId: string,
     clientData: any,
   ): Promise<RetentionFeatures> {
-    const { client, appointments, consents } = clientData;
+    const { client, appointments, consents: _consents } = clientData;
 
     // Calculate appointment history features
     const appointmentHistory = this.calculateAppointmentHistory(appointments);
@@ -1213,7 +1213,7 @@ export class PredictiveClientAnalyticsService {
 
   private async checkDatabaseConnection(): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
+      const { data: _data, error } = await this.supabase
         .from('patients')
         .select('count')
         .limit(1);

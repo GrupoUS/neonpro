@@ -23,6 +23,7 @@ import type {
   RealtimeAdapterError,
 } from "./event-adapter.js";
 import { createRealtimeEvent, validateParticipant } from "./event-adapter.js";
+import { logHealthcareError, realtimeLogger } from '../../../shared/src/logging/healthcare-logger';
 
 // Mock Supabase client for testing
 const createMockSupabaseClient = () => ({
@@ -104,7 +105,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       this.startHealthMonitoring();
 
       this.isInitialized = true;
-      console.log("SupabaseRealtimeAdapter initialized successfully");
+      realtimeLogger.info('SupabaseRealtimeAdapter initialized successfully', { config: this.config });
     } catch (_error) {
       void _error;
       throw new Error(`Failed to initialize SupabaseRealtimeAdapter: ${error}`);
@@ -121,7 +122,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     this.channelStates.clear();
     this.isInitialized = false;
 
-    console.log("SupabaseRealtimeAdapter cleaned up");
+    realtimeLogger.info('SupabaseRealtimeAdapter cleaned up');
   }
 
   async joinChannel(
@@ -187,9 +188,11 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
         });
       }
 
-      console.log(
-        `Participant ${fullParticipant.id} joined channel ${channelId}`,
-      );
+      realtimeLogger.info(`Participant ${fullParticipant.id} joined channel ${channelId}`, {
+        channelId,
+        participantId: fullParticipant.id,
+        participantRole: fullParticipant.role
+      });
     } catch (_error) {
       void _error;
       await this.handleError({
@@ -211,15 +214,13 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   ): Promise<void> {
     const channelState = this.channelStates.get(channelId);
     if (!channelState) {
-      console.warn(`Channel ${channelId} not found for leave operation`);
+      realtimeLogger.warn(`Channel ${channelId} not found for leave operation`, { channelId, participantId });
       return;
     }
 
     const participant = channelState.participants.get(participantId);
     if (!participant) {
-      console.warn(
-        `Participant ${participantId} not found in channel ${channelId}`,
-      );
+      realtimeLogger.warn(`Participant ${participantId} not found in channel ${channelId}`, { channelId, participantId });
       return;
     }
 
@@ -261,7 +262,12 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
         await this.unsubscribeFromChannel(channelId);
       }
 
-      console.log(`Participant ${participantId} left channel ${channelId}`);
+      realtimeLogger.info(`Participant ${participantId} left channel ${channelId}`, {
+        channelId,
+        participantId,
+        reason,
+        duration
+      });
     } catch (_error) {
       void _error;
       await this.handleError({
@@ -345,7 +351,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
         this.handlePresenceSync(channelId, channel as any);
       });
     } catch (e) {
-      console.warn("Presence tracking setup failed:", e);
+      logHealthcareError('realtime', e, { method: 'setupPresenceTracking', channelId });
     }
 
     await channel.subscribe();

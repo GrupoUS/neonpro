@@ -75,7 +75,7 @@ const React = {
 global.React = React;
 
 // Simple testing library mock
-const testingLibrary = {
+const _testingLibrary = {
   render: (component) => {
     const container = document.createElement('div');
     container.id = 'root';

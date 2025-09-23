@@ -117,7 +117,7 @@ export const realtimeTelemedicineRouter = router({
     .input(CreateSessionSchema)
     .mutation(async ({ input, _ctx }) => {
       try {
-        const service = await initializeRealtimeService();
+        const _service = await initializeRealtimeService();
 
         // Verify user has access to create sessions
         const userId = ctx.user?.id;
@@ -184,7 +184,7 @@ export const realtimeTelemedicineRouter = router({
     .input(SendMessageSchema)
     .mutation(async ({ input, _ctx }) => {
       try {
-        const service = await initializeRealtimeService();
+        const _service = await initializeRealtimeService();
 
         const userId = ctx.user?.id;
         if (!userId || userId !== input.senderId) {
@@ -238,7 +238,7 @@ export const realtimeTelemedicineRouter = router({
     .input(UpdatePresenceSchema)
     .mutation(async ({ input, _ctx }) => {
       try {
-        const service = await initializeRealtimeService();
+        const _service = await initializeRealtimeService();
 
         const userId = ctx.user?.id;
         if (!userId || userId !== input._userId) {
@@ -318,7 +318,7 @@ export const realtimeTelemedicineRouter = router({
     .input(MonitorQualitySchema)
     .query(async ({ input, _ctx }) => {
       try {
-        const service = await initializeRealtimeService();
+        const _service = await initializeRealtimeService();
 
         // Get session statistics
         const stats = service.getSessionStatistics(input.sessionId);
@@ -385,7 +385,7 @@ export const realtimeTelemedicineRouter = router({
     )
     .query(async ({ input, _ctx }) => {
       try {
-        const service = await initializeRealtimeService();
+        const _service = await initializeRealtimeService();
 
         // Get session statistics
         const stats = service.getSessionStatistics(input.sessionId);
@@ -437,7 +437,7 @@ export const realtimeTelemedicineRouter = router({
     )
     .mutation(async ({ input, _ctx }) => {
       try {
-        const service = await initializeRealtimeService();
+        const _service = await initializeRealtimeService();
 
         // Get final statistics before ending
         const finalStats = service.getSessionStatistics(input.sessionId);
@@ -540,7 +540,7 @@ export const realtimeTelemedicineRouter = router({
     )
     .mutation(async ({ input, _ctx }) => {
       try {
-        const service = await initializeRealtimeService();
+        const _service = await initializeRealtimeService();
 
         // This would trigger emergency protocols
         console.log(`🚨 EMERGENCY ALERT:`, {

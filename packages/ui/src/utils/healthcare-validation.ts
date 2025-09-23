@@ -29,19 +29,19 @@ export const healthcareValidationSchemas = {
       // Validate check digits
       let sum = 0;
       for (let i = 0; i < 9; i++) {
-        sum += parseInt(cleanCpf[i]) * (10 - i);
+        sum += parseInt(cleanCpf[i] || '0') * (10 - i);
       }
       let remainder = (sum * 10) % 11;
       if (remainder === 10 || remainder === 11) remainder = 0;
-      if (remainder !== parseInt(cleanCpf[9])) return false;
+      if (remainder !== parseInt(cleanCpf[9] || '0')) return false;
 
       sum = 0;
       for (let i = 0; i < 10; i++) {
-        sum += parseInt(cleanCpf[i]) * (11 - i);
+        sum += parseInt(cleanCpf[i] || '0') * (11 - i);
       }
       remainder = (sum * 10) % 11;
       if (remainder === 10 || remainder === 11) remainder = 0;
-      if (remainder !== parseInt(cleanCpf[10])) return false;
+      if (remainder !== parseInt(cleanCpf[10] || '0')) return false;
 
       return true;
     }, "CPF inválido"),
@@ -98,7 +98,7 @@ export const healthcareValidationSchemas = {
         "TO",
       ];
 
-      return validStates.includes(state) && number.length >= 4;
+      return state && number && validStates.includes(state) && number.length >= 4;
     }, "Estado inválido no CRM"),
 
   // Phone number validation (Brazilian format)
@@ -129,6 +129,7 @@ export const healthcareValidationSchemas = {
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, "Data deve estar no formato DD/MM/AAAA")
     .refine((dateStr: string) => {
       const [day, month, year] = dateStr.split("/").map(Number);
+      if (!day || !month || !year) return false;
       const date = new Date(year, month - 1, day);
       const now = new Date();
 

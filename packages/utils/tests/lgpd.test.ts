@@ -12,7 +12,7 @@ import {
   validateCNPJ,
   detectPIIPatterns,
   anonymizeData,
-  type PIIDetectionResult,
+  // type PIIDetectionResult,
 } from "../src/lgpd";
 
 describe("LGPD Compliance Utilities", () => {
@@ -360,7 +360,7 @@ describe("LGPD Compliance Utilities", () => {
           {
             name: "custom_id",
             pattern: /ID-\d{6}/g,
-            redactor: (match: string) => "ID-******",
+            redactor: (_match: string) => "ID-******",
           },
         ],
       };

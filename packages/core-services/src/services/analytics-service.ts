@@ -6,6 +6,7 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { z } from 'zod';
+import { logHealthcareError, analyticsLogger } from '../../../shared/src/logging/healthcare-logger';
 
 // Schema Types
 const AnalyticsConfigurationSchema = z.object({
@@ -1935,7 +1936,7 @@ export class AnalyticsService implements AnalyticsService {
       });
 
     if (error) {
-      console.error(`Failed to track analytics event: ${error.message}`);
+      logHealthcareError('analytics', error, { method: 'trackAnalyticsEvent', eventType, userId });
     }
   }
 
@@ -1979,7 +1980,7 @@ export class AnalyticsService implements AnalyticsService {
       try {
         widgetData[widget.id] = await this.getWidgetData(widget);
       } catch (error) {
-        console.error(`Failed to get data for widget ${widget.id}:`, error);
+        logHealthcareError('analytics', error, { method: 'getBIDashboardData', widgetId: widget.id });
         widgetData[widget.id] = { error: 'Failed to load data' };
       }
     }

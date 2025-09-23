@@ -96,28 +96,28 @@ export const contractTestUtils = {
   /**
    * Validates API response structure
    */
-  validateResponseStructure: (_response: any, expectedStructure: any) => {
+  validateResponseStructure: (_response: any, _expectedStructure: any) => {
     // Implementation for structure validation
   },
 
   /**
    * Validates input sanitization
    */
-  validateInputSanitization: (input: any, sanitizedInput: any) => {
+  validateInputSanitization: (_input: any, _sanitizedInput: any) => {
     // Implementation for sanitization validation
   },
 
   /**
    * Validates authentication requirements
    */
-  validateAuthRequirements: (endpoint: string, userRole: string) => {
+  validateAuthRequirements: (_endpoint: string, _userRole: string) => {
     // Implementation for auth validation
   },
 
   /**
    * Validates healthcare compliance
    */
-  validateHealthcareCompliance: (operation: string, data: any) => {
+  validateHealthcareCompliance: (_operation: string, _data: any) => {
     // Implementation for compliance validation
   },
 };

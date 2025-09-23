@@ -1,29 +1,275 @@
-import {
-  AIGovernanceMetric,
-  AuditTrailEntry,
-  AuditTrailFilters,
-  ComplianceStatus,
-  ComplianceStatusData,
-  CreateAuditTrailEntry,
-  CreateEscalationWorkflow,
-  CreateRiskAssessment,
-  EscalationFilters,
-  EscalationWorkflow,
-  GovernanceService,
-  KPIMetric,
-  KPIOverviewData,
-  PolicyManagement,
-  RiskAssessment,
-  UpdateEscalationWorkflow,
-  UpdateKPIMetric,
-  AuditTrailRecord,
-  KPIMetricRecord,
-  ComplianceStatusRecord,
-  RiskAssessmentRecord,
-  AIGovernanceMetricRecord,
-  PolicyManagementRecord,
-  EscalationWorkflowRecord,
-} from "@neonpro/types";
+// Define interfaces locally to avoid import issues
+interface KPIMetric {
+  id: string;
+  name: string;
+  description?: string;
+  category: string;
+  currentValue: number;
+  targetValue: number;
+  direction: "higher_better" | "lower_better" | "target_exact";
+  unit?: string;
+  status: "ACTIVE" | "ARCHIVED" | "PROVISIONAL";
+  threshold?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface CreateKPIMetric {
+  name: string;
+  description?: string;
+  category: string;
+  currentValue: number;
+  targetValue: number;
+  direction: "higher_better" | "lower_better" | "target_exact";
+  unit?: string;
+  status?: "ACTIVE" | "ARCHIVED" | "PROVISIONAL";
+  threshold?: number;
+}
+
+interface UpdateKPIMetric {
+  id: string;
+  currentValue?: number;
+  targetValue?: number;
+  threshold?: number;
+  status?: "ACTIVE" | "ARCHIVED" | "PROVISIONAL";
+}
+
+interface RiskAssessment {
+  id: string;
+  clinicId: string;
+  category: string;
+  title: string;
+  description: string;
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  likelihood: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  impact: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  status: "Open" | "Mitigated" | "Accepted" | "Transferred";
+  mitigation?: string;
+  owner?: string;
+  dueDate?: Date;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface CreateRiskAssessment {
+  clinicId: string;
+  category: string;
+  title: string;
+  description: string;
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  likelihood: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  impact: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  status?: "Open" | "Mitigated" | "Accepted" | "Transferred";
+  mitigation?: string;
+  owner?: string;
+  dueDate?: Date;
+  metadata?: Record<string, unknown>;
+}
+
+interface AIGovernanceMetric {
+  id: string;
+  modelName: string;
+  modelVersion: string;
+  status: "ACTIVE" | "INACTIVE" | "TRAINING" | "DEPRECATED";
+  hallucinationRate: number;
+  accuracyScore: number;
+  biasScore?: number;
+  complianceScore: number;
+  requestsProcessed: number;
+  averageResponseTime?: number;
+  errorRate: number;
+  lastTrainingDate?: Date;
+  modelSize?: string;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface PolicyManagement {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  framework: "HIPAA" | "LGPD" | "GDPR" | "SOC2";
+  status: "ACTIVE" | "DRAFT" | "ARCHIVED" | "UNDER_REVIEW";
+  version: string;
+  enforcementRate: number;
+  violationCount: number;
+  lastReview?: Date;
+  nextReview?: Date;
+  content: string;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface AuditTrailEntry {
+  id: string;
+  userId: string;
+  clinicId?: string;
+  patientId?: string;
+  action: "VIEW" | "CREATE" | "UPDATE" | "DELETE" | "EXPORT" | "LOGIN" | "LOGOUT";
+  resource: string;
+  resourceType: "PATIENT_RECORD" | "REPORT" | "SYSTEM_CONFIG" | "USER_ACCOUNT" | "HEALTHCARE_METRIC";
+  resourceId?: string;
+  ipAddress: string;
+  userAgent: string;
+  sessionId?: string;
+  status: "SUCCESS" | "FAILED" | "BLOCKED";
+  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  additionalInfo?: string;
+  createdAt: Date;
+  encryptedDetails?: Record<string, unknown>;
+}
+
+interface CreateAuditTrailEntry {
+  userId: string;
+  clinicId?: string;
+  patientId?: string;
+  action: "VIEW" | "CREATE" | "UPDATE" | "DELETE" | "EXPORT" | "LOGIN" | "LOGOUT";
+  resource: string;
+  resourceType: "PATIENT_RECORD" | "REPORT" | "SYSTEM_CONFIG" | "USER_ACCOUNT" | "HEALTHCARE_METRIC";
+  resourceId?: string;
+  ipAddress: string;
+  userAgent: string;
+  sessionId?: string;
+  status: "SUCCESS" | "FAILED" | "BLOCKED";
+  riskLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  additionalInfo?: string;
+  encryptedDetails?: Record<string, unknown>;
+}
+
+interface ComplianceStatus {
+  id: string;
+  clinicId: string;
+  framework: "HIPAA" | "LGPD" | "GDPR" | "SOC2";
+  score: number;
+  status: "COMPLIANT" | "NON_COMPLIANT" | "UNDER_REVIEW" | "CRITICAL";
+  violations: number;
+  lastAudit?: Date;
+  nextAudit?: Date;
+  details?: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface EscalationWorkflow {
+  id: string;
+  userId: string;
+  title: string;
+  description: string;
+  category: string;
+  source: string;
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  status: "OPEN" | "IN_PROGRESS" | "ESCALATED" | "RESOLVED" | "CLOSED";
+  assignedTo?: string;
+  deadline?: Date;
+  escalatedAt?: Date;
+  resolvedAt?: Date;
+  responseTime?: number;
+  resolutionTime?: number;
+  notes?: string;
+  metadata?: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface CreateEscalationWorkflow {
+  userId: string;
+  title: string;
+  description: string;
+  category: string;
+  source: string;
+  priority: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  status?: "OPEN" | "IN_PROGRESS" | "ESCALATED" | "RESOLVED" | "CLOSED";
+  assignedTo?: string;
+  deadline?: Date;
+  notes?: string;
+  metadata?: Record<string, unknown>;
+}
+
+interface UpdateEscalationWorkflow {
+  id: string;
+  status?: "OPEN" | "IN_PROGRESS" | "ESCALATED" | "RESOLVED" | "CLOSED";
+  assignedTo?: string;
+  deadline?: Date;
+  escalatedAt?: Date;
+  resolvedAt?: Date;
+  responseTime?: number;
+  resolutionTime?: number;
+  notes?: string;
+  metadata?: Record<string, unknown>;
+}
+
+interface AuditTrailFilters {
+  userId?: string;
+  clinicId?: string;
+  action?: "VIEW" | "CREATE" | "UPDATE" | "DELETE" | "EXPORT" | "LOGIN" | "LOGOUT";
+  status?: "SUCCESS" | "FAILED" | "BLOCKED";
+  riskLevel?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  dateFrom?: Date;
+  dateTo?: Date;
+  searchTerm?: string;
+}
+
+interface EscalationFilters {
+  status?: "OPEN" | "IN_PROGRESS" | "ESCALATED" | "RESOLVED" | "CLOSED";
+  priority?: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  assignedTo?: string;
+  category?: string;
+}
+
+interface KPIOverviewData {
+  totalKPIs: number;
+  normalizedKPIs: number;
+  normalizationRate: number;
+  dataQualityScore: number;
+  criticalKPIs: number;
+  trends: {
+    normalizationTrend: string;
+    qualityTrend: string;
+    criticalTrend: string;
+  };
+}
+
+interface ComplianceStatusData {
+  hipaaCompliance: {
+    score: number;
+    status: string;
+    violations: number;
+    lastAudit: string;
+  };
+  lgpdCompliance: {
+    score: number;
+    status: string;
+    violations: number;
+    lastAudit: string;
+  };
+  overallScore: number;
+  criticalViolations: number;
+  upcomingDeadlines: number;
+  auditStatus: string;
+}
+
+interface GovernanceService {
+  getKPIMetrics(): Promise<KPIMetric[]>;
+  createKPIMetric(metric: CreateKPIMetric): Promise<KPIMetric>;
+  updateKPIMetric(updates: UpdateKPIMetric): Promise<KPIMetric>;
+  getRiskAssessments(clinicId: string): Promise<RiskAssessment[]>;
+  createRiskAssessment(assessment: CreateRiskAssessment): Promise<RiskAssessment>;
+  getAIGovernanceMetrics(): Promise<AIGovernanceMetric[]>;
+  updateAIGovernanceMetric(id: string, updates: Partial<AIGovernanceMetric>): Promise<AIGovernanceMetric>;
+  getPolicies(): Promise<PolicyManagement[]>;
+  updatePolicy(id: string, updates: Partial<PolicyManagement>): Promise<PolicyManagement>;
+  getAuditTrail(filters: AuditTrailFilters): Promise<{ entries: AuditTrailEntry[]; totalCount: number; filteredCount: number }>;
+  createAuditEntry(entry: CreateAuditTrailEntry): Promise<AuditTrailEntry>;
+  getComplianceStatus(clinicId: string): Promise<ComplianceStatus[]>;
+  updateComplianceStatus(id: string, updates: Partial<ComplianceStatus>): Promise<ComplianceStatus>;
+  getEscalations(filters?: EscalationFilters): Promise<EscalationWorkflow[]>;
+  createEscalation(escalation: CreateEscalationWorkflow): Promise<EscalationWorkflow>;
+  updateEscalation(update: UpdateEscalationWorkflow): Promise<EscalationWorkflow>;
+}
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export class SupabaseGovernanceService implements GovernanceService {
@@ -66,7 +312,7 @@ export class SupabaseGovernanceService implements GovernanceService {
     return this.mapAuditTrailFromDb(data);
   }
 
-  async getAuditTrail(filters?: AuditTrailFilters): Promise<{
+  async getAuditTrail(filters: AuditTrailFilters): Promise<{
     entries: AuditTrailEntry[];
     totalCount: number;
     filteredCount: number;
@@ -114,6 +360,30 @@ export class SupabaseGovernanceService implements GovernanceService {
     if (error) throw new Error(`Failed to get KPI metrics: ${error.message}`);
 
     return data?.map((item) => this.mapKPIMetricFromDb(item)) || [];
+  }
+
+  async createKPIMetric(metric: CreateKPIMetric): Promise<KPIMetric> {
+    const { data, error } = await this.supabase
+      .from("kpi_metrics")
+      .insert([
+        {
+          name: metric.name,
+          description: metric.description,
+          category: metric.category,
+          current_value: metric.currentValue,
+          target_value: metric.targetValue,
+          direction: metric.direction,
+          unit: metric.unit,
+          status: metric.status || "ACTIVE",
+          threshold: metric.threshold,
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) throw new Error(`Failed to create KPI metric: ${error.message}`);
+
+    return this.mapKPIMetricFromDb(data);
   }
 
   async updateKPIMetric(update: UpdateKPIMetric): Promise<KPIMetric> {
@@ -398,10 +668,10 @@ export class SupabaseGovernanceService implements GovernanceService {
   }
 
   // Database mapping methods
-  private mapAuditTrailFromDb(data: AuditTrailRecord): AuditTrailEntry {
+  private mapAuditTrailFromDb(data: any): AuditTrailEntry {
     return {
       id: data.id,
-      _userId: data.user_id,
+      userId: data.user_id,
       clinicId: data.clinic_id,
       patientId: data.patient_id || undefined,
       action: data.action as any,
@@ -418,7 +688,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       encryptedDetails: data.encrypted_details as any,
     };
   }
-  private mapKPIMetricFromDb(data: KPIMetricRecord): KPIMetric {
+  private mapKPIMetricFromDb(data: any): KPIMetric {
     return {
       id: data.id,
       name: data.name,
@@ -436,7 +706,7 @@ export class SupabaseGovernanceService implements GovernanceService {
   }
 
   private mapComplianceStatusFromDb(
-    data: ComplianceStatusRecord,
+    data: any,
   ): ComplianceStatus {
     return {
       id: data.id,
@@ -453,7 +723,7 @@ export class SupabaseGovernanceService implements GovernanceService {
     };
   }
 
-  private mapRiskAssessmentFromDb(data: RiskAssessmentRecord): RiskAssessment {
+  private mapRiskAssessmentFromDb(data: any): RiskAssessment {
     return {
       id: data.id,
       clinicId: data.clinic_id,
@@ -474,7 +744,7 @@ export class SupabaseGovernanceService implements GovernanceService {
   }
 
   private mapAIGovernanceFromDb(
-    data: AIGovernanceMetricRecord,
+    data: any,
   ): AIGovernanceMetric {
     return {
       id: data.id,
@@ -499,7 +769,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       updatedAt: new Date(data.updated_at),
     };
   }
-  private mapPolicyFromDb(data: PolicyManagementRecord): PolicyManagement {
+  private mapPolicyFromDb(data: any): PolicyManagement {
     return {
       id: data.id,
       name: data.name,
@@ -520,11 +790,11 @@ export class SupabaseGovernanceService implements GovernanceService {
   }
 
   private mapEscalationFromDb(
-    data: EscalationWorkflowRecord,
+    data: any,
   ): EscalationWorkflow {
     return {
       id: data.id,
-      _userId: data.user_id,
+      userId: data.user_id,
       title: data.title,
       description: data.description,
       category: data.category,
@@ -584,11 +854,11 @@ export class SupabaseGovernanceService implements GovernanceService {
 
     const overallScore =
       statuses.length > 0
-        ? statuses.reduce((sum, _s) => sum + s.score, 0) / statuses.length
+        ? statuses.reduce((sum, s) => sum + s.score, 0) / statuses.length
         : 0;
 
     const criticalViolations = statuses.reduce(
-      (sum, _s) => (s.status === "CRITICAL" ? sum + s.violations : sum),
+      (sum, s) => (s.status === "CRITICAL" ? sum + s.violations : sum),
       0,
     );
 

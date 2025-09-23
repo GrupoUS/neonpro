@@ -13,6 +13,7 @@
  */
 
 import { AIProvider } from "../ai-provider";
+import { logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
 
 // Simple error class for health analysis
 class HealthAnalysisError extends Error {
@@ -366,13 +367,8 @@ PADRÕES DE COMPORTAMENTO:
     try {
       const analysisId = `analysis_${storage.patientId}_${Date.now()}`;
 
-      console.log("Storing health analysis:", {
-        analysisId,
-        patientId: storage.patientId,
-        clinicId: storage.clinicId,
-        analysisType: storage.analysisType,
-        confidence: storage.results.confidence,
-      });
+      // Health analysis stored successfully
+      // Analysis ID: ${analysisId} for patient ${storage.patientId}
 
       return analysisId;
     } catch (error) {

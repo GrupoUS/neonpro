@@ -11,7 +11,7 @@
 
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { AIAppointmentSchedulingService } from "../../../services/ai-appointment-scheduling-service";
-import { prisma } from "../../../lib/prisma";
+// import { prisma } from "../../../lib/prisma";
 import { NoShowPredictionFeatures, SchedulingOptimization, AppointmentSchedulingContext } from "../../../services/ai-appointment-scheduling-service";
 
 // Mock dependencies
@@ -50,7 +50,7 @@ describe("AIAppointmentSchedulingService", () => {
       $queryRaw: vi.fn(),
     };
 
-    (prisma as any) = mockPrisma;
+    // (prisma as any) = mockPrisma; // removed: cannot assign to imported binding
     
     // Create service instance
     schedulingService = new AIAppointmentSchedulingService();

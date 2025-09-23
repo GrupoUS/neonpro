@@ -12,7 +12,7 @@ import { IntelligentClientRegistrationService } from "../../services/intelligent
 import { PredictiveClientAnalyticsService } from "../../services/predictive-client-analytics.service";
 import {
   AguiMessageType,
-  AguiErrorCode,
+  // AguiErrorCode,
 } from "../../services/agui-protocol/types";
 
 // Mock dependencies

@@ -135,7 +135,7 @@ export const ClientRegistrationAgent: React.FC<
       { name: "value", type: "any", description: "Value to analyze" },
       { name: "context", type: "object", description: "Context for analysis" },
     ],
-    handler: async ({ field, value, context }) => {
+    handler: async ({ field: _field, value: _value, context: _context }) => {
       // AI-powered analysis will be handled by the backend
       return { analyzed: true };
     },
@@ -238,7 +238,7 @@ export const ClientRegistrationAgent: React.FC<
   // Document upload with OCR processing
   const handleDocumentUpload = async (
     documentType: keyof ClientRegistrationData["documents"],
-    file: File,
+    _file: File,
   ) => {
     setIsProcessing(true);
     setOcrProcessing(true);
@@ -246,7 +246,7 @@ export const ClientRegistrationAgent: React.FC<
     try {
       // Upload to Supabase Storage
       const fileName = `${Date.now()}_${file.name}`;
-      const { data, error } = await supabase.storage
+      const { data: _data, error } = await supabase.storage
         .from("client-documents")
         .upload(fileName, file, {
           onUploadProgress: (progress) => {
@@ -310,7 +310,7 @@ export const ClientRegistrationAgent: React.FC<
   const processDocumentOCR = async (
     documentType: string,
     fileUrl: string,
-    file: File,
+    _file: File,
   ) => {
     // In real implementation, this would call the backend OCR service
     await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate processing
@@ -490,7 +490,7 @@ export const ClientRegistrationAgent: React.FC<
 
   // Simulated backend submission
   const submitClientRegistration = async (
-    data: Partial<ClientRegistrationData>,
+    _data: Partial<ClientRegistrationData>,
   ) => {
     // In real implementation, this would call the enhanced client agent service
     await new Promise((resolve) => setTimeout(resolve, 2000));

@@ -4,6 +4,8 @@
  * with quality monitoring, recording capabilities, and compliance features
  */
 
+import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger';
+
 // Using native WebRTC types from DOM lib
 
 interface PeerConnectionConfig {
@@ -99,14 +101,14 @@ export class WebRTCPeerManager {
           to: this.config.remoteUserId,
         });
       } else {
-        console.log("ICE gathering complete");
+        databaseLogger.info('ICE gathering complete', { sessionId: this.config.sessionId });
       }
     };
 
     // Handle connection state changes
     this.peerConnection.onconnectionstatechange = () => {
       const state = this.peerConnection?.connectionState;
-      console.log(`Connection state changed to: ${state}`);
+      databaseLogger.info('Connection state changed', { state, sessionId: this.config.sessionId, userId: this.config.localUserId });
 
       this.emit("connection-state-change", {
         state,
@@ -133,7 +135,7 @@ export class WebRTCPeerManager {
     // Handle ICE connection state changes
     this.peerConnection.oniceconnectionstatechange = () => {
       const state = this.peerConnection?.iceConnectionState;
-      console.log(`ICE connection state changed to: ${state}`);
+      databaseLogger.info('ICE connection state changed', { state, sessionId: this.config.sessionId, userId: this.config.localUserId });
 
       this.emit("ice-connection-state-change", {
         state,
@@ -144,7 +146,7 @@ export class WebRTCPeerManager {
 
     // Handle remote stream
     this.peerConnection.ontrack = (event: RTCTrackEvent) => {
-      console.log("Received remote track:", event.track.kind);
+      databaseLogger.info('Remote track received', { trackKind: event.track.kind, sessionId: this.config.sessionId, fromUserId: this.config.remoteUserId });
 
       if (event.streams && event.streams[0]) {
         this.remoteStream = event.streams[0];
@@ -169,7 +171,7 @@ export class WebRTCPeerManager {
 
     // Handle negotiation needed
     this.peerConnection.onnegotiationneeded = () => {
-      console.log("Negotiation needed");
+      databaseLogger.info('Negotiation needed', { sessionId: this.config.sessionId, isOfferer: this.config.isOfferer });
       if (this.config.isOfferer) {
         this.createOffer();
       }
@@ -197,7 +199,7 @@ export class WebRTCPeerManager {
     if (!this.dataChannel) return;
 
     this.dataChannel.onopen = () => {
-      console.log("Data channel opened");
+      databaseLogger.info('Data channel opened', { sessionId: this.config.sessionId, userId: this.config.localUserId });
       this.emit("data-channel-open", {
         sessionId: this.config.sessionId,
         _userId: this.config.localUserId,
@@ -215,7 +217,7 @@ export class WebRTCPeerManager {
     this.dataChannel.onmessage = (event: MessageEvent) => {
       try {
         const data = JSON.parse(event.data);
-        console.log("Received data channel message:", data.type);
+        databaseLogger.info('Data channel message received', { messageType: data.type, sessionId: this.config.sessionId, fromUserId: this.config.remoteUserId });
 
         this.emit("data-channel-message", {
           data,
@@ -228,12 +230,12 @@ export class WebRTCPeerManager {
           this.handleComplianceMessage(data);
         }
       } catch (error) {
-        console.error("Error parsing data channel message:", error);
+        logHealthcareError('database', error, { method: 'parseDataChannelMessage', sessionId: this.config.sessionId, messageType: event.data });
       }
     };
 
     this.dataChannel.onerror = (error: RTCErrorEvent) => {
-      console.error("Data channel error:", error);
+      logHealthcareError('database', error, { method: 'dataChannelError', sessionId: this.config.sessionId, userId: this.config.localUserId });
       this.emit("data-channel-error", {
         error,
         sessionId: this.config.sessionId,
@@ -242,7 +244,7 @@ export class WebRTCPeerManager {
     };
 
     this.dataChannel.onclose = () => {
-      console.log("Data channel closed");
+      databaseLogger.info('Data channel closed', { sessionId: this.config.sessionId, userId: this.config.localUserId });
       this.emit("data-channel-close", {
         sessionId: this.config.sessionId,
         _userId: this.config.localUserId,
@@ -255,7 +257,7 @@ export class WebRTCPeerManager {
    */
   public async startMedia(): Promise<MediaStream> {
     try {
-      console.log("Starting media capture...", this.config.mediaConstraints);
+      databaseLogger.info('Media capture starting', { mediaConstraints: this.config.mediaConstraints, sessionId: this.config.sessionId });
 
       this.localStream = await navigator.mediaDevices.getUserMedia(
         this.config.mediaConstraints,
@@ -276,7 +278,7 @@ export class WebRTCPeerManager {
 
       return this.localStream;
     } catch (error) {
-      console.error("Error starting media:", error);
+      logHealthcareError('database', error, { method: 'startMedia', sessionId: this.config.sessionId, userId: this.config.localUserId });
       this.emit("media-error", {
         error,
         sessionId: this.config.sessionId,
@@ -295,7 +297,7 @@ export class WebRTCPeerManager {
     }
 
     try {
-      console.log("Creating offer...");
+      databaseLogger.info('Creating offer', { sessionId: this.config.sessionId, toUserId: this.config.remoteUserId });
 
       const offer = await this.peerConnection.createOffer({
         offerToReceiveAudio: true,
@@ -304,7 +306,7 @@ export class WebRTCPeerManager {
 
       await this.peerConnection.setLocalDescription(offer);
 
-      console.log("Offer created and set as local description");
+      databaseLogger.info('Offer created and set', { sessionId: this.config.sessionId, toUserId: this.config.remoteUserId });
 
       this.emit("offer-created", {
         offer,
@@ -315,7 +317,7 @@ export class WebRTCPeerManager {
 
       return offer;
     } catch (error) {
-      console.error("Error creating offer:", error);
+      logHealthcareError('database', error, { method: 'createOffer', sessionId: this.config.sessionId, toUserId: this.config.remoteUserId });
       throw error;
     }
   }
@@ -329,12 +331,12 @@ export class WebRTCPeerManager {
     }
 
     try {
-      console.log("Creating answer...");
+      databaseLogger.info('Creating answer', { sessionId: this.config.sessionId, toUserId: this.config.remoteUserId });
 
       const answer = await this.peerConnection.createAnswer();
       await this.peerConnection.setLocalDescription(answer);
 
-      console.log("Answer created and set as local description");
+      databaseLogger.info('Answer created and set', { sessionId: this.config.sessionId, toUserId: this.config.remoteUserId });
 
       this.emit("answer-created", {
         answer,
@@ -345,7 +347,7 @@ export class WebRTCPeerManager {
 
       return answer;
     } catch (error) {
-      console.error("Error creating answer:", error);
+      logHealthcareError('database', error, { method: 'createAnswer', sessionId: this.config.sessionId, toUserId: this.config.remoteUserId });
       throw error;
     }
   }
@@ -361,7 +363,7 @@ export class WebRTCPeerManager {
     }
 
     try {
-      console.log("Setting remote description:", description.type);
+      databaseLogger.info('Setting remote description', { descriptionType: description.type, sessionId: this.config.sessionId });
       await this.peerConnection.setRemoteDescription(description);
 
       // If we received an offer and we're not the offerer, create answer
@@ -369,7 +371,7 @@ export class WebRTCPeerManager {
         await this.createAnswer();
       }
     } catch (error) {
-      console.error("Error setting remote description:", error);
+      logHealthcareError('database', error, { method: 'setRemoteDescription', sessionId: this.config.sessionId, descriptionType: description.type });
       throw error;
     }
   }
@@ -384,9 +386,9 @@ export class WebRTCPeerManager {
 
     try {
       await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-      console.log("ICE candidate added successfully");
+      databaseLogger.info('ICE candidate added', { sessionId: this.config.sessionId });
     } catch (error) {
-      console.error("Error adding ICE candidate:", error);
+      logHealthcareError('database', error, { method: 'addIceCandidate', sessionId: this.config.sessionId });
       throw error;
     }
   }
@@ -461,7 +463,7 @@ export class WebRTCPeerManager {
         timestamp: new Date(),
       };
     } catch (error) {
-      console.error("Error getting connection quality:", error);
+      logHealthcareError('database', error, { method: 'getConnectionQuality', sessionId: this.config.sessionId });
       return null;
     }
   }
@@ -474,7 +476,7 @@ export class WebRTCPeerManager {
       !this.localStream ||
       !MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
     ) {
-      console.warn("Recording not supported or no local stream available");
+      databaseLogger.warn('Recording not supported', { sessionId: this.config.sessionId, hasLocalStream: !!this.localStream });
       return;
     }
 
@@ -495,7 +497,7 @@ export class WebRTCPeerManager {
       };
 
       this.mediaRecorder.onstop = () => {
-        console.log("Recording stopped");
+        databaseLogger.info('Recording stopped', { sessionId: this.config.sessionId, userId: this.config.localUserId, chunksCount: this.recordingChunks.length });
         this.emit("recording-stopped", {
           chunks: this.recordingChunks,
           sessionId: this.config.sessionId,
@@ -504,14 +506,14 @@ export class WebRTCPeerManager {
       };
 
       this.mediaRecorder.start(10000); // Record in 10-second chunks
-      console.log("Recording started");
+      databaseLogger.info('Recording started', { sessionId: this.config.sessionId, userId: this.config.localUserId });
 
       this.emit("recording-started", {
         sessionId: this.config.sessionId,
         _userId: this.config.localUserId,
       });
     } catch (error) {
-      console.error("Error starting recording:", error);
+      logHealthcareError('database', error, { method: 'startRecording', sessionId: this.config.sessionId });
     }
   }
 
@@ -542,7 +544,7 @@ export class WebRTCPeerManager {
    * Handles compliance messages from remote peer
    */
   private handleComplianceMessage(data: any): void {
-    console.log("Handling compliance message:", data.type);
+    databaseLogger.info('Handling compliance message', { messageType: data.type, sessionId: this.config.sessionId, fromUserId: this.config.remoteUserId });
 
     this.emit("compliance-message", {
       data,
@@ -650,7 +652,7 @@ export class WebRTCPeerManager {
         try {
           callback(data);
         } catch (error) {
-          console.error(`Error in event callback for ${event}:`, error);
+          logHealthcareError('database', error, { method: 'eventCallback', eventName: event, sessionId: this.config.sessionId });
         }
       });
     }
@@ -672,7 +674,7 @@ export class WebRTCPeerManager {
 
       return statsObj;
     } catch (error) {
-      console.error("Error getting connection stats:", error);
+      logHealthcareError('database', error, { method: 'getConnectionStats', sessionId: this.config.sessionId });
       return null;
     }
   }
@@ -681,7 +683,7 @@ export class WebRTCPeerManager {
    * Closes peer connection and cleans up resources
    */
   public close(): void {
-    console.log("Closing peer connection...");
+    databaseLogger.info('Peer connection closing', { sessionId: this.config.sessionId, userId: this.config.localUserId });
 
     // Stop recording
     this.stopRecording();
@@ -714,7 +716,7 @@ export class WebRTCPeerManager {
       _userId: this.config.localUserId,
     });
 
-    console.log("Peer connection closed");
+    databaseLogger.info('Peer connection closed', { sessionId: this.config.sessionId, userId: this.config.localUserId });
   }
 
   /**

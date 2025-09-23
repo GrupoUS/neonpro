@@ -8,9 +8,9 @@
 import { createClient } from '@supabase/supabase-js';
 import {
   AguiClientRegistrationMessage,
-  AguiClientValidationMessage,
-  AguiDocumentOCRMessage,
-  AguiErrorCode,
+  /* AguiClientValidationMessage, */
+  /* AguiDocumentOCRMessage, */
+  /* AguiErrorCode, */
   AISuggestion,
   OCRResult,
   ValidationResult,
@@ -199,7 +199,7 @@ export class IntelligentClientRegistrationService {
 
   // Document OCR Processing
   async processDocument(
-    file: File,
+    _file: File,
     documentType: string,
   ): Promise<DocumentProcessingResult> {
     const startTime = Date.now();
@@ -207,7 +207,7 @@ export class IntelligentClientRegistrationService {
     try {
       // Upload to Supabase Storage
       const fileName = `${Date.now()}_${documentType}_${file.name}`;
-      const { data: uploadData, error: uploadError } = await this.supabase.storage
+      const { data: _uploadData, error: uploadError } = await this.supabase.storage
         .from('client-documents')
         .upload(fileName, file);
 
@@ -270,7 +270,7 @@ export class IntelligentClientRegistrationService {
   private async callOCRService(
     documentUrl: string,
     documentType: string,
-    file: File,
+    _file: File,
   ): Promise<OCRResult> {
     try {
       // Convert file to base64
@@ -307,7 +307,7 @@ export class IntelligentClientRegistrationService {
 
   private async generateMockOCRResult(
     documentType: string,
-    file: File,
+    _file: File,
   ): Promise<OCRResult> {
     // Simulate processing time
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
@@ -1057,7 +1057,7 @@ export class IntelligentClientRegistrationService {
 
   private async checkDatabaseConnection(): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
+      const { data: _data, error } = await this.supabase
         .from('patients')
         .select('count')
         .limit(1);

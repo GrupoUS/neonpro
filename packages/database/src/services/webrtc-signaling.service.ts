@@ -11,7 +11,7 @@ import type { Socket } from "socket.io";
 // Import services
 import { WebRTCSessionService } from "./webrtc-session.service";
 import { CFMComplianceService } from "./cfm-compliance.service";
-import { winstonLogger } from "@neonpro/shared/services/structured-logging";
+import { winstonLogger, logHealthcareError } from "@neonpro/shared/services/structured-logging";
 
 interface SignalingParticipant {
   socketId: string;
@@ -170,7 +170,7 @@ export class WebRTCSignalingServer {
           try {
             await this.handleConnectionState(socket, state);
           } catch (error) {
-            console.error("Error handling connection state:", error);
+            logHealthcareError('database', error, { method: 'handleConnectionState', sessionId: state.sessionId, socketId: socket.id });
           }
         },
       );
@@ -180,7 +180,7 @@ export class WebRTCSignalingServer {
         try {
           await this.handleLeaveSession(socket, data.sessionId);
         } catch (error) {
-          console.error("Error leaving session:", error);
+          logHealthcareError('database', error, { method: 'handleLeaveSession', sessionId, socketId: socket.id });
         }
       });
 
@@ -212,7 +212,7 @@ export class WebRTCSignalingServer {
           try {
             await this.handleComplianceEvent(socket, event);
           } catch (error) {
-            console.error("Error handling compliance event:", error);
+            logHealthcareError('database', error, { method: 'handleComplianceEvent', sessionId: event.sessionId, eventType: event.eventType });
           }
         },
       );
@@ -331,8 +331,21 @@ export class WebRTCSignalingServer {
       timestamp: new Date().toISOString(),
     });
 
-    console.log(
+    winstonLogger.info(
       `User ${userId} joined session ${sessionId} as ${participantType}`,
+      undefined,
+      {
+        healthcare: {
+          workflowType: "session_management",
+          clinicalContext: {
+            sessionId,
+            userId,
+            participantType,
+            facilityId: "signaling-server",
+            requiresAudit: true,
+          },
+        },
+      },
     );
   }
 
@@ -414,8 +427,22 @@ export class WebRTCSignalingServer {
       });
     }
 
-    console.log(
+    winstonLogger.info(
       `Relayed ${type} signal from ${sender.userId} to ${to} in session ${sessionId}`,
+      undefined,
+      {
+        healthcare: {
+          workflowType: "webrtc_signaling",
+          clinicalContext: {
+            sessionId,
+            signalType: type,
+            fromUser: sender.userId,
+            toUser: to,
+            facilityId: "signaling-server",
+            requiresAudit: true,
+          },
+        },
+      },
     );
   }
 
@@ -530,7 +557,22 @@ export class WebRTCSignalingServer {
       }, 300000); // 5 minutes
     }
 
-    console.log(`User ${participant.userId} left session ${sessionId}`);
+    winstonLogger.info(
+      `User ${participant.userId} left session ${sessionId}`,
+      undefined,
+      {
+        healthcare: {
+          workflowType: "session_management",
+          clinicalContext: {
+            sessionId,
+            userId: participant.userId,
+            participantType: participant.participantType,
+            facilityId: "signaling-server",
+            requiresAudit: true,
+          },
+        },
+      },
+    );
   }
 
   /**
@@ -543,7 +585,7 @@ export class WebRTCSignalingServer {
       if (participant) {
         // Handle graceful leave
         this.handleLeaveSession(socket, sessionId).catch((error) => {
-          console.error("Error handling disconnect leave:", error);
+          logHealthcareError('database', error, { method: 'handleDisconnect', sessionId, socketId: socket.id });
         });
       }
     }
@@ -621,7 +663,7 @@ export class WebRTCSignalingServer {
 
       return false;
     } catch (error) {
-      console.error("Error validating user authorization:", error);
+      logHealthcareError('database', error, { method: 'validateUserAuthorization', sessionId, userId, participantType });
       return false;
     }
   }
@@ -660,8 +702,22 @@ export class WebRTCSignalingServer {
       for (const [socketId, participant] of room.participants.entries()) {
         const inactiveTime = now.getTime() - participant.joinedAt.getTime();
         if (inactiveTime > inactivityTimeout && !participant.isActive) {
-          console.log(
+          winstonLogger.info(
             `Removing inactive participant ${participant.userId} from session ${sessionId}`,
+            undefined,
+            {
+              healthcare: {
+                workflowType: "session_cleanup",
+                clinicalContext: {
+                  sessionId,
+                  userId: participant.userId,
+                  participantType: participant.participantType,
+                  inactiveTime,
+                  facilityId: "signaling-server",
+                  requiresAudit: true,
+                },
+              },
+            },
           );
           room.participants.delete(socketId);
 
@@ -677,7 +733,7 @@ export class WebRTCSignalingServer {
               },
             })
             .catch((error) => {
-              console.error("Error logging participant timeout:", error);
+              logHealthcareError('database', error, { method: 'cleanupInactiveSessions', sessionId, userId: participant.userId });
             });
         } else {
           // Reset activity flag for next check
@@ -691,10 +747,39 @@ export class WebRTCSignalingServer {
 
       if (room.participants.size === 0 && roomAge > 300000) {
         // 5 minutes empty
-        console.log(`Cleaning up empty session room ${sessionId}`);
+        winstonLogger.info(
+          `Cleaning up empty session room ${sessionId}`,
+          undefined,
+          {
+            healthcare: {
+              workflowType: "session_cleanup",
+              clinicalContext: {
+                sessionId,
+                reason: "empty_room",
+                facilityId: "signaling-server",
+                requiresAudit: true,
+              },
+            },
+          },
+        );
         this.sessionRooms.delete(sessionId);
       } else if (roomAge > maxRoomAge) {
-        console.log(`Cleaning up old session room ${sessionId}`);
+        winstonLogger.info(
+          `Cleaning up old session room ${sessionId}`,
+          undefined,
+          {
+            healthcare: {
+              workflowType: "session_cleanup",
+              clinicalContext: {
+                sessionId,
+                reason: "old_room",
+                roomAge,
+                facilityId: "signaling-server",
+                requiresAudit: true,
+              },
+            },
+          },
+        );
         this.sessionRooms.delete(sessionId);
       }
     }
@@ -723,7 +808,19 @@ export class WebRTCSignalingServer {
    * Shuts down the signaling server gracefully
    */
   public async shutdown(): Promise<void> {
-    console.log("Shutting down WebRTC Signaling Server...");
+    winstonLogger.info(
+      "Shutting down WebRTC Signaling Server...",
+      undefined,
+      {
+        healthcare: {
+          workflowType: "system_maintenance",
+          clinicalContext: {
+            facilityId: "signaling-server",
+            requiresAudit: true,
+          },
+        },
+      },
+    );
 
     // Notify all connected clients
     this.io.emit("server-shutdown", {
@@ -744,7 +841,19 @@ export class WebRTCSignalingServer {
       });
     });
 
-    console.log("WebRTC Signaling Server shut down complete");
+    winstonLogger.info(
+      "WebRTC Signaling Server shut down complete",
+      undefined,
+      {
+        healthcare: {
+          workflowType: "system_maintenance",
+          clinicalContext: {
+            facilityId: "signaling-server",
+            requiresAudit: true,
+          },
+        },
+      },
+    );
   }
 }
 

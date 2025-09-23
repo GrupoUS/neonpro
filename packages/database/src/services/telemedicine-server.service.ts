@@ -16,6 +16,7 @@ import { WebRTCSessionService } from "./webrtc-session.service";
 import { CFMComplianceService } from "./cfm-compliance.service";
 import { PatientIdentityService } from "./patient-identity.service";
 import { MedicalLicenseService } from "./medical-license.service";
+import { winstonLogger, logHealthcareError } from "../../../shared/src/logging/healthcare-logger";
 
 interface TelemedicineServerConfig {
   port: number;
@@ -157,7 +158,7 @@ export class TelemedicineServer {
             },
           })
           .catch((error) => {
-            console.error("Error logging compliance event:", error);
+            logHealthcareError('database', error, { method: 'apiRequestLogging', sessionId });
           });
       }
 
@@ -329,7 +330,7 @@ export class TelemedicineServer {
 
       res.json(result);
     } catch (error) {
-      console.error("Error validating session:", error);
+      logHealthcareError('database', error, { method: 'validateSession' });
       res.status(500).json({
         error: "Session validation failed",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -389,7 +390,7 @@ export class TelemedicineServer {
         },
       });
     } catch (error) {
-      console.error("Error creating session:", error);
+      logHealthcareError('database', error, { method: 'createSession' });
       res.status(500).json({
         error: "Failed to create session",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -423,7 +424,7 @@ export class TelemedicineServer {
         ...(activeSession && { requestDetails: activeSession }),
       });
     } catch (error) {
-      console.error("Error getting session:", error);
+      logHealthcareError('database', error, { method: 'getSession', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to get session",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -456,7 +457,7 @@ export class TelemedicineServer {
 
       res.json(result);
     } catch (error) {
-      console.error("Error starting session:", error);
+      logHealthcareError('database', error, { method: 'startSession', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to start session",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -498,7 +499,7 @@ export class TelemedicineServer {
 
       res.json(result);
     } catch (error) {
-      console.error("Error ending session:", error);
+      logHealthcareError('database', error, { method: 'endSession', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to end session",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -536,7 +537,7 @@ export class TelemedicineServer {
 
       res.json(result);
     } catch (error) {
-      console.error("Error cancelling session:", error);
+      logHealthcareError('database', error, { method: 'cancelSession', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to cancel session",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -558,7 +559,7 @@ export class TelemedicineServer {
 
       res.json(complianceStatus);
     } catch (error) {
-      console.error("Error getting compliance status:", error);
+      logHealthcareError('database', error, { method: 'getComplianceStatus', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to get compliance status",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -581,7 +582,7 @@ export class TelemedicineServer {
 
       res.json(qualityMetrics);
     } catch (error) {
-      console.error("Error getting quality metrics:", error);
+      logHealthcareError('database', error, { method: 'getQualityMetrics', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to get quality metrics",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -620,7 +621,7 @@ export class TelemedicineServer {
         consentGiven: granted === true,
       });
     } catch (error) {
-      console.error("Error updating consent:", error);
+      logHealthcareError('database', error, { method: 'updateConsent', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to update consent",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -646,7 +647,7 @@ export class TelemedicineServer {
 
       res.json(verification);
     } catch (error) {
-      console.error("Error verifying patient identity:", error);
+      logHealthcareError('database', error, { method: 'verifyPatientIdentity', patientId: req.body.patientId });
       res.status(500).json({
         error: "Identity verification failed",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -672,7 +673,7 @@ export class TelemedicineServer {
 
       res.json(verification);
     } catch (error) {
-      console.error("Error verifying physician identity:", error);
+      logHealthcareError('database', error, { method: 'verifyPhysicianIdentity', physicianId: req.body.physicianId });
       res.status(500).json({
         error: "Identity verification failed",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -698,7 +699,7 @@ export class TelemedicineServer {
 
       res.json(validation);
     } catch (error) {
-      console.error("Error validating medical license:", error);
+      logHealthcareError('database', error, { method: 'validateMedicalLicense', crm: req.params.crm });
       res.status(500).json({
         error: "License validation failed",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -736,7 +737,7 @@ export class TelemedicineServer {
 
       res.json(config);
     } catch (error) {
-      console.error("Error getting WebRTC config:", error);
+      logHealthcareError('database', error, { method: 'getWebRTCConfig' });
       res.status(500).json({
         error: "Failed to get WebRTC config",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -755,7 +756,7 @@ export class TelemedicineServer {
       const iceServers = await this.getIceServersConfig();
       res.json({ iceServers });
     } catch (error) {
-      console.error("Error getting ICE servers:", error);
+      logHealthcareError('database', error, { method: 'getIceServers' });
       res.status(500).json({
         error: "Failed to get ICE servers",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -780,7 +781,7 @@ export class TelemedicineServer {
 
       res.json(result);
     } catch (error) {
-      console.error("Error starting recording:", error);
+      logHealthcareError('database', error, { method: 'startRecording', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to start recording",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -802,7 +803,7 @@ export class TelemedicineServer {
 
       res.json(result);
     } catch (error) {
-      console.error("Error stopping recording:", error);
+      logHealthcareError('database', error, { method: 'stopRecording', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to stop recording",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -824,7 +825,7 @@ export class TelemedicineServer {
       // This would implement secure recording download
       res.status(501).json({ error: "Recording download not implemented" });
     } catch (error) {
-      console.error("Error downloading recording:", error);
+      logHealthcareError('database', error, { method: 'downloadRecording', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to download recording",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -846,7 +847,7 @@ export class TelemedicineServer {
 
       res.json(auditTrail);
     } catch (error) {
-      console.error("Error getting audit trail:", error);
+      logHealthcareError('database', error, { method: 'getAuditTrail', sessionId: req.params.sessionId });
       res.status(500).json({
         error: "Failed to get audit trail",
         message: error instanceof Error ? error.message : "Unknown error",
@@ -874,7 +875,7 @@ export class TelemedicineServer {
         res: express.Response,
         _next: express.NextFunction,
       ) => {
-        console.error("Global error handler:", error);
+        logHealthcareError('database', error, { method: 'globalErrorHandler', path: _req.path, method: _req.method });
 
         res.status(error.status || 500).json({
           error: "Internal server error",
@@ -929,12 +930,36 @@ export class TelemedicineServer {
    */
   public start(): void {
     this.httpServer.listen(this.config.port, () => {
-      console.log(`Telemedicine Server listening on port ${this.config.port}`);
-      console.log(
-        `Signaling Server listening on port ${this.config.signalingPort}`,
+      winstonLogger.info(
+        `Telemedicine Server listening on port ${this.config.port}`,
+        undefined,
+        {
+          healthcare: {
+            workflowType: "system_startup",
+            clinicalContext: {
+              facilityId: "telemedicine-server",
+              port: this.config.port,
+              environment: this.config.environment,
+              complianceLevel: this.config.complianceLevel,
+              requiresAudit: true,
+            },
+          },
+        },
       );
-      console.log(`Environment: ${this.config.environment}`);
-      console.log(`Compliance Level: ${this.config.complianceLevel}`);
+      winstonLogger.info(
+        `Signaling Server listening on port ${this.config.signalingPort}`,
+        undefined,
+        {
+          healthcare: {
+            workflowType: "system_startup",
+            clinicalContext: {
+              facilityId: "signaling-server",
+              port: this.config.signalingPort,
+              requiresAudit: true,
+            },
+          },
+        },
+      );
     });
   }
 
@@ -942,7 +967,19 @@ export class TelemedicineServer {
    * Stops the telemedicine server
    */
   public async stop(): Promise<void> {
-    console.log("Stopping Telemedicine Server...");
+    winstonLogger.info(
+      "Stopping Telemedicine Server...",
+      undefined,
+      {
+        healthcare: {
+          workflowType: "system_shutdown",
+          clinicalContext: {
+            facilityId: "telemedicine-server",
+            requiresAudit: true,
+          },
+        },
+      },
+    );
 
     // Shutdown signaling server
     await this.signalingServer.shutdown();
@@ -950,7 +987,19 @@ export class TelemedicineServer {
     // Close HTTP server
     this.httpServer.close();
 
-    console.log("Telemedicine Server stopped");
+    winstonLogger.info(
+      "Telemedicine Server stopped",
+      undefined,
+      {
+        healthcare: {
+          workflowType: "system_shutdown",
+          clinicalContext: {
+            facilityId: "telemedicine-server",
+            requiresAudit: true,
+          },
+        },
+      },
+    );
   }
 
   /**

@@ -6,7 +6,7 @@
  */
 
 import { EnhancedAgentSessionService, EnhancedSessionData } from './enhanced-agent-session-service';
-import { AestheticAguiService, AestheticAguiMessage } from '../agui-protocol/aesthetic-service';
+import { AestheticAguiService } from '../agui-protocol/aesthetic-service';
 import { AestheticDataHandlingService } from '../agui-protocol/aesthetic-data-handling';
 
 export interface CopilotKitSessionConfig {
@@ -767,7 +767,7 @@ export class CopilotKitSessionIntegration {
     };
   }
 
-  private async processSystemMessage(sessionId: string, message: CopilotKitMessage): Promise<any> {
+  private async processSystemMessage(_sessionId: string, _message: CopilotKitMessage): Promise<any> {
     // TODO: Implement system message processing logic
     return {
       type: 'system_response',
@@ -791,22 +791,22 @@ export class CopilotKitSessionIntegration {
     console.log('Action result received:', message);
   }
 
-  private async executeScheduleAppointment(sessionId: string, action: CopilotKitAction): Promise<any> {
+  private async executeScheduleAppointment(_sessionId: string, _action: CopilotKitAction): Promise<any> {
     // TODO: Implement appointment scheduling logic
     return { success: true, appointmentId: 'generated_id' };
   }
 
-  private async executeViewPatient(sessionId: string, action: CopilotKitAction): Promise<any> {
+  private async executeViewPatient(_sessionId: string, _action: CopilotKitAction): Promise<any> {
     // TODO: Implement patient viewing logic
     return { success: true, patientData: {} };
   }
 
-  private async executeGenerateReport(sessionId: string, action: CopilotKitAction): Promise<any> {
+  private async executeGenerateReport(_sessionId: string, _action: CopilotKitAction): Promise<any> {
     // TODO: Implement report generation logic
     return { success: true, reportUrl: 'generated_url' };
   }
 
-  private async executeSendMessage(sessionId: string, action: CopilotKitAction): Promise<any> {
+  private async executeSendMessage(_sessionId: string, _action: CopilotKitAction): Promise<any> {
     // TODO: Implement message sending logic
     return { success: true, messageId: 'sent_id' };
   }

@@ -5,6 +5,7 @@
  */
 
 import { createClient } from "../client";
+import { logHealthcareError, databaseLogger } from "../../../shared/src/logging/healthcare-logger";
 // import type { Database } from '../types/supabase';
 
 export interface CFMLicenseValidation {
@@ -119,7 +120,7 @@ export class CFMComplianceService {
         errorMessage: "License requires external CFM validation",
       };
     } catch (error) {
-      console.error("Error validating CFM license:", error);
+      logHealthcareError('database', error, { method: 'validateProfessionalLicense', crmNumber, crmState });
       return {
         crmNumber,
         crmState,
@@ -253,7 +254,7 @@ export class CFMComplianceService {
         complianceStatus: complianceCheck,
       };
     } catch (error) {
-      console.error("Error creating telemedicine session:", error);
+      logHealthcareError('database', error, { method: 'createTelemedicineSession', appointmentId: params.appointment_id });
       throw new Error(
         `Session creation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
@@ -366,7 +367,7 @@ export class CFMComplianceService {
         recommendations,
       };
     } catch (error) {
-      console.error("Error performing compliance check:", error);
+      logHealthcareError('database', error, { method: 'performComplianceCheck', sessionId });
       throw error;
     }
   }
@@ -398,7 +399,7 @@ export class CFMComplianceService {
         throw new Error(`Failed to create WebRTC session: ${error.message}`);
       }
     } catch (error) {
-      console.error("Error creating WebRTC session:", error);
+      logHealthcareError('database', error, { method: 'createWebRTCSession', telemedicineSessionId });
       throw error;
     }
   }
@@ -420,7 +421,7 @@ export class CFMComplianceService {
         .single();
 
       if (dashboardError) {
-        console.warn("Dashboard data not available:", dashboardError.message);
+        databaseLogger.warn('Dashboard data not available', { error: dashboardError.message, clinicId });
       }
 
       // Get detailed session data for the period
@@ -503,7 +504,7 @@ export class CFMComplianceService {
 
       return report;
     } catch (error) {
-      console.error("Error generating compliance report:", error);
+      logHealthcareError('database', error, { method: 'generateComplianceReport', clinicId, periodStart, periodEnd });
       throw error;
     }
   }
@@ -519,7 +520,7 @@ export class CFMComplianceService {
     // In production, this would use proper key management (HSM)
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(_array, (byte) =>
+    return Array.from(array, (byte) =>
       byte.toString(16).padStart(2, "0"),
     ).join("");
   }
@@ -588,7 +589,7 @@ export class CFMComplianceService {
         errors,
       };
     } catch (error) {
-      console.error("Error validating patient identity:", error);
+      logHealthcareError('database', error, { method: 'validatePatientIdentity', patientId });
       return {
         isValid: false,
         verificationMethod: "error",
@@ -657,11 +658,11 @@ export class CFMComplianceService {
         });
 
       if (error) {
-        console.error("Failed to log compliance event:", error);
+        logHealthcareError('database', error, { method: 'logComplianceEvent', sessionId: event.sessionId, eventType: event.eventType });
         // Don't throw error to avoid breaking the main flow
       }
     } catch (error) {
-      console.error("Error logging compliance event:", error);
+      logHealthcareError('database', error, { method: 'logComplianceEvent', sessionId: event.sessionId, eventType: event.eventType });
       // Don't throw error to avoid breaking the main flow
     }
   }
@@ -700,7 +701,7 @@ export class CFMComplianceService {
         generatedAt: new Date().toISOString(),
       };
     } catch (error) {
-      console.error("Error getting session audit trail:", error);
+      logHealthcareError('database', error, { method: 'getSessionAuditTrail', sessionId });
       throw error;
     }
   }

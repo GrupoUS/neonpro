@@ -5,6 +5,7 @@
 
 import { SupabaseClient } from "@supabase/supabase-js";
 import { ErrorMapper } from "@neonpro/shared/errors";
+import { databaseLogger } from "../../../shared/src/logging/healthcare-logger";
 
 export interface QueryPerformanceMetrics {
   _query: string;
@@ -432,10 +433,11 @@ export class DatabasePerformanceService {
     table: string;
     operation: string;
   }): void {
-    console.warn(
-      `[SLOW QUERY] ${queryInfo.table}:${queryInfo.operation} took ${queryInfo.duration.toFixed(2)}ms`,
+    databaseLogger.warn(
+      `Slow query detected: ${queryInfo.table}:${queryInfo.operation} took ${queryInfo.duration.toFixed(2)}ms`,
       {
-        _query: queryInfo.query,
+        table: queryInfo.table,
+        operation: queryInfo.operation,
         duration: queryInfo.duration,
         threshold: this.config.slowQueryThreshold,
       },

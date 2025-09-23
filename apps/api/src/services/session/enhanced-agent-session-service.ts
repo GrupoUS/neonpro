@@ -10,9 +10,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { Database } from '../../types/database';
 import { 
   AestheticAguiService, 
-  AestheticAguiMessage, 
-  AestheticAguiMessageType,
-  AestheticSessionContext,
+  // AestheticAguiMessage, 
+  // AestheticAguiMessageType,
+  // AestheticSessionContext,
   AestheticTreatmentData,
   AestheticClientProfile
 } from '../agui-protocol/aesthetic-service';
@@ -562,7 +562,7 @@ export class EnhancedAgentSessionService {
    */
   async getSessionAnalytics(
     sessionId: string,
-    timeRange?: { start: Date; end: Date },
+    _timeRange?: { start: Date; end: Date },
   ): Promise<SessionAnalytics | null> {
     try {
       const session = await this.getEnhancedSession(sessionId);
