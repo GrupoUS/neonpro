@@ -1,7 +1,7 @@
 # Accessibility Features
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [NeonProChatProvider.tsx](file://apps/web/src/components/chat/NeonProChatProvider.tsx)
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx)
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md)
@@ -14,6 +14,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Accessibility Implementation](#core-accessibility-implementation)
 3. [Keyboard Navigation Patterns](#keyboard-navigation-patterns)
@@ -33,6 +34,7 @@ The NeonPro frontend implements comprehensive accessibility features designed sp
 The accessibility framework is built around several core principles: perceivability, operability, understandability, and robustness. These principles are implemented through semantic HTML, proper ARIA labeling, focus management, and compatibility with assistive technologies commonly used in healthcare settings.
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L0-L38)
 
 ## Core Accessibility Implementation
@@ -40,6 +42,7 @@ The accessibility framework is built around several core principles: perceivabil
 The NeonPro frontend implements a comprehensive accessibility framework that addresses multiple aspects of accessible design for healthcare applications. The implementation follows WCAG 2.1 AA+ guidelines and includes support for screen readers, keyboard navigation, high contrast themes, reduced motion preferences, text resizing, and cognitive accessibility features.
 
 Key implementation areas include:
+
 - **Screen reader support**: Implementation of ARIA labels, live regions, and semantic HTML structure
 - **Keyboard navigation**: Comprehensive keyboard support with proper focus management and keyboard shortcuts
 - **High contrast mode**: Support for high contrast themes that meet medical display requirements
@@ -50,6 +53,7 @@ Key implementation areas include:
 The system also implements specific healthcare-focused accessibility features such as emergency mode alerts, patient data visibility controls, and medical-specific keyboard shortcuts that cater to the unique needs of medical professionals.
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L38-L111)
 - [accessibility.css](file://apps/web/src/components/chat/accessibility.css#L0-L1085)
 
@@ -60,6 +64,7 @@ The NeonPro frontend implements comprehensive keyboard navigation patterns that 
 Key keyboard navigation features include:
 
 ### Focus Management
+
 The system implements proper focus management with visible focus indicators that meet minimum contrast requirements. Focusable elements include buttons, form controls, links, and interactive components. The focus order follows the logical reading order of the content, ensuring predictable navigation.
 
 ```mermaid
@@ -75,10 +80,12 @@ F --> G[Maintain Focus Until Next Interaction]
 ```
 
 **Diagram sources**
+
 - [accessibility.css](file://apps/web/src/components/chat/accessibility.css#L425-L521)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L93-L136)
 
 ### Keyboard Shortcuts
+
 The system implements healthcare-specific keyboard shortcuts for common actions:
 
 - **Ctrl+Enter**: Submit form or message
@@ -93,9 +100,11 @@ The system implements healthcare-specific keyboard shortcuts for common actions:
 These shortcuts are designed to minimize hand movement and enable rapid data entry in clinical settings.
 
 ### Focus Trapping
+
 Modal dialogs and emergency alerts implement focus trapping to prevent keyboard users from accidentally navigating outside the active component. When a modal is open, the tab key cycles only through the focusable elements within the modal, returning to the first element after the last.
 
 **Section sources**
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L86-L134)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L208-L248)
 
@@ -104,6 +113,7 @@ Modal dialogs and emergency alerts implement focus trapping to prevent keyboard 
 The NeonPro frontend provides comprehensive support for screen readers used by medical staff, ensuring that all information and functionality is accessible to users who rely on assistive technologies. The implementation follows WAI-ARIA best practices and includes specific features for healthcare applications.
 
 ### ARIA Live Regions
+
 The system uses ARIA live regions to announce dynamic content updates to screen readers. Different priority levels are used based on the medical context:
 
 - **Polite announcements**: For routine messages and status updates
@@ -125,10 +135,12 @@ User-->>Component : Acknowledge Alert
 ```
 
 **Diagram sources**
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L38-L84)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L290-L336)
 
 ### Semantic HTML Structure
+
 The interface uses proper semantic HTML elements to convey document structure to screen readers:
 
 - `<main>` landmark for primary content
@@ -140,6 +152,7 @@ The interface uses proper semantic HTML elements to convey document structure to
 Each landmark has an appropriate `aria-label` to help screen reader users understand the purpose of each section.
 
 ### Screen Reader-Specific Features
+
 The system includes several features specifically designed for screen reader users in healthcare settings:
 
 - **Medical terminology support**: Proper pronunciation of medical terms
@@ -148,6 +161,7 @@ The system includes several features specifically designed for screen reader use
 - **Workflow guidance**: Verbal instructions for complex procedures
 
 **Section sources**
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L0-L36)
 - [ai-chat.spec.ts](file://tests/e2e/ai-chat.spec.ts#L425-L458)
 
@@ -158,6 +172,7 @@ The NeonPro frontend extensively uses ARIA (Accessible Rich Internet Application
 ### Core ARIA Implementation
 
 #### Roles and Properties
+
 The system implements appropriate ARIA roles and properties for all interactive components:
 
 - **Landmark roles**: `main`, `navigation`, `complementary`, `contentinfo`
@@ -206,10 +221,12 @@ AccessibleComponent <|-- ModalDialog
 ```
 
 **Diagram sources**
+
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L51-L91)
 - [accessibility.css](file://apps/web/src/components/chat/accessibility.css#L425-L521)
 
 #### State Management
+
 Dynamic ARIA states are updated in response to user interactions and system events:
 
 - `aria-expanded`: Indicates whether expandable content is currently expanded
@@ -221,6 +238,7 @@ Dynamic ARIA states are updated in response to user interactions and system even
 ### Healthcare-Specific ARIA Patterns
 
 #### Patient Data Disclosure
+
 When displaying sensitive patient information, the system uses ARIA attributes to control disclosure:
 
 ```tsx
@@ -234,6 +252,7 @@ When displaying sensitive patient information, the system uses ARIA attributes t
 ```
 
 #### Clinical Workflow Indicators
+
 ARIA attributes are used to indicate the state of clinical workflows:
 
 - `aria-current="step"`: Highlights the current step in a multi-step process
@@ -241,6 +260,7 @@ ARIA attributes are used to indicate the state of clinical workflows:
 - `aria-invalid="grammar"`: Indicates potential errors in medical documentation
 
 **Section sources**
+
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L290-L336)
 - [accessibility.css](file://apps/web/src/components/chat/accessibility.css#L425-L521)
 
@@ -272,6 +292,7 @@ J --> K[Change to 'Show Less' Button]
 ```
 
 **Diagram sources**
+
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L93-L136)
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L40-L111)
 
@@ -296,6 +317,7 @@ The chat accessibility implementation includes performance optimizations to ensu
 - **Lazy loading**: Large media content is loaded on demand
 
 **Section sources**
+
 - [NeonProChatProvider.tsx](file://apps/web/src/components/chat/NeonProChatProvider.tsx#L65-L279)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L338-L384)
 
@@ -363,12 +385,14 @@ export class ErrorBoundary extends React.Component<
 ### Accessibility Features of Error Handling
 
 #### Visual Design
+
 - **High contrast colors**: Error state uses high contrast color scheme for visibility
 - **Clear iconography**: Warning triangle icon provides visual cue
 - **Sufficient text size**: Error message is readable at standard zoom levels
 - **Focus management**: Focus is automatically set to the retry button
 
 #### Screen Reader Support
+
 - **Role alert**: Error container has `role="alert"` for immediate announcement
 - **Descriptive text**: Error message clearly explains the problem and solution
 - **Actionable instructions**: Users are told exactly what to do to resolve the issue
@@ -391,9 +415,11 @@ ErrorBoundary->>React : Re-render children
 ```
 
 **Diagram sources**
+
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L0-L72)
 
 **Section sources**
+
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L0-L72)
 
 ## Dynamic Content Updates
@@ -424,11 +450,13 @@ The implementation includes several key features:
 When performing asynchronous operations such as API calls or data processing, the system provides appropriate feedback:
 
 #### Loading States
+
 - **Visual indicators**: Spinner or progress bar shows operation progress
 - **ARIA busy state**: Elements set `aria-busy="true"` during loading
 - **Screen reader announcements**: "Loading..." or "Processing..." messages are announced
 
 #### Success and Error States
+
 - **Success announcements**: "Operation completed successfully" with relevant details
 - **Error announcements**: Clear description of the error and suggested actions
 - **Status persistence**: Important status messages remain until acknowledged
@@ -449,10 +477,12 @@ I --> J[Remove Loading Indicator]
 ```
 
 **Diagram sources**
+
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L208-L248)
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L38-L84)
 
 **Section sources**
+
 - [NeonProChatProvider.tsx](file://apps/web/src/components/chat/NeonProChatProvider.tsx#L65-L279)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L208-L248)
 
@@ -545,10 +575,12 @@ FocusManager->>User : Focus Returns to Original Button
 ```
 
 **Diagram sources**
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L86-L134)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L208-L248)
 
 **Section sources**
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L86-L134)
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L25-L72)
 
@@ -600,15 +632,19 @@ const generatePerformanceSettings = (
 Several strategies are employed to maintain performance while providing accessibility features:
 
 #### Virtualized Lists
+
 Long lists of chat messages are virtualized to render only visible items, reducing DOM size and improving scroll performance.
 
 #### Debounced Updates
+
 Rapid successive updates to screen reader announcements are debounced to prevent overwhelming assistive technologies.
 
 #### Efficient Re-renders
+
 React's memoization and shouldComponentUpdate are used to prevent unnecessary re-renders of accessible components.
 
 #### Conditional Feature Loading
+
 Advanced accessibility features are loaded conditionally based on user needs and device capabilities.
 
 ```mermaid
@@ -628,10 +664,12 @@ I --> J[Monitor Performance Metrics]
 ```
 
 **Diagram sources**
+
 - [useAnimationPerformance.ts](file://packages/ui/src/hooks/useAnimationPerformance.ts#L154-L206)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L338-L384)
 
 **Section sources**
+
 - [useAnimationPerformance.ts](file://packages/ui/src/hooks/useAnimationPerformance.ts#L154-L206)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L338-L384)
 
@@ -676,6 +714,7 @@ if (!professionalAccessibility) {
 ### Healthcare-Specific Accessibility Features
 
 #### Emergency Mode
+
 A dedicated emergency mode enhances accessibility during critical situations:
 
 - High contrast color scheme
@@ -684,6 +723,7 @@ A dedicated emergency mode enhances accessibility during critical situations:
 - Large touch targets for gloved hands
 
 #### Medical Workflow Optimization
+
 Accessibility features are optimized for common medical workflows:
 
 - **Patient intake**: Streamlined form filling with predictive text
@@ -692,6 +732,7 @@ Accessibility features are optimized for common medical workflows:
 - **Emergency response**: One-touch activation of emergency protocols
 
 #### Multilingual Support
+
 The system supports multiple languages with attention to accessibility:
 
 - Proper language tagging for screen readers
@@ -709,5 +750,6 @@ The system includes automated checks to verify ongoing compliance:
 - User feedback collection from medical staff with disabilities
 
 **Section sources**
+
 - [anvisa-compliance.ts](file://apps/api/src/services/anvisa-compliance.ts#L190-L259)
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L241-L268)

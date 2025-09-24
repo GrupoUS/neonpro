@@ -1,7 +1,7 @@
 # Deployment Architecture
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [DEPLOYMENT_GUIDE.md](file://DEPLOYMENT_GUIDE.md)
 - [vercel.json](file://vercel.json)
 - [apps/api/vercel.json](file://apps/api/vercel.json)
@@ -14,6 +14,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Deployment Targets and Environment Overview](#deployment-targets-and-environment-overview)
 3. [Frontend and API Deployment on Vercel](#frontend-and-api-deployment-on-vercel)
@@ -30,9 +31,11 @@
 14. [Technology Stack and Dependencies](#technology-stack-and-dependencies)
 
 ## Introduction
+
 The neonpro application is a healthcare-focused platform deployed across multiple cloud environments using a polyglot infrastructure model. This document details the deployment architecture, covering frontend and backend services hosted on Vercel, AI agents containerized with Docker, and persistent data storage managed through Supabase. The system supports zero-downtime deployments, automated certificate renewal, compliance with Brazilian healthcare regulations (LGPD, CFM, ANVISA), and regional data residency requirements. The architecture emphasizes security, scalability, and resilience while maintaining strict separation of concerns between components.
 
 ## Deployment Targets and Environment Overview
+
 neonpro utilizes a multi-cloud deployment strategy with distinct hosting models for different components:
 
 - **Frontend (Web UI)**: Deployed to Vercel using static site generation and edge functions
@@ -44,15 +47,19 @@ neonpro utilizes a multi-cloud deployment strategy with distinct hosting models 
 This topology enables independent scaling, technology-specific optimizations, and regulatory compliance enforcement at the infrastructure layer.
 
 **Section sources**
+
 - [DEPLOYMENT_GUIDE.md](file://DEPLOYMENT_GUIDE.md)
 - [vercel.json](file://vercel.json)
 - [apps/api/vercel.json](file://apps/api/vercel.json)
 
 ## Frontend and API Deployment on Vercel
+
 The frontend (`@neonpro/web`) and API (`@neonpro/api`) are both deployed to Vercel but follow separate configuration profiles optimized for their respective workloads.
 
 ### Web Application Configuration
+
 The web frontend uses a minimal `vercel.json` configuration that specifies:
+
 - Build command: `bun run build:vercel`
 - Output directory: `dist`
 - Framework: None (custom setup)
@@ -60,7 +67,9 @@ The web frontend uses a minimal `vercel.json` configuration that specifies:
 This allows full control over the build process while leveraging Vercel’s global CDN for fast content delivery.
 
 ### API Configuration
+
 The API layer uses an advanced `vercel.json` configuration tailored for healthcare compliance:
+
 - **Regions**: Restricted to `sao1` and `gru1` (São Paulo) to enforce Brazilian data residency
 - **Edge Functions**: All API routes execute on Vercel’s Edge Network with memory and timeout configurations
 - **Security Headers**: Comprehensive CSP, HSTS, X-Frame-Options, and medical-grade compliance headers
@@ -81,18 +90,23 @@ G --> H["Process Request"]
 ```
 
 **Diagram sources**
+
 - [apps/api/vercel.json](file://apps/api/vercel.json#L1-L180)
 - [apps/web/vercel.json](file://apps/web/vercel.json#L1-L9)
 
 **Section sources**
+
 - [apps/api/vercel.json](file://apps/api/vercel.json)
 - [apps/web/vercel.json](file://apps/web/vercel.json)
 
 ## AI Agent Deployment via Docker Containers
+
 AI agents are implemented as Python-based microservices running in Docker containers, enabling isolation, reproducibility, and portability.
 
 ### Container Image Definition
+
 The `Dockerfile` defines a production-ready image based on `python:3.11-slim`:
+
 - System dependencies: GCC for compilation
 - Dependency installation via pip with cache optimization
 - Non-root user (`app`) for security
@@ -101,7 +115,9 @@ The `Dockerfile` defines a production-ready image based on `python:3.11-slim`:
 - Uvicorn server for ASGI application serving
 
 ### Orchestration with Docker Compose
+
 The `docker-compose.yml` file orchestrates the AI agent service along with optional Redis caching:
+
 - Service name: `ai-agent`
 - Port mapping: 8001:8001
 - Environment variables injected from `.env` or host
@@ -128,14 +144,17 @@ B --> |Cache Ops| A
 ```
 
 **Diagram sources**
+
 - [apps/ai-agent/Dockerfile](file://apps/ai-agent/Dockerfile#L1-L33)
 - [apps/ai-agent/docker-compose.yml](file://apps/ai-agent/docker-compose.yml#L1-L48)
 
 **Section sources**
+
 - [apps/ai-agent/Dockerfile](file://apps/ai-agent/Dockerfile)
 - [apps/ai-agent/docker-compose.yml](file://apps/ai-agent/docker-compose.yml)
 
 ## Database Infrastructure with Supabase
+
 Supabase serves as the primary relational database backend, providing Postgres-as-a-service with additional features critical for healthcare applications:
 
 - Row Level Security (RLS) for fine-grained access control
@@ -149,10 +168,12 @@ The AI agents and API services connect directly to Supabase using service role k
 Data residency is enforced by deploying the Supabase project within South America (São Paulo) region, aligning with LGPD requirements.
 
 **Section sources**
+
 - [apps/ai-agent/docker-compose.yml](file://apps/ai-agent/docker-compose.yml)
 - [apps/api/vercel.json](file://apps/api/vercel.json)
 
 ## Environment Configuration Management
+
 Configuration is managed hierarchically across multiple layers:
 
 1. **Build-Time (Vercel)**: Defined in `vercel.json` under `env` block
@@ -173,14 +194,18 @@ Configuration is managed hierarchically across multiple layers:
 This layered approach ensures secure, auditable, and environment-specific configuration.
 
 **Section sources**
+
 - [apps/api/vercel.json](file://apps/api/vercel.json#L10-L18)
 - [apps/ai-agent/docker-compose.yml](file://apps/ai-agent/docker-compose.yml#L10-L20)
 
 ## CI/CD Pipeline Design
+
 The deployment pipeline combines Turborepo for build orchestration and Vercel CLI for deployment execution.
 
 ### Build Process
+
 Using `turbo.json`, builds are optimized with dependency-aware execution:
+
 ```
 @neonpro/types#build
 ├── @neonpro/database#build
@@ -192,7 +217,9 @@ Using `turbo.json`, builds are optimized with dependency-aware execution:
 Caching is enabled via remote cache sharing across team members and CI runners.
 
 ### Deployment Commands
+
 Three primary deployment modes exist:
+
 - **Turbo-Optimized Deploy**: Uses `vercel-turbo.json` with `bun install`
 - **Standard Deploy**: Fallback with default config
 - **Production Deploy**: Includes `--prod` flag and archive packaging
@@ -200,7 +227,9 @@ Three primary deployment modes exist:
 Deployment scripts such as `scripts/deploy.sh` encapsulate these commands with pre-flight checks.
 
 ### Verification Workflow
+
 Before deployment:
+
 - Dry-run build verification
 - Dependency resolution check
 - Authentication validation
@@ -209,33 +238,40 @@ Before deployment:
 Automated tests in `/tests` validate functionality pre-deployment.
 
 **Section sources**
+
 - [DEPLOYMENT_GUIDE.md](file://DEPLOYMENT_GUIDE.md)
 - [scripts/deploy.sh](file://scripts/deploy.sh)
 
 ## Scaling Strategy Across Components
+
 Each component follows a tailored scaling model:
 
-| Component | Scaling Model | Max Instances | Memory | Notes |
-|---------|---------------|-------------|--------|-------|
-| Vercel Edge Functions | Auto-scale (per request) | Unlimited | 128–256MB | Cold starts mitigated by warm-up cron |
-| AI Agent (Docker) | Horizontal Pod Autoscaling | 5+ | 512MB+ | Manual or Kubernetes-managed |
-| Redis Cache | Vertical + Horizontal | 2 replicas | 256MB | Optional high-availability setup |
-| Supabase DB | Vertical Scaling | 1 primary + read replicas | Configurable | Managed scaling via dashboard |
+| Component             | Scaling Model              | Max Instances             | Memory       | Notes                                 |
+| --------------------- | -------------------------- | ------------------------- | ------------ | ------------------------------------- |
+| Vercel Edge Functions | Auto-scale (per request)   | Unlimited                 | 128–256MB    | Cold starts mitigated by warm-up cron |
+| AI Agent (Docker)     | Horizontal Pod Autoscaling | 5+                        | 512MB+       | Manual or Kubernetes-managed          |
+| Redis Cache           | Vertical + Horizontal      | 2 replicas                | 256MB        | Optional high-availability setup      |
+| Supabase DB           | Vertical Scaling           | 1 primary + read replicas | Configurable | Managed scaling via dashboard         |
 
 Edge functions scale infinitely per Vercel's model, while containerized agents require external orchestration (e.g., Kubernetes) for auto-scaling beyond single-node Docker.
 
 **Section sources**
+
 - [apps/api/vercel.json](file://apps/api/vercel.json)
 - [apps/ai-agent/docker-compose.yml](file://apps/ai-agent/docker-compose.yml)
 
 ## Disaster Recovery and Rollback Procedures
+
 Robust recovery mechanisms are implemented across layers.
 
 ### Zero-Downtime Deployments
+
 Vercel’s atomic deploys ensure new versions go live only after successful build and health check. Traffic shifts instantly with no intermediate state.
 
 ### Emergency Rollback
+
 The `emergency-rollback.sh` script performs rapid reversion:
+
 - Identifies last known good deployment ID
 - Executes `vercel alias set <old-deployment> api.neonpro.com.br`
 - Validates health endpoint
@@ -244,26 +280,33 @@ The `emergency-rollback.sh` script performs rapid reversion:
 Rollbacks complete within 60 seconds.
 
 ### Backup Strategy
+
 - **Database**: Daily automated backups + PITR (Point-in-Time Recovery) enabled on Supabase
 - **Configuration**: Version-controlled `vercel.json`, `Dockerfile`, and compose files
 - **Certificates**: Automated renewal with fallback to cached valid certs
 
 ### Monitoring & Alerts
+
 Cron jobs trigger every 5 minutes to check:
+
 - API health (`/api/health`)
 - Compliance audit status
 - Performance degradation
-Alerts routed via Sentry and custom webhook integrations.
+  Alerts routed via Sentry and custom webhook integrations.
 
 **Section sources**
+
 - [scripts/emergency-rollback.sh](file://scripts/emergency-rollback.sh)
 - [apps/api/vercel.json](file://apps/api/vercel.json#L150-L160)
 
 ## Maintenance and Certificate Management
+
 TLS certificate lifecycle is fully automated.
 
 ### Certificate Renewal
+
 The `cert-renewal.sh` script:
+
 - Monitors expiration dates via `openssl s_client`
 - Integrates with Let's Encrypt ACME protocol
 - Deploys renewed certs to Vercel and internal services
@@ -272,17 +315,21 @@ The `cert-renewal.sh` script:
 Scheduled weekly via CI or cron.
 
 ### Health Monitoring
+
 Scripts in `/apps/api/scripts` handle operational tasks:
+
 - `cert-monitor.js`: Real-time SSL expiry tracking
 - `performance-monitor.js`: Latency and error rate analysis
 
 These feed into dashboards and alerting systems.
 
 **Section sources**
+
 - [apps/api/scripts/cert-renewal.sh](file://apps/api/scripts/cert-renewal.sh)
 - [apps/api/scripts/performance-monitor.js](file://apps/api/scripts/performance-monitor.js)
 
 ## Component Interaction and Orchestration
+
 Components interact through well-defined interfaces:
 
 - **Frontend ↔ API**: HTTPS calls with JWT authentication
@@ -318,10 +365,12 @@ API-->>Web : Stream Response
 ```
 
 **Diagram sources**
+
 - [apps/api/vercel.json](file://apps/api/vercel.json)
 - [apps/ai-agent/docker-compose.yml](file://apps/ai-agent/docker-compose.yml)
 
 ## System Context Diagram
+
 The following diagram illustrates the production deployment topology:
 
 ```mermaid
@@ -356,33 +405,41 @@ style SupabaseDB fill:#9B59B6,stroke:#333
 ```
 
 **Diagram sources**
+
 - [apps/web/vercel.json](file://apps/web/vercel.json)
 - [apps/api/vercel.json](file://apps/api/vercel.json)
 - [apps/ai-agent/docker-compose.yml](file://apps/ai-agent/docker-compose.yml)
 
 ## Cross-Cutting Concerns
+
 Several architectural concerns span all components.
 
 ### Zero-Downtime Deployments
+
 Achieved through:
+
 - Atomic deployments on Vercel
 - Health checks before traffic routing
 - Dual-server pattern during transitions
 - Pre-warming of edge functions
 
 ### Rollback Strategies
+
 - **Vercel**: Alias reversion to previous deployment
 - **Containers**: Image tagging and rollback in compose file
 - **Database**: Migrations with down scripts
 
 ### Certificate Management
+
 - Automated issuance and renewal via ACME
 - Centralized monitoring dashboard
 - Fallback certificates provisioned
 - HSTS preloading enabled
 
 ### Deployment Validation
+
 Pre-deployment checks include:
+
 - Build success (`turbo build`)
 - Dependency integrity
 - Environment completeness
@@ -390,35 +447,39 @@ Pre-deployment checks include:
 - Compliance rule verification
 
 Post-deployment:
+
 - Synthetic transaction testing
 - Performance budget adherence
 - Error rate monitoring
 
 **Section sources**
+
 - [DEPLOYMENT_GUIDE.md](file://DEPLOYMENT_GUIDE.md)
 - [apps/api/vercel.json](file://apps/api/vercel.json)
 - [scripts/deployment-validation.sh](file://scripts/deployment-validation.sh)
 
 ## Technology Stack and Dependencies
+
 The system leverages a modern, compliant tech stack:
 
-| Layer | Technology | Purpose | Version Compatibility |
-|------|------------|--------|------------------------|
-| Runtime | Bun | JavaScript/TypeScript execution | 1.0+ |
-| Framework | Next.js | React SSR and API routes | 14.x |
-| Language | Python 3.11 | AI agent logic | 3.11.x |
-| Container | Docker | Service isolation | 24.x |
-| Orchestration | Docker Compose | Multi-container management | 3.8 |
-| Database | Supabase | Postgres + Auth + Realtime | Latest |
-| Cloud | Vercel | Frontend/API hosting | N/A |
-| Testing | Vitest, Playwright | Unit/E2E testing | 1.x, 1.20+ |
-| Linting | Oxlint | Fast TypeScript linting | 0.1.x |
-| Bundler | Vite | Frontend tooling | 4.x |
-| Package Manager | pnpm | Monorepo dependency management | 8.x |
+| Layer           | Technology         | Purpose                         | Version Compatibility |
+| --------------- | ------------------ | ------------------------------- | --------------------- |
+| Runtime         | Bun                | JavaScript/TypeScript execution | 1.0+                  |
+| Framework       | Next.js            | React SSR and API routes        | 14.x                  |
+| Language        | Python 3.11        | AI agent logic                  | 3.11.x                |
+| Container       | Docker             | Service isolation               | 24.x                  |
+| Orchestration   | Docker Compose     | Multi-container management      | 3.8                   |
+| Database        | Supabase           | Postgres + Auth + Realtime      | Latest                |
+| Cloud           | Vercel             | Frontend/API hosting            | N/A                   |
+| Testing         | Vitest, Playwright | Unit/E2E testing                | 1.x, 1.20+            |
+| Linting         | Oxlint             | Fast TypeScript linting         | 0.1.x                 |
+| Bundler         | Vite               | Frontend tooling                | 4.x                   |
+| Package Manager | pnpm               | Monorepo dependency management  | 8.x                   |
 
 Third-party dependencies are pinned where possible and regularly audited for vulnerabilities using automated tools in the CI pipeline.
 
 **Section sources**
+
 - [package.json](file://package.json)
 - [pnpm-workspace.yaml](file://pnpm-workspace.yaml)
 - [bunfig.toml](file://bunfig.toml)

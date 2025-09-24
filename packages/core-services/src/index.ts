@@ -12,7 +12,6 @@ export * from "./audit/index";
 // Error handling utilities
 export * from "./errors/map";
 
-
 // Phase 1 AI Chat models/services
 export * from "./models/chat-session";
 export * from "./models/chat-message";
@@ -39,3 +38,6 @@ export * from "./usage/abuseWindow";
 
 // Config utilities
 export * from "./config/logger";
+
+export { MultiProfessionalCoordinationService } from "./services/multi-professional-coordination-service";
+export { PatientEngagementService } from "./services/patient-engagement-service";

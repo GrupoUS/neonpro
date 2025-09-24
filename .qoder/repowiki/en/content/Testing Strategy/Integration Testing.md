@@ -1,7 +1,7 @@
 # Integration Testing
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [supabase-connectivity.test.ts](file://apps/api/src/__tests__/integration/supabase-connectivity.test.ts)
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Integration Testing Strategy](#integration-testing-strategy)
 3. [Core Components and Workflows](#core-components-and-workflows)
@@ -31,6 +32,7 @@ The integration testing approach in the neonpro project focuses on validating co
 The testing framework is designed to be accessible to beginners while providing sufficient technical depth for advanced topics such as testing Row Level Security (RLS) policies and cross-service transaction consistency. The approach emphasizes realistic test data, database transaction rollback strategies, and external service mocking for Supabase and AI providers.
 
 **Section sources**
+
 - [README_TESTS.md](file://apps/ai-agent/README_TESTS.md#L1-L20)
 - [TESTING_STRATEGY.md](file://apps/web/TESTING_STRATEGY.md#L1-L10)
 
@@ -41,6 +43,7 @@ The integration testing strategy in neonpro follows a structured approach that c
 The framework uses Vitest for JavaScript/TypeScript testing and pytest for Python services, with Playwright for end-to-end testing. Integration tests are organized into specific categories including healthcare compliance, database operations, AI agent functionality, and real-time communication.
 
 Key aspects of the strategy include:
+
 - Using MSW (Mock Service Worker) for API mocking
 - Implementing realistic test data patterns
 - Ensuring LGPD compliance in test scenarios
@@ -59,10 +62,12 @@ G[pytest] --> B
 ```
 
 **Diagram sources **
+
 - [TESTING_STRATEGY.md](file://apps/web/TESTING_STRATEGY.md#L15-L25)
 - [vitest.config.integration.ts](file://apps/web/vitest.config.integration.ts#L1-L10)
 
 **Section sources**
+
 - [TESTING_STRATEGY.md](file://apps/web/TESTING_STRATEGY.md#L1-L50)
 - [vitest.config.integration.ts](file://apps/web/vitest.config.integration.ts#L1-L20)
 
@@ -89,10 +94,12 @@ Reminder --> End2([Complete])
 ```
 
 **Diagram sources **
+
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L1-L50)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L50)
 
 **Section sources**
+
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L1-L100)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L100)
 
@@ -121,10 +128,12 @@ end
 ```
 
 **Diagram sources **
+
 - [supabase-connectivity.test.ts](file://apps/api/src/__tests__/integration/supabase-connectivity.test.ts#L1-L50)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L50)
 
 **Section sources**
+
 - [supabase-connectivity.test.ts](file://apps/api/src/__tests__/integration/supabase-connectivity.test.ts#L1-L200)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L200)
 
@@ -151,10 +160,12 @@ Agent->>User : Send response
 ```
 
 **Diagram sources **
+
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L1-L50)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L50)
 
 **Section sources**
+
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L1-L300)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L300)
 
@@ -183,10 +194,12 @@ Server-->>Client2 : Acknowledge
 ```
 
 **Diagram sources **
+
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L50)
 - [README_TESTS.md](file://apps/ai-agent/README_TESTS.md#L1-L50)
 
 **Section sources**
+
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L200)
 - [README_TESTS.md](file://apps/ai-agent/README_TESTS.md#L50-L100)
 
@@ -199,6 +212,7 @@ Tests cover authentication context propagation, input validation, and error hand
 Procedure batching is tested to ensure multiple requests are handled efficiently. Performance metrics are collected for procedure execution time and resource usage under various load conditions.
 
 **Section sources**
+
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L1-L50)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L50)
 
@@ -209,6 +223,7 @@ Test data management in neonpro follows a structured approach to ensure realisti
 Test data isolation is maintained through database transaction rollback strategies and dedicated test databases. Each test suite sets up its own data environment and cleans up after execution to prevent interference between tests.
 
 Realistic data patterns are used, including:
+
 - Brazilian names and addresses
 - CPF and SUS card numbers
 - Healthcare appointment schedules
@@ -227,10 +242,12 @@ Restore --> End([Complete])
 ```
 
 **Diagram sources **
+
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L50)
 - [README_TESTS.md](file://apps/ai-agent/README_TESTS.md#L1-L50)
 
 **Section sources**
+
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L150)
 - [README_TESTS.md](file://apps/ai-agent/README_TESTS.md#L100-L150)
 
@@ -272,10 +289,12 @@ AIProviderFactory --> AnthropicProvider : creates
 ```
 
 **Diagram sources **
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L46-L91)
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L1-L50)
 
 **Section sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L1-L100)
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L50-L150)
 
@@ -288,6 +307,7 @@ Patient onboarding tests validate the complete process from initial contact thro
 Appointment scheduling tests verify real-time availability checks, conflict detection, and resource allocation. The framework tests edge cases such as overlapping appointments, provider availability, and room scheduling conflicts.
 
 Other healthcare workflows tested include:
+
 - Treatment planning and progress tracking
 - Medical record access and sharing
 - Prescription management
@@ -310,10 +330,12 @@ Remind --> Complete2["Scheduling Complete"]
 ```
 
 **Diagram sources **
+
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L1-L50)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L50)
 
 **Section sources**
+
 - [ai-agent-system.test.ts](file://apps/api/src/__tests__/integration/ai-agent-system.test.ts#L150-L300)
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L150-L300)
 
@@ -322,28 +344,34 @@ Remind --> Complete2["Scheduling Complete"]
 The integration testing framework addresses several common issues encountered in distributed systems testing:
 
 ### Test Data Isolation
+
 Problem: Tests interfere with each other due to shared database state.
 Solution: Use database transaction rollback and dedicated test databases.
 
 ### Timing Dependencies
+
 Problem: Distributed systems have inherent timing dependencies that cause flaky tests.
 Solution: Implement retry mechanisms and use mocked time where appropriate.
 
 ### Flaky Network-Dependent Tests
+
 Problem: External service dependencies cause unreliable test results.
 Solution: Comprehensive mocking of external services and implementation of circuit breakers.
 
 ### RLS Policy Testing
+
 Problem: Verifying Row Level Security policies without compromising security.
 Solution: Test both allowed and denied scenarios using appropriate authentication contexts.
 
 ### Cross-Service Transaction Consistency
+
 Problem: Maintaining data consistency across multiple services.
 Solution: Implement distributed transaction patterns and idempotent operations.
 
 The framework includes specific strategies for handling these issues, such as retry mechanisms for flaky tests, comprehensive mocking for external dependencies, and detailed logging for debugging failed tests.
 
 **Section sources**
+
 - [test_integration.py](file://apps/ai-agent/tests/test_integration.py#L1-L50)
 - [README_TESTS.md](file://apps/ai-agent/README_TESTS.md#L1-L50)
 
@@ -352,6 +380,7 @@ The framework includes specific strategies for handling these issues, such as re
 The integration testing approach in the neonpro project provides a comprehensive framework for validating component interactions across service boundaries. By focusing on realistic test data, robust mocking strategies, and thorough coverage of critical workflows, the framework ensures high-quality, reliable software delivery.
 
 Key strengths of the approach include:
+
 - Comprehensive coverage of healthcare-specific workflows
 - Robust testing of security policies like RLS
 - Effective handling of distributed system challenges

@@ -1,13 +1,14 @@
 # Communication Protocols
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py)
 - [main.py](file://apps/api/agents/ag-ui-rag-agent/main.py)
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [WebSocket Connection Handling](#websocket-connection-handling)
 3. [AGUI Protocol Structure](#agui-protocol-structure)
@@ -21,17 +22,20 @@
 11. [Performance Optimization Tips](#performance-optimization-tips)
 
 ## Introduction
+
 The NeonPro healthcare platform implements a WebSocket-based communication protocol between frontend clients and AI agents, known as the AG-UI protocol. This documentation details the complete communication framework that enables real-time, secure interactions for healthcare conversations. The protocol is designed to support low-latency messaging with end-to-end encryption, session management, and compliance with healthcare data regulations.
 
 The system consists of two main components: the AGUIProtocol class that handles the application-level protocol logic and message processing, and the WebSocketManager class that manages the underlying WebSocket connections. Together, these components provide a robust foundation for real-time communication between the TypeScript frontend and Python agent codebases.
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L1-L50)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L1-L20)
 
 ## WebSocket Connection Handling
 
 ### Handshake Process
+
 The WebSocket handshake process begins when a frontend client connects to the `/ws/agui/{user_id}` endpoint. The connection follows a strict sequence:
 
 1. The client initiates a WebSocket connection with a user ID parameter
@@ -60,13 +64,16 @@ end
 ```
 
 **Diagram sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L233-L257)
 - [main.py](file://apps/api/agents/ag-ui-rag-agent/main.py#L100-L115)
 
 ### Ping/Pong Keep-alive Mechanisms
+
 The protocol implements a robust keep-alive mechanism to maintain connection health and detect dropped connections. Each active session runs a heartbeat loop that sends periodic heartbeat events every 30 seconds.
 
 The heartbeat system works as follows:
+
 - Server sends HEARTBEAT events containing timestamp and message count
 - Client should respond with PONG messages (handled by WebSocketManager)
 - Inactive sessions exceeding 30 minutes of inactivity are automatically cleaned up
@@ -75,10 +82,12 @@ The heartbeat system works as follows:
 This dual-layer approach ensures connection reliability while minimizing network overhead. The heartbeat interval is configurable and can be adjusted based on network conditions and performance requirements.
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L371-L381)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L105-L118)
 
 ### Graceful Disconnection Procedures
+
 The protocol provides multiple pathways for graceful disconnection:
 
 1. **Normal Closure**: When a WebSocket disconnects normally, the server catches the WebSocketDisconnect exception, cancels the heartbeat task, and removes the session from active sessions.
@@ -88,12 +97,14 @@ The protocol provides multiple pathways for graceful disconnection:
 During disconnection, the system performs proper cleanup by removing the session from the sessions dictionary, closing the WebSocket connection, and logging the disconnection event. This prevents resource leaks and ensures accurate connection tracking.
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L259-L310)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L56-L65)
 
 ## AGUI Protocol Structure
 
 ### Protocol Architecture
+
 The AG-UI protocol is structured as a layered architecture with clear separation of concerns:
 
 ```mermaid
@@ -137,11 +148,14 @@ AGUIProtocol ..> WebSocketManager : "integrates with"
 ```
 
 **Diagram sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L14-L230)
 
 ### Message Framing
+
 Messages in the AG-UI protocol follow a standardized JSON structure with the following fields:
+
 - `id`: Unique identifier for the message
 - `type`: Event type (from AGUIEventType enum)
 - `timestamp`: Unix timestamp of message creation
@@ -154,11 +168,13 @@ Messages in the AG-UI protocol follow a standardized JSON structure with the fol
 All sensitive data in the `data` field is encrypted using AES-256-CFB before transmission. The protocol uses a fixed salt and key derivation function (PBKDF2HMAC) to generate encryption keys, ensuring consistent encryption across sessions.
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L100-L150)
 
 ## Message Formats and Event Types
 
 ### Event Type Classification
+
 The AG-UI protocol defines several event types through the AGUIEventType enum, each serving a specific purpose in the communication flow:
 
 ```mermaid
@@ -188,12 +204,15 @@ L --> W["Streaming end"]
 ```
 
 **Diagram sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L20-L35)
 
 ### Payload Schemas
+
 Each event type has a specific payload schema that defines its data structure:
 
 #### Connection Event Schema
+
 ```json
 {
   "id": "string",
@@ -212,6 +231,7 @@ Each event type has a specific payload schema that defines its data structure:
 ```
 
 #### Message Event Schema
+
 ```json
 {
   "id": "string",
@@ -233,6 +253,7 @@ Each event type has a specific payload schema that defines its data structure:
 ```
 
 #### Error Event Schema
+
 ```json
 {
   "id": "string",
@@ -248,11 +269,13 @@ Each event type has a specific payload schema that defines its data structure:
 ```
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L152-L190)
 
 ## Real-time Interaction Patterns
 
 ### Session Management
+
 The protocol implements sophisticated session management to handle user interactions:
 
 ```mermaid
@@ -273,9 +296,11 @@ end note
 Sessions are created with a unique session ID and associated with a specific user ID. The system tracks session activity, message count, and context data throughout the session lifecycle. Multiple sessions per user are supported, allowing concurrent connections from different devices.
 
 **Diagram sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L192-L201)
 
 ### Broadcasting and Targeted Messaging
+
 The protocol supports both broadcast and targeted messaging patterns:
 
 - **Broadcast to All**: The `broadcast_to_all` method sends an event to all active sessions, useful for system-wide announcements
@@ -285,11 +310,13 @@ The protocol supports both broadcast and targeted messaging patterns:
 These patterns enable flexible communication scenarios, from emergency alerts to personalized notifications.
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L383-L398)
 
 ## Authentication Methods
 
 ### User Authentication
+
 The current implementation validates users based on a user ID parameter in the WebSocket URL. While the production-ready version would implement JWT validation, the current logic performs basic validation:
 
 ```python
@@ -301,7 +328,9 @@ async def validate_user(self, user_id: str, websocket: WebSocket) -> bool:
 For administrative endpoints, API key validation is implemented using an environment variable (`ADMIN_API_KEY`). This allows privileged operations like broadcasting messages to all users or cleaning up sessions.
 
 ### Security Headers
+
 The protocol enforces security through HTTP headers:
+
 - `X-AG-UI-Version`: Specifies the protocol version (1.0)
 - `X-AG-UI-Security`: Indicates TLSv1.3 encryption
 - Standard security headers from TLS configuration
@@ -309,11 +338,13 @@ The protocol enforces security through HTTP headers:
 CORS policies restrict origins to trusted domains including localhost, neonpro.com, and api.neonpro.com, preventing unauthorized cross-origin access.
 
 **Section sources**
+
 - [main.py](file://apps/api/agents/ag-ui-rag-agent/main.py#L65-L99)
 
 ## Error Handling Strategies
 
 ### Network Interruption Handling
+
 The system implements comprehensive error handling for network interruptions:
 
 ```mermaid
@@ -333,10 +364,13 @@ J --> |No| L["Process normally"]
 ```
 
 **Diagram sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L259-L310)
 
 ### Error Event Types
+
 The protocol defines specific error codes for different failure scenarios:
+
 - `INVALID_FORMAT`: Malformed JSON payload
 - `INVALID_EVENT_TYPE`: Unrecognized event type
 - `EVENT_HANDLER_ERROR`: Failure in event processing
@@ -346,11 +380,13 @@ The protocol defines specific error codes for different failure scenarios:
 Each error includes a descriptive message to aid debugging while avoiding exposure of sensitive system information.
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L170-L175)
 
 ## Security Considerations
 
 ### Message Validation
+
 All incoming messages undergo rigorous validation:
 
 1. **Structural Validation**: Checks for required fields (id, type, timestamp, session_id)
@@ -362,6 +398,7 @@ All incoming messages undergo rigorous validation:
 The validation process prevents malformed messages from disrupting service operation.
 
 ### Injection Prevention
+
 The protocol employs multiple layers of injection prevention:
 
 - **Input Sanitization**: All user input is treated as untrusted data
@@ -372,6 +409,7 @@ The protocol employs multiple layers of injection prevention:
 Additionally, the end-to-end encryption ensures that even if messages are intercepted, the content remains protected.
 
 ### End-to-End Encryption
+
 The AGUIProtocolEncryption class implements AES-256-CFB encryption for message payloads:
 
 ```python
@@ -400,11 +438,13 @@ class AGUIProtocolEncryption:
 Each session has its own encryption instance, providing isolation between user communications.
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L152-L190)
 
 ## Rate Limiting Approaches
 
 ### Connection-Level Rate Limiting
+
 While the core AGUIProtocol doesn't implement rate limiting directly, it integrates with systems that do:
 
 - **Maximum Connections**: The WebSocketManager limits concurrent connections (default: 100)
@@ -414,6 +454,7 @@ While the core AGUIProtocol doesn't implement rate limiting directly, it integra
 The protocol design allows for extension with rate limiting through handler registration. Custom handlers can be added to monitor message frequency and enforce limits based on user ID or IP address.
 
 ### Future Rate Limiting Integration
+
 The architecture supports integration with dedicated rate limiting services:
 
 ```python
@@ -432,11 +473,13 @@ def register_rate_limiting_handler(protocol: AGUIProtocol):
 This modular approach allows rate limiting policies to be updated without modifying core protocol logic.
 
 **Section sources**
+
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L17-L22)
 
 ## Client Implementation Guidelines
 
 ### TypeScript Frontend Implementation
+
 For the TypeScript frontend, implement the AG-UI protocol client as follows:
 
 ```typescript
@@ -518,6 +561,7 @@ class AguiClient {
 ```
 
 Key considerations for frontend implementation:
+
 - Implement exponential backoff for reconnection
 - Handle different message types appropriately
 - Manage connection state locally
@@ -525,9 +569,11 @@ Key considerations for frontend implementation:
 - Ensure proper cleanup of event listeners
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 ### Python Agent Implementation
+
 For the Python agent, extend the existing AGUIProtocol implementation:
 
 ```python
@@ -572,6 +618,7 @@ class HealthcareAgent(AGUIProtocol):
 ```
 
 Best practices for agent implementation:
+
 - Register custom handlers for domain-specific logic
 - Leverage the existing encryption and session management
 - Implement proper error handling and logging
@@ -579,11 +626,13 @@ Best practices for agent implementation:
 - Extend functionality through inheritance rather than modification
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L216-L221)
 
 ## Performance Optimization Tips
 
 ### Low-Latency Communication
+
 To optimize healthcare conversations for low latency:
 
 1. **Minimize Processing Time**: Optimize query processing algorithms
@@ -593,6 +642,7 @@ To optimize healthcare conversations for low latency:
 5. **Asynchronous Processing**: Use async/await for non-blocking operations
 
 ### Streaming Support
+
 For long-running queries, implement streaming responses:
 
 ```python
@@ -631,7 +681,9 @@ async def stream_response(self, session: AGUISession, query: str):
 ```
 
 ### Resource Management
+
 Optimize resource usage with these strategies:
+
 - Set appropriate heartbeat intervals (30 seconds recommended)
 - Configure maximum connection limits based on server capacity
 - Implement efficient session cleanup for inactive sessions
@@ -641,5 +693,6 @@ Optimize resource usage with these strategies:
 The WebSocketManager provides connection statistics through `get_connection_stats()` which can be used to monitor system performance and identify bottlenecks.
 
 **Section sources**
+
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L143-L165)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L408-L424)

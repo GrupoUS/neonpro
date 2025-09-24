@@ -1,7 +1,7 @@
 # Tools Directory
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs)
 - [dprint.json](file://tools/quality/dprint.json)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Project Structure](#project-structure)
 3. [Core Components](#core-components)
@@ -24,6 +25,7 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The tools directory in the neonpro repository serves as the central hub for development, testing, monitoring, and quality assurance infrastructure. It houses a comprehensive ecosystem of tooling that supports the entire codebase across multiple dimensions: automated testing, code quality enforcement, system monitoring, workflow orchestration, and healthcare compliance validation. This document provides both conceptual overviews for new developers and technical deep dives for experienced engineers, covering configuration patterns, integration mechanisms, execution workflows, and extension points.
 
 ## Project Structure
@@ -55,9 +57,11 @@ K --> K1[phase-executors]
 ```
 
 **Diagram sources**
+
 - [tools](file://tools)
 
 **Section sources**
+
 - [tools](file://tools)
 
 ## Core Components
@@ -65,6 +69,7 @@ K --> K1[phase-executors]
 The tools directory contains several key component categories that work together to ensure code quality, system reliability, and regulatory compliance. These include testing infrastructure (Playwright E2E tests, Vitest unit tests), quality assurance tools (linting, formatting), monitoring systems (dashboards, alerts), orchestration frameworks (TDD orchestrator, workflow engine), and specialized healthcare compliance validators.
 
 **Section sources**
+
 - [tools](file://tools)
 
 ## Architecture Overview
@@ -97,6 +102,7 @@ CFM --> CodeBase
 ```
 
 **Diagram sources**
+
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts)
 - [compliance-monitoring.json](file://tools/monitoring/dashboards/compliance-monitoring.json)
@@ -104,9 +110,11 @@ CFM --> CodeBase
 ## Detailed Component Analysis
 
 ### Testing Infrastructure
+
 The testing infrastructure supports both unit and end-to-end testing through Vitest and Playwright respectively. Unit tests are configured via vitest.config.ts files across various tool packages, enabling isolated component verification. End-to-end testing is implemented using Playwright with scenario-specific specifications in the apps/tools/e2e directory.
 
 #### For API/Service Components:
+
 ```mermaid
 sequenceDiagram
 participant Developer
@@ -121,16 +129,20 @@ Reporter-->>Developer : Display outcome
 ```
 
 **Diagram sources**
+
 - [vitest.config.ts](file://tools/backend/vitest.config.ts)
 - [vitest.config.ts](file://tools/database/vitest.config.ts)
 
 **Section sources**
+
 - [vitest.config.ts](file://tools/backend/vitest.config.ts)
 
 ### Quality Assurance Tools
+
 The quality assurance subsystem enforces coding standards through oxlint and dprint configurations. Oxlint provides ultra-fast TypeScript linting with healthcare-specific rules, while dprint ensures consistent code formatting across the codebase.
 
 #### For Object-Oriented Components:
+
 ```mermaid
 classDiagram
 class OxlintConfig {
@@ -155,15 +167,19 @@ OxlintConfig --> OverrideRule : applies to
 ```
 
 **Diagram sources**
+
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs)
 
 **Section sources**
+
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs)
 
 ### Monitoring Systems
+
 The monitoring subsystem includes pre-configured dashboards and alert definitions for tracking system health, performance metrics, and compliance status. Dashboards are defined as JSON configurations that can be imported into visualization tools.
 
 #### For Complex Logic Components:
+
 ```mermaid
 flowchart TD
 Start([Start]) --> LoadConfig["Load Dashboard Configuration"]
@@ -178,17 +194,21 @@ style End fill:#bbf,stroke:#333
 ```
 
 **Diagram sources**
+
 - [compliance-monitoring.json](file://tools/monitoring/dashboards/compliance-monitoring.json)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 
 **Section sources**
+
 - [compliance-monitoring.json](file://tools/monitoring/dashboards/compliance-monitoring.json)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 
 ### Orchestration Framework
+
 The orchestration framework coordinates multi-phase development workflows, particularly TDD cycles, by managing agent execution and phase transitions. It uses a registry pattern to manage available agents and select appropriate ones based on context.
 
 #### For Object-Oriented Components:
+
 ```mermaid
 classDiagram
 class TDDOrchestrator {
@@ -214,14 +234,17 @@ TDDOrchestrator --> TDDAgentRegistry : uses
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts)
 
 ### Healthcare Compliance Validators
+
 Specialized validation tools ensure adherence to Brazilian healthcare regulations including LGPD, ANVISA, and CFM requirements. These validators are integrated into the testing toolkit and can be executed as part of quality gates.
 
 ```mermaid
@@ -240,11 +263,13 @@ I --> J[Output Results]
 ```
 
 **Diagram sources**
+
 - [lgpd.ts](file://tools/testing-toolkit/src/compliance/lgpd.ts)
 - [anvisa.ts](file://tools/testing-toolkit/src/compliance/anvisa.ts)
 - [cfm.ts](file://tools/testing-toolkit/src/compliance/cfm.ts)
 
 **Section sources**
+
 - [lgpd.ts](file://tools/testing-toolkit/src/compliance/lgpd.ts)
 
 ## Dependency Analysis
@@ -267,16 +292,19 @@ Orchestration -.-> workflow-engine
 ```
 
 **Diagram sources**
+
 - [package.json](file://tools/shared/package.json)
 - [package.json](file://tools/quality/package.json)
 - [package.json](file://tools/orchestration/package.json)
 
 **Section sources**
+
 - [package.json](file://tools/shared/package.json)
 
 ## Performance Considerations
 
 The tools directory prioritizes performance through several optimization strategies:
+
 - Oxlint configuration enables ultra-fast linting (50x faster than ESLint)
 - Parallel execution patterns in orchestration framework
 - Incremental processing in dprint formatter
@@ -288,6 +316,7 @@ These optimizations ensure rapid feedback loops during development while maintai
 ## Troubleshooting Guide
 
 Common issues in the tools ecosystem include configuration conflicts, performance bottlenecks, and integration failures. Key solutions include:
+
 - Using ignore patterns in oxlint.config.mjs for generated files
 - Adjusting coordination patterns based on feature complexity
 - Validating dashboard JSON schemas before deployment

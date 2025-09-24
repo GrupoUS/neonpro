@@ -1,7 +1,7 @@
 # Natural Language Processing
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py)
 - [config.py](file://apps/api/agents/ag-ui-rag-agent/src/config.py)
@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [RAG Architecture Overview](#rag-architecture-overview)
 3. [Document Preprocessing and Embedding Generation](#document-preprocessing-and-embedding-generation)
@@ -22,6 +23,7 @@
 10. [Common Issues and Mitigation Strategies](#common-issues-and-mitigation-strategies)
 
 ## Introduction
+
 The NeonPro AI system implements a sophisticated Retrieval Augmented Generation (RAG) architecture specifically designed for healthcare applications. This document details the natural language processing pipeline, focusing on how clinical queries are processed, contextualized, and augmented with medical knowledge before being sent to large language models. The system integrates multiple components including document preprocessing, embedding generation using healthcare-specific models, vector storage in Supabase, and advanced semantic search algorithms. Special attention is given to the retriever component's query expansion techniques, relevance scoring, and result ranking logic, as well as integration with security services for PII redaction and conversation context management.
 
 ## RAG Architecture Overview
@@ -52,10 +54,12 @@ style O fill:#f96,stroke:#333
 ```
 
 **Diagram sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 
 **Section sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 
@@ -82,10 +86,12 @@ style J fill:#bbf,stroke:#333
 ```
 
 **Diagram sources**
+
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 - [config.py](file://apps/api/agents/ag-ui-rag-agent/src/config.py#L1-L190)
 
 **Section sources**
+
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 - [config.py](file://apps/api/agents/ag-ui-rag-agent/src/config.py#L1-L190)
 
@@ -138,10 +144,12 @@ RAG_AGENT_SESSIONS ||--o{ RAG_AGENT_AUDIT_LOG : "references"
 ```
 
 **Diagram sources**
+
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 - [database.py](file://apps/api/agents/ag-ui-rag-agent/src/database.py#L1-L399)
 
 **Section sources**
+
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 - [database.py](file://apps/api/agents/ag-ui-rag-agent/src/database.py#L1-L399)
 
@@ -193,11 +201,13 @@ VectorStoreManager --> SupabaseManager : "uses"
 ```
 
 **Diagram sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 - [database.py](file://apps/api/agents/ag-ui-rag-agent/src/database.py#L1-L399)
 
 **Section sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 
 ## Query Expansion and Relevance Scoring
@@ -205,6 +215,7 @@ VectorStoreManager --> SupabaseManager : "uses"
 The retriever component implements sophisticated query expansion and relevance scoring mechanisms to improve search accuracy. When processing medical queries, the system automatically enhances the input query by adding domain-specific terms such as "medical," "clinical," "patient," and "treatment" if they are not already present. This expansion increases the likelihood of retrieving relevant medical knowledge even when users employ non-technical language.
 
 Relevance scoring combines multiple factors to rank search results. The base score comes from vector similarity, but this is augmented by several boosting factors:
+
 - Keyword matching with weighted medical terms (diagnosis: 2.0, treatment: 1.8, medication: 1.7)
 - Recency boost for documents created within the past year (1.1x multiplier)
 - Semantic relevance based on query type classification
@@ -239,10 +250,12 @@ style R fill:#bbf,stroke:#333
 ```
 
 **Diagram sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 
 **Section sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 
 ## Clinical Query Processing Example
@@ -278,12 +291,14 @@ Note over Retriever,VectorStore : Hybrid retrieval ensures<br/>both specificity 
 ```
 
 **Diagram sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 - [database.py](file://apps/api/agents/ag-ui-rag-agent/src/database.py#L1-L399)
 - [pii-redaction.ts](file://apps/api/src/lib/pii-redaction.ts#L0-L2974)
 
 **Section sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 
 ## Integration with Conversation Context Service
@@ -309,10 +324,12 @@ style J fill:#bbf,stroke:#333
 ```
 
 **Diagram sources**
+
 - [database.py](file://apps/api/agents/ag-ui-rag-agent/src/database.py#L1-L399)
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 
 **Section sources**
+
 - [database.py](file://apps/api/agents/ag-ui-rag-agent/src/database.py#L1-L399)
 
 ## Security and PII Redaction
@@ -345,10 +362,12 @@ style O fill:#f96,stroke:#333
 ```
 
 **Diagram sources**
+
 - [pii-redaction.ts](file://apps/api/src/lib/pii-redaction.ts#L0-L2974)
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 
 **Section sources**
+
 - [pii-redaction.ts](file://apps/api/src/lib/pii-redaction.ts#L0-L2974)
 
 ## Common Issues and Mitigation Strategies
@@ -360,6 +379,7 @@ Ambiguous medical terminology is handled through context-aware disambiguation, w
 Performance considerations include caching of frequent queries and pre-loading of patient data when a clinician opens a patient record. Error handling includes graceful degradation when external services are unavailable, fallback to simpler search methods when hybrid search fails, and comprehensive logging for troubleshooting.
 
 **Section sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py#L23-L583)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py#L17-L444)
 - [pii-redaction.ts](file://apps/api/src/lib/pii-redaction.ts#L0-L2974)

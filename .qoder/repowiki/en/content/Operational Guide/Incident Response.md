@@ -1,7 +1,7 @@
 # Incident Response
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh)
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts)
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts)
@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Emergency Rollback Mechanism](#emergency-rollback-mechanism)
 3. [Health Check Validation](#health-check-validation)
@@ -21,6 +22,7 @@
 10. [Conclusion](#conclusion)
 
 ## Introduction
+
 The NeonPro healthcare platform implements a comprehensive incident response system designed to ensure rapid recovery from critical failures while maintaining compliance with healthcare regulations such as LGPD, ANVISA, and CFM. This document details the implementation of emergency rollback procedures, health check validation mechanisms, and error tracking integration that form the core of the platform's resilience strategy. The system is designed to minimize downtime during deployment failures or service disruptions while protecting sensitive patient data throughout the incident management process.
 
 ## Emergency Rollback Mechanism
@@ -28,6 +30,7 @@ The NeonPro healthcare platform implements a comprehensive incident response sys
 The emergency rollback mechanism in NeonPro provides automated recovery capabilities for critical incidents through the `emergency-rollback.sh` script. This bash script enables full, partial, or configuration-only rollbacks based on the nature and scope of the incident. The rollback process follows a structured workflow: pre-rollback checks, execution, post-verification, and reporting.
 
 The script supports multiple rollback strategies:
+
 - **Full rollback**: Reverts to the previous deployment using Vercel alias promotion or Git history
 - **Partial rollback**: Restores specific components while maintaining other updated elements
 - **Configuration-only rollback**: Reverts only configuration changes without affecting codebase
@@ -47,9 +50,11 @@ H --> I[Process Complete]
 ```
 
 **Diagram sources **
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
 **Section sources**
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
 ## Health Check Validation
@@ -78,10 +83,12 @@ end
 ```
 
 **Diagram sources **
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L370-L400)
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L150-L165)
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L370-L481)
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L150-L165)
 
@@ -122,10 +129,12 @@ GlobalErrorHandler --> DataMasking : "applies"
 ```
 
 **Diagram sources **
+
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L27-L175)
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts#L11-L80)
 
 **Section sources**
+
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L1-L288)
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts#L1-L114)
 
@@ -134,6 +143,7 @@ GlobalErrorHandler --> DataMasking : "applies"
 The incident identification and escalation process in NeonPro follows a tiered approach based on severity levels defined in the monitoring configuration. Incidents are identified through multiple channels including synthetic monitoring failures, elevated error rates, performance degradation, security events, and database connection issues.
 
 The escalation policy defines three severity levels:
+
 - **Critical**: Triggers immediate alerts to all channels (email, Slack, PagerDuty) with mandatory response within 15 minutes
 - **Warning**: Notifies email and Slack channels with response expected within 1 hour
 - **Info**: Logged for awareness without immediate notification
@@ -156,9 +166,11 @@ G --> J[Manual Intervention Required]
 ```
 
 **Diagram sources **
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L430-L460)
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L430-L481)
 
 ## Incident Resolution Process
@@ -168,6 +180,7 @@ The incident resolution process in NeonPro follows a standardized workflow that 
 For deployment-related incidents, the emergency rollback script provides a documented procedure for recovery. Operators execute the script with appropriate parameters specifying environment, reason, rollback type, and notification webhooks. The script guides them through pre-checks, execution, and verification steps, generating comprehensive logs and reports for audit purposes.
 
 The resolution process distinguishes between different types of incidents:
+
 - **Deployment failures**: Resolved through emergency rollback with full, partial, or config-only options
 - **Performance degradation**: Addressed through scaling, caching optimization, or query tuning
 - **Security incidents**: Handled according to healthcare compliance protocols with mandatory reporting
@@ -192,9 +205,11 @@ Alert->>Operator : Confirm Incident Resolution
 ```
 
 **Diagram sources **
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L200-L400)
 
 **Section sources**
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
 ## Configuration Options
@@ -202,6 +217,7 @@ Alert->>Operator : Confirm Incident Resolution
 NeonPro provides extensive configuration options for tailoring incident response behavior to specific operational requirements. These configurations are managed through environment variables and configuration files that control alert thresholds, escalation policies, and communication channels.
 
 Key configuration parameters include:
+
 - **Alert thresholds**: Configurable response time, availability, and error rate thresholds for warning and critical levels
 - **Sampling rates**: Adjustable trace and profile sampling rates based on environment (higher in development, lower in production)
 - **Notification channels**: Configurable email recipients, Slack webhooks, and PagerDuty service keys
@@ -212,6 +228,7 @@ The system supports healthcare-specific configuration options that enable or dis
 These configuration options are designed to balance operational flexibility with regulatory compliance, ensuring that incident response procedures can be adapted to different environments while maintaining the necessary safeguards for protected health information.
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L481)
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L1-L288)
 
@@ -256,10 +273,12 @@ J --> C
 ```
 
 **Diagram sources **
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L481)
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L481)
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
@@ -282,6 +301,7 @@ NeonPro's incident response system addresses several common issues encountered i
 These solutions are implemented through the coordinated operation of the emergency rollback script, health validation system, and error tracking integration, creating a robust defense against common operational challenges in healthcare technology environments.
 
 **Section sources**
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L481)
 

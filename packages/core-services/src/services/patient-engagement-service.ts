@@ -1,5 +1,5 @@
 import { SupabaseClient } from '@neonpro/database';
-import { createClient, SupabaseClient as SupabaseJSClient } from '@supabase/supabase-js';
+import { SupabaseClient as SupabaseJSClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 
 // Schemas for validation

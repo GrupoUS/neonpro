@@ -1,7 +1,7 @@
 # API Reference
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [agent.py](file://apps/ai-agent/agent.py)
 - [main.py](file://apps/ai-agent/main.py)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py)
@@ -16,6 +16,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [RESTful APIs](#restful-apis)
 3. [tRPC Interfaces](#trpc-interfaces)
@@ -28,15 +29,19 @@
 10. [Monitoring and Debugging](#monitoring-and-debugging)
 
 ## Introduction
+
 The NeonPro application provides a comprehensive API suite for healthcare services with Brazilian regulatory compliance (LGPD, CFM, ANVISA). The API ecosystem consists of RESTful endpoints, tRPC interfaces for type-safe communication, and WebSocket connections for real-time AI agent interactions. This documentation covers all public interfaces, their usage patterns, security considerations, and implementation details.
 
 **Section sources**
+
 - [openapi.json.ts](file://apps/api/vercel/openapi.json.ts#L27-L81)
 
 ## RESTful APIs
+
 NeonPro exposes RESTful endpoints for health checks and basic service discovery. These endpoints follow OpenAPI 3.0 specification and are designed for monitoring and integration purposes.
 
 ### Health Check Endpoint
+
 The health check endpoint provides service status information for monitoring systems.
 
 ```mermaid
@@ -48,15 +53,19 @@ C --> |Unhealthy| E["{status: 'unhealthy', error: 'error description'}"]
 ```
 
 **Diagram sources **
+
 - [openapi.json.ts](file://apps/api/vercel/openapi.json.ts#L27-L81)
 
 **Section sources**
+
 - [openapi.json.ts](file://apps/api/vercel/openapi.json.ts#L27-L81)
 
 ## tRPC Interfaces
+
 The primary API interface for NeonPro is built using tRPC, providing type-safe, end-to-end typed endpoints with comprehensive healthcare compliance features.
 
 ### Architecture Overview
+
 tRPC routers are organized by domain functionality with proper authorization and audit logging middleware applied consistently across all endpoints.
 
 ```mermaid
@@ -97,21 +106,25 @@ style P fill:#F5A623,stroke:#333
 ```
 
 **Diagram sources **
+
 - [router.ts](file://apps/api/src/trpc/router.ts#L78-L102)
 - [context.ts](file://apps/api/src/trpc/context.ts#L27-L61)
 
 **Section sources**
+
 - [router.ts](file://apps/api/src/trpc/router.ts#L78-L102)
 - [context.ts](file://apps/api/src/trpc/context.ts#L27-L61)
 
 ### Agent Management API
+
 The Agent Management API enables creation, management, and interaction with AI agents through a comprehensive set of endpoints.
 
 #### Create Agent Session
+
 Creates a new conversational session with an AI agent.
 
-**Endpoint**: `mutation agent.createSession`  
-**Input Schema**: `CreateAgentSessionSchema`  
+**Endpoint**: `mutation agent.createSession`\
+**Input Schema**: `CreateAgentSessionSchema`\
 **Output Schema**: `AgentSessionResponseSchema`
 
 ```mermaid
@@ -128,14 +141,16 @@ tRPC-->>Client : AgentSessionResponse
 ```
 
 **Diagram sources **
+
 - [agent.ts](file://apps/api/src/trpc/routers/agent.ts#L226-L968)
 - [contracts/agent.ts](file://apps/api/src/trpc/contracts/agent.ts#L21-L25)
 
 #### Send Message to Agent
+
 Processes user messages and generates AI responses within an existing session.
 
-**Endpoint**: `mutation agent.sendMessage`  
-**Input Schema**: `CreateAgentMessageSchema`  
+**Endpoint**: `mutation agent.sendMessage`\
+**Input Schema**: `CreateAgentMessageSchema`\
 **Output Schema**: `AgentMessageResponseSchema`
 
 ```mermaid
@@ -159,14 +174,16 @@ tRPC-->>User : Message and response
 ```
 
 **Diagram sources **
+
 - [agent.ts](file://apps/api/src/trpc/routers/agent.ts#L226-L968)
 - [contracts/agent.ts](file://apps/api/src/trpc/contracts/agent.ts#L43-L58)
 
 #### Search Knowledge Base
+
 Enables semantic search within the agent's knowledge base.
 
-**Endpoint**: `query agent.searchKnowledge`  
-**Input Schema**: `SearchKnowledgeBaseSchema`  
+**Endpoint**: `query agent.searchKnowledge`\
+**Input Schema**: `SearchKnowledgeBaseSchema`\
 **Output Schema**: `KnowledgeEntryResponseSchema`
 
 ```mermaid
@@ -182,20 +199,24 @@ B --> |Invalid| I[Return Error]
 ```
 
 **Diagram sources **
+
 - [agent.ts](file://apps/api/src/trpc/routers/agent.ts#L226-L968)
 
 **Section sources**
+
 - [agent.ts](file://apps/api/src/trpc/routers/agent.ts#L226-L968)
 - [contracts/agent.ts](file://apps/api/src/trpc/contracts/agent.ts#L21-L100)
 
 ### AI Services API
+
 Provides AI-powered capabilities for healthcare applications with Portuguese language support.
 
 #### AI Chat
+
 Engages in medical conversations with proper terminology in Portuguese.
 
-**Endpoint**: `mutation ai.chat`  
-**Input Schema**: Message and optional context  
+**Endpoint**: `mutation ai.chat`\
+**Input Schema**: Message and optional context\
 **Output Schema**: AI response with compliance metadata
 
 ```mermaid
@@ -215,13 +236,15 @@ tRPC-->>Patient : Translated response
 ```
 
 **Diagram sources **
+
 - [ai.ts](file://apps/api/src/trpc/routers/ai.ts#L310-L566)
 
 #### No-Show Prediction
+
 Predicts patient no-show risk using AI analysis of historical patterns.
 
-**Endpoint**: `query ai.predictNoShow`  
-**Input Schema**: Patient ID and appointment time  
+**Endpoint**: `query ai.predictNoShow`\
+**Input Schema**: Patient ID and appointment time\
 **Output Schema**: Risk score and prevention recommendations
 
 ```mermaid
@@ -236,15 +259,19 @@ G --> H[Return Prediction]
 ```
 
 **Diagram sources **
+
 - [ai.ts](file://apps/api/src/trpc/routers/ai.ts#L310-L566)
 
 **Section sources**
+
 - [ai.ts](file://apps/api/src/trpc/routers/ai.ts#L310-L566)
 
 ## WebSocket APIs for AI Agents
+
 Real-time communication channels for AI agent interactions using the AG-UI protocol.
 
 ### Connection Handling
+
 WebSocket endpoints provide bidirectional communication for real-time AI interactions.
 
 ```mermaid
@@ -269,11 +296,13 @@ AGUIService->>WebSocketServer : Cleanup resources
 ```
 
 **Diagram sources **
+
 - [main.py](file://apps/ai-agent/main.py#L70-L127)
 - [agent.py](file://apps/ai-agent/agent.py#L274-L320)
 - [websocket-server.ts](file://apps/api/src/middleware/websocket-server.ts#L21-L300)
 
 ### Message Formats
+
 Messages follow the AG-UI protocol with standardized event types and payload structures.
 
 ```json
@@ -300,6 +329,7 @@ Messages follow the AG-UI protocol with standardized event types and payload str
 ```
 
 Supported event types:
+
 - `userMessage`: User input to the AI agent
 - `agentMessage`: AI response to the user
 - `ping`: Connection health check
@@ -307,13 +337,16 @@ Supported event types:
 - `error`: Error notification
 
 **Section sources**
+
 - [agent.py](file://apps/ai-agent/agent.py#L274-L320)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py)
 
 ## Authentication and Security
+
 NeonPro implements comprehensive security measures for API protection and healthcare compliance.
 
 ### Authentication Methods
+
 All tRPC procedures use authentication middleware that validates JWT tokens and extracts user context.
 
 ```mermaid
@@ -331,10 +364,12 @@ D --> |Invalid| H
 Protected procedures additionally verify user permissions through role-based access control.
 
 **Diagram sources **
+
 - [trpc.ts](file://apps/api/src/trpc/trpc.ts#L108-L111)
 - [context.ts](file://apps/api/src/trpc/context.ts#L27-L61)
 
 ### Security Headers
+
 All responses include security headers to protect against common web vulnerabilities:
 
 - Strict-Transport-Security: Enforces HTTPS usage
@@ -344,12 +379,15 @@ All responses include security headers to protect against common web vulnerabili
 - Content-Security-Policy: Restricts resource loading
 
 **Section sources**
+
 - [specs/006-implemente-o-https/research.md#L89-L134]
 
 ## Rate Limiting and Performance
+
 API performance optimization strategies and rate limiting policies.
 
 ### Rate Limiting
+
 Rate limiting is implemented at multiple levels to prevent abuse and ensure service availability.
 
 ```mermaid
@@ -366,6 +404,7 @@ F --> |No| H[Return 429 Too Many Requests]
 Limits vary by endpoint type and user tier, with higher limits for enterprise clients.
 
 ### Performance Optimization
+
 Recommended practices for optimal API performance:
 
 - **Batching**: Combine multiple operations in single requests when possible
@@ -374,12 +413,15 @@ Recommended practices for optimal API performance:
 - **Payload Optimization**: Minimize request/response sizes by requesting only needed fields
 
 **Section sources**
+
 - [websocket-server.ts](file://apps/api/src/middleware/websocket-server.ts#L21-L300)
 
 ## Error Handling
+
 Comprehensive error handling strategies for different failure modes.
 
 ### Error Formats
+
 All APIs return structured error responses with consistent formatting:
 
 ```json
@@ -396,6 +438,7 @@ All APIs return structured error responses with consistent formatting:
 ```
 
 ### Failure Mode Strategies
+
 Different approaches for handling various failure scenarios:
 
 - **Validation Errors**: Return 400 with specific field validation issues
@@ -406,13 +449,16 @@ Different approaches for handling various failure scenarios:
 - **Server Errors**: Return 500 with internal tracking ID
 
 **Section sources**
+
 - [agent.ts](file://apps/api/src/trpc/routers/agent.ts#L226-L968)
 - [ai.ts](file://apps/api/src/trpc/routers/ai.ts#L310-L566)
 
 ## Versioning and Migration
+
 API versioning strategy and migration guidance.
 
 ### Versioning Approach
+
 NeonPro uses semantic versioning with backward compatibility guarantees:
 
 - **Major versions**: Breaking changes, require migration
@@ -422,6 +468,7 @@ NeonPro uses semantic versioning with backward compatibility guarantees:
 Legacy endpoints are maintained with deprecation notices before removal.
 
 ### Backwards Compatibility
+
 The system ensures backward compatibility through:
 
 - Maintaining legacy tRPC routers alongside new implementations
@@ -430,12 +477,15 @@ The system ensures backward compatibility through:
 - Clear deprecation timelines and migration paths
 
 **Section sources**
+
 - [router.ts](file://apps/api/src/trpc/router.ts#L78-L102)
 
 ## Client Implementation Guidelines
+
 Best practices for implementing NeonPro API consumers.
 
 ### Frontend Integration
+
 For web applications, use the tRPC client with React hooks:
 
 ```typescript
@@ -448,6 +498,7 @@ const { data, isLoading } = trpc.agent.listSessions.useQuery({
 Handle authentication by including JWT tokens in request headers.
 
 ### External Systems
+
 For external integrations, consider:
 
 - Using the RESTful health check endpoints for monitoring
@@ -456,13 +507,16 @@ For external integrations, consider:
 - Logging request IDs for debugging and support
 
 **Section sources**
+
 - [router.ts](file://apps/api/src/trpc/router.ts#L78-L102)
 - [context.ts](file://apps/api/src/trpc/context.ts#L27-L61)
 
 ## Monitoring and Debugging
+
 Protocol-specific tools and approaches for API monitoring and debugging.
 
 ### Monitoring Approaches
+
 Implement comprehensive monitoring with:
 
 - Request tracing using unique request IDs
@@ -485,7 +539,9 @@ E --> F
 ```
 
 **Diagram sources **
+
 - [websocket-server.ts](file://apps/api/src/middleware/websocket-server.ts#L21-L300)
 
 **Section sources**
+
 - [websocket-server.ts](file://apps/api/src/middleware/websocket-server.ts#L21-L300)

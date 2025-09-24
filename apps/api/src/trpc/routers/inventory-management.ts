@@ -3,9 +3,9 @@
  * Complete inventory management for aesthetic clinics with Brazilian regulatory compliance
  */
 
-import { createTRPCRouter } from "~/server/api/trpc";
 import { z } from "zod";
 import { InventoryManagementService } from "@neonpro/core-services";
+import { router } from '../trpc';
 
 // Input schemas
 const ProductInput = z.object({
@@ -90,7 +90,7 @@ const _UpdateBatchInput = z.object({
   notes: z.string().optional(),
 });
 
-export const inventoryManagementRouter = createTRPCRouter({
+export const inventoryManagementRouter = router({
   // === Product Management ===
   
   createProduct: {
@@ -119,7 +119,7 @@ export const inventoryManagementRouter = createTRPCRouter({
           message: "Produto criado com sucesso",
           data: product,
         };
-      } catch {
+      } catch (error) {
         console.error("Error creating product:", error);
         return {
           success: false,

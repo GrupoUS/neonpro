@@ -726,7 +726,10 @@ export class RecommendationModel {
     const tiers: SubscriptionTier[] = ["free", "trial", "pro", "enterprise"];
     const currentIndex = tiers.indexOf(currentTier);
     const nextIndex = currentIndex + 1;
-    return nextIndex >= 0 && nextIndex < tiers.length ? tiers[nextIndex] : null;
+    if (nextIndex >= 0 && nextIndex < tiers.length) {
+      return tiers[nextIndex] as SubscriptionTier;
+    }
+    return null;
   }
 
   private estimatePlanCostDifference(

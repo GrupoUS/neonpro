@@ -1,7 +1,7 @@
 # Communication Protocols
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py)
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/agent.py)
@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Connection Establishment Process](#connection-establishment-process)
 3. [Message Framing and Protocol Structure](#message-framing-and-protocol-structure)
@@ -22,12 +23,15 @@
 10. [Protocol Message Examples](#protocol-message-examples)
 
 ## Introduction
+
 The NeonPro AI agent system utilizes a WebSocket-based communication protocol to enable real-time interaction between frontend clients and AI agents. This document details the AG-UI protocol implementation, focusing on connection management, message framing, and real-time data exchange patterns. The protocol supports Retrieval Augmented Generation (RAG) operations for healthcare data access, with comprehensive security measures and error handling mechanisms.
 
 ## Connection Establishment Process
+
 The WebSocket connection establishment process follows a standardized handshake procedure that ensures secure and authenticated communication between clients and the AI agent service. The process begins with the client initiating a WebSocket connection to the designated endpoint `/ws/ai/agent`. Upon receiving the connection request, the server accepts the connection and assigns a unique client identifier if not provided by the client.
 
 The connection manager performs several critical functions during establishment:
+
 - Validates connection limits to prevent resource exhaustion
 - Initializes connection metadata including timestamps, IP address, and user agent
 - Sends a welcome message confirming successful connection
@@ -48,17 +52,21 @@ Client->>Server : Confirm connection established
 ```
 
 **Diagram sources **
+
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L14-L230)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 **Section sources**
+
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L14-L230)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 ## Message Framing and Protocol Structure
+
 The AG-UI protocol employs a structured message format designed for efficient and secure data exchange. Each message follows a consistent schema with required fields including unique identifiers, timestamps, session information, and payload data. The protocol supports multiple message types through the `AguiMessageType` enumeration, which defines various communication patterns.
 
 Key message components include:
+
 - `id`: Unique identifier for message tracking and deduplication
 - `type`: Specifies the message purpose (e.g., query, response, error)
 - `timestamp`: ISO 8601 formatted timestamp for message ordering
@@ -90,14 +98,17 @@ AguiMessage --> AguiMessageMetadata : "has optional"
 ```
 
 **Diagram sources **
+
 - [types.ts](file://packages/agui-protocol/src/types.ts#L7-L14)
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 
 **Section sources**
+
 - [types.ts](file://packages/agui-protocol/src/types.ts#L7-L14)
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 
 ## Real-Time Interaction Patterns
+
 The AG-UI protocol supports several real-time interaction patterns optimized for AI agent communication. These patterns facilitate efficient data exchange while maintaining responsiveness and reliability. The primary interaction models include request-response, streaming responses, and event-driven notifications.
 
 For standard queries, the protocol follows a request-response pattern where the client sends a query message and receives a corresponding response. For longer-running operations or large data sets, the protocol supports streaming responses through specialized message types (`streaming_start`, `streaming_chunk`, `streaming_end`). This allows the AI agent to begin transmitting results immediately while still processing, reducing perceived latency.
@@ -120,19 +131,23 @@ F --> L[Receive confirmation]
 ```
 
 **Diagram sources **
+
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 **Section sources**
+
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 ## AG-UI RAG Agent Protocol
+
 The AG-UI RAG (Retrieval Augmented Generation) agent protocol extends the core WebSocket communication to support sophisticated healthcare data queries. This specialized protocol enables natural language interaction with clinical, appointment, and financial databases through a retrieval-augmented approach.
 
 The protocol workflow begins with intent parsing, where the AI agent analyzes the user's natural language query to determine the primary domain (clients, appointments, or finances) and intended action. Based on this analysis, the system retrieves relevant data from Supabase, formats it appropriately, and generates a comprehensive response.
 
 Key features of the RAG protocol include:
+
 - Context-aware querying with filter extraction
 - Structured data presentation with appropriate UI components
 - Actionable responses with suggested follow-up actions
@@ -154,19 +169,23 @@ Agent->>Client : Send structured response
 ```
 
 **Diagram sources **
+
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/agent.py#L1-L320)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 **Section sources**
+
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/agent.py#L1-L320)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 ## Handshake Procedures and Authentication
+
 The handshake procedure combines WebSocket connection establishment with authentication to ensure secure access to the AI agent services. The process begins with a standard WebSocket handshake, followed by a protocol-specific hello exchange that establishes communication parameters.
 
 Authentication is implemented through JWT (JSON Web Token) tokens provided in the hello message. The server validates the token signature using a configured secret key and extracts the user ID for session association. The protocol supports version negotiation during the handshake, allowing clients and servers to agree on compatible protocol versions.
 
 The handshake sequence includes:
+
 1. Client connects to WebSocket endpoint
 2. Server sends welcome message
 3. Client sends hello message with authentication token
@@ -189,19 +208,23 @@ Client->>Server : Ready for communication
 ```
 
 **Diagram sources **
+
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 **Section sources**
+
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 ## Error Recovery Strategies
+
 The AG-UI protocol implements comprehensive error recovery mechanisms to maintain reliable communication in unstable network conditions. These strategies address both transient errors and permanent failures, providing appropriate responses and recovery options.
 
 For connection interruptions, the protocol includes automatic reconnection logic with exponential backoff. Clients attempt to reconnect with increasing delays between attempts, preventing network congestion during widespread outages. The maximum number of reconnection attempts is configurable, after which manual intervention may be required.
 
 Message-level error handling provides specific error codes and descriptive messages to help diagnose issues. Common error types include:
+
 - `INVALID_FORMAT`: Malformed JSON or missing required fields
 - `AUTHENTICATION_FAILED`: Invalid or expired authentication token
 - `RATE_LIMITED`: Exceeded allowed request frequency
@@ -226,14 +249,17 @@ K --> |Yes| L[Report permanent failure]
 ```
 
 **Diagram sources **
+
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 **Section sources**
+
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 ## Security Considerations
+
 The AG-UI protocol incorporates multiple security layers to protect sensitive healthcare data and prevent common WebSocket vulnerabilities. These measures address authentication, authorization, data protection, and attack prevention.
 
 Authentication is enforced through JWT tokens validated on each connection, ensuring only authorized users can access the AI agent services. Role-based access control could be implemented at the application layer to restrict data access based on user permissions.
@@ -241,6 +267,7 @@ Authentication is enforced through JWT tokens validated on each connection, ensu
 Data protection includes end-to-end encryption using AES-256-CFB mode with PBKDF2 key derivation. All sensitive data transmitted through the WebSocket connection is encrypted before transmission. The protocol also supports TLS 1.3 for transport-layer security.
 
 Rate limiting is implemented at multiple levels:
+
 - Connection rate limiting by IP address
 - Message rate limiting per session
 - Query complexity limiting to prevent resource exhaustion
@@ -272,17 +299,21 @@ F --> F3[Heartbeat Monitoring]
 ```
 
 **Diagram sources **
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 
 ## Client Implementation Guidelines
+
 Client implementations should follow these guidelines to ensure reliable and secure communication with the NeonPro AI agent system. These recommendations apply to both web and mobile platforms.
 
 For web clients:
+
 - Use the provided `AguiProtocol` class to manage WebSocket connections
 - Implement connection status monitoring and appropriate UI feedback
 - Handle reconnection attempts gracefully with user notifications
@@ -290,6 +321,7 @@ For web clients:
 - Implement proper error handling for different error codes
 
 For mobile clients:
+
 - Optimize for intermittent connectivity with robust reconnection logic
 - Implement background processing considerations to conserve battery
 - Handle app suspension and resumption appropriately
@@ -297,6 +329,7 @@ For mobile clients:
 - Respect platform-specific networking policies
 
 All clients should:
+
 - Generate unique message IDs for tracking and deduplication
 - Include proper metadata in messages when available
 - Implement timeout mechanisms for requests
@@ -307,13 +340,16 @@ All clients should:
 The protocol client library handles many low-level details such as message queuing during disconnections, automatic reconnection, and basic error handling, allowing developers to focus on application logic.
 
 **Section sources**
+
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)
 
 ## Protocol Message Examples
+
 This section provides examples of protocol messages for common scenarios, illustrating the expected structure and content.
 
 ### Connection Establishment
+
 ```json
 {
   "id": "msg_1648723498_abc123",
@@ -336,6 +372,7 @@ This section provides examples of protocol messages for common scenarios, illust
 ```
 
 ### Query Submission
+
 ```json
 {
   "id": "msg_1648723500_def456",
@@ -360,6 +397,7 @@ This section provides examples of protocol messages for common scenarios, illust
 ```
 
 ### Streaming Response
+
 ```json
 // Streaming start
 {
@@ -401,6 +439,7 @@ This section provides examples of protocol messages for common scenarios, illust
 ```
 
 ### Session Termination
+
 ```json
 {
   "id": "msg_1648723600_pqr678",
@@ -417,6 +456,7 @@ This section provides examples of protocol messages for common scenarios, illust
 ```
 
 **Section sources**
+
 - [types.ts](file://packages/agui-protocol/src/types.ts#L7-L14)
 - [protocol.ts](file://packages/agui-protocol/src/protocol.ts#L15-L201)
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L203-L424)

@@ -1,7 +1,7 @@
 # Component Hierarchy
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [App.tsx](file://apps/web/src/App.tsx)
 - [main.tsx](file://apps/web/src/main.tsx)
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx)
@@ -16,6 +16,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Root Application Structure](#root-application-structure)
 3. [Provider Architecture](#provider-architecture)
@@ -26,6 +27,7 @@
 8. [Performance Considerations](#performance-considerations)
 
 ## Introduction
+
 This document provides a comprehensive analysis of the frontend component hierarchy in the neonpro application, focusing on the React component tree structure starting from App.tsx as the root container. The documentation details how higher-order components enable type-safe API communication and state management, describes composition patterns used throughout the application, and explains the organization of components by feature domains such as aesthetic-scheduling and ai-clinical-support. The content is designed to be accessible to developers of all experience levels while providing technical depth on best practices in component organization.
 
 ## Root Application Structure
@@ -49,10 +51,12 @@ I[PWAOfflineIndicator] --> B
 ```
 
 **Diagram sources **
+
 - [App.tsx](file://apps/web/src/App.tsx#L41-L93)
 - [main.tsx](file://apps/web/src/main.tsx#L70-L98)
 
 **Section sources**
+
 - [App.tsx](file://apps/web/src/App.tsx#L41-L93)
 - [main.tsx](file://apps/web/src/main.tsx#L70-L98)
 
@@ -95,10 +99,12 @@ TRPCProvider --> RouterProvider : "wraps"
 ```
 
 **Diagram sources **
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx#L35-L45)
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx#L8-L15)
 
 **Section sources**
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx#L1-L57)
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx#L1-L16)
 
@@ -137,10 +143,12 @@ style H fill:#f9f,stroke:#333
 ```
 
 **Diagram sources **
+
 - [aesthetic-scheduling/__root.tsx](file://apps/web/src/routes/aesthetic-scheduling/__root.tsx#L1-L166)
 - [ai-clinical-support/__root.tsx](file://apps/web/src/routes/ai-clinical-support/__root.tsx#L1-L168)
 
 **Section sources**
+
 - [aesthetic-scheduling/__root.tsx](file://apps/web/src/routes/aesthetic-scheduling/__root.tsx#L1-L166)
 - [ai-clinical-support/__root.tsx](file://apps/web/src/routes/ai-clinical-support/__root.tsx#L1-L168)
 
@@ -202,11 +210,13 @@ Tabs --> TabsContent
 ```
 
 **Diagram sources **
+
 - [button.tsx](file://apps/web/src/components/ui/button.tsx#L1-L56)
 - [card.tsx](file://apps/web/src/components/ui/card.tsx#L1-L85)
 - [tabs.tsx](file://apps/web/src/components/ui/tabs.tsx#L1-L53)
 
 **Section sources**
+
 - [button.tsx](file://apps/web/src/components/ui/button.tsx#L1-L56)
 - [card.tsx](file://apps/web/src/components/ui/card.tsx#L1-L85)
 - [tabs.tsx](file://apps/web/src/components/ui/tabs.tsx#L1-L53)
@@ -238,10 +248,12 @@ L[useErrorHandler] --> M[Functional Components]
 ```
 
 **Diagram sources **
+
 - [App.tsx](file://apps/web/src/App.tsx#L41-L93)
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L1-L73)
 
 **Section sources**
+
 - [App.tsx](file://apps/web/src/App.tsx#L41-L93)
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L1-L73)
 
@@ -280,9 +292,11 @@ end
 ```
 
 **Diagram sources **
+
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L1-L73)
 
 **Section sources**
+
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L1-L73)
 
 This dual-layer error handling approach separates expected operational errors (like failed API calls) from unexpected programming errors (like null reference exceptions), allowing each type to be handled appropriately. The strategy prioritizes user experience by preventing the entire application from crashing due to isolated component failures.
@@ -298,5 +312,6 @@ The component tree structure follows React best practices by placing providers a
 For large component trees, the application could benefit from additional optimizations such as code splitting at the route level, memoization of expensive components, and selective hydration. However, the current architecture provides a solid foundation for performance with its efficient state management and thoughtful component organization.
 
 **Section sources**
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx#L1-L57)
 - [App.tsx](file://apps/web/src/App.tsx#L41-L93)

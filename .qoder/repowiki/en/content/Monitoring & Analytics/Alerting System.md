@@ -1,7 +1,7 @@
 # Alerting System
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [monitoring-service.ts](file://apps/api/src/services/monitoring-service.ts)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [System Architecture Overview](#system-architecture-overview)
 3. [Alert Generation and Detection](#alert-generation-and-detection)
@@ -80,11 +81,13 @@ P --> H
 ```
 
 **Diagram sources**
+
 - [monitoring-service.ts](file://apps/api/src/services/monitoring-service.ts)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
 **Section sources**
+
 - [monitoring-service.ts](file://apps/api/src/services/monitoring-service.ts)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
@@ -116,6 +119,7 @@ Continue --> End([Continue Monitoring])
 The alert rules are defined in both code and configuration files. The `healthcare-alerts.json` file contains PromQL-style expressions that define alert conditions for critical healthcare scenarios such as database connection failures, high API error rates, and potential patient data breaches. Each alert includes metadata specifying its severity, impact on healthcare operations, and links to runbooks for incident resolution.
 
 **Section sources**
+
 - [monitoring-service.ts](file://apps/api/src/services/monitoring-service.ts#L481-L575)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [https-monitoring-service.ts](file://apps/api/src/services/monitoring/https-monitoring-service.ts#L131-L176)
@@ -147,10 +151,12 @@ NotificationRouter->>NotificationSystem : Route to appropriate channel
 The system also implements temporal deduplication by tracking alert history and applying cooldown periods. The `cleanupOldEvents()` method removes resolved alerts after a specified period while maintaining unresolved alerts for up to one hour to ensure proper incident tracking.
 
 **Diagram sources**
+
 - [monitoring-service.ts](file://apps/api/src/services/monitoring-service.ts#L516-L557)
 - [dynamic-connection-pool.ts](file://apps/api/src/services/dynamic-connection-pool.ts#L794-L834)
 
 **Section sources**
+
 - [monitoring-service.ts](file://apps/api/src/services/monitoring-service.ts#L516-L557)
 - [dynamic-connection-pool.ts](file://apps/api/src/services/dynamic-connection-pool.ts#L794-L834)
 
@@ -199,10 +205,12 @@ Notification --> NotificationTemplate : "references"
 The system prioritizes patient safety alerts and emergency notifications, bypassing normal rate limits to ensure immediate delivery. For critical healthcare incidents, notifications are sent through multiple channels simultaneously to maximize the likelihood of timely response.
 
 **Diagram sources**
+
 - [notification-service.ts](file://apps/api/src/services/notification-service.ts)
 - [aesthetic-notification-service.ts](file://apps/api/src/services/agui-protocol/aesthetic-notification-service.ts)
 
 **Section sources**
+
 - [notification-service.ts](file://apps/api/src/services/notification-service.ts)
 - [aesthetic-notification-service.ts](file://apps/api/src/services/agui-protocol/aesthetic-notification-service.ts)
 
@@ -233,6 +241,7 @@ The escalation logic is configurable through the monitoring configuration, allow
 The system maintains an escalation chain for each alert type, with the `updateAlertStatus()` method tracking the current assignee and resolution progress. This ensures accountability and provides audit trails for incident management.
 
 **Section sources**
+
 - [anomaly-detection.ts](file://apps/api/src/services/financial-ai-agent/anomaly-detection.ts#L1301-L1362)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L368-L410)
 
@@ -241,6 +250,7 @@ The system maintains an escalation chain for each alert type, with the `updateAl
 The alerting system requires specific infrastructure components to support reliable operation and data persistence. The system stores alert data in a dedicated database with retention policies aligned with healthcare compliance requirements.
 
 Alert storage requirements include:
+
 - **Database**: PostgreSQL with Supabase integration for notification data
 - **Retention**: 365 days for audit-compliant alerts, 30 days for operational alerts
 - **Indexing**: Optimized indexes on timestamp, severity, and status fields
@@ -292,10 +302,12 @@ string tertiary_contact
 ```
 
 **Diagram sources**
+
 - [notification-service.ts](file://apps/api/src/services/notification-service.ts)
 - [monitoring-service.ts](file://apps/api/src/services/monitoring-service.ts)
 
 **Section sources**
+
 - [notification-service.ts](file://apps/api/src/services/notification-service.ts)
 - [monitoring-service.ts](file://apps/api/src/services/monitoring-service.ts)
 
@@ -304,6 +316,7 @@ string tertiary_contact
 The alerting system is designed to handle high-volume alert scenarios typical in healthcare environments with thousands of concurrent users. The architecture incorporates several scalability features to maintain performance under load.
 
 Key scalability considerations include:
+
 - **Horizontal scaling**: The monitoring service can be deployed across multiple instances with load balancing
 - **Queue-based processing**: Notifications are processed through a priority queue to handle traffic spikes
 - **Rate limiting**: Per-channel and per-user rate limits prevent system overload
@@ -327,6 +340,7 @@ H --> I[Delivery Channels]
 The notification service also implements circuit breaker patterns to prevent cascading failures when external services are unavailable. If a notification channel fails repeatedly, the system temporarily disables it and redirects alerts to alternative channels.
 
 **Section sources**
+
 - [dynamic-connection-pool.ts](file://apps/api/src/services/dynamic-connection-pool.ts#L669-L715)
 - [notification-service.ts](file://apps/api/src/services/notification-service.ts)
 
@@ -335,6 +349,7 @@ The notification service also implements circuit breaker patterns to prevent cas
 The alerting system is deployed across staging and production environments with identical topology to ensure consistent behavior. Each environment consists of independent monitoring, alert processing, and notification components.
 
 Production deployment topology:
+
 - **Primary Region**: AWS sa-east-1 (São Paulo)
 - **Secondary Region**: AWS us-east-1 (Virginia)
 - **Database**: Supabase PostgreSQL with cross-region replication
@@ -346,6 +361,7 @@ Staging environment mirrors production but with reduced resource allocation and 
 The system implements environment-specific configuration through the `monitoringConfig` object, which loads different settings based on the `NODE_ENV` variable. Production alerts are configured to notify real operational teams, while staging alerts are directed to development personnel.
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 - [notification-service.ts](file://apps/api/src/services/notification-service.ts)
 
@@ -356,6 +372,7 @@ The alerting system addresses several cross-cutting concerns essential for healt
 ### Alert Fatigue Mitigation
 
 To prevent alert fatigue, the system implements multiple strategies:
+
 - **Intelligent deduplication**: Suppresses repeated alerts for the same issue
 - **Priority-based filtering**: Allows users to filter notifications by severity
 - **Quiet hours**: Respects user-defined quiet periods for non-critical alerts
@@ -370,6 +387,7 @@ The system supports scheduled maintenance windows during which certain alerts ar
 ### Incident Post-Mortem Workflows
 
 After an incident is resolved, the system supports post-mortem workflows by:
+
 - Maintaining detailed audit logs of all alert activity
 - Tracking resolution times and response effectiveness
 - Generating incident reports with timeline analysis
@@ -378,6 +396,7 @@ After an incident is resolved, the system supports post-mortem workflows by:
 The `updateAlertStatus()` method captures resolution notes and timestamps, providing valuable data for retrospective analysis and process improvement.
 
 **Section sources**
+
 - [notification-service.ts](file://packages/shared/src/services/notification-service.ts#L58-L118)
 - [anomaly-detection.ts](file://apps/api/src/services/financial-ai-agent/anomaly-detection.ts#L1301-L1362)
 
@@ -386,18 +405,21 @@ The `updateAlertStatus()` method captures resolution notes and timestamps, provi
 The alerting system leverages a modern technology stack with specific dependencies tailored to healthcare requirements:
 
 **Core Technologies:**
+
 - **Runtime**: Node.js with TypeScript
 - **Database**: Supabase PostgreSQL
 - **Monitoring**: Custom monitoring service with Prometheus-style expressions
 - **Messaging**: WebSocket and HTTP APIs
 
 **Third-Party Dependencies:**
+
 - **PagerDuty**: Critical alert integration for incident management
 - **Slack**: Real-time communication channel for team notifications
 - **Sentry**: Error tracking and performance monitoring
 - **Supabase**: Authentication and database services
 
 **Version Compatibility:**
+
 - **Alerting Protocols**: Compatible with PagerDuty v2 API and Slack Webhook API
 - **Database**: Requires PostgreSQL 12+ for JSONB field support
 - **Node.js**: Minimum version 18.x for performance and security features
@@ -405,6 +427,7 @@ The alerting system leverages a modern technology stack with specific dependenci
 The system implements healthcare-specific integrations for LGPD, ANVISA, and CFM compliance, with dedicated monitoring rules and alert categories for regulatory requirements. The configuration system allows easy updates to third-party service credentials and API endpoints without code changes.
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 - [notification-service.ts](file://apps/api/src/services/notification-service.ts)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)

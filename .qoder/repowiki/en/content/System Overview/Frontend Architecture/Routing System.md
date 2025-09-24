@@ -1,7 +1,7 @@
 # Routing System
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts)
 - [router.ts](file://apps/web/src/router.ts)
 - [App.tsx](file://apps/web/src/App.tsx)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Route Configuration and Generation](#route-configuration-and-generation)
 3. [Domain-Specific Route Structure](#domain-specific-route-structure)
@@ -22,9 +23,11 @@
 7. [Conclusion](#conclusion)
 
 ## Introduction
+
 The NeonPro frontend routing system is built on TanStack Router, providing a type-safe, efficient navigation framework for the healthcare platform. This document details the implementation of route configuration, domain organization, navigation flows, authentication protection, and performance optimizations across patient management, financial operations, compliance, and aesthetic scheduling domains.
 
 **Section sources**
+
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts#L1-L114)
 - [router.ts](file://apps/web/src/router.ts#L1-L12)
 
@@ -48,12 +51,14 @@ click B "file://apps/web/src/routeTree.gen.ts" "View routeTree.gen.ts"
 ```
 
 **Diagram sources **
+
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts#L1-L114)
 - [router.ts](file://apps/web/src/router.ts#L1-L12)
 
 The router initialization occurs in `router.ts`, where the generated route tree is passed to createRouter function. This setup enables compile-time type checking for all route references, preventing runtime errors from invalid route names or parameters.
 
 **Section sources**
+
 - [router.ts](file://apps/web/src/router.ts#L1-L12)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L96)
 
@@ -62,6 +67,7 @@ The router initialization occurs in `router.ts`, where the generated route tree 
 The routing system organizes functionality into distinct domains reflecting clinical and administrative workflows. Each domain has dedicated routes that support specific use cases within the aesthetic clinic environment.
 
 ### Patient Management Domain
+
 Patient-related functionality is accessible through routes like `/patients` and `/patient-engagement`, enabling comprehensive patient lifecycle management from initial contact through ongoing care coordination.
 
 ```mermaid
@@ -82,15 +88,19 @@ style PM4 fill:#eef,stroke:#333
 ```
 
 **Diagram sources **
+
 - [patient-engagement/index.tsx](file://apps/web/src/routes/patient-engagement/index.tsx#L1-L578)
 
 ### Financial Operations Domain
+
 Financial workflows are organized under routes such as `/financial-management` and `/billing`, supporting revenue cycle management, payment processing, and financial reporting requirements.
 
 ### Compliance Domain
+
 Compliance features are isolated in the `/compliance` route, ensuring regulatory requirements like LGPD adherence are properly segregated and auditable.
 
 ### Aesthetic Scheduling Domain
+
 Specialized scheduling for aesthetic procedures is handled through the `/aesthetic-scheduling` route hierarchy, with sub-routes for packages, contraindications, recovery tracking, and room allocation.
 
 ```mermaid
@@ -110,9 +120,11 @@ style Rooms fill:#efe,stroke:#333
 ```
 
 **Diagram sources **
+
 - [aesthetic-scheduling/packages.tsx](file://apps/web/src/routes/aesthetic-scheduling/packages.tsx#L1-L44)
 
 **Section sources**
+
 - [aesthetic-scheduling/packages.tsx](file://apps/web/src/routes/aesthetic-scheduling/packages.tsx#L1-L44)
 - [routes directory](file://apps/web/src/routes/)
 
@@ -138,6 +150,7 @@ Component-->>UI : Render patient history view
 ```
 
 **Diagram sources **
+
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts#L1-L114)
 - [dashboard/index.tsx](file://apps/web/src/routes/dashboard/index.tsx#L1-L301)
 
@@ -161,12 +174,14 @@ style LoginScreen fill:#ddf,stroke:#333
 ```
 
 **Diagram sources **
+
 - [index.tsx](file://apps/web/src/routes/index.tsx#L1-L34)
 - [login.tsx](file://apps/web/src/routes/auth/login.tsx#L1-L166)
 
 After successful authentication in the login component, the application redirects users to the dashboard route (`/dashboard`). This authentication flow protects all routes under the dashboard hierarchy by requiring valid session state.
 
 **Section sources**
+
 - [index.tsx](file://apps/web/src/routes/index.tsx#L1-L34)
 - [login.tsx](file://apps/web/src/routes/auth/login.tsx#L1-L166)
 
@@ -195,12 +210,15 @@ style H fill:#cfc,stroke:#333
 ```
 
 **Diagram sources **
+
 - [performance-optimizer.ts](file://tools/orchestration/performance-optimizer.ts#L172-L211)
 
 Code splitting configuration would be implemented in Vite to create separate chunks for feature domains, significantly reducing initial load time and improving overall application performance.
 
 **Section sources**
+
 - [performance-optimizer.ts](file://tools/orchestration/performance-optimizer.ts#L70-L102)
 
 ## Conclusion
+
 The NeonPro frontend routing system provides a robust foundation for navigating complex healthcare workflows. By leveraging TanStack Router's type-safe approach, the system ensures reliable navigation across patient management, financial operations, compliance, and aesthetic scheduling domains. The combination of automated route generation, strict type checking, authentication protection, and support for performance optimizations creates a scalable architecture that meets the demanding requirements of aesthetic clinics while maintaining excellent user experience.

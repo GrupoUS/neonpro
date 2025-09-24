@@ -1,7 +1,7 @@
 # Performance Testing
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [lighthouse-budget.json](file://lighthouse-budget.json)
 - [aesthetic-clinic-performance.test.ts](file://apps/api/src/tests/performance/aesthetic-clinic-performance.test.ts)
 - [chat-latency.test.ts](file://apps/api/tests/performance/chat-latency.test.ts)
@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Performance Budgets and Core Web Vitals](#performance-budgets-and-core-web-vitals)
 3. [API Response Time Testing](#api-response-time-testing)
@@ -30,6 +31,7 @@ The neonpro project implements a comprehensive performance testing strategy desi
 The testing strategy incorporates industry-standard tools like Lighthouse for core web vitals measurement, alongside custom validation scripts and real-world scenario simulations. Special emphasis is placed on validating critical healthcare workflows such as patient record access, appointment scheduling, and AI-powered medical consultations. The system establishes meaningful performance baselines and provides mechanisms for identifying regressions, particularly in AI-powered features that are central to the application's functionality.
 
 **Section sources**
+
 - [aesthetic-clinic-performance.test.ts](file://apps/api/src/tests/performance/aesthetic-clinic-performance.test.ts#L1-L635)
 - [chat-latency.test.ts](file://apps/api/tests/performance/chat-latency.test.ts#L1-L546)
 
@@ -56,6 +58,7 @@ D --> O[Third-party Resources < 5]
 ```
 
 **Diagram sources**
+
 - [lighthouse-budget.json](file://lighthouse-budget.json#L1-L160)
 
 The performance budget defines different thresholds for general pages versus dashboard pages, recognizing that complex data visualization interfaces have different performance characteristics than standard content pages. For general pages, the first-contentful-paint budget is set at 1500ms with a tolerance of 200ms, while dashboard pages have a slightly more lenient budget of 1800ms. Similarly, the largest-contentful-paint metric has a budget of 2000ms for general pages and 2300ms for dashboards.
@@ -65,6 +68,7 @@ Resource size budgets are carefully calibrated to optimize performance on limite
 Resource count limits further enhance performance by preventing excessive HTTP requests. The budget allows for a maximum of 50 total resources per page, with specific limits for different types: 15 scripts, 8 stylesheets, 15 images, and 5 third-party resources. These constraints encourage efficient bundling and minimize the overhead associated with multiple network requests.
 
 **Section sources**
+
 - [lighthouse-budget.json](file://lighthouse-budget.json#L1-L160)
 
 ## API Response Time Testing
@@ -93,6 +97,7 @@ Note over Client,API : Response time must be < 2s
 ```
 
 **Diagram sources**
+
 - [chat-latency.test.ts](file://apps/api/tests/performance/chat-latency.test.ts#L1-L546)
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L425)
 
@@ -103,6 +108,7 @@ Health check endpoints are tested to ensure they respond within 500ms, providing
 The tests include scenarios that simulate real-world usage patterns, such as consecutive requests from the same user and interactions that require database access. By measuring response times across these varied scenarios, the testing framework ensures consistent performance regardless of the specific workflow being executed.
 
 **Section sources**
+
 - [chat-latency.test.ts](file://apps/api/tests/performance/chat-latency.test.ts#L1-L546)
 
 ## Frontend Rendering Performance with Lighthouse
@@ -118,6 +124,7 @@ Cumulative Layout Shift (CLS) measures visual stability, preventing unexpected l
 Automated validation scripts execute Lighthouse audits as part of the continuous integration pipeline, comparing results against the performance budgets defined in `lighthouse-budget.json`. When metrics exceed their budgets, the build fails, preventing performance regressions from reaching production. This automated enforcement ensures that performance remains a first-class requirement throughout the development lifecycle.
 
 **Section sources**
+
 - [lighthouse-budget.json](file://lighthouse-budget.json#L1-L160)
 
 ## AI Agent Processing Latency
@@ -151,6 +158,7 @@ WebSocketManager --> WebSocket : "uses"
 ```
 
 **Diagram sources**
+
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L1-L231)
 
 The AI agent performance tests validate that chat queries complete within the required 2-second window, even when processing complex medical inquiries. The tests simulate realistic consultation flows, including multiple exchanges between practitioner and AI assistant, to ensure sustained performance during extended interactions.
@@ -162,6 +170,7 @@ The WebSocket manager maintains persistent connections with clients, reducing th
 Error handling is thoroughly tested to ensure that performance does not degrade when validation errors occur. Validation error responses are expected to return within 100ms, providing rapid feedback to users who may have entered incomplete or malformed queries during fast-paced medical consultations.
 
 **Section sources**
+
 - [chat-latency.test.ts](file://apps/api/tests/performance/chat-latency.test.ts#L1-L546)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L1-L231)
 
@@ -184,6 +193,7 @@ D --> I[Evaluate resource utilization]
 ```
 
 **Diagram sources**
+
 - [aesthetic-clinic-performance.test.ts](file://apps/api/src/tests/performance/aesthetic-clinic-performance.test.ts#L1-L635)
 
 Stress testing pushes the system beyond normal operating conditions to identify breaking points and ensure graceful degradation. The tests gradually increase the number of concurrent users until the system reaches its capacity, documenting performance characteristics at each level. This information helps determine appropriate scaling strategies and infrastructure requirements.
@@ -193,6 +203,7 @@ Appointment scheduling under peak load is simulated by creating numerous concurr
 Memory usage is closely monitored during high-concurrency tests to detect potential memory leaks or inefficient resource management. The tests validate that memory consumption remains within acceptable limits even after prolonged operation under heavy load, ensuring system stability over time.
 
 **Section sources**
+
 - [aesthetic-clinic-performance.test.ts](file://apps/api/src/tests/performance/aesthetic-clinic-performance.test.ts#L1-L635)
 
 ## Performance Monitoring and Real-Time Dashboards
@@ -216,6 +227,7 @@ style D fill:#bbf,stroke:#333
 ```
 
 **Diagram sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L425)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts#L1-L717)
 - [index.ts](file://supabase/functions/healthcare-performance-monitor/index.ts#L1-L688)
@@ -227,6 +239,7 @@ The real-time performance stream endpoint provides continuous updates via Server
 Automated alert generation identifies performance degradation, high error rates, or system outages, triggering notifications to the appropriate personnel. The alert system distinguishes between different severity levels, ensuring critical issues receive immediate attention while less severe warnings are handled according to established procedures.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L425)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts#L1-L717)
 - [index.ts](file://supabase/functions/healthcare-performance-monitor/index.ts#L1-L688)
@@ -244,6 +257,7 @@ The performance tests validate that database queries complete within specified t
 Index hints are configured for critical queries to ensure optimal execution plans. The system monitors slow queries and generates recommendations for additional indexing when necessary. This proactive approach to query optimization prevents performance degradation as data volumes grow over time.
 
 **Section sources**
+
 - [aesthetic-clinic-performance.test.ts](file://apps/api/src/tests/performance/aesthetic-clinic-performance.test.ts#L1-L635)
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L425)
 
@@ -262,6 +276,7 @@ Tracing performance bottlenecks in tRPC calls is facilitated by comprehensive lo
 Security considerations add another layer of complexity, as encryption, data masking, and audit logging can impact performance. The tests validate that security controls do not introduce unacceptable delays, ensuring that patient privacy protections do not compromise clinical efficiency. Data masking operations, for example, are tested to ensure they complete within 100ms, preventing them from becoming a bottleneck in fast-paced clinical environments.
 
 **Section sources**
+
 - [aesthetic-clinic-performance.test.ts](file://apps/api/src/tests/performance/aesthetic-clinic-performance.test.ts#L1-L635)
 - [chat-latency.test.ts](file://apps/api/tests/performance/chat-latency.test.ts#L1-L546)
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L425)

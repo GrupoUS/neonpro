@@ -1,7 +1,7 @@
 # Backup and Recovery
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [patient-document-service-backup.ts](file://apps/api/dev-tools/patient-document-service-backup.ts)
 - [config-full.toml](file://supabase/config-full.toml)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Automated Backup Strategy](#automated-backup-strategy)
 3. [Backup Frequency and Retention Policy](#backup-frequency-and-retention-policy)
@@ -23,9 +24,11 @@
 11. [Integration with Incident Response Protocols](#integration-with-incident-response-protocols)
 
 ## Introduction
+
 The NeonPro healthcare platform implements a robust backup and recovery framework designed to ensure data integrity, availability, and compliance with Brazilian regulatory standards such as LGPD, ANVISA, and CFM. Leveraging Supabase infrastructure, the system provides point-in-time recovery capabilities, secure encryption practices, and comprehensive monitoring to safeguard sensitive patient health information (PHI). This document details the technical implementation, operational procedures, and compliance mechanisms that underpin the platform's resilience against data loss events.
 
 ## Automated Backup Strategy
+
 NeonPro utilizes Supabase’s managed PostgreSQL database with automated daily backups and point-in-time recovery (PITR) enabled through Write-Ahead Logging (WAL) archiving. The PITR capability allows restoration to any second within the retention window, minimizing potential data loss during incident response. Backups are performed automatically by the Supabase infrastructure without requiring manual intervention, ensuring consistency and reliability.
 
 The configuration is defined in the Supabase environment settings where WAL logging and continuous archiving are activated. These settings enable granular recovery options while maintaining high availability for clinical operations.
@@ -41,15 +44,19 @@ G[Retention Policy Enforcement] --> D
 ```
 
 **Diagram sources **
+
 - [config-full.toml](file://supabase/config-full.toml#L1-L156)
 
 **Section sources**
+
 - [config-full.toml](file://supabase/config-full.toml#L1-L156)
 
 ## Backup Frequency and Retention Policy
+
 Backups occur daily at 02:00 AM BRT (Brazil Time), capturing a full base backup of the database cluster. In addition to daily snapshots, transaction logs are archived every 5 minutes to support point-in-time recovery up to the second.
 
 Data retention follows a tiered policy aligned with legal requirements:
+
 - Daily backups retained for 30 days
 - Weekly backups (first day of each week) retained for 90 days
 - Monthly backups (first day of each month) retained for 1 year
@@ -69,14 +76,18 @@ TriggerSecureDelete --> End
 ```
 
 **Diagram sources **
+
 - [lgpd-compliance.ts](file://apps/api/src/services/lgpd-compliance.ts#L171-L213)
 
 **Section sources**
+
 - [config-full.toml](file://supabase/config-full.toml#L1-L156)
 - [lgpd-compliance.ts](file://apps/api/src/services/lgpd-compliance.ts#L171-L213)
 
 ## Encryption Standards for Sensitive Data
+
 All backups containing protected health information (PHI) are encrypted using AES-256 encryption both in transit and at rest. The Supabase infrastructure ensures that:
+
 - Data is encrypted in transit using TLS 1.3
 - Database storage uses LUKS-level disk encryption
 - Backup archives are encrypted using customer-managed keys stored in a secure key vault
@@ -95,12 +106,15 @@ select = [
 ```
 
 **Section sources**
+
 - [config-full.toml](file://supabase/config-full.toml#L1-L156)
 
 ## Disaster Recovery Procedures
+
 In the event of data loss or corruption, NeonPro supports two primary recovery modes:
 
 ### Full System Recovery
+
 1. Identify the latest valid backup timestamp from monitoring logs
 2. Request restore from Supabase support team or use CLI tools
 3. Restore base backup and replay WAL segments to desired recovery point
@@ -108,7 +122,9 @@ In the event of data loss or corruption, NeonPro supports two primary recovery m
 5. Re-enable application access after successful validation
 
 ### Selective Data Restoration
+
 For isolated incidents (e.g., accidental deletion of a single patient record):
+
 1. Use audit logs to identify affected records and timestamps
 2. Export required data from backup using `pg_dump` with filters
 3. Apply redaction rules if exporting PHI
@@ -118,11 +134,14 @@ For isolated incidents (e.g., accidental deletion of a single patient record):
 Both procedures require multi-factor authorization and are subject to real-time monitoring and alerting.
 
 **Section sources**
+
 - [patient-document-service-backup.ts](file://apps/api/dev-tools/patient-document-service-backup.ts#L43-L235)
 - [config-full.toml](file://supabase/config-full.toml#L1-L156)
 
 ## Compliance with Brazilian Healthcare Regulations (LGPD)
+
 NeonPro’s backup and recovery processes adhere strictly to Lei Geral de Proteção de Dados (LGPD) requirements, including:
+
 - Article 6, III: Purpose limitation – backups used solely for disaster recovery
 - Article 7, X: Right to erasure – automated deletion upon expiration
 - Article 46: Security – encryption and access controls enforced
@@ -131,12 +150,15 @@ NeonPro’s backup and recovery processes adhere strictly to Lei Geral de Prote�
 Retention policies are programmatically enforced based on patient consent status and legal obligations. When a patient withdraws consent or the retention period expires, the system automatically schedules secure deletion after logging the action in the audit trail.
 
 **Section sources**
+
 - [lgpd-compliance.ts](file://apps/api/src/services/lgpd-compliance.ts#L171-L213)
 
 ## Full System and Selective Data Restoration
+
 Restoration workflows are differentiated based on scope and urgency:
 
 ### Full System Recovery Workflow
+
 ```mermaid
 sequenceDiagram
 participant Admin as Administrator
@@ -153,6 +175,7 @@ Audit-->>Admin : Confirmation
 ```
 
 ### Selective Data Restoration Workflow
+
 ```mermaid
 sequenceDiagram
 participant Clinician as Authorized User
@@ -169,13 +192,17 @@ API->>Clinician : Return Data
 ```
 
 **Diagram sources **
+
 - [patient-document-service-backup.ts](file://apps/api/dev-tools/patient-document-service-backup.ts#L43-L235)
 
 **Section sources**
+
 - [patient-document-service-backup.ts](file://apps/api/dev-tools/patient-document-service-backup.ts#L43-L235)
 
 ## Backup Integrity Testing
+
 To verify backup reliability, NeonPro conducts monthly integrity tests:
+
 1. Spin up isolated test environment
 2. Restore most recent backup to sandbox instance
 3. Run schema validation queries
@@ -192,10 +219,13 @@ shared_preload_libraries = "pg_stat_statements,pg_cron"
 Any failure triggers immediate alerts and initiates root cause analysis.
 
 **Section sources**
+
 - [config-full.toml](file://supabase/config-full.toml#L1-L156)
 
 ## Monitoring Backup Success/Failure
+
 Backup operations are monitored in real time using Prometheus metrics and Grafana dashboards. Key metrics include:
+
 - `neonpro_backup_success`: 1 if last backup succeeded, 0 otherwise
 - `neonpro_backup_duration_seconds`: Duration of last backup operation
 - `neonpro_wal_archive_delay_seconds`: Delay in WAL segment archiving
@@ -224,10 +254,13 @@ A critical alert named "BackupFailure" is triggered if no successful backup occu
 This ensures rapid detection and remediation of backup issues.
 
 **Section sources**
+
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json#L70-L106)
 
 ## Audit Logging of Backup Operations
+
 All backup-related activities are logged in a dedicated audit stream with immutable storage. Logs capture:
+
 - Timestamp of backup initiation and completion
 - User or service account responsible
 - Source and destination locations
@@ -262,10 +295,13 @@ healthcare: {
 These logs are retained for 7 years to meet long-term compliance requirements.
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L187-L239)
 
 ## Integration with Incident Response Protocols
+
 Backup systems are tightly integrated with NeonPro’s incident response framework:
+
 - Upon detection of ransomware or data corruption, SOC analysts can initiate emergency restores
 - All restoration requests require dual approval from security and clinical leadership
 - Post-incident reviews analyze backup effectiveness and update playbooks
@@ -274,5 +310,6 @@ Backup systems are tightly integrated with NeonPro’s incident response framewo
 The integration ensures that backup capabilities are not just technical safeguards but active components of the organization’s cybersecurity posture.
 
 **Section sources**
+
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json#L70-L106)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L187-L239)

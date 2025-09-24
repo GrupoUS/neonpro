@@ -7,6 +7,7 @@ This document provides comprehensive storyboard templates for creating professio
 ## 🎬 Storyboard Production Standards
 
 ### **Template Structure**
+
 ```typescript
 interface StoryboardTemplate {
   episodeInfo: EpisodeDetails[];
@@ -19,6 +20,7 @@ interface StoryboardTemplate {
 ```
 
 ### **Scene Components**
+
 ```typescript
 interface Scene {
   sceneNumber: number;
@@ -36,10 +38,12 @@ interface Scene {
 ## 🎥 Template 1: System Introduction Episode
 
 ### **Episode: Welcome to NeonPro (Episode 1, Series 1)**
+
 **Duration**: 3:00 minutes
 **Target Audience**: New users, all roles
 
 #### **Scene 1: Opening Sequence (0:00-0:30)**
+
 ```typescript
 interface Scene1 {
   sceneNumber: 1;
@@ -55,6 +59,7 @@ interface Scene1 {
 ```
 
 #### **Scene 2: System Benefits Overview (0:30-1:00)**
+
 ```typescript
 interface Scene2 {
   sceneNumber: 2;
@@ -70,6 +75,7 @@ interface Scene2 {
 ```
 
 #### **Scene 3: Interface Tour (1:00-2:00)**
+
 ```typescript
 interface Scene3 {
   sceneNumber: 3;
@@ -85,6 +91,7 @@ interface Scene3 {
 ```
 
 #### **Scene 4: Login Demonstration (2:00-2:30)**
+
 ```typescript
 interface Scene4 {
   sceneNumber: 4;
@@ -100,6 +107,7 @@ interface Scene4 {
 ```
 
 #### **Scene 5: Series Preview (2:30-3:00)**
+
 ```typescript
 interface Scene5 {
   sceneNumber: 5;
@@ -117,10 +125,12 @@ interface Scene5 {
 ## 🎥 Template 2: Healthcare Professional Training
 
 ### **Episode: AI Treatment Planning (Episode 3, Series 2)**
+
 **Duration**: 12:00 minutes
 **Target Audience**: Healthcare professionals
 
 #### **Scene 1: Introduction to AI Features (0:00-1:30)**
+
 ```typescript
 interface AIPlanningScene1 {
   sceneNumber: 1;
@@ -136,6 +146,7 @@ interface AIPlanningScene1 {
 ```
 
 #### **Scene 2: Patient Analysis Interface (1:30-3:30)**
+
 ```typescript
 interface AIPlanningScene2 {
   sceneNumber: 2;
@@ -151,6 +162,7 @@ interface AIPlanningScene2 {
 ```
 
 #### **Scene 3: AI Recommendation Engine (3:30-6:00)**
+
 ```typescript
 interface AIPlanningScene3 {
   sceneNumber: 3;
@@ -166,6 +178,7 @@ interface AIPlanningScene3 {
 ```
 
 #### **Scene 4: Treatment Sequence Optimization (6:00-8:30)**
+
 ```typescript
 interface AIPlanningScene4 {
   sceneNumber: 4;
@@ -181,6 +194,7 @@ interface AIPlanningScene4 {
 ```
 
 #### **Scene 5: Outcome Prediction (8:30-10:30)**
+
 ```typescript
 interface AIPlanningScene5 {
   sceneNumber: 5;
@@ -196,6 +210,7 @@ interface AIPlanningScene5 {
 ```
 
 #### **Scene 6: Implementation and Follow-up (10:30-12:00)**
+
 ```typescript
 interface AIPlanningScene6 {
   sceneNumber: 6;
@@ -213,10 +228,12 @@ interface AIPlanningScene6 {
 ## 🎥 Template 3: Compliance Training Episode
 
 ### **Episode: LGPD Compliance Fundamentals (Episode 1, Series 5)**
+
 **Duration**: 8:00 minutes
 **Target Audience**: All users
 
 #### **Scene 1: LGPD Introduction (0:00-1:30)**
+
 ```typescript
 interface LGPDSite1 {
   sceneNumber: 1;
@@ -232,6 +249,7 @@ interface LGPDSite1 {
 ```
 
 #### **Scene 2: Data Classification (1:30-3:00)**
+
 ```typescript
 interface LGPDSite2 {
   sceneNumber: 2;
@@ -247,6 +265,7 @@ interface LGPDSite2 {
 ```
 
 #### **Scene 3: Consent Management (3:00-5:00)**
+
 ```typescript
 interface LGPDSite3 {
   sceneNumber: 3;
@@ -262,6 +281,7 @@ interface LGPDSite3 {
 ```
 
 #### **Scene 4: Data Subject Rights (5:00-6:30)**
+
 ```typescript
 interface LGPDSite4 {
   sceneNumber: 4;
@@ -277,6 +297,7 @@ interface LGPDSite4 {
 ```
 
 #### **Scene 5: Breach Response (6:30-8:00)**
+
 ```typescript
 interface LGPDSite5 {
   sceneNumber: 5;
@@ -294,6 +315,7 @@ interface LGPDSite5 {
 ## 🎨 Production Guidelines
 
 ### **Visual Standards**
+
 ```typescript
 interface VisualStandards {
   colorScheme: string[];
@@ -305,6 +327,7 @@ interface VisualStandards {
 ```
 
 ### **Screen Recording Requirements**
+
 - **Resolution**: 4K (3840x2160) for optimal clarity
 - **Frame Rate**: 30fps for smooth playback
 - **Cursor**: Highlighted with custom cursor for visibility
@@ -313,6 +336,7 @@ interface VisualStandards {
 - **Transitions**: Smooth scene transitions
 
 ### **Audio Standards**
+
 - **Voice Quality**: Professional recording, clear enunciation
 - **Background Music**: Subtle, non-distracting
 - **Sound Effects**: Professional, context-appropriate
@@ -320,6 +344,7 @@ interface VisualStandards {
 - **Language**: Portuguese (Brazilian) with professional accent
 
 ### **Accessibility Requirements**
+
 - **Subtitles**: Portuguese subtitles for all videos
 - **Transcripts**: Full text transcripts available
 - **Visual Descriptions**: For visually impaired users
@@ -329,6 +354,7 @@ interface VisualStandards {
 ## 📋 Production Checklist
 
 ### **Pre-Production**
+
 ```typescript
 interface PreProductionChecklist {
   scriptReview: boolean;
@@ -340,6 +366,7 @@ interface PreProductionChecklist {
 ```
 
 ### **Production**
+
 ```typescript
 interface ProductionChecklist {
   recordingQuality: boolean;
@@ -351,6 +378,7 @@ interface ProductionChecklist {
 ```
 
 ### **Post-Production**
+
 ```typescript
 interface PostProductionChecklist {
   videoEditing: boolean;
@@ -362,6 +390,7 @@ interface PostProductionChecklist {
 ```
 
 ### **Final Review**
+
 ```typescript
 interface FinalReview {
   contentAccuracy: boolean;
@@ -375,6 +404,7 @@ interface FinalReview {
 ## 🎬 Template Library
 
 ### **Common Scene Templates**
+
 ```typescript
 interface CommonScenes {
   introduction: IntroductionScene[];
@@ -386,6 +416,7 @@ interface CommonScenes {
 ```
 
 ### **Animation Templates**
+
 ```typescript
 interface AnimationTemplates {
   dataVisualization: DataVizAnimation[];
@@ -397,6 +428,7 @@ interface AnimationTemplates {
 ```
 
 ### **Graphic Templates**
+
 ```typescript
 interface GraphicTemplates {
   titleCards: TitleCardTemplate[];
@@ -419,14 +451,14 @@ For storyboard development, production support, or template customization:
 - **Quality Assurance**: qa-video@neonpro.com.br
 - **Accessibility Support**: accessibility@neonpro.com.br
 
-**Production Hours**: Monday-Friday, 8:00-18:00 (Brasília Time)  
+**Production Hours**: Monday-Friday, 8:00-18:00 (Brasília Time)\
 **Emergency Support**: 24/7 for critical production issues
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 1.0.0  
-**Template Coverage**: Complete storyboard templates for all video series  
-**Production Standards**: Professional 4K production with accessibility compliance  
-**Maintainers**: NeonPro Video Production Team  
+**Last Updated**: January 2025\
+**Version**: 1.0.0\
+**Template Coverage**: Complete storyboard templates for all video series\
+**Production Standards**: Professional 4K production with accessibility compliance\
+**Maintainers**: NeonPro Video Production Team\
 **Status**: ✅ Complete - Comprehensive storyboard templates documented

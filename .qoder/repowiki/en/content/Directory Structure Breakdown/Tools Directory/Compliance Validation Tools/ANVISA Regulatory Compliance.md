@@ -1,7 +1,7 @@
 # ANVISA Regulatory Compliance
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [anvisa-compliance.ts](file://apps/api/src/services/anvisa-compliance.ts)
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts)
 - [anvisa.ts](file://tools/testing-toolkit/src/compliance/anvisa.ts)
@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [ANVISA Compliance Framework](#anvisa-compliance-framework)
 3. [Adverse Event Reporting Workflow](#adverse-event-reporting-workflow)
@@ -19,6 +20,7 @@
 8. [Troubleshooting Common Compliance Issues](#troubleshooting-common-compliance-issues)
 
 ## Introduction
+
 The ANVISA (Agência Nacional de Vigilância Sanitária) regulatory compliance sub-component ensures adherence to Brazilian health surveillance requirements for medical software systems. This documentation details the implementation of adverse event reporting, medical product tracking, and validation frameworks that support cosmetic procedure documentation and treatment outcome tracking. The system is designed to meet RDC 657/2022 standards for Software as a Medical Device (SaMD), with automated checks integrated into clinical workflows.
 
 The architecture supports both proactive monitoring and reactive reporting mechanisms, ensuring timely submission of adverse events to the VigiMed system while maintaining comprehensive audit trails. This document provides technical depth for developers extending the framework and accessible explanations for compliance officers managing regulatory submissions.
@@ -60,9 +62,11 @@ ANVISAComplianceService --> ANVISAComplianceReport : "returns"
 ```
 
 **Diagram sources**
+
 - [anvisa-compliance.ts](file://apps/api/src/services/anvisa-compliance.ts#L154-L607)
 
 **Section sources**
+
 - [anvisa-compliance.ts](file://apps/api/src/services/anvisa-compliance.ts#L1-L607)
 
 ## Adverse Event Reporting Workflow
@@ -88,9 +92,11 @@ Note over ANVISAFunction,VigiMed : Automated submission ensures<br/>timely repor
 ```
 
 **Diagram sources**
+
 - [index.ts](file://supabase/functions/anvisa-adverse-events/index.ts#L29-L674)
 
 **Section sources**
+
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts#L759-L792)
 - [index.ts](file://supabase/functions/anvisa-adverse-events/index.ts#L164-L217)
 
@@ -118,9 +124,11 @@ L --> M["End: Compliance Complete"]
 ```
 
 **Diagram sources**
+
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts#L24-L63)
 
 **Section sources**
+
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts#L24-L63)
 - [index.ts](file://supabase/functions/anvisa-adverse-events/index.ts#L620-L674)
 
@@ -156,9 +164,11 @@ ANVISAValidator --> ValidationResult : "returns"
 ```
 
 **Diagram sources**
+
 - [anvisa.ts](file://tools/testing-toolkit/src/compliance/anvisa.ts#L50-L147)
 
 **Section sources**
+
 - [anvisa.ts](file://tools/testing-toolkit/src/compliance/anvisa.ts#L50-L147)
 
 ## Automated Alerting and Reporting Deadlines
@@ -168,6 +178,7 @@ To address common challenges with timely reporting deadlines, the system impleme
 The `calculateReportingTimeline` function determines deadlines based on event type and severity, integrating with calendar systems to create actionable tasks. All alerts include direct links to the reporting interface and pre-filled forms containing relevant patient and device information, reducing administrative burden.
 
 **Section sources**
+
 - [index.ts](file://supabase/functions/anvisa-adverse-events/index.ts#L164-L217)
 
 ## Extending the Validation Framework
@@ -177,6 +188,7 @@ Developers can extend the validation framework for new medical device categories
 For specialized treatment protocols, custom validators should implement the same interface pattern used in the existing `ANVISAValidator` class, ensuring compatibility with the test suite generation system. Integration with external classification APIs, such as SaMD determination tools, allows dynamic assessment of regulatory requirements based on intended use and healthcare decision impact.
 
 **Section sources**
+
 - [anvisa-compliance.ts](file://apps/api/src/services/anvisa-compliance.ts#L449-L504)
 - [anvisa.ts](file://tools/testing-toolkit/src/compliance/anvisa.ts#L101-L147)
 
@@ -187,5 +199,6 @@ Common compliance issues include missing clinical evaluations for Class II+ devi
 When clinical evaluation is missing for non-Class I devices, the system flags it as a critical violation requiring 180-day remediation involving clinical studies and ethics committee approval. Similarly, gaps in risk management trigger recommendations for hazard analysis completion and control measure implementation within 60–90 days depending on severity.
 
 **Section sources**
+
 - [anvisa-compliance.ts](file://apps/api/src/services/anvisa-compliance.ts#L449-L504)
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts#L24-L63)

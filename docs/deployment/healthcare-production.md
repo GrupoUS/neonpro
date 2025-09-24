@@ -959,7 +959,7 @@ curl -X POST "$SLACK_WEBHOOK" \
 
 ---
 
-**Last Updated**: 2025-09-18  
-**Deployment Version**: v1.0  
-**Compliance Status**: LGPD + CFM + ANVISA Certified  
+**Last Updated**: 2025-09-18\
+**Deployment Version**: v1.0\
+**Compliance Status**: LGPD + CFM + ANVISA Certified\
 **Region**: São Paulo (gru1) - Brazilian Territory

@@ -49,7 +49,7 @@ export class EncryptionManager {
     }
 
     const iv = crypto.randomBytes(this.ivLength);
-    
+
     try {
       const cipher = crypto.createCipheriv(
         this.algorithm,
@@ -57,15 +57,11 @@ export class EncryptionManager {
         iv,
       );
 
-      let encrypted = cipher.update(data, 'utf8', 'hex');
-      encrypted += cipher.final('hex');
+      let encrypted = cipher.update(data, 'utf8', 'base64');
+      encrypted += cipher.final('base64');
 
-      // Combine IV + encrypted data
-      const combined = Buffer.concat([
-        iv,
-        Buffer.from(encrypted, 'hex'),
-      ]);
-
+      // Combine IV + encrypted data and encode as base64
+      const combined = Buffer.concat([iv, Buffer.from(encrypted, 'base64')]);
       return combined.toString('base64');
     } catch (error) {
       throw new Error(`Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -81,6 +77,39 @@ export class EncryptionManager {
   decryptData(encryptedData: string, key: string): string {
     if (!this.validateKey(key)) {
       throw new Error('Invalid encryption key');
+    }
+
+    try {
+      const combined = Buffer.from(encryptedData, 'base64');
+
+      // Extract IV (first 16 bytes) and encrypted data (rest)
+      const iv = combined.subarray(0, this.ivLength);
+      const encrypted = combined.subarray(this.ivLength);
+
+      const decipher = crypto.createDecipheriv(
+        this.algorithm,
+        Buffer.from(key, 'base64'),
+        iv,
+      );
+
+      let decrypted = decipher.update(encrypted, undefined, 'utf8');
+      decrypted += decipher.final('utf8');
+
+      return decrypted;
+    } catch (error) {
+      throw new Error('Invalid encrypted data');
+    }
+  }
+
+  /**
+   * Decrypt data using AES-256-CBC
+   * @param encryptedData Base64 encoded encrypted data with IV
+   * @param key Base64 encoded encryption key
+   * @returns Decrypted data
+   */
+  decryptDataWithKeyError(encryptedData: string, key: string): string {
+    if (!this.validateKey(key)) {
+      throw new Error('Invalid decryption key');
     }
 
     try {
@@ -169,7 +198,7 @@ export class EncryptionManager {
    * @returns SHA-256 hash of the data
    */
   hashData(data: string): string {
-    return crypto.createHash('sha256').update(data).digest('hex');
+    return crypto.createHash('sha256').update(data, 'utf8').digest('hex');
   }
 
   /**
@@ -263,7 +292,7 @@ export class KeyManager {
    */
   rotateKey(keyId: string, ttl: number = 3600): string {
     const oldKey = this.getKey(keyId);
-    const newKey = new EncryptionManager().generateKey();
+    const newKey = crypto.randomBytes(32).toString('base64');
 
     // Store new key
     this.storeKey(keyId, newKey);

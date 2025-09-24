@@ -1,7 +1,7 @@
 # Developer Onboarding Guide
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [dev-setup.sh](file://scripts/dev-setup.sh)
 - [app.ts](file://apps/api/src/app.ts)
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts)
@@ -15,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Environment Setup](#environment-setup)
 3. [Core Architecture Overview](#core-architecture-overview)
@@ -57,6 +58,7 @@ The project includes an automated setup script that configures your development 
 ```
 
 This script performs the following operations:
+
 - Verifies system requirements
 - Installs Node.js dependencies via pnpm
 - Sets up Git hooks for healthcare compliance
@@ -105,6 +107,7 @@ If you prefer manual setup, follow these steps:
 The setup process ensures all healthcare compliance requirements are met, including proper configuration of security headers, error tracking, and audit logging.
 
 **Section sources**
+
 - [dev-setup.sh](file://scripts/dev-setup.sh#L1-L466)
 
 ## Core Architecture Overview
@@ -181,10 +184,12 @@ The platform implements several healthcare-specific features:
 These features are integrated throughout the codebase, ensuring compliance with Brazilian healthcare regulations.
 
 **Diagram sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 
@@ -201,6 +206,7 @@ pnpm run dev:all
 This command starts all necessary services including the API server, database, and frontend application. The development server automatically reloads when code changes are detected.
 
 For individual services, use:
+
 ```bash
 # Start API server
 pnpm run dev:api
@@ -237,6 +243,7 @@ src/
 ```
 
 Key architectural patterns include:
+
 - **Middleware Pipeline**: Sequential processing of requests through specialized middleware
 - **Healthcare-First Design**: Security and compliance features built into the foundation
 - **Structured Logging**: Consistent log format with healthcare-specific context
@@ -267,6 +274,7 @@ When contributing to the codebase:
 The team follows a trunk-based development model with feature flags for incomplete functionality. This allows continuous integration while maintaining stability.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [logger.ts](file://apps/api/src/lib/logger.ts#L1-L188)
 
@@ -345,6 +353,7 @@ The platform uses a comprehensive set of testing tools:
 These tools work together to ensure the platform meets healthcare quality standards.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [openapi-generator.ts](file://apps/api/src/lib/openapi-generator.ts#L1-L598)
 
@@ -402,6 +411,7 @@ The platform integrates with multiple monitoring systems:
 - **Custom Monitoring Services**: Healthcare-specific metrics
 
 Key healthcare metrics include:
+
 - HTTPS handshake time (<300ms requirement)
 - Query response time (<2s requirement)
 - Data access compliance rate
@@ -421,10 +431,12 @@ Developers have access to several debugging tools:
 These tools help developers quickly identify and resolve issues while maintaining healthcare compliance.
 
 **Diagram sources**
+
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts#L1-L114)
 - [sentry.ts](file://apps/api/src/lib/sentry.ts#L1-L270)
 
 **Section sources**
+
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts#L1-L114)
 - [sentry.ts](file://apps/api/src/lib/sentry.ts#L1-L270)
 - [logger.ts](file://apps/api/src/lib/logger.ts#L1-L188)
@@ -489,11 +501,13 @@ curl http://localhost:3001/v1/monitoring/https
 Performance budgets are defined in `lighthouse-budget.json` and enforced during CI/CD.
 
 **Diagram sources**
+
 - [https-monitoring-middleware.ts](file://apps/api/src/middleware/https-monitoring-middleware.ts#L1-L456)
 - [query-timeout-middleware.ts](file://apps/api/src/middleware/query-timeout-middleware.ts#L1-L508)
 - [compression-middleware.ts](file://apps/api/src/middleware/compression-middleware.ts#L1-L665)
 
 **Section sources**
+
 - [https-monitoring-middleware.ts](file://apps/api/src/middleware/https-monitoring-middleware.ts#L1-L456)
 - [query-timeout-middleware.ts](file://apps/api/src/middleware/query-timeout-middleware.ts#L1-L508)
 - [compression-middleware.ts](file://apps/api/src/middleware/compression-middleware.ts#L1-L665)
@@ -561,6 +575,7 @@ pnpm run pentest
 Security scans are integrated into the CI/CD pipeline to catch issues early.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [openapi-generator.ts](file://apps/api/src/lib/openapi-generator.ts#L1-L598)
 
@@ -570,6 +585,7 @@ Security scans are integrated into the CI/CD pipeline to catch issues early.
 
 **Issue**: Node.js version incompatible
 **Solution**: Install Node.js 20.0.0 or higher using nvm:
+
 ```bash
 nvm install 20
 nvm use 20
@@ -577,6 +593,7 @@ nvm use 20
 
 **Issue**: Database connection fails
 **Solution**: Ensure Supabase CLI is installed and running:
+
 ```bash
 npm install -g supabase
 cd packages/database && supabase start
@@ -603,6 +620,7 @@ cd packages/database && supabase start
 
 **Issue**: Playwright tests failing
 **Solution**: Ensure Chrome is installed and accessible. Run tests in headed mode to debug:
+
 ```bash
 npx playwright test --headed
 ```

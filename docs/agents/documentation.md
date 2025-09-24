@@ -97,7 +97,6 @@ function goodExample() {
 > See also: links to how-to and reference
 
 ````
-
 ### How-to (task-focused recipe)
 
 ```markdown

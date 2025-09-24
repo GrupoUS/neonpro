@@ -19,6 +19,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 1.1 Portuguese UI Validation
 
 **TC-BR-UI-001: Complete Portuguese Interface**
+
 - **Objective**: Validate entire user interface is in Portuguese
 - **Preconditions**: System deployed with Portuguese locale
 - **Test Steps**:
@@ -32,6 +33,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-BR-UI-002: Brazilian Healthcare Terminology**
+
 - **Objective**: Verify appropriate medical terminology usage
 - **Preconditions**: User logged in as Healthcare Professional
 - **Test Steps**:
@@ -45,6 +47,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: High
 
 **TC-BR-UI-003: Brazilian Date and Number Formats**
+
 - **Objective**: Validate Brazilian formatting standards
 - **Test Steps**:
   1. Check date format (DD/MM/YYYY)
@@ -60,6 +63,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 1.2 Cultural Adaptation Testing
 
 **TC-BR-CULT-001: Brazilian Address Format**
+
 - **Objective**: Test Brazilian address input and validation
 - **Test Steps**:
   1. Enter address with Brazilian format (Rua, número, complemento, bairro, cidade, estado, CEP)
@@ -72,6 +76,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: High
 
 **TC-BR-CULT-002: Brazilian Name Format Handling**
+
 - **Objective**: Validate Brazilian name structure and validation
 - **Test Steps**:
   1. Enter complete Brazilian name structure
@@ -90,6 +95,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 2.1 Data Subject Rights Implementation
 
 **TC-LGPD-001: Right to Access Implementation**
+
 - **Objective**: Test complete data access request workflow
 - **Preconditions**: Patient with data in system
 - **Test Steps**:
@@ -103,6 +109,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-LGPD-002: Right to Rectification Workflow**
+
 - **Objective**: Test data correction request processing
 - **Test Steps**:
   1. Patient identifies incorrect data in their profile
@@ -115,6 +122,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-LGPD-003: Right to Deletion (Right to be Forgotten)**
+
 - **Objective**: Test complete data deletion workflow
 - **Test Steps**:
   1. Patient submits deletion request via portal
@@ -127,6 +135,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-LGPD-004: Data Portability Implementation**
+
 - **Objective**: Test data export and transfer capabilities
 - **Test Steps**:
   1. Patient requests data export in machine-readable format
@@ -141,6 +150,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 2.2 Consent Management Testing
 
 **TC-LGPD-005: Explicit Consent Collection**
+
 - **Objective**: Validate LGPD-compliant consent collection
 - **Test Steps**:
   1. Patient registers for clinic services
@@ -153,6 +163,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-LGPD-006: Consent Withdrawal Mechanism**
+
 - **Objective**: Test consent withdrawal process
 - **Test Steps**:
   1. Patient navigates to consent management page
@@ -165,6 +176,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-LGPD-007: Consent Documentation and Audit**
+
 - **Objective**: Validate consent record keeping and audit trail
 - **Test Steps**:
   1. Review consent database records
@@ -179,6 +191,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 2.3 Data Protection by Design
 
 **TC-LGPD-008: Data Minimization Validation**
+
 - **Objective**: Test that only necessary data is collected
 - **Test Steps**:
   1. Review all data collection forms
@@ -191,6 +204,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: High
 
 **TC-LGPD-009: PII Redaction and Masking**
+
 - **Objective**: Test automatic PII detection and redaction
 - **Test Steps**:
   1. Enter test data with Brazilian PII (CPF, CNPJ, phone, email)
@@ -209,6 +223,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 3.1 Pix Payment Integration
 
 **TC-PAY-001: Pix QR Code Generation**
+
 - **Objective**: Test Pix QR code generation and display
 - **Test Steps**:
   1. Patient selects Pix as payment method
@@ -221,6 +236,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-PAY-002: Pix Payment Confirmation**
+
 - **Objective**: Test Pix payment processing and confirmation
 - **Test Steps**:
   1. Generate Pix QR code for payment
@@ -233,6 +249,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-PAY-003: Pix Payment Refund**
+
 - **Objective**: Test Pix refund processing
 - **Test Steps**:
   1. Process original Pix payment
@@ -247,6 +264,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 3.2 Boleto Processing
 
 **TC-PAY-004: Boleto Generation and Validation**
+
 - **Objective**: Test boleto generation and barcode validation
 - **Test Steps**:
   1. Patient selects boleto as payment method
@@ -259,6 +277,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-PAY-005: Boleto Payment Tracking**
+
 - **Objective**: Test boleto payment status tracking
 - **Test Steps**:
   1. Generate boleto for payment
@@ -271,6 +290,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: High
 
 **TC-PAY-006: Boleto Expiration and Reissue**
+
 - **Objective**: Test boleto expiration and reissue process
 - **Test Steps**:
   1. Generate boleto with near-term expiration
@@ -285,6 +305,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 3.3 Credit Card Processing
 
 **TC-PAY-007: Credit Card Installment Options**
+
 - **Objective**: Test Brazilian installment payment options
 - **Test Steps**:
   1. Patient selects credit card payment
@@ -297,6 +318,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: High
 
 **TC-PAY-008: Multiple Credit Card Brands**
+
 - **Objective**: Test various Brazilian credit card brands
 - **Test Steps**:
   1. Process payments with different card brands:
@@ -317,6 +339,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 4.1 ANVISA Compliance
 
 **TC-ANVISA-001: Medical Device Registration Integration**
+
 - **Objective**: Test ANVISA medical device registration validation
 - **Test Steps**:
   1. Enter medical device information in system
@@ -329,6 +352,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-ANVISA-002: RDC ANVISA 55/2019 Compliance**
+
 - **Objective**: Test compliance with RDC 55/2019 for aesthetic procedures
 - **Test Steps**:
   1. Review all aesthetic procedures in system
@@ -343,6 +367,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 4.2 CFM Compliance Testing
 
 **TC-CFM-001: Medical Ethics Compliance**
+
 - **Objective**: Test CFM medical ethics compliance features
 - **Test Steps**:
   1. Verify doctor-patient confidentiality
@@ -355,6 +380,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-CFM-002: Professional Registration Validation**
+
 - **Objective**: Test CRM (Conselho Regional de Medicina) registration validation
 - **Test Steps**:
   1. Enter professional CRM number
@@ -373,6 +399,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 5.1 Mobile Device Compatibility
 
 **TC-MOB-001: Brazilian Smartphone Compatibility**
+
 - **Objective**: Test system on popular Brazilian smartphones
 - **Test Devices**:
   - Low-end: Samsung Galaxy A series, Motorola Moto G series
@@ -389,6 +416,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-MOB-002: Brazilian Network Conditions**
+
 - **Objective**: Test system performance under Brazilian network conditions
 - **Test Scenarios**:
   - 3G network (common in rural areas)
@@ -408,6 +436,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 5.2 Brazilian Mobile Usage Patterns
 
 **TC-MOB-003: Mobile-First Patient Journey**
+
 - **Objective**: Test complete patient journey on mobile devices
 - **Test Steps**:
   1. Patient discovers clinic via mobile search
@@ -421,6 +450,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: High
 
 **TC-MOB-004: WhatsApp Integration Testing**
+
 - **Objective**: Test WhatsApp integration for Brazilian communication
 - **Test Steps**:
   1. System sends appointment confirmations via WhatsApp
@@ -439,6 +469,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 6.1 Emergency Patient Care
 
 **TC-EMER-001: Emergency Appointment Handling**
+
 - **Objective**: Test emergency appointment scheduling and management
 - **Test Steps**:
   1. Patient requests emergency appointment
@@ -451,6 +482,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-EMER-002: Adverse Event Reporting**
+
 - **Objective**: Test adverse event reporting workflow
 - **Test Steps**:
   1. Professional identifies adverse event
@@ -465,6 +497,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 6.2 Data Breach and Security Incidents
 
 **TC-SEC-001: Data Breach Detection and Response**
+
 - **Objective**: Test data breach detection and response procedures
 - **Test Steps**:
   1. Simulate data breach scenario
@@ -477,6 +510,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - **Priority**: Critical
 
 **TC-SEC-002: System Recovery and Backup**
+
 - **Objective**: Test system backup and recovery procedures
 - **Test Steps**:
   1. Verify regular backup processes
@@ -502,18 +536,21 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 7.2 Test Data Requirements
 
 **Patient Data**:
+
 - Brazilian names and addresses
 - Valid CPF/CNPJ numbers
 - Brazilian phone numbers and email addresses
 - Diverse demographic representation
 
 **Professional Data**:
+
 - Valid CRM numbers for different states
 - ANVISA device registrations
 - Brazilian medical license information
 - Specialty certifications
 
 **Treatment Data**:
+
 - Brazilian Portuguese treatment names
 - ANVISA-compliant procedure descriptions
 - Brazilian pricing in Reais
@@ -526,6 +563,7 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 8.1 Brazilian Market Validation
 
 **Must Pass Criteria**:
+
 - 100% Portuguese language interface
 - Complete LGPD compliance implementation
 - All Brazilian payment methods functional
@@ -533,6 +571,7 @@ This document contains detailed test cases specifically designed to validate Neo
 - ANVISA and CFM compliance validation
 
 **Performance Criteria**:
+
 - Pix payment confirmation <2 minutes
 - Mobile page load time <3 seconds on 3G
 - Data access requests processed within 15 days
@@ -541,11 +580,13 @@ This document contains detailed test cases specifically designed to validate Neo
 ### 8.2 User Acceptance Criteria
 
 **Patient Satisfaction**:
+
 - Mobile ease of use score ≥8/10
 - Payment process satisfaction ≥90%
 - Communication clarity ≥95%
 
 **Professional Satisfaction**:
+
 - System efficiency rating ≥8/10
 - Compliance confidence ≥95%
 - Mobile functionality satisfaction ≥85%
@@ -555,12 +596,14 @@ This document contains detailed test cases specifically designed to validate Neo
 ## 9. Deliverables
 
 ### 9.1 Testing Documentation
+
 - Brazilian market test case execution results
 - Compliance validation reports (LGPD, ANVISA, CFM)
 - Mobile compatibility testing report
 - Payment method validation results
 
 ### 9.2 Certification and Approval
+
 - LGPD compliance certification
 - ANVISA registration validation
 - CFM ethics compliance approval
@@ -570,14 +613,18 @@ This document contains detailed test cases specifically designed to validate Neo
 
 **Document Approval**:
 
-_________________________
-**Brazilian Market Lead**   Date: ___________
+---
 
-_________________________
-**Compliance Officer**      Date: ___________
+**Brazilian Market Lead** Date: ___________
 
-_________________________
-**Technical Lead**         Date: ___________
+---
 
-_________________________
-**Product Manager**        Date: ___________
+**Compliance Officer** Date: ___________
+
+---
+
+**Technical Lead** Date: ___________
+
+---
+
+**Product Manager** Date: ___________

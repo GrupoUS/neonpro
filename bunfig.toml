@@ -17,7 +17,7 @@ cache = ".bun/install-cache"
 preload = [
   "./node_modules/@types/node/index.d.ts",
   "./node_modules/@copilotkit/react-core/dist/index.js",
-  "./node_modules/@copilotkit/react-ui/dist/index.js"
+  "./node_modules/@copilotkit/react-ui/dist/index.js",
 ]
 # Hot reload otimizado
 hot = true
@@ -31,7 +31,7 @@ coverage = true
 # Preload testing libs
 preload = [
   "./node_modules/vitest/dist/index.js",
-  "./.config/testing/vitest.setup.ts"
+  "./.config/testing/vitest.setup.ts",
 ]
 
 [build]

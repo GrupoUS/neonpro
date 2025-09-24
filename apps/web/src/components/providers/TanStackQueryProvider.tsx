@@ -1,6 +1,6 @@
-import * as React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import * as React from 'react';
 
 // Create a single QueryClient instance with optimized configuration
 const queryClient = new QueryClient({
@@ -38,9 +38,7 @@ export function TanStackQueryProvider({ children }: TanStackQueryProviderProps) 
     <QueryClientProvider client={queryClient}>
       {children}
       {/* Include React Query Devtools in development */}
-      {process.env.NODE_ENV === "development" && (
-        <ReactQueryDevtools initialIsOpen={false} />
-      )}
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
     </QueryClientProvider>
   );
 }
@@ -50,9 +48,5 @@ export { queryClient };
 
 // Export hooks for common patterns
 export const useTanStackQuery = () => {
-  const queryClient = React.useContext(QueryClient);
-  if (!queryClient) {
-    throw new Error("useTanStackQuery must be used within TanStackQueryProvider");
-  }
   return queryClient;
 };

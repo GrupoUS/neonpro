@@ -1,7 +1,7 @@
 # State Management
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx)
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Server State with TanStack Query](#server-state-with-tanstack-query)
@@ -23,6 +24,7 @@
 10. [Performance Considerations](#performance-considerations)
 
 ## Introduction
+
 The neonpro frontend implements a sophisticated state management system that combines TanStack Query for server state management and React hooks for client state. This architecture enables efficient data fetching, caching, and synchronization across components while maintaining optimal performance and user experience. The system integrates TRPC for type-safe API communication and Supabase for real-time database operations, creating a robust foundation for healthcare applications with strict data privacy requirements.
 
 ## Architecture Overview
@@ -48,11 +50,13 @@ style E fill:#9f9,stroke:#333
 ```
 
 **Diagram sources **
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx)
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx)
 - [trpc.ts](file://apps/web/src/lib/trpc.ts)
 
 **Section sources**
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx)
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx)
 
@@ -61,6 +65,7 @@ style E fill:#9f9,stroke:#333
 The application uses TanStack Query as the primary solution for managing server state, providing automatic caching, background refetching, and stale data handling. The QueryClient is configured with healthcare-appropriate defaults including 5-minute stale time and 30-minute garbage collection time to balance freshness with performance.
 
 Key configuration features include:
+
 - Automatic refetching on window focus for real-time updates
 - Reconnection resilience for offline scenarios
 - Selective retry logic that avoids retries on 4xx errors
@@ -101,10 +106,12 @@ useMutation --> QueryClient : "writes to"
 ```
 
 **Diagram sources **
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx)
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 
 **Section sources**
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx)
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 
@@ -113,6 +120,7 @@ useMutation --> QueryClient : "writes to"
 Client state is managed through custom React hooks that encapsulate component-specific state logic. These hooks leverage useState, useEffect, and other React primitives to manage local UI state while coordinating with global server state when necessary.
 
 The state management approach follows these principles:
+
 - Separation of concerns between server and client state
 - Custom hooks for reusable state logic
 - Minimal local state to reduce complexity
@@ -150,11 +158,13 @@ Note over Database,Supabase : Real-time changes trigger WebSocket events
 ```
 
 **Diagram sources **
+
 - [trpc.ts](file://apps/web/src/lib/trpc.ts)
 - [client.ts](file://apps/web/src/integrations/supabase/client.ts)
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 
 **Section sources**
+
 - [trpc.ts](file://apps/web/src/lib/trpc.ts)
 - [client.ts](file://apps/web/src/integrations/supabase/client.ts)
 
@@ -163,6 +173,7 @@ Note over Database,Supabase : Real-time changes trigger WebSocket events
 The patient data retrieval system demonstrates the integration of multiple state management patterns. The `usePatients` hook fetches patient data from Supabase with optional filtering capabilities, while maintaining proper cache invalidation and error handling.
 
 Key implementation details:
+
 - Query keys are structured hierarchically for precise cache invalidation
 - Filters are incorporated into query keys to enable filtered result caching
 - Error messages are standardized for consistent user feedback
@@ -187,9 +198,11 @@ style K fill:#f99,stroke:#333
 ```
 
 **Diagram sources **
+
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 
 **Section sources**
+
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 
 ## Real-time Updates Implementation
@@ -197,6 +210,7 @@ style K fill:#f99,stroke:#333
 Real-time updates are implemented through an enhanced realtime manager that synchronizes Supabase's real-time capabilities with TanStack Query's caching system. This ensures that UI components automatically reflect database changes without requiring manual refreshes.
 
 The system includes:
+
 - WebSocket subscriptions to database changes
 - Intelligent cache invalidation strategies
 - Fallback polling mechanisms for unreliable connections
@@ -239,10 +253,12 @@ EnhancedRealtimeManager --> RealtimeSubscriptionOptions
 ```
 
 **Diagram sources **
+
 - [enhanced-realtime-manager.ts](file://packages/core-services/src/realtime/enhanced-realtime-manager.ts)
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 
 **Section sources**
+
 - [enhanced-realtime-manager.ts](file://packages/core-services/src/realtime/enhanced-realtime-manager.ts)
 
 ## Relationship Between Local and Global State
@@ -250,6 +266,7 @@ EnhancedRealtimeManager --> RealtimeSubscriptionOptions
 The application maintains a clear separation between local component state and global application state, with well-defined synchronization points. Local state handles transient UI interactions, while global state manages persistent data that affects multiple components.
 
 Synchronization occurs through:
+
 - Mutation callbacks that update both server and client state
 - Query invalidation that triggers refetching of related data
 - Optimistic updates that provide immediate UI feedback
@@ -258,14 +275,18 @@ Synchronization occurs through:
 ## Common Issues and Solutions
 
 ### Stale Data
+
 Stale data is addressed through multiple mechanisms:
+
 - Configurable staleTime (5 minutes by default)
 - Automatic refetching on window focus
 - Real-time WebSocket updates
 - Manual refetch triggers when needed
 
 ### Race Conditions
+
 Race conditions are mitigated by:
+
 - Optimistic updates with rollback capability
 - Query cancellation before mutations
 - Version-based concurrency control
@@ -288,17 +309,21 @@ style G fill:#f99,stroke:#333
 ```
 
 **Diagram sources **
+
 - [enhanced-realtime-manager.ts](file://packages/core-services/src/realtime/enhanced-realtime-manager.ts)
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 
 **Section sources**
+
 - [enhanced-realtime-manager.ts](file://packages/core-services/src/realtime/enhanced-realtime-manager.ts)
 - [usePatients.ts](file://apps/web/src/hooks/usePatients.ts)
 
 ## Performance Considerations
 
 ### Data Fetching Strategies
+
 The application employs several performance optimization techniques:
+
 - Batched requests through httpBatchLink
 - Intelligent caching with appropriate TTL values
 - Selective fetching of required fields
@@ -306,7 +331,9 @@ The application employs several performance optimization techniques:
 - Prefetching of likely-needed data
 
 ### Memory Usage Optimization
+
 Memory usage is optimized through:
+
 - Garbage collection time settings (30 minutes)
 - Automatic cleanup of unused queries
 - Efficient data structures in cache
@@ -316,5 +343,6 @@ Memory usage is optimized through:
 The system balances performance needs with healthcare requirements for data accuracy and privacy, ensuring responsive user interfaces while maintaining compliance with regulations like LGPD.
 
 **Section sources**
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx)
 - [enhanced-realtime-manager.ts](file://packages/core-services/src/realtime/enhanced-realtime-manager.ts)

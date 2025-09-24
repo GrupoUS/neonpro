@@ -1,7 +1,7 @@
 # UI Design Principles
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [NeonProChatProvider.tsx](file://apps/web/src/components/chat/NeonProChatProvider.tsx)
 - [themeCss](file://packages/ui/src/theme/index.ts)
 - [tailwind.config.ts](file://packages/ui/tailwind.config.ts)
@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Design System Overview](#design-system-overview)
 3. [Visual Language and Styling](#visual-language-and-styling)
@@ -38,6 +39,7 @@ The component hierarchy follows a clear structure where atoms (basic elements li
 The design system emphasizes accessibility from the ground up, with all components considering WCAG 2.1 AA+ guidelines during development. Components are designed to be inclusive by default, supporting keyboard navigation, screen readers, high contrast modes, and reduced motion preferences without requiring additional configuration.
 
 **Section sources**
+
 - [NeonProChatProvider.tsx](file://apps/web/src/components/chat/NeonProChatProvider.tsx)
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 
@@ -73,6 +75,7 @@ The spacing system includes predefined values for touch targets, ensuring all in
 ### Responsive Breakpoints
 
 The responsive design system implements breakpoints aligned with common device categories:
+
 - Mobile: up to 640px
 - Tablet: 641px to 1024px
 - Desktop: 1025px and above
@@ -80,6 +83,7 @@ The responsive design system implements breakpoints aligned with common device c
 Media queries are used to adjust layout, typography, and component behavior at these breakpoints, ensuring optimal user experience across devices. The system prioritizes mobile-first design principles, with enhancements added progressively for larger screens.
 
 **Section sources**
+
 - [themeCss](file://packages/ui/src/theme/index.ts)
 - [tailwind.config.ts](file://packages/ui/tailwind.config.ts)
 
@@ -133,6 +137,7 @@ Form components include proper labeling with explicit associations between label
 Validation messages are programmatically associated with their respective fields using ARIA attributes, and form submission errors are announced to assistive technologies. Required fields are clearly indicated through both visual cues and ARIA attributes.
 
 **Section sources**
+
 - [accessibility.css](file://apps/web/src/components/chat/accessibility.css)
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md)
 
@@ -151,6 +156,7 @@ Molecules combine atoms into functional units, such as form fields that pair an 
 The design system distinguishes between shared components in the `packages/ui` directory and application-specific components in `apps/web/src/components`. Shared components are intended for cross-application reuse and follow stricter API contracts, while local components can be more tightly coupled to specific use cases.
 
 Shared components are organized into categories:
+
 - **ui**: Base primitive components (buttons, inputs, cards)
 - **forms**: Healthcare-specific form controls
 - **healthcare**: Medical application components (consent banners, patient data displays)
@@ -182,6 +188,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
 This pattern allows multiple components to access and update shared state without prop drilling, while maintaining a clean separation between presentation and logic.
 
 **Section sources**
+
 - [NeonProChatProvider.tsx](file://apps/web/src/components/chat/NeonProChatProvider.tsx)
 - [index.ts](file://packages/ui/src/components/healthcare/index.ts)
 
@@ -238,6 +245,7 @@ export function installThemeStyles(target?: Document) {
 ```
 
 **Section sources**
+
 - [themeCss](file://packages/ui/src/theme/index.ts)
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 
@@ -262,6 +270,7 @@ Responsive components are optimized for performance across network conditions an
 The system implements code splitting for major components, loading only the necessary code for the current view and device type. This reduces initial load time and memory usage, particularly important for mobile users with limited bandwidth or storage.
 
 **Section sources**
+
 - [dashboard-layout.tsx](file://packages/ui/src/components/ui/dashboard-layout.tsx)
 - [aesthetic-clinic-performance.test.tsx](file://apps/web/src/__tests__/performance/aesthetic-clinic-performance.test.tsx)
 
@@ -286,6 +295,7 @@ Automated testing includes cross-browser checks using tools like Playwright to v
 The system monitors browser usage statistics to inform support decisions and prioritize testing efforts. When significant portions of users rely on specific browser versions, targeted fixes are implemented to address compatibility issues.
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md)
 - [playwright.config.ts](file://playwright.config.ts)
 
@@ -296,6 +306,7 @@ The system monitors browser usage statistics to inform support decisions and pri
 When extending the design system with new components, developers should follow established patterns for structure, styling, and accessibility. New components should be added to the appropriate package based on their intended scope of reuse.
 
 Shared components belong in the `packages/ui` directory and should:
+
 - Follow atomic design principles
 - Use CSS custom properties for styling
 - Implement full keyboard navigation support
@@ -314,6 +325,7 @@ Component APIs should follow consistent naming conventions and prop patterns est
 ### Documentation Requirements
 
 All new components require documentation that includes:
+
 - Usage examples with code samples
 - Prop type definitions and descriptions
 - Accessibility considerations
@@ -324,6 +336,7 @@ All new components require documentation that includes:
 Documentation should be added to the component's source file and included in the design system documentation site. Visual examples should demonstrate the component in various states and configurations.
 
 **Section sources**
+
 - [index.ts](file://packages/ui/src/components/healthcare/index.ts)
 - [components.json](file://components.json)
 
@@ -354,5 +367,6 @@ Animations are implemented using CSS transforms and opacity changes, which are o
 The system respects user preferences for reduced motion, disabling non-essential animations when requested. Performance monitoring ensures that animations maintain 60fps even on lower-end devices.
 
 **Section sources**
+
 - [NeonProChatProvider.tsx](file://apps/web/src/components/chat/NeonProChatProvider.tsx)
 - [aesthetic-clinic-performance.test.tsx](file://apps/web/src/__tests__/performance/aesthetic-clinic-performance.test.tsx)

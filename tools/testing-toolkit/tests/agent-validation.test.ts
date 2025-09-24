@@ -22,14 +22,15 @@ describe('Agent validation utilities', () => {
       quality: 70,
       performance: 90,
       maintainability: 60,
-    }
+    });
 
     expect(result.passed).toBe(false);
-    expect(result.failures).toContain('quality: 70 below threshold of 85')
+    expect(result.failures).toContain('quality: 70 below threshold of 85');
     expect(result.failures).toContain(
-      'maintainability: 60 below threshold of 85',
-    
-    expect(result.score).toBeLessThan(100
+      'maintainability: 60 below threshold of 85'
+    );
+
+    expect(result.score).toBeLessThan(100);
   }
 
   it('applies vulnerability threshold with lower-is-better logic', () => {
@@ -43,32 +44,32 @@ describe('Agent validation utilities', () => {
       compliance: 100,
       vulnerabilities: 2,
       authentication: 90,
-    }
+    });
 
     expect(result.passed).toBe(false);
     expect(result.failures).toContain(
-      'vulnerabilities: 2 exceeds threshold of 0',
-    
+      'vulnerabilities: 2 exceeds threshold of 0'
+    );
   }
 
   it('returns default passing result when no gate configured', () => {
-    const result = validateAgentMetrics('architect-review', { patterns: 50 }
+    const result = validateAgentMetrics('architect-review', { patterns: 50 });
     expect(result.passed).toBe(true);
-    expect(result.score).toBe(100
+    expect(result.score).toBe(100);
   }
 
   it('validates TDD cycle phases', () => {
-    const failing = validateTDDCycle({ 'red-phase': true }
+    const failing = validateTDDCycle({ 'red-phase': true });
     expect(failing.compliant).toBe(false);
-    expect(failing.missingPhases).toContain('green-phase')
+    expect(failing.missingPhases).toContain('green-phase');
     const passing = validateTDDCycle({
       'red-phase': true,
       'green-phase': true,
       'refactor-phase': true,
-    }
+    });
 
     expect(passing.compliant).toBe(true);
-    expect(passing.completionRate).toBe(100
+    expect(passing.completionRate).toBe(100);
   }
 
   it('evaluates healthcare compliance risk levels', () => {
@@ -76,11 +77,11 @@ describe('Agent validation utilities', () => {
       consentGiven: false,
       dataProcessingPurpose: '',
       auditTrail: [],
-    }
+    });
 
     expect(result.compliant).toBe(false);
-    expect(result.violations.length).toBeGreaterThan(0
-    expect(result.riskLevel).toBe('critical')
+    expect(result.violations.length).toBeGreaterThan(0);
+    expect(result.riskLevel).toBe('critical');
   }
 
   it('generates targeted recommendations from validation results', () => {
@@ -98,27 +99,28 @@ describe('Agent validation utilities', () => {
       validation,
     
 
-    expect(recommendations).toContain('Follow TDD patterns more consistently')
+    expect(recommendations).toContain('Follow TDD patterns more consistently');
     expect(recommendations).toContain(
-      'Increase test coverage for critical paths',
-    
+      'Increase test coverage for critical paths'
+    );
+
     expect(recommendations).toContain(
-      'tdd-orchestrator requires significant improvement (score: 68%)',
-    
+      'tdd-orchestrator requires significant improvement (score: 68%)'
+    );
   }
 
   it('passes when optional metrics are missing', () => {
-    const result = validateAgentMetrics('code-reviewer', { quality: 90 }
+    const result = validateAgentMetrics('code-reviewer', { quality: 90 });
     expect(result.passed).toBe(true);
-    expect(result.failures).toHaveLength(0
+    expect(result.failures).toHaveLength(0);
   }
 
   it('defaults to success when no quality gate is defined', () => {
     const result = validateAgentMetrics('architect-review' as any, {
       quality: 90,
-    }
+    });
     expect(result.passed).toBe(true);
-    expect(result.score).toBe(100
+    expect(result.score).toBe(100);
   }
   it('returns perfect score when no metrics provided', () => {
     const result = validateAgentMetrics('code-reviewer', {}
@@ -190,8 +192,11 @@ it('suggests minor improvements when score is moderate', () => {
   
 
   expect(recommendations).toContain(
-    'code-reviewer needs minor improvements (score: 80%)',
-  
+    'code-reviewer needs minor improvements (score: 80%)'
+  );
+  expect(recommendations).toContain(
+    'code-reviewer needs minor improvements (score: 80%)'
+  );
 }
 it('sets high risk when multiple non-critical violations occur', () => {
   const result = validateHealthcareCompliance({

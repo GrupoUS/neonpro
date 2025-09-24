@@ -1,7 +1,7 @@
 # Operational Guide
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts)
 - [cert-renewal.sh](file://apps/api/scripts/cert-renewal.sh)
 - [https-config.ts](file://apps/api/src/config/https-config.ts)
@@ -15,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Monitoring Dashboard Configuration](#monitoring-dashboard-configuration)
 3. [Incident Response Procedures](#incident-response-procedures)
@@ -30,6 +31,7 @@
 The NeonPro application is a healthcare platform designed to ensure system reliability, availability, and performance in production environments. This operational guide provides comprehensive documentation for maintaining the application, focusing on key aspects such as monitoring, incident response, backup and recovery, updates, and support. The guide is structured to cater to both operations teams seeking conceptual understanding and DevOps engineers requiring technical details for effective system management.
 
 **Section sources**
+
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L1-L166)
 
@@ -60,9 +62,11 @@ A --> O[Network Performance]
 ```
 
 **Diagram sources**
+
 - [performance-monitoring.json](file://tools/monitoring/dashboards/performance-monitoring.json#L1-L493)
 
 Key features include:
+
 - Real-time tracking of API response times (50th, 90th, 95th, and 99th percentiles)
 - Error rate monitoring by service (patients, appointments, medical records, billing)
 - Database performance metrics (query duration, active/idle connections)
@@ -86,9 +90,11 @@ P --> X[Audit Events]
 ```
 
 **Diagram sources**
+
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json#L1-L268)
 
 This dashboard focuses on:
+
 - System health status (web server, API server, database)
 - Patient count and appointment scheduling metrics
 - API response time (95th percentile) and error rates
@@ -98,6 +104,7 @@ This dashboard focuses on:
 Both dashboards refresh every 30 seconds and use Prometheus as the data source, ensuring timely detection of anomalies.
 
 **Section sources**
+
 - [performance-monitoring.json](file://tools/monitoring/dashboards/performance-monitoring.json#L1-L493)
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json#L1-L268)
 
@@ -115,6 +122,7 @@ SSL/TLS certificate renewal is managed through a combination of Node.js configur
 4. **Notification System**: Logs warnings and sends notifications upon successful or failed renewals.
 
 The `cert-renewal.sh` script automates this process with additional features:
+
 - Backup of current certificates before renewal
 - Validation of renewed certificates using OpenSSL
 - Restart of services post-renewal
@@ -137,6 +145,7 @@ Alert --> End3([Failure])
 ```
 
 **Diagram sources**
+
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 - [cert-renewal.sh](file://apps/api/scripts/cert-renewal.sh#L1-L231)
 
@@ -152,6 +161,7 @@ In case of critical failures, the `emergency-rollback.sh` script enables rapid r
 The script integrates with external notification systems (Slack, PagerDuty) for real-time alerts during the rollback process.
 
 **Section sources**
+
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 - [cert-renewal.sh](file://apps/api/scripts/cert-renewal.sh#L1-L231)
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
@@ -165,12 +175,14 @@ While specific backup scripts are not explicitly mentioned in the provided files
 - **Vercel Deployment History**: Leverages Vercel's deployment aliases for promoting previous versions.
 
 Recovery strategies should incorporate regular backups of:
+
 - Database snapshots
 - Configuration files
 - Environment variables
 - SSL/TLS certificates
 
 **Section sources**
+
 - [cert-renewal.sh](file://apps/api/scripts/cert-renewal.sh#L1-L231)
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
@@ -186,6 +198,7 @@ Application updates follow a structured workflow involving testing, staging, and
 These scripts likely integrate with CI/CD pipelines to automate testing and validation before production deployment.
 
 **Section sources**
+
 - [deploy.sh](file://scripts/deploy.sh#L1-L20)
 - [deploy-api-separate.sh](file://scripts/deploy-api-separate.sh#L1-L20)
 - [deploy-unified.sh](file://scripts/deploy-unified.sh#L1-L20)
@@ -203,6 +216,7 @@ Support operations are facilitated through multiple channels:
 The `error-tracking.ts` middleware sets up global error handlers that log errors with stack traces and send appropriate responses based on environment settings.
 
 **Section sources**
+
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts#L1-L114)
 
 ## Common Operational Scenarios
@@ -235,6 +249,7 @@ During emergencies:
 4. Generate and distribute the rollback report for post-mortem analysis.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L425)
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
@@ -261,6 +276,7 @@ Plan capacity based on metrics from the monitoring dashboards:
 Regularly review the **Performance Monitoring Dashboard** to identify bottlenecks and plan infrastructure upgrades accordingly.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L425)
 - [performance-monitoring.json](file://tools/monitoring/dashboards/performance-monitoring.json#L1-L493)
 
@@ -269,6 +285,7 @@ Regularly review the **Performance Monitoring Dashboard** to identify bottleneck
 Maintaining the NeonPro application in production requires a proactive approach to monitoring, incident response, and system optimization. By leveraging the provided tools and following established procedures, operations teams can ensure high availability, reliability, and performance. Continuous monitoring through dashboards, automated certificate management, and well-defined rollback procedures form the foundation of a resilient operational framework.
 
 **Section sources**
+
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L425)
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)

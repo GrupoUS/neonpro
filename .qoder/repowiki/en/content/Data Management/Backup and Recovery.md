@@ -1,7 +1,7 @@
 # Backup and Recovery
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [data-retention-service.ts](file://apps/api/src/services/data-retention-service.ts)
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts)
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Automated Backup Systems](#automated-backup-systems)
 3. [Backup Frequency and Retention Policies](#backup-frequency-and-retention-policies)
@@ -22,9 +23,11 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The neonpro healthcare application implements a comprehensive backup and recovery system designed to ensure data integrity, availability, and compliance with Brazilian healthcare regulations including LGPD (Lei Geral de Proteção de Dados) and CFM Resolution 1.821/2007. This document details the implementation of automated backup systems, retention policies, restoration procedures, and integration with audit trails and monitoring systems. The system is designed to handle various failure scenarios while maintaining strict compliance with Brazilian regulatory requirements for healthcare data management.
 
 ## Automated Backup Systems
+
 The neonpro application employs an automated backup system that ensures regular, reliable backups of all critical healthcare data. The system integrates with Supabase as the primary database provider and implements multiple layers of protection to prevent data loss.
 
 The backup system automatically creates snapshots of the database at scheduled intervals, with incremental backups between full backups to minimize storage requirements and reduce backup window duration. Each backup includes metadata about the backup process, including timestamps, backup size, and cryptographic hashes for integrity verification.
@@ -47,18 +50,23 @@ K --> L[Send Completion Notification]
 ```
 
 **Diagram sources**
+
 - [data-retention-service.ts](file://apps/api/src/services/data-retention-service.ts#L240-L923)
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts#L271-L297)
 
 **Section sources**
+
 - [data-retention-service.ts](file://apps/api/src/services/data-retention-service.ts#L240-L923)
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts#L271-L297)
 
 ## Backup Frequency and Retention Policies
+
 The backup frequency and retention policies in the neonpro application are designed to comply with Brazilian healthcare regulations while balancing operational requirements and storage costs.
 
 ### Backup Frequency
+
 The system implements a tiered backup schedule:
+
 - **Real-time transaction logging**: All database changes are logged immediately to a write-ahead log
 - **Hourly incremental backups**: Every hour, changes since the last backup are captured
 - **Daily full backups**: Complete database snapshots are created daily
@@ -67,15 +75,16 @@ The system implements a tiered backup schedule:
 This multi-tiered approach ensures that data can be restored to any point within the retention period while minimizing the impact on system performance during peak hours.
 
 ### Retention Policies
+
 Retention policies are implemented according to Brazilian regulatory requirements:
 
-| Data Category | Retention Period | Regulatory Reference | Action After Expiry |
-|-------------|----------------|-------------------|-------------------|
-| Medical Records | 20 years | CFM Resolution 1.821/2007 | Manual review required before deletion |
-| Personal Data | 2 years | LGPD Article 16º | Automatic anonymization |
-| Financial Data | 5 years | Brazilian tax regulations | Anonymization |
-| Sensitive Data | Immediate cleanup on consent withdrawal | LGPD Article 18º | Permanent deletion |
-| Biometric Data | 1 year | ANVISA RDC 75/2013 | Permanent deletion |
+| Data Category   | Retention Period                        | Regulatory Reference      | Action After Expiry                    |
+| --------------- | --------------------------------------- | ------------------------- | -------------------------------------- |
+| Medical Records | 20 years                                | CFM Resolution 1.821/2007 | Manual review required before deletion |
+| Personal Data   | 2 years                                 | LGPD Article 16º          | Automatic anonymization                |
+| Financial Data  | 5 years                                 | Brazilian tax regulations | Anonymization                          |
+| Sensitive Data  | Immediate cleanup on consent withdrawal | LGPD Article 18º          | Permanent deletion                     |
+| Biometric Data  | 1 year                                  | ANVISA RDC 75/2013        | Permanent deletion                     |
 
 The `DataRetentionService` class manages these policies and automatically schedules cleanup jobs based on retention rules. The service calculates retention dates based on policy configuration and executes appropriate actions when data reaches its expiration date.
 
@@ -122,17 +131,21 @@ DataRetentionService : +runScheduledCleanup()
 ```
 
 **Diagram sources**
+
 - [data-retention-service.ts](file://apps/api/src/services/data-retention-service.ts#L240-L923)
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts#L0-L970)
 
 **Section sources**
+
 - [data-retention-service.ts](file://apps/api/src/services/data-retention-service.ts#L240-L923)
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts#L0-L970)
 
 ## Restoration Procedures
+
 The neonpro application provides comprehensive restoration procedures for various failure scenarios, ensuring business continuity and data integrity.
 
 ### Accidental Data Deletion
+
 When accidental data deletion occurs, the restoration process follows these steps:
 
 1. Identify the time of deletion through audit logs
@@ -144,6 +157,7 @@ When accidental data deletion occurs, the restoration process follows these step
 The system supports point-in-time recovery, allowing administrators to restore data to any specific moment within the retention period. This capability is particularly important for healthcare applications where even short periods of data loss can impact patient care.
 
 ### Database Corruption
+
 For database corruption scenarios, the restoration procedure includes:
 
 1. Isolate the corrupted database instance
@@ -154,6 +168,7 @@ For database corruption scenarios, the restoration procedure includes:
 6. Gradually reintroduce the restored database to production traffic
 
 ### Regional Outages
+
 In the event of a regional outage, the disaster recovery process involves:
 
 1. Activating the secondary region's infrastructure
@@ -180,18 +195,23 @@ API->>API : Log restoration in audit trail
 ```
 
 **Diagram sources**
+
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts#L271-L297)
 - [test_data_encryption.ts](file://apps/api/tests/integration/test_data_encryption.ts#L503-L526)
 
 **Section sources**
+
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts#L271-L297)
 - [test_data_encryption.ts](file://apps/api/tests/integration/test_data_encryption.ts#L503-L526)
 
 ## Audit Trail Integration
+
 The backup and recovery system is tightly integrated with the application's audit trail to ensure transparency, accountability, and compliance with Brazilian healthcare regulations.
 
 ### Audit Logging
+
 Every backup and restoration operation is recorded in the audit trail with detailed information including:
+
 - Timestamp of the operation
 - User or system identity initiating the operation
 - Type of operation (backup, restoration, verification)
@@ -203,6 +223,7 @@ Every backup and restoration operation is recorded in the audit trail with detai
 The `ComprehensiveAuditService` class handles audit logging for backup operations, ensuring that all activities are properly documented and available for compliance audits.
 
 ### Integrity Verification
+
 After each backup and restoration operation, the system performs integrity verification and records the results in the audit trail:
 
 ```typescript
@@ -216,6 +237,7 @@ After each backup and restoration operation, the system performs integrity verif
 ```
 
 This verification process confirms that:
+
 - All data was successfully backed up or restored
 - Encryption keys are accessible and functional
 - Data integrity is maintained (no corruption)
@@ -239,17 +261,21 @@ J --> K[Complete Operation]
 ```
 
 **Diagram sources**
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L0-L330)
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts#L271-L297)
 
 **Section sources**
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L0-L330)
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts#L271-L297)
 
 ## Monitoring and Alerting
+
 The backup and recovery system is integrated with comprehensive monitoring and alerting mechanisms to detect and respond to issues promptly.
 
 ### Health Checks
+
 The system performs regular health checks on the backup infrastructure:
 
 ```bash
@@ -277,6 +303,7 @@ check_backups() {
 ```
 
 These health checks verify that:
+
 - The backup system is operational
 - Backups are being created according to schedule
 - Storage capacity is sufficient
@@ -284,6 +311,7 @@ These health checks verify that:
 - Encryption keys are accessible
 
 ### Alerting Mechanisms
+
 The system triggers alerts for various conditions:
 
 - **Critical alerts**: Backup system failure, inability to create backups, data corruption detected
@@ -310,17 +338,21 @@ K --> N[Schedule Remediation]
 ```
 
 **Diagram sources**
+
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh#L223-L261)
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts#L271-L297)
 
 **Section sources**
+
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh#L223-L261)
 - [audit-service.ts](file://apps/api/src/services/audit-service.ts#L271-L297)
 
 ## Common Issues and Solutions
+
 The backup and recovery system addresses several common issues that can affect healthcare applications.
 
 ### Incomplete Backups
+
 Incomplete backups can occur due to network interruptions, storage limitations, or system failures. The system addresses this issue through:
 
 - **Resumable backups**: If a backup is interrupted, it can be resumed from the point of failure rather than starting over
@@ -329,6 +361,7 @@ Incomplete backups can occur due to network interruptions, storage limitations, 
 - **Bandwidth throttling**: Adaptive transfer rates to avoid network congestion
 
 ### Long Recovery Times
+
 Long recovery times can impact patient care and business operations. The system mitigates this through:
 
 - **Incremental backups**: Only changed data is backed up and restored, reducing transfer times
@@ -337,6 +370,7 @@ Long recovery times can impact patient care and business operations. The system 
 - **Pre-warming**: After restoration, the system pre-loads critical data into memory
 
 ### Data Consistency Issues
+
 To ensure data consistency across backups:
 
 - **Transactionally consistent snapshots**: Backups capture data at a specific point in time, ensuring referential integrity
@@ -365,13 +399,16 @@ K --> N
 ```
 
 **Section sources**
+
 - [data-retention-service.ts](file://apps/api/src/services/data-retention-service.ts#L240-L923)
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh#L223-L261)
 
 ## Disaster Recovery Planning
+
 The disaster recovery plan for the neonpro healthcare application is designed to ensure business continuity in the event of major incidents.
 
 ### Recovery Objectives
+
 The system defines clear recovery objectives aligned with Brazilian healthcare requirements:
 
 - **Recovery Time Objective (RTO)**: 2 hours for critical systems, 8 hours for non-critical systems
@@ -381,6 +418,7 @@ The system defines clear recovery objectives aligned with Brazilian healthcare r
 These objectives guide the design of backup frequency, restoration procedures, and infrastructure redundancy.
 
 ### Geo-Replication
+
 The system implements geo-replication to protect against regional disasters:
 
 - **Primary region**: São Paulo, Brazil
@@ -390,6 +428,7 @@ The system implements geo-replication to protect against regional disasters:
 Data is continuously replicated between regions with minimal latency to ensure the secondary region can take over quickly in case of failure.
 
 ### Failover and Failback
+
 The failover process is automated and includes:
 
 1. Detection of primary region failure
@@ -430,10 +469,12 @@ style F fill:#bbf,stroke:#333
 ```
 
 **Section sources**
+
 - [data-retention-service.ts](file://apps/api/src/services/data-retention-service.ts#L240-L923)
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh#L223-L261)
 
 ## Conclusion
+
 The backup and recovery system in the neonpro healthcare application provides a robust, compliant solution for protecting patient data and ensuring business continuity. By implementing automated backups with appropriate frequency and retention policies, the system meets Brazilian healthcare regulations including LGPD and CFM Resolution 1.821/2007.
 
 The integration with audit trails ensures complete transparency and accountability for all backup and restoration operations, while monitoring and alerting systems provide early detection of potential issues. The comprehensive restoration procedures address various failure scenarios, from accidental data deletion to regional outages.

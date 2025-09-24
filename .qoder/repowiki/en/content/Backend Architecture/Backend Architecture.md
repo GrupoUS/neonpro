@@ -1,8 +1,7 @@
-
 # Backend Architecture
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [index.ts](file://apps/api/src/index.ts)
 - [app.ts](file://apps/api/src/app.ts)
 - [auth.ts](file://apps/api/src/middleware/auth.ts)
@@ -18,6 +17,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [System Context and Integration](#system-context-and-integration)
 3. [Core Architecture Overview](#core-architecture-overview)
@@ -41,6 +41,7 @@ This documentation provides a comprehensive overview of the backend system's hig
 The backend serves multiple client applications including web interfaces, mobile apps, and AI agents, providing services for patient management, appointment scheduling, medical records, financial operations, and AI-powered clinical decision support. The architecture emphasizes security, auditability, and performance, particularly for edge deployments on Vercel.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [index.ts](file://apps/api/src/index.ts#L1-L95)
 
@@ -85,11 +86,13 @@ style Database fill:#9C27B0,stroke:#7B1FA2,color:white
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
 - [router.ts](file://apps/api/src/trpc/router.ts#L1-L106)
 
 The system context reveals several key integration points:
+
 - **Frontend Integration**: Multiple client applications consume the API through both RESTful endpoints and tRPC interfaces
 - **AI Agent Ecosystem**: The backend orchestrates multiple AI agents for different domains including aesthetic medicine, financial planning, and clinical decision support
 - **Database Layer**: Supabase provides PostgreSQL database services with real-time capabilities and authentication
@@ -99,6 +102,7 @@ The system context reveals several key integration points:
 The architecture supports bidirectional communication patterns, including request-response for traditional API calls and streaming responses for AI chat interactions. WebSocket connections enable real-time updates for collaborative features and telemedicine applications.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
 - [router.ts](file://apps/api/src/trpc/router.ts#L1-L106)
@@ -131,6 +135,7 @@ class I,J data
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L214)
@@ -138,23 +143,29 @@ class I,J data
 The core architectural components include:
 
 ### Entry Point Configuration
+
 The application entry point (`index.ts`) initializes the server instance and configures essential services before starting the HTTP server. In development mode, it creates a local server, while in production it integrates with Vercel's serverless environment.
 
 ### Hono Application Framework
+
 The main application (`app.ts`) configures the Hono framework with a comprehensive middleware pipeline that handles cross-cutting concerns before requests reach business logic. Hono's lightweight design enables fast cold starts on edge environments.
 
 ### Modular Route Structure
+
 Routes are organized by domain (patients, appointments, billing, AI) with versioned endpoints for backward compatibility. The system supports both RESTful routes and tRPC endpoints, providing flexibility for different client requirements.
 
 ### Service-Oriented Design
+
 Business logic is encapsulated in service classes that coordinate operations across multiple domains. This separation allows for better testability and maintainability of complex workflows.
 
 ### Data Access Layer
+
 Prisma ORM provides type-safe database access with support for complex queries and transactions. The data layer abstracts database operations from business logic, enabling easier maintenance and evolution of the data model.
 
 The architecture prioritizes performance with optimizations like semantic caching for AI responses, query timeouts, and response compression. Monitoring and observability are built-in, with comprehensive logging, error tracking, and performance metrics collection.
 
 **Section sources**
+
 - [index.ts](file://apps/api/src/index.ts#L1-L95)
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
@@ -188,6 +199,7 @@ style Sentry,AuditLog fill:#9C27B0,stroke:#7B1FA2,color:white
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L381)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L214)
@@ -197,6 +209,7 @@ style Sentry,AuditLog fill:#9C27B0,stroke:#7B1FA2,color:white
 The middleware pipeline is composed of several specialized layers, each addressing specific concerns:
 
 #### Security Middleware
+
 - **CORS Policy**: Restricts origins based on environment (production vs. development)
 - **HSTS Enforcement**: Ensures HTTPS-only communication with 1-year max-age
 - **Security Headers**: Implements comprehensive header protection including XSS, MIME sniffing, and frame guards
@@ -204,18 +217,22 @@ The middleware pipeline is composed of several specialized layers, each addressi
 - **HTTPS Redirection**: Automatically redirects HTTP requests to HTTPS
 
 #### Rate Limiting Strategy
+
 The system implements differentiated rate limiting based on endpoint sensitivity:
+
 - **Healthcare Data Endpoints**: 50 requests per 15 minutes
-- **AI/Chat Endpoints**: 20 requests per minute  
+- **AI/Chat Endpoints**: 20 requests per minute
 - **Authentication Endpoints**: 10 attempts per 15 minutes (only failed attempts counted)
 - **General API Endpoints**: 100 requests per 15 minutes
 
 #### Performance Optimization
+
 - **Query Timeout**: Enforces 2-second maximum response time for healthcare compliance
 - **Response Compression**: Compresses responses to reduce bandwidth usage
 - **HTTPS Monitoring**: Tracks handshake performance with alerting capabilities
 
 #### Observability and Monitoring
+
 - **Sentry Integration**: Captures errors and performance metrics
 - **Structured Logging**: Comprehensive logging with contextual information
 - **Audit Trail**: Records security-relevant events with risk level assessment
@@ -224,6 +241,7 @@ The system implements differentiated rate limiting based on endpoint sensitivity
 The middleware pipeline executes in a specific order to ensure proper handling of requests and responses. Security measures are applied early in the pipeline, while error handling and logging occur throughout and at the end of the request lifecycle.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L381)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L214)
@@ -278,6 +296,7 @@ end note
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [router.ts](file://apps/api/src/trpc/router.ts#L1-L106)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
@@ -287,11 +306,13 @@ end note
 The RESTful interface follows conventional patterns with versioned routes and standard HTTP methods:
 
 #### Versioned Routes
+
 - `/v1/` prefix for stable API endpoints
 - `/api/v2/` prefix for newer versions with enhanced features
 - Clear separation between legacy and modern endpoints
 
 #### Resource-Oriented Design
+
 - **Patients**: `/v1/patients` for patient management
 - **Appointments**: `/v1/appointments` for scheduling
 - **Medical Records**: `/v1/medical-records` for health data
@@ -299,6 +320,7 @@ The RESTful interface follows conventional patterns with versioned routes and st
 - **AI Chat**: `/v1/chat` for conversational AI
 
 #### Specialized Endpoints
+
 - **Streaming Responses**: `/v1/chat/stream` for AI chat with real-time text generation
 - **Search Suggestions**: `/v1/chat/suggestions` for query auto-completion
 - **Health Checks**: `/v1/health` and `/health` for system monitoring
@@ -309,6 +331,7 @@ The RESTful interface follows conventional patterns with versioned routes and st
 The tRPC interface provides type-safe RPC methods organized by domain:
 
 #### Domain-Specific Routers
+
 - **Patients Router**: CRUD operations for patient profiles
 - **Appointments Router**: Scheduling and management of appointments
 - **AI Router**: Conversational AI and predictive analytics
@@ -316,13 +339,16 @@ The tRPC interface provides type-safe RPC methods organized by domain:
 - **Healthcare Services Router**: Treatment planning and service management
 
 #### Enhanced Specialized Routers
+
 - **Aesthetic Scheduling Router**: Multi-session treatment scheduling with recovery planning
 - **Aesthetic Clinic Router**: Comprehensive clinic operations with ANVISA compliance
 - **AI Clinical Decision Support Router**: Treatment recommendation engine with contraindication analysis
 - **Real-Time Telemedicine Router**: WebSocket subscriptions for video consultations
 
 #### Context Propagation
+
 The tRPC context includes essential information for healthcare operations:
+
 - User authentication details (userId, clinicId)
 - Audit metadata (IP address, user agent, session ID)
 - Request tracing information for debugging
@@ -330,6 +356,7 @@ The tRPC context includes essential information for healthcare operations:
 The hybrid API approach allows clients to choose the appropriate interface based on their needs—RESTful APIs for simplicity and broad compatibility, tRPC for type safety and complex operations.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [router.ts](file://apps/api/src/trpc/router.ts#L1-L106)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
@@ -368,6 +395,7 @@ Note over Client,Database : Complete request-response cycle with error handling
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
 - [aesthetic-clinic.ts](file://apps/api/src/trpc/routers/aesthetic-clinic.ts#L1-L799)
@@ -377,18 +405,23 @@ Note over Client,Database : Complete request-response cycle with error handling
 The component interaction model follows a strict unidirectional flow from outer layers to inner layers:
 
 #### Presentation Layer (Hono Framework)
+
 The Hono framework acts as the entry point, receiving HTTP requests and applying the middleware pipeline. It routes requests to appropriate handlers based on URL patterns and HTTP methods.
 
 #### Middleware Layer
+
 The middleware pipeline processes requests through a series of filters that handle cross-cutting concerns:
+
 - Authentication and authorization
-- Rate limiting and DDoS protection  
+- Rate limiting and DDoS protection
 - Security header enforcement
 - Request validation and sanitization
 - Logging and monitoring
 
 #### Controller Layer (Route Handlers)
+
 Route handlers act as controllers that receive validated requests and coordinate business operations:
+
 - Parse request parameters and body
 - Extract authentication context
 - Invoke appropriate service methods
@@ -396,7 +429,9 @@ Route handlers act as controllers that receive validated requests and coordinate
 - Handle exceptions and return appropriate error codes
 
 #### Service Layer (Business Logic)
+
 Services encapsulate business rules and coordinate complex workflows:
+
 - Implement domain-specific logic for healthcare operations
 - Orchestrate multiple data access operations within transactions
 - Integrate with external systems (AI providers, payment gateways)
@@ -404,7 +439,9 @@ Services encapsulate business rules and coordinate complex workflows:
 - Manage state transitions for entities
 
 #### Data Access Layer (Repositories)
+
 Repositories provide an abstraction over database operations:
+
 - Encapsulate query logic and data transformations
 - Implement repository patterns for collections
 - Handle connection management and transactions
@@ -414,6 +451,7 @@ Repositories provide an abstraction over database operations:
 ### Cross-Layer Communication
 
 The architecture enforces strict dependency rules:
+
 - Higher layers can depend on lower layers, but not vice versa
 - Services depend on repositories, but repositories do not depend on services
 - Controllers depend on services, but services do not depend on controllers
@@ -422,6 +460,7 @@ The architecture enforces strict dependency rules:
 This dependency structure creates a clean architecture that is easy to test and maintain. Each layer can be developed and tested independently, with well-defined interfaces between components.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
 - [aesthetic-clinic.ts](file://apps/api/src/trpc/routers/aesthetic-clinic.ts#L1-L799)
@@ -466,6 +505,7 @@ style Egress fill:#e3f2fd,stroke:#2196F3
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
@@ -475,26 +515,31 @@ style Egress fill:#e3f2fd,stroke:#2196F3
 When a request enters the system, it undergoes several processing steps:
 
 #### Request Reception
+
 - HTTP request received by Vercel edge function
 - Request parsed into standardized format
 - Headers, method, URL, and body extracted
 
 #### CORS Validation
+
 - Origin checked against allowed list
 - Development vs. production origin policies applied
 - Preflight requests handled appropriately
 
 #### Authentication
+
 - JWT token extracted from Authorization header
 - Token validated and user identity established
 - User context stored for downstream processing
 
 #### Authorization
+
 - Role-based access control applied
 - Clinic-level data isolation enforced
 - Permission checks performed for sensitive operations
 
 #### Input Validation
+
 - Request parameters and body validated against schemas
 - Malformed requests rejected with appropriate error codes
 - Sanitization applied to prevent injection attacks
@@ -504,17 +549,20 @@ When a request enters the system, it undergoes several processing steps:
 Once the request is authenticated and validated, business processing begins:
 
 #### Context Establishment
+
 - Request-specific context created with user, clinic, and audit information
 - Trace identifiers generated for monitoring
 - Performance timers started
 
 #### Business Logic Execution
+
 - Service methods invoked with validated input
 - Complex workflows orchestrated across multiple domains
 - External API calls made as needed (AI providers, payment processors)
 - Transaction boundaries established for data consistency
 
 #### Data Transformation
+
 - Internal data structures mapped to domain models
 - Privacy-preserving transformations applied
 - Compliance checks performed (LGPD, ANVISA)
@@ -525,21 +573,25 @@ Once the request is authenticated and validated, business processing begins:
 Before the response is sent back to the client:
 
 #### Response Construction
+
 - Business results transformed into API response format
 - Error responses formatted consistently
 - Streaming responses prepared for AI chat
 
 #### Security Processing
+
 - Sensitive data redacted from responses
 - Security headers added to response
 - Content security policies enforced
 
 #### Performance Optimization
+
 - Response compression applied
 - Caching headers set appropriately
 - Performance metrics recorded
 
 #### Logging and Monitoring
+
 - Success or failure logged with contextual information
 - Audit trails updated for completed operations
 - Performance metrics captured for analysis
@@ -547,6 +599,7 @@ Before the response is sent back to the client:
 The data flow is designed to be transparent and auditable, with comprehensive logging at each stage. Error handling is integrated throughout the flow, ensuring that failures are properly reported and do not compromise system security.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
@@ -583,6 +636,7 @@ style B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3 fill:#cddc39,stroke:#afb42b,c
 ```
 
 **Diagram sources **
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L381)
 - [aesthetic-clinic.ts](file://apps/api/src/trpc/routers/aesthetic-clinic.ts#L1-L799)
@@ -592,18 +646,21 @@ style B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3 fill:#cddc39,stroke:#afb42b,c
 The system implements robust authentication to verify user identities:
 
 #### JWT-Based Authentication
+
 - Statelesss authentication using JSON Web Tokens
 - Tokens contain user ID, clinic ID, and role information
 - Signature verification ensures token integrity
 - Expiration times limit token validity
 
 #### Session Management
+
 - Enhanced session manager tracks active sessions
 - Session cookies with secure attributes (HttpOnly, Secure, SameSite)
 - Session invalidation on password change or logout
 - Refresh token rotation to prevent replay attacks
 
 #### Multi-Factor Authentication
+
 - Support for additional authentication factors
 - Configurable MFA policies based on user role
 - Time-based one-time passwords (TOTP) integration
@@ -614,18 +671,21 @@ The system implements robust authentication to verify user identities:
 Fine-grained authorization controls access to resources:
 
 #### Role-Based Access Control (RBAC)
+
 - Predefined roles (admin, clinician, staff, patient)
 - Role-specific permissions for different operations
 - Hierarchical role relationships
 - Dynamic role assignment
 
 #### Clinic-Level Data Isolation
+
 - All queries filtered by clinic ID
 - Cross-clinic data access strictly prohibited
 - Tenant isolation at database level
 - Clinic-specific configuration and branding
 
 #### Permission Scopes
+
 - Granular permissions for specific operations
 - Least privilege principle enforced
 - Temporary elevated privileges for specific tasks
@@ -636,18 +696,21 @@ Fine-grained authorization controls access to resources:
 Comprehensive data protection ensures confidentiality and integrity:
 
 #### Encryption
+
 - AES-256-GCM encryption for sensitive data
 - TLS 1.3 for data in transit
 - Key rotation policies
 - Hardware security modules (HSM) for key storage
 
 #### PII Redaction
+
 - Automatic redaction of personally identifiable information
 - CPF, CNPJ, phone numbers, and email addresses masked
 - Context-aware redaction based on user role
 - Audit logs with redacted sensitive data
 
 #### Anonymization
+
 - Patient data anonymized for AI processing
 - Direct identifiers removed before analysis
 - Generalization of sensitive attributes
@@ -658,18 +721,21 @@ Comprehensive data protection ensures confidentiality and integrity:
 Layered network defenses protect against common threats:
 
 #### Transport Security
+
 - HSTS with 1-year max-age and preload
 - Automatic HTTP to HTTPS redirection
 - Perfect forward secrecy enabled
 - Certificate transparency logging
 
 #### Content Security
+
 - Strict Content Security Policy
 - Blocking of inline scripts and unsafe evaluations
 - Whitelisted domains for external resources
 - Reporting of policy violations
 
 #### Rate Limiting
+
 - Differentiated limits for sensitive endpoints
 - IP-based and user-based limiting
 - Sliding window algorithms
@@ -680,18 +746,21 @@ Layered network defenses protect against common threats:
 Comprehensive auditing ensures accountability and regulatory compliance:
 
 #### Audit Logging
+
 - Immutable audit trails for all sensitive operations
 - Risk level classification for events
 - Tamper-evident logging mechanisms
 - Long-term retention for compliance
 
 #### Compliance Verification
+
 - Automated LGPD compliance checks
 - ANVISA regulation validation
 - CFM resolution adherence
 - Regular compliance reporting
 
 #### Security Monitoring
+
 - Real-time alerting for suspicious activities
 - Anomaly detection for unusual access patterns
 - Vulnerability scanning and penetration testing
@@ -700,6 +769,7 @@ Comprehensive auditing ensures accountability and regulatory compliance:
 The security implementation follows defense-in-depth principles, with multiple layers of protection that work together to create a robust security posture for the healthcare application.
 
 **Section sources**
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L381)
 - [aesthetic-clinic.ts](file://apps/api/src/trpc/routers/aesthetic-clinic.ts#L1-L799)
@@ -737,6 +807,7 @@ style I,J,K,L,M,N,O,P,Q,R fill:#cddc39,stroke:#afb42b,color:black
 ```
 
 **Diagram sources **
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L46)
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
@@ -746,30 +817,35 @@ style I,J,K,L,M,N,O,P,Q,R fill:#cddc39,stroke:#afb42b,color:black
 Errors are categorized into distinct types, each with appropriate handling:
 
 #### Validation Errors (400 Bad Request)
+
 - Invalid input parameters or request body
 - Missing required fields
 - Format violations (e.g., invalid email, malformed date)
 - Schema validation failures
 
 #### Authentication Errors (401 Unauthorized)
+
 - Missing authentication token
 - Expired or invalid token
 - Token signature verification failure
 - Session expiration
 
 #### Authorization Errors (403 Forbidden)
+
 - Insufficient role or permissions
 - Access to unauthorized resources
 - Clinic-level data isolation violations
 - Operation not permitted for user role
 
 #### Business Logic Errors (409 Conflict)
+
 - Violation of business rules
 - Data integrity constraints
 - Scheduling conflicts
 - Duplicate record creation
 
 #### System Errors (500 Internal Server Error)
+
 - Database connectivity issues
 - External service failures
 - Unhandled exceptions
@@ -780,18 +856,21 @@ Errors are categorized into distinct types, each with appropriate handling:
 To prevent information leakage, error details are carefully sanitized:
 
 #### Sensitive Data Removal
+
 - Stack traces stripped from production responses
 - Database error messages sanitized
 - Internal system details hidden
 - Configuration values protected
 
 #### Contextual Information
+
 - Generic error messages for clients
 - Detailed logging for internal use
 - Correlation IDs for troubleshooting
 - Request-specific context preserved internally
 
 #### User-Friendly Messages
+
 - Clear, actionable error descriptions
 - Language-appropriate messaging (Portuguese for Brazilian users)
 - Guidance on how to resolve common issues
@@ -802,18 +881,21 @@ To prevent information leakage, error details are carefully sanitized:
 Comprehensive logging ensures errors can be diagnosed and resolved:
 
 #### Structured Logging
+
 - Consistent log format with structured data
 - Timestamps, request IDs, and user context
 - Error severity levels
 - Performance impact metrics
 
 #### Audit Trails
+
 - Security-relevant errors logged to audit system
 - Risk level assessment for error events
 - Immutable records for compliance
 - Retention policies aligned with regulations
 
 #### Monitoring Integration
+
 - Real-time error tracking with Sentry
 - Alerting for critical errors
 - Error rate monitoring and trending
@@ -824,18 +906,21 @@ Comprehensive logging ensures errors can be diagnosed and resolved:
 The system implements strategies to maintain availability during failures:
 
 #### Circuit Breakers
+
 - Fail-fast for dependent services
 - Automatic recovery after cooldown
 - Fallback responses when possible
 - Load shedding during high traffic
 
 #### Retry Mechanisms
+
 - Exponential backoff for transient failures
 - Idempotent operations to prevent duplication
 - Retry budget limiting
 - Context-aware retry decisions
 
 #### Fallback Responses
+
 - Cached responses for read operations
 - Simplified functionality during partial outages
 - Maintenance mode for extended downtime
@@ -844,6 +929,7 @@ The system implements strategies to maintain availability during failures:
 The error handling strategy balances transparency with security, providing enough information for clients to understand and resolve issues while protecting system internals and sensitive data.
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L46)
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
@@ -879,6 +965,7 @@ style B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3 fill:#cddc39,stroke:#afb42b,c
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [aesthetic-clinic.ts](file://apps/api/src/trpc/routers/aesthetic-clinic.ts#L1-L799)
 - [aesthetic-scheduling.ts](file://apps/api/src/trpc/routers/aesthetic-scheduling.ts#L1-L799)
@@ -888,18 +975,21 @@ style B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3 fill:#cddc39,stroke:#afb42b,c
 Comprehensive audit logging provides accountability and traceability:
 
 #### Immutable Audit Trails
+
 - Write-once, append-only logs
 - Cryptographic hashing for tamper detection
 - Digital signatures for authenticity
 - External storage for protection
 
 #### Risk Level Classification
+
 - Low, Medium, High, Critical risk levels
 - Automated risk assessment based on operation type
 - Context-aware risk scoring
 - Regulatory impact evaluation
 
 #### Retention Policies
+
 - Short-term retention for operational use
 - Long-term archiving for compliance
 - Legal hold capabilities
@@ -910,18 +1000,21 @@ Comprehensive audit logging provides accountability and traceability:
 Automated compliance checks ensure adherence to regulations:
 
 #### LGPD Compliance
+
 - Data subject rights implementation
 - Lawful basis verification
 - Consent management
 - Data protection impact assessments
 
 #### ANVISA Regulations
+
 - Medical device compliance
 - Procedure registration validation
 - Safety protocol adherence
 - Professional certification checks
 
 #### CFM Resolutions
+
 - Telemedicine compliance
 - Medical license validation
 - Ethical guideline adherence
@@ -932,18 +1025,21 @@ Automated compliance checks ensure adherence to regulations:
 Continuous performance monitoring ensures system responsiveness:
 
 #### Response Time Tracking
+
 - Per-endpoint latency measurement
 - Percentile-based SLA monitoring
 - Cold start tracking for serverless functions
 - Regional performance analysis
 
 #### Throughput Monitoring
+
 - Requests per second by endpoint
 - Concurrent connection tracking
 - Queue length monitoring
 - Capacity planning metrics
 
 #### Error Rate Analysis
+
 - Error rates by type and endpoint
 - Error correlation with traffic patterns
 - Mean time to recovery (MTTR)
@@ -954,18 +1050,21 @@ Continuous performance monitoring ensures system responsiveness:
 Comprehensive observability enables effective system management:
 
 #### Distributed Tracing
+
 - End-to-end request tracing
 - Span propagation across services
 - Service dependency mapping
 - Bottleneck identification
 
 #### Metrics Collection
+
 - Infrastructure metrics (CPU, memory, disk)
 - Application metrics (requests, errors, latency)
 - Business metrics (appointments, revenue)
 - Custom metrics for key workflows
 
 #### Log Aggregation
+
 - Centralized log collection
 - Structured log parsing
 - Log correlation with traces
@@ -976,18 +1075,21 @@ Comprehensive observability enables effective system management:
 Robust data privacy protections align with healthcare standards:
 
 #### Data Minimization
+
 - Collection limited to necessary data
 - Field-level granularity
 - Just-in-time data access
 - Data lifecycle management
 
 #### Purpose Limitation
+
 - Data use restricted to specified purposes
 - Consent-based data sharing
 - Purpose change notifications
 - Secondary use restrictions
 
 #### Storage Limitation
+
 - Data retention periods by type
 - Automated data deletion
 - Archival vs. active data separation
@@ -996,6 +1098,7 @@ Robust data privacy protections align with healthcare standards:
 These cross-cutting concerns are implemented consistently across the system, with shared libraries and middleware ensuring uniform behavior regardless of the specific feature or endpoint.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [aesthetic-clinic.ts](file://apps/api/src/trpc/routers/aesthetic-clinic.ts#L1-L799)
 - [aesthetic-scheduling.ts](file://apps/api/src/trpc/routers/aesthetic-scheduling.ts#L1-L799)
@@ -1033,6 +1136,7 @@ style B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,E1,E2,E3,F1,F2,F3 fill:#cddc39,stroke:#afb42
 ```
 
 **Diagram sources **
+
 - [package.json](file://apps/api/package.json)
 - [tsconfig.json](file://apps/api/tsconfig.json)
 - [vercel.json](file://apps/api/vercel.json)
@@ -1042,18 +1146,21 @@ style B1,B2,B3,C1,C2,C3,C4,D1,D2,D3,E1,E2,E3,F1,F2,F3 fill:#cddc39,stroke:#afb42
 The backend runs in a modern JavaScript environment optimized for edge computing:
 
 #### Node.js 18+
+
 - Long-term support version with performance improvements
 - Enhanced cryptographic capabilities
 - Improved diagnostics and debugging
 - Better memory management
 
 #### Vercel Edge Functions
+
 - Global distribution with low-latency access
 - Automatic scaling to handle traffic spikes
 - Fast cold starts for serverless execution
 - Integrated CDN and caching
 
 #### TypeScript 5+
+
 - Strong typing for improved code quality
 - Enhanced type inference and checking
 - Decorators and metaprogramming support
@@ -1064,24 +1171,28 @@ The backend runs in a modern JavaScript environment optimized for edge computing
 A curated set of libraries provides essential functionality:
 
 #### Hono Framework
+
 - Lightweight and fast API framework
 - Excellent TypeScript support
 - Middleware composition capabilities
 - Optimized for serverless environments
 
 #### tRPC
+
 - End-to-end type safety between client and server
 - Zero-boilerplate API creation
 - Built-in serialization and deserialization
 - Excellent developer experience
 
 #### Prisma ORM
+
 - Type-safe database access
 - Intuitive query builder
 - Migrations and schema management
 - Support for complex relationships
 
 #### Zod
+
 - Schema validation with TypeScript integration
 - Runtime type checking
 - Easy-to-use validation syntax
@@ -1092,18 +1203,21 @@ A curated set of libraries provides essential functionality:
 The data layer combines relational and specialized storage:
 
 #### PostgreSQL via Supabase
+
 - Full-featured relational database
 - Row-level security for fine-grained access control
 - Real-time subscriptions for live updates
 - Managed backups and replication
 
 #### Redis
+
 - In-memory caching for frequently accessed data
 - Session storage
 - Rate limiting counters
 - Message queuing
 
 #### S3-Compatible Storage
+
 - Scalable object storage for documents and images
 - Versioning and lifecycle management
 - Server-side encryption
@@ -1114,18 +1228,21 @@ The data layer combines relational and specialized storage:
 Integration with leading AI providers enables intelligent features:
 
 #### OpenAI API
+
 - GPT-4 for advanced language understanding
 - Embeddings for semantic search
 - Function calling for tool integration
 - Moderation API for content safety
 
 #### Anthropic Claude
+
 - Large context windows for document analysis
 - Constitutional AI for responsible outputs
 - Advanced reasoning capabilities
 - Enterprise-grade security
 
 #### Tavily Search
+
 - Web search for information retrieval
 - Citation generation for transparency
 - Filtering for reliable sources
@@ -1136,18 +1253,21 @@ Integration with leading AI providers enables intelligent features:
 Modern DevOps practices ensure reliability and security:
 
 #### Vercel Platform
+
 - Global edge network
 - Automatic SSL certificate management
 - Preview deployments for pull requests
 - Integrated analytics and monitoring
 
 #### GitHub Actions
+
 - CI/CD pipelines for automated testing
 - Security scanning and vulnerability detection
 - Deployment automation
 - Code quality gates
 
 #### Sentry
+
 - Real-time error tracking
 - Performance monitoring
 - Release tracking
@@ -1156,6 +1276,7 @@ Modern DevOps practices ensure reliability and security:
 The technology stack is carefully selected to balance innovation with stability, choosing proven technologies for critical components while embracing new capabilities where they provide significant value.
 
 **Section sources**
+
 - [package.json](file://apps/api/package.json)
 - [tsconfig.json](file://apps/api/tsconfig.json)
 - [vercel.json](file://apps/api/vercel.json)
@@ -1196,6 +1317,7 @@ class N,O,P external
 ```
 
 **Diagram sources **
+
 - [vercel.json](file://apps/api/vercel.json)
 - [index.ts](file://apps/api/src/index.ts#L1-L95)
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
@@ -1205,18 +1327,21 @@ class N,O,P external
 The deployment leverages Vercel's global edge network for optimal performance:
 
 #### Global Points of Presence
+
 - 30+ regions worldwide
 - Automatic routing to nearest location
 - Anycast DNS for fast lookups
 - Low-latency connections (<50ms target)
 
 #### Static Asset Delivery
+
 - CDN-cached static assets (HTML, CSS, JS, images)
 - Automatic compression and optimization
 - Cache invalidation on deployment
 - Versioned asset URLs to prevent stale content
 
 #### Serverless Function Execution
+
 - On-demand function instances
 - Automatic scaling from zero to thousands of instances
 - Isolated execution environments
@@ -1227,18 +1352,21 @@ The deployment leverages Vercel's global edge network for optimal performance:
 API endpoints are deployed as serverless functions with specific configurations:
 
 #### Function Isolation
+
 - Separate functions for different API groups
 - Independent scaling and monitoring
 - Reduced blast radius for failures
 - Granular cost tracking
 
 #### Cold Start Optimization
+
 - Lightweight dependencies
 - Efficient initialization code
 - Keep-warm strategies for critical endpoints
 - Predictive scaling based on usage patterns
 
 #### Resource Limits
+
 - Memory allocation (512MB-3GB)
 - Execution timeout (1-10 seconds for HTTP, longer for background tasks)
 - Concurrent request limits
@@ -1249,18 +1377,21 @@ API endpoints are deployed as serverless functions with specific configurations:
 Multiple environments support the development lifecycle:
 
 #### Development Environment
+
 - Local development with hot reloading
 - Feature flags for incomplete functionality
 - Mock services for external dependencies
 - Debug logging enabled
 
 #### Staging Environment
+
 - Pre-production testing
 - Integration with real external services
 - Performance testing
 - Security scanning
 
 #### Production Environment
+
 - High-availability configuration
 - Automated failover
 - Disaster recovery procedures
@@ -1271,18 +1402,21 @@ Multiple environments support the development lifecycle:
 Sensitive configuration is securely managed:
 
 #### Environment Variables
+
 - Encrypted storage
 - Environment-specific values
 - Automatic injection at runtime
 - Restricted access controls
 
 #### Secret Rotation
+
 - Regular rotation schedules
 - Automated rotation where possible
 - Audit trails for secret changes
 - Emergency revocation procedures
 
 #### Access Controls
+
 - Principle of least privilege
 - Role-based access to secrets
 - Multi-factor authentication for administrative access
@@ -1291,6 +1425,7 @@ Sensitive configuration is securely managed:
 The deployment topology is designed for healthcare applications with strict requirements for availability, performance, and security. The edge-first approach minimizes latency for users worldwide while maintaining the scalability needed for growing clinics and hospitals.
 
 **Section sources**
+
 - [vercel.json](file://apps/api/vercel.json)
 - [index.ts](file://apps/api/src/index.ts#L1-L95)
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
@@ -1327,6 +1462,7 @@ style B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3 fill:#cddc39,stroke:#afb42b,c
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
 - [aesthetic-scheduling.ts](file://apps/api/src/trpc/routers/aesthetic-scheduling.ts#L1-L799)
@@ -1336,18 +1472,21 @@ style B1,B2,B3,C1,C2,C3,D1,D2,D3,E1,E2,E3,F1,F2,F3 fill:#cddc39,stroke:#afb42b,c
 The architecture supports horizontal scaling to handle increased load:
 
 #### Stateless Architecture
+
 - No server-side session storage
 - All state stored in databases or client
 - Requests can be handled by any instance
 - Easy addition of new instances
 
 #### Auto-Scaling Groups
+
 - Dynamic scaling based on CPU, memory, and request metrics
 - Predictive scaling for known traffic patterns
 - Minimum and maximum instance limits
 - Cost-optimized instance selection
 
 #### Container Orchestration
+
 - Kubernetes for container management
 - Pod autoscaling based on custom metrics
 - Rolling updates with zero downtime
@@ -1358,18 +1497,21 @@ The architecture supports horizontal scaling to handle increased load:
 Database performance is optimized for healthcare workloads:
 
 #### Indexing Strategy
+
 - Composite indexes for common query patterns
 - Partial indexes for filtered queries
 - Covering indexes to avoid table scans
 - Regular index maintenance
 
 #### Query Optimization
+
 - Query execution plan analysis
 - Avoidance of N+1 query problems
 - Batch operations for bulk updates
 - Read replicas for reporting queries
 
 #### Connection Pooling
+
 - Efficient reuse of database connections
 - Connection limits to prevent overload
 - Idle connection cleanup
@@ -1380,18 +1522,21 @@ Database performance is optimized for healthcare workloads:
 Multi-layer caching reduces database load and improves response times:
 
 #### Semantic Caching
+
 - Caching of AI responses based on semantic similarity
 - Vector embeddings for query matching
 - TTL-based expiration with refresh
 - Cost savings through response reuse
 
 #### Redis Caching
+
 - In-memory caching for frequently accessed data
 - Session storage with automatic expiration
 - Rate limiting counters
 - Distributed locks for coordination
 
 #### CDN Caching
+
 - Edge caching of static assets
 - API response caching for idempotent requests
 - Cache invalidation on data changes
@@ -1402,18 +1547,21 @@ Multi-layer caching reduces database load and improves response times:
 Traffic is distributed to optimize resource utilization:
 
 #### Traffic Shaping
+
 - Priority queuing for critical operations
 - Throttling of non-essential requests
 - Load shedding during peak periods
 - Circuit breakers for failing services
 
 #### Rate Limiting
+
 - Differentiated limits by endpoint and user role
 - Sliding window algorithms for accuracy
 - Adaptive thresholds based on system load
 - Fair queuing to prevent starvation
 
 #### Queue Processing
+
 - Asynchronous processing of background tasks
 - Message queues for decoupled communication
 - Worker pools for task execution
@@ -1424,18 +1572,21 @@ Traffic is distributed to optimize resource utilization:
 Efficient resource management prevents system overload:
 
 #### Memory Management
+
 - Object pooling for expensive allocations
 - Stream processing for large datasets
 - Garbage collection tuning
 - Memory leak detection
 
 #### Timeout Configuration
+
 - Per-operation timeouts to prevent hanging
 - Circuit breaker timeouts for external calls
 - Graceful timeout handling
 - Retry budgets to prevent thundering herd
 
 #### Graceful Degradation
+
 - Fallback responses during partial outages
 - Simplified functionality when resources are constrained
 - Maintenance mode for extended downtime
@@ -1444,6 +1595,7 @@ Efficient resource management prevents system overload:
 The scalability considerations ensure that the neonpro backend can grow with the needs of healthcare organizations, from small clinics to large hospital networks, while maintaining the performance and reliability required for critical medical applications.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L492)
 - [aesthetic-scheduling.ts](file://apps/api/src/trpc/routers/aesthetic-scheduling.ts#L1-L

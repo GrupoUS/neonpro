@@ -1,7 +1,7 @@
 # Security Headers Middleware
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts)
 - [https-config.ts](file://apps/api/src/config/https-config.ts)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts)
@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Implementation](#core-implementation)
 3. [Security Header Configuration](#security-header-configuration)
@@ -30,6 +31,7 @@ Built with healthcare compliance in mind, this middleware supports both general 
 The middleware operates as part of a comprehensive security architecture that includes TLS 1.3+ encryption, rate limiting, authentication controls, and audit logging. It is designed to be flexible enough for various deployment scenarios while ensuring that minimum security standards are always enforced.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L1-L166)
 
@@ -71,11 +73,13 @@ SecurityHeadersMiddleware --> Logger : "uses"
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 
 The middleware follows the Express.js middleware pattern, returning a function that intercepts HTTP requests before they reach the application routes. When invoked, it applies the configured security headers based on the request context and environment settings.
 
 Key implementation features include:
+
 - Conditional header application based on request protocol (HTTP vs HTTPS)
 - Dynamic header generation for specific use cases like AI chat interfaces
 - Comprehensive logging of security events for audit and monitoring
@@ -85,6 +89,7 @@ Key implementation features include:
 The implementation also includes specialized functions for generating complex headers like Content Security Policy and Permissions Policy, which require careful construction to balance security with functionality.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 
 ## Security Header Configuration
@@ -112,10 +117,12 @@ ApplyHeader --> End([HSTS Header Applied])
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L50-L75)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L145-L165)
 
 The default production configuration enforces a maximum security posture with:
+
 - **max-age**: 31536000 seconds (1 year)
 - **includeSubDomains**: Enabled to protect all subdomains
 - **preload**: Enabled for inclusion in browser preload lists
@@ -129,6 +136,7 @@ The Content Security Policy (CSP) implementation provides robust protection agai
 ```
 
 For the AI chat interface, a specialized CSP is generated that allows necessary inline scripts while maintaining strong security controls. The policy includes directives for:
+
 - script-src: Self and trusted CDNs
 - connect-src: WebSocket and API endpoints
 - frame-src: Restricted to none to prevent framing
@@ -138,17 +146,18 @@ For the AI chat interface, a specialized CSP is generated that allows necessary 
 
 The middleware implements multiple layers of protection through various HTTP headers:
 
-| Header | Purpose | Value |
-|-------|-------|-------|
-| X-Frame-Options | Clickjacking protection | DENY or SAMEORIGIN |
-| X-Content-Type-Options | MIME sniffing prevention | nosniff |
-| X-XSS-Protection | Legacy XSS filter | 1; mode=block |
-| Referrer-Policy | Referrer information control | strict-origin-when-cross-origin |
-| Permissions-Policy | Browser feature restrictions | Disabled high-risk features |
+| Header                 | Purpose                      | Value                           |
+| ---------------------- | ---------------------------- | ------------------------------- |
+| X-Frame-Options        | Clickjacking protection      | DENY or SAMEORIGIN              |
+| X-Content-Type-Options | MIME sniffing prevention     | nosniff                         |
+| X-XSS-Protection       | Legacy XSS filter            | 1; mode=block                   |
+| Referrer-Policy        | Referrer information control | strict-origin-when-cross-origin |
+| Permissions-Policy     | Browser feature restrictions | Disabled high-risk features     |
 
 Route-specific header customization is also supported, with stricter caching controls for API endpoints and enhanced anti-clickjacking measures for administrative interfaces.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L145-L165)
 - [tls-constants.ts](file://apps/api/src/config/tls-constants.ts#L90-L100)
@@ -177,10 +186,12 @@ Note over SecurityHeaders,LGPDMiddleware : Coordinated compliance enforcement
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L686)
 
 Key compliance integrations include:
+
 - Automatic addition of `X-LGPD-Compliant: true` header when LGPD requirements are met
 - Synchronization with consent management systems to ensure data processing aligns with user permissions
 - Audit logging of security header application for compliance reporting
@@ -195,6 +206,7 @@ A dedicated healthcare security profile is available through the `healthcareSecu
 ```
 
 This profile enforces:
+
 - Maximum HSTS duration with preload and subdomain inclusion
 - Strict CSP that blocks unnecessary external resources
 - Enhanced privacy controls through referrer policy
@@ -204,6 +216,7 @@ This profile enforces:
 The integration ensures that all patient data transmissions meet the stringent security requirements mandated by healthcare regulations, providing both technical protection and auditability for compliance verification.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L385-L450)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L686)
 
@@ -238,6 +251,7 @@ style E fill:#f9f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [websocket-security-middleware.ts](file://apps/api/src/middleware/websocket-security-middleware.ts#L1-L715)
 
@@ -254,6 +268,7 @@ The middleware ensures that security policies remain consistent across different
 - **Audit Logging**: Comprehensive logging provides visibility across protocols
 
 For WebSocket connections, the security model extends beyond headers to include:
+
 - Connection attempt validation
 - Message rate limiting
 - Payload structure validation
@@ -263,6 +278,7 @@ For WebSocket connections, the security model extends beyond headers to include:
 This integrated approach ensures that real-time features like AI chat and telemedicine services maintain the same high security standards as traditional REST API endpoints.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [websocket-security-middleware.ts](file://apps/api/src/middleware/websocket-security-middleware.ts#L1-L715)
 
@@ -279,6 +295,7 @@ The middleware provides a comprehensive validation system for HSTS configuration
 ```
 
 Validation checks include:
+
 - HSTS max-age minimum of 1 year (31536000 seconds)
 - Warning for excessively long max-age values
 - Alert when HSTS is disabled in production environments
@@ -299,6 +316,7 @@ Effective testing of security headers requires multiple approaches:
 4. **Manual Verification**: Test edge cases and error conditions
 
 The repository includes integration tests in `/tests/integration/https-enforcement.test.ts` that validate header enforcement across various scenarios, including:
+
 - HTTP to HTTPS redirection
 - Header application on secure connections
 - Route-specific header variations
@@ -316,6 +334,7 @@ While modern browsers fully support the implemented security headers, some consi
 The configuration strikes a balance between maximum security and broad compatibility, using well-supported header formats and providing fallback options where necessary.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L352-L400)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L100-L140)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)
@@ -334,6 +353,7 @@ The most frequent configuration problems include:
 - **Inconsistent header application**: Applying different policies across environments
 
 To troubleshoot these issues, administrators should:
+
 1. Review the security report endpoint output
 2. Check server logs for validation warnings
 3. Verify header values using browser developer tools
@@ -349,6 +369,7 @@ Some browsers may exhibit unexpected behavior with certain security headers:
 - Privacy-focused browsers blocking certain tracking prevention headers
 
 When encountering browser-specific issues, consider:
+
 - Implementing progressive enhancement strategies
 - Using feature detection to adjust header policies
 - Providing clear error messages for unsupported configurations
@@ -357,6 +378,7 @@ When encountering browser-specific issues, consider:
 ### Performance Considerations
 
 While security headers have minimal performance impact, large CSP policies or excessive logging can affect server performance. Monitor:
+
 - Memory usage under high load
 - Response time with and without security middleware
 - Log file growth from security event logging
@@ -365,6 +387,7 @@ While security headers have minimal performance impact, large CSP policies or ex
 The middleware is optimized for performance with efficient string operations and minimal overhead, but regular monitoring is recommended to ensure optimal operation.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L1-L166)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)
@@ -376,6 +399,7 @@ Implementing the Security Headers Middleware effectively requires adherence to e
 ### Production Deployment Guidelines
 
 For production environments, follow these recommendations:
+
 - Always enable HSTS with a minimum 1-year max-age
 - Use TLS 1.3+ with perfect forward secrecy cipher suites
 - Implement HSTS preload for maximum protection
@@ -385,6 +409,7 @@ For production environments, follow these recommendations:
 ### Development Environment Configuration
 
 In development environments, maintain security awareness while allowing flexibility:
+
 - Use self-signed certificates with proper validation
 - Implement relaxed CSP for development tools
 - Maintain consistent header structure across environments
@@ -393,6 +418,7 @@ In development environments, maintain security awareness while allowing flexibil
 ### Monitoring and Maintenance
 
 Establish ongoing monitoring and maintenance procedures:
+
 - Regularly review security reports and logs
 - Update configurations to address emerging threats
 - Test header effectiveness after application changes
@@ -402,6 +428,7 @@ Establish ongoing monitoring and maintenance procedures:
 By following these best practices, organizations can maximize the effectiveness of the Security Headers Middleware while maintaining compliance with healthcare regulations and protecting sensitive patient data from evolving web-based threats.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L1-L166)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)

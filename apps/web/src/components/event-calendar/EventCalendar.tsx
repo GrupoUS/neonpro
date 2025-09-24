@@ -2,22 +2,22 @@
  * Main Event Calendar Component
  */
 
-import React, { useState, useCallback } from 'react';
-import { CalendarHeader } from './CalendarHeader';
-import { DayView } from './DayView';
-import { WeekView } from './WeekView';
-import { MonthView } from './MonthView';
-import { EventModal } from './EventModal';
-import { EventForm } from './EventForm';
+import React, { useCallback, useState } from 'react';
 import type {
   CalendarComponentProps,
-  CalendarState,
   CalendarEvent,
-  CalendarView,
   CalendarFilters,
+  CalendarState,
+  CalendarView,
   TimeSlot,
 } from '../../types/event-calendar';
+import { CalendarHeader } from './CalendarHeader';
+import { DayView } from './DayView';
+import { EventForm } from './EventForm';
+import { EventModal } from './EventModal';
+import { MonthView } from './MonthView';
 import { formatCalendarDate } from './utils';
+import { WeekView } from './WeekView';
 
 export function EventCalendar({
   events,
@@ -50,11 +50,10 @@ export function EventCalendar({
     onDateChange?.(date);
   }, [onDateChange]);
 
-  const setView = useCallback((viewType: 'day' | 'week' | 'month') => {
-    const newView: CalendarView = { type: viewType, date: state.currentDate };
-    setState(prev => ({ ...prev, currentView: newView }));
-    onViewChange?.(newView);
-  }, [state.currentDate, onViewChange]);
+  const setView = useCallback((view: CalendarView) => {
+    setState(prev => ({ ...prev, currentView: view }));
+    onViewChange?.(view);
+  }, [onViewChange]);
 
   const setSelectedEvent = useCallback((event?: CalendarEvent) => {
     setState(prev => ({ ...prev, selectedEvent: event }));
@@ -67,18 +66,20 @@ export function EventCalendar({
   }, [state.filters, onFiltersChange]);
 
   const startCreatingEvent = useCallback((date?: Date, timeSlot?: TimeSlot) => {
-    setState(prev => ({ 
-      ...prev, 
+    setState(prev => ({
+      ...prev,
       isCreatingEvent: true,
-      selectedEvent: date ? {
-        id: '',
-        title: '',
-        start: timeSlot?.start || date,
-        end: timeSlot?.end || new Date(date.getTime() + 60 * 60 * 1000),
-        type: 'appointment',
-        clinicId: '',
-        status: 'scheduled',
-      } : undefined,
+      selectedEvent: date
+        ? {
+          id: '',
+          title: '',
+          start: timeSlot?.start || date,
+          end: timeSlot?.end || new Date(date.getTime() + 60 * 60 * 1000),
+          type: 'appointment',
+          clinicId: '',
+          status: 'scheduled',
+        }
+        : undefined,
     }));
   }, []);
 
@@ -105,9 +106,9 @@ export function EventCalendar({
   const handleEventSave = useCallback(async (eventData: Omit<CalendarEvent, 'id'>) => {
     try {
       if (state.selectedEvent?.id) {
-        await onEventUpdate?.({ ...eventData, id: state.selectedEvent.id });
+        await onEventUpdate?.({ ...(eventData as any), id: state.selectedEvent.id } as any);
       } else {
-        await onEventCreate?.({ ...eventData, id: '' });
+        await onEventCreate?.(eventData as any);
       }
       stopCreatingEvent();
       setSelectedEvent(undefined);
@@ -131,11 +132,14 @@ export function EventCalendar({
       // Apply filters
       if (state.filters.type && !state.filters.type.includes(event.type)) return false;
       if (state.filters.status && !state.filters.status.includes(event.status)) return false;
-      if (state.filters.professionalId && event.professionalId !== state.filters.professionalId) return false;
+      if (state.filters.professionalId && event.professionalId !== state.filters.professionalId) {
+        return false;
+      }
       if (state.filters.patientId && event.patientId !== state.filters.patientId) return false;
       if (state.filters.searchQuery) {
         const query = state.filters.searchQuery.toLowerCase();
-        const searchText = `${event.title} ${event.patientName || ''} ${event.notes || ''}`.toLowerCase();
+        const searchText = `${event.title} ${event.patientName || ''} ${event.notes || ''}`
+          .toLowerCase();
         if (!searchText.includes(query)) return false;
       }
       return true;
@@ -180,7 +184,7 @@ export function EventCalendar({
   };
 
   return (
-    <div className="calendar-container w-full h-full flex flex-col bg-white">
+    <div className='calendar-container w-full h-full flex flex-col bg-white'>
       {/* Header */}
       <CalendarHeader
         currentDate={state.currentDate}
@@ -191,14 +195,16 @@ export function EventCalendar({
       />
 
       {/* Main Content */}
-      <div className="calendar-content flex-1 overflow-hidden">
-        {state.isLoading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-gray-500">Carregando calendário...</div>
-          </div>
-        ) : (
-          renderCurrentView()
-        )}
+      <div className='calendar-content flex-1 overflow-hidden'>
+        {state.isLoading
+          ? (
+            <div className='flex items-center justify-center h-full'>
+              <div className='text-gray-500'>Carregando calendário...</div>
+            </div>
+          )
+          : (
+            renderCurrentView()
+          )}
       </div>
 
       {/* Event Modal */}
@@ -207,7 +213,7 @@ export function EventCalendar({
           event={state.selectedEvent}
           isOpen={!!state.selectedEvent}
           onClose={() => setSelectedEvent(undefined)}
-          onEdit={(event) => {
+          onEdit={event => {
             setSelectedEvent(event);
             setState(prev => ({ ...prev, isCreatingEvent: true }));
           }}
@@ -222,11 +228,13 @@ export function EventCalendar({
         <EventForm
           event={state.selectedEvent}
           startDate={state.selectedEvent?.start}
-          timeSlot={state.selectedEvent ? {
-            start: state.selectedEvent.start,
-            end: state.selectedEvent.end,
-            available: true,
-          } : undefined}
+          timeSlot={state.selectedEvent
+            ? {
+              start: state.selectedEvent.start,
+              end: state.selectedEvent.end,
+              available: true,
+            }
+            : undefined}
           onSave={handleEventSave}
           onCancel={() => {
             stopCreatingEvent();

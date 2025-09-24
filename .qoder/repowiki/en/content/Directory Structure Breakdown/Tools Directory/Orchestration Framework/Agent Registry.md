@@ -1,13 +1,14 @@
 # Agent Registry
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts)
 - [agent-registry.test.ts](file://tools/orchestration/__tests__/agent-registry.test.ts)
 - [types.ts](file://tools/orchestration/types.ts)
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Architecture](#core-architecture)
 3. [Agent Discovery and Registration](#agent-discovery-and-registration)
@@ -20,12 +21,15 @@
 10. [Common Issues and Solutions](#common-issues-and-solutions)
 
 ## Introduction
+
 The Agent Registry is a central component responsible for managing AI agents within the TDD (Test-Driven Development) workflow. It provides agent discovery, capability management, and intelligent selection based on development phase (red, green, refactor) and contextual requirements such as healthcare compliance. The registry serves as the backbone for coordinating quality checks across multiple tools and ensures appropriate agents are selected for each stage of development.
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L50)
 
 ## Core Architecture
+
 The Agent Registry implements a centralized pattern for managing agent lifecycle and capabilities. At its core, it maintains two primary data structures: a Map of registered agents indexed by their type, and a corresponding Map tracking performance statistics for each agent.
 
 ```mermaid
@@ -69,18 +73,22 @@ TDDAgentRegistry --> AgentStats : "tracks"
 ```
 
 **Diagram sources **
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L3-L18)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L23-L35)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L57-L62)
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 
 ## Agent Discovery and Registration
+
 The Agent Registry supports dynamic agent registration and discovery through a straightforward API. Agents are registered with comprehensive metadata that enables intelligent selection based on various criteria.
 
 ### Registration Process
+
 Agents are registered using the `registerAgent` method, which stores both capability information and initializes performance statistics:
 
 ```mermaid
@@ -94,13 +102,16 @@ InitializeStats --> Complete([Agent Registered])
 The registry comes pre-configured with default agents for common TDD roles including test coordination, code review, architecture analysis, and security auditing. These defaults ensure immediate functionality while allowing customization.
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L200-L230)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L190)
 
 ## Capability Management
+
 The Agent Registry employs a rich capability model that enables fine-grained agent selection based on multiple dimensions including functional capabilities, specializations, priority levels, and phase compatibility.
 
 ### Agent Capability Model
+
 Each agent is defined by the `AgentCapability` interface which includes:
 
 - **Type**: Categorical classification of the agent
@@ -145,16 +156,20 @@ AGENT_CAPABILITY ||--o{ ORCHESTRATION_CONTEXT : "selected-by"
 ```
 
 **Diagram sources **
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L3-L18)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L23-L35)
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L3-L18)
 
 ## TDD Phase-Based Agent Selection
+
 The registry provides specialized methods for selecting agents appropriate to specific TDD phases, ensuring the right tools are applied at each stage of development.
 
 ### getAgentsForPhase Implementation
+
 The `getAgentsForPhase` method implements a comprehensive filtering algorithm that considers both phase compatibility and contextual requirements:
 
 ```mermaid
@@ -181,13 +196,17 @@ The implementation handles edge cases gracefully, returning phase-compatible age
 ```
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L246-L293)
 
 ## Healthcare Compliance Integration
+
 The Agent Registry incorporates healthcare-specific compliance requirements into its selection logic, ensuring regulatory standards are met for sensitive medical applications.
 
 ### Compliance Framework
+
 The registry supports three key Brazilian healthcare regulations:
+
 - **LGPD**: General Data Protection Law
 - **ANVISA**: National Health Surveillance Agency
 - **CFM**: Federal Council of Medicine
@@ -195,6 +214,7 @@ The registry supports three key Brazilian healthcare regulations:
 These compliance requirements are integrated into both agent definitions and selection algorithms. Agents declare their compliance capabilities, while the orchestration context specifies required standards.
 
 ### Context-Aware Selection
+
 When healthcare compliance is required, the registry applies strict filtering to ensure only compliant agents are selected. The selection process evaluates each agent's compliance profile against the requirements specified in the orchestration context.
 
 ```mermaid
@@ -213,16 +233,20 @@ Registry-->>Context : Return compliant agents
 ```
 
 **Diagram sources **
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L246-L293)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L3-L18)
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L246-L293)
 
 ## Orchestration System Integration
+
 The Agent Registry works in concert with the broader orchestration system to coordinate quality checks across multiple tools and phases.
 
 ### Workflow Coordination
+
 The registry provides methods that integrate directly with the orchestration workflow:
 
 ```mermaid
@@ -245,6 +269,7 @@ The `getRecommendedWorkflow` method generates an optimal execution sequence base
 ```
 
 ### Agent Scoring Algorithm
+
 The `selectOptimalAgents` method employs a scoring algorithm that ranks agents based on relevance to the current context:
 
 ```mermaid
@@ -265,18 +290,22 @@ The scoring system weights different factors appropriately, with priority being 
 ```
 
 **Diagram sources **
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L307-L330)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L335-L393)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L407-L424)
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L307-L330)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L335-L393)
 
 ## Fallback Mechanisms and Dynamic Loading
+
 The Agent Registry incorporates robust fallback mechanisms to handle scenarios where expected agents are not available or configurations are missing.
 
 ### Graceful Degradation
+
 The registry implements several fallback strategies:
 
 1. **Context Validation**: When context is undefined or incomplete, the registry returns all agents compatible with the requested phase
@@ -294,16 +323,20 @@ E --> F[Ensure Non-Empty Result]
 ```
 
 ### Dynamic Agent Loading
+
 While the current implementation focuses on registration, the architecture supports dynamic loading patterns. Custom agents can be loaded at runtime through the `registerAgent` method, enabling extension of capabilities without restarting the system.
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L246-L293)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L200-L230)
 
 ## Extending the Registry with Custom Agents
+
 The Agent Registry is designed to be extensible, allowing developers to add custom agents for specialized compliance domains or unique project requirements.
 
 ### Custom Agent Registration
+
 To extend the registry with custom agents, implement the `AgentCapability` interface and register the agent:
 
 ```typescript
@@ -311,6 +344,7 @@ To extend the registry with custom agents, implement the `AgentCapability` inter
 ```
 
 Key considerations for custom agents:
+
 - Define appropriate capabilities and specializations
 - Set correct priority level based on importance
 - Specify compatible TDD phases
@@ -318,18 +352,23 @@ Key considerations for custom agents:
 - Provide meaningful triggers for context-based activation
 
 ### Specialized Compliance Agents
+
 For healthcare-specific domains, create agents with targeted compliance profiles. For example, a radiology compliance agent might emphasize ANVISA requirements, while a patient data agent would prioritize LGPD compliance.
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L222-L230)
 
 ## Common Issues and Solutions
+
 This section addresses frequent challenges encountered when working with the Agent Registry, particularly in healthcare validation scenarios.
 
 ### Missing Agent Configurations
+
 **Issue**: Healthcare-specific validation fails due to missing compliance agents.
 
 **Solution**: Implement fallback to general-purpose agents while maintaining compliance requirements:
+
 ```typescript
 // Ensure at least one compliant agent is available
 const compliantAgents = registry.getAgentsForPhase(phase, context);
@@ -343,9 +382,11 @@ if (compliantAgents.length === 0 && context.healthcareCompliance.required) {
 ```
 
 ### Dynamic Agent Loading Failures
+
 **Issue**: Custom agents fail to load in specific environments.
 
 **Solution**: Implement robust error handling and validation:
+
 ```typescript
 try {
   registry.registerAgent(customAgent);
@@ -356,9 +397,11 @@ try {
 ```
 
 ### Performance Optimization
+
 **Issue**: Agent selection becomes slow with many registered agents.
 
 **Solution**: Cache results when appropriate and leverage the built-in statistics for performance monitoring:
+
 ```typescript
 // Use getAgentStats to identify underperforming agents
 const stats = registry.getAgentStats('security-auditor');
@@ -368,6 +411,7 @@ if (stats.averageExecutionTime > threshold) {
 ```
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L246-L293)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L200-L230)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L445-L474)

@@ -7,6 +7,7 @@ This guide provides comprehensive instructions for setting up a development envi
 ## 🚀 Prerequisites
 
 ### System Requirements
+
 ```bash
 # Minimum System Requirements
 - OS: macOS, Linux, or Windows (WSL2 recommended)
@@ -20,6 +21,7 @@ This guide provides comprehensive instructions for setting up a development envi
 ```
 
 ### Required Tools
+
 ```bash
 # Development Tools
 - Node.js (v18.x or v20.x)
@@ -44,6 +46,7 @@ This guide provides comprehensive instructions for setting up a development envi
 ## 📦 Repository Setup
 
 ### Clone and Configure
+
 ```bash
 # Clone the repository
 git clone https://github.com/your-org/neonpro.git
@@ -70,6 +73,7 @@ pnpm build
 ```
 
 ### Environment Configuration
+
 ```bash
 # Copy environment templates
 cp apps/api/.env.example apps/api/.env.local
@@ -85,6 +89,7 @@ nano packages/database/.env.local
 ## 🔧 Local Development Setup
 
 ### Database Setup
+
 ```bash
 # Start PostgreSQL using Docker
 docker run -d \
@@ -112,6 +117,7 @@ pnpm db:seed
 ```
 
 ### Development Servers
+
 ```bash
 # Start API server (in one terminal)
 cd apps/api
@@ -128,6 +134,7 @@ pnpm dev
 ## 🐳 Docker Development
 
 ### Development Docker Compose
+
 ```yaml
 # docker-compose.dev.yml
 version: '3.8'
@@ -201,6 +208,7 @@ volumes:
 ```
 
 ### Development Dockerfile
+
 ```dockerfile
 # apps/api/Dockerfile.dev
 FROM node:20-alpine
@@ -231,6 +239,7 @@ CMD ["pnpm", "dev"]
 ## 🧪 Testing Setup
 
 ### Test Configuration
+
 ```json
 // jest.config.json
 {
@@ -257,6 +266,7 @@ CMD ["pnpm", "dev"]
 ```
 
 ### Test Database Setup
+
 ```bash
 # Create test database
 createdb neonpro_test
@@ -271,6 +281,7 @@ pnpm test
 ## 🔌 IDE Setup
 
 ### VS Code Configuration
+
 ```json
 // .vscode/settings.json
 {
@@ -298,6 +309,7 @@ pnpm test
 ```
 
 ### VS Code Extensions
+
 ```json
 // .vscode/extensions.json
 {
@@ -322,6 +334,7 @@ pnpm test
 ## 🔍 Debugging Setup
 
 ### VS Code Debug Configuration
+
 ```json
 // .vscode/launch.json
 {
@@ -371,6 +384,7 @@ pnpm test
 ```
 
 ### Chrome DevTools Configuration
+
 ```typescript
 // apps/api/src/utils/debug-config.ts
 import debug from 'debug';
@@ -418,6 +432,7 @@ export class ErrorTracker {
 ## 🔌 API Development
 
 ### API Testing with REST Client
+
 ```http
 ### Get all clients
 GET http://localhost:3001/api/v1/clients
@@ -456,6 +471,7 @@ Content-Type: application/json
 ```
 
 ### tRPC Playground Setup
+
 ```typescript
 // apps/api/src/trpc/playground.ts
 import { createTRPCPlayground } from 'trpc-playground';
@@ -477,6 +493,7 @@ app.use('/playground', playgroundHandler);
 ## 🎨 Frontend Development
 
 ### Component Development Setup
+
 ```typescript
 // apps/web/src/components/shared/dev-helpers.tsx
 import React, { useState } from 'react';
@@ -542,6 +559,7 @@ export const devUtils = {
 ```
 
 ### Storybook Configuration
+
 ```typescript
 // .storybook/main.ts
 module.exports = {
@@ -568,6 +586,7 @@ module.exports = {
 ## 🔄 Development Workflow
 
 ### Git Hooks Setup
+
 ```bash
 #!/bin/bash
 # scripts/setup-git-hooks.sh
@@ -591,6 +610,7 @@ echo "Git hooks installed successfully!"
 ```
 
 ### Lint-staged Configuration
+
 ```json
 // package.json
 {
@@ -614,6 +634,7 @@ echo "Git hooks installed successfully!"
 ```
 
 ### Development Scripts
+
 ```json
 // package.json
 {
@@ -646,6 +667,7 @@ echo "Git hooks installed successfully!"
 ## 🧪 Testing Development
 
 ### Test Utilities
+
 ```typescript
 // apps/api/src/__tests__/utils/test-utils.ts
 import { PrismaClient } from '@prisma/client';
@@ -744,6 +766,7 @@ export const auth = {
 ## 🌐 Local Development with ngrok
 
 ### ngrok Setup
+
 ```bash
 # Install ngrok
 npm install -g ngrok
@@ -759,6 +782,7 @@ export VITE_API_URL=https://your-ngrok-url.ngrok.io
 ```
 
 ### Local HTTPS Setup
+
 ```bash
 # Generate SSL certificates
 openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365
@@ -770,6 +794,7 @@ HTTPS=true SSL_KEY_PATH=./key.pem SSL_CERT_PATH=./cert.pem pnpm dev
 ## 📊 Development Monitoring
 
 ### Local Monitoring Setup
+
 ```typescript
 // apps/api/src/monitoring/dev-monitoring.ts
 import express from 'express';

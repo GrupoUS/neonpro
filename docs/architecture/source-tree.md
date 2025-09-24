@@ -437,21 +437,21 @@ Each package includes standardized scripts:
 
 ### Components & Code Files
 
-| File Type             | Convention               | Example                | Location      |
-| --------------------- | ------------------------ | ---------------------- | ------------- |
+| File Type             | Convention               | Example               | Location      |
+| --------------------- | ------------------------ | --------------------- | ------------- |
 | **React Components**  | PascalCase               | `ClientCard.tsx`      | `components/` |
 | **Custom Hooks**      | camelCase + `use` prefix | `useClientData.ts`    | `hooks/`      |
-| **Utility Functions** | camelCase                | `formatCurrency.ts`    | `utils/`      |
+| **Utility Functions** | camelCase                | `formatCurrency.ts`   | `utils/`      |
 | **Type Definitions**  | PascalCase               | `Client.ts`           | `types/`      |
 | **API Routes**        | kebab-case               | `client-profile.ts`   | `routes/`     |
 | **Test Files**        | Same as source + `.test` | `ClientCard.test.tsx` | `__tests__/`  |
-| **Configuration**     | kebab-case               | `vite.config.ts`       | Root level    |
+| **Configuration**     | kebab-case               | `vite.config.ts`      | Root level    |
 
 ### Directory Naming
 
 | Directory Type         | Convention | Example                 | Rationale              |
 | ---------------------- | ---------- | ----------------------- | ---------------------- |
-| **Feature Modules**    | kebab-case | `client-management/`   | URL-friendly, readable |
+| **Feature Modules**    | kebab-case | `client-management/`    | URL-friendly, readable |
 | **Technical Concepts** | camelCase  | `components/`, `hooks/` | JavaScript convention  |
 | **Package Names**      | kebab-case | `core-services/`        | NPM convention         |
 | **Configuration**      | dot-prefix | `.github/`, `.vscode/`  | Hidden/config files    |
@@ -475,18 +475,18 @@ Each package includes standardized scripts:
 
 ### Quick Reference Table
 
-| What You Need           | Primary Location              | Secondary Location               | Notes                  |
-| ----------------------- | ----------------------------- | -------------------------------- | ---------------------- |
-| **API Endpoints**       | `apps/api/src/`               | -                                | Hono.dev routes        |
-| **React Pages**         | `apps/web/src/routes/`        | `apps/web/src/pages/`            | TanStack Router        |
-| **UI Components**       | `apps/web/src/components/ui/` | `packages/shared/src/`           | shadcn/ui + custom     |
-| **Business Logic**      | `packages/core-services/src/` | `apps/web/src/hooks/`            | Services vs hooks      |
-| **Type Definitions**    | `packages/types/src/`         | `apps/*/src/types/`              | Shared vs app-specific |
-| **Database Schemas**    | `packages/database/src/`      | -                                | Supabase schemas       |
-| **Utilities**           | `packages/utils/src/`         | `apps/*/src/lib/`                | Shared vs app-specific |
+| What You Need           | Primary Location              | Secondary Location               | Notes                     |
+| ----------------------- | ----------------------------- | -------------------------------- | ------------------------- |
+| **API Endpoints**       | `apps/api/src/`               | -                                | Hono.dev routes           |
+| **React Pages**         | `apps/web/src/routes/`        | `apps/web/src/pages/`            | TanStack Router           |
+| **UI Components**       | `apps/web/src/components/ui/` | `packages/shared/src/`           | shadcn/ui + custom        |
+| **Business Logic**      | `packages/core-services/src/` | `apps/web/src/hooks/`            | Services vs hooks         |
+| **Type Definitions**    | `packages/types/src/`         | `apps/*/src/types/`              | Shared vs app-specific    |
+| **Database Schemas**    | `packages/database/src/`      | -                                | Supabase schemas          |
+| **Utilities**           | `packages/utils/src/`         | `apps/*/src/lib/`                | Shared vs app-specific    |
 | **Security/Compliance** | `packages/security/src/`      | `packages/utils/src/compliance/` | LGPD/Cosmetic Regulations |
-| **Tests**               | `apps/*/src/__tests__/`       | `packages/*/src/*.test.ts`       | App vs package tests   |
-| **Configuration**       | `packages/config/`            | Root config files                | Shared vs global       |
+| **Tests**               | `apps/*/src/__tests__/`       | `packages/*/src/*.test.ts`       | App vs package tests      |
+| **Configuration**       | `packages/config/`            | Root config files                | Shared vs global          |
 
 ### Module Organization Patterns
 

@@ -1,7 +1,7 @@
 # Monitoring Dashboard
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [performance-monitor.js](file://apps/api/scripts/performance-monitor.js)
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Monitoring System Architecture](#monitoring-system-architecture)
 3. [Performance Monitoring Implementation](#performance-monitoring-implementation)
@@ -29,6 +30,7 @@
 The NeonPro monitoring dashboard provides real-time visibility into system health, performance metrics, and security status for the healthcare platform. This comprehensive monitoring system ensures compliance with Brazilian healthcare regulations while maintaining optimal application performance. The dashboard architecture integrates multiple monitoring components that collect data from various sources across the application stack, providing actionable insights for development and operations teams.
 
 The monitoring system serves several critical purposes:
+
 - Real-time tracking of API response times and error rates
 - Continuous monitoring of TLS certificate expiration dates
 - Compliance verification with LGPD, ANVISA, and CFM regulations
@@ -76,11 +78,13 @@ N --> S
 ```
 
 **Diagram sources**
+
 - [performance-monitor.js](file://apps/api/scripts/performance-monitor.js)
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
 **Section sources**
+
 - [performance-monitor.js](file://apps/api/scripts/performance-monitor.js)
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
@@ -112,10 +116,12 @@ PM->>Storage : Save Performance Report
 ```
 
 **Diagram sources**
+
 - [performance-monitor.js](file://apps/api/scripts/performance-monitor.js)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts)
 
 **Section sources**
+
 - [performance-monitor.js](file://apps/api/scripts/performance-monitor.js)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts)
 
@@ -126,6 +132,7 @@ The certificate monitoring system ensures the security and trustworthiness of al
 The certificate monitoring process operates on a configurable interval (default 6 hours) and can run in two modes: one-time execution for cron jobs or continuous daemon mode. When executed, it invokes the `certificateMonitor.runPeriodicCheck()` method which verifies the status of all configured domains and their associated certificates.
 
 Key features of the certificate monitoring implementation include:
+
 - Automated checking of certificate expiration dates
 - Integration with the certificate management service
 - Exit code signaling for external monitoring systems
@@ -135,6 +142,7 @@ Key features of the certificate monitoring implementation include:
 The system returns different exit codes based on the overall health status: 0 for healthy, 1 for warnings, 2 for critical issues, and higher values for monitoring errors. This allows external systems like Kubernetes or CI/CD pipelines to take appropriate actions based on certificate health.
 
 **Section sources**
+
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js)
 
 ## Dashboard Configuration and Usage
@@ -169,6 +177,7 @@ I --> T[Prescriptions Filled]
 ```
 
 **Diagram sources**
+
 - [performance-monitoring.json](file://tools/monitoring/dashboards/performance-monitoring.json)
 
 ### Healthcare Overview Dashboard
@@ -202,6 +211,7 @@ The compliance monitoring dashboard (`compliance-monitoring.json`) focuses speci
 These dashboards are accessible through the Grafana interface and automatically refresh every 30 seconds to provide near real-time visibility into system status.
 
 **Section sources**
+
 - [performance-monitoring.json](file://tools/monitoring/dashboards/performance-monitoring.json)
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json)
 - [compliance-monitoring.json](file://tools/monitoring/dashboards/compliance-monitoring.json)
@@ -271,11 +281,13 @@ PerformanceDashboardController --> PerformanceMonitor : "uses"
 ```
 
 **Diagram sources**
+
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts)
 - [aesthetic-clinic-performance-optimizer.ts](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts)
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts)
 
 **Section sources**
+
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts)
 - [health.ts](file://apps/api/vercel/health.ts)
 
@@ -306,6 +318,7 @@ The alerting configuration also includes synthetic monitoring for critical healt
 Performance thresholds are defined for response time, availability, and error rate, with warning and critical levels that trigger appropriate alerts. This multi-tiered approach allows teams to address potential issues before they escalate to critical failures.
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
 ## Configuration Options
@@ -348,6 +361,7 @@ The performance monitor can be customized with the following parameters:
 These configuration options enable teams to adjust monitoring intensity based on environment requirements, balancing thoroughness with resource utilization.
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
 ## Common Issues and Solutions
@@ -398,6 +412,7 @@ Issues with certificate monitoring typically involve:
 Resolution involves verifying file permissions, correcting configuration paths, adjusting firewall rules, and ensuring accurate system time synchronization.
 
 **Section sources**
+
 - [performance-monitor.js](file://apps/api/scripts/performance-monitor.js)
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
@@ -447,6 +462,7 @@ The monitoring architecture supports scalability through:
 These performance considerations ensure that the monitoring system provides valuable insights without negatively impacting the application it monitors.
 
 **Section sources**
+
 - [performance-monitor.js](file://apps/api/scripts/performance-monitor.js)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 - [performance-monitoring.json](file://tools/monitoring/dashboards/performance-monitoring.json)

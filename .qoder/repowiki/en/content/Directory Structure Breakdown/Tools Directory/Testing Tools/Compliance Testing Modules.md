@@ -1,7 +1,7 @@
 # Compliance Testing Modules
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [lgpd-aesthetic-clinic-consent.test.ts](file://apps/api/src/__tests__/compliance/lgpd-aesthetic-clinic-consent.test.ts)
 - [lgpd-data-anonymization-pseudonymization.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-anonymization-pseudonymization.test.ts)
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts)
@@ -18,6 +18,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Regulatory Frameworks](#core-regulatory-frameworks)
 3. [LGPD Compliance Testing](#lgpd-compliance-testing)
@@ -38,6 +39,7 @@ The testing modules are designed to validate specific regulatory aspects includi
 These compliance tests follow Test-Driven Development (TDD) principles, with test cases designed to initially fail (RED phase) to drive proper implementation. The modular architecture allows for easy extension to support new regulations and evolving compliance requirements.
 
 **Section sources**
+
 - [README.md](file://docs/compliance/README.md#L1-L458)
 
 ## Core Regulatory Frameworks
@@ -45,7 +47,9 @@ These compliance tests follow Test-Driven Development (TDD) principles, with tes
 The compliance testing suite addresses three primary Brazilian regulatory frameworks that govern healthcare operations:
 
 ### LGPD (Lei Geral de Proteção de Dados)
+
 LGPD establishes comprehensive data protection requirements for personal information processing. Key compliance areas include:
+
 - Lawful basis for data processing (consent, vital interests, legitimate interests)
 - Data subject rights enforcement (access, rectification, erasure, portability)
 - Data minimization and purpose limitation principles
@@ -54,7 +58,9 @@ LGPD establishes comprehensive data protection requirements for personal informa
 - Data breach notification procedures
 
 ### ANVISA (Agência Nacional de Vigilância Sanitária)
+
 ANVISA regulates medical devices and pharmaceutical products, with specific requirements for software as a medical device (SaMD). Key compliance areas include:
+
 - Medical device classification and registration
 - Risk management according to ISO 14971
 - Software lifecycle processes per IEC 62304
@@ -63,7 +69,9 @@ ANVISA regulates medical devices and pharmaceutical products, with specific requ
 - Usability engineering per IEC 62366
 
 ### CFM (Conselho Federal de Medicina)
+
 CFM establishes professional standards for medical practice, particularly regarding telemedicine. Key compliance areas include:
+
 - Professional licensing validation (CRM verification)
 - Telemedicine consultation protocols
 - Digital prescription requirements with ICP-Brasil certificates
@@ -74,6 +82,7 @@ CFM establishes professional standards for medical practice, particularly regard
 The compliance framework integrates these regulatory requirements into a cohesive testing strategy that validates both technical implementation and operational procedures.
 
 **Section sources**
+
 - [lgpd-anvisa-cfm.md](file://docs/compliance/lgpd-anvisa-cfm.md#L1-L607)
 
 ## LGPD Compliance Testing
@@ -96,6 +105,7 @@ E --> H[Replaced with "ANONIMIZADO"<br>Dates converted to age groups<br>All dire
 ```
 
 **Diagram sources**
+
 - [lgpd-anonymization.md](file://docs/compliance/lgpd-anonymization.md#L1-L224)
 - [lgpd-data-anonymization-pseudonymization.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-anonymization-pseudonymization.test.ts#L1-L100)
 
@@ -124,6 +134,7 @@ System-->>Patient : Withdrawal confirmation
 The tests validate that consent is granular, allowing patients to provide separate consent for different processing purposes such as medical treatment, marketing communications, and research participation.
 
 **Diagram sources**
+
 - [lgpd-aesthetic-clinic-consent.test.ts](file://apps/api/src/__tests__/compliance/lgpd-aesthetic-clinic-consent.test.ts#L1-L100)
 - [lgpd-validation.test.ts](file://apps/api/tests/compliance/lgpd-validation.test.ts#L1-L100)
 
@@ -131,17 +142,18 @@ The tests validate that consent is granular, allowing patients to provide separa
 
 The framework thoroughly tests all LGPD data subject rights, ensuring timely and complete responses to patient requests:
 
-| Right | Implementation Requirements | Response Time |
-|-------|-----------------------------|---------------|
-| Access | Complete data retrieval in structured format | ≤ 15 days |
-| Rectification | Update mechanisms for inaccurate data | ≤ 15 days |
-| Erasure | Secure deletion with retention exceptions | ≤ 15 days |
-| Portability | Machine-readable export in standard formats | ≤ 15 days |
-| Objection | Opt-out from specific processing activities | Immediate |
+| Right         | Implementation Requirements                  | Response Time |
+| ------------- | -------------------------------------------- | ------------- |
+| Access        | Complete data retrieval in structured format | ≤ 15 days     |
+| Rectification | Update mechanisms for inaccurate data        | ≤ 15 days     |
+| Erasure       | Secure deletion with retention exceptions    | ≤ 15 days     |
+| Portability   | Machine-readable export in standard formats  | ≤ 15 days     |
+| Objection     | Opt-out from specific processing activities  | Immediate     |
 
 The tests verify that the system correctly identifies which data can be erased versus retained based on legal obligations and medical record retention requirements.
 
 **Section sources**
+
 - [lgpd-validation.test.ts](file://apps/api/tests/compliance/lgpd-validation.test.ts#L1-L100)
 - [lgpd.test.ts](file://apps/api/tests/compliance/lgpd.test.ts#L1-L100)
 
@@ -173,6 +185,7 @@ J --> K[Log in Audit Trail]
 The tests simulate various scenarios including software malfunctions, patient safety concerns, and recurring issues that require proactive reporting to ANVISA.
 
 **Diagram sources**
+
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts#L1-L100)
 
 ### SaMD Compliance Validation
@@ -219,6 +232,7 @@ ANVISAValidator --> ValidationResult : "returns"
 The tests validate that the system complies with ISO 14971 risk management requirements and maintains active post-market surveillance with adverse event tracking capabilities.
 
 **Diagram sources**
+
 - [anvisa.ts](file://tools/testing-toolkit/src/compliance/anvisa.ts#L1-L193)
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts#L1-L100)
 
@@ -253,6 +267,7 @@ end
 The tests verify that only doctors with active licenses and proper telemedicine authorization can conduct virtual consultations.
 
 **Diagram sources**
+
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts#L1-L100)
 
 ### Digital Prescription Validation
@@ -280,6 +295,7 @@ K --> L[Submit to CFM System]
 The tests ensure that digital prescriptions include valid cryptographic signatures and comply with controlled substance regulations when applicable.
 
 **Diagram sources**
+
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts#L1-L100)
 - [cfm.ts](file://tools/testing-toolkit/src/compliance/cfm.ts#L1-L215)
 
@@ -368,6 +384,7 @@ TestSuiteCreator --> CFMValidator
 This architecture promotes consistency while allowing each validator to implement domain-specific checks.
 
 **Diagram sources**
+
 - [lgpd.test.ts](file://tools/testing-toolkit/src/compliance/lgpd.test.ts#L1-L228)
 - [anvisa.ts](file://tools/testing-toolkit/src/compliance/anvisa.ts#L1-L193)
 - [cfm.ts](file://tools/testing-toolkit/src/compliance/cfm.ts#L1-L215)
@@ -395,6 +412,7 @@ K --> L[Deploy to Testing Environment]
 This approach allows the organization to maintain multiple versions of compliance checks and gradually migrate to updated requirements.
 
 **Section sources**
+
 - [lgpd-anvisa-cfm.md](file://docs/compliance/lgpd-anvisa-cfm.md#L1-L607)
 
 ## Extending the Compliance Suite
@@ -448,6 +466,7 @@ export function createHIPAATestSuite(testName: string, testData: HIPAATestData) 
 ```
 
 **Section sources**
+
 - [anvisa.ts](file://tools/testing-toolkit/src/compliance/anvisa.ts#L1-L193)
 - [cfm.ts](file://tools/testing-toolkit/src/compliance/cfm.ts#L1-L215)
 
@@ -469,6 +488,7 @@ G --> H[Quality Gate Evaluation]
 The use of standardized interfaces and patterns ensures that new compliance modules work with existing test runners, reporting tools, and quality gates.
 
 **Section sources**
+
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts#L1-L100)
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts#L1-L100)
 
@@ -499,6 +519,7 @@ J --> K[Suggest Remediation Steps]
 These fast-running tests provide immediate feedback to developers while preventing obvious compliance violations from entering the codebase.
 
 **Section sources**
+
 - [lgpd-audit-checklist.md](file://docs/compliance/lgpd-audit-checklist.md#L1-L479)
 
 ### CI/CD Pipeline Integration
@@ -525,6 +546,7 @@ K --> L[Assign to Responsible Team]
 The pipeline generates comprehensive compliance reports that document test results and provide evidence for regulatory audits.
 
 **Section sources**
+
 - [lgpd-validation.test.ts](file://apps/api/tests/compliance/lgpd-validation.test.ts#L1-L100)
 - [anvisa-reporting.test.ts](file://apps/api/tests/compliance/anvisa-reporting.test.ts#L1-L100)
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts#L1-L100)
@@ -538,6 +560,7 @@ This section addresses common challenges encountered when implementing and maint
 Regulations frequently change, creating challenges for maintaining compliance:
 
 **Solutions:**
+
 - Implement versioned compliance checks to support multiple regulation versions
 - Establish a regulatory monitoring process to track changes
 - Use modular rule configuration to update specific requirements without rewriting entire modules
@@ -550,6 +573,7 @@ The framework's modular design allows teams to update specific validation rules 
 Automated compliance tests may generate false positives due to overly strict rules:
 
 **Solutions:**
+
 - Implement configurable thresholds for performance and security checks
 - Use machine learning to identify patterns and reduce false alarms
 - Allow manual override with proper documentation
@@ -560,6 +584,7 @@ Automated compliance tests may generate false positives due to overly strict rul
 Legacy systems may not support modern compliance requirements:
 
 **Solutions:**
+
 - Implement adapter patterns to bridge compliance requirements
 - Use proxy services to enforce security controls
 - Gradually refactor legacy components to meet compliance standards
@@ -570,12 +595,14 @@ Legacy systems may not support modern compliance requirements:
 Comprehensive compliance testing can impact system performance:
 
 **Solutions:**
+
 - Run intensive tests during off-peak hours
 - Implement sampling for certain compliance checks
 - Use asynchronous processing for non-critical validations
 - Optimize database queries and indexing
 
 **Section sources**
+
 - [lgpd-anvisa-cfm.md](file://docs/compliance/lgpd-anvisa-cfm.md#L1-L607)
 
 ## Conclusion

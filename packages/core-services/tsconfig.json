@@ -18,6 +18,7 @@
     "tests/**/*"
   ],
   "references": [
+    { "path": "../database" },
     { "path": "../types" },
     { "path": "../utils" },
     { "path": "../config" },

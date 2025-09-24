@@ -7,33 +7,39 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ## Características Implementadas
 
 ### 1. Suporte a Leitores de Tela
+
 - **ARIA Labels**: Todos os componentes interativos possuem rótulos ARIA adequados
 - **Live Regions**: Anúncios automáticos para mudanças de estado
 - **Semantic HTML**: Uso correto de elementos semânticos HTML5
 - **Screen Reader Only**: Conteúdo específico para leitores de tela
 
 ### 2. Navegação por Teclado
+
 - **Focus Management**: Gerenciamento adequado de foco
 - **Keyboard Shortcuts**: Atalhos de teclado para ações comuns
 - **Focus Trap**: Armadilha de foco para modais
 - **Skip Links**: Links para pular navegação
 
 ### 3. Alto Contraste
+
 - **Theme Support**: Suporte a temas de alto contraste
 - **Color Variables**: Variáveis CSS para fácil personalização
 - **System Preferences**: Detecção automática de preferências do sistema
 
 ### 4. Redução de Movimento
+
 - **Prefers Reduced Motion**: Respeita preferências de redução de movimento
 - **Animation Control**: Controle sobre animações e transições
 - **Performance**: Melhor desempenho com animações reduzidas
 
 ### 5. Tamanho de Texto
+
 - **Resizable Text**: Suporte a redimensionamento de texto
 - **Zoom Support**: Compatibilidade com zoom do navegador
 - **Touch Targets**: Alvos de toque adequados para dispositivos móveis
 
 ### 6. Acessibilidade Cognitiva
+
 - **Clear Instructions**: Instruções claras e simples
 - **Consistent Navigation**: Navegação consistente
 - **Error Handling**: Mensagens de erro acessíveis
@@ -41,6 +47,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ## Componentes Acessíveis
 
 ### AccessibleChatMessage
+
 ```tsx
 <AccessibleChatMessage
   message={message}
@@ -50,6 +57,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ```
 
 **Características:**
+
 - Estrutura semântica com `<article>`
 - ARIA labels e descriptions adequados
 - Suporte a teclado completo
@@ -57,11 +65,13 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 - Ações de copiar, falar e reportar
 
 ### AccessibilitySettingsPanel
+
 ```tsx
 <AccessibilitySettingsPanel />
 ```
 
 **Características:**
+
 - Painel de configurações flutuante
 - Suporte a alto contraste
 - Controle de tamanho de texto
@@ -69,6 +79,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 - Modo teclado
 
 ### ScreenReaderAnnouncer
+
 ```tsx
 <ScreenReaderAnnouncer
   message="Nova mensagem recebida"
@@ -78,6 +89,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ```
 
 **Características:**
+
 - Anúncios para leitores de tela
 - Prioridade configurável (polite/assertive)
 - Timeout automático
@@ -86,6 +98,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ## CSS de Acessibilidade
 
 ### Classes Utilitárias
+
 ```css
 /* Alto contraste */
 .high-contrast {
@@ -113,6 +126,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 ## Testes de Acessibilidade
 
 ### Testes Automatizados
+
 ```tsx
 // Teste de atributos ARIA
 test('renders with proper ARIA attributes', () => {
@@ -135,6 +149,7 @@ test('supports keyboard navigation', () => {
 ### Lista de Verificação WCAG 2.1 AA+
 
 #### Perceivable (Perceptível)
+
 - [x] Alternativas textuais para conteúdo não textual
 - [x] Legendas para conteúdo de mídia
 - [x] Conteúdo em áudio pode ser pausado
@@ -145,6 +160,7 @@ test('supports keyboard navigation', () => {
 - [x] Conteúdo estruturado com cabeçalhos adequados
 
 #### Operable (Operável)
+
 - [x] Todas as funcionalidades disponíveis por teclado
 - [x] Não há armadilhas de foco de teclado
 - [x] Tempo suficiente para ler e interagir
@@ -155,6 +171,7 @@ test('supports keyboard navigation', () => {
 - [x] Funcionalidade de links é previsível
 
 #### Understandable (Compreensível)
+
 - [x] Idioma da página é identificado
 - [x] Conteúdo incompreensível é explicado
 - [x] Entrada de dados é explicada
@@ -164,6 +181,7 @@ test('supports keyboard navigation', () => {
 - [x] Contexto de navegação é mantido
 
 #### Robust (Robusto)
+
 - [x] Compatibilidade com leitores de tela
 - [x] Atributos ARIA são usados corretamente
 - [x] Validação de marcação
@@ -173,21 +191,25 @@ test('supports keyboard navigation', () => {
 ## Melhores Práticas
 
 ### 1. Design Inclusivo
+
 - Envolva usuários com deficiências no processo de design
 - Considere diferentes tipos de deficiência desde o início
 - Teste com múltiplas tecnologias assistivas
 
 ### 2. Desenvolvimento Acessível
+
 - Use HTML semântico sempre que possível
 - Forneça alternativas textuais para conteúdo não textual
 - Garanta que todos os elementos interativos sejam alcançáveis por teclado
 
 ### 3. Teste Contínuo
+
 - Realize testes automatizados de acessibilidade
 - Teste manualmente com leitores de tela
 - Valide com diferentes navegadores e dispositivos
 
 ### 4. Documentação
+
 - Documente todas as características de acessibilidade
 - Forneça guias para usuários com deficiências
 - Mantenha a documentação atualizada
@@ -195,12 +217,14 @@ test('supports keyboard navigation', () => {
 ## Suporte a Navegadores
 
 ### Navegadores Compatíveis
+
 - **Chrome**: Versão 90+ (recomendado)
 - **Firefox**: Versão 88+ (recomendado)
 - **Safari**: Versão 14+ (recomendado)
 - **Edge**: Versão 90+ (recomendado)
 
 ### Tecnologias Assistivas Suportadas
+
 - **Screen Readers**: NVDA, JAWS, VoiceOver, TalkBack
 - **Software de Ampliação**: ZoomText, MAGic
 - **Reconhecimento de Voz**: Dragon NaturallySpeaking
@@ -209,6 +233,7 @@ test('supports keyboard navigation', () => {
 ## Personalização
 
 ### Temas Personalizados
+
 ```tsx
 // Criar tema personalizado
 const customTheme = {
@@ -225,6 +250,7 @@ const customTheme = {
 ```
 
 ### Configurações de Usuário
+
 ```tsx
 // Salvar preferências do usuário
 const saveUserPreferences = (preferences: AccessibilitySettings) => {
@@ -241,16 +267,19 @@ const loadUserPreferences = (): AccessibilitySettings => {
 ## Monitoramento e Manutenção
 
 ### Auditorias Regulares
+
 - Realize auditorias de acessibilidade trimestrais
 - Monitore novas diretrizes WCAG
 - Atualize componentes conforme necessário
 
 ### Feedback dos Usuários
+
 - Colete feedback de usuários com deficiências
 - Implemente melhorias baseadas no feedback
 - Mantenha um canal de comunicação aberto
 
 ### Atualizações e Melhorias
+
 - Mantenha-se atualizado com as melhores práticas
 - Implemente novas tecnologias assistivas
 - Melhore continuamente a experiência do usuário
@@ -258,12 +287,14 @@ const loadUserPreferences = (): AccessibilitySettings => {
 ## Referências
 
 ### Padrões e Diretrizes
+
 - [WCAG 2.1](https://www.w3.org/TR/WCAG21/)
 - [WAI-ARIA](https://www.w3.org/TR/wai-aria/)
 - [Section 508](https://www.section508.gov/)
 - [EN 301 549](https://www.etsi.org/)
 
 ### Ferramentas de Teste
+
 - [axe DevTools](https://www.deque.com/axe/)
 - [WAVE](https://wave.webaim.org/)
 - [Lighthouse](https://developers.google.com/web/tools/lighthouse)
@@ -271,6 +302,7 @@ const loadUserPreferences = (): AccessibilitySettings => {
 - [VoiceOver](https://www.apple.com/accessibility/mac/vision/)
 
 ### Recursos de Aprendizagem
+
 - [WebAIM](https://webaim.org/)
 - [A11Y Project](https://www.a11yproject.com/)
 - [Smashing Magazine - Accessibility](https://www.smashingmagazine.com/category/accessibility/)
@@ -279,10 +311,11 @@ const loadUserPreferences = (): AccessibilitySettings => {
 ## Contato e Suporte
 
 Para questões de acessibilidade ou relatórios de problemas:
+
 - **Email**: accessibility@neonpro.com
 - **Telefone**: (11) 9999-9999
 - **Slack**: #acessibilidade-neonpro
 
 ---
 
-*Este guia é mantido pela equipe de desenvolvimento do NeonPro e é atualizado regularmente para refletir as melhores práticas de acessibilidade.*
+_Este guia é mantido pela equipe de desenvolvimento do NeonPro e é atualizado regularmente para refletir as melhores práticas de acessibilidade._

@@ -3,34 +3,28 @@ import { QualityGateValidator } from '../src/core/quality-gates';
 
 describe('QualityGateValidator', () => {
   it('throws when gate is missing', () => {
-    const validator = new QualityGateValidator(
-    expect(() => validator.validateGate('unknown', 10)).toThrow(
-      'Quality gate \'unknown\' not found',
-    
+    const validator = new QualityGateValidator();
+    expect(() =&gt; validator.validateGate('unknown', 10)).toThrow(
+      'Quality gate \'unknown\' not found'
+    );
   }
 
   it('evaluates special gate behavior', () => {
-    const validator = new QualityGateValidator(
+    const validator = new QualityGateValidator();
 
-    expect(validator.validateGate('security-vulnerabilities', 0).passed).toBe(
-      true,
-    
-    expect(validator.validateGate('security-vulnerabilities', 2).passed).toBe(
-      false,
-    
+    expect(validator.validateGate('security-vulnerabilities', 0).passed).toBe(true);
+    expect(validator.validateGate('security-vulnerabilities', 2).passed).toBe(false);
 
     expect(validator.validateGate('performance-budget', 900).passed).toBe(true);
-    expect(validator.validateGate('performance-budget', 1200).passed).toBe(
-      false,
-    
+    expect(validator.validateGate('performance-budget', 1200).passed).toBe(false);
 
     expect(validator.validateGate('test-coverage', 90).passed).toBe(true);
     expect(validator.validateGate('test-coverage', 70).passed).toBe(false);
   }
 
   it('validates multiple metrics and summarizes results', () => {
-    const validator = new QualityGateValidator(
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {}
+    const validator = new QualityGateValidator();
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() =&gt; {});
 
     const summary = validator.validateGates({
       'test-coverage': 70,
@@ -40,18 +34,18 @@ describe('QualityGateValidator', () => {
     }
 
     expect(summary.passed).toBe(false);
-    expect(summary.results).toHaveLength(3
-    expect(summary.criticalFailures.length).toBeGreaterThan(0
-    expect(summary.summary).toContain('critical failures')
+    expect(summary.results).toHaveLength(3);
+    expect(summary.criticalFailures.length).toBeGreaterThan(0);
+    expect(summary.summary).toContain('critical failures');
     expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('Skipping unknown quality gate'),
-    
+      expect.stringContaining('Skipping unknown quality gate')
+    );
 
-    warnSpy.mockRestore(
+    warnSpy.mockRestore();
   }
 
   it('adds or updates gates and generates reports', () => {
-    const validator = new QualityGateValidator([]
+    const validator = new QualityGateValidator([]);
 
     validator.addGate({
       name: 'custom-gate',
@@ -72,11 +66,11 @@ describe('QualityGateValidator', () => {
       validator.validateGate('custom-gate', 65),
     ];
 
-    const report = validator.generateReport(results
+    const report = validator.generateReport(results);
 
-    expect(report).toContain('Quality Gates Report')
-    expect(report).toContain('❌ FAIL custom-gate (CRITICAL)')
-    expect(report).toContain('✅ PASS custom-gate')
-    expect(validator.getGates()).toHaveLength(1
+    expect(report).toContain('Quality Gates Report');
+    expect(report).toContain('❌ FAIL custom-gate (CRITICAL)');
+    expect(report).toContain('✅ PASS custom-gate');
+    expect(validator.getGates()).toHaveLength(1);
   }
 }

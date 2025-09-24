@@ -28,6 +28,7 @@ apps/web/src/components/
 ## 👥 Client Management Components
 
 ### ClientProfileCard
+
 ```typescript
 // apps/web/src/components/aesthetic/client-management/ClientProfileCard.tsx
 interface ClientProfileCardProps {
@@ -168,6 +169,7 @@ const ClientProfileCard: React.FC<ClientProfileCardProps> = ({
 ```
 
 ### ClientRegistrationForm
+
 ```typescript
 // apps/web/src/components/aesthetic/client-management/ClientRegistrationForm.tsx
 interface ClientRegistrationFormProps {
@@ -590,6 +592,7 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
 ## 💉 Treatment Planning Components
 
 ### TreatmentPlanner
+
 ```typescript
 // apps/web/src/components/aesthetic/treatment-planning/TreatmentPlanner.tsx
 interface TreatmentPlannerProps {
@@ -937,6 +940,7 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
 ## 📅 Scheduling Components
 
 ### AICalendarScheduler
+
 ```typescript
 // apps/web/src/components/aesthetic/scheduling/AICalendarScheduler.tsx
 interface AICalendarSchedulerProps {
@@ -1260,6 +1264,7 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
 ## 🛡️ Compliance Components
 
 ### LGPDConsentModal
+
 ```typescript
 // apps/web/src/components/aesthetic/compliance/LGPDConsentModal.tsx
 interface LGPDConsentModalProps {
@@ -1532,6 +1537,7 @@ const LGPDConsentModal: React.FC<LGPDConsentModalProps> = ({
 ## 📊 Dashboard Components
 
 ### AestheticClinicDashboard
+
 ```typescript
 // apps/web/src/components/aesthetic/dashboard/AestheticClinicDashboard.tsx
 interface AestheticClinicDashboardProps {

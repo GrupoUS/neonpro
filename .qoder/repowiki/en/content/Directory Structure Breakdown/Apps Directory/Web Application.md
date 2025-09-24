@@ -1,7 +1,7 @@
 # Web Application
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [App.tsx](file://apps/web/src/App.tsx)
 - [main.tsx](file://apps/web/src/main.tsx)
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Component Hierarchy](#component-hierarchy)
@@ -37,6 +38,7 @@ As the primary user-facing component of the system, this web application integra
 The codebase emphasizes type safety through TypeScript, with comprehensive typing across components, props, and API interactions. It leverages modern tooling including Vite for fast development builds, TanStack Router for routing, and React Query for data fetching and caching. The application also implements internationalization support and adheres to Brazilian healthcare regulations (LGPD) in its data handling practices.
 
 **Section sources**
+
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 - [main.tsx](file://apps/web/src/main.tsx#L1-L98)
 
@@ -62,10 +64,12 @@ J[Shared UI Components] --> B
 ```
 
 **Diagram sources **
+
 - [main.tsx](file://apps/web/src/main.tsx#L1-L98)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 
 **Section sources**
+
 - [main.tsx](file://apps/web/src/main.tsx#L1-L98)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 
@@ -119,11 +123,13 @@ App --> PWAOfflineIndicator : "renders"
 ```
 
 **Diagram sources **
+
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 - [components/event-calendar/EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L1-L241)
 - [components/ai-scheduling/copilot-scheduling-agent.tsx](file://apps/web/src/components/ai-scheduling/copilot-scheduling-agent.tsx#L1-L524)
 
 **Section sources**
+
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 - [components/event-calendar/EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L1-L241)
 - [components/ai-scheduling/copilot-scheduling-agent.tsx](file://apps/web/src/components/ai-scheduling/copilot-scheduling-agent.tsx#L1-L524)
@@ -156,10 +162,12 @@ style RenderApp fill:#bbf,stroke:#333
 ```
 
 **Diagram sources **
+
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts#L1-L113)
 - [router.ts](file://apps/web/src/router.ts#L1-L11)
 
 **Section sources**
+
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts#L1-L113)
 - [router.ts](file://apps/web/src/router.ts#L1-L11)
 
@@ -176,6 +184,7 @@ In AI-powered components like the CopilotSchedulingAgent, CopilotKit's useCoAgen
 Form state is managed using controlled components with validation handled through custom hooks. Complex forms like appointment creation use context providers to share state between multiple components without prop drilling. All state changes are instrumented with proper error boundaries to prevent crashes.
 
 **Section sources**
+
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx#L1-L57)
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx#L1-L16)
 - [copilot-scheduling-agent.tsx](file://apps/web/src/components/ai-scheduling/copilot-scheduling-agent.tsx#L1-L524)
@@ -193,6 +202,7 @@ REST APIs are used for specific endpoints that don't require the full tRPC featu
 Environment-specific configuration ensures that API endpoints point to the correct backend instances based on deployment environment. Security measures include proper CORS configuration, HTTPS enforcement, and input validation to prevent injection attacks. All sensitive data transmissions are encrypted in transit.
 
 **Section sources**
+
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx#L1-L16)
 - [copilot-scheduling-agent.tsx](file://apps/web/src/components/ai-scheduling/copilot-scheduling-agent.tsx#L1-L524)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
@@ -208,6 +218,7 @@ PWA installation prompts are managed through the BeforeInstallPrompt event, with
 Offline status is visually indicated through the PWAOfflineIndicator component, which appears in the corner of the screen when connectivity is lost. The application continues to accept user input during offline periods, queuing actions to be synchronized when connectivity is restored.
 
 Additional PWA features include:
+
 - Web App Manifest with proper icons and theme colors
 - Splash screen customization
 - Background sync for queued operations
@@ -249,11 +260,13 @@ SW->>Cache : Clear Queued Actions
 ```
 
 **Diagram sources **
+
 - [main.tsx](file://apps/web/src/main.tsx#L1-L98)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 - [public/sw.js](file://apps/web/public/sw.js)
 
 **Section sources**
+
 - [main.tsx](file://apps/web/src/main.tsx#L1-L98)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 
@@ -272,6 +285,7 @@ Theme customization is implemented through the `tailwind.config.ts` file, which 
 Dark mode is supported through CSS variables and media queries, allowing users to switch between light and dark themes based on preference or ambient lighting conditions. The theme system is designed to be extensible, supporting future clinic-branded variations.
 
 Component styling follows a consistent methodology:
+
 1. Base styles using Tailwind utilities
 2. Component-specific overrides in dedicated CSS modules when necessary
 3. Responsive design using Tailwind's breakpoint system
@@ -280,6 +294,7 @@ Component styling follows a consistent methodology:
 The build process optimizes CSS output through PurgeCSS, removing unused utilities to minimize bundle size. This is particularly important for a PWA where download size impacts installation conversion rates.
 
 **Section sources**
+
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 - [components/event-calendar/EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L1-L241)
 - [components/ai-scheduling/copilot-scheduling-agent.tsx](file://apps/web/src/components/ai-scheduling/copilot-scheduling-agent.tsx#L1-L524)
@@ -289,6 +304,7 @@ The build process optimizes CSS output through PurgeCSS, removing unused utiliti
 The application leverages shared UI components from the `@neonpro/ui` package, ensuring consistency across different parts of the platform. These components are imported and used throughout the codebase, providing standardized buttons, inputs, cards, alerts, and other interface elements.
 
 The shared component library includes:
+
 - **Primitive Components**: Button, Input, Label, Select, Checkbox, Radio, Switch
 - **Composite Components**: Form fields with validation, data tables, modals, tooltips
 - **Layout Components**: Grid system, containers, aspect ratios
@@ -300,6 +316,7 @@ These components are designed with accessibility as a primary concern, following
 Theming is handled through CSS variables, allowing the shared components to adapt to the application's current theme (light/dark mode) and brand colors. Prop interfaces are fully typed with TypeScript, providing excellent developer experience with autocomplete and error detection.
 
 The integration approach follows best practices:
+
 - Components are imported individually to avoid bundling unused ones
 - Props are strictly typed with interfaces defined in the shared package
 - Customization is possible through className overrides
@@ -309,6 +326,7 @@ The integration approach follows best practices:
 This shared component system enables rapid development of new features while maintaining visual and behavioral consistency across the application.
 
 **Section sources**
+
 - [components/ui/button.tsx](file://apps/web/src/components/ui/button.tsx)
 - [components/ui/input.tsx](file://apps/web/src/components/ui/input.tsx)
 - [components/ui/card.tsx](file://apps/web/src/components/ui/card.tsx)
@@ -318,6 +336,7 @@ This shared component system enables rapid development of new features while mai
 The application implements multiple performance optimization strategies to ensure fast load times, smooth interactions, and efficient resource usage. These optimizations address both initial loading performance and runtime performance.
 
 Bundle size is minimized through several techniques:
+
 - Code splitting via dynamic imports for routes
 - Tree shaking to eliminate dead code
 - Compression of assets through Vite's build process
@@ -325,6 +344,7 @@ Bundle size is minimized through several techniques:
 - Deduplication of dependencies through pnpm workspaces
 
 Critical rendering path optimization includes:
+
 - Inlining of above-the-fold CSS
 - Preloading of key resources
 - Minification of JavaScript and CSS
@@ -332,6 +352,7 @@ Critical rendering path optimization includes:
 - Efficient font loading strategies
 
 Runtime performance is enhanced through:
+
 - Memoization of expensive calculations with useMemo
 - Prevention of unnecessary re-renders with useCallback
 - Virtualization of long lists to reduce DOM nodes
@@ -341,6 +362,7 @@ Runtime performance is enhanced through:
 The application also implements performance monitoring through Web Vitals tracking, collecting metrics like Largest Contentful Paint, First Input Delay, and Cumulative Layout Shift. This data is used to identify and address performance bottlenecks.
 
 Specific optimizations for the healthcare use case include:
+
 - Prefetching of patient data when navigating to appointment views
 - Caching of frequently accessed reference data
 - Optimistic updates for form submissions
@@ -350,6 +372,7 @@ Specific optimizations for the healthcare use case include:
 These optimizations ensure the application remains responsive even when handling large datasets typical in medical practices.
 
 **Section sources**
+
 - [vite.config.ts](file://apps/web/vite.config.ts)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 - [EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L1-L241)
@@ -359,6 +382,7 @@ These optimizations ensure the application remains responsive even when handling
 The application prioritizes accessibility to ensure usability for all users, including those with disabilities. It follows WCAG 2.1 AA guidelines and implements numerous accessibility features throughout the codebase.
 
 Key accessibility implementations include:
+
 - Semantic HTML structure with proper heading hierarchy
 - ARIA attributes for dynamic content and complex widgets
 - Keyboard navigation support for all interactive elements
@@ -369,6 +393,7 @@ Key accessibility implementations include:
 - Alternative text for images and icons
 
 Specific components demonstrate advanced accessibility patterns:
+
 - The EventCalendar provides keyboard navigation between dates and events
 - Form controls have associated labels and error messages
 - Modal dialogs trap focus and announce their presence to screen readers
@@ -378,6 +403,7 @@ Specific components demonstrate advanced accessibility patterns:
 The application also includes an accessibility configuration file that defines standards and guidelines for new components. Automated accessibility testing is integrated into the development workflow, catching issues early.
 
 For healthcare-specific accessibility needs, the application supports:
+
 - High contrast mode for users with low vision
 - Reduced motion preferences for users with vestibular disorders
 - Language support for Portuguese (Brazilian)
@@ -387,6 +413,7 @@ For healthcare-specific accessibility needs, the application supports:
 These features ensure the application can be used effectively by healthcare professionals and patients with diverse abilities and needs.
 
 **Section sources**
+
 - [config/accessibility.ts](file://apps/web/src/config/accessibility.ts)
 - [components/chat/ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md)
 - [components/chat/accessibility.css](file://apps/web/src/components/chat/accessibility.css)
@@ -396,6 +423,7 @@ These features ensure the application can be used effectively by healthcare prof
 The application includes a comprehensive testing setup with multiple testing strategies to ensure reliability and maintainability. Tests are organized in the `__tests__` directories throughout the codebase, following a structure that mirrors the source files.
 
 The testing stack includes:
+
 - **Unit Tests**: Using Vitest for isolated component and utility testing
 - **Integration Tests**: Testing component interactions and data flow
 - **End-to-End Tests**: Using Playwright for browser automation
@@ -403,6 +431,7 @@ The testing stack includes:
 - **Accessibility Tests**: Automated checks against WCAG standards
 
 Test files are co-located with their corresponding implementation files, making them easy to find and maintain. The test suite covers critical functionality including:
+
 - Event calendar rendering and interaction
 - Appointment scheduling workflows
 - Form validation and submission
@@ -413,6 +442,7 @@ Test files are co-located with their corresponding implementation files, making 
 Mocking is used extensively to isolate tests from external dependencies like API calls and browser APIs. MSW (Mock Service Worker) is employed to intercept network requests and return predictable responses, enabling reliable testing of data-dependent components.
 
 The testing configuration supports multiple environments:
+
 - Development: Fast feedback with focused testing
 - CI/CD: Comprehensive test runs with coverage reporting
 - Browser: Cross-browser testing on multiple platforms
@@ -421,8 +451,9 @@ The testing configuration supports multiple environments:
 Code coverage thresholds are enforced to maintain quality standards, with particular emphasis on business-critical paths like appointment booking and patient data management.
 
 **Section sources**
-- [__tests__/basic.test.tsx](file://apps/web/src/__tests__/basic.test.tsx)
-- [__tests__/integration/aesthetic-clinic-workflows.test.tsx](file://apps/web/src/__tests__/integration/aesthetic-clinic-workflows.test.tsx)
+
+- [**tests**/basic.test.tsx](file://apps/web/src/__tests__/basic.test.tsx)
+- [**tests**/integration/aesthetic-clinic-workflows.test.tsx](file://apps/web/src/__tests__/integration/aesthetic-clinic-workflows.test.tsx)
 - [test-setup.ts](file://apps/web/src/test-setup.ts)
 
 ## Common Issues and Solutions
@@ -430,14 +461,18 @@ Code coverage thresholds are enforced to maintain quality standards, with partic
 The application addresses several common frontend development challenges with targeted solutions:
 
 ### Hydration Errors
+
 Hydration mismatches between server and client rendering are prevented by:
+
 - Ensuring consistent initial state across server and client
 - Using useEffect for client-only operations
 - Properly handling browser APIs that aren't available during SSR
 - Implementing suspense boundaries for async components
 
 ### Bundle Size Optimization
+
 Large bundle sizes are mitigated through:
+
 - Code splitting at route level
 - Dynamic imports for heavy dependencies
 - Tree shaking configuration in Vite
@@ -445,7 +480,9 @@ Large bundle sizes are mitigated through:
 - Analyzing bundle composition with visualization tools
 
 ### Environment Configuration
+
 Environment-specific settings are managed through:
+
 - .env files with appropriate prefixes
 - Validation of required environment variables
 - Default values for optional configuration
@@ -453,7 +490,9 @@ Environment-specific settings are managed through:
 - Secure handling of sensitive credentials
 
 ### Memory Leaks
+
 Potential memory leaks are prevented by:
+
 - Cleaning up event listeners in useEffect cleanup functions
 - Canceling pending promises and subscriptions
 - Properly disposing of timers and intervals
@@ -461,7 +500,9 @@ Potential memory leaks are prevented by:
 - Monitoring performance in development mode
 
 ### Race Conditions
+
 Data race conditions are handled through:
+
 - Proper async/await patterns
 - Cancellation tokens for fetch operations
 - Versioning of data to detect conflicts
@@ -469,7 +510,9 @@ Data race conditions are handled through:
 - Idempotent mutation designs
 
 ### Cross-Browser Compatibility
+
 Browser inconsistencies are addressed by:
+
 - Using standardized APIs with polyfills when necessary
 - Progressive enhancement for older browsers
 - Feature detection rather than browser detection
@@ -479,6 +522,7 @@ Browser inconsistencies are addressed by:
 These solutions ensure the application remains stable and performant across different usage scenarios and deployment environments.
 
 **Section sources**
+
 - [main.tsx](file://apps/web/src/main.tsx#L1-L98)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 - [vite.config.ts](file://apps/web/vite.config.ts)
@@ -490,6 +534,7 @@ These solutions ensure the application remains stable and performant across diff
 The EventCalendar component demonstrates a complex, interactive UI element that manages appointment scheduling. It accepts props for events, view state, filters, and callback functions for CRUD operations. The component maintains internal state for the current date, selected event, and loading status.
 
 Key features include:
+
 - Multiple view modes (day, week, month)
 - Drag-and-drop event creation
 - Filtering by type, status, professional, and patient
@@ -520,6 +565,7 @@ style M fill:#bbf,stroke:#333
 ```
 
 **Diagram sources **
+
 - [components/event-calendar/EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L1-L241)
 
 ### AI Scheduling Agent
@@ -527,6 +573,7 @@ style M fill:#bbf,stroke:#333
 The CopilotSchedulingAgent component showcases integration with AI-powered functionality for intelligent appointment scheduling. It uses CopilotKit to create an agent-based interface that guides users through the scheduling workflow.
 
 Key aspects include:
+
 - Multi-step process with progress indication
 - Natural language interaction through CopilotChat
 - AI-driven availability analysis and optimization
@@ -567,8 +614,10 @@ Agent->>User : Display Confirmation
 ```
 
 **Diagram sources **
+
 - [components/ai-scheduling/copilot-scheduling-agent.tsx](file://apps/web/src/components/ai-scheduling/copilot-scheduling-agent.tsx#L1-L524)
 
 **Section sources**
+
 - [components/event-calendar/EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L1-L241)
 - [components/ai-scheduling/copilot-scheduling-agent.tsx](file://apps/web/src/components/ai-scheduling/copilot-scheduling-agent.tsx#L1-L524)

@@ -28,7 +28,7 @@ export interface MaskingOptions {
 /**
  * LGPD compliance levels for anonymization
  */
-export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'full_anonymization';
+export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'full_anonymization' | 'full';
 
 /**
  * Patient data structure for healthcare anonymization

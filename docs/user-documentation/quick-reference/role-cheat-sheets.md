@@ -7,6 +7,7 @@ These role-specific cheat sheets provide quick, at-a-glance references for commo
 ## 👨‍⚕️ Healthcare Professional Cheat Sheet
 
 ### **Daily Workflow Checklist**
+
 ```typescript
 interface DailyChecklist {
   morning: [
@@ -38,18 +39,20 @@ interface DailyChecklist {
 ```
 
 ### **Critical Keyboard Shortcuts**
-| Shortcut | Action | Priority |
-|----------|--------|----------|
-| `Ctrl + P` | Patient Search | 🔴 Critical |
-| `Ctrl + T` | Treatment Planning | 🔴 Critical |
-| `Ctrl + N` | New Clinical Note | 🟡 Important |
-| `Ctrl + I` | AI Recommendations | 🟡 Important |
-| `Ctrl + Shift + P` | Photo Capture | 🟡 Important |
-| `Alt + S` | Today's Schedule | 🔴 Critical |
-| `F5` | Refresh Patient Data | 🟡 Important |
-| `Ctrl + S` | Save Documentation | 🔴 Critical |
+
+| Shortcut           | Action               | Priority     |
+| ------------------ | -------------------- | ------------ |
+| `Ctrl + P`         | Patient Search       | 🔴 Critical  |
+| `Ctrl + T`         | Treatment Planning   | 🔴 Critical  |
+| `Ctrl + N`         | New Clinical Note    | 🟡 Important |
+| `Ctrl + I`         | AI Recommendations   | 🟡 Important |
+| `Ctrl + Shift + P` | Photo Capture        | 🟡 Important |
+| `Alt + S`          | Today's Schedule     | 🔴 Critical  |
+| `F5`               | Refresh Patient Data | 🟡 Important |
+| `Ctrl + S`         | Save Documentation   | 🔴 Critical  |
 
 ### **Patient Assessment Quick Reference**
+
 ```typescript
 interface AssessmentQuickRef {
   vitalSigns: {
@@ -74,6 +77,7 @@ interface AssessmentQuickRef {
 ```
 
 ### **Treatment Documentation Template**
+
 ```
 PROCEDURE PERFORMED:
 - Treatment: _________________
@@ -104,6 +108,7 @@ PROFESSIONAL SIGNATURE: _________________
 ```
 
 ### **Emergency Procedures Quick Reference**
+
 ```typescript
 interface EmergencyProcedures {
   anaphylaxis: [
@@ -135,6 +140,7 @@ interface EmergencyProcedures {
 ## 👩‍💼 Reception Staff Cheat Sheet
 
 ### **Front Desk Daily Checklist**
+
 ```typescript
 interface ReceptionChecklist {
   opening: [
@@ -167,18 +173,20 @@ interface ReceptionChecklist {
 ```
 
 ### **Essential Keyboard Shortcuts**
-| Shortcut | Action | Frequency |
-|----------|--------|-----------|
-| `F3` | Patient Search | 🔴 Very High |
-| `Ctrl + Shift + A` | New Appointment | 🔴 Very High |
-| `Ctrl + I` | Patient Check-in | 🔴 Very High |
+
+| Shortcut           | Action             | Frequency    |
+| ------------------ | ------------------ | ------------ |
+| `F3`               | Patient Search     | 🔴 Very High |
+| `Ctrl + Shift + A` | New Appointment    | 🔴 Very High |
+| `Ctrl + I`         | Patient Check-in   | 🔴 Very High |
 | `Ctrl + Shift + P` | Payment Processing | 🔴 Very High |
-| `Alt + T` | Today's Schedule | 🟡 High |
-| `Ctrl + Q` | Patient Queue | 🟡 High |
-| `F5` | Refresh Schedule | 🟡 High |
-| `Ctrl + S` | Save Changes | 🟡 High |
+| `Alt + T`          | Today's Schedule   | 🟡 High      |
+| `Ctrl + Q`         | Patient Queue      | 🟡 High      |
+| `F5`               | Refresh Schedule   | 🟡 High      |
+| `Ctrl + S`         | Save Changes       | 🟡 High      |
 
 ### **Appointment Scheduling Flowchart**
+
 ```
 START
   │
@@ -196,6 +204,7 @@ END → Update Patient Record → Schedule Follow-up
 ```
 
 ### **Payment Processing Quick Steps**
+
 ```typescript
 interface PaymentSteps {
   creditCard: [
@@ -228,6 +237,7 @@ interface PaymentSteps {
 ```
 
 ### **Customer Service Scripts**
+
 ```typescript
 interface ServiceScripts {
   greeting: "Bom dia! Clínica NeonPro, em que posso ajudar?";
@@ -242,6 +252,7 @@ interface ServiceScripts {
 ## 🧑‍💼 Administrator Cheat Sheet
 
 ### **System Administration Daily Tasks**
+
 ```typescript
 interface AdminDailyTasks {
   morningChecks: [
@@ -271,18 +282,20 @@ interface AdminDailyTasks {
 ```
 
 ### **Critical Administration Shortcuts**
-| Shortcut | Action | Priority |
-|----------|--------|----------|
-| `Ctrl + U` | User Management | 🔴 Critical |
-| `Ctrl + Shift + S` | System Settings | 🔴 Critical |
-| `Ctrl + R` | Reports Dashboard | 🟡 Important |
-| `Ctrl + L` | Audit Logs | 🟡 Important |
-| `Ctrl + B` | Backup Management | 🟡 Important |
-| `Ctrl + Shift + P` | Performance Monitor | 🟡 Important |
-| `Alt + A` | Analytics Dashboard | 🟡 Important |
-| `F12` | Developer Tools (Admin) | 🟢 Reference |
+
+| Shortcut           | Action                  | Priority     |
+| ------------------ | ----------------------- | ------------ |
+| `Ctrl + U`         | User Management         | 🔴 Critical  |
+| `Ctrl + Shift + S` | System Settings         | 🔴 Critical  |
+| `Ctrl + R`         | Reports Dashboard       | 🟡 Important |
+| `Ctrl + L`         | Audit Logs              | 🟡 Important |
+| `Ctrl + B`         | Backup Management       | 🟡 Important |
+| `Ctrl + Shift + P` | Performance Monitor     | 🟡 Important |
+| `Alt + A`          | Analytics Dashboard     | 🟡 Important |
+| `F12`              | Developer Tools (Admin) | 🟢 Reference |
 
 ### **User Role Matrix**
+
 ```typescript
 interface RoleMatrix {
   healthcareProfessional: {
@@ -308,6 +321,7 @@ interface RoleMatrix {
 ```
 
 ### **System Performance Metrics**
+
 ```typescript
 interface PerformanceMetrics {
   criticalAlerts: {
@@ -329,6 +343,7 @@ interface PerformanceMetrics {
 ```
 
 ### **Backup and Recovery Procedures**
+
 ```typescript
 interface BackupProcedures {
   dailyBackup: {
@@ -357,6 +372,7 @@ interface BackupProcedures {
 ## 🏥 Compliance Officer Cheat Sheet
 
 ### **Compliance Monitoring Daily Tasks**
+
 ```typescript
 interface ComplianceDailyTasks {
   monitoring: [
@@ -386,6 +402,7 @@ interface ComplianceDailyTasks {
 ```
 
 ### **Compliance Framework Quick Reference**
+
 ```typescript
 interface ComplianceFramework {
   lgpd: {
@@ -431,6 +448,7 @@ interface ComplianceFramework {
 ```
 
 ### **Audit Preparation Checklist**
+
 ```typescript
 interface AuditPreparation {
   documentation: [
@@ -462,6 +480,7 @@ interface AuditPreparation {
 ```
 
 ### **Incident Response Matrix**
+
 ```typescript
 interface IncidentResponse {
   dataBreach: {
@@ -493,6 +512,7 @@ interface IncidentResponse {
 ## 📱 Mobile Quick Reference
 
 ### **Mobile App Essential Functions**
+
 ```typescript
 interface MobileEssentials {
   quickActions: [
@@ -534,13 +554,13 @@ For additional cheat sheets or role-specific guides:
 
 **Print these cheat sheets** and keep them at your workstation for quick reference during daily operations.
 
-**Support Hours**: Monday-Friday, 8:00-18:00 (Brasília Time)  
+**Support Hours**: Monday-Friday, 8:00-18:00 (Brasília Time)\
 **Emergency Support**: 24/7 for critical system issues
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 1.0.0  
-**Cheat Sheet Coverage**: All major system roles and functions  
-**Maintainers**: NeonPro Training Team  
+**Last Updated**: January 2025\
+**Version**: 1.0.0\
+**Cheat Sheet Coverage**: All major system roles and functions\
+**Maintainers**: NeonPro Training Team\
 **Status**: ✅ Complete - Role-specific cheat sheets documented

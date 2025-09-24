@@ -1,7 +1,7 @@
 # AI Agent Service
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [main.py](file://apps/ai-agent/main.py)
 - [config.py](file://apps/ai-agent/config.py)
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py)
@@ -14,6 +14,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Core Components](#core-components)
@@ -35,6 +36,7 @@ The service integrates with external AI providers such as OpenAI and Anthropic, 
 This documentation provides both conceptual overviews for beginners and technical details for experienced developers, covering the complete request processing pipeline from initial connection to final response delivery.
 
 **Section sources**
+
 - [main.py](file://apps/ai-agent/main.py#L1-L180)
 - [config.py](file://apps/ai-agent/config.py#L1-L90)
 
@@ -64,6 +66,7 @@ style DB fill:#9f9,stroke:#333
 ```
 
 **Diagram sources **
+
 - [main.py](file://apps/ai-agent/main.py#L1-L180)
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L1-L284)
@@ -144,11 +147,13 @@ WebSocketManager --> AgentService : "routes messages"
 ```
 
 **Diagram sources **
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L1-L284)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L1-L230)
 
 **Section sources**
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L1-L284)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L1-L230)
@@ -220,6 +225,7 @@ end
 ```
 
 **Diagram sources **
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L1-L284)
 
@@ -269,6 +275,7 @@ style Z fill:#d9ead3,stroke:#333
 ```
 
 **Diagram sources **
+
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L1-L230)
 
 ## External AI Provider Integration
@@ -284,6 +291,7 @@ Authentication with external providers is managed through API keys stored in env
 The integration also includes error handling mechanisms to gracefully manage issues with external providers. If an API call fails due to network issues, rate limits, or other errors, the system logs the error and returns an appropriate error response to the user rather than crashing. This resilience is crucial for maintaining service availability in production environments where external dependencies may experience temporary disruptions.
 
 **Section sources**
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [config.py](file://apps/ai-agent/config.py#L1-L90)
 
@@ -315,6 +323,7 @@ K --> I
 ```
 
 **Diagram sources **
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L1-L284)
 
@@ -329,6 +338,7 @@ The healthcare_data_service.py implementation focuses on UI/UX optimization for 
 Both implementations demonstrate the flexibility of the AI Agent Service architecture. They reuse the core agent service components while adding specialized functionality for their domains. The ag-ui-rag-agent builds on the WebSocket communication system to create a rich, interactive experience, while the healthcare_data_service enhances the data formatting capabilities to meet specific user interface requirements. These examples show how new AI capabilities can be added by extending existing components rather than building entirely new systems.
 
 **Section sources**
+
 - [agui_protocol.py](file://apps/api/agents/ag-ui-rag-agent/agui_protocol.py#L1-L429)
 - [healthcare_data_service.py](file://apps/api/agents/ag-ui-rag-agent/healthcare_data_service.py#L1-L412)
 - [main.py](file://apps/api/agents/ag-ui-rag-agent/main.py#L1-L646)
@@ -346,6 +356,7 @@ The WebSocket communication layer implements connection resilience features, inc
 These error recovery mechanisms are complemented by comprehensive logging that captures detailed information about failures, including timestamps, error messages, and relevant context. This logging enables rapid diagnosis and resolution of issues, while also providing data for improving the system's resilience over time through analysis of failure patterns.
 
 **Section sources**
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L1-L284)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L1-L230)
@@ -363,6 +374,7 @@ The system also implements rate limiting and request queuing to prevent overload
 Additional performance considerations include efficient data serialization and deserialization, using JSON for message payloads with minimal overhead. The system avoids unnecessary data transfer by requesting only the fields needed for each operation, reducing bandwidth usage and improving response times. For high-frequency operations, bulk operations are preferred over individual requests to minimize network round trips.
 
 **Section sources**
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L1-L284)
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L1-L230)
@@ -380,6 +392,7 @@ The WebSocket communication system is designed to be extensible, with support fo
 Security and compliance configurations are centralized in the tls_config.py file for the AG-UI implementation, showing how security settings can be managed separately from business logic. This separation allows security policies to be updated independently of application functionality, facilitating compliance with evolving regulations.
 
 **Section sources**
+
 - [config.py](file://apps/ai-agent/config.py#L1-L90)
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L1-L480)
 - [tls_config.py](file://apps/api/agents/ag-ui-rag-agent/tls_config.py#L1-L195)

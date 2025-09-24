@@ -64,8 +64,19 @@
       }
     },
     "data_categories": {
-      "aesthetic_procedures": ["botox", "fillers", "laser", "chemical_peels", "facial_harmonization"],
-      "patient_data": ["medical_history", "treatment_records", "before_after_photos", "consent_forms"],
+      "aesthetic_procedures": [
+        "botox",
+        "fillers",
+        "laser",
+        "chemical_peels",
+        "facial_harmonization"
+      ],
+      "patient_data": [
+        "medical_history",
+        "treatment_records",
+        "before_after_photos",
+        "consent_forms"
+      ],
       "professional_data": ["licenses", "certifications", "specializations", "training_records"],
       "business_data": ["appointment_records", "billing", "inventory", "compliance_records"]
     }
@@ -301,7 +312,13 @@
       }
     },
     "aestheticMetrics": {
-      "procedureCategories": ["injectables", "laser", "facial_treatments", "body_contouring", "skin_rejuvenation"],
+      "procedureCategories": [
+        "injectables",
+        "laser",
+        "facial_treatments",
+        "body_contouring",
+        "skin_rejuvenation"
+      ],
       "professionalTypes": ["crm", "coren", "cff", "cnep"],
       "trackingPeriods": ["daily", "weekly", "monthly", "quarterly"]
     }

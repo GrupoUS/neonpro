@@ -1,7 +1,7 @@
 # CFM Telemedicine Compliance
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts)
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts)
 - [compliance.config.json](file://packages/config/src/compliance.config.json)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [CFM Compliance Framework Overview](#cfm-compliance-framework-overview)
 3. [Core Components and Architecture](#core-components-and-architecture)
@@ -69,10 +70,12 @@ H --> AC[Prescription Validation]
 ```
 
 **Diagram sources**
+
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts#L46-L87)
 - [compliance.config.json](file://packages/config/src/compliance.config.json#L1-L397)
 
 The framework operates on a continuous validation model, where compliance checks are performed at multiple stages of the telemedicine workflow:
+
 - Pre-consultation: Professional licensing and patient identity verification
 - Session initiation: Informed consent collection and security protocol establishment
 - During consultation: Real-time monitoring of compliance parameters
@@ -81,6 +84,7 @@ The framework operates on a continuous validation model, where compliance checks
 Each compliance domain is assigned a severity level (critical, high, medium, low) based on potential impact to patient safety and regulatory requirements. The system calculates an overall compliance score from 0-100, with penalties applied for each identified violation according to its severity.
 
 **Section sources**
+
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts#L1-L571)
 - [compliance.config.json](file://packages/config/src/compliance.config.json#L1-L397)
 
@@ -144,6 +148,7 @@ CFMComplianceServiceDB --> CFMLicenseValidation : "returns"
 ```
 
 **Diagram sources**
+
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts#L151-L567)
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L43-L707)
 
@@ -158,6 +163,7 @@ The system architecture comprises three main layers:
 The components communicate through well-defined interfaces and use asynchronous operations to ensure non-blocking execution. Error handling is implemented consistently across all layers, with healthcare-specific error logging to facilitate troubleshooting and auditing.
 
 **Section sources**
+
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts#L151-L567)
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L43-L707)
 
@@ -193,6 +199,7 @@ class LicenseCheck,PatientID,Consent,Security,Recording,Emergency,DigitalPrescri
 ```
 
 **Diagram sources**
+
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts#L324-L379)
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L139-L261)
 
@@ -213,6 +220,7 @@ Digital prescription validation ensures that all electronic prescriptions includ
 An immutable audit trail documents all key events throughout the validation process, including timestamped records of license checks, consent collection, security setup, and final compliance determination. This audit trail serves as evidence of regulatory adherence and supports internal quality assurance processes.
 
 **Section sources**
+
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts#L324-L379)
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L139-L261)
 
@@ -246,6 +254,7 @@ end
 ```
 
 **Diagram sources**
+
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L43-L138)
 - [20250128_cfm_telemedicine_platform.sql](file://packages/database/migrations/20250128_cfm_telemedicine_platform.sql#L1-L665)
 
@@ -280,6 +289,7 @@ The system also maintains historical validation records to support audit require
 For performance optimization, the system employs indexing on the composite CRM number and state fields, enabling rapid lookups even with large datasets. Additionally, a materialized view `cfm_compliance_dashboard` provides real-time metrics on license validation success rates and compliance trends.
 
 **Section sources**
+
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L43-L138)
 - [20250128_cfm_telemedicine_platform.sql](file://packages/database/migrations/20250128_cfm_telemedicine_platform.sql#L1-L665)
 
@@ -314,10 +324,12 @@ class C,D,G,H,L patient;
 ```
 
 **Diagram sources**
+
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L548-L625)
 - [20250918_telemedicine_session_table.sql](file://packages/database/migrations/20250918_telemedicine_session_table.sql#L1-L142)
 
 The patient identification process requires verification of at least two official documents:
+
 - **CPF (Cadastro de Pessoas Físicas)**: Mandatory national identification number with algorithmic validation to detect fraudulent numbers
 - **RG (Registro Geral)**: Mandatory official identification document issued by state authorities
 - **CNS (Cartão Nacional de Saúde)**: Optional but recommended national health card
@@ -342,6 +354,7 @@ Informed consent is managed through a digital process that captures patient agre
 - **Data Sharing Consent**: Permission for sharing medical information with other healthcare providers
 
 Each consent is time-stamped and associated with the patient's verified identity. The system generates a unique consent ID and stores the agreement in an immutable format to prevent repudiation. Consent records include metadata such as:
+
 - Date and time of consent
 - IP address and device information
 - User agent string
@@ -351,6 +364,7 @@ Each consent is time-stamped and associated with the patient's verified identity
 The audit trail captures all consent-related activities, including initial collection, modifications, and revocation requests. This comprehensive documentation supports compliance with both CFM regulations and LGPD requirements for data subject rights.
 
 **Section sources**
+
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L548-L625)
 - [20250918_telemedicine_session_table.sql](file://packages/database/migrations/20250918_telemedicine_session_table.sql#L1-L142)
 
@@ -384,6 +398,7 @@ System-->>Physician : Prescription Complete
 ```
 
 **Diagram sources**
+
 - [cfm.ts](file://tools/testing-toolkit/src/compliance/cfm.ts#L78-L90)
 - [20250918_telemedicine_session_table.sql](file://packages/database/migrations/20250918_telemedicine_session_table.sql#L1-L142)
 
@@ -447,6 +462,7 @@ The data model for digital prescriptions includes comprehensive fields to captur
 ```
 
 The system also implements business rules to prevent common prescription errors:
+
 - Duplicate therapy detection
 - Dosage range validation based on patient age and weight
 - Duration limits for antibiotics and opioids
@@ -456,6 +472,7 @@ The system also implements business rules to prevent common prescription errors:
 These validation mechanisms ensure that digital prescriptions meet both clinical safety standards and regulatory requirements, reducing medication errors and supporting accountable prescribing practices.
 
 **Section sources**
+
 - [cfm.ts](file://tools/testing-toolkit/src/compliance/cfm.ts#L78-L90)
 - [20250918_telemedicine_session_table.sql](file://packages/database/migrations/20250918_telemedicine_session_table.sql#L1-L142)
 
@@ -500,61 +517,77 @@ class B,C,D,E,F,G security;
 ```
 
 **Diagram sources**
+
 - [20250918_telemedicine_session_table.sql](file://packages/database/migrations/20250918_telemedicine_session_table.sql#L1-L142)
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L139-L261)
 
 The security framework addresses seven critical domains:
 
 ### Data Encryption
+
 All sensitive data is protected using military-grade encryption standards:
+
 - **At-rest encryption**: AES-256-GCM for database storage with encrypted backups
 - **In-transit encryption**: TLS 1.3 with perfect forward secrecy for all communications
 - **End-to-end encryption**: WebRTC media streams encrypted with DTLS-SRTP
 - **Key management**: Hardware Security Module (HSM) principles with regular key rotation
 
 ### Access Control
+
 Strict access control policies limit data access to authorized personnel only:
+
 - **Role-Based Access Control (RBAC)**: Granular permissions based on user roles
 - **Multi-Factor Authentication (MFA)**: Required for all user accounts
 - **Session timeouts**: 8-hour maximum session duration with inactivity timeout
 - **IP restriction options**: Geofencing capabilities for high-risk operations
 
 ### Audit Logging
+
 Comprehensive audit trails document all system activities:
+
 - **Immutable logs**: Write-once, append-only storage to prevent tampering
 - **Real-time monitoring**: Continuous analysis of log data for suspicious patterns
 - **Retention policy**: 7-year retention period in compliance with medical record requirements
 - **Automated alerts**: Immediate notification of critical security events
 
 ### Network Security
+
 Robust network defenses protect against external threats:
+
 - **Web Application Firewall (WAF)**: Protection against OWASP Top 10 vulnerabilities
 - **Intrusion Detection/Prevention Systems (IDS/IPS)**: Real-time threat detection
 - **DDoS mitigation**: Cloud-based protection against distributed attacks
 - **Network segmentation**: Isolation of critical systems from general network traffic
 
 ### Vulnerability Management
+
 Proactive vulnerability management ensures ongoing security:
+
 - **Regular scanning**: Automated vulnerability assessments on all systems
 - **Patch management**: Timely application of security updates
 - **Penetration testing**: Quarterly security assessments by independent experts
 - **Threat intelligence**: Integration with security feeds for emerging threats
 
 ### Incident Response
+
 Formal incident response procedures minimize impact of security breaches:
+
 - **Incident classification**: Severity levels with corresponding response protocols
 - **Containment procedures**: Steps to isolate affected systems
 - **Investigation process**: Forensic analysis of security incidents
 - **Notification requirements**: Compliance with regulatory reporting timelines
 
 ### Physical Security
+
 Data center security meets industry best practices:
+
 - **Biometric access controls**: Multi-factor authentication for facility entry
 - **24/7 surveillance**: Video monitoring with retention of footage
 - **Environmental controls**: Redundant power and cooling systems
 - **Disaster recovery**: Geographically distributed backup facilities
 
 The system also implements specific technical controls for telemedicine sessions:
+
 - **Secure session tokens**: Cryptographically random identifiers with short lifespan
 - **ICE/STUN/TURN servers**: Reliable NAT traversal with secure signaling
 - **Media encryption**: End-to-end encryption for audio and video streams
@@ -564,6 +597,7 @@ The system also implements specific technical controls for telemedicine sessions
 These security measures collectively ensure compliance with NGS2 Level 2 requirements and provide a secure foundation for telemedicine operations while protecting patient privacy and data integrity.
 
 **Section sources**
+
 - [20250918_telemedicine_session_table.sql](file://packages/database/migrations/20250918_telemedicine_session_table.sql#L1-L142)
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L139-L261)
 
@@ -597,12 +631,14 @@ class B,C,D,E,F,G,H monitoring;
 ```
 
 **Diagram sources**
+
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L374-L476)
 - [20250128_cfm_telemedicine_platform.sql](file://packages/database/migrations/20250128_cfm_telemedicine_platform.sql#L1-L665)
 
 The monitoring system tracks key compliance metrics across six critical categories:
 
 ### Real-Time Monitoring Metrics
+
 - **License validation success rate**: Percentage of successful professional license verifications
 - **Session security compliance score**: Aggregate score for encryption, authentication, and access controls
 - **Patient consent completeness rate**: Percentage of sessions with properly documented consent
@@ -611,20 +647,25 @@ The monitoring system tracks key compliance metrics across six critical categori
 - **Audit trail completeness**: Percentage of required audit events captured
 
 ### Alert Thresholds
+
 The system triggers alerts when metrics fall below predefined thresholds:
+
 - **Compliance score minimum**: 98% threshold with immediate notification
 - **License validation failure rate**: 1% tolerance before escalation
 - **Security incident tolerance**: Zero tolerance for critical security events
 - **Patient consent incompleteness**: Maximum 2% allowance before investigation
 
 ### Reporting Frequency
+
 The system generates reports on multiple schedules:
+
 - **Real-time alerts**: Immediate notifications for critical violations
 - **Daily summaries**: Comprehensive overview of compliance status
 - **Weekly audits**: Detailed analysis of compliance trends
 - **Monthly executive reports**: Strategic insights for leadership
 
 The `cfm_compliance_reports` table stores detailed compliance data for historical analysis and regulatory submissions. Each report includes:
+
 - Total telemedicine sessions in the reporting period
 - Number of CFM-validated sessions and compliance rate
 - Encryption compliance rate and recording consent rate
@@ -633,6 +674,7 @@ The `cfm_compliance_reports` table stores detailed compliance data for historica
 - Regulatory notes and compliance declarations
 
 The materialized view `cfm_compliance_dashboard` provides real-time metrics for clinic administrators, updated every 15 minutes. This dashboard displays:
+
 - 30-day compliance rate trend
 - Active telemedicine sessions
 - Sessions with technical issues
@@ -640,6 +682,7 @@ The materialized view `cfm_compliance_dashboard` provides real-time metrics for 
 - Sessions with recording consent
 
 The system also implements automated compliance checks through scheduled jobs that verify:
+
 - Professional license validity
 - Patient consent expiration dates
 - Data retention policy adherence
@@ -649,6 +692,7 @@ The system also implements automated compliance checks through scheduled jobs th
 These monitoring and reporting capabilities enable organizations to maintain continuous compliance with CFM regulations, quickly identify and remediate issues, and demonstrate regulatory adherence to auditors and accreditation bodies.
 
 **Section sources**
+
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L374-L476)
 - [20250128_cfm_telemedicine_platform.sql](file://packages/database/migrations/20250128_cfm_telemedicine_platform.sql#L1-L665)
 
@@ -683,12 +727,14 @@ class B,C,D,E testing;
 ```
 
 **Diagram sources**
+
 - [cfm.ts](file://tools/testing-toolkit/src/compliance/cfm.ts#L149-L179)
 - [cfm-telemedicine.test.ts](file://apps/api/tests/integration/cfm-telemedicine.test.ts#L1-L628)
 
 The framework includes several key components:
 
 ### CFM Validator Class
+
 The `CFMValidator` provides static methods for validating different aspects of compliance:
 
 ```typescript
@@ -704,6 +750,7 @@ class CFMValidator {
 Each validation method returns a boolean indicating compliance status, while the comprehensive validation returns detailed results including violations and recommendations.
 
 ### Test Suite Creation
+
 The framework provides a utility function `createCFMTestSuite` that generates standardized test suites for different compliance scenarios:
 
 ```typescript
@@ -711,6 +758,7 @@ function createCFMTestSuite(testName: string, testData: CFMTestData)
 ```
 
 This function creates a Vitest suite with predefined test cases for:
+
 - Professional licensing validation
 - Telemedicine requirements (when enabled)
 - Digital prescription requirements (when enabled)
@@ -718,6 +766,7 @@ This function creates a Vitest suite with predefined test cases for:
 - Overall CFM compliance
 
 ### Mock Data Generation
+
 The `createMockCFMData` function generates realistic test data with proper defaults:
 
 ```typescript
@@ -727,6 +776,7 @@ function createMockCFMData(overrides: Partial<CFMTestData> = {})
 The mock data includes valid CRM numbers, active licenses, proper consent flags, and compliant security settings, with the ability to override any field for testing edge cases.
 
 ### Integration Testing
+
 The system includes comprehensive integration tests that verify end-to-end compliance workflows:
 
 - **Session creation**: Tests the complete process of creating a CFM-compliant telemedicine session
@@ -735,6 +785,7 @@ The system includes comprehensive integration tests that verify end-to-end compl
 - **Audit trail generation**: Confirms proper logging of all compliance-related events
 
 ### Test Coverage
+
 The testing framework covers all critical compliance areas:
 
 1. **Professional Licensing**: Tests for valid/invalid CRM numbers, expired/suspended licenses, and specialty verification
@@ -750,6 +801,7 @@ The test suite also includes negative testing scenarios to verify proper error h
 The framework supports both automated CI/CD pipeline execution and manual testing scenarios, enabling comprehensive validation throughout the development lifecycle.
 
 **Section sources**
+
 - [cfm.ts](file://tools/testing-toolkit/src/compliance/cfm.ts#L149-L179)
 - [cfm-telemedicine.test.ts](file://apps/api/tests/integration/cfm-telemedicine.test.ts#L1-L628)
 
@@ -759,17 +811,20 @@ This section addresses common issues encountered in CFM telemedicine compliance 
 
 ### Issue 1: Real-Time License Verification Failures
 
-**Symptoms**: 
+**Symptoms**:
+
 - Delayed or failed professional license validation
 - High rate of "external validation required" responses
 - Inconsistent license status across systems
 
 **Root Causes**:
+
 - Lack of integration with CFM's official API
 - Stale data in local license database
 - Network connectivity issues to external validation services
 
 **Solutions**:
+
 1. **Implement CFM API Integration**: Develop the external validation interface to query CFM's official database in real-time
 2. **Scheduled Synchronization**: Implement nightly batch updates from official sources to keep local database current
 3. **Caching Strategy**: Cache validation results with appropriate TTL to reduce external API calls while maintaining freshness
@@ -778,11 +833,13 @@ This section addresses common issues encountered in CFM telemedicine compliance 
 ### Issue 2: Patient Identity Verification Failures
 
 **Symptoms**:
+
 - High rate of incomplete patient identification
 - Validation errors for legitimate documents
 - User frustration with document submission process
 
 **Solutions**:
+
 1. **Enhanced CPF Validation**: Implement the complete CPF validation algorithm with better error messages
 2. **Document Quality Checks**: Add client-side validation for image quality, lighting, and orientation
 3. **Progressive Disclosure**: Only require minimal documentation initially, with additional documents requested as needed
@@ -791,11 +848,13 @@ This section addresses common issues encountered in CFM telemedicine compliance 
 ### Issue 3: Informed Consent Management Problems
 
 **Symptoms**:
+
 - Missing or invalid consent records
 - Consent expiration issues
 - Difficulty proving consent was obtained
 
 **Solutions**:
+
 1. **Automated Renewal Reminders**: Implement proactive notifications for expiring consents
 2. **Centralized Consent Repository**: Ensure all consent records are stored in a single, auditable location
 3. **Digital Fingerprinting**: Capture comprehensive device and network metadata with each consent
@@ -804,11 +863,13 @@ This section addresses common issues encountered in CFM telemedicine compliance 
 ### Issue 4: Digital Signature Failures
 
 **Symptoms**:
+
 - Failed prescription signing
 - Certificate validation errors
 - Key management issues
 
 **Solutions**:
+
 1. **Certificate Lifecycle Management**: Implement automated certificate renewal and rotation
 2. **Backup Signing Methods**: Provide alternative signing methods when primary method fails
 3. **Offline Capability**: Allow temporary offline signing with synchronization when connectivity is restored
@@ -817,11 +878,13 @@ This section addresses common issues encountered in CFM telemedicine compliance 
 ### Issue 5: Performance Bottlenecks in Compliance Checks
 
 **Symptoms**:
+
 - Slow session creation times
 - Timeout errors during validation
 - High resource utilization
 
 **Solutions**:
+
 1. **Asynchronous Processing**: Move non-critical validation steps to background jobs
 2. **Caching Strategy**: Cache frequently accessed compliance rules and reference data
 3. **Database Optimization**: Ensure proper indexing on compliance-related fields
@@ -830,11 +893,13 @@ This section addresses common issues encountered in CFM telemedicine compliance 
 ### Issue 6: Audit Trail Gaps
 
 **Symptoms**:
+
 - Missing events in audit logs
 - Inconsistent timestamping
 - Difficulty reconstructing session history
 
 **Solutions**:
+
 1. **Comprehensive Event Capture**: Ensure all critical actions generate audit events
 2. **Immutable Storage**: Use write-once, append-only storage for audit logs
 3. **Centralized Logging**: Aggregate logs from all system components into a single repository
@@ -843,6 +908,7 @@ This section addresses common issues encountered in CFM telemedicine compliance 
 These troubleshooting solutions leverage the existing system architecture while identifying opportunities for enhancement. By addressing these common issues, organizations can improve compliance reliability, reduce operational friction, and enhance the overall telemedicine experience for both providers and patients.
 
 **Section sources**
+
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts#L1-L571)
 - [cfm-compliance.service.ts](file://packages/database/src/services/cfm-compliance.service.ts#L43-L707)
 

@@ -1,7 +1,7 @@
 # System Overview
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [main.py](file://apps/ai-agent/main.py)
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py)
 - [database_service.py](file://apps/ai-agent/services/database_service.py)
@@ -15,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Architecture](#core-architecture)
 3. [Main Applications](#main-applications)
@@ -40,6 +41,7 @@ NeonPro follows a monorepo architecture pattern, organizing its codebase into di
 The monorepo structure allows for atomic commits across multiple components, ensuring that changes affecting multiple parts of the system can be implemented and deployed together. This is particularly important for maintaining consistency in API contracts, data models, and security policies across the different services.
 
 At the core of the architecture is the principle of separation of concerns, with each application focusing on specific responsibilities:
+
 - The **web** application handles user interface and client-side interactions
 - The **api** application manages business logic, data persistence, and API endpoints
 - The **ai-agent** service provides AI-powered capabilities and real-time data processing
@@ -49,6 +51,7 @@ These applications communicate through well-defined interfaces and protocols, pr
 The platform leverages modern technologies and frameworks, including React for the frontend, Hono and FastAPI for the backend services, and various AI providers for intelligent features. Security and compliance are integrated throughout the architecture, with middleware components handling authentication, authorization, data protection, and audit logging.
 
 **Section sources**
+
 - [main.py](file://apps/ai-agent/main.py#L1-L180)
 - [app.ts](file://apps/api/src/app.ts#L1-L571)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
@@ -62,6 +65,7 @@ The web application serves as the primary user interface for NeonPro, providing 
 The application implements Progressive Web App (PWA) features, allowing users to install the application on their devices and access it offline when needed. Service workers handle caching and background synchronization, ensuring a smooth user experience even with intermittent connectivity.
 
 Key features of the web application include:
+
 - Patient management interface
 - Appointment scheduling dashboard
 - Financial operations console
@@ -71,6 +75,7 @@ Key features of the web application include:
 The frontend communicates with the backend API through REST endpoints and WebSocket connections, enabling real-time updates and interactive features. It also implements client-side validation and error handling to provide immediate feedback to users.
 
 **Section sources**
+
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
 
 ### API Application
@@ -90,6 +95,7 @@ Key architectural components of the API application include:
 The API exposes multiple versions of endpoints to support backward compatibility while introducing new features. It also provides OpenAPI documentation for developer reference and automated client generation.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L571)
 
 ### AI Agent Application
@@ -109,6 +115,7 @@ Key features of the AI Agent include:
 The AI Agent implements Brazilian healthcare patterns in its processing, recognizing local naming conventions, document formats, and medical terminology. It also respects LGPD compliance requirements by handling sensitive data appropriately and maintaining audit logs of all interactions.
 
 **Section sources**
+
 - [main.py](file://apps/ai-agent/main.py#L1-L180)
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L35-L480)
 
@@ -129,6 +136,7 @@ Key components of the database services include:
 The database service enforces multi-tenancy by ensuring that data access is scoped to the appropriate clinic, preventing unauthorized cross-clinic data access. It also implements connection pooling and query optimization to maintain high performance under load.
 
 **Section sources**
+
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L14-L284)
 
 ### WebSocket Manager
@@ -146,6 +154,7 @@ Key features of the WebSocket manager include:
 The manager maintains statistics on connection count, connection duration, and idle time, which can be used for monitoring and capacity planning. It also implements connection limits to prevent resource exhaustion.
 
 **Section sources**
+
 - [websocket_manager.py](file://apps/ai-agent/services/websocket_manager.py#L14-L230)
 
 ### AI Services
@@ -163,6 +172,7 @@ Key capabilities of the AI services include:
 The AI services implement safety checks to prevent inappropriate content generation and ensure compliance with medical ethics guidelines. They also incorporate fallback mechanisms to maintain service availability even if primary AI providers experience issues.
 
 **Section sources**
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L35-L480)
 
 ## User Scenarios
@@ -176,6 +186,7 @@ For patient searches, staff can query by name, CPF, or other identifying informa
 When updating patient information, the system validates that the user has appropriate permissions and that any changes comply with data protection regulations. The withdrawal of consent triggers automatic anonymization of personal data, implementing the "right to be forgotten" as required by LGPD Article 18.
 
 **Section sources**
+
 - [patients.ts](file://apps/api/src/trpc/routers/patients.ts#L165-L682)
 
 ### Appointment Scheduling
@@ -192,6 +203,7 @@ For example, a high-risk appointment might trigger additional reminder channels 
 The system provides real-time availability checking, allowing staff to quickly find suitable time slots for patients. It also supports complex scheduling scenarios, such as multi-session treatment plans and follow-up appointments.
 
 **Section sources**
+
 - [appointments.ts](file://apps/api/src/trpc/routers/appointments.ts#L637-L1118)
 
 ### AI-Assisted Clinical Decision Making
@@ -210,6 +222,7 @@ The system implements ANVISA compliance checks for aesthetic medicine procedures
 All AI interactions are logged in the audit trail, creating a transparent record of the decision support provided. This ensures accountability and allows for retrospective analysis of AI-assisted outcomes.
 
 **Section sources**
+
 - [ai.ts](file://apps/api/src/trpc/routers/ai.ts#L310-L973)
 
 ## System Context Diagram
@@ -273,6 +286,7 @@ O --> S
 ```
 
 **Diagram sources **
+
 - [main.py](file://apps/ai-agent/main.py#L1-L180)
 - [app.ts](file://apps/api/src/app.ts#L1-L571)
 - [App.tsx](file://apps/web/src/App.tsx#L1-L95)
@@ -315,6 +329,7 @@ Web->>User : Confirm appointment creation
 ```
 
 **Diagram sources **
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py#L35-L480)
 - [database_service.py](file://apps/ai-agent/services/database_service.py#L14-L284)
 - [app.ts](file://apps/api/src/app.ts#L1-L571)

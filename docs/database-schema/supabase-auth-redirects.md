@@ -28,7 +28,7 @@ Include any preview domains if used (e.g., `https://<branch>-neonpro.vercel.app/
 
 - We call `signInWithProvider('google', '/dashboard')` from `LoginForm`.
 - The helper in `apps/web/src/integrations/supabase/client.ts` builds:
-  - `redirectTo = `${getSiteUrl()}/auth/callback?next=${encodeURIComponent(finalRedirectTo)}``
+  - `redirectTo =`${getSiteUrl()}/auth/callback?next=${encodeURIComponent(finalRedirectTo)}``
 - The callback route (`/auth/callback`) reads `next` and navigates SPA to it (defaults to `/dashboard`).
 
 ## 4) Environment variables

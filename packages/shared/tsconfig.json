@@ -15,7 +15,15 @@
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts", "src/services/redis-cache-backend.ts", "src/services/winston-logging/**", "src/services/structured-logging.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "src/services/redis-cache-backend.ts",
+    "src/services/winston-logging/**",
+    "src/services/structured-logging.ts"
+  ],
   "references": [
     { "path": "../types" },
     { "path": "../utils" }

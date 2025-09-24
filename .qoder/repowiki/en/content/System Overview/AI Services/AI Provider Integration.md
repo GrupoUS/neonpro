@@ -1,7 +1,7 @@
 # AI Provider Integration
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts)
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts)
 - [openai-provider.ts](file://packages/ai-providers/src/providers/openai-provider.ts)
@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Provider Abstraction and Interface Design](#provider-abstraction-and-interface-design)
@@ -25,6 +26,7 @@
 11. [Clinical Use Case Configuration](#clinical-use-case-configuration)
 
 ## Introduction
+
 The AI provider integration subsystem in the neonpro platform enables pluggable AI backends through a robust factory pattern implementation. This architecture supports multiple AI providers including OpenAI, Anthropic, Google Vertex AI, and a mock provider for testing. The system is designed with healthcare compliance in mind, featuring built-in failover mechanisms, streaming support, and extensible interfaces for future provider integrations. This document details the implementation of the provider factory pattern, abstraction layers, configuration options, and operational characteristics that enable reliable AI service delivery in clinical environments.
 
 ## Architecture Overview
@@ -47,10 +49,12 @@ N[PII Redaction] --> B
 ```
 
 **Diagram sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L46-L146)
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts#L25-L28)
 
 **Section sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L46-L146)
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts#L25-L28)
 
@@ -63,6 +67,7 @@ The `GenerateAnswerInput` interface includes parameters such as prompt text, loc
 Multiple type definitions exist across the codebase, with the canonical definition residing in the types package. The system supports provider types including "openai", "anthropic", "google", and "mock" for fallback scenarios.
 
 **Section sources**
+
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts#L25-L28)
 - [types/ai-provider.ts](file://packages/types/src/ai-provider.ts#L2-L2)
 
@@ -110,11 +115,13 @@ GoogleProvider ..|> AIProvider : "implements"
 ```
 
 **Diagram sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L46-L146)
 - [openai-provider.ts](file://packages/ai-providers/src/providers/openai-provider.ts#L8-L26)
 - [anthropic-provider.ts](file://packages/ai-providers/src/providers/anthropic-provider.ts#L8-L26)
 
 **Section sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L46-L146)
 - [openai-provider.ts](file://packages/ai-providers/src/providers/openai-provider.ts#L8-L26)
 - [anthropic-provider.ts](file://packages/ai-providers/src/providers/anthropic-provider.ts#L8-L26)
@@ -152,10 +159,12 @@ Factory-->>Client : Return result with provider info
 ```
 
 **Diagram sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L87-L109)
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L111-L141)
 
 **Section sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L87-L141)
 
 ## Streaming Support and Performance Characteristics
@@ -165,6 +174,7 @@ The AI provider subsystem supports both synchronous and streaming response patte
 The `generateStreamWithFailover` method implements provider-level streaming with automatic failover between providers. When a streaming provider fails during transmission, the factory attempts to restart the stream with the next available provider in the fallback chain. Each stream chunk includes provider attribution, allowing clients to monitor which backend is serving the response.
 
 Performance characteristics vary by provider implementation:
+
 - **OpenAI**: Expected latency of 200-500ms per token with high consistency
 - **Anthropic**: Slightly higher latency (300-600ms) but strong performance on complex medical reasoning tasks
 - **Google Vertex AI**: Variable latency (250-800ms) with regional availability considerations
@@ -173,6 +183,7 @@ Performance characteristics vary by provider implementation:
 The system is designed to handle peak loads through connection pooling and request queuing, with each provider adapter implementing appropriate concurrency controls based on provider-specific limitations.
 
 **Section sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L111-L141)
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts#L27-L27)
 
@@ -181,6 +192,7 @@ The system is designed to handle peak loads through connection pooling and reque
 Authentication for AI providers is managed through API key injection at the provider constructor level. Each provider implementation (OpenAI, Anthropic, Google) requires an API key to be passed during instantiation, with validation to ensure the key is present before use.
 
 Configuration options are defined through multiple layers:
+
 1. **Type definitions** in the shared types package establish the canonical provider type enumeration
 2. **Python configuration** in the RAG agent defines supported providers for that specific component
 3. **Runtime configuration** allows dynamic selection of providers through the factory interface
@@ -206,11 +218,13 @@ J --> K[Ready for Requests]
 ```
 
 **Diagram sources**
+
 - [openai-provider.ts](file://packages/ai-providers/src/providers/openai-provider.ts#L8-L10)
 - [anthropic-provider.ts](file://packages/ai-providers/src/providers/anthropic-provider.ts#L8-L10)
 - [config.py](file://apps/api/agents/ag-ui-rag-agent/src/config.py#L10-L14)
 
 **Section sources**
+
 - [openai-provider.ts](file://packages/ai-providers/src/providers/openai-provider.ts#L8-L26)
 - [anthropic-provider.ts](file://packages/ai-providers/src/providers/anthropic-provider.ts#L8-L26)
 - [config.py](file://apps/api/agents/ag-ui-rag-agent/src/config.py#L10-L14)
@@ -220,6 +234,7 @@ J --> K[Ready for Requests]
 The AI provider integration includes several mechanisms for cost optimization and rate limit management. While the current implementation placeholders do not include full rate limiting logic, the architecture is designed to incorporate these features through the provider adapters.
 
 Cost optimization strategies include:
+
 - **Provider selection based on cost-per-token**: Future enhancements will consider cost metrics when selecting providers
 - **Caching of frequent responses**: The mock provider demonstrates pattern for response caching that can be extended to production providers
 - **Intelligent fallback routing**: The failover mechanism prevents costly retries on failing endpoints
@@ -230,6 +245,7 @@ Rate limit handling will be implemented at the provider adapter level, with each
 The system logs all provider interactions with cost-related metadata, enabling detailed usage analysis and budget tracking for clinical departments.
 
 **Section sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L46-L146)
 - [AIService.ts](file://packages/ai-providers/src/services/AIService.ts#L22-L78)
 
@@ -238,6 +254,7 @@ The system logs all provider interactions with cost-related metadata, enabling d
 While the current codebase shows placeholder implementations for text generation, the architecture supports Retrieval-Augmented Generation (RAG) workflows through its extensible provider interface. The embeddings generation process would utilize the same provider factory pattern, with specialized methods for creating vector representations of clinical text.
 
 For RAG operations, the workflow would involve:
+
 1. Using an AI provider to generate embeddings from clinical documents or patient queries
 2. Storing these embeddings in a vector database with appropriate metadata indexing
 3. Performing similarity searches against the vector store to retrieve relevant clinical knowledge
@@ -248,6 +265,7 @@ The `GenerateAnswerInput` interface already supports system prompts and contextu
 Vector storage would leverage the platform's existing database services, with specialized repositories for managing embedding records, metadata, and search indexes optimized for clinical terminology and medical coding systems.
 
 **Section sources**
+
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts#L25-L28)
 - [AIService.ts](file://packages/ai-providers/src/services/AIService.ts#L22-L78)
 
@@ -281,10 +299,12 @@ K --> L[Deploy and Monitor]
 ```
 
 **Diagram sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L46-L146)
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts#L25-L28)
 
 **Section sources**
+
 - [ai-provider-factory.ts](file://packages/ai-providers/src/providers/ai-provider-factory.ts#L46-L146)
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts#L25-L28)
 
@@ -293,6 +313,7 @@ K --> L[Deploy and Monitor]
 Configuring AI providers for clinical use cases involves several specialized considerations beyond general AI integration. The system supports provider-specific parameter tuning through the `GenerateAnswerInput` interface, allowing clinical teams to optimize models for medical applications.
 
 Key configuration parameters for clinical use include:
+
 - **Temperature**: Lower values (0.2-0.5) for diagnostic reasoning to reduce hallucination risk
 - **Max tokens**: Conservative limits to prevent excessive output in time-sensitive scenarios
 - **System prompts**: Specialized medical role definitions and safety constraints
@@ -303,5 +324,6 @@ The fallback order can be customized based on clinical workflow requirements, su
 Future enhancements will include clinical safety filters, medical fact verification layers, and integration with clinical decision support rules. The current architecture's separation of concerns between the factory, providers, and consumers enables these safety features to be added without disrupting existing workflows.
 
 **Section sources**
+
 - [ai-provider.ts](file://packages/ai-providers/src/providers/ai-provider.ts#L25-L28)
 - [config.py](file://apps/api/agents/ag-ui-rag-agent/src/config.py#L10-L14)

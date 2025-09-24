@@ -1,7 +1,7 @@
 # Compliance Reporting
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts)
 - [healthcare.ts](file://apps/api/src/routes/healthcare.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Components](#core-components)
 3. [Automated Compliance Checks](#automated-compliance-checks)
@@ -25,9 +26,11 @@
 12. [Conclusion](#conclusion)
 
 ## Introduction
+
 This document provides a comprehensive analysis of the compliance reporting sub-feature focused on Brazilian healthcare regulations (Lei Geral de Proteção de Dados - LGPD). The system implements automated compliance checks, audit trail generation, and regulatory reporting mechanisms to ensure adherence to Brazil's strict data protection requirements in healthcare contexts. The implementation covers consent verification, data access logging, patient rights enforcement, and cross-border data transfer restrictions. This documentation explains the technical architecture, domain models, and integration points while providing accessible explanations for both beginners and experienced developers.
 
 ## Core Components
+
 The compliance reporting system is built around several core components that work together to enforce LGPD requirements across the application. These include middleware layers for real-time compliance checking, utility functions for PII redaction, and specialized route handlers for regulatory operations.
 
 ```mermaid
@@ -44,15 +47,18 @@ G --> I[Response]
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L330)
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L330)
 - [healthcare.ts](file://apps/api/src/routes/healthcare.ts#L1-L621)
 
 ## Automated Compliance Checks
+
 The system implements automated compliance checks through middleware that intercepts requests and validates them against LGPD requirements. The `lgpdMiddleware` function performs real-time validation of data processing purposes, consent status, and user permissions before allowing access to protected resources.
 
 The middleware determines the required processing purpose based on the request path, checking whether explicit consent is needed for operations involving patient data. For medical care and appointment scheduling, the system applies strict mode enforcement, requiring valid consent for access. The implementation includes specialized middleware variants like `healthcareLGPDMiddleware` that configure appropriate settings for healthcare contexts.
@@ -60,9 +66,11 @@ The middleware determines the required processing purpose based on the request p
 When a request lacks proper consent, the system logs the violation and returns a 403 Forbidden response with details about the missing consent and instructions for obtaining it. This automated checking occurs at the middleware layer, ensuring consistent enforcement across all healthcare-related endpoints without requiring individual route implementations to handle compliance logic.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 
 ## Audit Trail Generation
+
 Audit trail generation is implemented through the `auditLogMiddleware` which creates detailed records of all significant operations involving patient data. Each audit entry captures essential information including timestamp, user ID, action performed, resource affected, IP address, user agent, and request duration.
 
 The middleware automatically extracts action and resource information from HTTP methods and request paths, mapping GET requests to "read" actions, POST to "create", and so on. For healthcare-specific operations, the `healthcareAuditMiddleware` variant includes additional safeguards, redacting sensitive fields like CPF (Brazilian individual taxpayer registry), RG (identity document), CNS (National Health Card), and medical record details from the logged request bodies.
@@ -87,12 +95,15 @@ Middleware-->>Client : Response
 ```
 
 **Diagram sources**
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L330)
 
 **Section sources**
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L330)
 
 ## Regulatory Reporting Mechanisms
+
 Regulatory reporting mechanisms are implemented through specialized endpoints and middleware that support LGPD-mandated patient rights. The system provides three key regulatory functions: data portability, data erasure, and consent management, each accessible through dedicated middleware handlers.
 
 The `dataPortabilityMiddleware` handles data export requests (LGPD Article 18), collecting all user data from various systems into a structured JSON format. This includes profile information, patient records, appointments, medical records (with sensitive data redacted), consents, and related audit logs. The exported data includes compliance metadata specifying the legal basis and retention period.
@@ -116,12 +127,15 @@ J --> L[Complete Processing]
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 
 ## Invocation Relationships with User Data Operations
+
 The compliance monitoring system is tightly integrated with user data operations through middleware chaining. When a user accesses healthcare data, the request flows through multiple middleware layers that collectively enforce compliance requirements.
 
 The invocation sequence begins with authentication, followed by LGPD compliance checking, then audit logging, and finally the target route handler. The `lgpdMiddleware` verifies that the user has valid consent for the requested operation based on the processing purpose derived from the request path. If consent is valid, the request proceeds to the `auditLogMiddleware` which records the access attempt.
@@ -131,13 +145,16 @@ In healthcare routes, these middleware functions are applied globally using `hea
 This layered approach creates a clear separation of concerns while maintaining tight integration between compliance monitoring and data operations. Each middleware component can be independently configured and tested, yet they work together to provide comprehensive protection for patient data.
 
 **Section sources**
+
 - [healthcare.ts](file://apps/api/src/routes/healthcare.ts#L1-L621)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 
 ## Domain Models for Compliance Events
+
 The system defines two primary domain models for compliance events, reflecting different levels of detail and usage contexts. These models capture the essential attributes needed for regulatory compliance and auditing.
 
 The first model, defined in `telemetry/types.ts`, represents a basic compliance event with core attributes:
+
 ```typescript
 export interface ComplianceEvent {
   eventType: "data_access" | "data_export" | "data_deletion" | "consent_update";
@@ -151,6 +168,7 @@ export interface ComplianceEvent {
 ```
 
 The second, more comprehensive model in `telemetry-event.ts` extends a base telemetry event with detailed compliance metadata:
+
 ```typescript
 export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
   eventType:
@@ -181,10 +199,12 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
 These models support different use cases, with the simpler version used for basic event tracking and the richer version employed when detailed compliance metadata is required for regulatory reporting.
 
 **Section sources**
+
 - [types.ts](file://packages/shared/src/telemetry/types.ts#L67-L75)
 - [telemetry-event.ts](file://packages/shared/src/models/telemetry-event.ts#L217-L240)
 
 ## Data Retention Policies
+
 Data retention policies are implemented through a combination of database operations and compliance rules that align with Brazilian healthcare regulations. The system follows the principle that medical records must be retained for 20 years as required by Brazilian law, while other data categories have shorter retention periods.
 
 During data erasure operations, the system distinguishes between complete deletion and anonymization. When a patient requests data deletion, the system retains medical records and billing information for legal compliance but anonymizes personally identifiable information. Fields like name, CPF, phone, and email are replaced with generic values or nullified, while the record structure remains intact for audit purposes.
@@ -194,9 +214,11 @@ The `deleteUserData` function implements this hybrid approach, performing update
 These retention policies are enforced programmatically rather than relying solely on database constraints, allowing for nuanced handling of different data categories and legal requirements.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 
 ## LGPD Compliance Validation in Patient Data Workflows
+
 LGPD compliance validation is deeply integrated into patient data workflows through the healthcare routes implementation. When accessing patient information, the system performs multi-layered validation that includes authentication, authorization, compliance checking, and audit logging.
 
 In the `/patients/:id` route, for example, the system first verifies that the authenticated user has the necessary permissions to read patient data. Then, through the chained middleware, it confirms that the access complies with LGPD requirements and logs the data access attempt. The response includes only the necessary data fields, adhering to the data minimization principle.
@@ -206,10 +228,12 @@ For data creation and modification operations, the system validates input agains
 The comprehensive test suite demonstrates expected compliance behavior across the data lifecycle, from collection with proper consent to storage with geographic restrictions (data localization in Brazil) and eventual deletion or anonymization according to retention policies.
 
 **Section sources**
+
 - [healthcare.ts](file://apps/api/src/routes/healthcare.ts#L1-L621)
 - [lgpd-validation.test.ts](file://apps/api/tests/compliance/lgpd-validation.test.ts#L1-L1022)
 
 ## Integration with Audit Logging and Security Policies
+
 The compliance system is closely integrated with audit logging and security policies to create a cohesive protection framework for patient data. The middleware components work together to enforce security controls while maintaining detailed records of all access attempts.
 
 The `lgpdMiddleware` and `auditLogMiddleware` are designed to complement each other, with the former preventing unauthorized access and the latter recording authorized access. This dual-layer approach ensures that both compliance violations and legitimate data operations are properly tracked and reported.
@@ -219,10 +243,12 @@ Security policies are enforced through field-level redaction in audit logs, wher
 The system also integrates with broader security infrastructure, including role-based access control, JWT validation, and HTTPS enforcement. These components work in concert with compliance middleware to create defense-in-depth protection for healthcare data, ensuring that technical security measures and regulatory compliance requirements are simultaneously satisfied.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L330)
 
 ## Common Compliance Issues and Solutions
+
 The system addresses several common compliance issues through proactive monitoring and automated enforcement mechanisms.
 
 **Incomplete Audit Trails**: To prevent incomplete audit trails, the system uses middleware chaining to ensure that every request passes through the audit logging component. The healthcare routes apply audit middleware globally, eliminating the possibility of unprotected endpoints. Additionally, the system logs both successful operations and failed access attempts, providing a complete record of data access patterns.
@@ -234,10 +260,12 @@ The system addresses several common compliance issues through proactive monitori
 These solutions demonstrate how the system moves beyond simple compliance checking to implement comprehensive data governance that addresses both technical and procedural aspects of regulatory requirements.
 
 **Section sources**
+
 - [lgpd-validation.test.ts](file://apps/api/tests/compliance/lgpd-validation.test.ts#L1-L1022)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 
 ## Conclusion
+
 The compliance reporting system for Brazilian healthcare regulations (LGPD) provides a robust framework for automated compliance checks, audit trail generation, and regulatory reporting. By implementing middleware-based enforcement, the system ensures consistent application of compliance rules across all healthcare data operations without requiring individual route handlers to manage complex regulatory requirements.
 
 The architecture effectively separates concerns while maintaining tight integration between compliance monitoring, audit logging, and user data operations. Domain models for compliance events capture the necessary metadata for regulatory reporting, and data retention policies align with Brazilian legal requirements for medical record keeping.

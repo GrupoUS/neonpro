@@ -1,7 +1,7 @@
 # ORM Usage
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [prisma.ts](file://apps/api/src/clients/prisma.ts)
 - [schema.prisma](file://packages/database/prisma/schema.prisma)
 - [patient-service.ts](file://apps/api/src/services/patient-service.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Prisma Client Integration](#prisma-client-integration)
 3. [Connection Configuration](#connection-configuration)
@@ -26,6 +27,7 @@
 11. [Advanced Features](#advanced-features)
 
 ## Introduction
+
 This document provides comprehensive guidance on using Prisma ORM within the neonpro application with PostgreSQL. The implementation is specifically optimized for healthcare workloads, incorporating multi-tenant Row Level Security (RLS), LGPD compliance, and Brazilian healthcare regulatory requirements. The documentation covers the complete lifecycle of database interactions from connection management to complex query patterns, with a focus on patient data integrity, performance optimization, and regulatory compliance.
 
 ## Prisma Client Integration
@@ -35,6 +37,7 @@ The neonpro application implements a healthcare-optimized Prisma client that ext
 The core integration is implemented in `prisma.ts`, which creates an extended HealthcarePrismaClient interface that includes methods for LGPD compliance, audit logging, and context-aware operations. The client is designed to work seamlessly with Supabase RLS policies, ensuring proper multi-tenant data isolation between clinics.
 
 Key integration features include:
+
 - Singleton pattern implementation for connection pooling
 - Context injection for multi-tenant RLS enforcement
 - Automatic audit trail creation for all data modifications
@@ -78,9 +81,11 @@ HealthcarePrismaClient --> HealthcareContext : uses
 ```
 
 **Diagram sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L1-L790)
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L1-L790)
 - [README-PRISMA-HEALTHCARE.md](file://apps/api/src/README-PRISMA-HEALTHCARE.md#L1-L200)
 
@@ -89,6 +94,7 @@ HealthcarePrismaClient --> HealthcareContext : uses
 The Prisma client in neonpro is configured with healthcare-optimized settings that balance performance, reliability, and regulatory compliance requirements. The connection configuration is defined through environment variables with sensible defaults for medical applications.
 
 Key configuration parameters include:
+
 - **maxConnections**: Maximum number of connections in the pool (default: 20)
 - **connectionTimeout**: Timeout for establishing new connections (default: 30,000ms)
 - **idleTimeout**: Timeout for idle connections before they are closed (default: 600,000ms)
@@ -114,9 +120,11 @@ style Ready fill:#9f6,stroke:#333,stroke-width:2px
 ```
 
 **Diagram sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L136-L180)
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L136-L180)
 
 ## Transaction Management
@@ -130,6 +138,7 @@ For complex operations involving multiple steps, the application uses Prisma's n
 The system also implements retry logic for transient database errors, with exponential backoff to handle temporary connectivity issues without compromising patient care workflows. Transactions are timed to prevent long-running operations that could impact system performance.
 
 Key transaction patterns include:
+
 - **Atomic patient data operations**: Ensuring all related records are processed together
 - **Audit-integrated transactions**: Creating audit logs as part of the same transaction
 - **Conditional transactions**: Only proceeding with data modifications when all compliance checks pass
@@ -158,9 +167,11 @@ Note over Prisma,DB : All operations in single transaction<br/>ensuring data con
 ```
 
 **Diagram sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L550-L590)
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L550-L590)
 - [consent-repository.ts](file://packages/database/src/repositories/consent-repository.ts#L217-L259)
 
@@ -169,6 +180,7 @@ Note over Prisma,DB : All operations in single transaction<br/>ensuring data con
 The neonpro application implements comprehensive CRUD operations through the extended Prisma client, with healthcare-specific optimizations and compliance features. The operations follow consistent patterns across entities while incorporating domain-specific validation and business rules.
 
 ### Patient Data Retrieval
+
 Patient data retrieval is implemented through the `findPatientsInClinic` method, which enforces RLS policies to ensure clinicians can only access patients within their authorized clinic. The method supports filtering and pagination, with automatic audit logging for compliance purposes.
 
 ```typescript
@@ -181,6 +193,7 @@ const patients = await prisma.findPatientsInClinic(clinicId, {
 The implementation selectively exposes sensitive fields like CPF (Brazilian national identifier) only to users with admin privileges, implementing field-level security based on user role.
 
 ### Appointment Creation
+
 Appointment creation follows a structured process that validates professional availability, checks for scheduling conflicts, and applies appropriate default values. The operation is wrapped in transaction management to ensure data consistency.
 
 ```typescript
@@ -196,6 +209,7 @@ const appointment = await prisma.appointment.create({
 The system automatically calculates end time from start time and duration, assigns appropriate status, and creates corresponding audit trails.
 
 ### Consent Record Updates
+
 Consent record management implements LGPD-compliant workflows for obtaining, updating, and withdrawing patient consent. Each operation creates a detailed audit trail with cryptographic proof when required.
 
 ```typescript
@@ -232,11 +246,13 @@ style M fill:#9f6,stroke:#333,stroke-width:2px
 ```
 
 **Diagram sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L600-L700)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L347-L397)
 - [consent-repository.ts](file://packages/database/src/repositories/consent-repository.ts#L173-L215)
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L600-L700)
 - [patient-service.ts](file://apps/api/src/services/patient-service.ts#L228-L266)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L347-L397)
@@ -246,6 +262,7 @@ style M fill:#9f6,stroke:#333,stroke-width:2px
 The neonpro application leverages Prisma's relation loading capabilities to efficiently retrieve complex healthcare data structures while avoiding common performance pitfalls. The implementation uses strategic relation inclusion to optimize queries for specific use cases.
 
 ### Relation Loading Strategies
+
 The system employs several relation loading strategies based on the access pattern:
 
 **Eager Loading with Include**: Used when related data is always needed, such as retrieving a patient with their appointments and consent records.
@@ -283,6 +300,7 @@ const patients = await prisma.patient.findMany({
 ```
 
 ### Healthcare-Specific Query Patterns
+
 The application implements several domain-specific query patterns:
 
 **Multi-Clinic Access**: For administrative users who need to access data across multiple clinics, the system uses union queries or batch operations rather than attempting to bypass RLS policies.
@@ -360,10 +378,12 @@ datetime createdAt
 ```
 
 **Diagram sources**
+
 - [schema.prisma](file://packages/database/prisma/schema.prisma#L1-L1903)
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L267-L350)
 
 **Section sources**
+
 - [schema.prisma](file://packages/database/prisma/schema.prisma#L1-L1903)
 - [patient-service.ts](file://apps/api/src/services/patient-service.ts#L393-L439)
 
@@ -372,6 +392,7 @@ datetime createdAt
 The neonpro application implements efficient batch operations for bulk data processing scenarios common in healthcare workflows, such as patient import, appointment scheduling, and reporting. The implementation balances performance optimization with system stability and regulatory compliance requirements.
 
 ### Batch Processing Patterns
+
 The system uses several patterns for batch operations:
 
 **Chunked Processing**: Large datasets are processed in smaller batches to prevent memory exhaustion and connection timeouts.
@@ -395,6 +416,7 @@ async function batchCreatePatients(
 **Progress Tracking**: Long-running batch operations provide progress updates and can be monitored through the system's performance metrics.
 
 ### Performance Optimization
+
 The batch operations are optimized with:
 
 - **Connection Pooling**: Efficient reuse of database connections
@@ -422,10 +444,12 @@ style L fill:#9f6,stroke:#333,stroke-width:2px
 ```
 
 **Diagram sources**
+
 - [healthcare-performance.ts](file://apps/api/src/utils/healthcare-performance.ts#L358-L404)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L299-L345)
 
 **Section sources**
+
 - [healthcare-performance.ts](file://apps/api/src/utils/healthcare-performance.ts#L358-L404)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L299-L345)
 
@@ -434,6 +458,7 @@ style L fill:#9f6,stroke:#333,stroke-width:2px
 The neonpro application implements a clean separation between data access and business logic through the repository pattern and service layer architecture. This design promotes code reusability, testability, and maintainability while enforcing healthcare-specific business rules.
 
 ### Repository Pattern Implementation
+
 The repository layer abstracts the Prisma client behind domain-specific interfaces, providing a consistent API for data access regardless of the underlying storage mechanism.
 
 ```typescript
@@ -446,6 +471,7 @@ interface AppointmentRepository {
 ```
 
 Each repository handles the mapping between domain objects and database records, applying appropriate filters and transformations. The repositories are responsible for:
+
 - Enforcing RLS policies
 - Applying default values
 - Validating data constraints
@@ -453,6 +479,7 @@ Each repository handles the mapping between domain objects and database records,
 - Handling database-specific error conditions
 
 ### Service Layer Responsibilities
+
 The service layer orchestrates complex business workflows by coordinating multiple repositories and enforcing domain rules. Key responsibilities include:
 
 **Business Rule Enforcement**: Implementing healthcare-specific rules such as appointment scheduling policies, consent management workflows, and patient data validation.
@@ -495,11 +522,13 @@ PatientService --> HealthcarePrismaClient : uses
 ```
 
 **Diagram sources**
+
 - [patient-service.ts](file://apps/api/src/services/patient-service.ts#L1-L500)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L1-L500)
 - [consent-repository.ts](file://packages/database/src/repositories/consent-repository.ts#L1-L500)
 
 **Section sources**
+
 - [patient-service.ts](file://apps/api/src/services/patient-service.ts#L1-L500)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L1-L500)
 
@@ -508,6 +537,7 @@ PatientService --> HealthcarePrismaClient : uses
 The neonpro application addresses the N+1 query problem through strategic use of Prisma's relation loading features and query optimization techniques. The N+1 issue is particularly critical in healthcare applications where large datasets and complex relationships are common.
 
 ### Prevention Strategies
+
 The system implements several approaches to prevent N+1 queries:
 
 **Eager Loading with Include**: The primary strategy is to use Prisma's `include` option to fetch related data in a single query rather than making additional queries for each relationship.
@@ -548,6 +578,7 @@ const patients = await prisma.patient.findMany({
 ```
 
 ### Performance Monitoring
+
 The application includes a query optimizer that detects potential N+1 patterns and recommends fixes:
 
 ```typescript
@@ -578,10 +609,12 @@ style K fill:#9f6,stroke:#333,stroke-width:2px
 ```
 
 **Diagram sources**
+
 - [healthcare-performance.ts](file://apps/api/src/utils/healthcare-performance.ts#L205-L251)
 - [query-optimizer.ts](file://apps/api/src/utils/query-optimizer.ts#L170-L209)
 
 **Section sources**
+
 - [healthcare-performance.ts](file://apps/api/src/utils/healthcare-performance.ts#L205-L251)
 - [query-optimizer.ts](file://apps/api/src/utils/query-optimizer.ts#L170-L209)
 
@@ -590,6 +623,7 @@ style K fill:#9f6,stroke:#333,stroke-width:2px
 The neonpro application implements comprehensive error handling for database operations, with specialized handling for healthcare-specific scenarios and regulatory requirements. The error handling system ensures data integrity, provides meaningful feedback, and maintains compliance with Brazilian healthcare regulations.
 
 ### Database Exception Handling
+
 The system categorizes database errors into several types:
 
 **Healthcare Compliance Errors**: Errors related to regulatory requirements such as LGPD, ANVISA, and CFM compliance.
@@ -619,6 +653,7 @@ class UnauthorizedHealthcareAccessError extends Error {
 The error handling system automatically logs all database errors to the audit trail, capturing the context, timestamp, and affected resources. Critical errors trigger alerts to system administrators while maintaining patient privacy.
 
 ### Connection Failure Recovery
+
 The application implements robust recovery mechanisms for database connection failures:
 
 - **Automatic Reconnection**: Attempting to reconnect when connections are lost
@@ -651,10 +686,12 @@ style M fill:#f96,stroke:#333,stroke-width:2px
 ```
 
 **Diagram sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L700-L745)
 - [healthcare-errors.ts](file://apps/api/src/utils/healthcare-errors.ts#L371-L550)
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L700-L745)
 - [healthcare-errors.ts](file://apps/api/src/utils/healthcare-errors.ts#L371-L550)
 
@@ -663,6 +700,7 @@ style M fill:#f96,stroke:#333,stroke-width:2px
 The neonpro application leverages advanced Prisma features to implement sophisticated healthcare workflows and maintain regulatory compliance. These features extend beyond basic ORM functionality to address domain-specific requirements.
 
 ### Raw SQL Queries
+
 For complex analytical queries and performance-critical operations, the system uses Prisma's raw SQL capabilities:
 
 ```typescript
@@ -684,6 +722,7 @@ const results = await prisma.$queryRaw`
 Raw queries are carefully audited and parameterized to prevent SQL injection, with additional sanitization through the application's SQL sanitizer module.
 
 ### Middleware Hooks
+
 The application implements Prisma middleware for cross-cutting concerns:
 
 **Automatic Audit Logging**: Creating audit trails for all data modifications.
@@ -711,6 +750,7 @@ prisma.$use(async (params, next) => {
 **Data Validation**: Enforcing healthcare-specific business rules at the data access layer.
 
 ### Custom Extensions
+
 The system extends Prisma with healthcare-specific methods:
 
 **LGPD Compliance Operations**: Data export and deletion following Brazilian privacy regulations.
@@ -766,9 +806,11 @@ PrismaClient --> CustomExtensions : extended by
 ```
 
 **Diagram sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L650-L700)
 - [README-PRISMA-HEALTHCARE.md](file://apps/api/src/README-PRISMA-HEALTHCARE.md#L93-L160)
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L650-L700)
 - [README-PRISMA-HEALTHCARE.md](file://apps/api/src/README-PRISMA-HEALTHCARE.md#L93-L160)

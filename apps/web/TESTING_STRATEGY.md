@@ -7,35 +7,38 @@ This document outlines the comprehensive testing strategy for the NeonPro aesthe
 ## Testing Pyramid
 
 ```
-          ┌─────────────┐
-          │   E2E       │ 10%
-          │  Playwright │
-          └─────────────┘
-         ┌─────────────┐
-         │ Integration │ 30%
-         │   Vitest    │
-         └─────────────┘
-        ┌─────────────┐
-        │    Unit     │ 60%
-        │   Vitest    │
-        └─────────────┘
+  ┌─────────────┐
+  │   E2E       │ 10%
+  │  Playwright │
+  └─────────────┘
+ ┌─────────────┐
+ │ Integration │ 30%
+ │   Vitest    │
+ └─────────────┘
+┌─────────────┐
+│    Unit     │ 60%
+│   Vitest    │
+└─────────────┘
 ```
 
 ## Test Types
 
 ### 1. Unit Tests (60%)
+
 - **Purpose**: Test individual components and functions in isolation
 - **Tools**: Vitest with React Testing Library
 - **Coverage**: All critical business logic, UI components, utilities
 - **Location**: `src/__tests__/components/`, `src/__tests__/utils/`
 
 ### 2. Integration Tests (30%)
+
 - **Purpose**: Test component interactions and data flow
 - **Tools**: Vitest with MSW for API mocking
 - **Coverage**: User flows, API integration, state management
 - **Location**: `src/__tests__/integration/`
 
 ### 3. End-to-End Tests (10%)
+
 - **Purpose**: Test complete user scenarios
 - **Tools**: Playwright
 - **Coverage**: Critical user journeys, authentication, key workflows
@@ -44,6 +47,7 @@ This document outlines the comprehensive testing strategy for the NeonPro aesthe
 ## Testing Configuration
 
 ### Vitest Configuration
+
 - **Environment**: jsdom for browser-like testing
 - **Coverage**: 80% minimum threshold
 - **Performance**: Parallel test execution with worker threads
@@ -51,6 +55,7 @@ This document outlines the comprehensive testing strategy for the NeonPro aesthe
 - **Setup**: Global setup/teardown with MSW server
 
 ### Playwright Configuration
+
 - **Browsers**: Chromium, Firefox, WebKit
 - **Mobile**: Pixel 5, iPhone 12 (conditional execution)
 - **Parallel**: Fully parallel execution
@@ -61,11 +66,13 @@ This document outlines the comprehensive testing strategy for the NeonPro aesthe
 ## Test Organization
 
 ### File Naming Convention
+
 - Unit tests: `ComponentName.test.tsx`
 - Integration tests: `FeatureName.integration.test.tsx`
 - E2E tests: `FeatureName.e2e.ts`
 
 ### Directory Structure
+
 ```
 src/
 ├── __tests__/
@@ -82,6 +89,7 @@ src/
 ## Testing Best Practices
 
 ### 1. Test Writing Guidelines
+
 - **AAA Pattern**: Arrange, Act, Assert
 - **Descriptive Names**: Use clear, action-oriented test names
 - **Independent Tests**: Each test should run in isolation
@@ -89,6 +97,7 @@ src/
 - **Error Testing**: Test both success and error scenarios
 
 ### 2. Component Testing
+
 ```typescript
 describe('ComponentName', () => {
   it('should render with required props', () => {
@@ -107,6 +116,7 @@ describe('ComponentName', () => {
 ```
 
 ### 3. Integration Testing
+
 ```typescript
 describe('Feature Integration', () => {
   it('should complete user flow', async () => {
@@ -123,6 +133,7 @@ describe('Feature Integration', () => {
 ```
 
 ### 4. E2E Testing
+
 ```typescript
 test.describe('User Journey', () => {
   test('should complete appointment booking', async ({ page }) => {
@@ -141,11 +152,13 @@ test.describe('User Journey', () => {
 ## Test Data Management
 
 ### Mock Data
+
 - **Location**: `src/test/mocks/`
 - **Format**: TypeScript interfaces with mock implementations
 - **Reset**: Clear mocks between tests
 
 ### Test Factories
+
 ```typescript
 export const generateMockPatient = (overrides = {}) => ({
   id: 'test-patient-id',
@@ -158,12 +171,14 @@ export const generateMockPatient = (overrides = {}) => ({
 ## Performance Testing
 
 ### Performance Metrics
+
 - **Test Execution Time**: < 2 seconds for unit tests
 - **Bundle Size**: Monitor for regression
 - **Memory Usage**: No memory leaks in tests
 - **Network Requests**: Mock all external calls
 
 ### Optimization Techniques
+
 - **Parallel Execution**: Use all available CPU cores
 - **Selective Testing**: Run only relevant tests on changes
 - **Caching**: Cache test results where appropriate
@@ -172,11 +187,13 @@ export const generateMockPatient = (overrides = {}) => ({
 ## Accessibility Testing
 
 ### Automated Checks
+
 - ** axe-core**: Integration with Playwright
 - **WCAG 2.1 AA**: Compliant color contrast and focus management
 - **Screen Reader**: Test with NVDA/VoiceOver simulations
 
 ### Manual Testing Guidelines
+
 - **Keyboard Navigation**: All functionality accessible via keyboard
 - **Screen Readers**: Compatible with major screen readers
 - **Mobile**: Touch targets minimum 44x44px
@@ -184,6 +201,7 @@ export const generateMockPatient = (overrides = {}) => ({
 ## CI/CD Integration
 
 ### GitHub Actions
+
 ```yaml
 test:
   runs-on: ubuntu-latest
@@ -198,6 +216,7 @@ test:
 ```
 
 ### Quality Gates
+
 - **Code Coverage**: Minimum 80% for all components
 - **Test Success Rate**: 100% required for merge
 - **Performance**: No performance regression
@@ -206,12 +225,14 @@ test:
 ## LGPD Compliance Testing
 
 ### Data Privacy Tests
+
 - **Data Masking**: Verify sensitive data is masked in logs
 - **Consent Management**: Test LGPD consent flows
 - **Data Retention**: Verify data deletion workflows
 - **Audit Trails**: Test user action logging
 
 ### Security Testing
+
 - **Input Validation**: Test all user inputs for security
 - **XSS Prevention**: Verify output encoding
 - **CSRF Protection**: Test form submissions
@@ -220,6 +241,7 @@ test:
 ## Testing Utilities
 
 ### Custom Matchers
+
 ```typescript
 expect.extend({
   toBeValidEmail(received) {
@@ -234,6 +256,7 @@ expect.extend({
 ```
 
 ### Test Helpers
+
 ```typescript
 export const renderWithProviders = (ui: ReactElement) => {
   const queryClient = new QueryClient();
@@ -248,6 +271,7 @@ export const renderWithProviders = (ui: ReactElement) => {
 ## Running Tests
 
 ### Development
+
 ```bash
 # Run all tests
 bun test
@@ -263,6 +287,7 @@ bun test:ui
 ```
 
 ### E2E Testing
+
 ```bash
 # Run E2E tests
 bun test:e2e
@@ -277,6 +302,7 @@ bun test:e2e --ui
 ## Debugging Tests
 
 ### Vitest Debug Mode
+
 ```bash
 # Run with debug breakpoint
 bun test --debug
@@ -286,6 +312,7 @@ bun test --debug AppointmentForm.test.tsx
 ```
 
 ### Playwright Debug Mode
+
 ```bash
 # Run with debug tools
 bun test:e2e --debug
@@ -297,12 +324,14 @@ bun test:e2e --headed
 ## Continuous Improvement
 
 ### Test Metrics
+
 - **Test Execution Time**: Monitor and optimize
 - **Coverage Reports**: Review and improve
 - **Flaky Tests**: Identify and fix
 - **Test Maintenance**: Regular review and updates
 
 ### Documentation
+
 - **Test Cases**: Document complex test scenarios
 - **Known Issues**: Track flaky tests and limitations
 - **Best Practices**: Update with team learnings
@@ -315,6 +344,7 @@ This testing strategy ensures that the NeonPro frontend application maintains hi
 ---
 
 **Key Principles:**
+
 - **Test Early, Test Often**: Shift left testing practices
 - **Quality Gates**: Maintain high standards for test coverage and success rates
 - **Performance**: Optimize test execution speed

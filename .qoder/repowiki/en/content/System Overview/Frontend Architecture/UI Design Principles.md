@@ -1,7 +1,7 @@
 # UI Design Principles
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [lgpd-consent-banner.tsx](file://packages/ui/src/components/healthcare/lgpd-consent-banner.tsx)
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 - [tailwind.config.ts](file://packages/ui/tailwind.config.ts)
@@ -16,6 +16,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Design System Overview](#design-system-overview)
 3. [Reusable UI Components](#reusable-ui-components)
@@ -53,10 +54,12 @@ F --> J[Dashboard Layouts]
 ```
 
 **Diagram sources**
+
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 - [lgpd-consent-banner.tsx](file://packages/ui/src/components/healthcare/lgpd-consent-banner.tsx)
 
 **Section sources**
+
 - [README.md](file://packages/ui/README.md)
 
 ## Reusable UI Components
@@ -137,11 +140,13 @@ HealthcareSelect --> healthcareValidationSchemas : "uses"
 ```
 
 **Diagram sources**
+
 - [healthcare-form.tsx](file://packages/ui/src/components/forms/healthcare-form.tsx)
 - [healthcare-text-field.tsx](file://packages/ui/src/components/forms/healthcare-text-field.tsx)
 - [healthcare-select.tsx](file://packages/ui/src/components/forms/healthcare-select.tsx)
 
 **Section sources**
+
 - [healthcare-form.tsx](file://packages/ui/src/components/forms/healthcare-form.tsx)
 - [healthcare-text-field.tsx](file://packages/ui/src/components/forms/healthcare-text-field.tsx)
 - [healthcare-select.tsx](file://packages/ui/src/components/forms/healthcare-select.tsx)
@@ -204,9 +209,11 @@ LGPDConsentBanner --> announceToScreenReader : "uses"
 ```
 
 **Diagram sources**
+
 - [lgpd-consent-banner.tsx](file://packages/ui/src/components/healthcare/lgpd-consent-banner.tsx)
 
 **Section sources**
+
 - [lgpd-consent-banner.tsx](file://packages/ui/src/components/healthcare/lgpd-consent-banner.tsx)
 
 ## Styling Conventions and CSS Architecture
@@ -240,9 +247,11 @@ D --> S[No Plugins]
 ```
 
 **Diagram sources**
+
 - [tailwind.config.ts](file://packages/ui/tailwind.config.ts)
 
 **Section sources**
+
 - [tailwind.config.ts](file://packages/ui/tailwind.config.ts)
 
 ### CSS Variables and Theming
@@ -282,9 +291,11 @@ USER_THEME ||--o{ HEALTHCARE_INDICATORS : "controls"
 ```
 
 **Diagram sources**
+
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 
 **Section sources**
+
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 
 ## Theme Customization and Context Management
@@ -313,10 +324,12 @@ ThemeProvider->>localStorage : Save updated theme
 ```
 
 **Diagram sources**
+
 - [ThemeContext.tsx](file://packages/ui/src/theme/ThemeContext.tsx)
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 
 **Section sources**
+
 - [ThemeContext.tsx](file://packages/ui/src/theme/ThemeContext.tsx)
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 
@@ -368,9 +381,11 @@ HealthcareThemeContextValue --> HealthcareA11yContext
 ```
 
 **Diagram sources**
+
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 
 **Section sources**
+
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 
 ## Accessibility Implementation
@@ -420,9 +435,11 @@ AccessibilityUtilities --> WCAGLevel
 ```
 
 **Diagram sources**
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts)
 
 **Section sources**
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts)
 
 ### Chat Interface Accessibility
@@ -454,10 +471,12 @@ ChatInterface->>User : Display updated interface
 ```
 
 **Diagram sources**
+
 - [NeonProChatInterface.tsx](file://apps/web/src/components/chat/NeonProChatInterface.tsx)
 - [NeonProAccessibility.tsx](file://apps/web/src/components/chat/NeonProAccessibility.tsx)
 
 **Section sources**
+
 - [NeonProChatInterface.tsx](file://apps/web/src/components/chat/NeonProChatInterface.tsx)
 - [NeonProAccessibility.tsx](file://apps/web/src/components/chat/NeonProAccessibility.tsx)
 
@@ -489,6 +508,7 @@ K --> P[Reduce latency]
 ```
 
 **Section sources**
+
 - [vite.config.ts](file://packages/ui/vite.config.ts)
 - [tsup.config.ts](file://packages/ui/tsup.config.ts)
 
@@ -516,6 +536,7 @@ Browser->>Browser : Apply non-critical CSS
 ```
 
 **Section sources**
+
 - [index.html](file://apps/web/public/index.html)
 - [main.css](file://apps/web/src/styles/main.css)
 
@@ -562,6 +583,7 @@ DEVICE_TYPE {
 ```
 
 **Section sources**
+
 - [NeonProChatInterface.tsx](file://apps/web/src/components/chat/NeonProChatInterface.tsx)
 - [NeonProAccessibility.tsx](file://apps/web/src/components/chat/NeonProAccessibility.tsx)
 
@@ -589,6 +611,7 @@ K --> P[Reduced cognitive load]
 ```
 
 **Section sources**
+
 - [NeonProChatInterface.tsx](file://apps/web/src/components/chat/NeonProChatInterface.tsx)
 - [NeonProAccessibility.tsx](file://apps/web/src/components/chat/NeonProAccessibility.tsx)
 
@@ -623,6 +646,7 @@ H --> P[Limited PWA capabilities]
 ```
 
 **Section sources**
+
 - [package.json](file://packages/ui/package.json)
 - [tsconfig.json](file://packages/ui/tsconfig.json)
 
@@ -654,6 +678,7 @@ N --> P[Graceful Degradation]
 ```
 
 **Section sources**
+
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts)
 

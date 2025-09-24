@@ -1,7 +1,7 @@
 # Validators Package
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [index.ts](file://packages/validators/src/index.ts)
 - [brazilian-healthcare.test.ts](file://packages/validators/src/__tests__/brazilian-healthcare.test.ts)
 - [debug-cns.ts](file://packages/validators/debug-cns.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Validation Functions](#core-validation-functions)
 3. [CNS Validation Algorithm](#cns-validation-algorithm)
@@ -28,6 +29,7 @@ The validators package in the neonpro repository provides specialized validation
 The package offers both simple validation functions and comprehensive validation utilities that provide detailed error reporting. It includes extensive test coverage and debugging tools to ensure reliability in production environments. The validators are designed to be integrated into forms, API endpoints, and data processing pipelines, providing consistent validation across the application stack.
 
 **Section sources**
+
 - [index.ts](file://packages/validators/src/index.ts#L1-L50)
 
 ## Core Validation Functions
@@ -48,9 +50,11 @@ ValidateChecksum --> |Valid| ReturnTrue["Return True"]
 ```
 
 **Diagram sources **
+
 - [index.ts](file://packages/validators/src/index.ts#L1-L100)
 
 **Section sources**
+
 - [index.ts](file://packages/validators/src/index.ts#L1-L100)
 
 ## CNS Validation Algorithm
@@ -76,10 +80,12 @@ CheckDivisible --> |Divisible| ReturnTrue["Return True"]
 ```
 
 **Diagram sources **
+
 - [index.ts](file://packages/validators/src/index.ts#L132-L153)
 - [index.ts](file://packages/validators/src/index.ts#L569-L600)
 
 **Section sources**
+
 - [index.ts](file://packages/validators/src/index.ts#L132-L153)
 - [index.ts](file://packages/validators/src/index.ts#L569-L600)
 
@@ -105,9 +111,11 @@ CheckFirstDigit --> |Valid Start| ReturnTrue["Return True"]
 ```
 
 **Diagram sources **
+
 - [index.ts](file://packages/validators/src/index.ts#L167-L198)
 
 **Section sources**
+
 - [index.ts](file://packages/validators/src/index.ts#L167-L198)
 
 ## Professional License Validation
@@ -143,10 +151,12 @@ AestheticProfessionalValidator --> AestheticProfessionalValidationResult : "retu
 ```
 
 **Diagram sources **
+
 - [index.ts](file://packages/validators/src/index.ts#L204-L426)
 - [index.ts](file://packages/validators/src/index.ts#L432-L568)
 
 **Section sources**
+
 - [index.ts](file://packages/validators/src/index.ts#L204-L568)
 
 ## Comprehensive Healthcare Document Validation
@@ -181,9 +191,11 @@ Validator-->>Client : HealthcareValidationResult
 ```
 
 **Diagram sources **
+
 - [index.ts](file://packages/validators/src/index.ts#L620-L753)
 
 **Section sources**
+
 - [index.ts](file://packages/validators/src/index.ts#L620-L753)
 
 ## Test Suite and Debugging Utilities
@@ -221,11 +233,13 @@ GenerateCPF --> |Creates| ValidCPF["Valid CPF Numbers"]
 ```
 
 **Diagram sources **
+
 - [brazilian-healthcare.test.ts](file://packages/validators/src/__tests__/brazilian-healthcare.test.ts)
 - [debug-cns.ts](file://packages/validators/debug-cns.ts)
 - [debug-tuss.ts](file://packages/validators/debug-tuss.ts)
 
 **Section sources**
+
 - [brazilian-healthcare.test.ts](file://packages/validators/src/__tests__/brazilian-healthcare.test.ts)
 - [debug-cns.ts](file://packages/validators/debug-cns.ts)
 - [debug-tuss.ts](file://packages/validators/debug-tuss.ts)
@@ -249,6 +263,7 @@ const results = validateHealthcareDocuments(patientData);
 For API endpoints, the validators can be used in middleware or service layers to ensure incoming data meets regulatory requirements before being processed or stored. The detailed error information returned by the comprehensive validation functions can be mapped directly to API response formats, providing clear feedback to clients about validation failures.
 
 **Section sources**
+
 - [index.ts](file://packages/validators/src/index.ts#L620-L753)
 
 ## Common Issues and Best Practices
@@ -258,5 +273,6 @@ When working with Brazilian healthcare identifier validation, several common iss
 Best practices include validating identifiers at multiple points in the data flow (client-side for immediate feedback, server-side for security), using the comprehensive validation functions to get detailed error information, and regularly updating validation rules to reflect any changes in Brazilian healthcare regulations. For performance-critical applications, consider caching validation results for frequently accessed identifiers, though this should be done carefully to avoid storing sensitive data unnecessarily.
 
 **Section sources**
+
 - [index.ts](file://packages/validators/src/index.ts)
 - [brazilian-healthcare.test.ts](file://packages/validators/src/__tests__/brazilian-healthcare.test.ts)

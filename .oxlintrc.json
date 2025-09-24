@@ -1,13 +1,13 @@
 {
   // Oxlint Configuration for NeonPro Healthcare Platform
-  // 
+  //
   // Ultra-fast linter with healthcare compliance rules
   // 50x faster than ESLint with zero-config defaults
   // Compatible with ESLint v8 format
 
   "plugins": [
     "typescript",
-    "react", 
+    "react",
     "import",
     "jsdoc",
     "promise",
@@ -64,7 +64,6 @@
     "promise/param-names": "error",
 
     // ES6+ features and modern JavaScript
-
 
     // JSDoc for healthcare API documentation
     "jsdoc/require-jsdoc": ["warn", {

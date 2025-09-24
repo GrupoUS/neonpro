@@ -75,6 +75,7 @@
    - Test that configuration persists after logout/login
 
 **Expected Results**:
+
 - [ ] Clinic profile created successfully
 - [ ] All configurations saved without errors
 - [ ] System displays success messages in Portuguese
@@ -82,7 +83,8 @@
 
 **Success Criteria**: All steps completed successfully without errors
 
-**Notes for Facilitator**: 
+**Notes for Facilitator**:
+
 - Guide participant through each step
 - Note any navigation difficulties
 - Record time taken for each major section
@@ -154,6 +156,7 @@
    - Verify audit trail is complete and accurate
 
 **Expected Results**:
+
 - [ ] Users created successfully with correct roles
 - [ ] Permission boundaries enforced correctly
 - [ ] Audit trail complete and accurate
@@ -162,6 +165,7 @@
 **Success Criteria**: All user management functions work correctly
 
 **Notes for Facilitator**:
+
 - Observe user's understanding of permission concepts
 - Note any confusion in permission selection
 - Record time taken for user creation
@@ -224,6 +228,7 @@
    - Verify scheduling confirmation
 
 **Expected Results**:
+
 - [ ] Financial reports generated accurately
 - [ ] Filtering and exporting work correctly
 - [ ] Trend analysis displays meaningful data
@@ -232,6 +237,7 @@
 **Success Criteria**: All financial reporting features functional
 
 **Notes for Facilitator**:
+
 - Note user's ability to interpret financial data
 - Record any difficulties with filtering options
 - Document report generation time
@@ -318,6 +324,7 @@
    - Schedule follow-up consultation
 
 **Expected Results**:
+
 - [ ] Complete consultation workflow executed
 - [ ] Photo assessment with AI analysis completed
 - [ ] Treatment plan generated and documented
@@ -327,6 +334,7 @@
 **Success Criteria**: All consultation steps completed successfully
 
 **Notes for Facilitator**:
+
 - Time each major section of the consultation
 - Note any difficulties with photo assessment tools
 - Record user's confidence in AI recommendations
@@ -392,6 +400,7 @@
    - Download and save reports
 
 **Expected Results**:
+
 - [ ] Photos uploaded successfully with consent
 - [ ] AI analysis completed with recommendations
 - [ ] Manual assessment tools functional
@@ -401,6 +410,7 @@
 **Success Criteria**: Photo assessment workflow completed successfully
 
 **Notes for Facilitator**:
+
 - Record photo upload time and any issues
 - Note user's interaction with AI recommendations
 - Document any difficulties with comparison tools
@@ -475,6 +485,7 @@
    - Document package terms and conditions
 
 **Expected Results**:
+
 - [ ] Multi-session treatment configured correctly
 - [ ] All resources properly assigned
 - [ ] Appointments scheduled without conflicts
@@ -484,6 +495,7 @@
 **Success Criteria**: Complete multi-session treatment scheduling
 
 **Notes for Facilitator**:
+
 - Time the scheduling process
 - Note any resource conflicts or errors
 - Document user's ability to handle complex scheduling
@@ -570,6 +582,7 @@
    - Provide patient with information summary
 
 **Expected Results**:
+
 - [ ] Patient registered successfully
 - [ ] All required information collected
 - [ ] LGPD consent properly documented
@@ -580,6 +593,7 @@
 **Success Criteria**: Complete patient registration workflow
 
 **Notes for Facilitator**:
+
 - Time the registration process
 - Note any missing fields or confusion
 - Document LGPD consent collection process
@@ -650,6 +664,7 @@
    - Export report for accounting
 
 **Expected Results**:
+
 - [ ] All payment methods processed successfully
 - [ ] Payment confirmations received correctly
 - [ ] Installment calculations accurate
@@ -659,6 +674,7 @@
 **Success Criteria**: Complete payment processing workflow
 
 **Notes for Facilitator**:
+
 - Record payment processing time for each method
 - Note any user confusion with payment options
 - Document reconciliation process understanding
@@ -723,6 +739,7 @@
    - Save communication settings
 
 **Expected Results**:
+
 - [ ] Patient portal account created successfully
 - [ ] Profile completed and configured
 - [ ] Privacy settings managed correctly
@@ -732,6 +749,7 @@
 **Success Criteria**: Complete patient portal registration
 
 **Notes for Facilitator**:
+
 - Time the registration process
 - Note any navigation difficulties
 - Document understanding of privacy settings
@@ -788,6 +806,7 @@
    - Receive clinic responses
 
 **Expected Results**:
+
 - [ ] Appointment browsing and selection successful
 - [ ] Professional selection completed
 - [ ] Appointment scheduled correctly
@@ -797,6 +816,7 @@
 **Success Criteria**: Complete appointment self-service workflow
 
 **Notes for Facilitator**:
+
 - Record user's ability to navigate independently
 - Note any difficulties with scheduling interface
 - Document communication feature usage
@@ -862,6 +882,7 @@
    - Schedule automated report generation
 
 **Expected Results**:
+
 - [ ] Compliance dashboard functional
 - [ ] All audit areas accessible and working
 - [ ] Reports generated correctly
@@ -871,6 +892,7 @@
 **Success Criteria**: Complete LGPD compliance audit capability
 
 **Notes for Facilitator**:
+
 - Document user's understanding of compliance requirements
 - Note any difficulties with audit tools
 - Record time taken for each audit section
@@ -883,6 +905,7 @@
 ### 6.1 Facilitator Instructions
 
 **Before Testing**:
+
 - Ensure test environment is ready and accessible
 - Verify all user accounts are created and working
 - Prepare test data and scenarios
@@ -890,6 +913,7 @@
 - Review test scripts and expected outcomes
 
 **During Testing**:
+
 - Guide participants through test scripts
 - Encourage think-aloud protocol
 - Record detailed observations and timings
@@ -898,6 +922,7 @@
 - Collect qualitative feedback
 
 **After Testing**:
+
 - Compile test results and observations
 - Document issues and recommendations
 - Calculate success metrics
@@ -907,6 +932,7 @@
 ### 6.2 Data Collection Procedures
 
 **Quantitative Data**:
+
 - Task completion time
 - Success/failure rates
 - Error frequency and type
@@ -914,6 +940,7 @@
 - Click paths and navigation patterns
 
 **Qualitative Data**:
+
 - User satisfaction ratings
 - Usability feedback
 - Feature suggestions
@@ -921,6 +948,7 @@
 - Overall impressions
 
 **Technical Data**:
+
 - System performance metrics
 - Error logs and exceptions
 - Browser/device information
@@ -944,17 +972,20 @@
 
 **Document Version Control**:
 
-| Version | Date | Changes | Author |
-|---------|------|---------|--------|
-| 1.0 | 2025-01-23 | Initial creation | UAT Team |
+| Version | Date       | Changes          | Author   |
+| ------- | ---------- | ---------------- | -------- |
+| 1.0     | 2025-01-23 | Initial creation | UAT Team |
 
 **Approvals**:
 
-_________________________
-**UAT Lead**              Date: ___________
+---
 
-_________________________
-**Quality Assurance**     Date: ___________
+**UAT Lead** Date: ___________
 
-_________________________
-**Compliance Officer**    Date: ___________
+---
+
+**Quality Assurance** Date: ___________
+
+---
+
+**Compliance Officer** Date: ___________

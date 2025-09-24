@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { createTRPCRouter } from "~/trpc";
-import { treatmentPlanningService } from "~/services/treatment-planning-service";
+import { createTRPCRouter } from "@trpc/server";
+import { treatmentPlanningService } from "@neonpro/core-services";
 import { 
   CreateTreatmentPlanInput,
   UpdateTreatmentPlanInput,

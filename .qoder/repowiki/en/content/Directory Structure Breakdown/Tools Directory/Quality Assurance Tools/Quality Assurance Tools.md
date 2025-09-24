@@ -1,7 +1,7 @@
 # Quality Assurance Tools
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [parallel-quality-check.sh](file://tools/quality/parallel-quality-check.sh)
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs)
 - [dprint.json](file://tools/quality/dprint.json)
@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Quality Enforcement Tools](#core-quality-enforcement-tools)
 3. [Parallel Quality Check Orchestration](#parallel-quality-check-orchestration)
@@ -21,6 +22,7 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The NeonPro platform implements a comprehensive quality assurance system designed to enforce code quality, formatting standards, and security compliance across all components. This document details the implementation of key quality tools including oxlint for static analysis, dprint for code formatting, and the security-auditor-agent for healthcare-specific vulnerability scanning. The system is orchestrated through the parallel-quality-check.sh script that integrates these tools into a cohesive quality control pipeline. This documentation provides both beginner-friendly explanations and technical depth for developers creating custom rules for medical data handling.
 
 ## Core Quality Enforcement Tools
@@ -28,15 +30,19 @@ The NeonPro platform implements a comprehensive quality assurance system designe
 The quality assurance system is built on three core tools that work together to maintain code integrity:
 
 ### Oxlint Static Analysis
+
 Oxlint serves as the primary static analysis tool, providing 50x faster performance compared to traditional ESLint while maintaining comprehensive rule coverage. The configuration in `oxlint.config.mjs` includes specialized rules for TypeScript safety, React best practices, accessibility (WCAG 2.1 AA+), and security vulnerabilities.
 
 ### Dprint Formatting
+
 Dprint ensures consistent code formatting across the codebase with near-instantaneous formatting checks. The configuration in `dprint.json` defines style rules for TypeScript, JavaScript, JSON, and Markdown files, with specific settings for line width, indentation, and syntax preferences.
 
 ### Security Auditor Agent
+
 The security-auditor-agent performs specialized security validation with a focus on healthcare compliance requirements. It operates as part of the TDD orchestration system, providing phase-specific security recommendations during red, green, and refactor cycles.
 
 **Section sources**
+
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs#L1-L162)
 - [dprint.json](file://tools/quality/dprint.json#L1-L68)
 - [security-auditor-agent.ts](file://tools/quality/src/orchestrator/agents/security-auditor-agent.ts#L1-L677)
@@ -67,9 +73,11 @@ Failure --> Exit1["exit 1"]
 ```
 
 **Diagram sources **
+
 - [parallel-quality-check.sh](file://tools/quality/parallel-quality-check.sh#L1-L86)
 
 **Section sources**
+
 - [parallel-quality-check.sh](file://tools/quality/parallel-quality-check.sh#L1-L86)
 
 The `parallel-quality-check.sh` script orchestrates multiple quality checks by running oxlint, dprint, and TypeScript type checking in parallel. This approach maximizes performance by leveraging concurrent execution. The script first attempts to use GNU parallel for optimal efficiency, falling back to background processes if GNU parallel is not available. Each quality check runs independently, and the script collects results to determine overall success or failure. This parallel execution reduces total quality check time from sequential minutes to near-instantaneous completion, making it suitable for pre-commit hooks and CI/CD pipelines.
@@ -124,10 +132,12 @@ SecurityAuditorAgent --> AgentResult : "produces"
 ```
 
 **Diagram sources **
+
 - [security-auditor-agent.ts](file://tools/quality/src/orchestrator/agents/security-auditor-agent.ts#L1-L677)
 - [types.ts](file://tools/quality/src/orchestrator/types.ts#L1-L333)
 
 **Section sources**
+
 - [security-auditor-agent.ts](file://tools/quality/src/orchestrator/agents/security-auditor-agent.ts#L1-L677)
 - [types.ts](file://tools/quality/src/orchestrator/types.ts#L1-L333)
 
@@ -169,10 +179,12 @@ Note over CI,SecurityAgent : Healthcare compliance gate
 ```
 
 **Diagram sources **
+
 - [security-auditor-agent.ts](file://tools/quality/src/orchestrator/agents/security-auditor-agent.ts#L1-L677)
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs#L1-L162)
 
 **Section sources**
+
 - [security-auditor-agent.ts](file://tools/quality/src/orchestrator/agents/security-auditor-agent.ts#L1-L677)
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs#L1-L162)
 
@@ -216,9 +228,11 @@ GenerateReport --> Output["Output results with suppression context"]
 ```
 
 **Diagram sources **
+
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs#L1-L162)
 
 **Section sources**
+
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs#L1-L162)
 
 The quality assurance system addresses false positives in healthcare compliance rules through strategic rule customization and suppression patterns. The oxlint configuration employs file-specific overrides to reduce false positives in appropriate contexts:
@@ -232,6 +246,7 @@ The quality assurance system addresses false positives in healthcare compliance 
 4. **Agent implementations**: Files in `src/agents/**` require JSDoc documentation and prohibit non-null assertions, maintaining high documentation standards for critical components.
 
 The system also supports standard suppression patterns:
+
 - Single-line suppression: `// eslint-disable-line rule-name`
 - Block suppression: `/* eslint-disable rule-name */`
 - File-level suppression: `/* eslint-disable-next*/` at the top of a file
@@ -275,6 +290,7 @@ Custom rules should follow the existing pattern of severity classification (crit
 When creating rules for medical data, developers should reference established healthcare standards such as HIPAA, GDPR Article 9, and NIST 800-66. Rules should distinguish between different types of medical data (PHI, EHI, research data) and apply appropriate requirements to each.
 
 **Section sources**
+
 - [oxlint.config.mjs](file://tools/quality/oxlint.config.mjs#L1-L162)
 - [security-auditor-agent.ts](file://tools/quality/src/orchestrator/agents/security-auditor-agent.ts#L1-L677)
 
@@ -293,6 +309,7 @@ The quality assurance tools are integrated into the CI/CD pipeline through the `
 The parallel execution model ensures that these checks complete quickly, minimizing pipeline wait times. The script's exit code (0 for success, 1 for failure) integrates seamlessly with CI/CD systems, allowing automatic blocking of deployments that don't meet quality standards.
 
 Additional CI/CD integrations include:
+
 - Quality reports published as PR comments
 - Security findings integrated with issue tracking
 - Compliance status displayed in deployment dashboards
@@ -301,7 +318,9 @@ Additional CI/CD integrations include:
 This comprehensive integration ensures that code quality, formatting standards, and security compliance are maintained throughout the software development lifecycle.
 
 **Section sources**
+
 - [parallel-quality-check.sh](file://tools/quality/parallel-quality-check.sh#L1-L86)
 
 ## Conclusion
+
 The NeonPro quality assurance system provides a robust framework for maintaining code quality, enforcing formatting standards, and ensuring security compliance. By combining oxlint for ultra-fast static analysis, dprint for consistent formatting, and the security-auditor-agent for healthcare-specific vulnerability scanning, the system addresses the unique challenges of medical software development. The parallel-quality-check.sh script orchestrates these tools efficiently, integrating them into CI/CD pipelines without introducing significant delays. Through strategic rule customization and suppression patterns, the system minimizes false positives while maintaining rigorous standards for medical data handling. Developers can extend the system with custom rules tailored to specific healthcare compliance requirements, ensuring that the quality assurance framework evolves with the application's needs.

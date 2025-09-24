@@ -1,8 +1,9 @@
-import * as React from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { usePWA } from "@/hooks/usePWA";
+import { useState } from "react";
+import { Toaster } from "@/components/ui/toaster";
+import { Badge } from "@/components/ui/badge";
 import { 
   Smartphone, 
   Download, 
@@ -39,12 +40,14 @@ export const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className })
       const timer = setTimeout(() => setShowInstallPrompt(true), 3000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isInstallable, isInstalled]);
 
   React.useEffect(() => {
     // Show sync status when offline or has offline data
     if (!isOnline || hasOfflineData) {
       setShowSyncStatus(true);
+      return undefined;
     } else {
       const timer = setTimeout(() => setShowSyncStatus(false), 5000);
       return () => clearTimeout(timer);

@@ -1,7 +1,7 @@
 # Shared Package
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [index.ts](file://packages/shared/src/index.ts)
 - [useRealtimeQuery.ts](file://packages/shared/src/hooks/useRealtimeQuery.ts)
 - [realtime-manager.ts](file://packages/shared/src/realtime/realtime-manager.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Architecture and Organization](#core-architecture-and-organization)
 3. [Key Modules Overview](#key-modules-overview)
@@ -31,6 +32,7 @@ This documentation provides comprehensive guidance for both beginners and experi
 By standardizing critical functionality such as authentication, real-time data synchronization, logging, and Brazilian healthcare compliance validation, the shared package ensures uniform behavior and regulatory adherence throughout the application ecosystem.
 
 **Section sources**
+
 - [index.ts](file://packages/shared/src/index.ts)
 
 ## Core Architecture and Organization
@@ -89,6 +91,7 @@ W --> Index
 ```
 
 **Diagram sources**
+
 - [index.ts](file://packages/shared/src/index.ts)
 
 ## Key Modules Overview
@@ -106,6 +109,7 @@ Type definitions establish consistent interfaces for patient data, medical recor
 Authentication components provide reusable route protection mechanisms that integrate with the monorepo's authentication system, supporting role-based access control and permission checking.
 
 **Section sources**
+
 - [index.ts](file://packages/shared/src/index.ts)
 
 ## UI Components and React Hooks
@@ -140,12 +144,14 @@ Hook-->>Component : Query result with real-time capabilities
 ```
 
 **Diagram sources**
+
 - [useRealtimeQuery.ts](file://packages/shared/src/hooks/useRealtimeQuery.ts)
 - [realtime-manager.ts](file://packages/shared/src/realtime/realtime-manager.ts)
 
 The `useRealtimeQuery` hook integrates seamlessly with TanStack Query's caching mechanism while adding real-time updates from Supabase. It implements healthcare-appropriate rate limiting (100ms default) to prevent excessive updates and includes automatic retry logic with exponential backoff for connection resilience.
 
 Key features include:
+
 - Optimistic updates for immediate UI feedback
 - Configurable refetch behavior (disabled on window focus by default)
 - Built-in error handling with healthcare-specific logging
@@ -178,11 +184,13 @@ RenderChildren --> End
 ```
 
 **Diagram sources**
+
 - [protected-route.tsx](file://packages/shared/src/auth/protected-route.tsx)
 
 The `ProtectedRoute` component supports optional role requirements and permission checks, with a placeholder implementation for granular permission validation. It logs authentication-related events for audit purposes and provides customizable fallback UIs for loading and unauthorized states.
 
 **Section sources**
+
 - [useRealtimeQuery.ts](file://packages/shared/src/hooks/useRealtimeQuery.ts)
 - [realtime-manager.ts](file://packages/shared/src/realtime/realtime-manager.ts)
 - [protected-route.tsx](file://packages/shared/src/auth/protected-route.tsx)
@@ -196,7 +204,7 @@ The shared package implements a sophisticated logging infrastructure designed sp
 In development mode, console output includes debug-level messages with formatted output for easy debugging. In production, console output is restricted to error-level messages only, while file transports handle different log types:
 
 - **Error logs**: Errors only, rotated at 5MB with 5 files retained
-- **Combined logs**: Info-level and above, rotated at 5MB with 5 files retained  
+- **Combined logs**: Info-level and above, rotated at 5MB with 5 files retained
 - **Audit logs**: Audit-level events only, rotated at 10MB with 10 files retained
 
 The logging system uses custom levels that include "audit" for compliance-critical events, ensuring proper categorization of sensitive operations. All loggers include service metadata and implement non-blocking behavior to prevent application crashes during logging failures.
@@ -302,9 +310,11 @@ TelemetryEvent --> ComplianceMetadata : "contains"
 ```
 
 **Diagram sources**
+
 - [telemetry-event.ts](file://packages/shared/src/models/telemetry-event.ts)
 
 The event model incorporates several healthcare-specific features:
+
 - Patient ID hashing to protect personally identifiable information
 - Data sensitivity classification for appropriate handling
 - LGPD compliance flags and retention tracking
@@ -315,6 +325,7 @@ The event model incorporates several healthcare-specific features:
 Event types are categorized into system, performance, healthcare-specific, security, error, user, AI/ML, and compliance domains, enabling effective filtering and analysis.
 
 **Section sources**
+
 - [healthcare-logger.ts](file://packages/shared/src/logging/healthcare-logger.ts)
 - [telemetry-event.ts](file://packages/shared/src/models/telemetry-event.ts)
 
@@ -325,8 +336,9 @@ Event types are categorized into system, performance, healthcare-specific, secur
 The shared package provides comprehensive validation utilities for Brazilian healthcare identifiers through the `brazilian.ts` validator module. These utilities ensure data integrity and regulatory compliance when handling patient and provider information.
 
 The validation suite includes functions for:
+
 - CPF (Cadastro de Pessoas Físicas): Individual taxpayer registry
-- CNPJ (Cadastro Nacional da Pessoa Jurídica): Corporate taxpayer registry  
+- CNPJ (Cadastro Nacional da Pessoa Jurídica): Corporate taxpayer registry
 - CRM (Conselho Regional de Medicina): Medical license numbers
 - ANVISA codes: National Health Surveillance Agency identifiers
 - SUS cards: Unified Health System identification
@@ -353,6 +365,7 @@ Valid --> End
 ```
 
 **Diagram sources**
+
 - [brazilian.ts](file://packages/shared/src/validators/brazilian.ts)
 
 ### LGPD Consent Management
@@ -370,6 +383,7 @@ The LGPD consent model defines a comprehensive structure for managing patient co
 The package provides utility functions like `validateConsentCompleteness` to ensure all required fields are present before storing consent records. This function performs mandatory field validation to prevent incomplete consent captures.
 
 Additional utilities support consent lifecycle management:
+
 - `withdrawConsent`: Process consent revocation requests
 - `renewConsent`: Handle consent renewal workflows
 - `generateConsentSummary`: Create human-readable consent summaries
@@ -379,6 +393,7 @@ Additional utilities support consent lifecycle management:
 These tools help ensure that the application maintains lawful grounds for processing personal health data while providing patients with transparency and control over their information.
 
 **Section sources**
+
 - [brazilian.ts](file://packages/shared/src/validators/brazilian.ts)
 - [lgpd-consent.ts](file://packages/shared/src/types/lgpd-consent.ts)
 
@@ -470,6 +485,7 @@ async function processInvoice(invoiceData: any) {
 These examples demonstrate how the shared package enables consistent implementation patterns across the monorepo, reducing boilerplate code and ensuring uniform behavior.
 
 **Section sources**
+
 - [index.ts](file://packages/shared/src/index.ts)
 
 ## Common Issues and Best Practices
@@ -477,8 +493,9 @@ These examples demonstrate how the shared package enables consistent implementat
 ### Versioning Conflicts
 
 When updating the shared package, follow semantic versioning principles:
+
 - Patch versions (0.0.x) for bug fixes and minor improvements
-- Minor versions (0.x.0) for backward-compatible feature additions  
+- Minor versions (0.x.0) for backward-compatible feature additions
 - Major versions (x.0.0) for breaking changes
 
 Coordinate updates across dependent applications using the monorepo's dependency management tools. Test shared package changes thoroughly in staging environments before deployment.
@@ -486,6 +503,7 @@ Coordinate updates across dependent applications using the monorepo's dependency
 ### Circular Dependencies
 
 Avoid circular dependencies by:
+
 - Organizing modules by domain rather than technical layer
 - Using dependency inversion principles
 - Creating intermediate modules for shared dependencies
@@ -496,6 +514,7 @@ The monorepo build system should detect and prevent circular dependencies during
 ### Contribution Guidelines
 
 When contributing to the shared package:
+
 1. Ensure new utilities have broad applicability across multiple applications
 2. Follow existing coding standards and patterns
 3. Include comprehensive TypeScript types
@@ -509,4 +528,5 @@ Prefer composition over inheritance in component design, and make hooks configur
 Regularly review the shared package for deprecated or underutilized functionality that could be removed to reduce bundle size and maintenance overhead.
 
 **Section sources**
+
 - [index.ts](file://packages/shared/src/index.ts)

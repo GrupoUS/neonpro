@@ -65,7 +65,7 @@ export function useRecoveryPlan(options: UseRecoveryPlanOptions = {}) {
       // Atualizar cache específico se possível
       const cacheKey = getQueryKey({
         procedureId: variables.procedureId,
-        treatmentPlanId: variables.treatmentPlanId,
+        treatmentPlanId: options.treatmentPlanId,
         patientId: variables.patientId,
         appointmentId: variables.appointmentId,
       });

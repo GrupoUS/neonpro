@@ -7,6 +7,7 @@ The aesthetic clinic system implements a robust deployment strategy ensuring hig
 ## 🏗️ Deployment Architecture
 
 ### Environment Structure
+
 ```
 Production: Highly available, multi-region deployment with full compliance
 Staging: Production-identical for testing and validation
@@ -17,6 +18,7 @@ CI/CD: Automated testing and deployment pipelines
 ## 🌍 Environment Configuration
 
 ### Environment Variables Setup
+
 ```bash
 # .env.production
 # Core Infrastructure
@@ -62,6 +64,7 @@ ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY}"
 ```
 
 ### Staging Configuration
+
 ```bash
 # .env.staging
 NODE_ENV=staging
@@ -85,6 +88,7 @@ SENTRY_DSN="${SENTRY_STAGING_DSN}"
 ## 🐳 Container Orchestration
 
 ### Docker Compose for Development
+
 ```yaml
 # docker-compose.yml
 version: '3.8'
@@ -170,6 +174,7 @@ networks:
 ```
 
 ### Production Dockerfile
+
 ```dockerfile
 # apps/api/Dockerfile
 FROM node:20-alpine AS base
@@ -220,6 +225,7 @@ CMD ["node", "server.js"]
 ## ☸️ Kubernetes Deployment
 
 ### Production Deployment
+
 ```yaml
 # k8s/production/api-deployment.yaml
 apiVersion: apps/v1
@@ -294,6 +300,7 @@ spec:
 ```
 
 ### Database StatefulSet
+
 ```yaml
 # k8s/production/postgres-statefulset.yaml
 apiVersion: apps/v1
@@ -342,6 +349,7 @@ spec:
 ```
 
 ### Ingress Configuration
+
 ```yaml
 # k8s/production/ingress.yaml
 apiVersion: networking.k8s.io/v1
@@ -385,6 +393,7 @@ spec:
 ## 🔒 Security Configuration
 
 ### Network Policies
+
 ```yaml
 # k8s/production/network-policy.yaml
 apiVersion: networking.k8s.io/v1
@@ -426,6 +435,7 @@ spec:
 ```
 
 ### RBAC Configuration
+
 ```yaml
 # k8s/production/rbac.yaml
 apiVersion: v1
@@ -467,6 +477,7 @@ subjects:
 ## 📊 Monitoring & Logging
 
 ### Prometheus Configuration
+
 ```yaml
 # monitoring/prometheus.yml
 global:
@@ -503,6 +514,7 @@ scrape_configs:
 ```
 
 ### Alert Rules
+
 ```yaml
 # monitoring/alert_rules.yml
 groups:
@@ -546,6 +558,7 @@ groups:
 ```
 
 ### Grafana Dashboards
+
 ```json
 // monitoring/grafana/dashboards/neonpro-dashboard.json
 {
@@ -616,6 +629,7 @@ groups:
 ## 🔄 CI/CD Pipeline
 
 ### GitHub Actions Workflow
+
 ```yaml
 # .github/workflows/deploy.yml
 name: Deploy to Production
@@ -715,6 +729,7 @@ jobs:
 ## 📈 Performance Optimization
 
 ### Horizontal Pod Autoscaler
+
 ```yaml
 # k8s/production/hpa.yaml
 apiVersion: autoscaling/v2
@@ -752,6 +767,7 @@ spec:
 ```
 
 ### Vertical Pod Autoscaler
+
 ```yaml
 # k8s/production/vpa.yaml
 apiVersion: autoscaling.k8s.io/v1
@@ -780,6 +796,7 @@ spec:
 ## 🔧 Infrastructure as Code
 
 ### Terraform Configuration
+
 ```hcl
 # main.tf
 terraform {
@@ -896,6 +913,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "assets" {
 ## 🚨 Disaster Recovery
 
 ### Backup Strategy
+
 ```yaml
 # k8s/production/backup-cronjob.yaml
 apiVersion: batch/v1beta1
@@ -932,6 +950,7 @@ spec:
 ```
 
 ### Restore Procedure
+
 ```bash
 #!/bin/bash
 # scripts/restore-from-backup.sh

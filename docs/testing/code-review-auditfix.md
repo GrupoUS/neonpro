@@ -558,6 +558,6 @@ export async function getPatientData(patientId: string, userId: string) {
 
 ---
 
-**Last Updated**: 2025-09-16  
-**Version**: 1.0.0  
+**Last Updated**: 2025-09-16\
+**Version**: 1.0.0\
 **Maintainer**: TDD Orchestration Framework

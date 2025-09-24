@@ -9,6 +9,7 @@ The aesthetic clinic database schema is designed with Brazilian healthcare compl
 ### 1. Client Management Tables
 
 #### AestheticClientProfile
+
 ```sql
 CREATE TABLE AestheticClientProfile (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -60,6 +61,7 @@ CREATE INDEX idx_aesthetic_client_created_at ON AestheticClientProfile(created_a
 ```
 
 #### AestheticClientAddress
+
 ```sql
 CREATE TABLE AestheticClientAddress (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -88,6 +90,7 @@ CREATE INDEX idx_aesthetic_address_coordinates ON AestheticClientAddress(latitud
 ### 2. Treatment Management Tables
 
 #### AestheticTreatmentCatalog
+
 ```sql
 CREATE TABLE AestheticTreatmentCatalog (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -141,6 +144,7 @@ CREATE INDEX idx_aesthetic_treatment_professional_type ON AestheticTreatmentCata
 ```
 
 #### AestheticTreatmentPlan
+
 ```sql
 CREATE TABLE AestheticTreatmentPlan (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -180,6 +184,7 @@ CREATE INDEX idx_aesthetic_plan_dates ON AestheticTreatmentPlan(start_date, esti
 ### 3. Session Management Tables
 
 #### AestheticSession
+
 ```sql
 CREATE TABLE AestheticSession (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -240,6 +245,7 @@ CREATE INDEX idx_aesthetic_session_treatment_plan ON AestheticSession(treatment_
 ### 4. Professional Management Tables
 
 #### AestheticProfessional
+
 ```sql
 CREATE TABLE AestheticProfessional (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -307,6 +313,7 @@ CREATE INDEX idx_aesthetic_professional_specialization ON AestheticProfessional 
 ### 5. Scheduling Tables
 
 #### AestheticAppointment
+
 ```sql
 CREATE TABLE AestheticAppointment (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -373,6 +380,7 @@ CREATE INDEX idx_aesthetic_appointment_dates ON AestheticAppointment(scheduled_s
 ### 6. Compliance Tables
 
 #### AestheticComplianceRecord
+
 ```sql
 CREATE TABLE AestheticComplianceRecord (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -410,6 +418,7 @@ CREATE INDEX idx_aesthetic_compliance_next_review ON AestheticComplianceRecord(n
 ```
 
 #### AestheticAuditTrail
+
 ```sql
 CREATE TABLE AestheticAuditTrail (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -448,6 +457,7 @@ CREATE INDEX idx_aesthetic_audit_review_status ON AestheticAuditTrail(review_sta
 ## 🔗 Table Relationships
 
 ### Primary Relationships
+
 ```mermaid
 erDiagram
     AestheticClientProfile ||--o{ AestheticClientAddress : has
@@ -478,6 +488,7 @@ erDiagram
 ## 🛡️ Row Level Security (RLS) Policies
 
 ### Client Data Protection
+
 ```sql
 -- Enable RLS on client tables
 ALTER TABLE AestheticClientProfile ENABLE ROW LEVEL SECURITY;
@@ -501,6 +512,7 @@ CREATE POLICY professional_client_access ON AestheticClientProfile
 ```
 
 ### Professional Access Control
+
 ```sql
 -- Enable RLS on professional tables
 ALTER TABLE AestheticProfessional ENABLE ROW LEVEL SECURITY;
@@ -522,6 +534,7 @@ CREATE POLICY admin_professional_access ON AestheticProfessional
 ## 📊 Performance Optimization
 
 ### Materialized Views
+
 ```sql
 -- Client statistics for dashboard
 CREATE MATERIALIZED VIEW AestheticClientStatistics AS
@@ -562,6 +575,7 @@ REFRESH MATERIALIZED VIEW AestheticProfessionalWorkload;
 ## 🔄 Database Triggers
 
 ### Automated Audit Trail
+
 ```sql
 CREATE OR REPLACE FUNCTION aesthetic_audit_trigger()
 RETURNS TRIGGER AS $$
@@ -602,6 +616,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ```
 
 ### Compliance Validation
+
 ```sql
 CREATE OR REPLACE FUNCTION aesthetic_compliance_check()
 RETURNS TRIGGER AS $$

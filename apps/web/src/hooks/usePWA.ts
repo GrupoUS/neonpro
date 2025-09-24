@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
-import { 
-  pwaIndexedDB, 
-  pwaPushManager, 
-  pwaOfflineSync, 
+import { useCallback, useEffect, useState } from 'react';
+import {
+  type OfflineData,
+  pwaIndexedDB,
+  pwaOfflineSync,
+  pwaPushManager,
   pwaStatus,
-  type OfflineData 
-} from '../utils/pwa';
+} from '../utils/pwa-lite';
 
 interface PWAState {
   isOnline: boolean;
@@ -36,10 +36,10 @@ export function usePWA() {
       try {
         // Initialize IndexedDB
         await pwaIndexedDB.init();
-        
+
         // Initialize offline sync
         await pwaOfflineSync.init();
-        
+
         // Check PWA status
         setState(prev => ({
           ...prev,
@@ -52,7 +52,6 @@ export function usePWA() {
           ...prev,
           offlineDataCount: offlineData.length,
         }));
-
       } catch (error) {
         console.error('Failed to initialize PWA services:', error);
       }
@@ -65,12 +64,15 @@ export function usePWA() {
       setState(prev => ({ ...prev, isOnline }));
     });
 
-    const unsubscribeInstallPrompt = pwaStatus.subscribe('installPromptAvailable', (available: boolean) => {
-      setState(prev => ({ ...prev, isInstallable: available }));
-    });
+    const unsubscribeInstallPrompt = pwaStatus.subscribe(
+      'installPromptAvailable',
+      (available: boolean) => {
+        setState(prev => ({ ...prev, isInstallable: available }));
+      },
+    );
 
     const unsubscribeInstalled = pwaStatus.subscribe('isInstalled', (installed: boolean) => {
-      setState(prev => ({ ...prev, isInstalled }));
+      setState(prev => ({ ...prev, isInstalled: installed }));
     });
 
     // PWA install event listeners
@@ -118,7 +120,7 @@ export function usePWA() {
     try {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      
+
       setDeferredPrompt(null);
       setState(prev => ({ ...prev, isInstallable: false }));
 
@@ -157,27 +159,30 @@ export function usePWA() {
   }, []);
 
   // Send local notification
-  const sendLocalNotification = useCallback(async (title: string, options?: NotificationOptions) => {
-    try {
-      await pwaPushManager.sendLocalNotification(title, options);
-    } catch (error) {
-      console.error('Failed to send local notification:', error);
-    }
-  }, []);
+  const sendLocalNotification = useCallback(
+    async (title: string, options?: NotificationOptions) => {
+      try {
+        await pwaPushManager.sendLocalNotification(title, options);
+      } catch (error) {
+        console.error('Failed to send local notification:', error);
+      }
+    },
+    [],
+  );
 
   // Add offline action
   const addOfflineAction = useCallback(async (
     type: OfflineData['type'],
     action: OfflineData['action'],
-    data: any
+    data: any,
   ): Promise<string> => {
     try {
       const id = await pwaOfflineSync.addOfflineAction(type, action, data);
-      
+
       // Update offline data count
       const offlineData = await pwaIndexedDB.getOfflineData();
       setState(prev => ({ ...prev, offlineDataCount: offlineData.length }));
-      
+
       return id;
     } catch (error) {
       console.error('Failed to add offline action:', error);
@@ -196,7 +201,7 @@ export function usePWA() {
 
     try {
       await pwaOfflineSync.sync();
-      
+
       // Update offline data count and sync time
       const offlineData = await pwaIndexedDB.getOfflineData();
       setState(prev => ({
@@ -258,7 +263,7 @@ export function usePWA() {
   return {
     // State
     ...state,
-    
+
     // Actions
     installPWA,
     requestNotificationPermission,
@@ -269,7 +274,7 @@ export function usePWA() {
     cacheData,
     getCachedData,
     clearAllData,
-    
+
     // Derived state
     hasOfflineData: state.offlineDataCount > 0,
     canSync: state.isOnline && state.offlineDataCount > 0,
@@ -286,7 +291,7 @@ export function useOfflineData<T>(
     ttl?: number;
     enabled?: boolean;
     refetchOnFocus?: boolean;
-  }
+  },
 ) {
   const { isOnline, cacheData, getCachedData } = usePWA();
   const [data, setData] = useState<T | null>(null);
@@ -314,7 +319,7 @@ export function useOfflineData<T>(
       if (isOnline) {
         const freshData = await fetchFn();
         setData(freshData);
-        
+
         // Cache the data
         await cacheData(key, freshData, options?.ttl);
       } else {

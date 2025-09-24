@@ -1,13 +1,14 @@
 # Audit Logging & Monitoring
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts)
 - [opentelemetry-config.ts](file://packages/shared/src/telemetry/opentelemetry-config.ts)
 - [init.ts](file://packages/monitoring/src/init.ts)
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Audit Log Implementation](#audit-log-implementation)
 3. [Structured Logging Formats](#structured-logging-formats)
@@ -19,6 +20,7 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The neonpro platform implements a comprehensive audit logging and monitoring infrastructure designed to ensure data integrity, regulatory compliance, and operational visibility across clinical, financial, and administrative workflows. The system captures immutable audit trails for all critical operations while providing real-time monitoring capabilities through integrated observability tools.
 
 ## Audit Log Implementation
@@ -41,9 +43,11 @@ Middleware-->>Client : Response
 ```
 
 **Diagram sources **
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L0-L330)
 
 **Section sources**
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L0-L330)
 
 ## Structured Logging Formats
@@ -92,9 +96,11 @@ AuditLogEntry --> DEFAULT_SENSITIVE_FIELDS : "references"
 ```
 
 **Diagram sources **
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L6-L22)
 
 **Section sources**
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L6-L22)
 
 ## Real-time Monitoring Capabilities
@@ -115,9 +121,11 @@ F --> J[Alerting System]
 ```
 
 **Diagram sources **
+
 - [init.ts](file://packages/monitoring/src/init.ts#L0-L101)
 
 **Section sources**
+
 - [init.ts](file://packages/monitoring/src/init.ts#L0-L101)
 
 ## Domain Models for Audit Events
@@ -125,6 +133,7 @@ F --> J[Alerting System]
 The system defines specific audit middleware configurations for different domains, each with appropriate sensitivity settings and logging requirements. These domain-specific implementations ensure compliance with relevant regulations while capturing necessary operational context.
 
 ### Healthcare Audit Model
+
 ```mermaid
 classDiagram
 class healthcareAuditMiddleware {
@@ -148,9 +157,11 @@ healthcareAuditMiddleware --> SensitiveHealthcareFields : "includes"
 ```
 
 **Diagram sources **
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L265-L283)
 
 ### Financial Audit Model
+
 ```mermaid
 classDiagram
 class financialAuditMiddleware {
@@ -173,9 +184,11 @@ financialAuditMiddleware --> SensitiveFinancialFields : "includes"
 ```
 
 **Diagram sources **
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L288-L305)
 
 ### Authentication Audit Model
+
 ```mermaid
 classDiagram
 class authAuditMiddleware {
@@ -194,6 +207,7 @@ authAuditMiddleware --> SensitiveAuthFields : "includes"
 ```
 
 **Diagram sources **
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L310-L323)
 
 ## Integration with Observability Systems
@@ -221,9 +235,11 @@ A --> D --> G
 ```
 
 **Diagram sources **
+
 - [opentelemetry-config.ts](file://packages/shared/src/telemetry/opentelemetry-config.ts#L0-L363)
 
 **Section sources**
+
 - [opentelemetry-config.ts](file://packages/shared/src/telemetry/opentelemetry-config.ts#L0-L363)
 
 ## Compliance and Regulatory Requirements
@@ -260,21 +276,27 @@ string role
 ```
 
 **Section sources**
+
 - [opentelemetry-config.ts](file://packages/shared/src/telemetry/opentelemetry-config.ts#L346-L393)
 
 ## Common Issues and Solutions
 
 ### Log Volume Management
+
 High-volume operations can generate excessive log data. The system addresses this through sampling strategies and tiered logging levels, allowing detailed logging for critical operations while minimizing overhead for routine activities.
 
 ### Audit Integrity
+
 To ensure audit trail integrity, the system implements write-once storage for audit records and cryptographic hashing to detect tampering. Each audit entry is timestamped and linked to the originating session and request.
 
 ### Regulatory Retention
+
 The platform enforces configurable retention periods aligned with regulatory requirements. Automated purging removes records beyond their required retention period while maintaining chain-of-custody documentation for compliance audits.
 
 **Section sources**
+
 - [opentelemetry-config.ts](file://packages/shared/src/telemetry/opentelemetry-config.ts#L346-L393)
 
 ## Conclusion
+
 The neonpro platform's audit logging and monitoring infrastructure provides a robust foundation for ensuring data security, regulatory compliance, and operational excellence. By implementing domain-specific audit policies, structured logging formats, and comprehensive observability integrations, the system enables both automated compliance and proactive issue detection across clinical, financial, and administrative workflows.

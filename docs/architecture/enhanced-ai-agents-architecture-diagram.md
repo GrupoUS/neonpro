@@ -373,8 +373,8 @@ gantt
 | Security Layer | ○        | ○           | ●       | ○    | ●        | ●          |
 | Monitoring     | ○        | ○           | ●       | ○    | ○        | ●          |
 
-● = Direct Interaction  
-○ = Indirect Interaction  
+● = Direct Interaction\
+○ = Indirect Interaction\
 ○ = No Direct Interaction
 
 ## Technology Stack

@@ -1,7 +1,7 @@
 # REST API Reference
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [openapi-config.ts](file://apps/api/src/schemas/openapi-config.ts)
 - [openapi-routes.ts](file://apps/api/src/schemas/openapi-routes.ts)
 - [openapi-schemas.ts](file://apps/api/src/schemas/openapi-schemas.ts)
@@ -17,6 +17,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [API Versioning Strategy](#api-versioning-strategy)
 3. [Authentication and Security](#authentication-and-security)
@@ -28,14 +29,17 @@
 9. [Client Examples](#client-examples)
 
 ## Introduction
+
 The NeonPro Healthcare API provides a comprehensive RESTful interface for managing patient data, appointments, billing, and AI-powered healthcare services. Built with Hono and TypeScript, the API follows LGPD compliance standards for Brazilian healthcare data protection. The API is organized around resource-oriented URLs, standard HTTP methods, and predictable response formats.
 
 All API endpoints are designed to be intuitive and consistent, with comprehensive OpenAPI documentation available at `/docs`. The API supports JSON request and response payloads, with proper error handling and status codes. The system prioritizes security, performance, and regulatory compliance throughout its architecture.
 
 **Section sources**
+
 - [openapi-config.ts](file://apps/api/src/schemas/openapi-config.ts#L1-L238)
 
 ## API Versioning Strategy
+
 The NeonPro API implements a clear versioning strategy using URL path prefixes. All stable endpoints are accessible under the `/v1` path prefix, ensuring backward compatibility for existing integrations. The versioning approach follows semantic versioning principles, where breaking changes require a major version increment.
 
 The API maintains multiple versions simultaneously during transition periods, allowing clients time to migrate. Version deprecation notices are communicated through API response headers and documentation updates at least 90 days before endpoint removal. Clients are encouraged to specify the API version they expect to ensure consistent behavior.
@@ -51,14 +55,17 @@ E --> F[Return Response with version header]
 ```
 
 **Diagram sources**
+
 - [openapi-config.ts](file://apps/api/src/schemas/openapi-config.ts#L1-L238)
 - [v1/health.ts](file://apps/api/vercel/v1/health.ts#L1-L50)
 
 **Section sources**
+
 - [openapi-config.ts](file://apps/api/src/schemas/openapi-config.ts#L1-L238)
 - [v1/health.ts](file://apps/api/vercel/v1/health.ts#L1-L50)
 
 ## Authentication and Security
+
 The NeonPro API implements JWT-based authentication for all protected endpoints. Clients must include a valid JWT token in the Authorization header using the Bearer scheme. The authentication system validates tokens and extracts user context including user ID, clinic ID, and permissions.
 
 Role-based access control (RBAC) ensures that users can only access resources appropriate to their role. The system supports various roles including admin, healthcare professional, and billing specialist, each with specific permission sets. Clinic access middleware enforces multi-tenancy by ensuring users can only access data belonging to their assigned clinic.
@@ -79,16 +86,19 @@ API-->>Client : 200 OK + Patient data
 ```
 
 **Diagram sources**
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L283)
 
 **Section sources**
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L283)
 
 ## Rate Limiting Policies
+
 The NeonPro API implements tiered rate limiting policies based on endpoint sensitivity and client type. The system uses an in-memory store with sliding window counting to track request rates per client IP address. Different limits apply to various endpoint categories:
 
 - **Healthcare data endpoints**: 50 requests per 15 minutes
-- **AI/Chat endpoints**: 20 requests per minute  
+- **AI/Chat endpoints**: 20 requests per minute
 - **Authentication endpoints**: 10 attempts per 15 minutes (failed attempts only)
 - **General API endpoints**: 100 requests per 15 minutes
 
@@ -110,12 +120,15 @@ G --> |No| I[Process Request]
 ```
 
 **Diagram sources**
+
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 
 **Section sources**
+
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 
 ## CORS Configuration
+
 The NeonPro API implements strict CORS (Cross-Origin Resource Sharing) policies to protect against cross-site request forgery attacks while allowing legitimate browser-based clients. The API whitelists specific origins defined in the ALLOWED_ORIGINS environment variable, with fallback to known NeonPro domains.
 
 Preflight requests (OPTIONS method) are handled automatically by the API, returning appropriate Access-Control headers without processing the full request. The API sets Vary: Origin to ensure proper caching behavior when multiple origins are allowed. Credentials are supported for authenticated requests, enabling session cookies to be sent with cross-origin requests.
@@ -131,17 +144,21 @@ API->>Browser : 200 OK + Patient data
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [v1/health.ts](file://apps/api/vercel/v1/health.ts#L1-L50)
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [v1/health.ts](file://apps/api/vercel/v1/health.ts#L1-L50)
 
 ## Error Handling
+
 The NeonPro API returns standardized error responses with descriptive messages and machine-readable error codes. All error responses follow the ErrorResponseSchema defined in the OpenAPI specification, including error message, code, and timestamp.
 
 The API distinguishes between different error types with appropriate HTTP status codes:
+
 - **400 Bad Request**: Invalid request parameters or body
 - **401 Unauthorized**: Missing or invalid authentication token
 - **403 Forbidden**: Insufficient permissions or LGPD consent required
@@ -152,19 +169,25 @@ The API distinguishes between different error types with appropriate HTTP status
 Specific error codes like LGPD_CONSENT_REQUIRED and RATE_LIMIT_EXCEEDED allow clients to implement targeted error handling logic. Error responses exclude sensitive information to prevent information leakage.
 
 **Section sources**
+
 - [openapi-schemas.ts](file://apps/api/src/schemas/openapi-schemas.ts#L1-L299)
 
 ## Endpoint Reference
 
 ### Health Check Endpoints
+
 #### GET /health
+
 Basic health check endpoint for load balancers and monitoring systems.
 
 **Parameters**
+
 - None
 
 **Responses**
+
 - `200 OK`: Service is healthy
+
 ```json
 {
   "status": "ok",
@@ -175,13 +198,17 @@ Basic health check endpoint for load balancers and monitoring systems.
 ```
 
 #### GET /v1/health
+
 Detailed health check with system diagnostics and environment info.
 
 **Parameters**
+
 - None
 
 **Responses**
+
 - `200 OK`: Detailed system health information
+
 ```json
 {
   "status": "healthy",
@@ -192,15 +219,19 @@ Detailed health check with system diagnostics and environment info.
 ```
 
 **Section sources**
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L48)
 - [v1/health.ts](file://apps/api/vercel/v1/health.ts#L1-L50)
 
 ### Patient Management Endpoints
+
 #### GET /v1/patients
+
 Retrieve a list of patients with pagination and filtering.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Query Parameters**:
+
 - `clinicId`: Clinic identifier (required)
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 20, max: 100)
@@ -208,29 +239,35 @@ Retrieve a list of patients with pagination and filtering.
 - `status`: Filter by status (active, inactive, all)
 
 **Responses**
+
 - `200 OK`: List of patients
 - `400 Bad Request`: Missing required parameters
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
 
 #### GET /v1/patients/{patientId}
+
 Retrieve detailed information about a specific patient.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Path Parameters**:
+
 - `patientId`: Patient unique identifier
 
 **Responses**
+
 - `200 OK`: Patient details with appointments and consent records
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
 - `404 Not Found`: Patient not found
 
 #### POST /v1/patients
+
 Create a new patient record.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Request Body**:
+
 ```json
 {
   "clinicId": "string",
@@ -238,28 +275,32 @@ Create a new patient record.
   "familyName": "string",
   "cpf": "string",
   "birthDate": "datetime",
-  "phone": "string", 
+  "phone": "string",
   "email": "string",
   "lgpdConsentGiven": false
 }
 ```
 
 **Responses**
+
 - `201 Created`: Patient successfully created
 - `400 Bad Request`: Validation failed
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
 
 #### PUT /v1/patients/{patientId}
+
 Update an existing patient record.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Path Parameters**:
+
 - `patientId`: Patient unique identifier
 
 **Request Body**: Same as POST but all fields optional
 
 **Responses**
+
 - `200 OK`: Patient successfully updated
 - `400 Bad Request`: Validation failed
 - `401 Unauthorized`: Authentication required
@@ -267,37 +308,46 @@ Update an existing patient record.
 - `404 Not Found`: Patient not found
 
 **Section sources**
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [openapi-routes.ts](file://apps/api/src/schemas/openapi-routes.ts#L1-L463)
 
 ### Appointment Management Endpoints
+
 #### GET /v1/appointments
+
 Retrieve a list of appointments with LGPD consent validation.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Responses**
+
 - `200 OK`: List of appointments
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
 
 #### GET /v1/appointments/client/{clientId}
+
 Retrieve appointments for a specific client.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Path Parameters**:
+
 - `clientId`: Client unique identifier
 
 **Responses**
+
 - `200 OK`: Client appointments
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
 - `404 Not Found`: Client not found
 
 #### POST /v1/appointments
+
 Create a new appointment with conflict detection.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Request Body**:
+
 ```json
 {
   "clinicId": "string",
@@ -310,19 +360,23 @@ Create a new appointment with conflict detection.
 ```
 
 **Responses**
+
 - `201 Created`: Appointment successfully created
 - `400 Bad Request`: Validation failed or time conflict
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
 
 #### PUT /v1/appointments/{id}
+
 Update an existing appointment with conflict detection.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Path Parameters**:
+
 - `id`: Appointment identifier
 
 **Responses**
+
 - `200 OK`: Appointment successfully updated
 - `400 Bad Request`: Validation failed or time conflict
 - `401 Unauthorized`: Authentication required
@@ -330,15 +384,19 @@ Update an existing appointment with conflict detection.
 - `404 Not Found`: Appointment not found
 
 **Section sources**
+
 - [appointments.ts](file://apps/api/src/routes/appointments.ts#L1-L252)
 - [openapi-routes.ts](file://apps/api/src/schemas/openapi-routes.ts#L1-L463)
 
 ### Billing Endpoints
+
 #### POST /billing/invoices
+
 Create a new invoice with Brazilian tax compliance.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Request Body**:
+
 ```json
 {
   "patientId": "string",
@@ -359,16 +417,19 @@ Create a new invoice with Brazilian tax compliance.
 ```
 
 **Responses**
+
 - `201 Created`: Invoice successfully created
 - `400 Bad Request`: Validation failed
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
 
 #### GET /billing/invoices
+
 Search invoices with filters.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Query Parameters**:
+
 - `patientId`: Filter by patient
 - `clinicId`: Filter by clinic
 - `status`: Filter by payment status
@@ -376,18 +437,22 @@ Search invoices with filters.
 - `dateTo`: End date filter
 
 **Responses**
+
 - `200 OK`: Search results
 - `401 Unauthorized`: Authentication required
 - `403 Forbidden`: Insufficient permissions
 
 #### POST /billing/invoices/{id}/payments
+
 Process a payment for an invoice.
 
-**Authentication**: Required (JWT Bearer token)  
+**Authentication**: Required (JWT Bearer token)\
 **Path Parameters**:
+
 - `id`: Invoice identifier
 
 **Request Body**:
+
 ```json
 {
   "amount": 100.0,
@@ -397,6 +462,7 @@ Process a payment for an invoice.
 ```
 
 **Responses**
+
 - `201 Created`: Payment processed successfully
 - `400 Bad Request`: Validation failed
 - `401 Unauthorized`: Authentication required
@@ -404,14 +470,18 @@ Process a payment for an invoice.
 - `404 Not Found`: Invoice not found
 
 **Section sources**
+
 - [index.ts](file://apps/api/src/routes/billing/index.ts#L1-L481)
 
 ### AI Chat Endpoints
+
 #### POST /ai-chat/stream
+
 Stream AI chat responses for aesthetic clinic consultations.
 
-**Authentication**: Optional (JWT Bearer token)  
+**Authentication**: Optional (JWT Bearer token)\
 **Request Body**:
+
 ```json
 {
   "messages": [
@@ -426,14 +496,17 @@ Stream AI chat responses for aesthetic clinic consultations.
 ```
 
 **Responses**
+
 - `200 OK`: Streaming text response
 - `500 Internal Server Error`: AI processing failed
 
 #### POST /ai-chat/suggestions
+
 Get search suggestions for aesthetic treatments.
 
-**Authentication**: Optional (JWT Bearer token)  
+**Authentication**: Optional (JWT Bearer token)\
 **Request Body**:
+
 ```json
 {
   "query": "string",
@@ -442,13 +515,16 @@ Get search suggestions for aesthetic treatments.
 ```
 
 **Responses**
+
 - `200 OK`: Array of treatment suggestions
 - `500 Internal Server Error`: Suggestion generation failed
 
 **Section sources**
+
 - [ai-chat.ts](file://apps/api/src/routes/ai-chat.ts#L1-L493)
 
 ## OpenAPI Specification
+
 The NeonPro API includes a comprehensive OpenAPI 3.1.0 specification available at `/openapi.json`. The specification is automatically generated using @hono/zod-openapi, ensuring consistency between the documentation and actual implementation. The API documentation is accessible via Swagger UI at `/docs`.
 
 The OpenAPI configuration includes detailed descriptions of all endpoints, request parameters, request body schemas, and response formats. Security schemes are properly documented, with JWT Bearer authentication required for protected endpoints. The specification includes examples and validation rules for all data structures.
@@ -468,17 +544,21 @@ E --> I[Always-Up-to-Date Docs]
 ```
 
 **Diagram sources**
+
 - [openapi-config.ts](file://apps/api/src/schemas/openapi-config.ts#L1-L238)
 - [openapi-routes.ts](file://apps/api/src/schemas/openapi-routes.ts#L1-L463)
 
 **Section sources**
+
 - [openapi-config.ts](file://apps/api/src/schemas/openapi-config.ts#L1-L238)
 - [openapi-routes.ts](file://apps/api/src/schemas/openapi-routes.ts#L1-L463)
 
 ## Client Examples
 
 ### cURL Examples
+
 #### Get Patient List
+
 ```bash
 curl -X GET "https://api.neonpro.health/v1/patients?clinicId=clinic_123" \
   -H "Authorization: Bearer your-jwt-token" \
@@ -486,6 +566,7 @@ curl -X GET "https://api.neonpro.health/v1/patients?clinicId=clinic_123" \
 ```
 
 #### Create New Patient
+
 ```bash
 curl -X POST "https://api.neonpro.health/v1/patients" \
   -H "Authorization: Bearer your-jwt-token" \
@@ -500,6 +581,7 @@ curl -X POST "https://api.neonpro.health/v1/patients" \
 ```
 
 #### Schedule Appointment
+
 ```bash
 curl -X POST "https://api.neonpro.health/v1/appointments" \
   -H "Authorization: Bearer your-jwt-token" \
@@ -515,7 +597,9 @@ curl -X POST "https://api.neonpro.health/v1/appointments" \
 ```
 
 ### JavaScript Fetch Examples
+
 #### Patient Management
+
 ```javascript
 // Get patients
 async function getPatients(clinicId, token) {
@@ -547,6 +631,7 @@ async function createPatient(patientData, token) {
 ```
 
 #### Appointment Scheduling
+
 ```javascript
 // Create appointment
 async function createAppointment(appointmentData, token) {
@@ -577,6 +662,7 @@ async function getPatientAppointments(patientId, token) {
 ```
 
 #### Billing Operations
+
 ```javascript
 // Create invoice
 async function createInvoice(invoiceData, token) {
@@ -609,6 +695,7 @@ async function processPayment(invoiceId, paymentData, token) {
 ```
 
 **Section sources**
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [appointments.ts](file://apps/api/src/routes/appointments.ts#L1-L252)
 - [index.ts](file://apps/api/src/routes/billing/index.ts#L1-L481)

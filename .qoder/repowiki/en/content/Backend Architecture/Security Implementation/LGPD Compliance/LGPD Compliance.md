@@ -1,12 +1,13 @@
 # LGPD Compliance
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts)
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Consent Management Workflows](#consent-management-workflows)
 3. [Data Anonymization and Pseudonymization](#data-anonymization-and-pseudonymization)
@@ -17,11 +18,13 @@
 8. [Cross-Border Data Transfer and Retention Policies](#cross-border-data-transfer-and-retention-policies)
 
 ## Introduction
+
 This document details the implementation of LGPD (Lei Geral de Proteção de Dados) compliance within the neonpro system. The Brazilian data protection law requires strict adherence to principles of transparency, accountability, and data subject rights. The system implements comprehensive mechanisms for consent management, data protection, and regulatory compliance through dedicated middleware and service components.
 
 The core LGPD compliance features are implemented in two primary components: `lgpd-middleware.ts` which handles request-level compliance checks at the API layer, and `lgpd-service.ts` which provides business logic for consent management, data subject requests, and compliance operations. These components work together to ensure that all processing of personal data adheres to LGPD requirements.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L50)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L1-L50)
 
@@ -48,6 +51,7 @@ Note over Patient,Service : Consent lifecycle management with full audit trail
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L236-L349)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L282-L323)
 
@@ -56,6 +60,7 @@ The system supports multiple consent statuses including pending, granted, denied
 Consent verification occurs automatically through the `lgpdMiddleware` which intercepts API requests and checks whether valid consent exists for the requested processing purpose. If explicit consent is required and not present, the middleware returns a 403 Forbidden response directing the user to the consent URL. The system also logs all data access attempts for audit purposes, recording whether consent was present at the time of access.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L13-L234)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L282-L428)
 
@@ -87,6 +92,7 @@ end
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L576-L678)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L1095-L1120)
 
@@ -95,6 +101,7 @@ The LGPD service also provides advanced anonymization capabilities through the `
 The system validates the quality of anonymization through the `validateAnonymizationQuality` method, which returns a quality score between 0.85 and 0.95 along with risk assessment and recommendations for improvement. This ensures that anonymized datasets meet appropriate privacy standards before being released for secondary use.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L576-L678)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L1095-L1153)
 
@@ -127,6 +134,7 @@ Note over Patient,System : Comprehensive data portability with privacy protectio
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L416-L570)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L469-L513)
 
@@ -135,6 +143,7 @@ The right to rectification is implemented through the `processDataRectificationR
 The right to deletion (or "right to be forgotten") is implemented through the `dataErasureMiddleware` which handles requests to `/api/v1/data-erasure`. As described in the anonymization section, this process involves both true deletion of certain records and anonymization of others to comply with legal retention requirements while respecting the data subject's request.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L416-L678)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L469-L576)
 
@@ -165,12 +174,14 @@ style M fill:#f9f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L469-L576)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L548-L576)
 
 The LGPD service maintains a centralized repository of all data subject requests, allowing administrators to monitor request volumes, processing times, and fulfillment rates. The `getPrivacyImpactAssessments` method can filter requests by status (pending, in progress, completed, rejected) and risk level, providing valuable insights for compliance reporting.
 
 Each request type follows a specific processing workflow:
+
 - Access requests trigger immediate validation of patient existence and creation of a tracking record
 - Portability requests generate a secure download URL with the requested format (JSON, CSV, PDF)
 - Deletion requests initiate the 30-day grace period and schedule the anonymization/deletion process
@@ -179,6 +190,7 @@ Each request type follows a specific processing workflow:
 All request processing is logged in the audit system, creating an immutable record of when requests were received, who processed them, and the outcome of each request.
 
 **Section sources**
+
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L469-L576)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L548-L576)
 
@@ -187,6 +199,7 @@ All request processing is logged in the audit system, creating an immutable reco
 The system maintains comprehensive audit trails for all LGPD-related activities, providing verifiable evidence of compliance with Brazilian data protection requirements. Every significant action related to personal data processing is logged with detailed metadata including timestamp, user ID, IP address, user agent, and action description.
 
 The audit system captures several categories of events:
+
 - Consent actions (granting, updating, revoking)
 - Data access attempts (successful and failed)
 - Data subject requests (submission and processing)
@@ -240,12 +253,14 @@ USERS ||--o{ DATA_SUBJECT_REQUESTS : "has"
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L600-L650)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L282-L428)
 
 The `exportUserData` function demonstrates the integration between audit logging and data subject rights. When a patient requests their data portability package, the system includes their audit log history (limited to the last 1000 records) showing all system interactions involving their data. This transparency empowers data subjects to understand how their information has been used and accessed.
 
 Compliance verification is further supported by the `generateComplianceReport` method, which produces regular reports (daily, weekly, monthly, quarterly, annual) containing key metrics such as:
+
 - Total number of active consents
 - Percentage of compliant consent records
 - Volume of data subject requests
@@ -255,6 +270,7 @@ Compliance verification is further supported by the `generateComplianceReport` m
 These reports help organizations demonstrate accountability and identify areas for improvement in their data protection practices.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L416-L570)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L950-L990)
 
@@ -263,6 +279,7 @@ These reports help organizations demonstrate accountability and identify areas f
 LGPD policies are enforced at the API layer through the `lgpdMiddleware` component, which acts as a gatekeeper for all incoming requests that involve personal data processing. This middleware implements a zero-trust approach, requiring explicit validation of compliance requirements before allowing requests to proceed to business logic handlers.
 
 The middleware operates through several key functions:
+
 - `lgpdMiddleware`: The core compliance checker that evaluates each request against configured policies
 - `healthcareLGPDMiddleware`: A specialized variant for healthcare-specific endpoints with stricter requirements
 - `consentMiddleware`: Handles consent collection and modification requests
@@ -292,10 +309,12 @@ Note over LGPDMiddleware,BusinessLogic : Real-time compliance enforcement at API
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L143-L234)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L227-L234)
 
 The middleware uses a purpose-based authorization model, where different API endpoints require different levels of consent based on their processing purpose. The `getProcessingPurpose` function maps request paths to specific purposes:
+
 - Medical care (for patient and medical record endpoints)
 - Appointment scheduling (for appointment endpoints)
 - Billing (for payment and invoice endpoints)
@@ -306,6 +325,7 @@ Some purposes like legal obligation and vital interest do not require explicit c
 The system also supports configurable strictness modes through the `LGPDConfig` interface, allowing different enforcement policies for development, testing, and production environments. In strict mode, missing consent results in a 403 error, while in non-strict mode, the request may proceed with only audit logging.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L143-L349)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L18-L25)
 
@@ -314,6 +334,7 @@ The system also supports configurable strictness modes through the `LGPDConfig` 
 The system implements data retention policies aligned with Brazilian legal requirements, particularly CFM Resolution 1821/2007 and LGPD Article 16. These policies govern how long different categories of personal data must be retained and when they can be deleted or anonymized.
 
 The LGPD service maintains a `retentionPolicies` map that defines retention periods for different data categories:
+
 - Medical records: 20 years (per CFM Resolution 1821/2007)
 - Personal data: 5 years (per LGPD Art. 16)
 - Consent records: 1 year (typical consent duration)
@@ -345,6 +366,7 @@ Audit --> M3
 ```
 
 **Diagram sources**
+
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L250-L270)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L750-L815)
 
@@ -355,5 +377,6 @@ Regarding cross-border data transfers, the current implementation assumes that a
 The `checkRetentionStatus` method provides real-time monitoring of data retention compliance, returning the status of all data categories for a given patient along with the next scheduled review date. This allows administrators to verify compliance at any time and prepare for upcoming retention deadlines.
 
 **Section sources**
+
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L250-L270)
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L750-L815)

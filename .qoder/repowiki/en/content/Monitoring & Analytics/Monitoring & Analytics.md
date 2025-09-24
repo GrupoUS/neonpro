@@ -1,7 +1,7 @@
 # Monitoring & Analytics
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts)
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts)
 - [health/checks.ts](file://packages/monitoring/src/health/checks.ts)
@@ -16,6 +16,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Project Structure](#project-structure)
 3. [Core Components](#core-components)
@@ -27,6 +28,7 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The neonpro application implements a comprehensive monitoring and analytics system designed to ensure high reliability, optimal performance, and strict compliance with healthcare regulations. This documentation details the architectural design of the observability framework, focusing on health checks, performance instrumentation, error tracking, compliance reporting, and alerting mechanisms. The system integrates multiple telemetry data types—metrics, logs, traces, and alerts—across distributed components while maintaining scalability and regulatory compliance.
 
 ## Project Structure
@@ -63,12 +65,14 @@ ET --> Logging
 ```
 
 **Diagram sources**
+
 - [packages/monitoring](file://packages/monitoring)
 - [apps/api/src/middleware](file://apps/api/src/middleware)
 - [config/vercel](file://config/vercel)
 - [tools/monitoring](file://tools/monitoring)
 
 **Section sources**
+
 - [packages/monitoring](file://packages/monitoring)
 - [apps/api/src/middleware](file://apps/api/src/middleware)
 
@@ -87,6 +91,7 @@ The monitoring architecture is built around several core components that handle 
 These components work together to provide full-stack observability while meeting stringent healthcare compliance requirements.
 
 **Section sources**
+
 - [packages/monitoring/src](file://packages/monitoring/src)
 - [apps/api/src/middleware](file://apps/api/src/middleware)
 
@@ -124,6 +129,7 @@ style P fill:#f96,stroke:#333
 ```
 
 **Diagram sources**
+
 - [packages/monitoring/src/init.ts](file://packages/monitoring/src/init.ts)
 - [tools/monitoring/alerts/healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [tools/monitoring/dashboards/performance-monitoring.json](file://tools/monitoring/dashboards/performance-monitoring.json)
@@ -167,10 +173,12 @@ HealthCheck --> HealthCheckResult : "produces"
 ```
 
 **Diagram sources**
+
 - [packages/monitoring/src/health/checks.ts](file://packages/monitoring/src/health/checks.ts)
 - [packages/monitoring/src/health/index.ts](file://packages/monitoring/src/health/index.ts)
 
 **Section sources**
+
 - [packages/monitoring/src/health](file://packages/monitoring/src/health)
 
 ### Performance Monitoring Instrumentation
@@ -199,10 +207,12 @@ API-->>Client : HTTP Response
 ```
 
 **Diagram sources**
+
 - [apps/api/src/middleware/performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts)
 - [packages/monitoring/src/metrics](file://packages/monitoring/src/metrics)
 
 **Section sources**
+
 - [apps/api/src/middleware/performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts)
 
 ### Error Tracking Integration
@@ -226,10 +236,12 @@ style Classify fill:#ffcccc,stroke:#f00
 ```
 
 **Diagram sources**
+
 - [apps/api/src/middleware/error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts)
 - [packages/monitoring/src/logging/winston.ts](file://packages/monitoring/src/logging/winston.ts)
 
 **Section sources**
+
 - [apps/api/src/middleware/error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts)
 
 ### Compliance Reporting Mechanisms
@@ -263,10 +275,12 @@ style R fill:#bbf,stroke:#333
 ```
 
 **Diagram sources**
+
 - [tools/monitoring/dashboards/compliance-monitoring.json](file://tools/monitoring/dashboards/compliance-monitoring.json)
 - [config/vercel/healthcare-compliance-config.ts](file://config/vercel/healthcare-compliance-config.ts)
 
 **Section sources**
+
 - [tools/monitoring/dashboards/compliance-monitoring.json](file://tools/monitoring/dashboards/compliance-monitoring.json)
 
 ### Alerting System Configuration
@@ -307,10 +321,12 @@ end note
 ```
 
 **Diagram sources**
+
 - [tools/monitoring/alerts/healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [packages/monitoring/src/init.ts](file://packages/monitoring/src/init.ts)
 
 **Section sources**
+
 - [tools/monitoring/alerts/healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 
 ## Dependency Analysis
@@ -341,11 +357,13 @@ style I fill:#c0c,stroke:#333,color:#fff
 ```
 
 **Diagram sources**
+
 - [package.json](file://package.json)
 - [packages/monitoring/package.json](file://packages/monitoring/package.json)
 - [config/vercel/monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
 **Section sources**
+
 - [package.json](file://package.json)
 - [packages/monitoring/package.json](file://packages/monitoring/package.json)
 
@@ -368,34 +386,40 @@ The system maintains performance even under peak load conditions, ensuring obser
 Common monitoring issues and their resolutions:
 
 **Section sources**
+
 - [packages/monitoring/src/logging](file://packages/monitoring/src/logging)
 - [packages/monitoring/src/health](file://packages/monitoring/src/health)
 
 ### High Memory Usage in Monitoring Service
+
 - Check for unbounded label cardinality in metrics
 - Verify proper cleanup of completed traces
 - Review log retention settings
 - Monitor for memory leaks in long-running processes
 
 ### Missing Metrics in Dashboard
+
 - Validate Prometheus scraping configuration
 - Check application health endpoint status
 - Verify network connectivity between components
 - Confirm metric registration in code
 
 ### False Positive Alerts
+
 - Review threshold configurations
 - Adjust for legitimate traffic patterns
 - Implement dynamic baselines
 - Fine-tune alert conditions
 
 ### Slow Dashboard Rendering
+
 - Optimize query complexity
 - Implement appropriate time ranges
 - Use summary metrics for historical data
 - Enable dashboard caching
 
 ### Compliance Report Gaps
+
 - Verify audit log completeness
 - Check data retention policies
 - Validate consent tracking implementation

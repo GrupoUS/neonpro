@@ -57,7 +57,7 @@ export class HealthcareError extends Error {
   public readonly lgpdCompliant: boolean;
   public readonly timestamp: Date;
   public readonly metadata?: Record<string, unknown>;
-  public override readonly cause?: Error | undefined;
+  public readonly cause?: Error;
 
   constructor(
     message: string,

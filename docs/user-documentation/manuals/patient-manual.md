@@ -7,6 +7,7 @@ Este guia foi criado especialmente para você, paciente da NeonPro Aesthetic Cli
 ### 🌟 Por Que Escolher a NeonPro?
 
 **Excelência em Saúde Estética:**
+
 - Profissionais altamente qualificados e certificados
 - Tecnologia de ponta com recursos de inteligência artificial
 - Ambiente seguro e acolhedor
@@ -14,6 +15,7 @@ Este guia foi criado especialmente para você, paciente da NeonPro Aesthetic Cli
 - Atendimento humanizado e individualizado
 
 **Compromisso com Sua Saúde e Beleza:**
+
 - Tratamentos personalizados para suas necessidades
 - Acompanhamento completo durante todo o processo
 - Resultados naturais e harmoniosos
@@ -25,6 +27,7 @@ Este guia foi criado especialmente para você, paciente da NeonPro Aesthetic Cli
 ### 🔑 Criando Sua Conta
 
 #### Cadastro Online
+
 ```bash
 Passo a passo para cadastro:
 1. Acesse: https://paciente.neonpro.com.br/cadastro
@@ -42,6 +45,7 @@ Passo a passo para cadastro:
 ```
 
 #### Cadastro Presencial
+
 ```bash
 Na clínica (traga documentos):
 - Documento com foto (RG ou CNH)
@@ -57,6 +61,7 @@ Tempo estimado: 15-20 minutos
 ### 📱 Aplicativo do Paciente
 
 #### Baixe Nosso App
+
 ```bash
 Disponível para:
 - iOS: App Store - "NeonPro Paciente"
@@ -77,6 +82,7 @@ Funcionalidades principais:
 ### 📞 Como Agendar
 
 #### Opções de Agendamento
+
 ```bash
 1. Pelo aplicativo (recomendado):
    - Login no app
@@ -100,6 +106,7 @@ Funcionalidades principais:
 ```
 
 #### Tipos de Consulta Disponíveis
+
 ```typescript
 interface ConsultationTypes {
   // Consulta inicial
@@ -139,6 +146,7 @@ interface ConsultationTypes {
 ### 📋 Preparação para a Consulta
 
 #### Antes da Consulta Inicial
+
 ```bash
 Documentos necessários:
 - Documento de identificação com foto
@@ -159,6 +167,7 @@ Informações importantes:
 ```
 
 #### No Dia da Consulta
+
 ```bash
 Chegue com antecedência:
 - 15 minutos para primeira consulta
@@ -183,6 +192,7 @@ Evitar:
 ### 🌟 Nossos Serviços
 
 #### Tratamentos Faciais
+
 ```typescript
 interface FacialTreatments {
   // Botox
@@ -224,6 +234,7 @@ interface FacialTreatments {
 ```
 
 #### Tratamentos Corporais
+
 ```typescript
 interface BodyTreatments {
   // Lipoaspiração
@@ -258,6 +269,7 @@ interface BodyTreatments {
 ### 🎯 Personalização com IA
 
 #### Sistema de Recomendações
+
 ```typescript
 interface AIRecommendations {
   // Análise personalizada
@@ -289,6 +301,7 @@ interface AIRecommendations {
 ```
 
 #### Como Funciona a Análise
+
 ```bash
 Processo de recomendação:
 1. Você responde questionário detalhado
@@ -312,6 +325,7 @@ Benefícios:
 ### 💰 Formas de Pagamento
 
 #### Opções Disponíveis
+
 ```typescript
 interface PaymentOptions {
   // Cartão de crédito
@@ -352,6 +366,7 @@ interface PaymentOptions {
 ```
 
 #### Pacotes e Promos
+
 ```typescript
 interface TreatmentPackages {
   // Pacote facial completo
@@ -391,6 +406,7 @@ interface TreatmentPackages {
 ### 📋 Fatura e Pagamentos
 
 #### Acompanhamento Financeiro
+
 ```bash
 No aplicativo/portal:
 - Extrato detalhado
@@ -412,6 +428,7 @@ Pagamentos online:
 ### 🔐 Acesso à Sua Conta
 
 #### Funcionalidades do Portal
+
 ```typescript
 interface PatientPortal {
   // Agenda e agendamentos
@@ -450,6 +467,7 @@ interface PatientPortal {
 ```
 
 #### Configurações de Privacidade
+
 ```typescript
 interface PrivacySettings {
   // Controle de dados
@@ -481,6 +499,7 @@ interface PrivacySettings {
 ### 📊 Acompanhamento de Resultados
 
 #### Visualização de Progresso
+
 ```bash
 Ferramentas disponíveis:
 - Fotos antes e depois
@@ -502,6 +521,7 @@ Atualizações automáticas:
 ### 🔒 Proteção de Dados (LGPD)
 
 #### Seus Direitos como Paciente
+
 ```typescript
 interface PatientRights {
   // Direitos LGPD
@@ -535,6 +555,7 @@ interface PatientRights {
 ```
 
 #### Como Exercer Seus Direitos
+
 ```bash
 Solicitações comuns:
 1. Acessar seus dados:
@@ -561,6 +582,7 @@ Solicitações comuns:
 ### 🏥 Segurança em Primeiro Lugar
 
 #### Nossos Compromissos de Segurança
+
 ```typescript
 interface SafetyCommitments {
   // Profissionais qualificados
@@ -598,6 +620,7 @@ interface SafetyCommitments {
 ```
 
 #### O Que Fazemos para Sua Segurança
+
 ```bash
 Protocolos de segurança:
 1. Esterilização completa de equipamentos
@@ -615,6 +638,7 @@ Protocolos de segurança:
 ### 🆘 Quando Procurar Ajuda
 
 #### Situações de Emergência
+
 ```bash
 Procure atendimento imediato para:
 - Reações alérgicas graves (dificuldade respiratória)
@@ -631,6 +655,7 @@ Contatos de emergência:
 ```
 
 #### Efeitos Colaterais Comuns
+
 ```typescript
 interface CommonSideEffects {
   // Leves e temporários
@@ -656,6 +681,7 @@ interface CommonSideEffects {
 ### 📞 Canais de Suporte
 
 #### Suporte ao Paciente
+
 ```bash
 Horários de atendimento:
 - Suporte geral: (11) 3456-7890 (8h-20h)
@@ -677,6 +703,7 @@ Tipos de suporte:
 ### 📋 Preparação para Tratamentos
 
 #### Antes do Procedimento
+
 ```bash
 Recomendações gerais:
 - Evitar exposição solar (1 semana antes)
@@ -689,6 +716,7 @@ Recomendações gerais:
 ```
 
 #### Após o Procedimento
+
 ```bash
 Cuidados gerais pós-tratamento:
 - Seguir instruções específicas do profissional
@@ -704,6 +732,7 @@ Cuidados gerais pós-tratamento:
 ### 🎯 Maximizando Seus Resultados
 
 #### Rotina de Cuidados
+
 ```typescript
 interface CareRoutine {
   // Diária
@@ -732,6 +761,7 @@ interface CareRoutine {
 ```
 
 #### Estilo de Vida Saudável
+
 ```bash
 Fatores que influenciam resultados:
 1. Hidratação adequada (2-3L de água/dia)
@@ -749,6 +779,7 @@ Fatores que influenciam resultados:
 ### 🔧 Configuração Inicial
 
 #### Passo a Passo
+
 ```bash
 1. Download do app:
    - iOS: App Store
@@ -776,6 +807,7 @@ Fatores que influenciam resultados:
 ```
 
 #### Navegação do App
+
 ```typescript
 interface AppNavigation {
   // Tela inicial
@@ -801,6 +833,7 @@ interface AppNavigation {
 ### 📚 Recursos Educacionais
 
 #### Conteúdo Disponível
+
 ```bash
 Materiais educacionais:
 - Artigos sobre tratamentos
@@ -823,6 +856,7 @@ Personalização:
 ### ⭐ Benefícios VIP
 
 #### Como Participar
+
 ```bash
 Cadastro automático:
 - Todos os pacientes são incluídos
@@ -838,6 +872,7 @@ Como acumular pontos:
 ```
 
 #### Níveis e Benefícios
+
 ```typescript
 interface LoyaltyProgram {
   // Bronze (0-500 pontos)
@@ -881,6 +916,7 @@ interface LoyaltyProgram {
 ### 🏢 Nossas Unidades
 
 #### Endereço Principal
+
 ```bash
 NeonPro Aesthetic Clinic - Unidade Ipiranga
 Endereço: Rua Silva Jardim, 136 - Ipiranga, São Paulo - SP
@@ -897,6 +933,7 @@ Estacionamento:
 ```
 
 #### Como Chegar
+
 ```bash
 Transporte público:
 - Metrô: Linha Verde (Estação Ipiranga)
@@ -915,6 +952,7 @@ GPS: -23.5868, -46.6178
 ### 📞 Redes Sociais
 
 #### Siga a NeonPro
+
 ```bash
 Instagram: @neonpro.aesthetic
 - Fotos de antes e depois

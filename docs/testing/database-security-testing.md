@@ -91,7 +91,6 @@ db: { schema: 'test_schema' }
 };
 
 ````
-
 ## Row Level Security (RLS) Testing
 
 ### 1. Multi-Tenant Data Isolation

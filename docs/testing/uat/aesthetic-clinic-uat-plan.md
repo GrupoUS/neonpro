@@ -46,6 +46,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 **Responsibilities**: System configuration, user management, reporting, financial oversight
 
 **Key Workflows**:
+
 - Clinic setup and configuration
 - Staff management and permissions
 - Financial reporting and analytics
@@ -58,6 +59,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 **Responsibilities**: Patient assessment, treatment planning, procedure execution
 
 **Key Workflows**:
+
 - Patient consultation and assessment
 - Treatment planning and recommendations
 - Photo assessment and analysis
@@ -70,6 +72,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 **Responsibilities**: Patient registration, appointment scheduling, billing
 
 **Key Workflows**:
+
 - Patient registration and check-in
 - Appointment scheduling and management
 - Billing and payment processing
@@ -82,6 +85,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 **Responsibilities**: Using patient portal, managing appointments, accessing records
 
 **Key Workflows**:
+
 - Appointment booking and management
 - Treatment history access
 - Photo uploads and assessment
@@ -94,6 +98,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 **Responsibilities**: Ensuring regulatory compliance, audit preparation
 
 **Key Workflows**:
+
 - LGPD compliance monitoring
 - Audit trail review
 - Data subject rights management
@@ -106,6 +111,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 **Responsibilities**: System maintenance, security management, technical support
 
 **Key Workflows**:
+
 - User access management
 - System configuration
 - Security monitoring
@@ -121,6 +127,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.1.1 System Configuration and Setup
 
 **TC-CA-001: Clinic Profile Configuration**
+
 - **Objective**: Validate complete clinic setup workflow
 - **Steps**:
   1. Navigate to clinic configuration
@@ -133,6 +140,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **LGPD Compliance**: Data processing consent verified
 
 **TC-CA-002: User Management and Permissions**
+
 - **Objective**: Test user role management and permission assignment
 - **Steps**:
   1. Create new user accounts for different roles
@@ -145,6 +153,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **Security**: Role-based access validation
 
 **TC-CA-003: Treatment Package Management**
+
 - **Objective**: Validate creation and management of treatment packages
 - **Steps**:
   1. Create new treatment package (Botox, Hyaluronic Acid, etc.)
@@ -159,6 +168,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.1.2 Financial Management
 
 **TC-CA-004: Revenue Reporting and Analytics**
+
 - **Objective**: Test financial reporting capabilities
 - **Steps**:
   1. Generate daily/weekly/monthly revenue reports
@@ -171,6 +181,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **Data Integrity**: Financial data accuracy verification
 
 **TC-CA-005: Payment Method Configuration**
+
 - **Objective**: Validate payment method setup and management
 - **Steps**:
   1. Configure Pix payment integration
@@ -187,6 +198,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.2.1 Patient Assessment and Treatment Planning
 
 **TC-HP-001: Complete Patient Consultation Workflow**
+
 - **Objective**: Test end-to-end patient consultation process
 - **Steps**:
   1. Access patient profile and medical history
@@ -200,6 +212,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **Clinical Safety**: Assessment accuracy and recommendation validation
 
 **TC-HP-002: Photo Assessment and Analysis**
+
 - **Objective**: Validate photo upload and AI-powered assessment
 - **Steps**:
   1. Upload patient photos with LGPD consent
@@ -212,6 +225,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **LGPD Compliance**: Image processing consent and data protection
 
 **TC-HP-003: Contraindication Assessment**
+
 - **Objective**: Test medical contraindication detection and management
 - **Steps**:
   1. Review patient medical history and contraindications
@@ -226,6 +240,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.2.2 Treatment Management
 
 **TC-HP-004: Multi-Session Treatment Scheduling**
+
 - **Objective**: Validate complex treatment scheduling across multiple sessions
 - **Steps**:
   1. Select multiple procedures for treatment plan
@@ -238,6 +253,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **Operational Efficiency**: Scheduling optimization validation
 
 **TC-HP-005: Treatment Progress Monitoring**
+
 - **Objective**: Test treatment progress tracking and modification
 - **Steps**:
   1. Access ongoing treatment plans
@@ -254,6 +270,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.3.1 Patient Management
 
 **TC-RS-001: Patient Registration and Check-in**
+
 - **Objective**: Test complete patient registration workflow
 - **Steps**:
   1. Register new patient with personal information
@@ -266,6 +283,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **LGPD Compliance**: Data collection consent validation
 
 **TC-RS-002: Appointment Scheduling and Management**
+
 - **Objective**: Validate appointment scheduling across multiple scenarios
 - **Steps**:
   1. Schedule new appointments for various treatments
@@ -280,6 +298,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.3.2 Billing and Payment Processing
 
 **TC-RS-003: Payment Processing with Multiple Methods**
+
 - **Objective**: Test various payment processing scenarios
 - **Steps**:
   1. Process Pix payments with QR codes
@@ -292,6 +311,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **Financial Accuracy**: Payment processing and reconciliation validation
 
 **TC-RS-004: Insurance Verification and Billing**
+
 - **Objective**: Test insurance processing and verification
 - **Steps**:
   1. Verify patient insurance coverage and benefits
@@ -308,6 +328,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.4.1 Patient Portal Usage
 
 **TC-PA-001: Patient Portal Registration and Profile Management**
+
 - **Objective**: Test patient self-service capabilities
 - **Steps**:
   1. Register for patient portal account
@@ -320,6 +341,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **User Experience**: Intuitive navigation and ease of use
 
 **TC-PA-002: Appointment Self-Service**
+
 - **Objective**: Validate patient-driven appointment management
 - **Steps**:
   1. Browse available treatment options and pricing
@@ -334,6 +356,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.4.2 Treatment Management and Communication
 
 **TC-PA-003: Treatment History and Progress Access**
+
 - **Objective**: Test patient access to treatment information
 - **Steps**:
   1. View treatment history and upcoming appointments
@@ -350,6 +373,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.5.1 LGPD Compliance Monitoring
 
 **TC-CO-001: LGPD Compliance Audit**
+
 - **Objective**: Validate LGPD compliance monitoring capabilities
 - **Steps**:
   1. Review data processing records and activities
@@ -362,6 +386,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **Regulatory**: LGPD compliance validation
 
 **TC-CO-002: Data Subject Rights Management**
+
 - **Objective**: Test handling of data subject requests
 - **Steps**:
   1. Process data access requests
@@ -378,6 +403,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 #### 3.6.1 System Management and Security
 
 **TC-IT-001: User Access Management**
+
 - **Objective**: Test user lifecycle management
 - **Steps**:
   1. Create and configure user accounts
@@ -396,12 +422,14 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ### 4.1 Portuguese Language Validation
 
 **TC-BR-001: Portuguese UI Localization**
+
 - **Objective**: Validate complete Portuguese language interface
 - **Coverage**: All UI elements, error messages, notifications
 - **Testing**: Professional healthcare terminology verification
 - **Priority**: Critical
 
 **TC-BR-002: Brazilian Medical Terminology**
+
 - **Objective**: Verify appropriate medical terminology usage
 - **Coverage**: Treatment names, medical conditions, procedures
 - **Testing**: Healthcare professional review of terminology
@@ -410,12 +438,14 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ### 4.2 LGPD Compliance Testing
 
 **TC-BR-003: LGPD Consent Workflows**
+
 - **Objective**: Test complete LGPD consent management
 - **Coverage**: Consent collection, withdrawal, documentation
 - **Testing**: End-to-end consent lifecycle validation
 - **Priority**: Critical
 
 **TC-BR-004: Data Subject Rights Implementation**
+
 - **Objective**: Validate all LGPD data subject rights
 - **Coverage**: Access, rectification, deletion, portability
 - **Testing**: Rights exercise and response validation
@@ -424,12 +454,14 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ### 4.3 Brazilian Payment Methods
 
 **TC-BR-005: Pix Payment Integration**
+
 - **Objective**: Test Pix payment processing end-to-end
 - **Coverage**: QR code generation, payment confirmation, reconciliation
 - **Testing**: Real Pix transaction validation
 - **Priority**: Critical
 
 **TC-BR-006: Boleto Processing**
+
 - **Objective**: Validate boleto generation and payment
 - **Coverage**: Boleto generation, barcode validation, payment tracking
 - **Testing**: Complete boleto lifecycle testing
@@ -438,12 +470,14 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ### 4.4 Mobile-First Testing
 
 **TC-BR-007: Mobile Device Compatibility**
+
 - **Objective**: Test system functionality on mobile devices
 - **Coverage**: iOS and Android smartphones and tablets
 - **Testing**: Responsive design and touch interface validation
 - **Priority**: High
 
 **TC-BR-008: Brazilian Mobile Usage Patterns**
+
 - **Objective**: Validate mobile usage patterns for Brazilian clinics
 - **Coverage**: Mobile scheduling, communication, payments
 - **Testing**: Real-world mobile scenario validation
@@ -456,6 +490,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ### 5.1 Functional Acceptance Criteria
 
 **Must Have (Critical)**:
+
 - [ ] All critical user workflows function correctly
 - [ ] LGPD compliance requirements fully met
 - [ ] Brazilian payment methods work end-to-end
@@ -463,6 +498,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - [ ] Data security and privacy measures effective
 
 **Should Have (High Priority)**:
+
 - [ ] User satisfaction score ≥ 80/100
 - [ ] Task success rate ≥ 95%
 - [ ] System response time < 2 seconds
@@ -472,6 +508,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ### 5.2 Success Metrics
 
 **Quantitative Metrics**:
+
 - **Task Success Rate**: ≥95% for critical tasks
 - **Time on Task**: Within expected thresholds
 - **Error Rate**: <1% for critical operations
@@ -479,6 +516,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - **System Response Time**: <2 seconds for critical operations
 
 **Qualitative Metrics**:
+
 - **User Feedback**: Positive feedback on usability and efficiency
 - **Compliance**: No critical compliance gaps identified
 - **Security**: No security vulnerabilities identified
@@ -489,12 +527,14 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ## 6. UAT Execution Timeline
 
 ### 6.1 Phase 1: Preparation (Week 1)
+
 - UAT environment setup and validation
 - Test data preparation and loading
 - UAT participant recruitment and screening
 - UAT scripts and procedures finalization
 
 ### 6.2 Phase 2: Core Testing (Week 2-3)
+
 - Clinic Administrator testing (Days 1-3)
 - Healthcare Professional testing (Days 4-7)
 - Reception Staff testing (Days 8-10)
@@ -502,6 +542,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - Daily issue review and prioritization
 
 ### 6.3 Phase 3: Specialized Testing (Week 3-4)
+
 - Compliance Officer testing (Days 13-14)
 - IT Administrator testing (Day 15)
 - Brazilian market-specific testing (Days 16-17)
@@ -509,6 +550,7 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 - Performance and accessibility testing (Days 20-21)
 
 ### 6.4 Phase 4: Wrap-up (Week 4)
+
 - Issue resolution and retesting
 - UAT summary report preparation
 - User satisfaction analysis
@@ -519,18 +561,21 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ## 7. Deliverables
 
 ### 7.1 UAT Documentation
+
 - UAT Plan (this document)
 - Detailed test scripts for each user role
 - User guides and instructions
 - Environment configuration guide
 
 ### 7.2 UAT Execution Deliverables
+
 - Test case execution results
 - Issue log with resolutions
 - User feedback collection
 - Performance and accessibility reports
 
 ### 7.3 Final Deliverables
+
 - UAT Summary Report
 - Go/No-Go Recommendation
 - Lessons Learned and Improvements
@@ -543,26 +588,31 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 ### 8.1 Identified Risks
 
 **High Risk**:
+
 - **User Recruitment**: Difficulty finding qualified participants
 - **Mitigation**: Multiple recruitment channels, incentives, extended timeline
 
 **Medium Risk**:
+
 - **Technical Issues**: System instability during testing
 - **Mitigation**: Dedicated support team, backup environment, rollback procedures
 
 **Low Risk**:
+
 - **Data Quality**: Test data not representative of real scenarios
 - **Mitigation**: Data validation with domain experts, synthetic data generation
 
 ### 8.2 Issue Management
 
 **Severity Levels**:
+
 - **Critical**: System unusable, data loss, security breach
 - **High**: Major functionality broken, compliance violation
 - **Medium**: Minor functionality issues, usability problems
 - **Low**: Cosmetic issues, minor improvements
 
 **Response Times**:
+
 - **Critical**: Immediate response, resolution within 24 hours
 - **High**: Response within 4 hours, resolution within 48 hours
 - **Medium**: Response within 24 hours, resolution within 5 days
@@ -592,17 +642,22 @@ This comprehensive User Acceptance Testing (UAT) plan validates the NeonPro Aest
 
 **Document Approval**:
 
-_________________________
-**UAT Lead**              Date: ___________
+---
 
-_________________________
-**Quality Assurance**     Date: ___________
+**UAT Lead** Date: ___________
 
-_________________________
-**Product Management**    Date: ___________
+---
 
-_________________________
-**Legal/Compliance**      Date: ___________
+**Quality Assurance** Date: ___________
 
-_________________________
-**Executive Sponsor**     Date: ___________
+---
+
+**Product Management** Date: ___________
+
+---
+
+**Legal/Compliance** Date: ___________
+
+---
+
+**Executive Sponsor** Date: ___________

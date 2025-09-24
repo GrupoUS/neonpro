@@ -1,7 +1,7 @@
 # Accessibility Features
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx)
 - [EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx)
@@ -14,6 +14,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [ARIA Attributes Implementation](#aria-attributes-implementation)
 3. [Keyboard Navigation Support](#keyboard-navigation-support)
@@ -32,6 +33,7 @@
 The NeonPro frontend implements comprehensive accessibility features to ensure usability for all users, including those with disabilities. The accessibility strategy follows WCAG 2.1 AA+ guidelines and is documented in the ACCESSIBILITY_GUIDE.md file. Key focus areas include ARIA attributes, keyboard navigation, screen reader compatibility, focus management, and semantic HTML structure. The implementation covers interactive components such as chat interfaces, form elements, modal dialogs, and complex UIs like the event calendar. Accessibility requirements are integrated into the component development workflow, with automated testing procedures ensuring compliance throughout the quality assurance process.
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L0-L38)
 
 ## ARIA Attributes Implementation
@@ -67,10 +69,12 @@ EventCalendar --> AccessibleChatMessage : "contains"
 ```
 
 **Diagram sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L40-L55)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L290-L336)
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L11-L15)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L290-L336)
 
@@ -102,10 +106,12 @@ Component->>User : Close modal and return focus
 ```
 
 **Diagram sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L16-L19)
 - [EventModal.tsx](file://apps/web/src/components/event-calendar/EventModal.tsx#L0-L161)
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L16-L19)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L134-L168)
 
@@ -131,10 +137,12 @@ InitializeApp --> Ready["Application Ready"]
 ```
 
 **Diagram sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L12-L14)
 - [accessibility.css](file://apps/web/src/components/chat/accessibility.css#L0-L20)
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L12-L14)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L310-L336)
 
@@ -160,10 +168,12 @@ FocusRestored --> InitialState
 ```
 
 **Diagram sources**
+
 - [EventModal.tsx](file://apps/web/src/components/event-calendar/EventModal.tsx#L0-L161)
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L17-L18)
 
 **Section sources**
+
 - [EventModal.tsx](file://apps/web/src/components/event-calendar/EventModal.tsx#L0-L161)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L134-L168)
 
@@ -213,10 +223,12 @@ class LABEL {
 ```
 
 **Diagram sources**
+
 - [EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L21-L239)
 - [NeonProChatInterface.tsx](file://apps/web/src/components/chat/NeonProChatInterface.tsx#L0-L100)
 
 **Section sources**
+
 - [EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L21-L239)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L166-L206)
 
@@ -251,10 +263,12 @@ end
 ```
 
 **Diagram sources**
+
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L0-L336)
 - [IMPLEMENTATION-SUMMARY.md](file://apps/web/docs/testing/IMPLEMENTATION-SUMMARY.md#L39-L67)
 
 **Section sources**
+
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L0-L336)
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L112-L154)
 
@@ -284,10 +298,12 @@ LiveRegion->>ScreenReader : Announce "Loaded"
 ```
 
 **Diagram sources**
+
 - [ScreenReaderAnnouncer.tsx](file://apps/web/src/components/chat/ScreenReaderAnnouncer.tsx#L0-L20)
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L70-L74)
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L70-L74)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L290-L336)
 
@@ -328,10 +344,12 @@ MediaQueries --> ThemeVariables : "influences"
 ```
 
 **Diagram sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L20-L22)
 - [accessibility.css](file://apps/web/src/components/chat/accessibility.css#L5-L20)
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L20-L22)
 - [accessibility.css](file://apps/web/src/components/chat/accessibility.css#L5-L20)
 
@@ -364,10 +382,12 @@ N --> Z
 ```
 
 **Diagram sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L112-L115)
 - [EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L21-L239)
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L112-L115)
 - [MonthView.tsx](file://apps/web/src/components/event-calendar/MonthView.tsx#L86-L114)
 
@@ -402,10 +422,12 @@ N[User Feedback] --> F
 ```
 
 **Diagram sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L155-L188)
 - [EventCalendar.tsx](file://apps/web/src/components/event-calendar/EventCalendar.tsx#L21-L239)
 
 **Section sources**
+
 - [ACCESSIBILITY_GUIDE.md](file://apps/web/src/components/chat/ACCESSIBILITY_GUIDE.md#L155-L188)
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L0-L336)
 
@@ -436,9 +458,11 @@ P[Custom Rules] --> D
 ```
 
 **Diagram sources**
+
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L0-L336)
 - [IMPLEMENTATION-SUMMARY.md](file://apps/web/docs/testing/IMPLEMENTATION-SUMMARY.md#L39-L67)
 
 **Section sources**
+
 - [accessibility.test.tsx](file://apps/web/src/components/chat/__tests__/accessibility.test.tsx#L0-L336)
 - [IMPLEMENTATION-SUMMARY.md](file://apps/web/docs/testing/IMPLEMENTATION-SUMMARY.md#L39-L67)

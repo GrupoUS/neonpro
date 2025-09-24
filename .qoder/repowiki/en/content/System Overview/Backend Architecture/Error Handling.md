@@ -1,7 +1,7 @@
 # Error Handling
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts)
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts)
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Centralized Error Handling Architecture](#centralized-error-handling-architecture)
 3. [Error Classification System](#error-classification-system)
@@ -23,9 +24,11 @@
 10. [Global Error Handlers](#global-error-handlers)
 
 ## Introduction
+
 The neonpro backend implements a comprehensive error handling system designed specifically for healthcare applications with strict LGPD compliance requirements. The system features middleware-based interception, structured error responses, sensitive data redaction, and integration with monitoring tools like Sentry and OpenTelemetry. This documentation details the architecture, implementation patterns, and best practices for error handling across the platform.
 
 ## Centralized Error Handling Architecture
+
 The error handling system is built around a middleware-based interception pattern that captures errors at multiple levels of the application stack. The primary entry point is the `errorHandler` middleware which serves as the global exception catcher for all API routes.
 
 ```mermaid
@@ -45,27 +48,32 @@ L --> M[Monitoring Systems]
 ```
 
 **Diagram sources **
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L46)
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts#L1-L113)
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L46)
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L1-L254)
 
 ## Error Classification System
+
 The system implements a sophisticated error classification mechanism that categorizes errors by type and severity. Errors are classified into healthcare-specific categories such as patient data exposure, LGPD compliance issues, and unauthorized access, with corresponding severity levels.
 
 ### Error Severity Levels
+
 The severity classification follows a four-tier system:
 
-| Severity Level | Description | Response Required |
-|----------------|-------------|-------------------|
-| critical | Patient data exposure, LGPD violations, security breaches | Immediate response required, incident reporting |
-| high | Unauthorized access attempts, data integrity issues, service outages | High priority response within 1 hour |
-| medium | Performance degradation, database connectivity issues, external service failures | Response within 4 hours |
-| low | Validation errors, rate limit exceeded, configuration issues | Response within 24 hours |
+| Severity Level | Description                                                                      | Response Required                               |
+| -------------- | -------------------------------------------------------------------------------- | ----------------------------------------------- |
+| critical       | Patient data exposure, LGPD violations, security breaches                        | Immediate response required, incident reporting |
+| high           | Unauthorized access attempts, data integrity issues, service outages             | High priority response within 1 hour            |
+| medium         | Performance degradation, database connectivity issues, external service failures | Response within 4 hours                         |
+| low            | Validation errors, rate limit exceeded, configuration issues                     | Response within 24 hours                        |
 
 ### Healthcare Error Types
+
 The system recognizes 15 distinct error types specific to healthcare applications:
 
 ```mermaid
@@ -88,16 +96,20 @@ A --> P[configuration_error]
 ```
 
 **Diagram sources **
+
 - [error-tracking.ts](file://apps/api/src/services/error-tracking.ts#L1-L618)
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L1-L287)
 
 **Section sources**
+
 - [error-tracking.ts](file://apps/api/src/services/error-tracking.ts#L1-L618)
 
 ## Structured Error Responses
+
 The system returns standardized error responses that include essential information while protecting sensitive data. All error responses follow a consistent JSON structure regardless of the underlying error type.
 
 ### Response Format
+
 ```json
 {
   "error": {
@@ -111,7 +123,9 @@ The system returns standardized error responses that include essential informati
 ```
 
 ### Client-Friendly Message Formatting
+
 Error messages are tailored based on severity and environment:
+
 - **Critical errors**: Generic messages like "System temporarily unavailable" to prevent information leakage
 - **High/Medium errors**: Descriptive but non-technical messages explaining what went wrong
 - **Low severity errors**: Specific guidance on how to correct the issue
@@ -134,16 +148,20 @@ G --> H
 ```
 
 **Diagram sources **
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L1-L254)
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L46)
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L1-L254)
 
 ## Error Sanitization and Data Protection
+
 The system implements comprehensive data protection measures to prevent sensitive healthcare information from being exposed in error messages and logs.
 
 ### Sensitive Data Redaction
+
 The `errorSanitizationMiddleware` automatically redacts sensitive information from error messages and contexts using pattern matching:
 
 ```mermaid
@@ -166,23 +184,29 @@ J --> K[Log/Send Error]
 ```
 
 ### Protected Data Categories
+
 The system protects the following categories of sensitive information:
+
 - **Authentication & Security**: passwords, tokens, secrets, keys, authorization headers
 - **Personal Identifiers**: CPF, CNPJ, RG, CNS (Cartão Nacional de Saúde), email, phone numbers
 - **Healthcare Data**: prontuário (medical records), diagnosis, medications, treatments
 - **Financial Information**: credit/debit cards, bank accounts, PIX transactions
 
 **Diagram sources **
+
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L1-L147)
 - [error-tracking.ts](file://apps/api/src/services/error-tracking.ts#L1-L618)
 
 **Section sources**
+
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L1-L147)
 
 ## Error Tracking and Monitoring
+
 The error tracking system integrates with both Sentry and OpenTelemetry to provide comprehensive monitoring while maintaining healthcare data privacy.
 
 ### Integration Architecture
+
 ```mermaid
 sequenceDiagram
 participant App as Application
@@ -202,6 +226,7 @@ Note over Sentry,OpenTelemetry : All sensitive data redacted before transmission
 ```
 
 ### Configuration Settings
+
 The error tracking configuration includes healthcare-specific settings:
 
 ```typescript
@@ -233,16 +258,20 @@ export const errorTrackingConfig = {
 ```
 
 **Diagram sources **
+
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L1-L287)
 - [error-tracking.ts](file://apps/api/src/services/error-tracking.ts#L1-L618)
 
 **Section sources**
+
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L1-L287)
 
 ## Domain Exceptions vs System Errors
+
 The system distinguishes between domain-specific exceptions and general system errors, handling each appropriately.
 
 ### Domain Exception Pattern
+
 Domain exceptions represent business rule violations and are thrown intentionally:
 
 ```mermaid
@@ -277,6 +306,7 @@ HealthcareError <|-- AuthenticationError
 ```
 
 ### Error Handling Flow
+
 ```mermaid
 flowchart TD
 A[Error Thrown] --> B{Instance of HealthcareError?}
@@ -297,29 +327,34 @@ J --> K
 ```
 
 **Diagram sources **
+
 - [error-tracking.ts](file://apps/api/src/services/error-tracking.ts#L1-L618)
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L46)
 
 **Section sources**
+
 - [error-tracking.ts](file://apps/api/src/services/error-tracking.ts#L1-L618)
 
 ## HTTP Status Code Mapping
+
 The system implements proper HTTP status code mapping based on error types, ensuring clients receive appropriate responses.
 
 ### Status Code Rules
-| Error Type | HTTP Status | Error Code | Example Scenario |
-|-----------|------------|------------|------------------|
-| Validation Error | 400 | VALIDATION_ERROR | Invalid patient data format |
-| Authentication Required | 401 | UNAUTHORIZED | Missing or invalid JWT token |
-| Access Forbidden | 403 | FORBIDDEN | User lacks permission for resource |
-| Not Found | 404 | NOT_FOUND | Patient record not found |
-| Conflict | 409 | CONFLICT | Duplicate patient registration |
-| Rate Limited | 429 | TOO_MANY_REQUESTS | Excessive API calls from client |
-| Internal Server Error | 500 | INTERNAL_ERROR | Unexpected server exception |
-| Service Unavailable | 503 | SERVICE_UNAVAILABLE | Database connection failure |
-| Gateway Timeout | 504 | GATEWAY_TIMEOUT | External service timeout |
+
+| Error Type              | HTTP Status | Error Code          | Example Scenario                   |
+| ----------------------- | ----------- | ------------------- | ---------------------------------- |
+| Validation Error        | 400         | VALIDATION_ERROR    | Invalid patient data format        |
+| Authentication Required | 401         | UNAUTHORIZED        | Missing or invalid JWT token       |
+| Access Forbidden        | 403         | FORBIDDEN           | User lacks permission for resource |
+| Not Found               | 404         | NOT_FOUND           | Patient record not found           |
+| Conflict                | 409         | CONFLICT            | Duplicate patient registration     |
+| Rate Limited            | 429         | TOO_MANY_REQUESTS   | Excessive API calls from client    |
+| Internal Server Error   | 500         | INTERNAL_ERROR      | Unexpected server exception        |
+| Service Unavailable     | 503         | SERVICE_UNAVAILABLE | Database connection failure        |
+| Gateway Timeout         | 504         | GATEWAY_TIMEOUT     | External service timeout           |
 
 ### Status Code Determination Logic
+
 ```mermaid
 flowchart TD
 A[Error Detected] --> B{Error Type}
@@ -346,16 +381,20 @@ L --> M
 ```
 
 **Diagram sources **
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L1-L254)
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L46)
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L1-L254)
 
 ## Common Issues and Solutions
+
 The system addresses common error handling challenges with specific solutions.
 
 ### Error Masking Prevention
+
 To prevent error masking, the system uses a layered approach:
 
 ```mermaid
@@ -372,6 +411,7 @@ I --> J[Alert on Critical Errors]
 ```
 
 ### Sensitive Information Leakage
+
 Multiple safeguards prevent sensitive data exposure:
 
 1. **Request-level sanitization**: Remove sensitive headers from tracing
@@ -380,6 +420,7 @@ Multiple safeguards prevent sensitive data exposure:
 4. **Monitoring sanitization**: Filter sensitive data before sending to external services
 
 ### Proper Error Propagation
+
 The system ensures errors are properly propagated through the call stack:
 
 ```mermaid
@@ -401,13 +442,16 @@ deactivate ErrorHandler
 ```
 
 **Section sources**
+
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L1-L147)
 - [error-tracking.ts](file://apps/api/src/services/error-tracking.ts#L1-L618)
 
 ## Global Error Handlers
+
 The system configures global handlers for uncaught exceptions and promise rejections to ensure no error goes unhandled.
 
 ### Process-Level Handlers
+
 ```mermaid
 flowchart TD
 A[Process Events] --> B{Event Type}
@@ -426,6 +470,7 @@ M --> N[Exit Process]
 ```
 
 ### Handler Implementation
+
 The global error handlers are configured during application startup:
 
 ```typescript
@@ -459,4 +504,5 @@ export function setupGlobalErrorHandlers(): void {
 ```
 
 **Section sources**
+
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts#L1-L113)

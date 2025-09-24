@@ -20,6 +20,7 @@ This guide provides comprehensive troubleshooting information for common issues 
 ## 🛠️ Development Environment Issues
 
 ### Node.js Version Compatibility
+
 ```bash
 # Check current Node.js version
 node --version
@@ -36,6 +37,7 @@ nvm use 20
 ```
 
 ### Dependency Installation Issues
+
 ```bash
 # Clear node modules and reinstall
 rm -rf node_modules package-lock.json
@@ -54,6 +56,7 @@ npm config set prefix ~/.npm-global
 ```
 
 ### Port Conflicts
+
 ```bash
 # Check if port is in use
 lsof -i :3000  # Web app
@@ -70,6 +73,7 @@ WEB_PORT=3000
 ```
 
 ### Docker Issues
+
 ```bash
 # Docker not starting
 docker --version
@@ -98,6 +102,7 @@ docker-compose logs redis
 ## 🗄️ Database Issues
 
 ### Database Connection Issues
+
 ```bash
 # Test database connection
 psql -h localhost -U postgres -d neonpro
@@ -120,6 +125,7 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/neonpro"
 ```
 
 ### Migration Issues
+
 ```bash
 # Check migration status
 npx prisma migrate status
@@ -138,6 +144,7 @@ npx prisma generate
 ```
 
 ### Database Performance Issues
+
 ```bash
 # Check active connections
 SELECT count(*) FROM pg_stat_activity;
@@ -169,6 +176,7 @@ ORDER BY idx_tup_fetch DESC;
 ```
 
 ### Database Permission Issues
+
 ```sql
 -- Check user permissions
 SELECT * FROM pg_user;
@@ -192,6 +200,7 @@ CREATE POLICY client_isolation ON aesthetic_client_profiles
 ## 🔌 API Issues
 
 ### API Server Won't Start
+
 ```bash
 # Check for syntax errors
 cd apps/api
@@ -211,6 +220,7 @@ PORT=3002 npm run start:dev
 ```
 
 ### API Response Issues
+
 ```typescript
 // Check API health
 curl http://localhost:3001/health
@@ -227,6 +237,7 @@ curl -v http://localhost:3001/health
 ```
 
 ### tRPC Issues
+
 ```typescript
 // Common tRPC issues and solutions
 
@@ -267,6 +278,7 @@ export const createProtectedRouter = () => {
 ## 🎨 Frontend Issues
 
 ### Build Issues
+
 ```bash
 # Check build errors
 cd apps/web
@@ -287,6 +299,7 @@ NODE_OPTIONS="--max-old-space-size=4096" npm run build
 ```
 
 ### React Component Issues
+
 ```typescript
 // Common React issues and solutions
 
@@ -358,6 +371,7 @@ function GrandChild() {
 ```
 
 ### Styling Issues
+
 ```css
 /* Common CSS issues and solutions */
 
@@ -407,6 +421,7 @@ function GrandChild() {
 ## 🔐 Authentication Issues
 
 ### JWT Token Issues
+
 ```typescript
 // Common JWT issues and solutions
 
@@ -450,6 +465,7 @@ document.cookie = `token=${token}; path=/; secure; httpOnly; samesite=strict`;
 ```
 
 ### Session Management Issues
+
 ```typescript
 // Common session issues and solutions
 
@@ -500,6 +516,7 @@ const newSession = await db.session.create({
 ```
 
 ### Permission Issues
+
 ```typescript
 // Common permission issues and solutions
 
@@ -547,6 +564,7 @@ app.put('/clients/:id', authMiddleware, async (req, res) => {
 ## ⚡ Performance Issues
 
 ### Frontend Performance Issues
+
 ```typescript
 // Common frontend performance issues and solutions
 
@@ -597,6 +615,7 @@ const { data, loading } = useQuery(GET_DASHBOARD_DATA, {
 ```
 
 ### API Performance Issues
+
 ```typescript
 // Common API performance issues and solutions
 
@@ -678,6 +697,7 @@ app.get('/api/v1/clients', async (req, res) => {
 ```
 
 ### Database Performance Issues
+
 ```sql
 -- Common database performance issues and solutions
 
@@ -721,6 +741,7 @@ datasource db {
 ## 🚀 Deployment Issues
 
 ### Build Issues in Production
+
 ```bash
 # Common production build issues
 
@@ -743,6 +764,7 @@ pnpm build
 ```
 
 ### Docker Deployment Issues
+
 ```bash
 # Common Docker deployment issues
 
@@ -765,6 +787,7 @@ docker exec container-name env
 ```
 
 ### Kubernetes Deployment Issues
+
 ```bash
 # Common Kubernetes deployment issues
 
@@ -788,6 +811,7 @@ kubectl describe service service-name
 ## 🧪 Testing Issues
 
 ### Unit Test Issues
+
 ```typescript
 // Common unit testing issues and solutions
 
@@ -841,6 +865,7 @@ jest.mock('nodemailer', () => ({
 ```
 
 ### Integration Test Issues
+
 ```typescript
 // Common integration testing issues and solutions
 
@@ -885,6 +910,7 @@ describe('Client Workflow', () => {
 ```
 
 ### E2E Test Issues
+
 ```typescript
 // Common E2E testing issues and solutions
 
@@ -929,6 +955,7 @@ test('should display client list', async ({ page }) => {
 ## 📋 Compliance Issues
 
 ### LGPD Compliance Issues
+
 ```typescript
 // Common LGPD compliance issues and solutions
 
@@ -1012,6 +1039,7 @@ export async function exportUserData(userId: string): Promise<UserDataExport> {
 ```
 
 ### ANVISA Compliance Issues
+
 ```typescript
 // Common ANVISA compliance issues and solutions
 
@@ -1066,6 +1094,7 @@ export async function reportAdverseEvent(data: AdverseEventReport) {
 ## 🔒 Security Issues
 
 ### Common Security Vulnerabilities
+
 ```typescript
 // Common security issues and solutions
 
@@ -1142,6 +1171,7 @@ const client = await prisma.client.create({
 ## 📞 Getting Help
 
 ### Community Support
+
 ```bash
 # Join our community channels
 - Discord: https://discord.gg/neonpro
@@ -1156,32 +1186,38 @@ https://github.com/neonpro/neonpro/issues/new
 ```
 
 ### Bug Reporting Template
+
 ```markdown
 ## 🐛 Bug Report
 
 ### Environment
+
 - OS: [e.g., macOS 13.0, Ubuntu 22.04]
 - Node.js: [e.g., v18.17.0, v20.5.0]
 - Browser: [e.g., Chrome 115, Safari 16]
 - NeonPro Version: [e.g., v1.0.0]
 
 ### Steps to Reproduce
+
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
 ### Expected Behavior
+
 A brief description of what you expected to happen.
 
 ### Actual Behavior
+
 A brief description of what actually happened.
 
 ### Error Messages
 ```
-Paste error messages here
-```
 
+Paste error messages here
+
+```
 ### Screenshots
 If applicable, add screenshots to help explain your problem.
 

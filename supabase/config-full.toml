@@ -41,7 +41,7 @@ additional_redirect_urls = ["https://neonpro.vercel.app"]
 jwt_expiry = 3600
 refresh_token_rotation_enabled = true
 double_confirm_changes_enabled = true
-enable_signup = false  # Registration controlled by clinic admins
+enable_signup = false # Registration controlled by clinic admins
 enable_confirmations = true
 secure_password_change_enabled = true
 password_min_length = 12
@@ -68,7 +68,7 @@ refresh_token_reuse_interval = 10
 [db.settings]
 log_min_messages = "warning"
 log_min_error_statement = "error"
-log_statement = "mod"  # Log data-modifying statements for audit
+log_statement = "mod" # Log data-modifying statements for audit
 logging_collector = true
 log_directory = "pg_log"
 log_filename = "postgresql-%Y-%m-%d_%H%M%S.log"
@@ -99,16 +99,16 @@ log_timezone = "America/Sao_Paulo"
 # Enable extensions for healthcare features
 [db.extensions]
 select = [
-  "uuid-ossp",     # UUID generation
-  "pgcrypto",      # Encryption for PHI
-  "pg_stat_statements",  # Performance monitoring
-  "pg_cron",       # Scheduled jobs for compliance
-  "pg_trgm",       # Text search for patients
-  "vector",        # AI embeddings for smart search
-  "unaccent",      # Brazilian Portuguese text search
-  "btree_gin",     # Performance for JSON queries
-  "btree_gist",    # Performance for date ranges
-  "ltree",         # Hierarchical data (org structure)
+  "uuid-ossp", # UUID generation
+  "pgcrypto", # Encryption for PHI
+  "pg_stat_statements", # Performance monitoring
+  "pg_cron", # Scheduled jobs for compliance
+  "pg_trgm", # Text search for patients
+  "vector", # AI embeddings for smart search
+  "unaccent", # Brazilian Portuguese text search
+  "btree_gin", # Performance for JSON queries
+  "btree_gist", # Performance for date ranges
+  "ltree", # Hierarchical data (org structure)
 ]
 
 # Realtime configuration for healthcare updates

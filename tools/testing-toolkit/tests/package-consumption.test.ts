@@ -18,15 +18,15 @@ describe('Package Consumption', () => {
       refactorPhase: () => {
         expect(true).toBe(true);
       },
-    }
+    });
 
-    expect(result).toBeDefined(
-  }
+    expect(result).toBeDefined();
+  });
 
   // Import the function directly to test
-  const { createTDDSuite } = require('../src/core/tdd-cycle')
+  const { createTDDSuite } = require('../src/core/tdd-cycle');
 
-  expect(typeof createTDDSuite).toBe('function')
+  expect(typeof createTDDSuite).toBe('function');
 
   // Test that we can create a TDD suite without errors
   // The function expects a config object and implementation object
@@ -39,14 +39,15 @@ describe('Package Consumption', () => {
     {
       // RED phase should throw an error to simulate failing tests
       redPhase: () => {
-        throw new Error('Tests should fail in RED phase')
+        throw new Error('Tests should fail in RED phase');
       },
       greenPhase: () => {/* Implementation that passes tests */},
       refactorPhase: () => {/* Code improvement */},
     },
     { forceMock: true },
-  
-  expect(suite).toBeDefined(
-  expect(suite.name).toBe('test-suite')
-  expect(suite.description).toBe('TDD: test-suite')
-}
+  );
+
+  expect(suite).toBeDefined();
+  expect(suite.name).toBe('test-suite');
+  expect(suite.description).toBe('TDD: test-suite');
+});

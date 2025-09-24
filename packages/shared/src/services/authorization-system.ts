@@ -930,13 +930,13 @@ export class HealthcareAuthorizationRules {
     advice.push({
       type: 'lgpd',
       description: 'Ensure data sharing agreements are in place',
-      severity: 'error' as const,
+      severity: 'warning' as const,
     });
   }
 
   // Right to erasure for patients
   if (context.subject._role === 'patient' && action.operation === 'delete') {
-    decision = 'permit';
+    decision = 'allow';
     reasons.push('Patient right to erasure under LGPD');
     advice.push({
       type: 'lgpd',
@@ -1249,7 +1249,15 @@ export class HealthcareAuthorizationEngine {
       if (lgpdDecision.decision === 'deny') {
         finalDecision = 'deny';
         allReasons.push(...lgpdDecision.reasons);
-        allAdvice.push(...lgpdDecision.advice);
+        // Map advice to compatible schema types (filter out 'error' severity)
+        allAdvice.push(...lgpdDecision.advice
+          .filter(advice => advice.severity !== 'error')
+          .map(advice => ({
+            type: advice.type,
+            description: advice.description,
+            severity: advice.severity as 'info' | 'warning' | 'critical'
+          }))
+        );
       }
     }
 
@@ -1430,10 +1438,12 @@ export class HealthcareAuthorizationEngine {
     averageEvaluationTime: number;
     config: AuthorizationConfig;
   } {
+    // Clean up expired cache entries before returning statistics
+    this.cleanupExpiredCacheEntries();
+    
     this.stats.cacheSize = this.decisionCache.size;
     this.stats.policiesLoaded = this.policies.size;
     this.stats.isInitialized = this.isInitialized;
-
     return {
       ...this.stats,
       config: this.config,
@@ -1820,33 +1830,36 @@ export class HealthcareAuthorizationEngine {
   ): AuthorizationDecision['monitoring'] {
     const monitoring = {
       auditRequired: false,
-      monitoringLevel: 'none' as 'none' | 'basic' | 'enhanced' | 'critical',
-      retentionPeriod: 0,
-      reviewRequired: false,
+      alertRequired: false,
+      notificationRequired: false,
+      complianceTracking: false,
     };
 
     // Check compliance context audit requirement first
     if (_context.compliance?.auditRequired) {
       monitoring.auditRequired = true;
-      monitoring.monitoringLevel = 'basic';
-      monitoring.retentionPeriod = 180;
+      monitoring.alertRequired = true;
+      monitoring.complianceTracking = true;
     }
     // Basic monitoring logic based on decision and risk
     else if (decision === 'permit') {
       monitoring.auditRequired = riskScore > 5;
-      monitoring.monitoringLevel = riskScore > 7 ? 'enhanced' : 'basic';
-      monitoring.retentionPeriod = riskScore > 7 ? 365 : 90;
+      monitoring.alertRequired = riskScore > 7;
+      monitoring.notificationRequired = riskScore > 8;
+      monitoring.complianceTracking = riskScore > 3;
     } else if (decision === 'deny') {
       monitoring.auditRequired = true;
-      monitoring.monitoringLevel = 'basic';
-      monitoring.retentionPeriod = 180;
+      monitoring.alertRequired = true;
+      monitoring.notificationRequired = false;
+      monitoring.complianceTracking = true;
     }
 
     // Emergency monitoring
     if (_context.environment?.workflow?.emergencyFlag) {
-      monitoring.monitoringLevel = 'critical';
-      monitoring.retentionPeriod = 730;
-      monitoring.reviewRequired = true;
+      monitoring.auditRequired = true;
+      monitoring.alertRequired = true;
+      monitoring.notificationRequired = true;
+      monitoring.complianceTracking = true;
     }
 
     return monitoring;
@@ -1867,7 +1880,7 @@ export class HealthcareAuthorizationEngine {
         conditions.push({
           type: 'time_restriction',
           description: 'Access restricted to business hours',
-          condition: 'hour >= 6 && hour <= 22',
+          satisfied: hour >= 6 && hour <= 22,
         });
       }
     }
@@ -1877,7 +1890,7 @@ export class HealthcareAuthorizationEngine {
       conditions.push({
         type: 'facility_access',
         description: 'Access limited to assigned facility',
-        condition: `facility === '${_context.environment.location.facility}'`,
+        satisfied: _context.environment?.location?.facility === _context.subject.facilityId,
       });
     }
 
@@ -1886,7 +1899,7 @@ export class HealthcareAuthorizationEngine {
       conditions.push({
         type: 'license_validation',
         description: 'Valid medical license required',
-        condition: 'license.valid && license.expiry > now()',
+        satisfied: _context.subject.attributes?.license?.valid && new Date(_context.subject.attributes?.license?.expiry) > new Date(),
       });
     }
 

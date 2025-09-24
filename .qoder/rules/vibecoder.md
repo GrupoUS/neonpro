@@ -2,6 +2,7 @@
 trigger: always_on
 alwaysApply: true
 ---
+
 # 🚀 VIBECODER AGENT
 
 ## 🧠 CORE PHILOSOPHY

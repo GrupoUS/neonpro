@@ -1,4 +1,3 @@
-
 # TDD Orchestration Framework
 
 <cite>
@@ -16,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [TDD Cycle Execution Flow](#tdd-cycle-execution-flow)
 3. [Phase Coordination and Quality Gates](#phase-coordination-and-quality-gates)
@@ -32,6 +32,7 @@ The TDD Orchestration Framework is a comprehensive system designed to manage the
 At its core, the framework leverages TypeScript-based orchestration logic that coordinates with shell script phase executors to implement the TDD cycle. This hybrid approach combines the flexibility and type safety of TypeScript with the operational capabilities of shell scripting, creating a robust system for managing complex development workflows. The framework is particularly focused on healthcare compliance, ensuring that all developed features meet stringent regulatory requirements including LGPD (Brazilian General Data Protection Law), ANVISA (National Health Surveillance Agency), and CFM (Federal Council of Medicine) standards.
 
 **Section sources**
+
 - [README.md](file://tools/orchestration/README.md#L1-L20)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L50)
 
@@ -54,9 +55,11 @@ Results --> End([RED Phase Completed])
 ```
 
 **Diagram sources**
+
 - [red-phase.sh](file://tools/testing/phase-executors/red-phase.sh#L1-L38)
 
 The RED phase utilizes several specialized agents:
+
 - **Architect Review Agent**: Validates frontend architecture test patterns across component structure, routing patterns, state management, API integration, and error boundaries
 - **Apex UI/UX Designer Agent**: Defines UI/UX test structures for aesthetic clinic workflows, focusing on patient registration flows, appointment scheduling interfaces, and WhatsApp integration components
 - **Code Reviewer Agent**: Establishes code quality test specifications covering TypeScript type safety, component performance, bundle size analysis, and security patterns
@@ -79,9 +82,11 @@ Results --> End([GREEN Phase Completed])
 ```
 
 **Diagram sources**
+
 - [green-phase.sh](file://tools/testing/phase-executors/green-phase.sh#L1-L41)
 
 Key activities in the GREEN phase include:
+
 - **MCP Playwright Test Orchestration**: Executes a comprehensive test suite across multiple browsers (Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari) with detailed reporting including HTML, JSON, screenshots, videos, and trace files
 - **Accessibility Validation**: Performs WCAG 2.1 AA+ accessibility checks focusing on color contrast validation, keyboard navigation, screen reader compatibility, and mobile responsiveness across eight device sizes from iPhone 5 to desktop
 - **Performance Testing**: Conducts thorough performance assessments measuring page load performance, component render performance, and API response performance using Lighthouse integration, bundle analysis, and memory usage assessment
@@ -104,9 +109,11 @@ Results --> End([REFACTOR Phase Completed])
 ```
 
 **Diagram sources**
+
 - [refactor-phase.sh](file://tools/testing/phase-executors/refactor-phase.sh#L1-L62)
 
 The REFACTOR phase produces a comprehensive optimization summary that categorizes improvements into:
+
 - **Code Optimizations**: Identifies opportunities for bundle size reduction, addresses performance bottlenecks, improves API efficiency, and optimizes memory usage
 - **UX Optimizations**: Resolves accessibility issues, enhances mobile responsiveness, improves overall user experience, and ensures design system consistency
 - **Architecture Optimizations**: Recommends improvements to component composition, optimizes state management, enhances error handling strategies, and improves scalability
@@ -114,6 +121,7 @@ The REFACTOR phase produces a comprehensive optimization summary that categorize
 This structured approach to refactoring ensures that improvements are systematically identified and prioritized, with critical performance issues addressed first, followed by high-impact UX improvements, architecture scalability enhancements, and code maintainability refinements.
 
 **Section sources**
+
 - [red-phase.sh](file://tools/testing/phase-executors/red-phase.sh#L1-L38)
 - [green-phase.sh](file://tools/testing/phase-executors/green-phase.sh#L1-L41)
 - [refactor-phase.sh](file://tools/testing/phase-executors/refactor-phase.sh#L1-L62)
@@ -142,9 +150,11 @@ Results --> End([Quality Gate Phase Completed])
 ```
 
 **Diagram sources**
+
 - [quality-gate-phase.sh](file://tools/testing/phase-executors/quality-gate-phase.sh#L1-L63)
 
 The quality gate validation process assesses multiple critical metrics:
+
 - **Test Coverage**: Requires a minimum of 90% coverage, with detailed component coverage analysis
 - **Accessibility Compliance**: Mandates 100% WCAG 2.1 AA+ compliance, with thorough violation analysis and recommended fixes
 - **Performance Thresholds**: Sets a target of at least 85% Lighthouse score, with detailed breakdown of performance metrics
@@ -194,12 +204,14 @@ AgentRegistry --> AgentCapability : "manages"
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L476)
 
 The framework uses an `OrchestrationContext` object to maintain state throughout the TDD cycle, ensuring that information flows seamlessly between phases. This context contains essential information about the feature being developed, including its name, type, complexity, criticality level, requirements, and healthcare compliance needs. The `TDDOrchestrator` uses this context to make intelligent decisions about agent selection, coordination patterns, and quality gate requirements.
 
 For distributed environments, the framework implements three primary coordination patterns:
+
 - **Sequential**: Agents execute one after another, ideal for healthcare compliance scenarios where strict ordering is required
 - **Parallel**: Multiple agents execute simultaneously, maximizing efficiency for non-critical features
 - **Hierarchical**: Agents are organized in a hierarchy with primary agents coordinating secondary agents, suitable for high-complexity features
@@ -207,6 +219,7 @@ For distributed environments, the framework implements three primary coordinatio
 The choice of coordination pattern is determined dynamically based on the feature's characteristics, with healthcare compliance always triggering sequential execution to ensure regulatory requirements are properly validated.
 
 **Section sources**
+
 - [quality-gate-phase.sh](file://tools/testing/phase-executors/quality-gate-phase.sh#L1-L63)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L476)
@@ -218,6 +231,7 @@ The TDD Orchestration Framework places significant emphasis on healthcare compli
 ### Regulatory Framework Support
 
 The framework specifically supports three major Brazilian healthcare regulations:
+
 - **LGPD (Lei Geral de Proteção de Dados)**: Brazil's General Data Protection Law, which establishes guidelines for personal data processing and protection
 - **ANVISA (Agência Nacional de Vigilância Sanitária)**: The National Health Surveillance Agency, which regulates medical devices and healthcare software
 - **CFM (Conselho Federal de Medicina)**: The Federal Council of Medicine, which sets standards for telemedicine and medical software
@@ -251,10 +265,12 @@ Orchestrator->>Developer : Complete TDD cycle with compliance status
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L476)
 
 When a feature with healthcare compliance requirements is initiated, the `TDDOrchestrator` automatically adjusts its behavior to ensure proper validation. This includes:
+
 - Selecting only agents that have healthcare compliance capabilities
 - Enforcing sequential coordination to ensure proper validation order
 - Applying stricter quality gates for security and data protection
@@ -287,6 +303,7 @@ const result = await runTDDCycle('patient-authentication', {
 ```
 
 This configuration ensures that:
+
 - The security-critical workflow is used, which includes enhanced security validation
 - Healthcare compliance is explicitly enabled, triggering additional validation steps
 - Sequential coordination is enforced to maintain proper validation order
@@ -296,6 +313,7 @@ This configuration ensures that:
 The framework also supports constitutional logging, which records all compliance activities with reference to constitutional principles, providing an auditable trail of compliance validation.
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L476)
 - [README.md](file://tools/orchestration/README.md#L1-L224)
@@ -307,6 +325,7 @@ The Agent Registry is a fundamental component of the TDD Orchestration Framework
 ### Agent Capability Model
 
 Agents in the framework are defined by a comprehensive capability model that includes:
+
 - **Type**: Categorization of the agent (e.g., tdd-orchestrator, architect-review, code-reviewer, security-auditor, test)
 - **Name and Description**: Human-readable identification and explanation of the agent's purpose
 - **Capabilities**: Specific skills and functions the agent can perform
@@ -355,6 +374,7 @@ TDDAgentRegistry --> OrchestrationContext : "uses for selection"
 ```
 
 **Diagram sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L476)
 
 ### Agent Selection Algorithm
@@ -401,15 +421,18 @@ IncludeAgent --> ReturnAgents
 ```
 
 **Diagram sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L476)
 
 This context-aware filtering ensures that:
+
 - Only agents capable of supporting the current phase are selected
 - For healthcare compliance features, only agents with the necessary compliance capabilities are included
 - For critical features, tertiary agents are excluded to ensure reliability
 - The final selection represents the optimal combination of capabilities for the specific development context
 
 The framework includes several default agents with healthcare compliance capabilities, ensuring that regulatory requirements are consistently addressed:
+
 - **TDD Orchestrator**: Has full LGPD, ANVISA, and CFM compliance capabilities
 - **Architecture Review Agent**: Supports all three healthcare regulations
 - **Code Reviewer Agent**: Compliant with all healthcare regulations
@@ -419,6 +442,7 @@ The framework includes several default agents with healthcare compliance capabil
 This comprehensive approach to agent management and selection ensures that the right expertise is applied to each development task, with particular attention to regulatory compliance in healthcare applications.
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L476)
 
 ## Configuration and Extension
@@ -451,11 +475,13 @@ TDDOrchestratorConfig --> TDDOrchestrator : "configures"
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 - [standard-tdd.ts](file://tools/orchestration/src/workflows/standard-tdd.ts#L1-L34)
 - [security-critical.ts](file://tools/orchestration/src/workflows/security-critical.ts#L1-L43)
 
 The available workflow types include:
+
 - **Standard TDD**: Balanced approach suitable for general development tasks
 - **Security-Critical TDD**: Enhanced security validation for sensitive features
 - **Microservices TDD**: Optimized for distributed microservice architectures
@@ -538,6 +564,7 @@ const healthcareQualityConfig = {
 These custom quality gates are automatically enforced during the quality gate validation phase, ensuring that project-specific requirements are consistently applied.
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 - [standard-tdd.ts](file://tools/orchestration/src/workflows/standard-tdd.ts#L1-L34)
 - [security-critical.ts](file://tools/orchestration/src/workflows/security-critical.ts#L1-L43)
@@ -569,9 +596,11 @@ CreateFailure --> ReturnFailure["Return failure result"]
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 
 The framework distinguishes between temporary and permanent errors, applying different recovery strategies accordingly:
+
 - **Temporary errors** (e.g., network timeouts, resource contention) trigger automatic retry mechanisms with exponential backoff
 - **Permanent errors** (e.g., syntax errors, missing dependencies) result in graceful phase failure with detailed error reporting
 - **Unknown errors** are logged extensively to facilitate debugging and future improvement of error handling
@@ -614,10 +643,12 @@ TDDCycleState --> OrchestrationContext : "contains"
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 - [types.ts](file://tools/orchestration/src/types.ts#L1-L232)
 
 The `TDDCycleState` object maintains comprehensive information about the current TDD cycle, including:
+
 - Unique cycle identifier and timing information
 - Current phase and overall status
 - Detailed results from completed phases
@@ -639,6 +670,7 @@ The framework employs several error recovery strategies to maximize the chances 
 These recovery mechanisms ensure that the TDD Orchestration Framework remains resilient in the face of various failure modes, from temporary infrastructure issues to more persistent code-level problems.
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L489)
 - [types.ts](file://tools/orchestration/src/types.ts#L1-L232)
 

@@ -1,6 +1,6 @@
 # NeonPro Database Schema Implementation Summary
 
-**Data**: 20 de Setembro de 2025  
+**Data**: 20 de Setembro de 2025\
 **Status**: ✅ **CONCLUÍDO COM SUCESSO**
 
 ## 🎯 Objetivos Alcançados

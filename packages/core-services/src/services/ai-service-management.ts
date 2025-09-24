@@ -90,7 +90,7 @@ export class AIServiceManagement {
       const results = await Promise.allSettled(healthChecks);
       const healthStatuses: AIServiceHealth[] = [];
 
-      results.forEach((result, _index) => {
+      results.forEach((result, index) => {
         if (result.status === "fulfilled") {
           healthStatuses.push(result.value);
         } else {
@@ -98,7 +98,7 @@ export class AIServiceManagement {
           const providerName = Array.from(this.providers.keys())[index];
           healthStatuses.push({
             status: "unavailable",
-            provider: providerName,
+            provider: providerName || "unknown",
             model: "unknown",
             responseTime: 0,
             lastCheck: new Date(),

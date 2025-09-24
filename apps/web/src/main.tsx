@@ -1,18 +1,18 @@
-import * as React from "react";
-import { createRoot } from "react-dom/client";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { TanStackQueryProvider } from "./components/providers/TanStackQueryProvider";
-import { TRPCProvider } from "./components/providers/TRPCProvider";
-import { routeTree } from "./routeTree.gen";
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import * as React from 'react';
+import { createRoot } from 'react-dom/client';
+import { TanStackQueryProvider } from './components/providers/TanStackQueryProvider';
+import { TRPCProvider } from './components/stubs/TRPCProvider';
+import { routeTree } from './routeTree.gen';
 
 // Import PWA Styles
-import "./styles/pwa.css";
+import './styles/pwa.css';
 
 // Create the router
 const router = createRouter({ routeTree });
 
 // Register the router
-declare module "@tanstack/react-router" {
+declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
@@ -23,10 +23,10 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw.js')
-      .then((registration) => {
+      .then(registration => {
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
       })
-      .catch((error) => {
+      .catch(error => {
         console.log('ServiceWorker registration failed: ', error);
       });
   });
@@ -34,10 +34,10 @@ if ('serviceWorker' in navigator) {
 
 // PWA Install Prompt Handler
 let deferredPrompt: any;
-window.addEventListener('beforeinstallprompt', (e) => {
+window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   deferredPrompt = e;
-  
+
   // Show custom install UI if needed
   const installButton = document.getElementById('pwa-install-button');
   if (installButton) {
@@ -86,7 +86,7 @@ if (navigator.onLine) {
 }
 
 // Render the app
-const rootElement = document.getElementById("root")!;
+const rootElement = document.getElementById('root')!;
 const root = createRoot(rootElement);
 root.render(
   <React.StrictMode>

@@ -1,7 +1,7 @@
 # Disaster Recovery
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh)
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js)
 - [health.ts](file://apps/api/vercel/health.ts)
@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Emergency Rollback Mechanism](#emergency-rollback-mechanism)
 3. [Health Check Endpoints](#health-check-endpoints)
@@ -23,11 +24,13 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The NeonPro healthcare platform implements a comprehensive disaster recovery system designed to ensure high availability, rapid incident response, and regulatory compliance with healthcare standards such as LGPD, ANVISA, and CFM. This document details the implementation of emergency rollback mechanisms, health check endpoints, and monitoring systems that enable rapid recovery from failures. The system is designed to balance automated recovery workflows with manual intervention procedures, ensuring both speed and safety in critical situations.
 
 The disaster recovery framework consists of three core components: emergency rollback capabilities for immediate remediation of deployment issues, comprehensive health check endpoints for system status verification, and robust monitoring systems for proactive issue detection. These components work together to minimize downtime, maintain data integrity, and ensure continuous availability of critical healthcare services.
 
 **Section sources**
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh#L1-L313)
 
@@ -61,9 +64,11 @@ RollbackScript->>AlertingSystem : Send completion alert
 ```
 
 **Diagram sources **
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
 **Section sources**
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
 ## Health Check Endpoints
@@ -91,9 +96,11 @@ J --> K
 ```
 
 **Diagram sources **
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L48)
 
 **Section sources**
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L48)
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh#L1-L313)
 
@@ -134,12 +141,14 @@ HealthCheckScript --> "alerts to" AlertingSystem : Notifications
 ```
 
 **Diagram sources **
+
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js#L1-L121)
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 - [https-monitoring-middleware.ts](file://apps/api/src/middleware/https-monitoring-middleware.ts#L1-L456)
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh#L1-L313)
 
 **Section sources**
+
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js#L1-L121)
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 - [https-monitoring-middleware.ts](file://apps/api/src/middleware/https-monitoring-middleware.ts#L1-L456)
@@ -156,6 +165,7 @@ Recovery time objectives are aligned with healthcare service level agreements, w
 The domain model also includes detailed compliance monitoring for healthcare regulations, with specific tracking for LGPD data protection, ANVISA medical device requirements, and CFM professional standards. This ensures that incident response activities themselves comply with relevant regulations, maintaining the integrity of audit trails and patient data protection.
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L485)
 
 ## Common Issues and Solutions
@@ -169,6 +179,7 @@ Certificate expiration, a common cause of service outages, is prevented through 
 Performance degradation is addressed through synthetic monitoring of critical user flows, including patient registration, appointment booking, and medical record access. These automated tests run every 5-10 minutes from multiple geographic locations, providing early warning of performance issues before they affect real users.
 
 **Section sources**
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 - [cert-monitor.js](file://apps/api/scripts/cert-monitor.js#L1-L121)
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
@@ -215,10 +226,12 @@ CM --> EM
 ```
 
 **Diagram sources **
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L485)
 
 **Section sources**
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L485)
 
@@ -233,6 +246,7 @@ Analysis focuses on identifying systemic issues rather than individual blame, al
 Regular review of incident patterns helps identify areas for automation and process improvement. For example, repeated certificate-related issues led to the enhancement of automated renewal processes, while analysis of rollback failures resulted in more comprehensive pre-rollback validation checks.
 
 **Section sources**
+
 - [emergency-rollback.sh](file://scripts/emergency-rollback.sh#L1-L482)
 
 ## Conclusion

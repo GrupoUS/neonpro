@@ -1,7 +1,7 @@
 # Quality Control Bridge
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts)
 - [TDD_LINTING_FIX_SUMMARY.md](file://tools/orchestration/TDD_LINTING_FIX_SUMMARY.md)
 - [utils.ts](file://tools/orchestration/src/utils.ts)
@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Core Implementation Details](#core-implementation-details)
@@ -27,6 +28,7 @@ The Quality Control Bridge serves as a critical integration point between the or
 The bridge translates orchestration results into actionable quality metrics and standardized reporting formats, providing developers with clear feedback on code quality. By connecting linting tools, security scanners, and compliance validators with the TDD orchestrator, it creates a unified quality control system that supports both automated enforcement and human review processes.
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 
 ## Architecture Overview
@@ -50,10 +52,12 @@ I --> K[CI/CD Pipeline]
 ```
 
 **Diagram sources **
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 - [utils.ts](file://tools/orchestration/src/utils.ts#L8-L44)
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 - [utils.ts](file://tools/orchestration/src/utils.ts#L8-L44)
 
@@ -104,9 +108,11 @@ QualityControlResult --> OrchestrationResult : "contains"
 ```
 
 **Diagram sources **
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 
 ## Integration with TDD Orchestrator
@@ -116,6 +122,7 @@ The Quality Control Bridge maintains a symbiotic relationship with the TDD Orche
 When the TDD Orchestrator initiates a quality control cycle, it creates an orchestration system instance that includes the Quality Control Bridge as a core component. This integration allows the orchestrator to leverage the bridge's capabilities for specific quality checks while maintaining oversight of the entire development lifecycle.
 
 The interaction follows a three-phase pattern:
+
 1. **RED Phase**: The orchestrator triggers initial quality checks that typically fail due to existing issues
 2. **GREEN Phase**: Developers address identified issues, with the bridge providing continuous feedback
 3. **REFACTOR Phase**: The orchestrator coordinates final quality validation after fixes are implemented
@@ -141,10 +148,12 @@ QualityControlBridge-->>TDDOrchestrator : aggregatedQualityResult
 ```
 
 **Diagram sources **
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 - [utils.ts](file://tools/orchestration/src/utils.ts#L8-L44)
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 - [utils.ts](file://tools/orchestration/src/utils.ts#L8-L44)
 
@@ -153,11 +162,13 @@ QualityControlBridge-->>TDDOrchestrator : aggregatedQualityResult
 The Quality Control Bridge facilitates effective communication of linting issues between systems through a well-documented workflow exemplified in the TDD_LINTING_FIX_SUMMARY.md file. This process demonstrates how the bridge integrates with the broader quality control ecosystem to resolve code quality issues systematically.
 
 In the documented case, three specific linting issues were identified in the agent-registry.ts file:
+
 1. Unused import of `AgentCoordinationPattern`
 2. Unused parameter `context` in `validateAgentCapability` method
 3. Unused variable `optimalAgents` in `getRecommendedWorkflow` method
 
 The resolution followed strict TDD principles:
+
 - **RED Phase**: Comprehensive tests were created to verify current behavior and establish a baseline
 - **GREEN Phase**: Minimal fixes were applied by removing unused elements while preserving functionality
 - **REFACTOR Phase**: Code quality improvements were made, including enhanced error handling for edge cases
@@ -167,6 +178,7 @@ The bridge played a crucial role in this process by providing consistent quality
 The communication workflow ensures that linting issues are not just eliminated but properly validated through automated testing, providing confidence that code quality improvements maintain functional integrity, especially for critical healthcare compliance requirements.
 
 **Section sources**
+
 - [TDD_LINTING_FIX_SUMMARY.md](file://tools/orchestration/TDD_LINTING_FIX_SUMMARY.md#L0-L190)
 
 ## Healthcare Compliance Scanning
@@ -182,6 +194,7 @@ For complex healthcare scenarios, the bridge can coordinate multiple specialized
 The implementation ensures that all critical healthcare compliance functions are preserved during quality improvement processes, as demonstrated in the successful resolution of linting issues while maintaining 100% LGPD, ANVISA, and CFM compliance.
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 - [TDD_LINTING_FIX_SUMMARY.md](file://tools/orchestration/TDD_LINTING_FIX_SUMMARY.md#L0-L190)
 
@@ -190,6 +203,7 @@ The implementation ensures that all critical healthcare compliance functions are
 The Quality Control Bridge transforms orchestration results into standardized quality metrics and reporting formats that provide actionable insights for development teams. The primary output is a comprehensive quality score that combines multiple dimensions of code quality into a single, interpretable metric.
 
 The quality scoring system weights different aspects of code quality based on their importance:
+
 - **Code Quality (30%)**: Based on linting results and coding standards adherence
 - **Security (25%)**: Derived from vulnerability scans and security best practices
 - **Test Coverage (20%)**: Measured against established coverage thresholds
@@ -203,6 +217,7 @@ The reporting system generates markdown-formatted documents that can be easily s
 For healthcare applications, the reports highlight compliance with LGPD, ANVISA, and CFM requirements, making it easy for medical software teams to demonstrate regulatory adherence during audits or certification processes.
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 - [TDD_LINTING_FIX_SUMMARY.md](file://tools/orchestration/TDD_LINTING_FIX_SUMMARY.md#L0-L190)
 
@@ -215,6 +230,7 @@ To resolve false positives, the bridge supports configurable rule thresholds tha
 Another common issue is performance degradation during comprehensive quality checks. The bridge mitigates this through parallel execution capabilities and configurable depth levels. Teams can run lighter checks during development and reserve comprehensive L5 scans for pre-deployment validation.
 
 When quality gates fail, the bridge provides specific recommendations for resolution, such as:
+
 - Fixing linting errors immediately
 - Addressing security vulnerabilities based on severity
 - Implementing missing compliance functions
@@ -223,6 +239,7 @@ When quality gates fail, the bridge provides specific recommendations for resolu
 The system also handles edge cases gracefully, such as undefined or null contexts, ensuring that quality validation does not fail catastrophically when encountering unexpected inputs. This robustness is particularly important in healthcare applications where system stability is paramount.
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 - [TDD_LINTING_FIX_SUMMARY.md](file://tools/orchestration/TDD_LINTING_FIX_SUMMARY.md#L0-L190)
 
@@ -231,12 +248,14 @@ The system also handles edge cases gracefully, such as undefined or null context
 The Quality Control Bridge is designed to be extensible for custom quality metrics in regulated healthcare environments. Developers can extend the system by implementing additional validation rules, integrating new analysis tools, or creating specialized reporting formats tailored to specific medical domains.
 
 To add custom quality metrics, developers can:
+
 1. Create new agent implementations that specialize in specific types of validation
 2. Extend the QualityControlContext interface to support additional parameters
 3. Implement custom parsing logic in the command processor
 4. Develop specialized reporting templates for domain-specific requirements
 
 For healthcare applications, common extensions include:
+
 - Medical device interoperability checks
 - Clinical decision support validation
 - Patient safety protocol verification
@@ -247,6 +266,7 @@ The extension mechanism preserves the core TDD workflow while allowing customiza
 The bridge's modular design ensures that custom extensions do not compromise the integrity of existing quality gates. All extensions must pass the same rigorous testing and validation processes as core components, maintaining the high standards required for healthcare software development.
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 
 ## Conclusion
@@ -260,5 +280,6 @@ For healthcare applications, the bridge's specialized handling of LGPD, ANVISA, 
 By following the principles demonstrated in this implementation, development teams can establish a quality control process that balances technical excellence with regulatory compliance, ultimately delivering safer, more reliable healthcare software.
 
 **Section sources**
+
 - [quality-control-bridge.ts](file://tools/orchestration/src/quality-control-bridge.ts#L7-L112)
 - [TDD_LINTING_FIX_SUMMARY.md](file://tools/orchestration/TDD_LINTING_FIX_SUMMARY.md#L0-L190)

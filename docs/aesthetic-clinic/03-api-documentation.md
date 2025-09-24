@@ -7,6 +7,7 @@ The aesthetic clinic API provides comprehensive endpoints for managing client pr
 ## 🔗 Base Configuration
 
 ### API Structure
+
 ```
 /api/v1/aesthetic-clinic/
 ├── clients/           # Client management
@@ -19,6 +20,7 @@ The aesthetic clinic API provides comprehensive endpoints for managing client pr
 ```
 
 ### Authentication & Authorization
+
 ```typescript
 // Required headers for all requests
 {
@@ -33,6 +35,7 @@ The aesthetic clinic API provides comprehensive endpoints for managing client pr
 ## 👥 Client Management APIs
 
 ### Create Client Profile
+
 **POST** `/api/v1/aesthetic-clinic/clients`
 
 Creates a new aesthetic client profile with LGPD compliance validation.
@@ -138,6 +141,7 @@ interface AestheticClientProfile {
 ```
 
 **Example Request:**
+
 ```typescript
 const response = await fetch('/api/v1/aesthetic-clinic/clients', {
   method: 'POST',
@@ -180,12 +184,14 @@ const response = await fetch('/api/v1/aesthetic-clinic/clients', {
 ```
 
 **Response Codes:**
+
 - `201` - Client profile created successfully
 - `400` - Invalid input data or missing required fields
 - `409` - CPF or email already registered
 - `422` - LGPD consent validation failed
 
 ### Get Client Profile
+
 **GET** `/api/v1/aesthetic-clinic/clients/:id`
 
 Retrieves client profile with comprehensive information and compliance status.
@@ -219,6 +225,7 @@ interface ClientAnalytics {
 ```
 
 ### Update Client Profile
+
 **PATCH** `/api/v1/aesthetic-clinic/clients/:id`
 
 Updates client information with audit trail and compliance validation.
@@ -234,6 +241,7 @@ interface UpdateAestheticClientInput extends Partial<CreateAestheticClientInput>
 ## 💉 Treatment Management APIs
 
 ### Treatment Catalog
+
 **GET** `/api/v1/aesthetic-clinic/treatments`
 
 Retrieves all available treatments with ANVISA compliance information.
@@ -290,6 +298,7 @@ interface TreatmentFilters {
 ```
 
 ### Create Treatment Plan
+
 **POST** `/api/v1/aesthetic-clinic/treatment-plans`
 
 Creates a comprehensive treatment plan for a client.
@@ -330,6 +339,7 @@ interface AIRecommendations {
 ## 📅 Scheduling APIs
 
 ### AI-Optimized Appointment Scheduling
+
 **POST** `/api/v1/aesthetic-clinic/appointments/optimize`
 
 Creates AI-optimized appointment schedule based on multiple constraints.
@@ -405,6 +415,7 @@ interface OptimizationMetrics {
 ```
 
 ### Create Appointment
+
 **POST** `/api/v1/aesthetic-clinic/appointments`
 
 Creates a new appointment with comprehensive validation.
@@ -432,6 +443,7 @@ interface CreateAppointmentInput {
 ```
 
 ### No-Show Prediction
+
 **GET** `/api/v1/aesthetic-clinic/appointments/:id/no-show-risk`
 
 Provides AI-powered no-show risk assessment for appointments.
@@ -462,6 +474,7 @@ interface RiskFactor {
 ## 👨‍⚕️ Professional Management APIs
 
 ### Professional Registration
+
 **POST** `/api/v1/aesthetic-clinic/professionals`
 
 Registers a new healthcare professional with CFM validation.
@@ -518,6 +531,7 @@ interface WorkDaySchedule {
 ```
 
 ### Professional Availability
+
 **GET** `/api/v1/aesthetic-clinic/professionals/:id/availability`
 
 Retrieves professional availability for scheduling.
@@ -568,6 +582,7 @@ interface SessionStatistics {
 ## 🛡️ Compliance APIs
 
 ### LGPD Data Subject Request
+
 **POST** `/api/v1/aesthetic-clinic/compliance/lgpd-request`
 
 Handles LGPD data subject rights requests.
@@ -613,6 +628,7 @@ interface DataPackage {
 ```
 
 ### ANVISA Compliance Check
+
 **GET** `/api/v1/aesthetic-clinic/compliance/anvisa-validation/:treatmentId`
 
 Validates ANVISA compliance for treatments and medical devices.
@@ -649,6 +665,7 @@ interface RegulatoryAction {
 ```
 
 ### Compliance Dashboard
+
 **GET** `/api/v1/aesthetic-clinic/compliance/dashboard`
 
 Provides comprehensive compliance overview.
@@ -744,6 +761,7 @@ interface ComplianceDeadline {
 ## 📊 Analytics APIs
 
 ### Client Analytics
+
 **GET** `/api/v1/aesthetic-clinic/analytics/clients`
 
 Provides comprehensive client analytics and insights.
@@ -844,6 +862,7 @@ interface ClientPredictions {
 ```
 
 ### Performance Analytics
+
 **GET** `/api/v1/aesthetic-clinic/analytics/performance`
 
 Provides clinic performance analytics and KPIs.
@@ -933,6 +952,7 @@ interface PerformanceTrends {
 ## 🔄 Webhook Events
 
 ### Appointment Events
+
 ```typescript
 interface AppointmentWebhook {
   event: 'appointment.created' | 'appointment.updated' | 'appointment.cancelled' | 'appointment.completed';
@@ -951,6 +971,7 @@ interface AppointmentWebhookData {
 ```
 
 ### Compliance Events
+
 ```typescript
 interface ComplianceWebhook {
   event: 'compliance.issue' | 'compliance.resolved' | 'compliance.deadline' | 'compliance.audit';
@@ -970,6 +991,7 @@ interface ComplianceWebhookData {
 ## 🚫 Error Handling
 
 ### Standard Error Responses
+
 ```typescript
 interface APIError {
   code: string;
@@ -996,6 +1018,7 @@ ERROR_CODES = {
 ```
 
 ### Error Response Example
+
 ```json
 {
   "code": "COMPLIANCE_VIOLATION",

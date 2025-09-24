@@ -7,6 +7,7 @@ The aesthetic clinic system implements comprehensive Brazilian healthcare compli
 ## 📋 Regulatory Framework
 
 ### Primary Compliance Areas
+
 ```typescript
 interface ComplianceFramework {
   lgpd: LGPDCompliance;
@@ -33,6 +34,7 @@ interface ComplianceStatus {
 ## 🔒 LGPD (Lei Geral de Proteção de Dados) Implementation
 
 ### Data Subject Rights
+
 ```typescript
 // apps/api/src/services/lgpd-service.ts
 export class LGPDService {
@@ -161,6 +163,7 @@ export class LGPDService {
 ```
 
 ### Consent Management
+
 ```typescript
 // apps/api/src/services/enhanced-lgpd-lifecycle.ts
 export class LGPDConsentManager {
@@ -312,6 +315,7 @@ export class LGPDConsentManager {
 ## 🔬 ANVISA (Agência Nacional de Vigilância Sanitária) Compliance
 
 ### Medical Device Tracking
+
 ```typescript
 // apps/api/src/services/anvisa-compliance.ts
 export class ANVISAComplianceService {
@@ -475,6 +479,7 @@ export class ANVISAComplianceService {
 ```
 
 ### Treatment Validation
+
 ```typescript
 export class ANVISATreatmentValidator {
   async validateTreatmentCompliance(treatment: AestheticTreatment): Promise<TreatmentValidationResult> {
@@ -577,6 +582,7 @@ export class ANVISATreatmentValidator {
 ## 👨‍⚕️ CFM (Conselho Federal de Medicina) Compliance
 
 ### Professional Validation
+
 ```typescript
 // apps/api/src/services/cfm-compliance.ts
 export class CFMComplianceService {
@@ -732,6 +738,7 @@ export class CFMComplianceService {
 ## 📊 Compliance Reporting & Monitoring
 
 ### Automated Compliance Monitoring
+
 ```typescript
 // apps/api/src/services/compliance-monitoring.ts
 export class ComplianceMonitoringService {

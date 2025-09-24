@@ -5,7 +5,7 @@ tags = ["archon", "mcp", "devops", "pipeline", "automation", "kanban", "orchestr
 related = [
   "../../docs/agents/AGENTS.md",
   "../../docs/architecture/source-tree.md",
-  "../../AGENTS.md"
+  "../../AGENTS.md",
 ]
 
 [mission]
@@ -20,7 +20,7 @@ expected = [
   "Todas as implementações revisadas",
   "Todos os erros corrigidos",
   "Tasks movidas para coluna 'done'",
-  "Relatório de execução completo"
+  "Relatório de execução completo",
 ]
 
 [execution_sequence]
@@ -28,7 +28,7 @@ steps = [
   "Use mcp_archon_find_projects para localizar o projeto pelo ID",
   "Use mcp_archon_find_tasks para listar TODAS as tasks do projeto",
   "Analise dependências e ordem de execução",
-  "Crie plano de execução detalhado"
+  "Crie plano de execução detalhado",
 ]
 
 [task_execution]
@@ -68,7 +68,7 @@ mandatory = [
   "NUNCA mover task para 'done' com erros",
   "SEMPRE corrigir TODOS os erros encontrados",
   "SEMPRE validar implementação antes de finalizar",
-  "SEMPRE usar ferramentas MCP adequadas"
+  "SEMPRE usar ferramentas MCP adequadas",
 ]
 
 [mcp_tools]
@@ -76,7 +76,7 @@ primary = [
   "archon: Gerenciamento de tasks e projetos",
   "serena: Análise e manipulação de código",
   "desktop-commander: Operações de arquivo e sistema",
-  "sequential-thinking: Análise cognitiva de problemas complexos"
+  "sequential-thinking: Análise cognitiva de problemas complexos",
 ]
 
 [quality_checklist]
@@ -84,7 +84,7 @@ pre_execution = [
   "ID do projeto Archon recebido e validado",
   "Todas as tasks do projeto listadas",
   "Dependências entre tasks mapeadas",
-  "Plano de execução definido"
+  "Plano de execução definido",
 ]
 
 during_execution = [
@@ -92,7 +92,7 @@ during_execution = [
   "Cada implementação revisada",
   "Erros detectados e corrigidos",
   "Testes executados e passando",
-  "Status das tasks atualizado no Archon"
+  "Status das tasks atualizado no Archon",
 ]
 
 post_execution = [
@@ -100,7 +100,7 @@ post_execution = [
   "Suite completa de testes passando",
   "Código revisado e validado",
   "Tasks movidas para coluna \"done\"",
-  "Relatório de execução gerado"
+  "Relatório de execução gerado",
 ]
 
 [error_handling]
@@ -130,7 +130,7 @@ validação:
 instructions = [
   "Forneça o ID do projeto Archon: \"Execute o pipeline para projeto ID: [SEU_PROJECT_ID]\"",
   "O agent executará automaticamente: Listagem de todas as tasks, Execução sequencial das tasks, Revisão e correção de erros, Validação final, Movimentação para \"done\"",
-  "Aguarde o relatório final com status de todas as tasks"
+  "Aguarde o relatório final com status de todas as tasks",
 ]
 
 [critical_rules]
@@ -139,7 +139,7 @@ never = [
   "Mover task para \"done\" com erros conhecidos",
   "Assumir sucesso sem validação explícita",
   "Parar execução antes de completar TODAS as tasks",
-  "Ignorar falhas de teste ou problemas de type-check"
+  "Ignorar falhas de teste ou problemas de type-check",
 ]
 
 always = [
@@ -148,5 +148,5 @@ always = [
   "Validar implementação antes de finalizar",
   "Usar ferramentas MCP apropriadas",
   "Gerar logs detalhados de execução",
-  "Confirmar 100% de completude antes de finalizar"
+  "Confirmar 100% de completude antes de finalizar",
 ]

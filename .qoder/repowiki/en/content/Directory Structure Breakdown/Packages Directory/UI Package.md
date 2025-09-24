@@ -1,7 +1,7 @@
 # UI Package
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [README.md](file://packages/ui/README.md)
 - [lgpd-consent-banner.tsx](file://packages/ui/src/components/healthcare/lgpd-consent-banner.tsx)
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx)
@@ -15,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Component Library Architecture](#component-library-architecture)
 3. [Theming System](#theming-system)
@@ -33,6 +34,7 @@ This documentation provides both conceptual overviews for beginners and technica
 The package follows a monorepo architecture with clear separation between generic UI components and healthcare-specific implementations. All components are designed to be app-agnostic while providing specialized variants for medical use cases. The library includes form controls with medical taxonomy support, consent management banners, theme providers with emergency mode capabilities, and accessibility utilities tailored for healthcare interfaces.
 
 **Section sources**
+
 - [README.md](file://packages/ui/README.md#L1-L23)
 
 ## Component Library Architecture
@@ -73,10 +75,12 @@ style I fill:#6f9,stroke:#333
 ```
 
 **Diagram sources **
+
 - [README.md](file://packages/ui/README.md#L1-L23)
 - [index.ts](file://packages/ui/src/index.ts#L1-L155)
 
 **Section sources**
+
 - [README.md](file://packages/ui/README.md#L1-L23)
 - [index.ts](file://packages/ui/src/index.ts#L1-L155)
 
@@ -130,10 +134,12 @@ HealthcareThemeProvider --> "documentElement" : "applies classes/styles"
 ```
 
 **Diagram sources **
+
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx#L1-L442)
 - [index.ts](file://packages/ui/src/index.ts#L1-L155)
 
 **Section sources**
+
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx#L1-L442)
 - [index.ts](file://packages/ui/src/index.ts#L1-L155)
 - [theme/index.ts](file://packages/ui/src/theme/index.ts#L1-L195)
@@ -185,9 +191,11 @@ style F fill:#69f,stroke:#333
 ```
 
 **Diagram sources **
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L1-L499)
 
 **Section sources**
+
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L1-L499)
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx#L1-L442)
 - [healthcare-form.tsx](file://packages/ui/src/components/forms/healthcare-form.tsx#L1-L482)
@@ -239,11 +247,13 @@ end
 ```
 
 **Diagram sources **
+
 - [healthcare-form.tsx](file://packages/ui/src/components/forms/healthcare-form.tsx#L1-L482)
 - [healthcare-text-field.tsx](file://packages/ui/src/components/forms/healthcare-text-field.tsx#L1-L506)
 - [healthcare-validation.ts](file://packages/ui/src/utils/healthcare-validation.ts#L1-L403)
 
 **Section sources**
+
 - [healthcare-form.tsx](file://packages/ui/src/components/forms/healthcare-form.tsx#L1-L482)
 - [healthcare-select.tsx](file://packages/ui/src/components/forms/healthcare-select.tsx#L1-L738)
 - [healthcare-text-field.tsx](file://packages/ui/src/components/forms/healthcare-text-field.tsx#L1-L506)
@@ -286,10 +296,12 @@ style O fill:#69f,stroke:#333
 ```
 
 **Diagram sources **
+
 - [lgpd-consent-banner.tsx](file://packages/ui/src/components/healthcare/lgpd-consent-banner.tsx#L1-L666)
 - [healthcare-validation.ts](file://packages/ui/src/utils/healthcare-validation.ts#L1-L403)
 
 **Section sources**
+
 - [lgpd-consent-banner.tsx](file://packages/ui/src/components/healthcare/lgpd-consent-banner.tsx#L1-L666)
 - [healthcare-validation.ts](file://packages/ui/src/utils/healthcare-validation.ts#L1-L403)
 
@@ -423,6 +435,7 @@ function EmergencyButton() {
 ```
 
 **Section sources**
+
 - [healthcare-form.tsx](file://packages/ui/src/components/forms/healthcare-form.tsx#L1-L482)
 - [healthcare-text-field.tsx](file://packages/ui/src/components/forms/healthcare-text-field.tsx#L1-L506)
 - [healthcare-select.tsx](file://packages/ui/src/components/forms/healthcare-select.tsx#L1-L738)
@@ -436,6 +449,7 @@ function EmergencyButton() {
 When integrating @neonpro/ui with existing applications, styling conflicts may occur due to CSS specificity issues. To resolve these:
 
 1. Ensure Tailwind's purge settings include the UI package paths in your `tailwind.config.ts`:
+
 ```ts
 content: [
   "./src/**/*.{js,ts,jsx,tsx}",
@@ -444,6 +458,7 @@ content: [
 ```
 
 2. Use the `!important` modifier sparingly and prefer composition over override:
+
 ```jsx
 {/* Good: Compose classes */}
 <HealthcareTextField className="max-w-md" />
@@ -468,6 +483,7 @@ Common accessibility issues and their solutions:
 For optimal performance:
 
 1. Import components directly rather than using namespace imports:
+
 ```ts
 // Good
 import { Button } from "@neonpro/ui";
@@ -479,6 +495,7 @@ import * as UI from "@neonpro/ui";
 2. Use React.memo for components that render frequently with the same props.
 
 3. Implement lazy loading for less frequently used components:
+
 ```ts
 const HeavyComponent = React.lazy(() => import("@neonpro/ui/heavy-component"));
 ```
@@ -500,6 +517,7 @@ Best practices for consistent user experience:
 6. **Test with real medical workflows**: Validate component usability with actual healthcare professionals to ensure they meet clinical workflow requirements.
 
 **Section sources**
+
 - [healthcare-validation.ts](file://packages/ui/src/utils/healthcare-validation.ts#L1-L403)
 - [accessibility.ts](file://packages/ui/src/utils/accessibility.ts#L1-L499)
 - [healthcare-theme-provider.tsx](file://packages/ui/src/components/healthcare/healthcare-theme-provider.tsx#L1-L442)

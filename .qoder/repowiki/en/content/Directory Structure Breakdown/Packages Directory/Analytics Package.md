@@ -1,7 +1,7 @@
 # Analytics Package
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [index.ts](file://packages/analytics/src/index.ts)
 - [event-collector.ts](file://packages/analytics/src/ingestion/event-collector.ts)
 - [ingestion/index.ts](file://packages/analytics/src/ingestion/index.ts)
@@ -18,6 +18,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Architecture Overview](#core-architecture-overview)
 3. [Data Ingestion Pipeline](#data-ingestion-pipeline)
@@ -40,6 +41,7 @@ For beginners, this documentation provides conceptual overviews of healthcare an
 The analytics package is structured around three main components: a high-performance ingestion pipeline that collects events from various sources, an aggregation framework that computes KPIs from collected data, and an AI analytics layer that provides predictive insights and advanced recommendations. Each component is designed with extensibility in mind, allowing healthcare organizations to customize the system to their specific needs while maintaining compliance with regulatory requirements.
 
 **Section sources**
+
 - [index.ts](file://packages/analytics/src/index.ts#L1-L216)
 
 ## Core Architecture Overview
@@ -75,6 +77,7 @@ style H fill:#9f9,stroke:#333
 ```
 
 **Diagram sources **
+
 - [index.ts](file://packages/analytics/src/index.ts#L1-L216)
 - [event-collector.ts](file://packages/analytics/src/ingestion/event-collector.ts#L1-L426)
 - [kpis.ts](file://packages/analytics/src/aggregation/kpis.ts#L1-L795)
@@ -93,6 +96,7 @@ Data transformation occurs through `TransformationRule` configurations that defi
 The ingestion pipeline also incorporates robust error handling and reliability features, including retry mechanisms with configurable backoff strategies, dead letter queues for failed events, and comprehensive audit logging. Monitoring metrics track throughput, latency, error rates, and data quality scores, providing visibility into pipeline health and performance. Webhook configurations enable real-time notifications for specific events, facilitating integration with external alerting systems and compliance monitoring tools.
 
 **Section sources**
+
 - [types/ingestion.ts](file://packages/analytics/src/types/ingestion.ts#L1-L461)
 
 ## Event Collection System
@@ -138,6 +142,7 @@ end
 ```
 
 **Diagram sources **
+
 - [event-collector.ts](file://packages/analytics/src/ingestion/event-collector.ts#L1-L426)
 - [index.ts](file://packages/analytics/src/ingestion/index.ts#L1-L23)
 
@@ -196,6 +201,7 @@ style O fill:#9f9,stroke:#333
 ```
 
 **Diagram sources **
+
 - [kpis.ts](file://packages/analytics/src/aggregation/kpis.ts#L1-L795)
 
 ## Clinical and Financial KPIs
@@ -213,6 +219,7 @@ The system includes specialized KPI implementations for common healthcare metric
 Utility functions enhance KPI analysis by providing automated risk scoring and compliance validation. The `calculateClinicalRiskScore` function analyzes multiple clinical KPIs to produce an overall risk assessment with identified critical areas and recommended interventions. Similarly, `calculateFinancialHealthScore` evaluates financial KPIs against weighted performance targets to generate a comprehensive financial health assessment with performance indicators by category.
 
 **Section sources**
+
 - [types/clinical-kpis.ts](file://packages/analytics/src/types/clinical-kpis.ts#L1-L670)
 - [types/financial-kpis.ts](file://packages/analytics/src/types/financial-kpis.ts#L1-L638)
 
@@ -287,6 +294,7 @@ PredictionResult --> FeatureImportance : "contains"
 ```
 
 **Diagram sources **
+
 - [predictive-analytics.service.ts](file://packages/analytics/src/ai-analytics/predictive-analytics.service.ts#L1-L469)
 - [interfaces.ts](file://packages/analytics/src/ml/interfaces.ts#L1-L314)
 - [stub-provider.ts](file://packages/analytics/src/ml/stub-provider.ts#L1-L358)
@@ -304,6 +312,7 @@ CFM (Conselho Federal de Medicina) compliance is integrated through professional
 Compliance validation is performed at multiple points in the data pipeline. During ingestion, validation rules check for proper consent documentation, data minimization principles, and purpose limitation. During aggregation, compliance scores are calculated based on audit trail completeness, access control enforcement, and data integrity measures. The AI analytics layer performs additional compliance checks to ensure that predictive models do not introduce bias or discrimination in patient care decisions. Comprehensive compliance reports aggregate findings from all system components, providing a unified view of organizational compliance status with detailed recommendations for improvement.
 
 **Section sources**
+
 - [index.ts](file://packages/analytics/src/index.ts#L1-L216)
 - [base-metrics.ts](file://packages/analytics/src/types/base-metrics.ts#L1-L558)
 - [clinical-kpis.ts](file://packages/analytics/src/types/clinical-kpis.ts#L1-L670)
@@ -441,6 +450,7 @@ insights.insights.forEach(insight => {
 Best practices for implementation include batching events to reduce overhead, implementing proper error handling for failed collections, monitoring queue sizes to prevent memory issues, and regularly validating data quality through the built-in assessment tools. For production deployments, ensure that audit logging is integrated with your organization's security information and event management (SIEM) system, and establish regular review processes for compliance reports and predictive insights.
 
 **Section sources**
+
 - [index.ts](file://packages/analytics/src/index.ts#L1-L216)
 - [event-collector.ts](file://packages/analytics/src/ingestion/event-collector.ts#L1-L426)
 - [kpis.ts](file://packages/analytics/src/aggregation/kpis.ts#L1-L795)
@@ -531,6 +541,7 @@ Regular monitoring and alerting are essential for maintaining system health. Tra
 When troubleshooting specific issues, consult the audit logs for detailed information about event processing and system operations. The logs capture key events like event collection, batch flushing, and error conditions, providing valuable context for diagnosing problems. For complex issues, enable verbose logging temporarily to gather more detailed information, but remember to disable it in production to avoid performance impacts and potential privacy violations.
 
 **Section sources**
+
 - [event-collector.ts](file://packages/analytics/src/ingestion/event-collector.ts#L1-L426)
 - [base-metrics.ts](file://packages/analytics/src/types/base-metrics.ts#L1-L558)
 - [kpis.ts](file://packages/analytics/src/aggregation/kpis.ts#L1-L795)

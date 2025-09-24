@@ -7,6 +7,7 @@ Bem-vindo ao manual da equipe de recepção do NeonPro Aesthetic Clinic! Este gu
 ### 📋 Seu Perfil Profissional
 
 Como membro da equipe de recepção, você é responsável por:
+
 - **Atendimento ao Cliente**: Primeira impressão e acolhimento
 - **Agendamento de Consultas**: Gestão eficiente da agenda
 - **Gestão de Cadastros**: Registro e atualização de pacientes
@@ -19,6 +20,7 @@ Como membro da equipe de recepção, você é responsável por:
 ### 🔑 Acesso e Configuração
 
 #### Configuração Inicial
+
 ```bash
 1. Acesse: https://app.neonpro.com.br/recepcao
 2. Use suas credenciais corporativas
@@ -30,6 +32,7 @@ Como membro da equipe de recepção, você é responsável por:
 ```
 
 #### Permissões e Acessos
+
 ```typescript
 interface ReceptionPermissions {
   // Agendamento
@@ -69,6 +72,7 @@ interface ReceptionPermissions {
 ### 🏢 Ambiente de Trabalho
 
 #### Organização da Recepção
+
 ```bash
 Áreas de responsabilidade:
 1. Recepção principal: Acolhimento e direcionamento
@@ -80,6 +84,7 @@ interface ReceptionPermissions {
 ```
 
 #### Equipamentos Necessários
+
 ```bash
 Estação de trabalho padrão:
 - Computador com monitor duplo
@@ -96,6 +101,7 @@ Estação de trabalho padrão:
 ### 🤝 Protocolo de Acolhimento
 
 #### Boas-Vindas Padrão
+
 ```typescript
 interface WelcomeProtocol {
   // Saudação inicial
@@ -125,6 +131,7 @@ interface WelcomeProtocol {
 ```
 
 #### Atendimento Telefônico
+
 ```bash
 Script padrão de atendimento:
 1. "NeonPro Aesthetic Clinic, [seu nome] falando! Como posso ajudar?"
@@ -142,6 +149,7 @@ Média de atendimento: 2-3 minutos por chamada
 ### 📋 Cadastro de Novos Pacientes
 
 #### Ficha de Cadastramento
+
 ```typescript
 interface PatientRegistration {
   // Informações pessoais
@@ -184,6 +192,7 @@ interface PatientRegistration {
 ```
 
 #### Processo de Cadastramento
+
 ```bash
 Etapas do cadastro:
 1. Coleta de informações básicas (5-10 min)
@@ -200,6 +209,7 @@ Etapas do cadastro:
 ### 🔄 Gestão de Espera
 
 #### Gerenciamento da Sala de Espera
+
 ```typescript
 interface WaitingRoomManagement {
   // Controle de espera
@@ -230,6 +240,7 @@ interface WaitingRoomManagement {
 ```
 
 #### Protocolos de Atrasos
+
 ```bash
 Níveis de atraso:
 - Leve (5-15 min): Informar paciente, oferecer água/café
@@ -250,6 +261,7 @@ Comunicação:
 ### 📞 Sistema de Agendamento
 
 #### Tipos de Agendamentos
+
 ```typescript
 interface AppointmentTypes {
   // Consulta inicial
@@ -291,6 +303,7 @@ interface AppointmentTypes {
 ```
 
 #### Processo de Agendamento
+
 ```bash
 Fluxo padrão de agendamento:
 1. Identificar tipo de atendimento necessário
@@ -308,6 +321,7 @@ Fluxo padrão de agendamento:
 ### 🤖 Agendamento Inteligente
 
 #### Sistema de Otimização
+
 ```typescript
 interface SmartScheduling {
   // Fatores de otimização
@@ -340,6 +354,7 @@ interface SmartScheduling {
 ```
 
 #### Confirmações e Lembretes
+
 ```bash
 Protocolo de comunicação:
 - Confirmação imediata: Email/SMS após agendamento
@@ -358,6 +373,7 @@ Métodos preferenciais:
 ### 🔄 Gestão de Alterações
 
 #### Cancelamentos e Remarcações
+
 ```typescript
 interface AppointmentChanges {
   // Política de cancelamento
@@ -387,6 +403,7 @@ interface AppointmentChanges {
 ```
 
 #### Protocolos Especiais
+
 ```bash
 Situações especiais:
 1. Paciente muito adiantado (>30 min)
@@ -410,6 +427,7 @@ Situações especiais:
 ### 💰 Pagamentos e Faturamento
 
 #### Métodos de Pagamento
+
 ```typescript
 interface PaymentMethods {
   // Cartão de crédito
@@ -453,6 +471,7 @@ interface PaymentMethods {
 ```
 
 #### Processo de Pagamento
+
 ```bash
 Fluxo de pagamento:
 1. Confirmar serviços a serem pagos
@@ -468,6 +487,7 @@ Fluxo de pagamento:
 ### 📋 Gestão de Inadimplência
 
 #### Controle de Contas a Pagar
+
 ```typescript
 interface AccountsReceivable {
   // Status de pagamento
@@ -498,6 +518,7 @@ interface AccountsReceivable {
 ```
 
 #### Protocolo de Cobrança
+
 ```bash
 Etapas de cobrança:
 1. Vencimento: Notificação automática
@@ -516,6 +537,7 @@ Comunicação sempre respeitosa e profissional
 ### 📧 Canais de Comunicação
 
 #### Sistema Multicanal
+
 ```typescript
 interface CommunicationChannels {
   // Email
@@ -555,6 +577,7 @@ interface CommunicationChannels {
 ```
 
 #### Templates de Comunicação
+
 ```bash
 Templates padrão:
 1. Confirmação de agendamento
@@ -573,6 +596,7 @@ Templates padrão:
 ### 🚨 Gestão de Emergências
 
 #### Protocolo de Emergências
+
 ```typescript
 interface EmergencyProtocol {
   // Tipos de emergência
@@ -604,6 +628,7 @@ interface EmergencyProtocol {
 ```
 
 #### Situações de Crise
+
 ```bash
 Procedimentos emergenciais:
 1. Reação adversa durante tratamento
@@ -633,6 +658,7 @@ Procedimentos emergenciais:
 ### 📋 Gestão de Documentos
 
 #### Sistema de Arquivamento
+
 ```typescript
 interface DocumentManagement {
   // Documentos físicos
@@ -662,6 +688,7 @@ interface DocumentManagement {
 ```
 
 #### Checklist Diário de Abertura/Fechamento
+
 ```bash
 Abertura da clínica (manhã):
 1. Ligar computadores e sistemas
@@ -687,6 +714,7 @@ Fechamento da clínica (noite):
 ### 📈 Relatórios Diários
 
 #### Relatório de Operações
+
 ```typescript
 interface DailyOperationsReport {
   // Métricas do dia
@@ -718,6 +746,7 @@ interface DailyOperationsReport {
 ```
 
 #### Análise de Desempenho
+
 ```bash
 Métricas de acompanhamento:
 - Taxa de ocupação: Meta >75%
@@ -734,6 +763,7 @@ Métricas de acompanhamento:
 ### 🔒 LGPD na Recepção
 
 #### Gestão de Dados
+
 ```typescript
 interface ReceptionLGPD {
   // Coleta de dados
@@ -763,6 +793,7 @@ interface ReceptionLGPD {
 ```
 
 #### Protocolos de Privacidade
+
 ```bash
 Regras de LGPD na recepção:
 1. Nunca compartilhar informações de pacientes
@@ -778,6 +809,7 @@ Regras de LGPD na recepção:
 ### 🏥 Procedimentos Clínicos Básicos
 
 #### Triagem Inicial
+
 ```typescript
 interface InitialScreening {
   // Avaliação básica
@@ -807,6 +839,7 @@ interface InitialScreening {
 ```
 
 #### Emergências Médicas
+
 ```bash
 Reconhecimento de emergências:
 - Dificuldade respiratória: Imediata
@@ -823,6 +856,7 @@ Reconhecimento de emergências:
 ### 📱 Funcionalidades Móveis
 
 #### App de Recepção
+
 ```typescript
 interface ReceptionMobileApp {
   // Agendamento móvel
@@ -860,6 +894,7 @@ interface ReceptionMobileApp {
 ```
 
 #### Segurança Móvel
+
 ```bash
 Medidas de segurança:
 - PIN de acesso: 6 dígitos
@@ -876,6 +911,7 @@ Medidas de segurança:
 ### 📚 Treinamento Contínuo
 
 #### Programa de Capacitação
+
 ```bash
 Treinamentos obrigatórios:
 1. Onboarding inicial (40h)
@@ -894,6 +930,7 @@ Atualizações trimestrais:
 ```
 
 #### Avaliação de Desempenho
+
 ```typescript
 interface PerformanceEvaluation {
   // Métricas de atendimento
@@ -927,12 +964,14 @@ interface PerformanceEvaluation {
 ### 🆘 Canais de Ajuda
 
 #### Suporte Interno
+
 - **Supervisor imediato**: Disponível no local
 - **Coordenador de recepção**: (11) 3456-7892
 - **RH e treinamento**: hr@neonpro.com.br
 - **Suporte técnico**: (11) 3456-7890
 
 #### Emergências
+
 - **Emergência médica**: (11) 9999-8889
 - **Segurança**: (11) 9999-8890
 - **TI Crítico**: (11) 9999-8891
@@ -940,12 +979,14 @@ interface PerformanceEvaluation {
 ### 📚 Recursos Adicionais
 
 #### Manuais de Referência
+
 - [Guia Rápido do Sistema](../quick-reference/system-quick-guide.md)
 - [Scripts de Atendimento](../scripts/call-scripts.md)
 - [Manual LGPD](../compliance/lgpd-reception-guide.md)
 - [Procedimentos de Emergência](../procedures/emergency-procedures.md)
 
 #### Ferramentas Úteis
+
 - Calculadora de horários
 - Gerador de confirmações
 - Sistema de pesquisa rápida

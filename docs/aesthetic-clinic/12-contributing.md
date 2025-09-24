@@ -19,10 +19,13 @@ Thank you for your interest in contributing to the NeonPro Aesthetic Clinic syst
 ## 📜 Code of Conduct
 
 ### Our Pledge
+
 We as members, contributors, and leaders pledge to make participation in our community a harassment-free experience for everyone, regardless of age, body size, visible or invisible disability, ethnicity, sex characteristics, gender identity and expression, level of experience, education, socioeconomic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
 ### Our Standards
+
 Examples of behavior that contributes to creating a positive environment include:
+
 - Using welcoming and inclusive language
 - Being respectful of differing viewpoints and experiences
 - Gracefully accepting constructive criticism
@@ -30,6 +33,7 @@ Examples of behavior that contributes to creating a positive environment include
 - Showing empathy towards other community members
 
 Examples of unacceptable behavior include:
+
 - The use of sexualized language or imagery and unwelcome sexual attention or advances
 - Trolling, insulting/derogatory comments, and personal or political attacks
 - Public or private harassment
@@ -37,14 +41,17 @@ Examples of unacceptable behavior include:
 - Other conduct which could reasonably be considered inappropriate in a professional setting
 
 ### Enforcement Responsibilities
+
 Project maintainers are responsible for clarifying and enforcing our standards of acceptable behavior and will take appropriate and fair corrective action in response to any instances of unacceptable behavior.
 
 ### Scope
+
 This Code of Conduct applies both within project spaces and in public spaces when an individual is representing the project or its community.
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 ```bash
 # Ensure you have the following installed:
 - Node.js (v18.x or v20.x)
@@ -56,6 +63,7 @@ This Code of Conduct applies both within project spaces and in public spaces whe
 ```
 
 ### First-time Setup
+
 ```bash
 # 1. Fork the repository on GitHub
 # 2. Clone your fork locally
@@ -76,6 +84,7 @@ pnpm test
 ```
 
 ### Creating Your Development Branch
+
 ```bash
 # Fetch latest changes from upstream
 git fetch upstream
@@ -93,11 +102,13 @@ git checkout -b docs/your-docs-updates upstream/main
 ## 🔄 Development Workflow
 
 ### 1. Planning
+
 - **Create an issue**: Start by creating an issue to discuss the feature or bug fix
 - **Get approval**: Wait for approval from maintainers before starting work
 - **Break down tasks**: Break down complex features into smaller, manageable tasks
 
 ### 2. Development
+
 ```bash
 # Create your feature branch
 git checkout -b feature/your-feature-name upstream/main
@@ -116,6 +127,7 @@ pnpm build
 ```
 
 ### 3. Commit Guidelines
+
 ```bash
 # Commit format: <type>(<scope>): <description>
 # 
@@ -136,6 +148,7 @@ git commit -m "test(aesthetic-clinic): add unit tests for client service"
 ```
 
 ### 4. Keeping Your Branch Updated
+
 ```bash
 # Fetch latest changes from upstream
 git fetch upstream
@@ -151,6 +164,7 @@ git rebase upstream/main
 ## 💻 Coding Standards
 
 ### TypeScript Standards
+
 ```typescript
 // Use explicit types
 interface ClientProfile {
@@ -253,6 +267,7 @@ export async function getClientHistory(
 ```
 
 ### React Component Standards
+
 ```typescript
 // Use functional components with proper typing
 interface ClientListProps {
@@ -364,6 +379,7 @@ ClientList.displayName = 'ClientList';
 ```
 
 ### API Standards
+
 ```typescript
 // Use tRPC for type-safe APIs
 export const aestheticClinicRouter = t.router({
@@ -440,6 +456,7 @@ export const CreateAestheticClientInputSchema = z.object({
 ## 🧪 Testing Requirements
 
 ### Unit Tests
+
 ```typescript
 // apps/api/src/__tests__/services/aesthetic-clinic-service.test.ts
 import { AestheticClinicService } from '../services/aesthetic-clinic-service';
@@ -525,6 +542,7 @@ describe('AestheticClinicService', () => {
 ```
 
 ### Integration Tests
+
 ```typescript
 // apps/api/src/__tests__/integration/client-workflow.test.ts
 import { TestClient } from '../__tests__/utils/test-client';
@@ -593,6 +611,7 @@ describe('Client Management Workflow', () => {
 ```
 
 ### E2E Tests
+
 ```typescript
 // apps/web/e2e/client-management.spec.ts
 import { test, expect } from '@playwright/test';
@@ -636,6 +655,7 @@ test.describe('Client Management', () => {
 ```
 
 ### Test Coverage Requirements
+
 ```bash
 # Minimum coverage requirements:
 - Overall coverage: 80%
@@ -653,6 +673,7 @@ open coverage/lcov-report/index.html
 ## 📚 Documentation
 
 ### Code Documentation
+
 ```typescript
 /**
  * Service for managing aesthetic client profiles
@@ -720,7 +741,8 @@ export class AestheticClinicService {
 ```
 
 ### README Documentation
-```markdown
+
+````markdown
 # Component README Template
 
 ## ClientList
@@ -753,16 +775,17 @@ const MyComponent = () => {
   );
 };
 ```
+````
 
 ### Props
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `clients` | `ClientProfile[]` | Yes | - | Array of client profiles |
-| `onClientSelect` | `(clientId: string) => void` | Yes | - | Function called when client is selected |
-| `loading` | `boolean` | No | `false` | Loading state |
-| `error` | `string | null` | No | `null` | Error message |
-| `className` | `string` | No | `""` | Additional CSS classes |
+| Prop             | Type                         | Required | Default | Description                             |
+| ---------------- | ---------------------------- | -------- | ------- | --------------------------------------- |
+| `clients`        | `ClientProfile[]`            | Yes      | -       | Array of client profiles                |
+| `onClientSelect` | `(clientId: string) => void` | Yes      | -       | Function called when client is selected |
+| `loading`        | `boolean`                    | No       | `false` | Loading state                           |
+| `error`          | `string                      | null`    | No      | `null`                                  |
+| `className`      | `string`                     | No       | `""`    | Additional CSS classes                  |
 
 ### Accessibility
 
@@ -777,8 +800,8 @@ const MyComponent = () => {
 - Memoizes expensive operations
 - Uses React.memo for component optimization
 - Lazy loading for images
-```
 
+````
 ## 🔄 Pull Request Process
 
 ### 1. Before Submitting
@@ -801,37 +824,44 @@ pnpm build
 
 # Check for security vulnerabilities
 pnpm audit
-```
+````
 
 ### 2. Pull Request Template
+
 ```markdown
 ## 📋 Pull Request Description
 
 ### Changes
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ### Description
+
 Brief description of what this PR does and why it's needed.
 
 ### Type of Change
+
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
 - [ ] Documentation update
 
 ### How Has This Been Tested?
+
 Please describe the tests that you ran to verify your changes.
 
 ### Test Coverage
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] E2E tests added/updated
 - [ ] Manual testing performed
 
 ### Checklist
+
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
@@ -845,11 +875,14 @@ Please describe the tests that you ran to verify your changes.
 ### Screenshots (if appropriate)
 
 ### Additional context
+
 Add any other context about the problem here.
 ```
 
 ### 3. Automated Checks
+
 Your PR will automatically run the following checks:
+
 - **Build**: Ensures the project builds successfully
 - **Tests**: Runs all unit, integration, and E2E tests
 - **Linting**: Checks code style and formatting
@@ -860,7 +893,9 @@ Your PR will automatically run the following checks:
 ## 👀 Review Process
 
 ### Review Criteria
+
 Reviewers will check for:
+
 - **Code Quality**: Clean, maintainable, and well-structured code
 - **Performance**: Efficient algorithms and proper optimization
 - **Security**: No vulnerabilities and proper data handling
@@ -870,12 +905,14 @@ Reviewers will check for:
 - **Accessibility**: WCAG compliance for UI components
 
 ### Review Levels
+
 1. **Code Review**: At least one maintainer review required
 2. **Security Review**: Required for authentication, authorization, or data handling changes
 3. **Compliance Review**: Required for healthcare-related features
 4. **Performance Review**: Required for performance-critical changes
 
 ### Review Timeline
+
 - **Simple changes**: 1-2 business days
 - **Complex features**: 3-5 business days
 - **Breaking changes**: 5-7 business days
@@ -883,11 +920,13 @@ Reviewers will check for:
 ## 📦 Release Process
 
 ### Version Management
+
 - Use [Semantic Versioning](https://semver.org/)
 - `MAJOR.MINOR.PATCH` format
 - Automated version bumping via CI/CD
 
 ### Release Checklist
+
 ```bash
 # 1. Update version
 npm version patch/minor/major
@@ -914,10 +953,12 @@ git push origin v1.0.0
 ```
 
 ### Changelog Format
+
 ```markdown
 ## [1.0.0] - 2024-01-15
 
 ### Added
+
 - Client profile management system
 - Treatment planning and scheduling
 - LGPD compliance features
@@ -925,16 +966,19 @@ git push origin v1.0.0
 - Multi-professional coordination
 
 ### Changed
+
 - Updated user authentication system
 - Improved performance optimizations
 - Enhanced security measures
 
 ### Fixed
+
 - Client data encryption issues
 - Appointment scheduling conflicts
 - Mobile responsiveness problems
 
 ### Security
+
 - Enhanced encryption for sensitive data
 - Added audit logging for compliance
 - Improved authentication security
@@ -943,13 +987,16 @@ git push origin v1.0.0
 ## 🎯 Community Guidelines
 
 ### Communication
+
 - Use GitHub issues for bug reports and feature requests
 - Use GitHub discussions for general questions
 - Join our Discord server for real-time chat
 - Follow the project on Twitter for updates
 
 ### Issue Reporting
+
 When reporting issues, please include:
+
 - **Environment**: OS, Node.js version, browser
 - **Steps to reproduce**: Clear reproduction steps
 - **Expected behavior**: What you expected to happen
@@ -958,7 +1005,9 @@ When reporting issues, please include:
 - **Screenshots**: Screenshots if relevant
 
 ### Feature Requests
+
 When requesting features, please include:
+
 - **Problem statement**: What problem you're trying to solve
 - **Proposed solution**: How you envision the solution
 - **Use cases**: Specific use cases for the feature
@@ -967,11 +1016,13 @@ When requesting features, please include:
 ## 🏆 Recognition
 
 ### Contributor Recognition
+
 - All contributors are acknowledged in the project's README
 - Major contributors may be invited to join the core team
 - Outstanding contributions are featured in project updates
 
 ### Ways to Contribute
+
 - **Code**: Bug fixes, new features, performance improvements
 - **Documentation**: Guides, API docs, examples
 - **Testing**: Unit tests, integration tests, E2E tests

@@ -15,6 +15,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Core Components](#core-components)
@@ -56,6 +57,7 @@ N --> Q[ANVISA Compliance Engine]
 ```
 
 **Diagram sources**
+
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/src/agent.py)
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py)
@@ -63,6 +65,7 @@ N --> Q[ANVISA Compliance Engine]
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts)
 
 **Section sources**
+
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/src/agent.py)
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py)
 
@@ -75,6 +78,7 @@ The system employs a modular architecture with distinct components for database 
 Key architectural patterns include separation of concerns between data retrieval and AI processing, asynchronous operations for improved responsiveness, and comprehensive logging for audit and compliance purposes.
 
 **Section sources**
+
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/src/agent.py)
 - [config.py](file://apps/api/agents/ag-ui-rag-agent/src/config.py)
 
@@ -107,10 +111,12 @@ AIAgent-->>HealthcareProfessional : Return ranked recommendations
 ```
 
 **Diagram sources**
+
 - [ai-clinical-decision-support.ts](file://packages/core-services/src/services/ai-clinical-decision-support.ts)
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py)
 
 **Section sources**
+
 - [ai-clinical-decision-support.ts](file://packages/core-services/src/services/ai-clinical-decision-support.ts)
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py)
 
@@ -123,6 +129,7 @@ The healthcare retriever component accesses multiple data sources to build a com
 Patient assessment extends beyond simple contraindication checking to include risk stratification and outcome prediction. The system calculates clinical risk scores based on various KPIs and provides insights into potential treatment outcomes, helping healthcare professionals make more informed decisions.
 
 **Section sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py)
 - [clinical-kpis.ts](file://packages/analytics/src/types/clinical-kpis.ts)
 
@@ -149,10 +156,12 @@ style I fill:#bbf,stroke:#333
 ```
 
 **Diagram sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py)
 
 **Section sources**
+
 - [retriever.py](file://apps/api/agents/ag-ui-rag-agent/src/retriever.py)
 - [vector_store.py](file://apps/api/agents/ag-ui-rag-agent/src/vector_store.py)
 
@@ -165,6 +174,7 @@ The scheduling logic considers factors such as required consultation time based 
 The integration between treatment planning and scheduling ensures continuity of care. When a treatment plan is approved, the system can automatically propose an optimized schedule that aligns with the recommended treatment timeline, considers the patient's availability preferences, and accounts for necessary recovery periods between procedures.
 
 **Section sources**
+
 - [aesthetic-rag-service.ts](file://apps/api/src/services/agui-protocol/aesthetic-rag-service.ts)
 - [ai-appointment-scheduling-service.test.ts](file://apps/api/src/__tests__/services/ai-scheduling/ai-appointment-scheduling-service.test.ts)
 
@@ -196,10 +206,12 @@ FallbackResponse --> ReturningResponse : Send fallback
 ```
 
 **Diagram sources**
+
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/src/agent.py)
 - [integration-example.ts](file://apps/api/src/services/circuit-breaker/integration-example.ts)
 
 **Section sources**
+
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/src/agent.py)
 - [integration-example.ts](file://apps/api/src/services/circuit-breaker/integration-example.ts)
 
@@ -212,6 +224,7 @@ Feedback mechanisms allow users to rate the quality and accuracy of AI responses
 Critical decisions, particularly those involving diagnosis or treatment planning, trigger additional validation steps. The system may require secondary review by another professional or prompt for confirmation of key assumptions before proceeding. This multi-layered validation approach balances efficiency with appropriate caution in medical decision-making.
 
 **Section sources**
+
 - [agent_service.py](file://apps/ai-agent/services/agent_service.py)
 - [agent.py](file://apps/api/agents/ag-ui-rag-agent/src/agent.py)
 
@@ -284,11 +297,13 @@ COMPLIANCE_REPORT }o--|| AUDIT_LOG : "generated from"
 ```
 
 **Diagram sources**
+
 - [database.py](file://apps/api/agents/ag-ui-rag-agent/src/database.py)
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts)
 - [agent.ts](file://apps/api/src/trpc/routers/agent.ts)
 
 **Section sources**
+
 - [cfm-compliance.ts](file://apps/api/src/services/cfm-compliance.ts)
 - [agent.ts](file://apps/api/src/trpc/routers/agent.ts)
 - [database.py](file://apps/api/agents/ag-ui-rag-agent/src/database.py)

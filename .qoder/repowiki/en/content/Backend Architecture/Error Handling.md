@@ -1,7 +1,7 @@
 # Error Handling
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts)
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts)
 - [healthcare-errors.ts](file://packages/utils/src/healthcare-errors.ts)
@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Centralized Error Handling Mechanism](#centralized-error-handling-mechanism)
 3. [Error Type Hierarchy](#error-type-hierarchy)
@@ -22,9 +23,11 @@
 10. [createHealthcareError Utility](#createhealthcareerror-utility)
 
 ## Introduction
+
 The neonpro backend implements a comprehensive error handling strategy designed specifically for healthcare applications with strict compliance requirements. The system features centralized error handling through middleware, a hierarchical error type system, standardized response formats, and robust logging and monitoring integration. This documentation details the implementation and usage of these components to ensure consistent, secure, and compliant error handling across the application.
 
 ## Centralized Error Handling Mechanism
+
 The neonpro backend employs a centralized error handling mechanism using middleware to catch unhandled exceptions throughout the application. The primary component is the `httpErrorHandlingMiddleware` function defined in `http-error-handling.ts`, which serves as the main error handler for API requests. This middleware wraps all route handlers in a try-catch block, ensuring that any unhandled exceptions are caught and processed consistently.
 
 The middleware captures comprehensive context information including request path, method, user agent, IP address, and request ID, which is included in error logs for debugging purposes. It distinguishes between different types of errors such as HTTP exceptions from the Hono framework, validation errors, database errors, authentication/authorization errors, and network/timeout errors, handling each appropriately.
@@ -57,17 +60,21 @@ Q --> R[Client Response]
 ```
 
 **Diagram sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L7-L46)
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L7-L46)
 
 ## Error Type Hierarchy
+
 The error handling system implements a comprehensive hierarchy of error types tailored to healthcare applications. The base class is `HealthcareError` defined in `healthcare-errors.ts`, which extends JavaScript's native Error class with healthcare-specific properties and compliance features.
 
 The error hierarchy includes specialized error classes for different domains:
+
 - `HealthcareValidationError` for validation failures
 - `HealthcareAuthenticationError` for authentication issues
 - `HealthcareAuthorizationError` for authorization problems
@@ -131,15 +138,19 @@ CRITICAL
 ```
 
 **Diagram sources**
+
 - [healthcare-errors.ts](file://packages/utils/src/healthcare-errors.ts#L47-L464)
 
 **Section sources**
+
 - [healthcare-errors.ts](file://packages/utils/src/healthcare-errors.ts#L47-L464)
 
 ## Standardized Error Response Format
+
 The error handling system enforces a standardized error response format to ensure consistency across all API endpoints. When an error occurs, the system returns a JSON response with a predictable structure that includes essential information while protecting sensitive data.
 
 The standard error response includes:
+
 - A top-level `error` object containing error details
 - Error message that is client-friendly and sanitized
 - Error code for programmatic identification
@@ -178,12 +189,15 @@ R --> S[Return JSON Response]
 ```
 
 **Diagram sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 
 ## Error Transformation and Client Exposure
+
 The error handling system transforms internal errors before exposing them to clients, ensuring that sensitive information is not leaked while still providing useful feedback. This transformation process occurs in the `httpErrorHandlingMiddleware` and involves several steps to sanitize and standardize the error representation.
 
 When an error is caught, the system first determines its type using helper functions like `isValidationError`, `isDatabaseError`, `isAuthError`, and `isNetworkError`. These functions examine the error's name, message, and other properties to classify it correctly. Based on the classification, the error is transformed into a standardized format appropriate for client consumption.
@@ -193,14 +207,17 @@ For example, database errors may contain sensitive information about the databas
 The transformation process also adds contextual information such as the request ID and timestamp, which helps with debugging and support without compromising security. This ensures that clients receive meaningful error information while protecting the system's internal details.
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 
 ## Error Scenarios and Examples
+
 The error handling system addresses various common scenarios encountered in healthcare applications. For patient creation conflicts, when attempting to create a patient with an identifier that already exists, the system throws a `PatientAlreadyExistsError` from the domain layer, which is then caught by the middleware and transformed into a standardized 409 Conflict response with an appropriate error code.
 
 For AI service timeouts, when communication with external AI services exceeds the configured timeout threshold, the system generates a network error that is classified as a service availability issue. This results in a 503 Service Unavailable response, indicating that the service is temporarily unable to process the request but may be available later.
 
 Other examples include:
+
 - Validation errors when patient data fails schema validation, resulting in a 400 Bad Request response
 - Authentication errors when invalid credentials are provided, resulting in a 401 Unauthorized response
 - Authorization errors when a user attempts to access resources they don't have permission for, resulting in a 403 Forbidden response
@@ -239,14 +256,17 @@ end
 ```
 
 **Diagram sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 - [healthcare-errors.ts](file://packages/utils/src/healthcare-errors.ts#L47-L464)
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 - [healthcare-errors.ts](file://packages/utils/src/healthcare-errors.ts#L47-L464)
 
 ## Error Logging and Monitoring Integration
+
 The error handling system integrates with monitoring systems to ensure that errors are properly logged and can be analyzed for operational improvement. When an error occurs, it is logged with comprehensive context including the error message, stack trace, request path, method, user agent, IP address, and request ID.
 
 The `logger.error` function is used to log errors at appropriate levels based on their severity. For example, validation errors are logged at the warning level since they represent client-side issues, while database errors and system errors are logged at the error level due to their impact on service availability.
@@ -256,10 +276,12 @@ The system also includes global error handlers for unhandled exceptions and unha
 Additionally, the system is designed to integrate with external monitoring services like Sentry or DataDog, though the specific integration points are currently implemented as placeholders that log warnings about missing implementations. This indicates a planned enhancement for more sophisticated error tracking and alerting.
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 - [error-tracking.ts](file://apps/api/src/middleware/error-tracking.ts#L7-L113)
 
 ## Client-Friendly Message Sanitization
+
 To protect patient privacy and comply with regulations like LGPD, the error handling system sanitizes error messages before exposing them to clients. The `sanitizeErrorMessage` function in `healthcare-errors.ts` removes personal data patterns from error messages, replacing them with redacted placeholders.
 
 The system identifies personal data using regular expressions that match common Brazilian healthcare identifiers such as CPF (individual taxpayer registry), email addresses, phone numbers, SUS card numbers, and CRM (medical registration) numbers. When these patterns are detected in an error message, they are replaced with `[REDACTED_X]` placeholders where X is an index corresponding to the pattern type.
@@ -269,13 +291,16 @@ Additionally, the `errorSanitizationMiddleware` in `error-sanitization.ts` provi
 The system also evaluates whether an error message is LGPD compliant by checking if it contains any personal data patterns. This compliance check is stored as a property on the `HealthcareError` object, allowing downstream processes to make decisions based on compliance status.
 
 **Section sources**
+
 - [healthcare-errors.ts](file://packages/utils/src/healthcare-errors.ts#L47-L464)
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L7-L146)
 
 ## HTTP Status Code Usage
+
 The error handling system uses HTTP status codes appropriately to indicate the nature of errors to clients. The system maps different error types to the most appropriate HTTP status code based on REST conventions and the specific circumstances of the error.
 
 Common mappings include:
+
 - 400 Bad Request for validation errors
 - 401 Unauthorized for authentication failures
 - 403 Forbidden for authorization failures
@@ -290,9 +315,11 @@ Common mappings include:
 The `getErrorCode` function in `http-error-handling.ts` provides a lookup table that maps HTTP status codes to standardized error codes, ensuring consistency in error reporting. This allows clients to programmatically handle different types of errors based on both the HTTP status code and the error code in the response body.
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L7-L254)
 
 ## createHealthcareError Utility
+
 The `createHealthcareError` utility function is a key component of the error handling system, providing a consistent way to generate error objects throughout the application. Defined in `healthcare-errors.ts`, this factory function creates instances of `HealthcareError` with proper defaults and healthcare-specific properties.
 
 The function accepts parameters for the error message, category, severity, and optional configuration including a custom error code, metadata, and a cause error. It returns a fully formed `HealthcareError` object with a unique ID, timestamp, and compliance flags. The function ensures that all healthcare errors have consistent structure and behavior, making them easy to work with across different parts of the application.
@@ -302,4 +329,5 @@ The utility automatically checks if the error message contains personal data pat
 This utility is used throughout the application to create errors in a standardized way, ensuring consistency in error handling and reducing the likelihood of errors being created with missing or incorrect properties.
 
 **Section sources**
+
 - [healthcare-errors.ts](file://packages/utils/src/healthcare-errors.ts#L226-L237)

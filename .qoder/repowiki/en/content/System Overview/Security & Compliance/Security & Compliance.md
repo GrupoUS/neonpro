@@ -1,7 +1,7 @@
 # Security & Compliance
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [security-middleware.ts](file://apps/api/src/middleware/security-middleware.ts)
 - [rls-policies.ts](file://apps/api/src/security/rls-policies.ts)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts)
@@ -16,6 +16,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Security Architecture Overview](#security-architecture-overview)
 3. [Authentication and Authorization](#authentication-and-authorization)
@@ -36,6 +37,7 @@ This document outlines the high-level design of the security infrastructure, det
 The security model is built on the principle of least privilege, where users and services are granted only the minimum permissions necessary to perform their functions. This approach minimizes the potential impact of compromised accounts or systems.
 
 **Section sources**
+
 - [security-middleware.ts](file://apps/api/src/middleware/security-middleware.ts#L1-L384)
 
 ## Security Architecture Overview
@@ -72,6 +74,7 @@ style DataProtection fill:#f9f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [security-middleware.ts](file://apps/api/src/middleware/security-middleware.ts#L1-L384)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L307)
 
@@ -106,10 +109,12 @@ end
 ```
 
 **Diagram sources**
+
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L307)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L712)
 
 **Section sources**
+
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L307)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L712)
 
@@ -158,10 +163,12 @@ TLSConfigManager --> EncryptionManager : "depends on"
 ```
 
 **Diagram sources**
+
 - [encryption.ts](file://packages/security/src/encryption.ts#L1-L302)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)
 
 **Section sources**
+
 - [encryption.ts](file://packages/security/src/encryption.ts#L1-L302)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)
 
@@ -190,9 +197,11 @@ style StoreLog fill:#f96,stroke:#333,color:white
 ```
 
 **Diagram sources**
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L331)
 
 **Section sources**
+
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L331)
 
 ## Compliance and Regulatory Requirements
@@ -222,9 +231,11 @@ style L fill:#ff9,stroke:#333
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L222)
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L222)
 
 ## Rate Limiting and Abuse Prevention
@@ -253,9 +264,11 @@ style I fill:#9f9,stroke:#333
 ```
 
 **Diagram sources**
+
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 
 **Section sources**
+
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 
 ## Security Headers and HTTPS Enforcement
@@ -294,10 +307,12 @@ SecurityHeadersMiddleware --> SecurityHeadersConfig : "uses"
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L1-L166)
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [https-config.ts](file://apps/api/src/config/https-config.ts#L1-L166)
 
@@ -330,9 +345,11 @@ style K fill:#9f9,stroke:#333
 ```
 
 **Diagram sources**
+
 - [rls-policies.ts](file://apps/api/src/security/rls-policies.ts#L1-L642)
 
 **Section sources**
+
 - [rls-policies.ts](file://apps/api/src/security/rls-policies.ts#L1-L642)
 
 ## Incident Response and Vulnerability Management
@@ -342,6 +359,7 @@ The neonpro platform includes comprehensive incident response and vulnerability 
 Security monitoring is implemented through continuous validation of system configurations, automated scanning for vulnerabilities, and real-time alerting for suspicious activities. The platform includes tools for security analysis and auditing that help identify potential weaknesses before they can be exploited.
 
 The incident response process follows a structured approach:
+
 1. Detection and analysis of security events
 2. Containment to prevent further damage
 3. Eradication of the root cause
@@ -351,5 +369,6 @@ The incident response process follows a structured approach:
 Vulnerability management includes regular security audits, penetration testing, and prompt patching of identified issues. The platform's modular architecture allows for rapid deployment of security fixes without disrupting service availability.
 
 **Section sources**
+
 - [security-middleware.ts](file://apps/api/src/middleware/security-middleware.ts#L1-L384)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L331)

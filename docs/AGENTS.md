@@ -21,12 +21,14 @@ llm_instructions:
 ## 🎯 FOR LLMs: MANDATORY EXECUTION RULES
 
 ### CRITICAL PRINCIPLES
+
 - **KISS**: Keep It Simple, Stupid - eliminate complexity
 - **YAGNI**: You Aren't Gonna Need It - build only what's needed NOW
 - **WORKING > PERFECT**: Focus on functionality over documentation perfection
 - **PARALLEL EXECUTION**: Execute tasks simultaneously when possible
 
 ### NAVIGATION PROTOCOL
+
 ```yaml
 LLM_NAVIGATION:
   entry_point: docs/AGENTS.md (this file)
@@ -43,12 +45,14 @@ LLM_NAVIGATION:
 ## 🚀 QUICK START FOR LLMs
 
 ### IMMEDIATE ACTIONS
+
 1. **Read control files**: Start with relevant AGENTS.md
 2. **Apply KISS/YAGNI**: Eliminate unnecessary complexity
 3. **Execute in parallel**: Use concurrent operations when possible
 4. **Focus on working**: Make system functional, not perfect
 
 ### CONTROL HIERARCHY
+
 ```
 docs/AGENTS.md (YOU ARE HERE)
 ├── architecture/AGENTS.md  ← System design & tech stack
@@ -61,6 +65,7 @@ docs/AGENTS.md (YOU ARE HERE)
 ## 🛠️ ESSENTIAL TOOLS & COMMANDS
 
 ### Development
+
 ```bash
 # Start development
 pnpm dev
@@ -76,6 +81,7 @@ pnpm type-check
 ```
 
 ### Database
+
 ```bash
 # Database migrations
 bunx prisma migrate dev
@@ -89,23 +95,25 @@ bunx prisma generate
 
 ## 🎯 TASK EXECUTION MATRIX
 
-| Task Type | Primary Control | Secondary | Tertiary |
-|-----------|----------------|-----------|----------|
-| **Add API endpoint** | `apis/AGENTS.md` | `architecture/AGENTS.md` | `testing/AGENTS.md` |
-| **UI/Component** | `architecture/AGENTS.md` | `testing/AGENTS.md` | - |
-| **Database change** | `database-schema/AGENTS.md` | `apis/AGENTS.md` | - |
-| **Bug fix** | `testing/AGENTS.md` | Relevant domain AGENTS.md | - |
-| **Feature** | `agents/AGENTS.md` | Domain-specific AGENTS.md | - |
+| Task Type            | Primary Control             | Secondary                 | Tertiary            |
+| -------------------- | --------------------------- | ------------------------- | ------------------- |
+| **Add API endpoint** | `apis/AGENTS.md`            | `architecture/AGENTS.md`  | `testing/AGENTS.md` |
+| **UI/Component**     | `architecture/AGENTS.md`    | `testing/AGENTS.md`       | -                   |
+| **Database change**  | `database-schema/AGENTS.md` | `apis/AGENTS.md`          | -                   |
+| **Bug fix**          | `testing/AGENTS.md`         | Relevant domain AGENTS.md | -                   |
+| **Feature**          | `agents/AGENTS.md`          | Domain-specific AGENTS.md | -                   |
 
 ## 📊 SIMPLIFIED FOLDER STRUCTURE
 
 ### PROTECTED (Keep Intact)
+
 - `architecture/` - System design
-- `agents/` - Development workflows  
+- `agents/` - Development workflows
 - `prd/` - Product requirements
 - `rules/` - Coding standards
 
 ### WORKING AREAS
+
 - `apis/` - API documentation
 - `testing/` - Test strategies
 - `database-schema/` - Data models
@@ -114,6 +122,7 @@ bunx prisma generate
 - `security/` - Security guidelines
 
 ### ELIMINATED
+
 - ❌ `README.md` files (use AGENTS.md instead)
 - ❌ `mistakes/` folder (consolidated to troubleshooting.md)
 - ❌ Files >800 lines (broken into essentials)
@@ -122,6 +131,7 @@ bunx prisma generate
 ## 🔗 CONTROL FILE LINKS
 
 ### Primary Controllers
+
 - **[Architecture Control](./architecture/AGENTS.md)** - System design, tech stack, source tree
 - **[API Control](./apis/AGENTS.md)** - Endpoints, contracts, specifications
 - **[Testing Control](./testing/AGENTS.md)** - Test strategies, TDD orchestration
@@ -129,6 +139,7 @@ bunx prisma generate
 - **[Agents Control](./agents/AGENTS.md)** - Development workflows, coordination
 
 ### Quick Access
+
 - **[Troubleshooting](./troubleshooting.md)** - Common issues and solutions
 - **[Coding Standards](./rules/coding-standards.md)** - Development guidelines
 - **[Operations Guide](./deployment/operations-guide.md)** - Production procedures
@@ -136,18 +147,21 @@ bunx prisma generate
 ## 📝 DOCUMENTATION PRINCIPLES
 
 ### KISS Applied
+
 - **One purpose per file**: Each document serves a single, clear purpose
 - **Essential information only**: Remove theoretical/future considerations
 - **Working examples**: Code that actually runs, not pseudocode
 - **Direct instructions**: "Do X" instead of "You might consider doing X"
 
-### YAGNI Applied  
+### YAGNI Applied
+
 - **No speculative features**: Document only what exists and is used
 - **No "might need later"**: Remove "for future use" sections
 - **Current requirements only**: Focus on immediate needs
 - **Remove unused**: Delete documentation for unused features
 
 ### File Size Management
+
 - **800 line limit**: Break larger files into focused pieces
 - **Essential content**: Remove verbose explanations
 - **Reference vs Tutorial**: Separate reference data from learning material
@@ -156,6 +170,7 @@ bunx prisma generate
 ## ⚡ PARALLEL EXECUTION GUIDE
 
 ### Operations You Can Run in Parallel
+
 ```bash
 # Multiple test suites
 pnpm test:unit & pnpm test:integration & pnpm test:e2e
@@ -170,6 +185,7 @@ pnpm build & pnpm type-check
 ```
 
 ### Operations That Must Be Sequential
+
 ```bash
 # Database operations
 pnpm db:migrate && pnpm db:seed
@@ -182,18 +198,21 @@ pnpm db:migrate && pnpm db:seed
 ## 🤖 LLM EXECUTION CHECKLIST
 
 ### Before Starting Any Task
+
 - [ ] Read relevant AGENTS.md control file
 - [ ] Apply KISS principle (simplest solution that works)
 - [ ] Check if you can execute operations in parallel
 - [ ] Focus on making system work, not perfect docs
 
 ### During Task Execution
+
 - [ ] Keep files under 800 lines
 - [ ] Eliminate redundant information
 - [ ] Use AGENTS.md for navigation, not README.md
 - [ ] Execute parallel operations when possible
 
 ### Task Completion
+
 - [ ] System functionality verified
 - [ ] Documentation updated if necessary
 - [ ] No overengineering introduced
@@ -202,12 +221,14 @@ pnpm db:migrate && pnpm db:seed
 ## 🎯 SUCCESS METRICS
 
 ### System Functionality
+
 - [ ] Application builds successfully
-- [ ] Tests pass consistently  
+- [ ] Tests pass consistently
 - [ ] Core features work in production
 - [ ] Performance meets requirements
 
 ### Documentation Quality
+
 - [ ] LLMs can navigate easily using AGENTS.md files
 - [ ] Developers find information quickly
 - [ ] No files exceed 800 lines

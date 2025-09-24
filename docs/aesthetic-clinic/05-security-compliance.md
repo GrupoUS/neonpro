@@ -7,6 +7,7 @@ The aesthetic clinic system implements a comprehensive security framework design
 ## 🏗️ Security Architecture
 
 ### Security Layers
+
 ```
 Application Layer: Authentication, Authorization, Input Validation
 Service Layer: Business Logic Security, Data Validation
@@ -18,6 +19,7 @@ Compliance Layer: LGPD, ANVISA, CFM, Audit Trails
 ## 🔐 Authentication & Authorization
 
 ### Multi-Factor Authentication (MFA)
+
 ```typescript
 // apps/api/src/security/enhanced-session-manager.ts
 interface SecurityConfig {
@@ -94,6 +96,7 @@ export class EnhancedSessionManager {
 ```
 
 ### Role-Based Access Control (RBAC)
+
 ```typescript
 // apps/api/src/services/permissions/agent-permissions.ts
 interface Permission {
@@ -216,6 +219,7 @@ export class PermissionManager {
 ## 🛡️ Data Protection
 
 ### Encryption Strategy
+
 ```typescript
 // apps/api/src/services/data-masking-service.ts
 interface EncryptionConfig {
@@ -330,6 +334,7 @@ export class DataProtectionService {
 ```
 
 ### Database Security
+
 ```typescript
 // Row Level Security Implementation
 CREATE POLICY client_data_isolation ON AestheticClientProfile
@@ -389,6 +394,7 @@ CREATE TRIGGER encrypt_client_data
 ## 🔍 Input Validation & Sanitization
 
 ### SQL Injection Prevention
+
 ```typescript
 // apps/api/src/security/sql-sanitizer.ts
 export class SQLSanitizer {
@@ -458,6 +464,7 @@ export class SQLSanitizer {
 ```
 
 ### XSS Prevention
+
 ```typescript
 // apps/api/src/security/xss-protection.ts
 export class XSSProtection {
@@ -527,6 +534,7 @@ export class XSSProtection {
 ## 📝 Audit Trail & Logging
 
 ### Comprehensive Audit System
+
 ```typescript
 // apps/api/src/services/audit/agent-audit-service.ts
 interface AuditEvent {
@@ -686,6 +694,7 @@ export class AuditService {
 ## 🔐 API Security
 
 ### Request Security Middleware
+
 ```typescript
 // apps/api/src/middleware/security-middleware.ts
 export class SecurityMiddleware {
@@ -855,6 +864,7 @@ export class SecurityMiddleware {
 ## 🛡️ Security Monitoring & Alerting
 
 ### Real-time Security Monitoring
+
 ```typescript
 // apps/api/src/services/security-monitoring-dashboard.ts
 export class SecurityMonitoringService {

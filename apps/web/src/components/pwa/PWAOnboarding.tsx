@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { PWABottomSheet, PWATouchAction } from "./PWAMobileComponents";
 import { usePWA } from "@/hooks/usePWA";
@@ -153,17 +152,17 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
           <div className="flex items-center space-x-4">
             <div className="flex-shrink-0">
               <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                {steps[currentStep].icon && (
+                {steps[currentStep]?.icon && (
                   React.createElement(steps[currentStep].icon, { className: "h-6 w-6 text-blue-600" })
                 )}
               </div>
             </div>
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-gray-900">
-                {steps[currentStep].title}
+                {steps[currentStep]?.title || ''}
               </h3>
               <p className="text-sm text-gray-600 mt-1">
-                {steps[currentStep].description}
+                {steps[currentStep]?.description || ''}
               </p>
             </div>
           </div>
@@ -183,7 +182,7 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
 
           {/* Action Buttons */}
           <div className="space-y-3">
-            {steps[currentStep].action && (
+            {steps[currentStep]?.action && (
               <PWATouchAction
                 onClick={steps[currentStep].action.onClick}
                 className={steps[currentStep].action.primary ? "w-full" : "w-full"}

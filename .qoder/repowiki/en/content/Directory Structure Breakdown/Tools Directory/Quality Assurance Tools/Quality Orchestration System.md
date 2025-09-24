@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Orchestrator-Core Architecture](#orchestrator-core-architecture)
 3. [Workflow Engine Design](#workflow-engine-design)
@@ -31,6 +32,7 @@ The Quality Orchestration System is a comprehensive framework designed to coordi
 This document provides an in-depth analysis of the orchestrator-core and workflow-engine modules, explaining their architecture, functionality, and integration with CI/CD pipelines. It also covers how the system handles failure scenarios, particularly in healthcare compliance validation, and addresses common issues such as race conditions in parallel execution through proper state management. The content is structured to be accessible to beginners while offering sufficient technical depth for experienced developers looking to extend the orchestration workflow for new quality dimensions.
 
 **Section sources**
+
 - [README.md](file://tools/orchestration/README.md#L1-L223)
 
 ## Orchestrator-Core Architecture
@@ -78,10 +80,12 @@ TDDOrchestrator --> TDDAgentRegistry : "uses"
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L488)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L475)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L488)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L475)
 
@@ -116,10 +120,12 @@ WorkflowEngine --> SecurityCriticalWorkflow : "uses"
 ```
 
 **Diagram sources**
+
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L1-L78)
 - [security-critical.ts](file://tools/orchestration/src/workflows/security-critical.ts#L1-L42)
 
 **Section sources**
+
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L1-L78)
 - [security-critical.ts](file://tools/orchestration/src/workflows/security-critical.ts#L1-L42)
 
@@ -152,10 +158,12 @@ Orchestrator->>Orchestrator : Aggregate results and generate report
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L488)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L475)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L488)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L475)
 
@@ -186,9 +194,11 @@ Reporting --> |Include Metrics| IncludeMetrics["Include Quality, Compliance, and
 ```
 
 **Diagram sources**
+
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L1-L202)
 
 **Section sources**
+
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L1-L202)
 
 ## Healthcare Compliance Validation
@@ -218,10 +228,12 @@ Orchestrator->>Orchestrator : Aggregate results and generate compliance report
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L488)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L1-L202)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L1-L488)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L1-L202)
 
@@ -248,10 +260,12 @@ H --> B
 ```
 
 **Diagram sources**
+
 - [orchestration-system.ts](file://tools/orchestration/src/orchestration-system.ts#L1-L193)
 - [utils.ts](file://tools/orchestration/src/utils.ts#L1-L107)
 
 **Section sources**
+
 - [orchestration-system.ts](file://tools/orchestration/src/orchestration-system.ts#L1-L193)
 - [utils.ts](file://tools/orchestration/src/utils.ts#L1-L107)
 
@@ -289,10 +303,12 @@ QUALITY_GATE ||--o{ MONITORING_CONFIG : "applies_to"
 ```
 
 **Diagram sources**
+
 - [types.ts](file://tools/orchestration/src/types.ts#L1-L231)
 - [config.ts](file://tools/orchestration/src/config.ts#L1-L99)
 
 **Section sources**
+
 - [types.ts](file://tools/orchestration/src/types.ts#L1-L231)
 - [config.ts](file://tools/orchestration/src/config.ts#L1-L99)
 
@@ -326,10 +342,12 @@ Release3 --> End
 ```
 
 **Diagram sources**
+
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L1-L78)
 - [result-aggregator.ts](file://tools/orchestration/src/result-aggregator.ts#L1-L514)
 
 **Section sources**
+
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L1-L78)
 - [result-aggregator.ts](file://tools/orchestration/src/result-aggregator.ts#L1-L514)
 
@@ -387,12 +405,14 @@ CustomMonitoringConfig --> MonitoringSystem : "configures"
 ```
 
 **Diagram sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L475)
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L1-L78)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L1-L202)
 - [types.ts](file://tools/orchestration/src/types.ts#L1-L231)
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L1-L475)
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L1-L78)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L1-L202)

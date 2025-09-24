@@ -2,11 +2,8 @@ import { Context, Next } from 'hono';
 import {
   getSecurityHeaders,
   isSafeHeaderValue,
-  // isSafeRedirectUrl,
   RateLimiter,
-  // validateAndSanitizeInput,
-  // validatePassword,
-} from '../types/guards';
+} from '@neonpro/types/guards';
 
 // Security configuration
 const SECURITY_CONFIG = {

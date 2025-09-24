@@ -6,6 +6,9 @@
 // Core database clients - factory functions
 export { createClient, createServiceClient } from "./client";
 
+// Prisma client
+export { prisma } from "./client";
+
 // Database types
 export type { Database } from "./types/supabase-generated";
 export type { SupabaseClient } from "./client";

@@ -7,6 +7,7 @@ The aesthetic clinic system implements a multi-layered performance optimization 
 ## 🏗️ Performance Architecture
 
 ### Optimization Layers
+
 ```
 Frontend: Lazy Loading, Code Splitting, Caching, Optimized Rendering
 API: Response Compression, Query Optimization, Rate Limiting, Caching
@@ -17,6 +18,7 @@ Infrastructure: Load Balancing, Auto-scaling, CDN, Monitoring
 ## 🚀 Frontend Performance Optimization
 
 ### Code Splitting & Lazy Loading
+
 ```typescript
 // apps/web/src/router/index.tsx
 import { createRouter, createRoute } from '@tanstack/react-router';
@@ -92,6 +94,7 @@ export const router = createRouter({
 ```
 
 ### Component Optimization
+
 ```typescript
 // apps/web/src/components/shared/optimized-components.tsx
 import React, { memo, useMemo, useCallback, useState } from 'react';
@@ -269,6 +272,7 @@ ClientListItem.displayName = 'ClientListItem';
 ```
 
 ### Image Optimization
+
 ```typescript
 // apps/web/src/components/shared/optimized-image.tsx
 import React, { useState, useRef, useEffect } from 'react';
@@ -369,6 +373,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 ## 🚀 API Performance Optimization
 
 ### Response Compression & Caching
+
 ```typescript
 // apps/api/src/middleware/compression-middleware.ts
 import compression from 'compression';
@@ -515,6 +520,7 @@ export class CacheService {
 ```
 
 ### Query Optimization
+
 ```typescript
 // apps/api/src/services/database/query-optimizer-service.ts
 export class QueryOptimizerService {
@@ -683,6 +689,7 @@ export class QueryOptimizerService {
 ## 🗄️ Database Performance Optimization
 
 ### Connection Pooling
+
 ```typescript
 // apps/api/src/services/connection-pool-manager.ts
 export class ConnectionPoolManager {
@@ -870,6 +877,7 @@ export class ConnectionPoolManager {
 ```
 
 ### Query Caching
+
 ```typescript
 // apps/api/src/services/cache/enhanced-query-cache.ts
 export class EnhancedQueryCache {
@@ -1007,6 +1015,7 @@ export class EnhancedQueryCache {
 ## 📊 Performance Monitoring
 
 ### Real-time Performance Monitoring
+
 ```typescript
 // apps/api/src/services/monitoring-service.ts
 export class PerformanceMonitoringService {

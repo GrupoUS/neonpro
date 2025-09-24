@@ -1,7 +1,7 @@
 # Input Sanitization
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [sql-sanitizer.ts](file://apps/api/src/security/sql-sanitizer.ts)
 - [sensitive-field-analyzer.ts](file://apps/api/src/services/sensitive-field-analyzer.ts)
 - [security-middleware.ts](file://apps/api/src/middleware/security-middleware.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [SQL Injection Prevention](#sql-injection-prevention)
 3. [ORM and Prisma Protections](#orm-and-prisma-protections)
@@ -24,6 +25,7 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The NeonPro platform implements a comprehensive input sanitization framework to protect against various security threats, particularly injection attacks and data exposure risks. The system employs multiple layers of defense including SQL sanitization, ORM protections, content filtering, and sensitive data analysis. This document details the implementation of these security measures across the codebase, focusing on how user inputs are validated and sanitized at various entry points.
 
 ## SQL Injection Prevention
@@ -57,9 +59,11 @@ AuditOperation --> AllowOperation["Execute Sanitized Query"]
 ```
 
 **Diagram sources**
+
 - [sql-sanitizer.ts](file://apps/api/src/security/sql-sanitizer.ts#L1-L512)
 
 **Section sources**
+
 - [sql-sanitizer.ts](file://apps/api/src/security/sql-sanitizer.ts#L1-L512)
 
 ## ORM and Prisma Protections
@@ -74,6 +78,7 @@ The application leverages Prisma as its ORM layer, providing inherent protection
 The integration between the SQL sanitizer and Prisma creates a defense-in-depth strategy where even if lower-level protections were bypassed, the ORM layer provides an additional barrier against injection attacks. All database operations flow through middleware that applies both sanitization rules and Prisma's built-in security features.
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L1-L100)
 - [sql-sanitizer.ts](file://apps/api/src/security/sql-sanitizer.ts#L1-L512)
 
@@ -89,6 +94,7 @@ Cross-site scripting (XSS) prevention is implemented through a combination of in
 The system also implements Content Security Policy (CSP) headers through security middleware to mitigate the impact of any potential XSS vulnerabilities by restricting the sources from which scripts can be loaded.
 
 **Section sources**
+
 - [healthcare-validation-schemas.ts](file://apps/api/src/schemas/healthcare-validation-schemas.ts#L1-L200)
 - [security-middleware.ts](file://apps/api/src/middleware/security-middleware.ts#L1-L150)
 
@@ -105,6 +111,7 @@ NeonPro employs comprehensive data validation at multiple levels to ensure input
 Validation occurs at the request ingress point through middleware, ensuring that invalid data is rejected before reaching business logic layers. Error responses provide generic messages to avoid information leakage while detailed validation results are logged securely for diagnostic purposes.
 
 **Section sources**
+
 - [healthcare-validation-schemas.ts](file://apps/api/src/schemas/healthcare-validation-schemas.ts#L1-L200)
 - [validators](file://packages/validators/src/index.ts#L1-L50)
 
@@ -167,9 +174,11 @@ ExposureAnalysisResult --> SensitiveFieldClassification : "references"
 ```
 
 **Diagram sources**
+
 - [sensitive-field-analyzer.ts](file://apps/api/src/services/sensitive-field-analyzer.ts#L1-L595)
 
 **Section sources**
+
 - [sensitive-field-analyzer.ts](file://apps/api/src/services/sensitive-field-analyzer.ts#L1-L595)
 
 ## File Upload Security
@@ -206,10 +215,12 @@ LogAudit --> ReturnSuccess["Return Success Response"]
 ```
 
 **Diagram sources**
+
 - [aesthetic-clinic-middleware.ts](file://apps/api/src/middleware/aesthetic-clinic-middleware.ts#L266-L318)
 - [documents.upload.test.ts](file://apps/api/src/routes/patients/__tests__/documents.upload.test.ts#L42-L126)
 
 **Section sources**
+
 - [aesthetic-clinic-middleware.ts](file://apps/api/src/middleware/aesthetic-clinic-middleware.ts#L266-L318)
 - [documents.upload.test.ts](file://apps/api/src/routes/patients/__tests__/documents.upload.test.ts#L42-L126)
 
@@ -223,6 +234,7 @@ The platform implements secure logging practices to balance diagnostic needs wit
 - **Minimal logging**: Error messages provide generic information to users while detailed diagnostics are restricted to authorized personnel
 
 The logging framework distinguishes between different log types:
+
 - **Application logs**: General operational information with sensitive data redacted
 - **Security logs**: Authentication events, access control decisions, and security policy violations
 - **Audit logs**: Regulatory-compliant records of data access and modifications with immutable storage
@@ -230,9 +242,11 @@ The logging framework distinguishes between different log types:
 This layered approach ensures that troubleshooting information is available to developers while protecting patient privacy and complying with healthcare regulations.
 
 **Section sources**
+
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L1-L50)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L80)
 - [medical-image-protection-service.ts](file://apps/api/src/security/medical-image-protection-service.ts#L219-L269)
 
 ## Conclusion
+
 NeonPro implements a comprehensive, multi-layered approach to input sanitization that effectively mitigates injection attacks and protects sensitive healthcare data. The system combines proactive prevention through SQL sanitization and ORM protections with reactive monitoring via sensitive field analysis and secure logging. By enforcing strict validation rules, implementing defense-in-depth strategies, and maintaining regulatory compliance, the platform ensures the security and privacy of user data while providing robust protection against common web application vulnerabilities.

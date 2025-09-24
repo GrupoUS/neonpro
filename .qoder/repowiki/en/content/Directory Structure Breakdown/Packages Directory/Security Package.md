@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Security Components](#core-security-components)
 3. [Data Anonymization Framework](#data-anonymization-framework)
@@ -31,6 +32,7 @@ The security infrastructure is built around three core pillars: data protection 
 This documentation serves both beginners seeking to understand healthcare data privacy principles and experienced developers looking for detailed technical information about cryptographic implementations, secure configuration patterns, and compliance validation mechanisms.
 
 **Section sources**
+
 - [anonymization.ts](file://packages/security/src/anonymization.ts)
 - [encryption.ts](file://packages/security/src/encryption.ts)
 - [audit/logger.ts](file://packages/security/src/audit/logger.ts)
@@ -48,6 +50,7 @@ These components are designed to work independently but can be integrated seamle
 Each component follows the principle of least privilege and defense in depth, ensuring that multiple layers of protection exist for sensitive healthcare data. They are implemented as reusable services that can be incorporated into various parts of the application, from API endpoints to background processing jobs.
 
 **Section sources**
+
 - [anonymization.ts](file://packages/security/src/anonymization.ts)
 - [encryption.ts](file://packages/security/src/encryption.ts)
 - [audit/logger.ts](file://packages/security/src/audit/logger.ts)
@@ -74,6 +77,7 @@ E --> N[Suppress Sensitive Fields]
 ```
 
 The framework provides specific functions for handling common Brazilian identifiers:
+
 - CPF (Cadastro de Pessoas Físicas): Masked using configurable visible characters at start/end
 - CNPJ (Cadastro Nacional da Pessoa Jurídica): Similar masking pattern with corporate format preservation
 - Phone numbers: Country code and area code partially preserved
@@ -82,9 +86,11 @@ The framework provides specific functions for handling common Brazilian identifi
 For healthcare-specific data, the framework includes specialized anonymization techniques such as age range generalization, geographic spatial generalization, and pseudonymization that allows for data linkage without revealing identities. The system also generates privacy reports that document the anonymization process for compliance verification.
 
 **Diagram sources**
+
 - [anonymization.ts](file://packages/security/src/anonymization.ts)
 
 **Section sources**
+
 - [anonymization.ts](file://packages/security/src/anonymization.ts)
 - [patient.ts](file://packages/shared/src/types/patient.ts)
 
@@ -121,6 +127,7 @@ EncryptionManager --> KeyManager : "uses"
 ```
 
 The system uses a singleton KeyManager instance to handle secure key storage and rotation. Key management features include:
+
 - Automatic key expiration and cleanup
 - Key rotation with overlapping validity periods
 - Secure storage in memory with no persistence
@@ -129,9 +136,11 @@ The system uses a singleton KeyManager instance to handle secure key storage and
 The encryption process combines the initialization vector (IV), encrypted data, and authentication tag into a single base64-encoded string for easy storage and transmission. For object-level encryption, specific fields can be targeted while leaving others in plaintext, allowing for efficient querying of non-sensitive attributes.
 
 **Diagram sources**
+
 - [encryption.ts](file://packages/security/src/encryption.ts)
 
 **Section sources**
+
 - [encryption.ts](file://packages/security/src/encryption.ts)
 
 ## Audit Logging System
@@ -161,6 +170,7 @@ AuditLogger-->>Application : Promise<void>
 ```
 
 The AuditLogger class supports multiple output destinations:
+
 - Console logging for development and debugging
 - Database storage via Supabase for permanent, queryable records
 - File logging (currently placeholder) for backup and archival
@@ -170,9 +180,11 @@ Each audit entry includes metadata such as user ID, action type, resource affect
 For AI/ML operations, specialized logging captures model usage, token counts, processing times, and confidence scores, enabling cost tracking and performance analysis while maintaining compliance.
 
 **Diagram sources**
+
 - [audit/logger.ts](file://packages/security/src/audit/logger.ts)
 
 **Section sources**
+
 - [audit/logger.ts](file://packages/security/src/audit/logger.ts)
 
 ## LGPD Compliance Middleware
@@ -194,6 +206,7 @@ I --> J[Proceed to Handler]
 ```
 
 The middleware performs several critical functions:
+
 - Determines the processing purpose based on the requested endpoint
 - Checks for valid user consent when required
 - Logs all data access for audit purposes
@@ -201,6 +214,7 @@ The middleware performs several critical functions:
 - Handles consent management requests
 
 Different processing purposes trigger varying levels of scrutiny:
+
 - Medical care and appointment scheduling require explicit consent
 - Legal obligations and vital interests may proceed without consent
 - Billing operations follow specific financial regulation requirements
@@ -208,9 +222,11 @@ Different processing purposes trigger varying levels of scrutiny:
 The system also includes specialized middleware for handling LGPD Article 18 rights, including data portability requests (allowing users to export their data) and data erasure requests (anonymizing or deleting personal information upon request).
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
 
 ## Security Integration Architecture
@@ -257,10 +273,12 @@ The integration follows a layered approach where each security component builds 
 For outgoing responses, the reverse process occurs: data is retrieved from storage, decrypted if necessary, potentially anonymized based on the requesting user's permissions, and logged for audit purposes before being sent to the client. This bidirectional protection ensures that sensitive data is safeguarded throughout its entire lifecycle.
 
 **Diagram sources**
+
 - [security-middleware.ts](file://apps/api/src/middleware/security-middleware.ts)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
 
 **Section sources**
+
 - [security-middleware.ts](file://apps/api/src/middleware/security-middleware.ts)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
 
@@ -296,6 +314,7 @@ Use the audit logging system to track and verify compliance:
 These examples demonstrate how to properly integrate security controls into application code, ensuring that sensitive healthcare data is protected according to regulatory requirements while maintaining functionality.
 
 **Section sources**
+
 - [anonymization.ts](file://packages/security/src/anonymization.ts)
 - [encryption.ts](file://packages/security/src/encryption.ts)
 - [audit/logger.ts](file://packages/security/src/audit/logger.ts)
@@ -305,6 +324,7 @@ These examples demonstrate how to properly integrate security controls into appl
 ### Key Management Challenges
 
 One common issue is improper key management, which can lead to data loss or unauthorized access. Best practices include:
+
 - Never hardcode encryption keys in source code
 - Use environment variables or secure secret management services
 - Implement regular key rotation with overlapping validity periods
@@ -313,6 +333,7 @@ One common issue is improper key management, which can lead to data loss or unau
 ### Regulatory Compliance Gaps
 
 Organizations often struggle with maintaining continuous compliance. Recommended practices:
+
 - Automate compliance checks through middleware enforcement
 - Regularly audit data processing activities against LGPD requirements
 - Maintain comprehensive documentation of data flows and processing purposes
@@ -321,6 +342,7 @@ Organizations often struggle with maintaining continuous compliance. Recommended
 ### Performance Considerations
 
 Cryptographic operations can impact application performance. Optimization strategies:
+
 - Cache decrypted data when safe to do so
 - Use selective field encryption rather than encrypting entire records
 - Implement asynchronous logging to avoid blocking request processing
@@ -329,6 +351,7 @@ Cryptographic operations can impact application performance. Optimization strate
 ### Incident Response Preparedness
 
 Ensure readiness for security incidents by:
+
 - Maintaining immutable audit logs that cannot be altered
 - Implementing real-time monitoring for suspicious activities
 - Establishing clear procedures for data breach notification
@@ -337,6 +360,7 @@ Ensure readiness for security incidents by:
 Following these best practices helps maintain a strong security posture while meeting the stringent requirements of healthcare data protection regulations.
 
 **Section sources**
+
 - [encryption.ts](file://packages/security/src/encryption.ts)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
 - [audit/logger.ts](file://packages/security/src/audit/logger.ts)

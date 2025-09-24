@@ -1,7 +1,7 @@
 # ORM Usage
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [prisma.ts](file://apps/api/src/clients/prisma.ts)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Prisma Client Configuration](#prisma-client-configuration)
 3. [Type-Safe Database Queries](#type-safe-database-queries)
@@ -33,6 +34,7 @@ The ORM layer is designed with a repository pattern that abstracts database oper
 The system incorporates healthcare-specific features including audit logging, multi-tenant Row Level Security (RLS), and LGPD-compliant data operations, making it suitable for sensitive medical data processing while maintaining high performance standards.
 
 **Section sources**
+
 - [README-PRISMA-HEALTHCARE.md](file://apps/api/src/README-PRISMA-HEALTHCARE.md#L0-L28)
 
 ## Prisma Client Configuration
@@ -55,6 +57,7 @@ const healthcareConfig: HealthcareConnectionConfig = {
 ```
 
 The client is extended with healthcare-specific methods beyond standard Prisma functionality, including:
+
 - `exportPatientData()` for LGPD-mandated data portability
 - `deletePatientData()` for right-to-erasure compliance
 - `findPatientsInClinic()` with automatic RLS enforcement
@@ -63,6 +66,7 @@ The client is extended with healthcare-specific methods beyond standard Prisma f
 Health checks are implemented via `validateConnection()` and `getHealthMetrics()`, providing real-time monitoring of database connectivity and performance metrics. The client also includes automatic audit logging middleware that captures all create, update, and delete operations.
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L136-L180)
 - [README-PRISMA-HEALTHCARE.md](file://apps/api/src/README-PRISMA-HEALTHCARE.md#L230-L295)
 
@@ -102,6 +106,7 @@ await this.prisma.patient.findMany({
 This approach ensures developers receive immediate feedback on invalid operations during development rather than encountering errors at runtime.
 
 **Section sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L15-L568)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L17-L571)
 
@@ -138,6 +143,7 @@ Transactions are used strategically for operations that modify multiple related 
 For performance-critical paths, the implementation avoids unnecessary transactions on single-model operations, reserving them for multi-entity workflows where atomicity is essential.
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L570-L620)
 
 ## Connection Pooling and Performance
@@ -145,6 +151,7 @@ For performance-critical paths, the implementation avoids unnecessary transactio
 NeonPro implements sophisticated connection pooling strategies to optimize database performance under varying workloads. The connection pool is configured with healthcare-specific parameters that balance resource utilization with responsiveness requirements.
 
 Key configuration settings include:
+
 - Maximum connections capped at 20 by default, configurable via `DATABASE_MAX_CONNECTIONS`
 - Connection timeout of 30 seconds to prevent hanging requests
 - Idle timeout of 10 minutes to efficiently recycle unused connections
@@ -153,6 +160,7 @@ Key configuration settings include:
 The system monitors connection pool metrics including active, idle, and waiting connections, providing visibility into pool utilization. Under load testing, the implementation demonstrates graceful handling of connection saturation without catastrophic failure.
 
 Performance optimization extends beyond basic pooling with features like:
+
 - Query caching with healthcare-specific TTL values
 - Batch operations for efficient bulk processing
 - Predictive scaling based on historical usage patterns
@@ -161,6 +169,7 @@ Performance optimization extends beyond basic pooling with features like:
 The connection pool integrates with edge runtime environments to minimize latency for Brazilian healthcare regions, with regional optimization ensuring response times remain below 30ms for local deployments.
 
 **Section sources**
+
 - [prisma.ts](file://apps/api/src/clients/prisma.ts#L136-L180)
 - [edge-runtime.test.ts](file://apps/api/tests/performance/edge-runtime.test.ts#L211-L282)
 
@@ -189,6 +198,7 @@ Repositories implement domain-defined interfaces (`IPatientRepository`, `IAppoin
 The pattern enables centralized management of database clients and shared utilities while providing type-safe access to data operations. Each repository encapsulates query logic specific to its entity type, promoting code reuse and consistent error handling across the application.
 
 **Section sources**
+
 - [repository-container.ts](file://packages/database/src/containers/repository-container.ts#L19-L169)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L15-L568)
 
@@ -233,6 +243,7 @@ async findByClinicId(
 Update and delete operations include appropriate error handling and return meaningful success indicators. All operations incorporate healthcare logger integration for monitoring and troubleshooting.
 
 **Section sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L15-L568)
 
 ## Complex Queries with AppointmentRepository
@@ -277,6 +288,7 @@ async findWithFilter(
 All queries include proper error handling and transformation between database and domain representations, ensuring consistent data formats throughout the application.
 
 **Section sources**
+
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L17-L571)
 
 ## Integration with Business Logic Services
@@ -284,6 +296,7 @@ All queries include proper error handling and transformation between database an
 The ORM layer integrates seamlessly with business logic services through well-defined interfaces and dependency injection. Services consume repository instances rather than directly accessing the Prisma client, maintaining separation of concerns.
 
 The integration follows these patterns:
+
 - Services receive repository instances through constructor injection
 - Business logic orchestrates multiple repository calls when needed
 - Transactions are managed at the service level for multi-step operations
@@ -313,6 +326,7 @@ class PatientService {
 This approach allows business services to focus on workflow orchestration while delegating data access details to specialized repositories, resulting in more maintainable and testable code.
 
 **Section sources**
+
 - [repository-container.ts](file://packages/database/src/containers/repository-container.ts#L19-L169)
 
 ## Error Handling Patterns
@@ -363,6 +377,7 @@ async findById(id: string): Promise<Patient | null> {
 Errors are sanitized before exposure to clients, with generic messages returned for security while detailed information is preserved in logs for debugging purposes.
 
 **Section sources**
+
 - [domain-errors.ts](file://packages/domain/src/errors/domain-errors.ts#L164-L220)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L15-L568)
 
@@ -373,6 +388,7 @@ The NeonPro platform employs several query optimization techniques to ensure eff
 Key optimization strategies include:
 
 **Selective Field Projection**: Using precise select statements instead of retrieving entire records:
+
 ```typescript
 .select({
   id: true,
@@ -383,6 +399,7 @@ Key optimization strategies include:
 ```
 
 **Proper Pagination**: Implementing both offset-based and cursor-based pagination to handle large datasets efficiently:
+
 ```typescript
 if (options?.limit) query = query.limit(options.limit);
 if (options?.offset) query = query.range(/* ... */);
@@ -391,6 +408,7 @@ if (options?.offset) query = query.range(/* ... */);
 **Index-Aware Filtering**: Structuring queries to leverage database indexes, particularly on commonly filtered fields like clinicId, status, and date ranges.
 
 **Batch Operations**: Processing multiple records in single operations when possible to reduce round trips:
+
 ```typescript
 await tx.appointment.deleteMany({ where: { patientId } });
 ```
@@ -400,6 +418,7 @@ await tx.appointment.deleteMany({ where: { patientId } });
 The system also includes tools for identifying suboptimal queries, such as detecting potential N+1 patterns and recommending JOIN usage or batch queries. Performance monitoring tracks slow queries and provides metrics for ongoing optimization efforts.
 
 **Section sources**
+
 - [query-optimizer.ts](file://apps/api/src/utils/query-optimizer.ts#L170-L209)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L15-L568)
 
@@ -428,6 +447,7 @@ The NeonPro platform follows several best practices for writing efficient, maint
 These practices ensure that the data access layer remains performant, maintainable, and aligned with the overall architecture of the healthcare platform.
 
 **Section sources**
+
 - [README-PRISMA-HEALTHCARE.md](file://apps/api/src/README-PRISMA-HEALTHCARE.md#L0-L341)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L15-L568)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts#L17-L571)

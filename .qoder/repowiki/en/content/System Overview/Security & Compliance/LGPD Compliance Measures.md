@@ -1,7 +1,7 @@
 # LGPD Compliance Measures
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
 - [lgpd.ts](file://apps/api/src/types/lgpd.ts)
 - [lgpd.ts](file://packages/utils/src/lgpd.ts)
@@ -16,6 +16,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [LGPD Middleware Implementation](#lgpd-middleware-implementation)
 3. [Consent Lifecycle Management](#consent-lifecycle-management)
@@ -28,6 +29,7 @@
 10. [Technical Implementation of LGPD Principles](#technical-implementation-of-lgpd-principles)
 
 ## Introduction
+
 The neonpro healthcare platform implements comprehensive compliance measures with Brazil's General Data Protection Law (LGPD). This document details the technical architecture and implementation strategies for handling data subject rights, managing consent lifecycles, and enforcing personal data processing restrictions. The system integrates lgpd-middleware with consent repositories and audit services to ensure regulatory compliance across all patient interactions. Domain models for consent records, data anonymization workflows, and retention policies are implemented throughout the platform, with specific controls for cross-border data transfers and sensitive health information. Integration points with patient registration, appointment scheduling, and data export features ensure that LGPD requirements are met at every touchpoint in the patient journey.
 
 ## LGPD Middleware Implementation
@@ -60,9 +62,11 @@ end
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 
 ## Consent Lifecycle Management
@@ -103,10 +107,12 @@ ConsentRecord --> ConsentService : "returned"
 ```
 
 **Diagram sources**
+
 - [consent-repository.ts](file://packages/domain/src/repositories/consent-repository.ts#L1-L107)
 - [consent-service.ts](file://packages/domain/src/services/consent-service.ts#L1-L153)
 
 **Section sources**
+
 - [consent-repository.ts](file://packages/domain/src/repositories/consent-repository.ts#L1-L107)
 - [consent-service.ts](file://packages/domain/src/services/consent-service.ts#L1-L153)
 - [consent-service.ts](file://packages/database/src/services/consent-service.ts#L1-L161)
@@ -137,10 +143,12 @@ style MarketingData fill:#f9f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts#L211-L244)
 - [lgpd-data-retention-deletion.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-retention-deletion.test.ts#L74-L106)
 
 **Section sources**
+
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts#L211-L244)
 - [data-retention-service.ts](file://apps/api/src/services/data-retention-service.ts#L28-L71)
 - [compliance-management-service.ts](file://packages/core-services/src/services/compliance-management-service.ts#L956-L1044)
@@ -175,10 +183,12 @@ API-->>Patient : Return Success Response
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 - [lgpd.ts](file://apps/api/src/types/lgpd.ts#L1-L423)
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 - [lgpd.ts](file://apps/api/src/types/lgpd.ts#L1-L423)
 
@@ -241,10 +251,12 @@ L --> I
 ```
 
 **Diagram sources**
+
 - [lgpd-sensitive-health-data-protection.test.ts](file://apps/api/src/__tests__/compliance/lgpd-sensitive-health-data-protection.test.ts#L1158-L1187)
 - [anonymization.ts](file://packages/security/src/anonymization.ts#L1-L50)
 
 **Section sources**
+
 - [lgpd-sensitive-health-data-protection.test.ts](file://apps/api/src/__tests__/compliance/lgpd-sensitive-health-data-protection.test.ts#L1158-L1187)
 - [anonymization.ts](file://packages/security/src/anonymization.ts#L1-L50)
 
@@ -270,10 +282,12 @@ ComplianceService-->>System : Complete Audit Cycle
 ```
 
 **Diagram sources**
+
 - [lgpd-audit-trail-verification.test.ts](file://apps/api/src/__tests__/compliance/lgpd-audit-trail-verification.test.ts#L558-L577)
 - [aesthetic-compliance-service.ts](file://apps/api/src/services/agui-protocol/aesthetic-compliance-service.ts#L477-L511)
 
 **Section sources**
+
 - [lgpd-audit-trail-verification.test.ts](file://apps/api/src/__tests__/compliance/lgpd-audit-trail-verification.test.ts#L558-L577)
 - [aesthetic-compliance-service.ts](file://apps/api/src/services/agui-protocol/aesthetic-compliance-service.ts#L477-L511)
 
@@ -305,6 +319,7 @@ S --> T[Audit Log Entry]
 ```
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 - [lgpd.ts](file://apps/api/src/types/lgpd.ts#L1-L423)
 - [healthcare-governance.service.ts](file://packages/governance/src/services/healthcare-governance.service.ts#L1-L50)
@@ -314,15 +329,19 @@ S --> T[Audit Log Entry]
 The platform addresses common LGPD compliance challenges through automated processes and clear user interfaces. These solutions ensure that both patients and healthcare providers can meet their obligations under Brazilian data protection law.
 
 ### Handling Data Subject Access Requests (DSARs)
+
 The system provides an automated process for handling DSARs, allowing patients to submit requests through a self-service portal. The request triggers a workflow that collects all relevant data from across the platform, applies appropriate redaction rules, and delivers the information in a standardized format.
 
 ### Implementing Right to Be Forgotten Procedures
+
 When a patient exercises their right to be forgotten, the system initiates a multi-step process that first anonymizes sensitive fields in medical records (as required by medical regulations), then permanently deletes consent records and audit logs. This balanced approach respects both patient privacy rights and legal requirements for medical record retention.
 
 ### Maintaining Compliance Documentation
+
 The platform automatically generates and stores compliance documentation, including consent records, audit trails, and data processing agreements. These documents are retained for the legally required periods and can be retrieved for regulatory inspections or internal audits.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 - [lgpd.ts](file://apps/api/src/types/lgpd.ts#L1-L423)
 - [consent-service.ts](file://packages/domain/src/services/consent-service.ts#L1-L153)
@@ -332,15 +351,19 @@ The platform automatically generates and stores compliance documentation, includ
 The platform embodies key LGPD principles through specific technical implementations that ensure accountability and transparency in data processing activities.
 
 ### Data Minimization
+
 The system implements data minimization through selective field inclusion in API responses and database queries. Only data necessary for the specific purpose is retrieved and transmitted, reducing exposure of unnecessary personal information.
 
 ### Purpose Limitation
+
 Each data processing operation is associated with a defined purpose (medical care, appointment scheduling, billing, etc.). The lgpd-middleware enforces that data collected for one purpose cannot be used for another without explicit additional consent.
 
 ### Accountability
+
 Comprehensive audit logging captures all data access and modification events, creating an immutable record of processing activities. These logs include timestamps, user identifiers, IP addresses, and user agents, providing evidence of compliance with regulatory requirements.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L685)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L50)
 - [lgpd.ts](file://packages/utils/src/lgpd.ts#L1-L448)

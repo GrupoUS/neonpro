@@ -347,8 +347,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
           <button
             onClick={() => setShowEventModal(true)}
             className="p-2 text-gray-400 hover:text-gray-600"
-            title="Novo evento"
-          >
+            title="Novo evento">
             <Plus className="h-5 w-5" />
           </button>
         </div>
@@ -546,7 +545,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                 <input
                   type="text"
                   value={newEvent.title || ''}
-                  onChange={(e) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   placeholder="Consulta, procedimento, etc."
                 />
@@ -560,7 +559,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                   <input
                     type="datetime-local"
                     value={newEvent.startTime ? newEvent.startTime.toISOString().slice(0, 16) : ''}
-                    onChange={(e) => setNewEvent(prev => ({ ...prev, startTime: new Date(e.target.value) }))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent(prev => ({ ...prev, startTime: new Date(e.target.value) }))}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>
@@ -571,7 +570,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                   <input
                     type="datetime-local"
                     value={newEvent.endTime ? newEvent.endTime.toISOString().slice(0, 16) : ''}
-                    onChange={(e) => setNewEvent(prev => ({ ...prev, endTime: new Date(e.target.value) }))}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent(prev => ({ ...prev, endTime: new Date(e.target.value) }))}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                 </div>
@@ -583,7 +582,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                 </label>
                 <select
                   value={newEvent.eventType || 'appointment'}
-                  onChange={(e) => setNewEvent(prev => ({ ...prev, eventType: e.target.value as any }))}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setNewEvent(prev => ({ ...prev, eventType: e.target.value as any }))}
                   className="w-full p-2 border border-gray-300 rounded-md"
                 >
                   <option value="appointment">Agendamento</option>
@@ -601,7 +600,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                 <input
                   type="text"
                   value={newEvent.location || ''}
-                  onChange={(e) => setNewEvent(prev => ({ ...prev, location: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEvent(prev => ({ ...prev, location: e.target.value }))}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   placeholder="Clínica, sala, endereço"
                 />
@@ -613,7 +612,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                 </label>
                 <textarea
                   value={newEvent.description || ''}
-                  onChange={(e) => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
                   className="w-full p-2 border border-gray-300 rounded-md"
                   rows={3}
                   placeholder="Observações sobre o evento"

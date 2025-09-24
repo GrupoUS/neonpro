@@ -401,9 +401,7 @@ export const PatientAssessmentSchema = z.object({
   id: z.string().uuid('ID da avaliação inválido'),
   patientId: z.string().uuid('ID do paciente inválido'),
   assessmentDate: z.date(),
-  skinType: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI'], {
-    errorMap: () => ({ message: 'Tipo de pele inválido (I-VI)' }),
-  }),
+  skinType: z.enum(['I', 'II', 'III', 'IV', 'V', 'VI']),
   fitzpatrickScale: z.number().min(1).max(6, 'Escala Fitzpatrick deve ser 1-6'),
   skinConditions: z.array(z.string()).default([]),
   medicalHistory: z.object({
@@ -411,17 +409,13 @@ export const PatientAssessmentSchema = z.object({
     medications: z.array(z.string()).default([]),
     previousTreatments: z.array(z.string()).default([]),
     chronicConditions: z.array(z.string()).default([]),
-    pregnancyStatus: z.enum(['none', 'pregnant', 'breastfeeding', 'planning'], {
-      errorMap: () => ({ message: 'Status de gravidez inválido' }),
-    }),
+    pregnancyStatus: z.enum(['none', 'pregnant', 'breastfeeding', 'planning']),
   }),
   aestheticGoals: z.array(z.string()).min(1, 'É necessário fornecer ao menos um objetivo estético'),
   budgetRange: z.object({
     min: z.number().min(0, 'Valor mínimo não pode ser negativo'),
     max: z.number().min(0, 'Valor máximo não pode ser negativo'),
-    currency: z.enum(['BRL', 'USD', 'EUR'], {
-      errorMap: () => ({ message: 'Moeda inválida' }),
-    }),
+    currency: z.enum(['BRL', 'USD', 'EUR']),
   }).refine(data => data.max >= data.min, {
     message: 'Valor máximo deve ser maior ou igual ao mínimo',
     path: ['max'],
@@ -451,7 +445,10 @@ export const TreatmentPlanSchema = z.object({
 
 export const ContraindicationAnalysisSchema = z.object({
   patientId: z.string().uuid('ID do paciente inválido'),
-  procedureIds: z.array(z.string().uuid('ID do procedimento inválido')).min(1, 'Selecione ao menos um procedimento'),
+  procedureIds: z.array(z.string().uuid('ID do procedimento inválido')).min(
+    1,
+    'Selecione ao menos um procedimento',
+  ),
 });
 
 export const TreatmentGuidelinesSchema = z.object({
@@ -469,9 +466,7 @@ export const OutcomePredictionSchema = z.object({
   procedureId: z.string().uuid('ID do procedimento inválido'),
   treatmentPlan: z.object({
     sessions: z.number().min(1, 'Número de sessões inválido'),
-    intensity: z.enum(['low', 'medium', 'high'], {
-      errorMap: () => ({ message: 'Intensidade inválida' }),
-    }),
+    intensity: z.enum(['low', 'medium', 'high']),
     frequency: z.string().min(1, 'Frequência é obrigatória'),
   }),
 });
@@ -482,16 +477,12 @@ export const ProgressMonitoringSchema = z.object({
   patientFeedback: z.object({
     satisfaction: z.number().min(0).max(100, 'Satisfação deve ser 0-100'),
     sideEffects: z.array(z.string()).default([]),
-    adherenceToAftercare: z.enum(['excellent', 'good', 'fair', 'poor'], {
-      errorMap: () => ({ message: 'Nível de adesão inválido' }),
-    }),
+    adherenceToAftercare: z.enum(['excellent', 'good', 'fair', 'poor']),
   }),
   clinicalAssessment: z.object({
     improvement: z.number().min(0).max(100, 'Melhora deve ser 0-100'),
     complications: z.array(z.string()).default([]),
-    healing: z.enum(['excellent', 'good', 'fair', 'poor'], {
-      errorMap: () => ({ message: 'Nível de cicatrização inválido' }),
-    }),
+    healing: z.enum(['excellent', 'good', 'fair', 'poor']),
   }),
 });
 

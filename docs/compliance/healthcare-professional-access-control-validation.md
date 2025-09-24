@@ -130,8 +130,8 @@ Required Validations:
 
 #### Medical Procedures Access Matrix
 
-| Procedure Type    | Medical Doctor | Aesthetic Professional | Clinic Staff   | Client        |
-| ----------------- | -------------- | ---------------------- | -------------- | ------------- |
+| Procedure Type    | Medical Doctor | Aesthetic Professional | Clinic Staff   | Client       |
+| ----------------- | -------------- | ---------------------- | -------------- | ------------ |
 | Botox Injections  | ✅ Full        | ❌ Prohibited          | ❌ No Access   | 👁️ View Only  |
 | Dermal Fillers    | ✅ Full        | ❌ Prohibited          | ❌ No Access   | 👁️ View Only  |
 | Chemical Peels    | ✅ Full        | ✅ Certified Only      | ❌ No Access   | 👁️ View Only  |
@@ -142,14 +142,14 @@ Required Validations:
 
 #### Data Access Permissions Matrix
 
-| Data Category       | Medical Doctor | Aesthetic Professional | Clinic Staff   | Client        |
-| ------------------- | -------------- | ---------------------- | -------------- | ------------- |
-| Treatment History   | ✅ Full        | 👁️ Authorized Only     | ❌ No Access   | 👁️ Own Data   |
-| Procedure Records   | ✅ Full        | 👁️ Performed Only      | ❌ No Access   | 👁️ Own Data   |
-| Payment Info        | 👁️ Summary     | ❌ No Access           | ✅ Processing  | 👁️ Own Data   |
-| Contact Details     | ✅ Full        | 📋 Business Only       | ✅ Basic       | ✅ Own Data   |
+| Data Category       | Medical Doctor | Aesthetic Professional | Clinic Staff   | Client       |
+| ------------------- | -------------- | ---------------------- | -------------- | ------------ |
+| Treatment History   | ✅ Full        | 👁️ Authorized Only      | ❌ No Access   | 👁️ Own Data   |
+| Procedure Records   | ✅ Full        | 👁️ Performed Only       | ❌ No Access   | 👁️ Own Data   |
+| Payment Info        | 👁️ Summary      | ❌ No Access           | ✅ Processing  | 👁️ Own Data   |
+| Contact Details     | ✅ Full        | 📋 Business Only       | ✅ Basic       | ✅ Own Data  |
 | Before/After Photos | ✅ Full        | ✅ Full                | ✅ Upload Only | 👁️ Own Photos |
-| Consultation Notes  | ✅ Full        | 👁️ Related Only        | ❌ No Access   | 👁️ Own Data   |
+| Consultation Notes  | ✅ Full        | 👁️ Related Only         | ❌ No Access   | 👁️ Own Data   |
 
 ### Dynamic Access Control Rules
 

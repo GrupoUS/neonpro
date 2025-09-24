@@ -87,13 +87,15 @@ export const PWASwipeable: React.FC<PWASwipeableProps> = ({
   const [isDragging, setIsDragging] = React.useState(false);
 
   const handleTouchStart = React.useCallback((e: React.TouchEvent) => {
-    setStartX(e.touches[0].clientX);
-    setStartY(e.touches[0].clientY);
-    setIsDragging(true);
+    if (e.touches && e.touches[0]) {
+      setStartX(e.touches[0].clientX);
+      setStartY(e.touches[0].clientY);
+      setIsDragging(true);
+    }
   }, []);
 
   const handleTouchMove = React.useCallback((e: React.TouchEvent) => {
-    if (!isDragging) return;
+    if (!isDragging || !e.touches || !e.touches[0]) return;
 
     const currentX = e.touches[0].clientX;
     const currentY = e.touches[0].clientY;
@@ -175,15 +177,17 @@ export const PWABottomSheet: React.FC<PWABottomSheetProps> = ({
 
   const handleTouchStart = React.useCallback((e: React.TouchEvent) => {
     setIsDragging(true);
-    setStartY(e.touches[0].clientY);
+    if (e.touches && e.touches[0]) {
+      setStartY(e.touches[0].clientY);
+    }
   }, []);
 
   const handleTouchMove = React.useCallback((e: React.TouchEvent) => {
-    if (!isDragging) return;
-    
+    if (!isDragging || !e.touches || !e.touches[0]) return;
+
     const y = e.touches[0].clientY;
     setCurrentY(y);
-    
+
     // Close if dragged down enough
     if (y - startY > 100) {
       onClose();
@@ -260,14 +264,14 @@ export const PWAPullToRefresh: React.FC<PWAPullToRefreshProps> = ({
   const [startY, setStartY] = React.useState(0);
 
   const handleTouchStart = React.useCallback((e: React.TouchEvent) => {
-    if (window.scrollY === 0) {
+    if (window.scrollY === 0 && e.touches && e.touches[0]) {
       setStartY(e.touches[0].clientY);
       setIsPulling(true);
     }
   }, []);
 
   const handleTouchMove = React.useCallback((e: React.TouchEvent) => {
-    if (!isPulling || isRefreshing) return;
+    if (!isPulling || isRefreshing || !e.touches || !e.touches[0]) return;
 
     const currentY = e.touches[0].clientY;
     const distance = Math.max(0, currentY - startY);

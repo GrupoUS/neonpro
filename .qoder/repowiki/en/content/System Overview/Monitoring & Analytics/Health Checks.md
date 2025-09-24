@@ -1,7 +1,7 @@
 # Health Checks
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [health.ts](file://apps/api/vercel/health.ts)
 - [health-legacy.ts](file://apps/api/vercel/health-legacy.ts)
 - [v1/health-legacy.ts](file://apps/api/vercel/v1/health-legacy.ts)
@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Health Check System Overview](#health-check-system-overview)
 3. [Modern vs Legacy Health Endpoints](#modern-vs-legacy-health-endpoints)
@@ -27,6 +28,7 @@
 The health check system in the neonpro platform is a critical component for ensuring service availability and system reliability across all application layers. It provides comprehensive monitoring capabilities that validate the operational status of various services, detect potential issues before they impact users, and ensure compliance with healthcare-specific regulations such as LGPD, ANVISA, and CFM. The system supports both modern and legacy endpoints to accommodate different client requirements while maintaining backward compatibility.
 
 **Section sources**
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [health-legacy.ts](file://apps/api/vercel/health-legacy.ts#L1-L12)
 
@@ -52,10 +54,12 @@ L --> M[Trigger Alerts if Needed]
 ```
 
 **Diagram sources **
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [health-checker.ts](file://apps/api/src/services/circuit-breaker/health-checker.ts#L1-L100)
 
 **Section sources**
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [health-checker.ts](file://apps/api/src/services/circuit-breaker/health-checker.ts#L1-L100)
 
@@ -87,11 +91,13 @@ deactivate LegacyEndpoint
 ```
 
 **Diagram sources **
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [health-legacy.ts](file://apps/api/vercel/health-legacy.ts#L1-L12)
 - [v1/health-legacy.ts](file://apps/api/vercel/v1/health-legacy.ts#L1-L12)
 
 **Section sources**
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [health-legacy.ts](file://apps/api/vercel/health-legacy.ts#L1-L12)
 - [v1/health-legacy.ts](file://apps/api/vercel/v1/health-legacy.ts#L1-L12)
@@ -101,6 +107,7 @@ deactivate LegacyEndpoint
 The health check system employs different response formats for modern and legacy endpoints, each designed to meet specific client requirements while providing essential health information. The modern endpoint returns a comprehensive JSON structure with detailed status indicators, while legacy endpoints use simplified formats for backward compatibility.
 
 The modern health endpoint response includes several key fields:
+
 - `status`: Current health status ("ok" or "error")
 - `message`: Descriptive message about the system status
 - `timestamp`: ISO formatted timestamp of the health check
@@ -109,6 +116,7 @@ The modern health endpoint response includes several key fields:
 - Internal health indicators (when enabled): Presence of critical environment variables
 
 The legacy endpoints use a simpler format with basic health indicators:
+
 - `ok`: Boolean indicating overall health status
 - `status`: Text status description
 - `ts`: Timestamp of the health check
@@ -134,10 +142,12 @@ K --> L
 ```
 
 **Diagram sources **
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [health-legacy.ts](file://apps/api/vercel/health-legacy.ts#L1-L12)
 
 **Section sources**
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [health-legacy.ts](file://apps/api/vercel/health-legacy.ts#L1-L12)
 
@@ -146,6 +156,7 @@ K --> L
 The health check system offers various configuration options to customize behavior according to deployment requirements and security policies. These configurations are primarily managed through environment variables and configuration files, allowing flexible adaptation to different environments.
 
 Key configuration options include:
+
 - `NODE_ENV`: Determines whether the system is running in development or production mode
 - `INTERNAL_HEALTH`: Controls visibility of internal health information including environment variable presence
 - `ALLOWED_ORIGINS`: Specifies domains permitted for CORS access to health endpoints
@@ -156,6 +167,7 @@ The monitoring configuration file (`monitoring-config.ts`) provides extensive op
 Additionally, the AG-UI RAG agent configuration allows customization of health-related parameters such as maximum response time and query length limits, ensuring optimal performance while maintaining healthcare compliance standards.
 
 **Section sources**
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L485)
 - [agent_config.py](file://apps/api/agents/ag-ui-rag-agent/agent_config.py#L1-L78)
@@ -201,9 +213,11 @@ T --> U[Incident Response]
 ```
 
 **Diagram sources **
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L485)
 
 **Section sources**
+
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L485)
 
 ## Practical Use Cases
@@ -215,6 +229,7 @@ During incident response, the comprehensive health information helps operations 
 The health check system also supports capacity planning by providing historical performance data and trend analysis. This information helps infrastructure teams anticipate resource needs and optimize system performance. Additionally, the system aids in validating disaster recovery procedures by verifying that backup systems are operational and can handle production traffic.
 
 **Section sources**
+
 - [health.ts](file://apps/api/vercel/health.ts#L1-L47)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts#L1-L485)
 - [health-checker.ts](file://apps/api/src/services/circuit-breaker/health-checker.ts#L1-L100)
@@ -269,9 +284,11 @@ ServiceHealth --> ServiceMetrics : "contains"
 ```
 
 **Diagram sources **
+
 - [health-checker.ts](file://apps/api/src/services/circuit-breaker/health-checker.ts#L1-L100)
 
 **Section sources**
+
 - [health-checker.ts](file://apps/api/src/services/circuit-breaker/health-checker.ts#L1-L100)
 - [healthcare_data_service.py](file://apps/api/agents/ag-ui-rag-agent/healthcare_data_service.py#L1-L413)
 

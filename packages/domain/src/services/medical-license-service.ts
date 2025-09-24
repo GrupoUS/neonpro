@@ -196,7 +196,7 @@ export class MedicalLicenseDomainService {
       const { getLogger } = await import("@neonpro/core-services");
       const logger = getLogger();
       const errorObj = error instanceof Error ? error : new Error(String(error));
-      logger.error("Error verifying medical license", { component: "medical-license-service", operation: "verify_medical_license", request: _request }, errorObj);
+      logger.error("Error verifying medical license", { component: "medical-license-service", operation: "verify_medical_license", request: _request, error: errorObj });
       throw new Error(
         `License verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
@@ -271,7 +271,7 @@ export class MedicalLicenseDomainService {
       const { getLogger } = await import("@neonpro/core-services");
       const logger = getLogger();
       const errorObj = error instanceof Error ? error : new Error(String(error));
-      logger.error("Error getting CFM registration", { component: "medical-license-service", operation: "get_cfm_registration", cfmNumber }, errorObj);
+      logger.error("Error getting CFM registration", { component: "medical-license-service", operation: "get_cfm_registration", cfmNumber, error: errorObj });
       throw new Error(
         `Failed to retrieve CFM registration: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
@@ -325,7 +325,7 @@ export class MedicalLicenseDomainService {
       const { getLogger } = await import("@neonpro/core-services");
       const logger = getLogger();
       const errorObj = error instanceof Error ? error : new Error(String(error));
-      logger.error("Error fetching from CFM API", { component: "medical-license-service", operation: "fetch_cfm_api", cfmNumber }, errorObj);
+      logger.error("Error fetching from CFM API", { component: "medical-license-service", operation: "fetch_cfm_api", cfmNumber, error: errorObj });
       return null; // Fall back to manual verification
     }
   }

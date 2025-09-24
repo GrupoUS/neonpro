@@ -7,6 +7,7 @@ The aesthetic clinic system implements comprehensive data protection measures al
 ## 🏗️ Data Protection Architecture
 
 ### Protection Layers
+
 ```
 Application Layer: Input Validation, Data Masking, Access Control
 Transport Layer: TLS 1.3, Certificate Pinning, Secure Headers
@@ -18,6 +19,7 @@ Audit Layer: Complete Activity Logging, Compliance Monitoring
 ## 🗃️ Data Classification & Handling
 
 ### Data Classification Framework
+
 ```typescript
 // apps/api/src/services/sensitive-field-analyzer.ts
 export interface DataClassification {
@@ -227,6 +229,7 @@ export class DataClassificationService {
 ## 🔐 Encryption Implementation
 
 ### End-to-End Encryption
+
 ```typescript
 // apps/api/src/services/encryption-service.ts
 export interface EncryptionConfig {
@@ -436,6 +439,7 @@ export class EncryptionService {
 ```
 
 ### Database Encryption
+
 ```typescript
 // Database encryption implementation
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
@@ -541,6 +545,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ## 🛡️ Data Access Control
 
 ### Fine-Grained Access Control
+
 ```typescript
 // apps/api/src/services/access-control-service.ts
 export interface AccessPolicy {
@@ -777,6 +782,7 @@ export class AccessControlService {
 ## 📊 Data Retention & Lifecycle Management
 
 ### Automated Data Retention
+
 ```typescript
 // apps/api/src/services/data-retention-service.ts
 export interface RetentionPolicy {

@@ -1,7 +1,7 @@
 # Monitoring Systems
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Monitoring Systems Overview](#monitoring-systems-overview)
 2. [Operational Monitoring Implementation](#operational-monitoring-implementation)
 3. [Healthcare Dashboard Visualization](#healthcare-dashboard-visualization)
@@ -31,6 +32,7 @@ The monitoring ecosystem is built around three core components: JSON-based dashb
 This documentation provides detailed insights into the implementation of these monitoring systems, their integration with quality control processes, and strategies for effective healthcare monitoring in clinical environments.
 
 **Section sources**
+
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh)
@@ -58,6 +60,7 @@ L --> M[Send Alerts if Critical]
 ```
 
 **Diagram sources**
+
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh#L100-L300)
 
 The monitoring system also includes the `compliance-validator.sh` script, which specifically validates adherence to healthcare regulations. This script performs targeted checks for LGPD data protection requirements, ANVISA medical device regulations, and CFM professional standards. It calls dedicated API endpoints to verify consent management, data retention policies, medical device registration, quality management systems, and professional licensure verification.
@@ -65,6 +68,7 @@ The monitoring system also includes the `compliance-validator.sh` script, which 
 Both scripts implement standardized logging with color-coded output for different severity levels (INFO, WARNING, ERROR) and write comprehensive logs to `/var/log/neonpro/`. The health check script includes configurable thresholds for alerting, with a default threshold of 3 failed checks triggering critical alerts to on-call teams.
 
 **Section sources**
+
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh)
 - [compliance-validator.sh](file://tools/monitoring/scripts/compliance-validator.sh)
 
@@ -109,6 +113,7 @@ object annotations
 ```
 
 **Diagram sources**
+
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 
@@ -125,6 +130,7 @@ Key dashboard panels include:
 The dashboard automatically refreshes every 30 seconds and displays data from the last hour by default, providing near real-time visibility into system operations. Panel layouts are optimized for quick assessment, with critical system health and compliance indicators positioned in the top row for immediate visibility.
 
 **Section sources**
+
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json)
 
 ## Alert Configuration and Compliance Violations
@@ -148,6 +154,7 @@ style F fill:#ffcccc,stroke:#f66
 ```
 
 **Diagram sources**
+
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json#L1-L150)
 
 Critical alerts include:
@@ -159,6 +166,7 @@ Critical alerts include:
 - **ComplianceViolation**: Triggers immediately when any compliance violations are detected
 
 Each alert includes rich metadata that enhances incident response:
+
 - **Severity levels** (critical, high, warning) to prioritize response
 - **Component tags** to identify affected system areas
 - **Healthcare impact assessments** to understand clinical implications
@@ -170,6 +178,7 @@ For example, the PatientDataBreach alert includes the annotation "Potential pati
 The alerting system also considers healthcare-specific requirements by including compliance-focused alerts that monitor regulatory obligations such as audit logging (AuditLogFailure alert) and data retention (BackupFailure alert). These alerts help ensure continuous compliance with Brazilian healthcare regulations.
 
 **Section sources**
+
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 
 ## Integration with Quality Control Orchestrator
@@ -194,6 +203,7 @@ Monitoring->>Monitoring : update compliance dashboard
 ```
 
 **Diagram sources**
+
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L1-L79)
 - [monitoring.ts](file://tools/quality/src/orchestrator/integrations/monitoring.ts)
 
@@ -212,6 +222,7 @@ When a compliance violation is detected by monitoring, the system can initiate a
 The integration also works in reverse - quality control results influence monitoring thresholds and alert configurations. For example, if code reviews consistently identify performance bottlenecks, the monitoring system may adjust its slow response time thresholds accordingly.
 
 **Section sources**
+
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts)
 - [monitoring.ts](file://tools/quality/src/orchestrator/integrations/monitoring.ts)
 
@@ -237,6 +248,7 @@ style G fill:#e6ffe6
 ```
 
 **Diagram sources**
+
 - [metrics.ts](file://apps/api/src/services/metrics.ts)
 - [healthcare-governance.service.ts](file://packages/governance/src/services/healthcare-governance.service.ts)
 
@@ -250,6 +262,7 @@ Long-term reporting is facilitated by the `HealthcareMetricsService` which aggre
 The service calculates an overall compliance score by weighting KPIs according to their compliance level (critical, high, medium, low). Critical violations, particularly those involving LGPD or ANVISA compliance, significantly impact the overall score and trigger immediate alerts.
 
 Historical data is preserved to meet regulatory requirements:
+
 - Audit logs are retained for minimum 3 years as required by LGPD
 - Medical device operation records are maintained for 10+ years per ANVISA guidelines
 - Patient safety metrics are archived with versioning for traceability
@@ -260,6 +273,7 @@ The system also implements trend analysis to identify gradual degradation that m
 This integration of real-time and historical monitoring ensures that the platform maintains continuous compliance while providing actionable insights for both immediate response and strategic improvement.
 
 **Section sources**
+
 - [metrics.ts](file://apps/api/src/services/metrics.ts)
 - [healthcare-governance.service.ts](file://packages/governance/src/services/healthcare-governance.service.ts)
 
@@ -294,6 +308,7 @@ style G fill:#ffffcc,stroke:#cc0
 ```
 
 **Diagram sources**
+
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [config/vercel/monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
@@ -306,6 +321,7 @@ Escalation policies are designed to match healthcare operational realities:
 The system also implements alert grouping and deduplication to prevent notification storms. Related alerts are correlated and presented as consolidated incidents rather than individual notifications. For example, a database outage might trigger multiple dependent service failures, but these are grouped under a single incident report.
 
 Additional anti-fatigue measures include:
+
 - **Business hour filtering**: Non-critical alerts are suppressed during nighttime hours unless they reach critical severity
 - **Maintenance mode**: Scheduled maintenance periods suppress expected alerts
 - **Auto-resolution**: Some alerts automatically resolve when conditions return to normal
@@ -314,6 +330,7 @@ Additional anti-fatigue measures include:
 These strategies ensure that healthcare staff receive timely notifications about genuinely important issues without being overwhelmed by less critical alerts, maintaining vigilance for patient safety and regulatory compliance.
 
 **Section sources**
+
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 - [config/vercel/monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
@@ -369,6 +386,7 @@ MedicalDeviceMonitor --> ComplianceStatus : produces
 ```
 
 **Diagram sources**
+
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json)
 - [healthcare-alerts.json](file://tools/monitoring/alerts/healthcare-alerts.json)
 
@@ -383,6 +401,7 @@ Key extension points include:
 - **Alert Escalation**: Device-related alerts can be configured with appropriate escalation policies based on clinical impact, with life-critical devices receiving highest priority.
 
 When integrating a new aesthetic medical device (such as laser systems or imaging equipment), developers would:
+
 1. Define device-specific metrics in the monitoring schema
 2. Create dashboard panels to visualize device status and performance
 3. Configure alert rules for critical failure modes
@@ -393,6 +412,7 @@ When integrating a new aesthetic medical device (such as laser systems or imagin
 This extensible design ensures that new medical device integrations maintain the same high standards of monitoring, reliability, and compliance as the core platform, protecting patient safety while enabling innovation in aesthetic treatments.
 
 **Section sources**
+
 - [health-check.sh](file://tools/monitoring/scripts/health-check.sh)
 - [compliance-validator.sh](file://tools/monitoring/scripts/compliance-validator.sh)
 - [healthcare-overview.json](file://tools/monitoring/dashboards/healthcare-overview.json)

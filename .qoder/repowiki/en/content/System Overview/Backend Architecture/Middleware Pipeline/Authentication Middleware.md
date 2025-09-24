@@ -1,7 +1,7 @@
 # Authentication Middleware
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [auth.ts](file://apps/api/src/middleware/auth.ts)
 - [authn.ts](file://apps/api/src/middleware/authn.ts)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Architecture](#core-architecture)
 3. [JWT Validation Process](#jwt-validation-process)
@@ -33,6 +34,7 @@ The system follows a layered security approach, combining token validation, data
 This documentation explains the implementation details of the authentication system, covering the complete request flow from token extraction to user context population, and detailing how various security components work together to provide robust protection.
 
 **Section sources**
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L306)
 
@@ -64,10 +66,12 @@ L[Rate Limiter] --> M[Prevent Brute Force]
 ```
 
 **Diagram sources**
+
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L306)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L711)
 
 **Section sources**
+
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L306)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L711)
 
@@ -112,10 +116,12 @@ AuthMiddleware-->>Client : Proceed to Route Handler
 ```
 
 **Diagram sources**
+
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L711)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L306)
 
 **Section sources**
+
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L711)
 
 ## Supabase Integration
@@ -174,9 +180,11 @@ HealthcareAdminClient --> RLSQueryBuilder : "uses"
 ```
 
 **Diagram sources**
+
 - [supabase.ts](file://apps/api/src/clients/supabase.ts#L1-L489)
 
 **Section sources**
+
 - [supabase.ts](file://apps/api/src/clients/supabase.ts#L1-L489)
 
 ## Role-Based Access Control
@@ -221,9 +229,11 @@ SetContext --> Continue["Continue to Route Handler"]
 ```
 
 **Diagram sources**
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 
 **Section sources**
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 
 ## Request Flow and Context Population
@@ -269,10 +279,12 @@ Auth-->>Client : Response from Route Handler
 ```
 
 **Diagram sources**
+
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L306)
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 
 **Section sources**
+
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L306)
 
 ## Protected Route Implementation
@@ -334,6 +346,7 @@ app.get('/profile', optionalAuth(), async (c) => {
 The system also supports combined authentication and authorization through specialized middleware like `requireAIAccess()` which combines permission checks with authentication.
 
 **Section sources**
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 
 ## Session Management
@@ -410,10 +423,12 @@ SessionCookieUtils --> EnhancedSessionManager : "validates"
 ```
 
 **Diagram sources**
+
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L1-L798)
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L1-L405)
 
 **Section sources**
+
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L1-L798)
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L1-L405)
 
@@ -470,10 +485,12 @@ M --> |Valid| C
 ```
 
 **Diagram sources**
+
 - [rate-limit.ts](file://apps/api/src/middleware/rate-limit.ts#L1-L221)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L330)
 
 **Section sources**
+
 - [rate-limit.ts](file://apps/api/src/middleware/rate-limit.ts#L1-L221)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L1-L330)
 
@@ -511,6 +528,7 @@ Common authentication failures and their causes:
 - **500 Internal Server Error**: System failure during authentication processing
 
 Debugging steps:
+
 1. Check browser developer tools for request/response details
 2. Verify token format and expiration time
 3. Confirm user has appropriate role/permissions
@@ -520,6 +538,7 @@ Debugging steps:
 ### Testing Considerations
 
 The system includes test-friendly features:
+
 - Test tokens for development environments
 - Configurable rate limits for testing
 - Mock user implementations
@@ -528,6 +547,7 @@ The system includes test-friendly features:
 When writing tests, use the provided test utilities and avoid hardcoding sensitive values.
 
 **Section sources**
+
 - [auth.ts](file://apps/api/src/middleware/auth.ts#L1-L282)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L306)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L711)

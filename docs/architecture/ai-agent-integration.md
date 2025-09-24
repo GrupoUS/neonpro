@@ -4,8 +4,8 @@
 
 This document describes the architectural patterns and integration strategies for AI agents within the NeonPro aesthetic clinic platform, focusing on secure, scalable, and compliant AI-powered aesthetic clinic data access and analysis.
 
-**Version**: 1.0.0  
-**Last Updated**: January 15, 2024  
+**Version**: 1.0.0\
+**Last Updated**: January 15, 2024\
 **Compliance**: LGPD, ANVISA, Professional Councils, ISO 27001
 
 ## Table of Contents

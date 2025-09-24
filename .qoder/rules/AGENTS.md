@@ -2,6 +2,7 @@
 trigger: always_on
 alwaysApply: true
 ---
+
 # 🚀 NEONPRO DEVELOPMENT CONSTITUTION
 
 ## 🧠 FILOSOFIA CENTRAL

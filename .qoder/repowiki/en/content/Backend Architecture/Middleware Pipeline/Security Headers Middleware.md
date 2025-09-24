@@ -10,6 +10,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Components](#core-components)
 3. [Architecture Overview](#architecture-overview)
@@ -21,9 +22,11 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The Security Headers Middleware in neonpro implements a comprehensive security layer for HTTP responses, enforcing critical security policies through standardized headers. This middleware ensures compliance with healthcare regulations like LGPD (Brazil's General Data Protection Law) and CFM (Federal Council of Medicine) guidelines by injecting essential security headers such as Content-Security-Policy (CSP), X-Content-Type-Options, X-Frame-Options, and Strict-Transport-Security (HSTS). The implementation is tightly integrated with TLS configuration and certificate management systems to provide end-to-end security for healthcare applications.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 
 ## Core Components
@@ -33,6 +36,7 @@ The security headers implementation consists of several key components that work
 The middleware provides methods for generating specific security policies, including CSP directives tailored for AI chat interfaces and Permissions Policies that restrict access to sensitive browser features. Additionally, it includes validation capabilities to verify HSTS configuration compliance and generate security reports detailing enabled features and potential issues.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)
 
@@ -68,6 +72,7 @@ T[LGPD Compliance] --> B
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
@@ -108,6 +113,7 @@ SecurityHeadersMiddleware --> SecurityHeadersConfig : "uses"
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 
 #### Header Injection Process
@@ -151,6 +157,7 @@ Middleware->>Client : Continue Request Processing
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 
 ## Configuration and Compliance
@@ -200,6 +207,7 @@ TLSConfigManager --> CertificateConfig : "validates"
 ```
 
 **Diagram sources**
+
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)
 
 ### Certificate Renewal System
@@ -229,6 +237,7 @@ P --> C
 ```
 
 **Diagram sources**
+
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 
 ### Compliance with LGPD and CFM
@@ -277,6 +286,7 @@ LGPDMiddleware --> ConsentStore : "manages"
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L1-L686)
 
 ## WebSocket Security Integration
@@ -310,6 +320,7 @@ end
 ```
 
 **Diagram sources**
+
 - [websocket-security-middleware.ts](file://apps/api/src/middleware/websocket-security-middleware.ts#L1-L715)
 
 ## Testing and Validation
@@ -326,6 +337,7 @@ To verify the effectiveness of security headers, multiple testing approaches sho
 The middleware includes built-in validation methods such as `validateHSTSConfig()` that can be used to programmatically verify configuration correctness before deployment.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [tls-config.ts](file://apps/api/src/config/tls-config.ts#L1-L312)
 
@@ -348,6 +360,7 @@ When implementing security headers, several common issues may arise:
 The system provides diagnostic capabilities through the `getSecurityReport()` method and certificate health monitoring via `getCertificateHealth()`.
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [certificate-renewal.ts](file://apps/api/src/config/certificate-renewal.ts#L1-L297)
 - [websocket-security-middleware.ts](file://apps/api/src/middleware/websocket-security-middleware.ts#L1-L715)

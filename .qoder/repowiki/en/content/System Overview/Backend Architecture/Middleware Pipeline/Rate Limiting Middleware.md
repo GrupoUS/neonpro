@@ -9,6 +9,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Implementation Overview](#implementation-overview)
 3. [Token Bucket Algorithm](#token-bucket-algorithm)
@@ -31,6 +32,7 @@ The middleware serves multiple purposes: preventing brute force attacks on authe
 This documentation is structured to be accessible to beginners while providing sufficient technical depth for experienced developers implementing or modifying the rate limiting system.
 
 **Section sources**
+
 - [rate-limit.ts](file://apps/api/src/middleware/rate-limit.ts#L1-L222)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 
@@ -41,6 +43,7 @@ The rate limiting system consists of multiple components working together to pro
 The core implementation uses an in-memory store for basic rate limiting functionality, with provisions for Redis-backed storage in distributed environments. The system supports multiple rate limiting algorithms including token bucket and sliding window approaches, allowing different strategies to be applied based on endpoint sensitivity and usage patterns.
 
 Key architectural decisions include:
+
 - Hierarchical rate limiting with different thresholds for various endpoint categories
 - Support for both IP-based and user-based identification
 - Configurable behavior for handling successful vs failed requests
@@ -68,10 +71,12 @@ J --> L[Set Rate Limit Headers]
 ```
 
 **Diagram sources**
+
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L172-L213)
 - [rate-limit.ts](file://apps/api/src/middleware/rate-limit.ts#L82-L215)
 
 **Section sources**
+
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 - [rate-limit-service.ts](file://apps/api/src/services/rate-limit-service.ts#L1-L194)
 
@@ -82,6 +87,7 @@ The token bucket algorithm is implemented as one of the primary rate limiting st
 In the implementation, each client has a virtual "bucket" of tokens with a defined capacity (burst size). Tokens are replenished at a configured rate (refill rate), and each request consumes one token. When the bucket is empty, requests are rejected until more tokens are added through the refill process.
 
 The key advantages of this approach include:
+
 - Allowing legitimate traffic bursts within defined limits
 - Preventing sustained high-volume attacks
 - Providing smooth rate limiting behavior without abrupt cutoffs
@@ -104,10 +110,12 @@ DenyRequest --> End
 ```
 
 **Diagram sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L476-L522)
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L399-L434)
 
 **Section sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L432-L565)
 
 ## Redis-Backed Storage for Distributed Rate Tracking
@@ -115,6 +123,7 @@ DenyRequest --> End
 For distributed environments, the rate limiting system supports Redis-backed storage to ensure consistent rate tracking across multiple server instances. This capability is essential for maintaining accurate rate limits in horizontally scaled deployments where requests may be handled by different servers.
 
 The Redis implementation provides several key benefits:
+
 - Consistent state across all application instances
 - Persistence of rate limit data during server restarts
 - High-performance access to rate tracking information
@@ -139,10 +148,12 @@ C --> I[TTL Management]
 ```
 
 **Diagram sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L313-L352)
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L520-L565)
 
 **Section sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L313-L352)
 
 ## Dynamic Limits Based on User Roles and API Endpoints
@@ -150,6 +161,7 @@ C --> I[TTL Management]
 The rate limiting system implements dynamic limits that vary based on both user roles and specific API endpoints, providing granular control over access patterns. This approach recognizes that different users have different legitimate usage requirements and that certain endpoints require more restrictive protection due to their sensitivity.
 
 For API endpoints, the system categorizes routes into different sensitivity levels:
+
 - **Patient data endpoints**: Highly restrictive limits for GET requests to /patients and /medical-records paths
 - **AI/Chat endpoints**: Moderate limits for AI-powered features that are resource-intensive
 - **Authentication endpoints**: Strict limits with special handling for failed attempts
@@ -200,11 +212,13 @@ RoleBasedLimits --> RateLimitRule : "configures"
 ```
 
 **Diagram sources**
+
 - [rate-limit-service.ts](file://apps/api/src/services/rate-limit-service.ts#L34-L81)
 - [rate-limit-service.ts](file://apps/api/src/services/rate-limit-service.ts#L136-L192)
 - [aesthetic-data-handling.ts](file://apps/api/src/services/agui-protocol/aesthetic-data-handling.ts#L694-L732)
 
 **Section sources**
+
 - [rate-limit-service.ts](file://apps/api/src/services/rate-limit-service.ts#L34-L192)
 - [aesthetic-data-handling.ts](file://apps/api/src/services/agui-protocol/aesthetic-data-handling.ts#L694-L732)
 
@@ -215,6 +229,7 @@ The rate limiting middleware exposes extensive configuration options to accommod
 Key configuration parameters include:
 
 ### Burst Limits and Sustained Rates
+
 - **Burst size**: Maximum number of requests allowed in a short time window
 - **Burst window seconds**: Duration of the burst window
 - **Requests per minute/hour/day**: Sustained rate limits over longer periods
@@ -222,18 +237,21 @@ Key configuration parameters include:
 - **Grace period seconds**: Additional time buffer before enforcing limits
 
 ### Penalty Policies
+
 - **Skip successful requests**: Option to exclude successful requests from counting toward limits (useful for authentication endpoints)
 - **Skip failed requests**: Option to exclude failed requests from counting (prevents attackers from triggering rate limits on legitimate users)
 - **Penalty duration**: Extended blocking period for abusive behavior patterns
 - **Progressive penalties**: Increasingly severe restrictions for repeated violations
 
 ### Storage and Persistence
+
 - **Storage type**: Memory, Redis, or database backend selection
 - **Connection string**: Configuration for external storage systems
 - **Key prefix**: Namespace prefix for storage keys
 - **TTL seconds**: Time-to-live for rate limit data
 
 ### Monitoring and Alerting
+
 - **Enable metrics**: Collection of rate limiting statistics
 - **Enable alerting**: Notifications when thresholds are approached
 - **Alert threshold**: Percentage of limit utilization that triggers alerts
@@ -256,10 +274,12 @@ G --> H[Enforce Rate Limiting]
 ```
 
 **Diagram sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L610-L659)
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L313-L352)
 
 **Section sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L313-L352)
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L610-L659)
 
@@ -268,6 +288,7 @@ G --> H[Enforce Rate Limiting]
 The rate limiting middleware integrates closely with the authentication system to provide per-user limits and enhanced security features. This integration enables more sophisticated rate limiting strategies that consider user identity, session state, and authentication status.
 
 Key integration points include:
+
 - **User identification**: Using authenticated user IDs as rate limit keys when available, falling back to IP addresses for unauthenticated requests
 - **Session binding**: Associating rate limits with active sessions to prevent circumvention through credential rotation
 - **Multi-factor authentication state**: Adjusting rate limits based on MFA verification status
@@ -305,11 +326,13 @@ end
 ```
 
 **Diagram sources**
+
 - [rate-limit.ts](file://apps/api/src/middleware/rate-limit.ts#L82-L215)
 - [authn.ts](file://apps/api/src/middleware/authn.ts)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts)
 
 **Section sources**
+
 - [rate-limit.ts](file://apps/api/src/middleware/rate-limit.ts#L82-L215)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L104-L150)
 
@@ -318,6 +341,7 @@ end
 The rate limiting middleware incorporates sophisticated abuse detection systems that go beyond simple request counting to identify and mitigate complex attack patterns. These systems analyze request behavior, timing, and context to distinguish between legitimate traffic bursts and malicious activity.
 
 Key abuse detection features include:
+
 - **Suspicious activity pattern recognition**: Monitoring for high-frequency permission checks, unusual access patterns, or rapid sequential operations
 - **Geographic anomaly detection**: Identifying logins or requests from unexpected geographic locations
 - **Device fingerprinting**: Tracking known devices and flagging unknown ones for additional scrutiny
@@ -352,11 +376,13 @@ L --> O
 ```
 
 **Diagram sources**
+
 - [agent-permissions.ts](file://apps/api/src/services/permissions/agent-permissions.ts#L863-L911)
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1609-L1667)
 - [bulk-operations-service.ts](file://apps/api/src/services/bulk-operations-service.ts#L259-L294)
 
 **Section sources**
+
 - [agent-permissions.ts](file://apps/api/src/services/permissions/agent-permissions.ts#L863-L911)
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1609-L1667)
 
@@ -365,22 +391,28 @@ L --> O
 The rate limiting system includes comprehensive handling of various edge cases to ensure reliability and security in production environments. These edge cases cover technical challenges, distributed system complexities, and denial-of-service protection scenarios.
 
 ### Clock Drift and Timing Issues
+
 The system accounts for potential clock drift between servers by using relative time calculations and implementing tolerance windows. Timestamps are validated against expected ranges, and significant discrepancies trigger alerts rather than immediate enforcement actions.
 
 ### Distributed System Synchronization
+
 In multi-instance deployments, the system uses Redis or database storage to maintain consistent state across all nodes. Connection resilience features include automatic reconnection, retry logic with exponential backoff, and circuit breaker patterns to prevent cascading failures.
 
 ### Denial-of-Service Protection
+
 Beyond standard rate limiting, the system implements additional DoS protection measures:
+
 - **Resource exhaustion prevention**: Limiting concurrent requests per user/session
 - **Slowloris attack mitigation**: Timeout controls for incomplete requests
 - **Amplification attack prevention**: Restrictions on response sizes for certain endpoints
 - **Cache-aware limiting**: Protecting caching layers from being overwhelmed
 
 ### Fail-Open vs Fail-Closed Behavior
+
 The system follows a fail-open approach for rate limiting, meaning that if the rate limiting service itself fails, requests are allowed to proceed. This design prioritizes availability in healthcare contexts where blocking legitimate emergency requests could have serious consequences.
 
 ### Graceful Degradation
+
 When external dependencies like Redis are unavailable, the system gracefully degrades to in-memory storage with appropriate logging and alerting. This ensures continued operation while notifying administrators of the reduced protection level.
 
 ```mermaid
@@ -399,11 +431,13 @@ G --> H
 ```
 
 **Diagram sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L757-L791)
 - [session-integration.ts](file://apps/api/src/services/session/copilotkit-session-integration.ts#L632-L676)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L430-L487)
 
 **Section sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L757-L791)
 - [copilotkit-session-integration.ts](file://apps/api/src/services/session/copilotkit-session-integration.ts#L632-L676)
 
@@ -412,21 +446,27 @@ G --> H
 The rate limiting implementation addresses several common issues encountered in real-world deployments, providing solutions that balance security requirements with user experience.
 
 ### False Positives
+
 False positives occur when legitimate users are incorrectly blocked by rate limiting. The system mitigates this through:
+
 - **User identification prioritization**: Preferring user IDs over IP addresses to avoid blocking multiple users behind NAT
 - **Gradual enforcement**: Warming up with warnings before full blocking
 - **Whitelist support**: Allowing trusted IPs to bypass certain limits
 - **Context-aware exceptions**: Recognizing legitimate traffic patterns that resemble abuse
 
 ### Legitimate Traffic Bursts
+
 Healthcare applications often experience legitimate traffic bursts during shift changes, emergencies, or scheduled procedures. The system accommodates these through:
+
 - **Burst allowance**: Token bucket algorithm permitting short-term spikes
 - **Role-based differentiation**: Higher limits for clinical staff during working hours
 - **Emergency overrides**: Bypass mechanisms for critical situations
 - **Adaptive learning**: Monitoring historical patterns to distinguish normal bursts from attacks
 
 ### Monitoring and Troubleshooting
+
 Comprehensive monitoring capabilities help identify and resolve rate limiting issues:
+
 - **Detailed logging**: Recording rate limit events with full context
 - **Real-time metrics**: Dashboard visibility into current utilization
 - **Alerting**: Notifications when thresholds are approached
@@ -448,11 +488,13 @@ F --> G
 ```
 
 **Diagram sources**
+
 - [rate-limit-service.ts](file://apps/api/src/services/rate-limit-service.ts#L83-L134)
 - [rate-counter.ts](file://packages/core-services/src/services/rate-counter.ts#L0-L68)
 - [rate-counter.test.ts](file://packages/core-services/tests/rate-counter.test.ts#L0-L56)
 
 **Section sources**
+
 - [rate-limit-service.ts](file://apps/api/src/services/rate-limit-service.ts#L83-L134)
 - [rate-counter.ts](file://packages/core-services/src/services/rate-counter.ts#L0-L170)
 
@@ -461,6 +503,7 @@ F --> G
 The rate limiting system includes comprehensive monitoring capabilities to track usage patterns, detect anomalies, and ensure proper enforcement. These monitoring features provide visibility into both normal operations and potential security incidents.
 
 Key monitoring components include:
+
 - **Real-time metrics collection**: Gathering data on request volumes, limit hits, and bypass events
 - **Usage analytics**: Analyzing patterns across users, endpoints, and time periods
 - **Alerting system**: Notifying administrators when thresholds are crossed
@@ -468,6 +511,7 @@ Key monitoring components include:
 - **Dashboard visualization**: Presenting key metrics in an accessible format
 
 The system collects detailed statistics such as:
+
 - Active keys (current users being tracked)
 - Total requests processed
 - Rate limit violations
@@ -478,6 +522,7 @@ The system collects detailed statistics such as:
 These metrics are collected at regular intervals (configurable via metricsInterval parameter) and can be integrated with external monitoring platforms for centralized observability. The system also supports exporting metrics in standard formats for compliance reporting and long-term analysis.
 
 Security-focused monitoring includes detection of potential abuse patterns such as:
+
 - Rapid successive requests from single users
 - Coordinated attacks from multiple IPs
 - Attempts to enumerate valid user accounts
@@ -503,11 +548,13 @@ L --> P[Troubleshooting Tools]
 ```
 
 **Diagram sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L833-L884)
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L1034-L1076)
 - [monitoring-config.ts](file://config/vercel/monitoring-config.ts)
 
 **Section sources**
+
 - [api-rate-limiting.ts](file://packages/shared/src/services/api-rate-limiting.ts#L833-L1076)
 
 ## Conclusion

@@ -7,16 +7,18 @@ This comprehensive quick reference guide provides instant access to essential in
 ## 🎯 Quick Navigation
 
 ### **Dashboard Shortcuts**
-| Shortcut | Action | Category |
-|----------|--------|----------|
-| `Ctrl + D` | Go to Dashboard | Navigation |
-| `Ctrl + P` | Patient Search | Navigation |
+
+| Shortcut   | Action               | Category   |
+| ---------- | -------------------- | ---------- |
+| `Ctrl + D` | Go to Dashboard      | Navigation |
+| `Ctrl + P` | Patient Search       | Navigation |
 | `Ctrl + A` | Appointment Calendar | Navigation |
-| `Ctrl + T` | Treatment Planning | Navigation |
-| `Ctrl + F` | Financial Overview | Navigation |
-| `Ctrl + R` | Reports Center | Navigation |
+| `Ctrl + T` | Treatment Planning   | Navigation |
+| `Ctrl + F` | Financial Overview   | Navigation |
+| `Ctrl + R` | Reports Center       | Navigation |
 
 ### **Global Navigation**
+
 ```typescript
 interface NavigationShortcuts {
   dashboard: "Ctrl + D | Alt + Home";
@@ -33,17 +35,20 @@ interface NavigationShortcuts {
 ## 👥 Role-Specific Quick References
 
 ### **Healthcare Professional**
+
 #### **Daily Workflow Shortcuts**
-| Action | Shortcut | Description |
-|--------|----------|-------------|
-| New Patient Assessment | `Ctrl + Shift + N` | Create new patient assessment |
-| View Today's Schedule | `Alt + S` | Open today's appointment schedule |
-| Treatment Planning | `Ctrl + T` | Access treatment planning module |
-| Clinical Notes | `Ctrl + N` | Open clinical notes editor |
-| Photo Capture | `Ctrl + Shift + P` | Open clinical photography interface |
-| AI Recommendations | `Ctrl + I` | View AI-powered treatment suggestions |
+
+| Action                 | Shortcut           | Description                           |
+| ---------------------- | ------------------ | ------------------------------------- |
+| New Patient Assessment | `Ctrl + Shift + N` | Create new patient assessment         |
+| View Today's Schedule  | `Alt + S`          | Open today's appointment schedule     |
+| Treatment Planning     | `Ctrl + T`         | Access treatment planning module      |
+| Clinical Notes         | `Ctrl + N`         | Open clinical notes editor            |
+| Photo Capture          | `Ctrl + Shift + P` | Open clinical photography interface   |
+| AI Recommendations     | `Ctrl + I`         | View AI-powered treatment suggestions |
 
 #### **Patient Management Quick Steps**
+
 ```typescript
 interface PatientQuickActions {
   registration: [
@@ -75,6 +80,7 @@ interface PatientQuickActions {
 ```
 
 #### **Clinical Documentation Templates**
+
 ```typescript
 interface DocumentationTemplates {
   initialConsultation: {
@@ -95,17 +101,20 @@ interface DocumentationTemplates {
 ```
 
 ### **Reception Staff**
+
 #### **Front Desk Shortcuts**
-| Action | Shortcut | Description |
-|--------|----------|-------------|
-| New Appointment | `Ctrl + Shift + A` | Create new appointment |
-| Check-in Patient | `Ctrl + I` | Patient check-in workflow |
-| Payment Processing | `Ctrl + Shift + P` | Open payment interface |
-| Patient Search | `F3` | Quick patient lookup |
-| Today's Schedule | `Alt + T` | View today's appointments |
-| Queue Management | `Ctrl + Q` | Manage patient waiting queue |
+
+| Action             | Shortcut           | Description                  |
+| ------------------ | ------------------ | ---------------------------- |
+| New Appointment    | `Ctrl + Shift + A` | Create new appointment       |
+| Check-in Patient   | `Ctrl + I`         | Patient check-in workflow    |
+| Payment Processing | `Ctrl + Shift + P` | Open payment interface       |
+| Patient Search     | `F3`               | Quick patient lookup         |
+| Today's Schedule   | `Alt + T`          | View today's appointments    |
+| Queue Management   | `Ctrl + Q`         | Manage patient waiting queue |
 
 #### **Appointment Management Quick Steps**
+
 ```typescript
 interface AppointmentQuickSteps {
   booking: [
@@ -136,6 +145,7 @@ interface AppointmentQuickSteps {
 ```
 
 #### **Payment Processing Flow**
+
 ```typescript
 interface PaymentProcessing {
   steps: [
@@ -160,17 +170,20 @@ interface PaymentProcessing {
 ```
 
 ### **Administrators**
+
 #### **System Administration Shortcuts**
-| Action | Shortcut | Description |
-|--------|----------|-------------|
-| User Management | `Ctrl + U` | Manage user accounts |
-| System Settings | `Ctrl + Shift + S` | System configuration |
-| Reports Dashboard | `Ctrl + R` | Access reports center |
-| Audit Logs | `Ctrl + L` | View system audit logs |
-| Backup Management | `Ctrl + B` | Manage system backups |
+
+| Action              | Shortcut           | Description                  |
+| ------------------- | ------------------ | ---------------------------- |
+| User Management     | `Ctrl + U`         | Manage user accounts         |
+| System Settings     | `Ctrl + Shift + S` | System configuration         |
+| Reports Dashboard   | `Ctrl + R`         | Access reports center        |
+| Audit Logs          | `Ctrl + L`         | View system audit logs       |
+| Backup Management   | `Ctrl + B`         | Manage system backups        |
 | Performance Monitor | `Ctrl + Shift + P` | System performance dashboard |
 
 #### **User Management Quick Steps**
+
 ```typescript
 interface UserManagementSteps {
   createUser: [
@@ -206,6 +219,7 @@ interface UserManagementSteps {
 ### **Common Issues and Solutions**
 
 #### **Login Problems**
+
 ```typescript
 interface LoginTroubleshooting {
   forgottenPassword: [
@@ -234,6 +248,7 @@ interface LoginTroubleshooting {
 ```
 
 #### **Performance Issues**
+
 ```typescript
 interface PerformanceTroubleshooting {
   slowLoading: [
@@ -263,6 +278,7 @@ interface PerformanceTroubleshooting {
 ```
 
 ### **Emergency Procedures**
+
 ```typescript
 interface EmergencyProcedures {
   systemOutage: [
@@ -294,6 +310,7 @@ interface EmergencyProcedures {
 ## 📊 Dashboard Components
 
 ### **Main Dashboard Elements**
+
 ```typescript
 interface DashboardComponents {
   header: {
@@ -321,6 +338,7 @@ interface DashboardComponents {
 ```
 
 ### **Widget Configuration**
+
 ```typescript
 interface WidgetConfiguration {
   customizationOptions: {
@@ -347,29 +365,32 @@ interface WidgetConfiguration {
 ## 💾 Data Entry Shortcuts
 
 ### **Form Navigation**
-| Action | Shortcut | Description |
-|--------|----------|-------------|
-| Next Field | `Tab` | Move to next form field |
-| Previous Field | `Shift + Tab` | Move to previous form field |
-| Save Form | `Ctrl + S` | Save current form |
-| Cancel Form | `Esc` | Cancel form without saving |
-| Submit Form | `Ctrl + Enter` | Submit completed form |
-| Clear Form | `Ctrl + Shift + C` | Clear all form fields |
+
+| Action         | Shortcut           | Description                 |
+| -------------- | ------------------ | --------------------------- |
+| Next Field     | `Tab`              | Move to next form field     |
+| Previous Field | `Shift + Tab`      | Move to previous form field |
+| Save Form      | `Ctrl + S`         | Save current form           |
+| Cancel Form    | `Esc`              | Cancel form without saving  |
+| Submit Form    | `Ctrl + Enter`     | Submit completed form       |
+| Clear Form     | `Ctrl + Shift + C` | Clear all form fields       |
 
 ### **Text Editing**
-| Action | Shortcut | Description |
-|--------|----------|-------------|
-| Copy | `Ctrl + C` | Copy selected text |
-| Paste | `Ctrl + V` | Paste copied text |
-| Cut | `Ctrl + X` | Cut selected text |
-| Undo | `Ctrl + Z` | Undo last action |
-| Redo | `Ctrl + Y` | Redo last undone action |
-| Select All | `Ctrl + A` | Select all text |
-| Find | `Ctrl + F` | Find text in form |
+
+| Action     | Shortcut   | Description             |
+| ---------- | ---------- | ----------------------- |
+| Copy       | `Ctrl + C` | Copy selected text      |
+| Paste      | `Ctrl + V` | Paste copied text       |
+| Cut        | `Ctrl + X` | Cut selected text       |
+| Undo       | `Ctrl + Z` | Undo last action        |
+| Redo       | `Ctrl + Y` | Redo last undone action |
+| Select All | `Ctrl + A` | Select all text         |
+| Find       | `Ctrl + F` | Find text in form       |
 
 ## 📱 Mobile Quick Reference
 
 ### **Mobile App Navigation**
+
 ```typescript
 interface MobileNavigation {
   bottomNavigation: {
@@ -391,6 +412,7 @@ interface MobileNavigation {
 ```
 
 ### **Mobile-Specific Features**
+
 ```typescript
 interface MobileFeatures {
   quickActions: [
@@ -414,6 +436,7 @@ interface MobileFeatures {
 ## 🔍 Search and Filter Tips
 
 ### **Advanced Search Operators**
+
 ```typescript
 interface SearchOperators {
   textSearch: {
@@ -442,6 +465,7 @@ interface SearchOperators {
 ```
 
 ### **Filter Quick Reference**
+
 ```typescript
 interface FilterReference {
   patientFilters: [
@@ -473,6 +497,7 @@ interface FilterReference {
 ## 📋 Report Generation
 
 ### **Common Reports Quick Access**
+
 ```typescript
 interface ReportShortcuts {
   dailyReports: {
@@ -499,6 +524,7 @@ interface ReportShortcuts {
 ```
 
 ### **Export Options**
+
 ```typescript
 interface ExportOptions {
   formats: [
@@ -522,6 +548,7 @@ interface ExportOptions {
 ## 🚨 Critical Alerts Reference
 
 ### **Alert Types and Actions**
+
 ```typescript
 interface AlertReference {
   systemAlerts: {
@@ -558,13 +585,13 @@ For quick reference questions or additional shortcuts:
 - **Emergency Support**: emergencia@neonpro.com.br
 - **System Status**: status.neonpro.com.br
 
-**Support Hours**: Monday-Friday, 8:00-18:00 (Brasília Time)  
+**Support Hours**: Monday-Friday, 8:00-18:00 (Brasília Time)\
 **Emergency Support**: 24/7 for critical system issues
 
 ---
 
-**Last Updated**: January 2025  
-**Version**: 1.0.0  
-**Quick Reference Coverage**: All system modules and user roles  
-**Maintainers**: NeonPro Documentation Team  
+**Last Updated**: January 2025\
+**Version**: 1.0.0\
+**Quick Reference Coverage**: All system modules and user roles\
+**Maintainers**: NeonPro Documentation Team\
 **Status**: ✅ Complete - Comprehensive quick reference documented

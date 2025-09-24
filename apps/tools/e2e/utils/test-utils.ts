@@ -43,7 +43,7 @@ export class TestUtils {
 
   async checkAccessibility() {
     // Basic accessibility check
-    const violations = await this.page.accessibility.snapshot();
+    const violations: any = await this.page.accessibility.snapshot();
     
     if (violations) {
       console.log("🔍 Accessibility violations found:", violations);

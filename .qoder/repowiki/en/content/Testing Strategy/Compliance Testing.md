@@ -1,7 +1,7 @@
 # Compliance Testing
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [lgpd-sensitive-health-data-protection.test.ts](file://apps/api/src/__tests__/compliance/lgpd-sensitive-health-data-protection.test.ts)
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts)
 - [lgpd-data-subject-rights.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-subject-rights.test.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Regulatory Framework Overview](#regulatory-framework-overview)
 3. [Core Compliance Testing Components](#core-compliance-testing-components)
@@ -48,6 +49,7 @@ The framework integrates these regulations through configuration files that defi
 This multi-regulatory approach ensures that the system complies with both data protection laws and medical practice standards, creating a comprehensive compliance posture that addresses legal, ethical, and security requirements in the Brazilian healthcare context.
 
 **Section sources**
+
 - [compliance.config.json](file://packages/config/src/compliance.config.json#L0-L396)
 - [governance.config.json](file://packages/config/src/governance.config.json#L0-L106)
 
@@ -68,6 +70,7 @@ Supporting services include PatientPrivacyControls for managing consent preferen
 These components work in concert through a well-defined interface contract, allowing for modular testing of compliance scenarios while maintaining separation of concerns. The framework uses dependency injection to provide mock implementations during testing, enabling isolated validation of each compliance requirement.
 
 **Section sources**
+
 - [lgpd-sensitive-health-data-protection.test.ts](file://apps/api/src/__tests__/compliance/lgpd-sensitive-health-data-protection.test.ts#L0-L799)
 - [lgpd-data-anonymization-pseudonymization.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-anonymization-pseudonymization.test.ts#L0-L799)
 
@@ -92,6 +95,7 @@ Integration with ANVISA and CFM regulations is tested to ensure compliance with 
 Cross-border data transfer restrictions are implemented to prevent unauthorized international transfers of Brazilian health data, with proper consent mechanisms and legal basis validation for any permitted transfers.
 
 **Section sources**
+
 - [lgpd-sensitive-health-data-protection.test.ts](file://apps/api/src/__tests__/compliance/lgpd-sensitive-health-data-protection.test.ts#L0-L799)
 
 ## CFM Telemedicine Compliance Testing
@@ -115,6 +119,7 @@ Digital prescription validity is ensured through ICP-Brasil digital signatures, 
 Ethical compliance in digital environments is monitored through integration with CFM ethics committee systems, ensuring adherence to professional conduct standards in telemedicine practice.
 
 **Section sources**
+
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts#L0-L799)
 
 ## Data Subject Rights Implementation
@@ -140,6 +145,7 @@ Cross-border data transfer rights inform patients about international data flows
 Request processing times are monitored to ensure all legal deadlines are met, with status updates provided for pending requests. Automated workflows route requests to appropriate teams based on type and urgency, with escalation paths for overdue requests.
 
 **Section sources**
+
 - [lgpd-data-subject-rights.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-subject-rights.test.ts#L0-L686)
 
 ## Data Anonymization and Pseudonymization Testing
@@ -165,6 +171,7 @@ Microaggregation clusters similar records and replaces them with cluster centroi
 Anonymization for research purposes requires ethical approval from CEP/CONEP committees, documented consent frameworks, and irreversible data transformation. Public health data processing follows similar requirements with additional safeguards for population-level data.
 
 **Section sources**
+
 - [lgpd-data-anonymization-pseudonymization.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-anonymization-pseudonymization.test.ts#L0-L799)
 
 ## Configuration-Driven Compliance Validation
@@ -190,6 +197,7 @@ Aesthetic-specific checks validate professional license verification, procedure 
 The configuration-driven approach enables rapid adaptation to regulatory changes by updating JSON files rather than modifying code. Automated validation scripts check that implementation matches configuration, generating compliance reports and identifying gaps.
 
 **Section sources**
+
 - [compliance.config.json](file://packages/config/src/compliance.config.json#L0-L396)
 - [governance.config.json](file://packages/config/src/governance.config.json#L0-L106)
 
@@ -216,6 +224,7 @@ Keeping pace with regulatory changes requires a proactive monitoring system that
 Training and awareness challenges are addressed through comprehensive documentation, automated compliance checks, and regular training sessions. The framework generates educational materials from compliance tests, helping developers understand regulatory requirements in practical terms.
 
 **Section sources**
+
 - [lgpd-sensitive-health-data-protection.test.ts](file://apps/api/src/__tests__/compliance/lgpd-sensitive-health-data-protection.test.ts#L0-L799)
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts#L0-L799)
 
@@ -244,6 +253,7 @@ Quantum-resistant cryptography prepares the system for future threats, implement
 Continuous compliance monitoring employs real-time analytics on system logs, network traffic, and user activities. Automated policy enforcement takes corrective actions for detected violations, such as blocking suspicious access attempts or quarantining potentially compromised data. Integration with SIEM systems provides centralized visibility across the technology stack.
 
 **Section sources**
+
 - [lgpd-sensitive-health-data-protection.test.ts](file://apps/api/src/__tests__/compliance/lgpd-sensitive-health-data-protection.test.ts#L0-L799)
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts#L0-L799)
 
@@ -264,6 +274,7 @@ Ongoing maintenance and improvement of the framework will ensure continued compl
 The neonpro compliance testing framework serves as a model for healthcare software development in regulated environments, balancing rigorous compliance requirements with practical usability and technical innovation.
 
 **Section sources**
+
 - [lgpd-sensitive-health-data-protection.test.ts](file://apps/api/src/__tests__/compliance/lgpd-sensitive-health-data-protection.test.ts#L0-L799)
 - [cfm-telemedicine.test.ts](file://apps/api/tests/compliance/cfm-telemedicine.test.ts#L0-L799)
 - [lgpd-data-subject-rights.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-subject-rights.test.ts#L0-L686)

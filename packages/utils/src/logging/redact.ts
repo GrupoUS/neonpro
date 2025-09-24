@@ -44,20 +44,19 @@ export function redact(input: string, opts: RedactOptions = {}) {
   if (!input) return input;
 
   // Email replacer function
-  const emailRepl =
-    opts.emailReplacement ||
-    ((match: string) => {
-      const parts = match.split("@");
-      const local = parts[0] || "";
-      const domain = parts[1] || "";
-      const maskedLocal = local[0] + "*".repeat(Math.max(0, local.length - 1));
-      return maskedLocal + "@" + domain;
+  const emailRepl = opts.emailReplacement
+    || ((match: string) => {
+      const parts = match.split('@');
+      const local = parts[0] || '';
+      const domain = parts[1] || '';
+      const maskedLocal = local[0] + '*'.repeat(Math.max(0, local.length - 1));
+      return maskedLocal + '@' + domain;
     });
 
-  const cpfRepl = opts.cpfReplacement || "***.***.***-**";
-  const phoneRepl = opts.phoneReplacement || "(11) 9****-****";
-  const rgRepl = opts.rgReplacement || "***";
-  const cnpjRepl = opts.cnpjReplacement || "**";
+  const cpfRepl = opts.cpfReplacement || '***.***.***-**';
+  const phoneRepl = opts.phoneReplacement || '(11) 9****-****';
+  const rgRepl = opts.rgReplacement || '***';
+  const cnpjRepl = opts.cnpjReplacement || '**';
 
   let out = input
     .replace(EMAIL_REGEX, emailRepl)
@@ -66,15 +65,15 @@ export function redact(input: string, opts: RedactOptions = {}) {
     .replace(CNPJ_REGEX, cnpjRepl)
     .replace(PHONE_REGEX, phoneRepl)
     .replace(RG_REGEX, rgRepl)
-    .replace(NAME_REGEX, "*** *** ***")
-    .replace(MEDICAL_RECORD_REGEX, "MR-******")
-    .replace(CRM_REGEX, "[REDACTED_REG]")
-    .replace(CEP_REGEX, "*****-***")
-    .replace(CREDIT_CARD_SPACE_REGEX, "**** **** **** ****")
-    .replace(CREDIT_CARD_DOTTED_REGEX, "****.****.****.****")
-    .replace(BANK_REGEX, "Banco: *** Agência: **** Conta: ******-*")
-    .replace(SUS_CNS_REGEX, "[REDACTED_SUS_CNS]")
-    .replace(INSURANCE_REGEX, "Unimed *****");
+    .replace(NAME_REGEX, '*** *** ***')
+    .replace(MEDICAL_RECORD_REGEX, 'MR-******')
+    .replace(CRM_REGEX, '[REDACTED_REG]')
+    .replace(CEP_REGEX, '*****-***')
+    .replace(CREDIT_CARD_SPACE_REGEX, '**** **** **** ****')
+    .replace(CREDIT_CARD_DOTTED_REGEX, '****.****.****.****')
+    .replace(BANK_REGEX, 'Banco: *** Agência: **** Conta: ******-*')
+    .replace(SUS_CNS_REGEX, '[REDACTED_SUS_CNS]')
+    .replace(INSURANCE_REGEX, 'Unimed *****');
 
   if (opts.customPatterns) {
     for (const { pattern, replacement } of opts.customPatterns) {
@@ -83,5 +82,3 @@ export function redact(input: string, opts: RedactOptions = {}) {
   }
   return out;
 }
-
-export default redact;

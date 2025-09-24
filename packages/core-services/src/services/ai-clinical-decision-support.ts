@@ -5,7 +5,6 @@
  */
 
 import { prisma } from '@neonpro/database';
-import { EnhancedAestheticSchedulingService } from './enhanced-aesthetic-scheduling-service';
 
 
 export interface PatientAssessment {
@@ -664,7 +663,7 @@ export class AIClinicalDecisionSupport {
     return 0.6; // Placeholder
   }
 
-  private calculateConfidence(assessment: PatientAssessment): number {
+  private calculateConfidence(_assessment: PatientAssessment): number {
     // Calculate confidence in the recommendation based on data completeness
     return 0.8; // Placeholder
   }

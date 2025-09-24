@@ -1,7 +1,7 @@
 # Error Handling Middleware
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts)
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts)
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts)
@@ -20,6 +20,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Architecture and Integration](#core-architecture-and-integration)
 3. [Error Classification System](#error-classification-system)
@@ -60,11 +61,13 @@ style G fill:#f9f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L100)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L10-L40)
 - [rate-limit.ts](file://apps/api/src/middleware/rate-limit.ts#L15-L30)
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L1-L150)
 - [app.ts](file://apps/api/src/app.ts#L50-L80)
 
@@ -73,10 +76,12 @@ style G fill:#f9f,stroke:#333
 The middleware implements a hierarchical error classification system that distinguishes between different types of failures based on origin, severity, and handling strategy:
 
 ### Client vs Server Errors
+
 - **Client Errors (4xx)**: Result from invalid input, missing authentication, or malformed requests.
 - **Server Errors (5xx)**: Indicate internal system failures, database issues, or unhandled exceptions.
 
 ### Specialized Error Categories
+
 - **Validation Errors**: Triggered by schema validation failures; mapped to `400 Bad Request`.
 - **Security-Related Errors**: Include JWT validation failures, CSRF violations, or policy denials; mapped to `401 Unauthorized` or `403 Forbidden`.
 - **Compliance Errors**: Specific to LGPD and healthcare regulations; trigger enhanced logging and notification workflows.
@@ -85,6 +90,7 @@ The middleware implements a hierarchical error classification system that distin
 Each error type is associated with a predefined HTTP status code, user-facing message template, and logging severity level.
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L80-L200)
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L5-L60)
 
@@ -112,6 +118,7 @@ All error responses follow a uniform JSON structure designed for consistency acr
 This format enables frontend applications to programmatically interpret errors and display appropriate feedback. The middleware automatically maps native JavaScript errors (e.g., `TypeError`, `SyntaxError`) into these standardized formats using internal translation rules.
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L120-L250)
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L30-L80)
 
@@ -120,6 +127,7 @@ This format enables frontend applications to programmatically interpret errors a
 The middleware integrates with external observability platforms through the `error-tracking.ts` configuration module. When an error occurs, it triggers asynchronous reporting to services like Sentry, Datadog, or custom internal monitoring tools defined in `[error-tracking.ts](file://apps/api/src/config/error-tracking.ts)`.
 
 Key features include:
+
 - Automatic capture of stack traces (excluding production environments for security).
 - Context enrichment with user ID, IP address, and request path.
 - Sampling strategies to avoid overwhelming tracking systems during error storms.
@@ -141,16 +149,19 @@ EH->>App : Send Client Response
 ```
 
 **Diagram sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L180-L220)
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L10-L50)
 
 **Section sources**
+
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L1-L60)
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L170-L230)
 
 ## Error Sanitization and Security
 
 To prevent information leakage, especially in healthcare contexts governed by LGPD, the middleware employs aggressive sanitization via `[error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts)`. This process removes or obfuscates:
+
 - Stack traces containing file paths or line numbers.
 - Environment variables or configuration values.
 - Database query details or connection strings.
@@ -159,6 +170,7 @@ To prevent information leakage, especially in healthcare contexts governed by LG
 Sanitization uses pattern matching and redaction rules aligned with `[lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)` policies to ensure regulatory compliance.
 
 **Section sources**
+
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L1-L40)
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L90-L130)
 
@@ -167,6 +179,7 @@ Sanitization uses pattern matching and redaction rules aligned with `[lgpd-middl
 Every incoming request is assigned a unique correlation ID, either generated by the system or passed through the `X-Correlation-ID` header. This ID is preserved throughout the request lifecycle and included in all error logs and responses.
 
 The correlation ID enables:
+
 - End-to-end tracing of error context across microservices.
 - Efficient debugging by linking client reports to server logs.
 - Aggregation of related events in monitoring dashboards.
@@ -174,6 +187,7 @@ The correlation ID enables:
 The ID is stored in the request context and automatically injected into audit logs (`audit-log.ts`) and performance metrics (`performance-middleware.ts`).
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L60-L80)
 - [audit-log.ts](file://apps/api/src/middleware/audit-log.ts#L20-L40)
 
@@ -182,6 +196,7 @@ The ID is stored in the request context and automatically injected into audit lo
 The middleware seamlessly handles both traditional REST routes and tRPC-based RPC calls. For tRPC, it respects the framework's built-in error formatting while ensuring alignment with the global error schema.
 
 Special considerations include:
+
 - Preserving tRPC's method name and input data context without exposing sensitive fields.
 - Supporting streaming responses via `streaming.ts` even during partial failures.
 - Ensuring WebSocket connections (`websocket-security-middleware.ts`) receive properly formatted JSON error frames.
@@ -189,6 +204,7 @@ Special considerations include:
 This unified approach guarantees consistent behavior whether clients consume APIs directly or through type-safe tRPC clients.
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L200-L300)
 - [streaming.ts](file://apps/api/src/middleware/streaming.ts#L15-L35)
 - [websocket-security-middleware.ts](file://apps/api/src/middleware/websocket-security-middleware.ts#L10-L25)
@@ -196,13 +212,17 @@ This unified approach guarantees consistent behavior whether clients consume API
 ## Common Issues and Resilience Patterns
 
 ### Unhandled Promise Rejections
+
 The middleware registers global handlers for `unhandledRejection` and `uncaughtException` events, preventing process crashes and ensuring graceful degradation.
 
 ### Circular JSON References
+
 Before serialization, error objects are processed to detect and remove circular references using a safe replacer function, avoiding `Converting circular structure to JSON` errors.
 
 ### High Error Volume Protection
+
 During traffic spikes or cascading failures, the middleware:
+
 - Limits log verbosity to prevent disk saturation.
 - Applies sampling to external error tracking.
 - Maintains minimal response generation overhead to avoid amplifying latency.
@@ -210,12 +230,14 @@ During traffic spikes or cascading failures, the middleware:
 These patterns are validated through chaos engineering tests in the integration suite.
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L250-L350)
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L40-L60)
 
 ## Performance Considerations
 
 Despite its comprehensive functionality, the error handling middleware is optimized for low overhead:
+
 - Synchronous operations are minimized; most side effects (logging, tracking) occur asynchronously.
 - Regular expressions used in sanitization are precompiled.
 - Error classification uses constant-time lookups rather than iterative checks.
@@ -223,30 +245,38 @@ Despite its comprehensive functionality, the error handling middleware is optimi
 Benchmarks show sub-millisecond average impact on response time, even under peak load conditions simulated via `performance-monitor.js`.
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L300-L400)
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L10-L30)
 
 ## Troubleshooting Guide
 
 ### Diagnosing Missing Error Logs
+
 Check if:
+
 - `[error-tracking.ts](file://apps/api/src/config/error-tracking.ts)` has valid credentials.
 - Network policies allow outbound connections to monitoring endpoints.
 - Sampling rate isn't filtering out expected events.
 
 ### Debugging Incorrect Status Codes
+
 Verify:
+
 - Custom error classes extend the correct base types.
 - No upstream middleware is sending headers prematurely.
 - Validation schemas in `[schemas/](file://apps/api/src/schemas)` match expected formats.
 
 ### Handling Unexpected Error Leaks
+
 Inspect:
+
 - Recent changes to `[error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts)`.
 - Whether new error types have been registered in the classification map.
 - If environment-specific overrides exist in config files.
 
 **Section sources**
+
 - [error-handler.ts](file://apps/api/src/middleware/error-handler.ts#L350-L500)
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L30-L50)
 - [config/error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L40-L60)

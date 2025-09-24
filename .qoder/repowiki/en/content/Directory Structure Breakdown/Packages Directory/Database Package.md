@@ -1,7 +1,7 @@
 # Database Package
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [client.ts](file://packages/database/src/client.ts)
 - [index.ts](file://packages/database/src/index.ts)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts)
@@ -12,6 +12,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Architecture](#core-architecture)
 3. [Repository Pattern Implementation](#repository-pattern-implementation)
@@ -69,10 +70,12 @@ style D fill:#f9f,stroke:#333
 ```
 
 **Diagram sources**
+
 - [client.ts](file://packages/database/src/client.ts)
 - [index.ts](file://packages/database/src/index.ts)
 
 **Section sources**
+
 - [client.ts](file://packages/database/src/client.ts#L1-L268)
 - [index.ts](file://packages/database/src/index.ts#L1-L56)
 
@@ -124,9 +127,11 @@ end
 ```
 
 **Diagram sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L12-L570)
 
 **Section sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L1-L570)
 
 ## Service Layer Design
@@ -163,9 +168,11 @@ Note over ConsentService,AuditService : All patient identifiers are hashed<br/>f
 ```
 
 **Diagram sources**
+
 - [consent-service.ts](file://packages/database/src/services/consent-service.ts#L43-L98)
 
 **Section sources**
+
 - [consent-service.ts](file://packages/database/src/services/consent-service.ts#L1-L670)
 
 ### Audit Service Workflow
@@ -190,9 +197,11 @@ style ReturnError fill:#f96,stroke:#333
 ```
 
 **Diagram sources**
+
 - [audit-service.ts](file://packages/database/src/services/audit-service.ts#L98-L122)
 
 **Section sources**
+
 - [audit-service.ts](file://packages/database/src/services/audit-service.ts#L1-L680)
 
 ## Connection Management
@@ -204,7 +213,7 @@ The database package implements sophisticated connection management strategies o
 The package exports multiple client types for different use cases:
 
 - **Optimized Supabase Client**: For server-side operations with RLS bypass
-- **Browser Supabase Client**: For client-side operations with RLS enforcement  
+- **Browser Supabase Client**: For client-side operations with RLS enforcement
 - **Prisma Client**: For type-safe database operations with advanced query capabilities
 
 ```mermaid
@@ -236,6 +245,7 @@ end
 ```
 
 **Section sources**
+
 - [client.ts](file://packages/database/src/client.ts#L1-L268)
 
 ## Health Monitoring and Graceful Shutdown
@@ -267,6 +277,7 @@ Response-->>Caller : Health status object
 ```
 
 **Diagram sources**
+
 - [client.ts](file://packages/database/src/client.ts#L221-L244)
 
 ### Graceful Shutdown Process
@@ -286,9 +297,11 @@ G --> H[Process exits cleanly]
 ```
 
 **Diagram sources**
+
 - [client.ts](file://packages/database/src/client.ts#L247-L257)
 
 **Section sources**
+
 - [client.ts](file://packages/database/src/client.ts#L221-L257)
 
 ## Dependency Injection with Repository Container
@@ -323,9 +336,11 @@ end
 ```
 
 **Diagram sources**
+
 - [repository-container.ts](file://packages/database/src/containers/repository-container.ts#L19-L169)
 
 **Section sources**
+
 - [repository-container.ts](file://packages/database/src/containers/repository-container.ts#L1-L169)
 
 ## CRUD Operations Example
@@ -360,6 +375,7 @@ deactivate PatientService
 ```
 
 **Section sources**
+
 - [patient-service.ts](file://packages/database/src/application/patient-service.ts#L23-L58)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L18-L44)
 
@@ -379,6 +395,7 @@ async findWithFilter(
 ```
 
 This method demonstrates several optimization techniques:
+
 - **Conditional query building**: Only applies filters that are specified
 - **Efficient pagination**: Uses Supabase's range() method instead of offset/limit
 - **Intelligent sorting**: Defaults to creation date when no sort field specified
@@ -387,6 +404,7 @@ This method demonstrates several optimization techniques:
 The implementation avoids the N+1 query problem by using Supabase's relational queries to load associated data (clinic information and appointment counts) in a single round trip.
 
 **Section sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L120-L200)
 
 ## Error Handling Strategy
@@ -396,6 +414,7 @@ The package implements a comprehensive error handling strategy that prioritizes 
 ### Healthcare-Specific Error Logging
 
 All database operations include healthcare-aware error logging that:
+
 - Redacts sensitive patient information
 - Includes contextual metadata for debugging
 - Preserves error types for appropriate handling
@@ -404,6 +423,7 @@ All database operations include healthcare-aware error logging that:
 The `logHealthcareError` function ensures that errors are logged consistently across the application while protecting patient privacy.
 
 **Section sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L25-L40)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts#L60-L75)
 
@@ -414,6 +434,7 @@ The database package incorporates several performance optimization techniques ta
 ### Connection Pooling Configuration
 
 The optimized Supabase client configuration includes settings specifically tuned for healthcare workloads:
+
 - Reduced real-time events per second (10) to prevent overwhelming medical staff
 - Server-side session persistence disabled for stateless API operations
 - Custom headers for application identification and monitoring
@@ -421,6 +442,7 @@ The optimized Supabase client configuration includes settings specifically tuned
 ### Query Optimization Techniques
 
 The repositories implement several query optimization patterns:
+
 - **Selective field selection**: Only retrieves needed fields
 - **Batch operations**: Minimizes round trips for related data
 - **Index-aware queries**: Uses database indexes effectively
@@ -431,6 +453,7 @@ The repositories implement several query optimization patterns:
 The main clients (supabase, prisma) are implemented as proxies that are only instantiated when first accessed, reducing startup time and memory usage for modules that don't require database access.
 
 **Section sources**
+
 - [client.ts](file://packages/database/src/client.ts#L1-L268)
 
 ## Extending the Package
@@ -440,6 +463,7 @@ The modular design allows for easy extension of the database package with new re
 ### Adding a New Repository
 
 To add a new repository:
+
 1. Implement the repository interface in `src/repositories/`
 2. Add the export to `src/repositories/index.ts`
 3. Register in `RepositoryContainer` if needed
@@ -448,6 +472,7 @@ To add a new repository:
 ### Creating a New Service
 
 To create a new service:
+
 1. Implement the service class in `src/services/`
 2. Add exports to `src/services/index.ts`
 3. Include type exports for external consumption
@@ -456,4 +481,5 @@ To create a new service:
 The package's architecture supports both vertical scaling (adding new entities) and horizontal scaling (adding new capabilities) while maintaining consistency across the codebase.
 
 **Section sources**
+
 - [index.ts](file://packages/database/src/index.ts#L1-L56)

@@ -1,13 +1,14 @@
 # Performance Monitoring
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts)
 - [aesthetic-clinic-performance-optimizer.ts](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts)
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Performance Monitoring Architecture](#performance-monitoring-architecture)
 3. [Core Components](#core-components)
@@ -25,6 +26,7 @@ The performance monitoring system in the neonpro application provides comprehens
 The performance monitoring sub-feature integrates seamlessly with the application's existing architecture, providing real-time insights into system health and performance metrics. It captures data points from HTTP requests, database queries, and system resources, aggregating them into actionable insights that can be used to improve application efficiency and user experience.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L40)
 
 ## Performance Monitoring Architecture
@@ -58,6 +60,7 @@ style H fill:#6ff,stroke:#333
 ```
 
 **Diagram sources **
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L40)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts#L1-L27)
 
@@ -66,6 +69,7 @@ The performance monitoring architecture follows a layered approach where each in
 The architecture integrates with other system components such as caching, rate limiting, and compression to provide a holistic view of application performance. It also interfaces with error tracking and security monitoring systems to correlate performance issues with potential security concerns or error patterns.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L40)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts#L1-L27)
 
@@ -108,6 +112,7 @@ PerformanceMonitor --> AestheticClinicPerformanceOptimizer : "uses"
 ```
 
 **Diagram sources **
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L38-L403)
 - [aesthetic-clinic-performance-optimizer.ts](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)
 
@@ -116,6 +121,7 @@ The `PerformanceMonitor` class is responsible for capturing key performance indi
 The `AestheticClinicPerformanceOptimizer` service extends the basic monitoring capabilities by adding domain-specific optimizations. It implements intelligent caching strategies for frequently accessed data such as client profiles, treatment catalogs, and before/after photos. The optimizer also handles image optimization, including format conversion to WebP, lazy loading, and CDN integration, which significantly reduces bandwidth usage and improves page load times.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L38-L403)
 - [aesthetic-clinic-performance-optimizer.ts](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)
 
@@ -150,6 +156,7 @@ PERFORMANCE_METRICS ||--o{ PERFORMANCE_THRESHOLDS : "has"
 ```
 
 **Diagram sources **
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L9-L36)
 
 The performance monitoring system uses a well-defined data model to capture and store performance metrics. The core entity is the `PerformanceMetrics` interface, which defines the structure of collected data points. Each metric record includes essential information such as the request ID, HTTP method, URL, user agent, timestamps, duration, memory usage, CPU usage, response size, status code, cache hit status, and database query count.
@@ -159,6 +166,7 @@ The `PerformanceThresholds` interface defines the acceptable limits for various 
 The data model is designed to be extensible, allowing additional fields to be added as needed without breaking existing functionality. This flexibility enables the system to adapt to changing performance requirements and capture new types of metrics as the application evolves.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L9-L36)
 
 ## Middleware Implementation
@@ -188,6 +196,7 @@ PerformanceMonitor->>Client : HTTP Response
 ```
 
 **Diagram sources **
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L78-L231)
 
 The performance monitoring middleware is implemented as an Express.js middleware function that wraps around HTTP requests. When a request is received, the middleware generates a unique request ID and records the start time using `performance.now()`. It then overrides the `res.send` method to track the response size by measuring the byte length of the data being sent.
@@ -195,6 +204,7 @@ The performance monitoring middleware is implemented as an Express.js middleware
 As the request progresses through the application, the middleware continues to collect data. When the response finishes (indicated by the 'finish' event), the middleware records the end time, calculates the total duration, and captures the current memory usage using `process.memoryUsage()`. It also records the status code and response size, creating a complete `PerformanceMetrics` object.
 
 The middleware includes several specialized functions for different aspects of performance monitoring:
+
 - `databaseQueryMiddleware()` - Tracks database query counts
 - `compressionMiddleware()` - Handles response compression and sets appropriate headers
 - `cacheMiddleware()` - Implements caching with configurable TTL
@@ -204,6 +214,7 @@ The middleware includes several specialized functions for different aspects of p
 These middleware functions can be used individually or combined into a chain to provide comprehensive performance monitoring and optimization.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L78-L231)
 
 ## Performance Dashboard and API Endpoints
@@ -251,11 +262,13 @@ style AI fill:#f9f,stroke:#333
 ```
 
 **Diagram sources **
+
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts#L27-L390)
 
 The performance dashboard provides a set of API endpoints that expose performance metrics and insights to monitoring tools and administrators. These endpoints are created using the `createPerformanceDashboardRoutes` function, which takes instances of the `AestheticClinicPerformanceOptimizer` and `PerformanceMonitor` as parameters.
 
 Key endpoints include:
+
 - `/metrics` - Returns current performance metrics with optional time range filtering
 - `/insights` - Provides performance insights and optimization recommendations
 - `/cache` - Returns cache performance statistics
@@ -270,6 +283,7 @@ Key endpoints include:
 The dashboard routes integrate with the underlying performance monitoring components to provide real-time access to performance data. The `/stream` endpoint is particularly useful for real-time monitoring, sending updated metrics every 5 seconds via Server-Sent Events, allowing dashboards to display live performance data without requiring constant polling.
 
 **Section sources**
+
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts#L27-L390)
 
 ## Integration with Other Systems
@@ -283,6 +297,7 @@ Performance data is used to inform optimization decisions in other parts of the 
 The monitoring system also provides data to business intelligence tools, allowing non-technical stakeholders to understand application performance trends and their impact on user experience. This cross-functional integration ensures that performance data is not siloed but is instead used to improve multiple aspects of the application.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L40)
 - [aesthetic-clinic-performance-optimizer.ts](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)
 - [performance-dashboard.ts](file://apps/api/src/routes/performance-dashboard.ts#L1-L27)
@@ -292,7 +307,9 @@ The monitoring system also provides data to business intelligence tools, allowin
 The performance monitoring system is designed to detect and help resolve common performance issues in the neonpro application. Some of the most frequent issues and their solutions include:
 
 ### Slow Database Queries
+
 Slow database queries are identified by the system when query duration exceeds the configured thresholds. The `AestheticClinicPerformanceOptimizer` addresses this by:
+
 - Implementing intelligent caching for frequently accessed data
 - Using query batching to reduce round trips
 - Applying index hints to guide query optimization
@@ -301,7 +318,9 @@ Slow database queries are identified by the system when query duration exceeds t
 [SOLUTION: Optimize Database Queries](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)
 
 ### Inefficient AI Model Loading
+
 When AI models are loaded inefficiently, it can cause significant delays in request processing. The system mitigates this by:
+
 - Pre-loading frequently used models during application startup
 - Implementing lazy loading for less commonly used models
 - Caching model instances to avoid repeated initialization
@@ -310,7 +329,9 @@ When AI models are loaded inefficiently, it can cause significant delays in requ
 [SOLUTION: Optimize AI Model Loading](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)
 
 ### WebSocket Connection Bottlenecks
+
 WebSocket connections can become bottlenecks when handling large numbers of concurrent clients. The system addresses this by:
+
 - Implementing connection pooling
 - Optimizing message serialization
 - Using efficient data structures for connection management
@@ -319,7 +340,9 @@ WebSocket connections can become bottlenecks when handling large numbers of conc
 [SOLUTION: Optimize WebSocket Connections](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)
 
 ### Large Response Sizes
+
 Large response sizes can degrade performance, especially on mobile networks. The system handles this by:
+
 - Implementing response compression (gzip, deflate)
 - Optimizing image formats and sizes
 - Using pagination for large datasets
@@ -328,7 +351,9 @@ Large response sizes can degrade performance, especially on mobile networks. The
 [SOLUTION: Reduce Response Sizes](file://apps/api/src/middleware/performance-middleware.ts#L150-L179)
 
 ### High Memory Usage
+
 High memory usage can lead to application instability. The system monitors this and recommends:
+
 - Implementing proper garbage collection
 - Optimizing data structures
 - Using streaming for large data processing
@@ -337,6 +362,7 @@ High memory usage can lead to application instability. The system monitors this 
 [SOLUTION: Manage Memory Usage](file://apps/api/src/middleware/performance-middleware.ts#L300-L320)
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L40)
 - [aesthetic-clinic-performance-optimizer.ts](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)
 
@@ -345,7 +371,9 @@ High memory usage can lead to application instability. The system monitors this 
 Based on the performance monitoring data and system design, several best practices emerge for optimizing the neonpro application:
 
 ### Implement Strategic Caching
+
 Use the `cacheMiddleware` with appropriate TTL values for different types of data:
+
 - Short TTL (5 minutes) for frequently changing data like client appointments
 - Medium TTL (1 hour) for relatively stable data like treatment catalogs
 - Long TTL (24 hours) for static data like clinic information
@@ -353,7 +381,9 @@ Use the `cacheMiddleware` with appropriate TTL values for different types of dat
 [IMPLEMENT CACHING STRATEGY](file://apps/api/src/middleware/performance-middleware.ts#L150-L179)
 
 ### Optimize Database Access
+
 Leverage the `AestheticClinicPerformanceOptimizer` features:
+
 - Use batched queries when retrieving related data
 - Implement read replicas for reporting queries
 - Apply proper indexing based on query patterns
@@ -362,7 +392,9 @@ Leverage the `AestheticClinicPerformanceOptimizer` features:
 [OPTIMIZE DATABASE ACCESS](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)
 
 ### Use Compression Effectively
+
 Enable response compression for all appropriate endpoints:
+
 - Use gzip for text-based responses
 - Use deflate as fallback
 - Set proper Vary headers to handle client capabilities
@@ -371,7 +403,9 @@ Enable response compression for all appropriate endpoints:
 [ENABLE COMPRESSION](file://apps/api/src/middleware/performance-middleware.ts#L130-L149)
 
 ### Implement Rate Limiting
+
 Protect your API from abuse and ensure fair usage:
+
 - Set reasonable limits based on user roles
 - Use sliding window algorithms for smoother rate limiting
 - Provide clear headers indicating rate limit status
@@ -380,7 +414,9 @@ Protect your API from abuse and ensure fair usage:
 [IMPLEMENT RATE LIMITING](file://apps/api/src/middleware/performance-middleware.ts#L180-L231)
 
 ### Monitor and Alert on Key Metrics
+
 Set up proactive monitoring for critical performance indicators:
+
 - Average response time
 - Error rates
 - Memory usage
@@ -392,5 +428,6 @@ Set up proactive monitoring for critical performance indicators:
 By following these best practices and leveraging the built-in performance monitoring capabilities, developers can ensure that the neonpro application remains responsive, reliable, and scalable even as traffic grows and requirements evolve.
 
 **Section sources**
+
 - [performance-middleware.ts](file://apps/api/src/middleware/performance-middleware.ts#L1-L40)
 - [aesthetic-clinic-performance-optimizer.ts](file://apps/api/src/services/performance/aesthetic-clinic-performance-optimizer.ts#L84-L805)

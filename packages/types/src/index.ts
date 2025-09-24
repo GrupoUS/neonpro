@@ -1,3 +1,6 @@
+import { UserRole } from './ai-agent';
+import { ChatMessage } from './ai-chat';
+
 // Types Package Index Exports
 // This file exports all types from the packages/types directory
 
@@ -209,4 +212,34 @@ export interface ExternalIds {
   insurance_id?: string;
   medical_record_system_id?: string;
   [key: string]: string | number | boolean | null | undefined;
+}
+
+// AI Feedback types
+export interface FeedbackRequest {
+  sessionId: string;
+  messageId?: string;
+  rating: number; // 1-5
+  comment?: string;
+  userRole: UserRole;
+  timestamp: string;
+}
+
+export interface FeedbackResponse {
+  id: string;
+  sessionId: string;
+  rating: number;
+  comment?: string;
+  processed: boolean;
+  createdAt: string;
+}
+
+// AI Session types
+export interface SessionResponse {
+  id: string;
+  userId: string;
+  status: 'active' | 'completed' | 'archived';
+  messages: ChatMessage[];
+  metadata: Record<string, any>;
+  createdAt: string;
+  updatedAt: string;
 }

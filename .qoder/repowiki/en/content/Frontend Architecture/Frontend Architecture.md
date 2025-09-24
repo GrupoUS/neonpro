@@ -1,7 +1,7 @@
 # Frontend Architecture
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [App.tsx](file://apps/web/src/App.tsx)
 - [main.tsx](file://apps/web/src/main.tsx)
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Project Structure](#project-structure)
 3. [Core Components](#core-components)
@@ -24,6 +25,7 @@
 9. [Conclusion](#conclusion)
 
 ## Introduction
+
 The NeonPro frontend architecture is built on React with Vite as the build tool, following modern component-based patterns. The application implements a robust PWA (Progressive Web App) architecture with offline capabilities, service worker integration, and installability features. The system leverages tRPC for type-safe API communication and TanStack Router for efficient routing. This documentation provides a comprehensive overview of the architectural design, component hierarchy, state management, routing system, and integration patterns with backend services.
 
 ## Project Structure
@@ -51,11 +53,13 @@ E --> S[dashboard]
 ```
 
 **Diagram sources**
+
 - [App.tsx](file://apps/web/src/App.tsx)
 - [main.tsx](file://apps/web/src/main.tsx)
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts)
 
 **Section sources**
+
 - [App.tsx](file://apps/web/src/App.tsx)
 - [main.tsx](file://apps/web/src/main.tsx)
 - [vite.config.ts](file://apps/web/vite.config.ts)
@@ -65,6 +69,7 @@ E --> S[dashboard]
 The core components of the NeonPro frontend include the main application shell, routing system, state management providers, and PWA infrastructure. The architecture follows a provider pattern for dependency injection, with specialized providers for tRPC and TanStack Query. The ErrorBoundary component implements resilient error handling across the application. The PWA components enable offline functionality and installation prompts.
 
 **Section sources**
+
 - [App.tsx](file://apps/web/src/App.tsx#L41-L93)
 - [main.tsx](file://apps/web/src/main.tsx)
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L12-L61)
@@ -95,6 +100,7 @@ style I fill:#bbf,stroke:#333
 ```
 
 **Diagram sources**
+
 - [App.tsx](file://apps/web/src/App.tsx)
 - [main.tsx](file://apps/web/src/main.tsx)
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx)
@@ -126,6 +132,7 @@ Route --> Route : "parent/child"
 ```
 
 **Diagram sources**
+
 - [routeTree.gen.ts](file://apps/web/src/routeTree.gen.ts#L0-L113)
 - [router.ts](file://apps/web/src/router.ts)
 
@@ -149,6 +156,7 @@ Note over Query,tRPC : Automatic caching<br/>and error handling
 ```
 
 **Diagram sources**
+
 - [TRPCProvider.tsx](file://apps/web/src/components/providers/TRPCProvider.tsx#L8-L15)
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx#L35-L45)
 
@@ -171,6 +179,7 @@ style C fill:#ccffcc,stroke:#333
 ```
 
 **Diagram sources**
+
 - [App.tsx](file://apps/web/src/App.tsx#L41-L93)
 - [main.tsx](file://apps/web/src/main.tsx)
 - [PWAInstallPrompt.tsx](file://apps/web/src/components/pwa/PWAInstallPrompt.tsx)
@@ -202,16 +211,19 @@ linkStyle 9 stroke:#4c1,stroke-width:2px;
 ```
 
 **Diagram sources**
+
 - [vite.config.ts](file://apps/web/vite.config.ts)
 - [package.json](file://apps/web/package.json)
 
 **Section sources**
+
 - [vite.config.ts](file://apps/web/vite.config.ts)
 - [package.json](file://apps/web/package.json)
 
 ## Performance Considerations
 
 The frontend architecture incorporates several performance optimizations:
+
 - Code splitting via route-based chunking
 - Pre-bundling of dependencies in Vite config
 - Efficient query caching with staleTime and gcTime settings
@@ -222,6 +234,7 @@ The frontend architecture incorporates several performance optimizations:
 The Vite configuration specifies key dependencies to include in the pre-bundle optimization list, reducing initial load time. The TanStack Query configuration balances freshness with performance by setting appropriate stale times and enabling refetch on window focus only when necessary.
 
 **Section sources**
+
 - [vite.config.ts](file://apps/web/vite.config.ts)
 - [TanStackQueryProvider.tsx](file://apps/web/src/components/providers/TanStackQueryProvider.tsx)
 
@@ -236,6 +249,7 @@ The application implements comprehensive error handling through the ErrorBoundar
 - Routing errors: Validate routeTree.gen.ts generation and import paths
 
 **Section sources**
+
 - [ErrorBoundary.tsx](file://apps/web/src/components/ErrorBoundary.tsx#L12-L61)
 - [main.tsx](file://apps/web/src/main.tsx)
 

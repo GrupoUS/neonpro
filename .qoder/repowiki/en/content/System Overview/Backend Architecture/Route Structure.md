@@ -1,7 +1,7 @@
 # Route Structure
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [app.ts](file://apps/api/src/app.ts)
 - [patients.ts](file://apps/api/src/routes/patients.ts)
 - [chat.ts](file://apps/api/src/routes/ai/chat.ts)
@@ -16,6 +16,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Routing Hierarchy and Versioning](#routing-hierarchy-and-versioning)
 3. [Domain-Based RESTful Endpoints](#domain-based-restful-endpoints)
@@ -32,6 +33,7 @@
 The NeonPro backend implements a comprehensive routing structure that combines RESTful endpoints with tRPC procedures to provide a robust API for healthcare applications. The system is organized around key domains including patient management, AI interactions, appointments, billing, and other clinical operations. This documentation details the architecture of the route structure, focusing on how endpoints are organized by domain, versioned for backward compatibility, and secured through middleware integration. The design emphasizes healthcare compliance (LGPD, CFM), performance optimization, and secure data handling while providing flexible access patterns for both traditional REST clients and type-safe tRPC consumers.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
 ## Routing Hierarchy and Versioning
@@ -60,9 +62,11 @@ E --> E1[tRPC Procedures]
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [v1/index.ts](file://apps/api/src/routes/v1/index.ts#L1-L15)
 - [v1/ai/index.ts](file://apps/api/src/routes/v1/ai/index.ts#L1-L19)
@@ -105,11 +109,13 @@ F --> F2[Finance Tools]
 ```
 
 **Diagram sources **
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [chat.ts](file://apps/api/src/routes/ai/chat.ts#L1-L754)
 - [ai/analyze.ts](file://apps/api/src/routes/ai/analyze.ts#L1-L294)
 
 **Section sources**
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [chat.ts](file://apps/api/src/routes/ai/chat.ts#L1-L754)
 - [ai/analyze.ts](file://apps/api/src/routes/ai/analyze.ts#L1-L294)
@@ -155,10 +161,12 @@ AppRouter --> FinancialAgentRouter : "composes"
 ```
 
 **Diagram sources **
+
 - [router.ts](file://apps/api/src/trpc/router.ts#L1-L115)
 - [patients.router.ts](file://apps/api/src/trpc/routers/patients.ts#L1-L684)
 
 **Section sources**
+
 - [router.ts](file://apps/api/src/trpc/router.ts#L1-L115)
 - [patients.router.ts](file://apps/api/src/trpc/routers/patients.ts#L1-L684)
 
@@ -193,11 +201,13 @@ Endpoint-->>Client : HTTP Response
 ```
 
 **Diagram sources **
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L307)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L307)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
@@ -227,11 +237,13 @@ ErrorHandler --> Response
 ```
 
 **Diagram sources **
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [chat.ts](file://apps/api/src/routes/ai/chat.ts#L1-L754)
 - [ai/analyze.ts](file://apps/api/src/routes/ai/analyze.ts#L1-L294)
 
 **Section sources**
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [chat.ts](file://apps/api/src/routes/ai/chat.ts#L1-L754)
 - [ai/analyze.ts](file://apps/api/src/routes/ai/analyze.ts#L1-L294)
@@ -243,6 +255,7 @@ Parameter extraction and validation in NeonPro employs a systematic approach usi
 For RESTful endpoints, parameters are extracted from query strings, URL parameters, and request bodies based on their location, then validated against predefined Zod schemas. The patients endpoint demonstrates this pattern with separate schemas for creation, update, and query operations, each defining the required fields, data types, and constraints. Similarly, AI endpoints use specialized schemas that validate message content, model preferences, and contextual information. This schema-driven approach enables automatic type inference and provides clear error messages when validation fails.
 
 **Section sources**
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [chat.ts](file://apps/api/src/routes/ai/chat.ts#L1-L754)
 - [ai/analyze.ts](file://apps/api/src/routes/ai/analyze.ts#L1-L294)
@@ -254,6 +267,7 @@ Response formatting standards in NeonPro ensure consistency across all API endpo
 All endpoints include standardized response headers that convey important operational and compliance information. These include X-Request-ID for tracing, X-Response-Time for performance monitoring, and various healthcare compliance headers such as X-CFM-Compliant and X-LGPD-Compliant. The response structure also incorporates pagination metadata for list operations and cryptographic proofs for audit trail purposes. This consistent formatting enables client applications to handle responses uniformly while meeting regulatory requirements for healthcare data handling.
 
 **Section sources**
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [chat.ts](file://apps/api/src/routes/ai/chat.ts#L1-L754)
 - [ai/analyze.ts](file://apps/api/src/routes/ai/analyze.ts#L1-L294)
@@ -265,6 +279,7 @@ Common issues in NeonPro's routing system include route conflicts, query paramet
 Query parameter parsing is handled consistently across endpoints using Zod validation with transformation functions that convert string inputs to appropriate types while enforcing limits and defaults. For example, the patients endpoint transforms page and limit parameters from strings to numbers while applying sensible defaults and maximum values. Payload validation issues are mitigated through comprehensive schema definitions that specify required fields, data types, and constraints, with detailed error messages returned when validation fails. The system also addresses performance concerns through caching strategies, query timeouts, and rate limiting tailored to different endpoint types.
 
 **Section sources**
+
 - [patients.ts](file://apps/api/src/routes/patients.ts#L1-L438)
 - [chat.ts](file://apps/api/src/routes/ai/chat.ts#L1-L754)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)

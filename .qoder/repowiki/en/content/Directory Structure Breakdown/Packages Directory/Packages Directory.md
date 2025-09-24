@@ -1,7 +1,7 @@
 # Packages Directory
 
 <cite>
-**Referenced Files in This Document **   
+**Referenced Files in This Document **
 - [core-services/README.md](file://packages/core-services/README.md)
 - [database/README.md](file://packages/database/README.md)
 - [security/src/index.ts](file://packages/security/src/index.ts)
@@ -14,6 +14,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Packages Overview](#core-packages-overview)
 3. [Package Interdependencies and Architecture](#package-interdependencies-and-architecture)
@@ -51,10 +52,12 @@ AIService --> PatientValidator : "uses"
 ```
 
 **Diagram sources **
+
 - [core-services/README.md](file://packages/core-services/README.md)
 - [core-services/src/index.ts](file://packages/core-services/src/index.ts)
 
 **Section sources**
+
 - [core-services/README.md](file://packages/core-services/README.md)
 - [core-services/src/index.ts](file://packages/core-services/src/index.ts)
 
@@ -86,10 +89,12 @@ RepositoryContainer --> BaseService : "extends"
 ```
 
 **Diagram sources **
+
 - [database/README.md](file://packages/database/README.md)
 - [database/src/index.ts](file://packages/database/src/index.ts)
 
 **Section sources**
+
 - [database/README.md](file://packages/database/README.md)
 - [database/src/index.ts](file://packages/database/src/index.ts)
 
@@ -122,9 +127,11 @@ RateLimiter --> SecurityUtils : "uses"
 ```
 
 **Diagram sources **
+
 - [security/src/index.ts](file://packages/security/src/index.ts)
 
 **Section sources**
+
 - [security/src/index.ts](file://packages/security/src/index.ts)
 
 ### Shared Package
@@ -156,9 +163,11 @@ API_Client --> TelemetryEvent : "logs"
 ```
 
 **Diagram sources **
+
 - [shared/src/index.ts](file://packages/shared/src/index.ts)
 
 **Section sources**
+
 - [shared/src/index.ts](file://packages/shared/src/index.ts)
 
 ### Validators Package
@@ -190,9 +199,11 @@ BatchValidator --> DocumentValidator : "composes"
 ```
 
 **Diagram sources **
+
 - [validators/src/index.ts](file://packages/validators/src/index.ts)
 
 **Section sources**
+
 - [validators/src/index.ts](file://packages/validators/src/index.ts)
 
 ### Specialized Packages
@@ -233,6 +244,7 @@ N --> F
 ```
 
 **Diagram sources **
+
 - [core-services/src/index.ts](file://packages/core-services/src/index.ts)
 - [database/src/index.ts](file://packages/database/src/index.ts)
 - [security/src/index.ts](file://packages/security/src/index.ts)
@@ -240,6 +252,7 @@ N --> F
 - [validators/src/index.ts](file://packages/validators/src/index.ts)
 
 **Section sources**
+
 - [core-services/src/index.ts](file://packages/core-services/src/index.ts)
 - [database/src/index.ts](file://packages/database/src/index.ts)
 - [security/src/index.ts](file://packages/security/src/index.ts)
@@ -253,6 +266,7 @@ Core-services depends on database for data persistence, analytics for metrics co
 Applications consume shared packages through standardized import patterns that follow the monorepo's naming convention. Packages are imported using their scoped names (e.g., @neonpro/core-services) and specific functionality is accessed via named exports or default objects.
 
 For example, an API service might import and use the core-services package as follows:
+
 ```typescript
 import { AIService } from "@neonpro/core-services";
 const ai = new AIService();
@@ -260,6 +274,7 @@ const result = await ai.makePrediction(predictionData);
 ```
 
 Similarly, validation of Brazilian documents can be performed using the validators package:
+
 ```typescript
 import { validateCPF, validateCNPJ } from "@neonpro/validators";
 if (validateCPF(cpfValue)) {
@@ -268,18 +283,21 @@ if (validateCPF(cpfValue)) {
 ```
 
 Security middleware can be integrated into Hono applications:
+
 ```typescript
 import { getSecurityMiddlewareStack } from "@neonpro/security";
 app.use("*", getSecurityMiddlewareStack());
 ```
 
 Database services are initialized with proper configuration:
+
 ```typescript
 import { createClient } from "@neonpro/database";
 const dbClient = createClient(databaseConfig);
 ```
 
 Type definitions from shared packages ensure consistency across the codebase:
+
 ```typescript
 import { Patient } from "@neonpro/shared";
 const patient: Patient = { id: "123", name: "John Doe", cpf: "123.456.789-00" };
@@ -317,6 +335,7 @@ Package naming should reflect its purpose clearly, using descriptive terms that 
 ### Circular Dependencies
 
 Circular dependencies between packages can cause build failures and runtime errors. To resolve this issue:
+
 1. Identify the dependency cycle using tools like madge or dependency-cruiser
 2. Extract shared functionality into a new package that both original packages can depend on
 3. Use dependency injection to break tight coupling
@@ -327,6 +346,7 @@ For example, if core-services and analytics develop a circular dependency, extra
 ### Version Conflicts
 
 Version conflicts occur when different applications require incompatible versions of the same package. Mitigation strategies include:
+
 1. Maintaining backward compatibility in package updates
 2. Using peer dependencies for framework-specific packages
 3. Implementing gradual rollout strategies for breaking changes
@@ -335,6 +355,7 @@ Version conflicts occur when different applications require incompatible version
 ### Bundle Size Optimization
 
 Large package sizes can impact application performance. Optimize by:
+
 1. Enabling tree-shaking through ES module exports
 2. Minimizing external dependencies
 3. Using lazy loading for non-critical functionality

@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { usePWA } from "@/hooks/usePWA";
 import { 
   Wifi, 
@@ -45,6 +44,7 @@ export const PWAOfflineIndicator: React.FC<PWAOfflineIndicatorProps> = ({ classN
       const timer = setTimeout(() => setShowNotificationPrompt(true), 5000);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [notificationPermission, isOnline]);
 
   const handleEnableNotifications = async () => {

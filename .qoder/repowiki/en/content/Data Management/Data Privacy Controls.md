@@ -1,7 +1,7 @@
 # Data Privacy Controls
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts)
 - [encryption.ts](file://packages/security/src/encryption.ts)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Data Anonymization and Pseudonymization](#data-anonymization-and-pseudonymization)
 3. [Field-Level Encryption Strategies](#field-level-encryption-strategies)
@@ -20,9 +21,11 @@
 7. [Developer Guidelines for Sensitive Data Handling](#developer-guidelines-for-sensitive-data-handling)
 
 ## Introduction
+
 The neonpro application implements comprehensive data privacy controls to ensure compliance with Brazil's Lei Geral de Proteção de Dados (LGPD) for healthcare data processing. The system incorporates technical implementations of data anonymization, pseudonymization, redaction techniques, field-level encryption, and consent management systems. These controls are designed to protect patient information throughout its lifecycle, from collection through processing, storage, and eventual deletion or anonymization. The architecture supports privacy-by-design principles while maintaining the functionality required for healthcare services.
 
 ## Data Anonymization and Pseudonymization
+
 The neonpro application implements multiple data anonymization and pseudonymization techniques to protect patient information while preserving data utility for research and analytics purposes. The system uses k-anonymity, l-diversity, t-closeness, and differential privacy methods to ensure that individual patients cannot be re-identified from datasets.
 
 ```mermaid
@@ -45,6 +48,7 @@ K --> L
 ```
 
 **Diagram sources**
+
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts#L0-L971)
 - [lgpd-data-anonymization-pseudonymization.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-anonymization-pseudonymization.test.ts#L344-L758)
 
@@ -55,10 +59,12 @@ Microaggregation techniques are applied to numeric data such as age, weight, hei
 Hierarchical generalization is used to transform specific attributes into broader categories. For example, exact ages are generalized into 5-year groups, specific addresses are generalized to neighborhood or city levels, and exact dates are generalized to quarters or years. This approach maintains data utility for analysis while protecting individual privacy.
 
 **Section sources**
+
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts#L0-L971)
 - [lgpd-data-anonymization-pseudonymization.test.ts](file://apps/api/src/__tests__/compliance/lgpd-data-anonymization-pseudonymization.test.ts#L665-L699)
 
 ## Field-Level Encryption Strategies
+
 The neonpro application implements robust field-level encryption strategies to protect sensitive health data both at rest and in transit. The system uses AES-256-GCM encryption with authenticated encryption to ensure confidentiality, integrity, and authenticity of protected data.
 
 ```mermaid
@@ -90,6 +96,7 @@ EncryptionManager --> KeyManager : "uses"
 ```
 
 **Diagram sources**
+
 - [encryption.ts](file://packages/security/src/encryption.ts#L0-L301)
 
 Sensitive fields identified by the HealthcareSensitiveFieldAnalyzer include CPF (Brazilian individual taxpayer registry), phone numbers, email addresses, medical history, allergies, genetic data, biometric data, insurance numbers, and billing information. These fields are automatically encrypted when stored in the database and decrypted only when accessed by authorized personnel with proper consent.
@@ -99,10 +106,12 @@ The encryption implementation follows a hybrid approach where sensitive fields a
 Key management is handled through a dedicated KeyManager class that securely stores encryption keys with creation timestamps and optional expiration dates. The system supports key rotation, allowing old keys to be phased out while maintaining access to data encrypted with previous keys during a grace period. Automatic cleanup removes expired keys from the system.
 
 **Section sources**
+
 - [encryption.ts](file://packages/security/src/encryption.ts#L0-L301)
 - [sensitive-field-analyzer.ts](file://apps/api/src/services/sensitive-field-analyzer.ts#L175-L232)
 
 ## Consent Management Architecture
+
 The consent management system in neonpro provides a comprehensive framework for handling patient consent in accordance with LGPD requirements. The architecture supports creation, updating, revocation, and tracking of consent records throughout their lifecycle.
 
 ```mermaid
@@ -128,6 +137,7 @@ API-->>Patient : Request accepted
 ```
 
 **Diagram sources**
+
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L0-L1259)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L0-L685)
 
@@ -138,10 +148,12 @@ Consent records are immutable once created, with any changes tracked through a h
 The system implements middleware that intercepts API requests and verifies consent status before allowing access to personal data. Different endpoints require different processing purposes, with medical care and appointment scheduling having stricter consent requirements than billing or legal obligations. The middleware logs all data access attempts for audit trail purposes.
 
 **Section sources**
+
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L0-L1259)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L0-L685)
 
 ## API Response and Logging Protection
+
 The neonpro application implements comprehensive protections for personal data in API responses and logging systems. These controls ensure that sensitive information is never exposed inappropriately, whether through direct API output or diagnostic logs.
 
 ```mermaid
@@ -163,6 +175,7 @@ J --> |No PII| L
 ```
 
 **Diagram sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L0-L685)
 - [utils/lgpd-compliance-validator.ts](file://apps/api/src/utils/lgpd-compliance-validator.ts#L33-L439)
 
@@ -173,10 +186,12 @@ Logging systems implement real-time detection of personally identifiable informa
 The dataPortabilityMiddleware handles Article 18 requests for data portability by collecting all user data from across the system and formatting it in standard JSON format. Similarly, the dataErasureMiddleware processes right-to-be-forgotten requests by either anonymizing or deleting user data according to retention policies and legal requirements.
 
 **Section sources**
+
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L0-L685)
 - [utils/lgpd-compliance-validator.ts](file://apps/api/src/utils/lgpd-compliance-validator.ts#L33-L439)
 
 ## Right-to-be-Forgotten Implementation
+
 The neonpro application implements a comprehensive right-to-be-forgotten system that complies with LGPD Article 18 requirements for data deletion and anonymization. The implementation balances patient rights with legal obligations to retain certain types of data.
 
 ```mermaid
@@ -197,6 +212,7 @@ end note
 ```
 
 **Diagram sources**
+
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts#L0-L971)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L0-L685)
 
@@ -209,15 +225,18 @@ The EnhancedLGPDLifecycleService manages the entire deletion workflow, including
 Patients receive confirmation of their deletion request with details about which data was processed and which data was retained due to legal obligations. The system also sends notifications before automatic deletion or anonymization occurs, giving patients a final opportunity to withdraw their request if needed.
 
 **Section sources**
+
 - [enhanced-lgpd-lifecycle.ts](file://apps/api/src/services/enhanced-lgpd-lifecycle.ts#L0-L971)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L0-L685)
 
 ## Developer Guidelines for Sensitive Data Handling
+
 Developers working with the neonpro application must follow strict guidelines for handling sensitive healthcare data in accordance with privacy-by-design principles and regulatory requirements.
 
 All code that processes personal data must use the established encryption and anonymization services rather than implementing custom solutions. Direct database queries on sensitive fields should be avoided in favor of service layer methods that automatically apply appropriate protections.
 
 When designing new features that involve personal data, developers must:
+
 1. Identify all data categories being collected and their sensitivity levels
 2. Determine the legal basis for processing under LGPD Article 7
 3. Define the specific purpose for data processing
@@ -232,6 +251,7 @@ API endpoints that return patient data must use the standardized response format
 Regular security reviews should verify that all data flows comply with the principle of least privilege and that no unauthorized data sharing occurs between subsystems. Automated tests should validate that protection mechanisms work correctly across all scenarios.
 
 **Section sources**
+
 - [lgpd-service.ts](file://apps/api/src/services/lgpd-service.ts#L0-L1259)
 - [encryption.ts](file://packages/security/src/encryption.ts#L0-L301)
 - [lgpd-middleware.ts](file://apps/api/src/middleware/lgpd-middleware.ts#L0-L685)

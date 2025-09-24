@@ -1,7 +1,7 @@
 # API Service
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [index.ts](file://apps/api/src/index.ts)
 - [app.ts](file://apps/api/src/app.ts)
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Middleware Pipeline](#middleware-pipeline)
@@ -36,6 +37,7 @@ This documentation provides comprehensive coverage of the API's architecture, mi
 The API is designed with healthcare compliance at its core, implementing LGPD (Lei Geral de Proteção de Dados), ANVISA, and CFM regulations throughout its architecture. It processes sensitive medical and personal data while maintaining strict audit trails, data protection measures, and access controls.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [index.ts](file://apps/api/src/index.ts#L1-L96)
 
@@ -46,6 +48,7 @@ The API service follows a layered architecture built on the Hono framework, whic
 At the entry point, the `index.ts` file initializes the server and sets up graceful shutdown procedures. When not running in Vercel's serverless environment, it creates an HTTP server that listens on port 3005 and initializes WebSocket support for the AG-UI Protocol. The main application logic is contained in `app.ts`, which creates an OpenAPI-compliant Hono application instance.
 
 The architecture incorporates multiple layers of functionality:
+
 - **Security Layer**: Implements CORS, HTTPS redirection, security headers, and rate limiting
 - **Monitoring Layer**: Integrates Sentry for error tracking and OpenTelemetry for performance monitoring
 - **Validation Layer**: Uses Zod schemas for request validation and data integrity
@@ -72,6 +75,7 @@ B --> N[OpenTelemetry Monitoring]
 ```
 
 **Diagram sources**
+
 - [index.ts](file://apps/api/src/index.ts#L1-L96)
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
@@ -82,6 +86,7 @@ The API implements a comprehensive middleware pipeline that processes requests t
 The pipeline begins with CORS (Cross-Origin Resource Sharing) configuration, which restricts access to trusted origins based on the environment. In production, only `neonpro.com.br` and `neonpro.vercel.app` are allowed, while development environments permit localhost connections. The CORS configuration also supports credentials and specifies allowed methods and headers.
 
 Following CORS, the API applies several security-focused middleware components:
+
 - **Sentry Middleware**: Captures errors and performance metrics for monitoring
 - **Error Sanitization**: Removes sensitive data from error messages before logging
 - **HTTP Error Handling**: Standardizes error responses across the API
@@ -115,6 +120,7 @@ RequestLogging --> BusinessLogic["Business Logic Processing"]
 ```
 
 **Diagram sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L1-L147)
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L1-L255)
@@ -122,6 +128,7 @@ RequestLogging --> BusinessLogic["Business Logic Processing"]
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
 ## Route Structure and Endpoint Management
@@ -129,6 +136,7 @@ RequestLogging --> BusinessLogic["Business Logic Processing"]
 The API organizes its endpoints through a structured routing system that groups related functionality into dedicated modules. The route structure follows a versioned approach with different paths for various API versions and service types.
 
 Key route groupings include:
+
 - `/v1/chat`: Chat-related functionality
 - `/v1/appointments`: Appointment management
 - `/v1/medical-records`: Medical record access
@@ -142,12 +150,14 @@ Key route groupings include:
 The routing system uses Hono's `route` method to mount these individual routers at their respective paths. For example, the chat router is mounted at `/v1/chat`, making endpoints like `/v1/chat/conversation` accessible. This modular approach allows teams to work on specific domains independently while maintaining a cohesive API structure.
 
 Health endpoints follow a tiered approach:
+
 - `/health`: Basic health check returning minimal status
 - `/v1/health`: Detailed health check with system information
 - `/v1/info`: System information endpoint with security features list
 - `/v1/monitoring/https`: HTTPS monitoring status for compliance
 
 The API also includes specialized endpoints for security and compliance:
+
 - `/v1/security/status`: Security configuration overview
 - `/v1/compliance/lgpd`: LGPD compliance status
 - `/api/security/csp-violations`: CSP violation reporting
@@ -156,6 +166,7 @@ The API also includes specialized endpoints for security and compliance:
 Wildcard routes handle 404 cases with proper logging, capturing request details for monitoring and debugging purposes. The routing system is designed to be extensible, allowing new modules to be added without disrupting existing functionality.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
 ## Error Handling Mechanisms
@@ -174,6 +185,7 @@ The primary error handling occurs through the `httpErrorHandlingMiddleware` func
 For each error type, the middleware logs detailed context including the request path, method, user agent, IP address, and request ID. Sensitive information is automatically redacted from error messages through the error sanitization process.
 
 Error responses follow a standardized format defined in the OpenAPI specification, containing:
+
 - Success flag (always false for errors)
 - Error object with message, code, and category
 - Request ID for tracing
@@ -211,10 +223,12 @@ FormatResponse --> SendResponse["Send JSON Response"]
 ```
 
 **Diagram sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L1-L255)
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L1-L147)
 
 **Section sources**
+
 - [http-error-handling.ts](file://apps/api/src/middleware/http-error-handling.ts#L1-L255)
 
 ## Security Implementation
@@ -222,16 +236,21 @@ FormatResponse --> SendResponse["Send JSON Response"]
 The API implements a multi-layered security approach that addresses both general web application vulnerabilities and healthcare-specific compliance requirements. The security architecture follows defense-in-depth principles, with multiple overlapping controls protecting sensitive medical and personal data.
 
 ### Authentication and Authorization
+
 The system requires JWT bearer tokens for most endpoints, with additional API keys for service-to-service communication. The authentication process validates tokens and extracts user and clinic identifiers for audit logging and multi-tenant isolation. Role-based access control ensures users can only access resources appropriate to their permissions.
 
 ### Transport Security
+
 All production traffic is redirected to HTTPS using HSTS (HTTP Strict Transport Security) with a one-year max-age, includeSubDomains, and preload directives. The Content Security Policy (CSP) restricts content sources to prevent XSS attacks, while allowing necessary connections to AI services like OpenAI and Supabase WebSockets.
 
 ### Input Validation and Sanitization
+
 The API employs rigorous input validation using Zod schemas to prevent injection attacks. All error messages pass through sanitization filters that remove sensitive patterns including passwords, tokens, CPF numbers, emails, phone numbers, and medical terminology. This prevents accidental data leakage through error responses.
 
 ### Rate Limiting
+
 A sophisticated rate limiting system protects against abuse and denial-of-service attacks:
+
 - **Healthcare data endpoints**: 50 requests per 15 minutes
 - **AI/Chat endpoints**: 20 requests per minute
 - **Authentication endpoints**: 10 attempts per 15 minutes (failed only)
@@ -240,7 +259,9 @@ A sophisticated rate limiting system protects against abuse and denial-of-servic
 Rate limits are enforced by IP address and return standard rate limit headers (X-RateLimit-Limit, X-RateLimit-Remaining, Retry-After).
 
 ### Audit Logging
+
 All access to patient data triggers audit log entries containing:
+
 - Event type (data_access, data_export, etc.)
 - Timestamp
 - User ID
@@ -250,10 +271,13 @@ All access to patient data triggers audit log entries containing:
 - Audit trail ID
 
 ### Data Protection
+
 The system implements data masking for sensitive fields and removes PII from monitoring systems. Before sending error reports to Sentry, the system strips patient data, personal information, CPF numbers, and health data from event payloads.
 
 ### Header Security
+
 The API sets multiple security headers:
+
 - Strict-Transport-Security: Enforces HTTPS
 - X-Frame-Options: Prevents clickjacking
 - X-Content-Type-Options: Blocks MIME sniffing
@@ -297,11 +321,13 @@ H --> H4[Referrer-Policy]
 ```
 
 **Diagram sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 - [error-sanitization.ts](file://apps/api/src/middleware/error-sanitization.ts#L1-L147)
 
 **Section sources**
+
 - [security-headers.ts](file://apps/api/src/middleware/security-headers.ts#L1-L382)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
 
@@ -310,6 +336,7 @@ H --> H4[Referrer-Policy]
 The API integrates tRPC (TypeScript Remote Procedure Call) to provide end-to-end type safety between the frontend and backend. This integration enables strongly-typed API endpoints where both request parameters and response structures are fully typed, eliminating runtime type errors and improving developer experience.
 
 The tRPC router is mounted at the `/trpc` endpoint and configured with a context creation function that extracts relevant information from incoming requests. The context includes:
+
 - `userId`: Extracted from x-user-id header
 - `clinicId`: Extracted from x-clinic-id header
 - `auditMeta`: Additional metadata for audit logging including IP address, user agent, and session ID
@@ -323,6 +350,7 @@ Type safety extends to validation, where input parameters are validated against 
 The system maintains type consistency across layers by sharing type definitions between the API and frontend through shared packages. This ensures that both sides of the application agree on data structures, reducing integration errors and improving development velocity.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
 ## OpenAPI Specification Generation
@@ -330,18 +358,21 @@ The system maintains type consistency across layers by sharing type definitions 
 The API generates comprehensive OpenAPI specifications using the `@hono/zod-openapi` library, providing machine-readable documentation that describes all available endpoints, request/response formats, and security requirements. The OpenAPI generator is implemented in `openapi-generator.ts` and creates healthcare-compliant API documentation.
 
 The generated specification includes:
+
 - **Info Object**: Contains API title, version, description, contact information, and license details
 - **Servers Array**: Lists production, staging, and development server URLs
 - **Components**: Defines reusable schemas, parameters, security schemes, and responses
 - **Paths**: Describes all available endpoints with methods, parameters, request bodies, and responses
 
 Healthcare-specific extensions are included in the specification:
+
 - `x-healthcare-compliance`: Details LGPD, ANVISA, and CFM compliance status
 - `x-security-features`: Lists implemented security measures
 - `x-data-classification`: Classifies endpoints by data sensitivity (public, internal, personal, medical, financial)
 - `x-audit-required`: Indicates whether audit logging is required for the endpoint
 
 The system defines common healthcare schemas including:
+
 - **SuccessResponse**: Standard success response format
 - **ErrorResponse**: Standard error response with code, message, and category
 - **PaginatedResponse**: Structure for paginated results
@@ -351,6 +382,7 @@ The system defines common healthcare schemas including:
 Security schemes are registered for both JWT Bearer tokens and API keys, with appropriate descriptions and usage guidelines. The specification also includes examples of common operations like patient registration, appointment scheduling, and medical record access.
 
 Interactive documentation is served at multiple endpoints (`/swagger`, `/docs`, `/documentation`) using Swagger UI with healthcare-branded styling. The documentation includes:
+
 - Try-it-out functionality for testing endpoints
 - Request snippets in multiple languages
 - Filterable operations
@@ -358,6 +390,7 @@ Interactive documentation is served at multiple endpoints (`/swagger`, `/docs`, 
 - Persistent authorization
 
 Additional documentation endpoints provide:
+
 - `/api/docs/examples`: Real-world usage examples
 - `/api/docs/compliance`: Compliance summary for all endpoints
 - `/api/docs/health`: Documentation system health status
@@ -403,9 +436,11 @@ H --> H3[/api/docs/health]
 ```
 
 **Diagram sources**
+
 - [openapi-generator.ts](file://apps/api/src/lib/openapi-generator.ts#L1-L598)
 
 **Section sources**
+
 - [openapi-generator.ts](file://apps/api/src/lib/openapi-generator.ts#L1-L598)
 
 ## Database Connectivity with Prisma
@@ -413,6 +448,7 @@ H --> H3[/api/docs/health]
 The API connects to databases using Prisma ORM, which provides a type-safe database client and schema migration system. While the direct Prisma client configuration is not visible in the analyzed files, the presence of database-related routes and services indicates Prisma is used as the primary data access layer.
 
 The architecture suggests a multi-database approach with different data stores for various purposes:
+
 - **PostgreSQL**: Primary relational database for patient records, appointments, and clinical data
 - **Supabase**: Used for real-time features, authentication, and possibly storage
 - **AI Agent Database**: Separate database for AI agent operations and state management
@@ -424,6 +460,7 @@ Database connectivity is abstracted through service classes that encapsulate dat
 Connection pooling and query optimization are handled by Prisma, with additional query timeout middleware enforcing healthcare compliance requirements (sub-2-second response times). The system likely implements connection health checks and failover mechanisms to maintain availability during database maintenance or outages.
 
 Security measures for database access include:
+
 - Environment variable-based connection strings
 - Role-based database permissions
 - Row-Level Security (RLS) policies for multi-tenancy
@@ -433,6 +470,7 @@ Security measures for database access include:
 The database schema is designed to comply with healthcare regulations, including proper indexing for performance, encryption at rest, and retention policies for sensitive data. Migration scripts are managed through Prisma's migration system, ensuring controlled and reversible schema changes.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
 ## Real-time Features and WebSocket Integration
@@ -440,6 +478,7 @@ The database schema is designed to comply with healthcare regulations, including
 The API supports real-time communication through WebSocket integration, primarily for the AG-UI Protocol used by AI agents. The WebSocket server is initialized in the `index.ts` file, where it's attached to the HTTP server instance.
 
 The WebSocket integration enables bidirectional communication between clients and the AI agent system, allowing for:
+
 - Real-time AI responses and streaming
 - Live updates for collaborative workflows
 - Interactive diagnostic sessions
@@ -449,6 +488,7 @@ The WebSocket integration enables bidirectional communication between clients an
 The WebSocket server is created through the `createWebSocketServer` function imported from `./middleware/websocket-server`. This middleware handles WebSocket connection lifecycle events, message routing, and security validation.
 
 Security measures for WebSockets include:
+
 - Origin validation matching the CORS policy
 - Authentication via JWT tokens passed during connection initiation
 - Message validation to prevent injection attacks
@@ -462,6 +502,7 @@ The WebSocket architecture follows a publish-subscribe pattern, where clients su
 Error handling for WebSockets includes automatic reconnection logic, message queuing during temporary disconnects, and graceful degradation when real-time features are unavailable. The system maintains message ordering and delivery guarantees where required by healthcare workflows.
 
 **Section sources**
+
 - [index.ts](file://apps/api/src/index.ts#L1-L96)
 
 ## Practical Examples from Key Routes
@@ -469,7 +510,9 @@ Error handling for WebSockets includes automatic reconnection logic, message que
 The API includes several practical examples that demonstrate its capabilities in handling healthcare workflows. These examples illustrate how the system processes real-world scenarios while maintaining compliance and security.
 
 ### Patients Module
+
 The patients module (mounted at `/api/v2/patients`) handles patient registration and management. When creating a new patient, the API:
+
 1. Validates input against Zod schemas including CPF format validation
 2. Checks for duplicate patients using unique constraints
 3. Hashes sensitive data before storage
@@ -477,6 +520,7 @@ The patients module (mounted at `/api/v2/patients`) handles patient registration
 5. Returns standardized success responses with request IDs
 
 Example request:
+
 ```json
 {
   "name": "João Silva",
@@ -491,7 +535,9 @@ Example request:
 ```
 
 ### Appointments Module
+
 The appointments module (mounted at `/v1/appointments`) manages scheduling and calendar operations. It enforces business rules such as:
+
 - Preventing double-booking of time slots
 - Validating provider availability
 - Ensuring proper lead times for different appointment types
@@ -500,7 +546,9 @@ The appointments module (mounted at `/v1/appointments`) manages scheduling and c
 The system handles conflicts through optimistic locking and returns appropriate error codes when scheduling is not possible.
 
 ### AI Services
+
 The AI services (mounted at `/api/v2/ai`) integrate with external AI providers for clinical decision support. These endpoints:
+
 - Stream responses from large language models
 - Apply healthcare-specific prompt engineering
 - Filter outputs for patient safety
@@ -512,6 +560,7 @@ The financial copilot service provides AI-driven financial advice while maintain
 These practical implementations demonstrate how the API balances functionality, performance, and compliance requirements in a healthcare setting.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 
 ## Common Issues and Troubleshooting
@@ -519,21 +568,27 @@ These practical implementations demonstrate how the API balances functionality, 
 The API implementation addresses several common issues that developers may encounter when working with the system. Understanding these issues and their solutions helps maintain system reliability and developer productivity.
 
 ### CORS Configuration Issues
+
 Developers may encounter CORS errors when testing locally. The API allows localhost origins in development mode but restricts them in production. To resolve CORS issues:
+
 - Ensure the origin matches exactly (including protocol and port)
 - Verify credentials are properly included in requests
 - Check that required headers (Content-Type, Authorization) are permitted
 - Use the development environment variables when testing locally
 
 ### Rate Limiting Challenges
+
 The aggressive rate limiting on healthcare data endpoints can impact development workflows. Solutions include:
+
 - Using the development environment where limits are more generous
 - Implementing exponential backoff in client applications
 - Monitoring rate limit headers (X-RateLimit-Remaining, Retry-After)
 - Requesting temporary limit increases for bulk operations
 
 ### Authentication Token Validation
+
 JWT token validation issues commonly occur due to:
+
 - Expired tokens (default expiration likely set to 24 hours)
 - Invalid signatures (mismatched secrets between services)
 - Missing required claims (x-user-id, x-clinic-id)
@@ -542,7 +597,9 @@ JWT token validation issues commonly occur due to:
 Troubleshooting steps include verifying token structure, checking system clocks, and validating secret keys across services.
 
 ### Database Connection Problems
+
 Intermittent database connectivity can cause 500 errors. Mitigation strategies include:
+
 - Implementing retry logic with exponential backoff
 - Monitoring connection pool utilization
 - Checking network connectivity between API and database
@@ -550,7 +607,9 @@ Intermittent database connectivity can cause 500 errors. Mitigation strategies i
 - Reviewing database performance metrics
 
 ### Error Tracking Configuration
+
 When error tracking isn't working as expected:
+
 - Verify SENTRY_DSN environment variable is set
 - Check network connectivity to Sentry endpoints
 - Validate that sensitive data filtering is properly configured
@@ -558,7 +617,9 @@ When error tracking isn't working as expected:
 - Confirm that breadcrumbs are capturing sufficient context
 
 ### Performance Bottlenecks
+
 To address slow endpoint performance:
+
 - Check query timeout middleware logs for slow database queries
 - Optimize database indexes for frequently accessed fields
 - Implement caching for read-heavy endpoints
@@ -568,6 +629,7 @@ To address slow endpoint performance:
 Understanding these common issues and their solutions helps maintain system stability and developer efficiency.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)
 - [error-tracking.ts](file://apps/api/src/config/error-tracking.ts#L1-L288)
 - [rate-limiting.ts](file://apps/api/src/middleware/rate-limiting.ts#L1-L215)
@@ -601,4 +663,5 @@ To add a new tRPC router:
 The tRPC integration automatically provides end-to-end type safety, so frontend consumers will immediately see the new endpoints with complete type information. This reduces integration errors and improves development velocity across the full stack.
 
 **Section sources**
+
 - [app.ts](file://apps/api/src/app.ts#L1-L572)

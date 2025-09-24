@@ -1,7 +1,7 @@
 # Data Management
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [schema.prisma](file://packages/database/prisma/schema.prisma)
 - [client.ts](file://packages/database/src/client.ts)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Architecture Overview](#architecture-overview)
 3. [Schema Definition and Type Safety](#schema-definition-and-type-safety)
@@ -81,6 +82,7 @@ style J fill:#fcc,stroke:#333
 ```
 
 **Diagram sources**
+
 - [schema.prisma](file://packages/database/prisma/schema.prisma)
 - [client.ts](file://packages/database/src/client.ts)
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts)
@@ -115,6 +117,7 @@ model Patient {
 ```
 
 **Section sources**
+
 - [schema.prisma](file://packages/database/prisma/schema.prisma)
 
 The schema design incorporates several key features specific to healthcare applications:
@@ -180,6 +183,7 @@ IAppointmentRepository <|.. AppointmentRepository
 ```
 
 **Diagram sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts)
 - [appointment-repository.ts](file://packages/database/src/repositories/appointment-repository.ts)
 
@@ -218,6 +222,7 @@ end
 ```
 
 **Diagram sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts)
 - [client.ts](file://packages/database/src/client.ts)
 
@@ -266,6 +271,7 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
 ```
 
 **Section sources**
+
 - [client.ts](file://packages/database/src/client.ts)
 
 Key features of the connection management system include:
@@ -308,6 +314,7 @@ style I fill:#6f9,stroke:#333
 ```
 
 **Diagram sources**
+
 - [schema.prisma](file://packages/database/prisma/schema.prisma)
 
 The migration management approach includes:
@@ -347,6 +354,7 @@ Note over PR,DB : Repository handles domain mapping<br/>and error logging transp
 ```
 
 **Diagram sources**
+
 - [patient-repository.ts](file://packages/database/src/repositories/patient-repository.ts)
 - [consent-service.ts](file://packages/database/src/services/consent-service.ts)
 
@@ -389,6 +397,7 @@ CS-->>Caller : Return consent record
 ```
 
 **Diagram sources**
+
 - [consent-service.ts](file://packages/database/src/services/consent-service.ts)
 - [audit-service.ts](file://packages/database/src/services/audit-service.ts)
 

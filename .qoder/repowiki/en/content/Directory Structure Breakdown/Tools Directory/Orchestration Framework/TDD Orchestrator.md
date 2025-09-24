@@ -1,7 +1,7 @@
 # TDD Orchestrator
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts)
 - [types.ts](file://tools/orchestration/types.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Architecture](#core-architecture)
 3. [Red-Green-Refactor Cycle Execution](#red-green-refactor-cycle-execution)
@@ -31,6 +32,7 @@ Designed with extensibility in mind, the TDD Orchestrator can be customized for 
 This documentation provides a detailed explanation of the TDD Orchestrator's implementation, focusing on its core functionality, integration points, and operational patterns. It includes concrete examples from the codebase and explains how developers can extend the orchestrator for custom TDD workflows while maintaining system integrity and compliance requirements.
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [tdd-orchestrator-config.json](file://tdd-orchestrator-config.json#L1-L188)
 
@@ -72,11 +74,13 @@ TDDOrchestrator --> WorkflowEngine : "optional dependency"
 ```
 
 **Diagram sources **
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L39-L78)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [types.ts](file://tools/orchestration/types.ts#L291-L325)
 
@@ -125,11 +129,13 @@ deactivate Orchestrator
 ```
 
 **Diagram sources **
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L39-L65)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L70-L125)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L130-L193)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L39-L193)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L70-L125)
 
@@ -138,6 +144,7 @@ deactivate Orchestrator
 The TDD Orchestrator employs sophisticated agent management and coordination strategies to ensure optimal execution of the TDD workflow. Central to this capability is the integration with the `TDDAgentRegistry`, which maintains a catalog of available agents, their capabilities, and performance statistics. The orchestrator queries this registry to identify the most appropriate agents for each phase of the TDD cycle based on the specific feature context.
 
 Agent selection follows a multi-criteria approach that considers several factors:
+
 - **Phase compatibility**: Agents must support the current TDD phase (RED, GREEN, or REFACTOR)
 - **Healthcare compliance**: When healthcare regulations apply, only agents with appropriate compliance capabilities are selected
 - **Criticality level**: For critical features, tertiary agents are excluded to ensure reliability
@@ -164,10 +171,12 @@ ResultCollection --> End([End Coordination])
 ```
 
 **Diagram sources **
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L438-L457)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L438-L457)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 
@@ -206,9 +215,11 @@ style RFP fill:#9ff,stroke:#333
 ```
 
 **Diagram sources **
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L198-L256)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L198-L256)
 - [tdd-orchestrator-config.json](file://tdd-orchestrator-config.json#L120-L158)
 
@@ -248,11 +259,13 @@ style C fill:#ccccff,stroke:#333
 ```
 
 **Diagram sources **
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L39-L78)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L70-L78)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L39-L78)
@@ -298,11 +311,13 @@ AGENT_CAPABILITY }o--|| COMPLIANCE_VALIDATION : "performs"
 ```
 
 **Diagram sources **
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L462-L477)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 - [tdd-orchestrator-config.json](file://tdd-orchestrator-config.json#L80-L118)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L462-L477)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 - [tdd-orchestrator-config.json](file://tdd-orchestrator-config.json#L80-L118)
@@ -338,10 +353,12 @@ ReturnResult --> Idle
 ```
 
 **Diagram sources **
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L70-L125)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L360-L395)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L70-L125)
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L360-L395)
 
@@ -349,7 +366,7 @@ ReturnResult --> Idle
 
 The TDD Orchestrator supports extensive configuration and customization options, enabling adaptation to different project requirements and development workflows. Configuration is primarily managed through the `tdd-orchestrator-config.json` file, which defines agent behaviors, quality gate thresholds, and workflow parameters.
 
-The configuration system allows customization of specialized agents including architect-review, security-auditor, code-reviewer, test, and compliance-validator. Each agent can be configured with specific roles, focus areas, activation triggers, and file patterns that determine when and where they are engaged during the TDD process. For example, the security-auditor agent activates when files contain patterns like "**/auth/**" or "**/*patient*" indicating sensitive functionality.
+The configuration system allows customization of specialized agents including architect-review, security-auditor, code-reviewer, test, and compliance-validator. Each agent can be configured with specific roles, focus areas, activation triggers, and file patterns that determine when and where they are engaged during the TDD process. For example, the security-auditor agent activates when files contain patterns like "**/auth/**" or "**/_patient_" indicating sensitive functionality.
 
 Quality gates can be customized for each phase of the TDD cycle, allowing teams to adjust thresholds based on project requirements. The configuration defines specific criteria for test structure, coverage, security validation, and compliance requirements. Agent-specific thresholds provide additional granularity, allowing different standards for architectural compliance (≥90%), security vulnerabilities (0 critical), code quality (≥85%), and test coverage (≥90%).
 
@@ -381,9 +398,11 @@ AuditContext --> ComplianceFocus["healthcareComplianceFocus"]
 ```
 
 **Diagram sources **
+
 - [tdd-orchestrator-config.json](file://tdd-orchestrator-config.json#L1-L188)
 
 **Section sources**
+
 - [tdd-orchestrator-config.json](file://tdd-orchestrator-config.json#L1-L188)
 
 ## Testing and Validation
@@ -391,6 +410,7 @@ AuditContext --> ComplianceFocus["healthcareComplianceFocus"]
 The TDD Orchestrator is thoroughly tested through a comprehensive suite of unit and integration tests that validate its core functionality, error handling, and integration points. The primary test file `tdd-orchestrator.test.ts` contains over 600 lines of test code covering various aspects of the orchestrator's behavior, ensuring reliability and correctness.
 
 Testing focuses on several key areas:
+
 - **Constructor and initialization**: Verifies proper setup of the orchestrator with agent registry and workflow engine, and correct initialization of metrics
 - **Full TDD cycle execution**: Tests successful completion of the complete Red-Green-Refactor cycle with various feature contexts
 - **Phase-specific execution**: Validates correct behavior of individual phases (RED, GREEN, REFACTOR) and their quality gate applications
@@ -403,4 +423,5 @@ Testing focuses on several key areas:
 The test suite uses mocking extensively to isolate the orchestrator from its dependencies, allowing focused testing of specific behaviors. For example, the workflow engine is mocked to simulate both successful workflow selection and error conditions, enabling comprehensive testing of both success and failure paths.
 
 **Section sources**
+
 - [tdd-orchestrator.test.ts](file://tools/orchestration/__tests__/tdd-orchestrator.test.ts#L1-L635)

@@ -90,10 +90,13 @@
   "author": "NeonPro Development Team",
   "license": "MIT",
   "dependencies": {
+    "@hono/trpc-server": "^0.4.0",
     "@trpc/server": "^11.5.1",
     "@vitest/coverage-v8": "^3.2.4",
     "ai": "^5.0.50",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dompurify": "^3.2.7",
     "dotenv": "^17.2.2",
     "ioredis": "^5.8.0",
     "lodash-es": "^4.17.21",

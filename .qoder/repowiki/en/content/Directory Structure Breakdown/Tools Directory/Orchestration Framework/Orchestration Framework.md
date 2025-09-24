@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Components](#core-components)
 3. [TDD Orchestrator Implementation](#tdd-orchestrator-implementation)
@@ -23,11 +24,13 @@
 10. [Conclusion](#conclusion)
 
 ## Introduction
+
 The Orchestration Framework is a sophisticated system designed to coordinate development processes through intelligent workflow management, agent coordination, and quality control. At its core, the framework implements a Test-Driven Development (TDD) orchestrator that manages the complete development lifecycle from test creation to implementation and refactoring. The system integrates a workflow engine that dynamically selects execution patterns based on project requirements, an agent registry that manages specialized development agents, and a result aggregator that consolidates outcomes across multiple quality checks.
 
 This documentation provides comprehensive insight into how these components work together to streamline development workflows, particularly in complex domains like healthcare applications that require strict compliance with regulatory standards. The framework is designed to be accessible to beginners while offering sufficient technical depth for experienced developers who need to create custom workflows for new regulatory requirements or specialized development scenarios.
 
 ## Core Components
+
 The orchestration framework consists of five primary components that work in concert to manage development workflows: the TDD Orchestrator, Workflow Engine, Agent Registry, Execution Pattern Selector, and Result Aggregator. These components form a cohesive system that coordinates development processes, selects appropriate execution strategies, manages specialized agents, and aggregates results across quality checks.
 
 The TDD Orchestrator serves as the central coordinator, managing the complete TDD cycle through its three phases: RED (test creation), GREEN (implementation), and REFACTOR (optimization). It interfaces with the Agent Registry to identify appropriate agents for each phase based on context such as feature complexity, criticality level, and compliance requirements. The Workflow Engine determines the optimal execution pattern (sequential, parallel, or hierarchical) based on these same contextual factors, ensuring efficient processing while maintaining necessary constraints.
@@ -35,6 +38,7 @@ The TDD Orchestrator serves as the central coordinator, managing the complete TD
 The Execution Pattern Selector analyzes the development context to recommend the most suitable coordination strategy, considering factors like performance requirements, healthcare compliance needs, and agent count. Finally, the Result Aggregator collects outputs from all agents, calculates quality scores, identifies issues, and generates recommendations for improvement. Together, these components create a robust system that can adapt to various development scenarios while maintaining high standards of code quality and regulatory compliance.
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L39-L77)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
@@ -42,6 +46,7 @@ The Execution Pattern Selector analyzes the development context to recommend the
 - [result-aggregator.ts](file://tools/orchestration/src/result-aggregator.ts#L25-L514)
 
 ## TDD Orchestrator Implementation
+
 The TDD Orchestrator is implemented as a class that manages the complete Test-Driven Development cycle through its three distinct phases: RED, GREEN, and REFACTOR. The orchestrator begins by converting feature context into an orchestration context that includes metadata such as feature name, type, complexity, criticality level, requirements, and healthcare compliance specifications. This context drives all subsequent decisions within the orchestration process.
 
 The orchestrator's primary method, `executeFullTDDCycle`, initiates the complete development workflow by first selecting an appropriate workflow using the workflow engine, then sequentially executing each phase of the TDD cycle. During the RED phase, the orchestrator identifies agents capable of creating failing tests, with priority given to security auditors and test coordinators. The GREEN phase focuses on implementing minimal code to pass tests, typically involving code reviewers and implementation specialists. Finally, the REFACTOR phase optimizes code quality and performance, engaging architecture review agents and code quality specialists.
@@ -72,13 +77,16 @@ TDDOrchestrator --> TDDAgentRegistry : "uses"
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 
 ## Workflow Engine and Execution Patterns
+
 The Workflow Engine and Execution Pattern Selector work together to determine the most appropriate execution strategy for development workflows based on contextual factors such as complexity, criticality, and compliance requirements. The system supports four primary execution patterns: sequential, parallel, hierarchical, and event-driven, each suited to different development scenarios.
 
 The Execution Pattern Selector analyzes the development context to recommend the optimal workflow type. For high-complexity features, it selects a hierarchical pattern that organizes agents into structured tiers with clear reporting relationships. When healthcare compliance is required, it defaults to an event-driven pattern that ensures proper sequencing and validation. Low-complexity features typically use a sequential pattern for simplicity, while medium-complexity features benefit from parallel execution to improve efficiency.
@@ -110,14 +118,17 @@ Adjust --> End([Workflow Complete])
 ```
 
 **Diagram sources**
+
 - [execution-pattern-selector.ts](file://tools/orchestration/src/execution-pattern-selector.ts#L25-L115)
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L39-L77)
 
 **Section sources**
+
 - [execution-pattern-selector.ts](file://tools/orchestration/src/execution-pattern-selector.ts#L25-L115)
 - [workflow-engine.ts](file://tools/orchestration/src/workflow-engine.ts#L39-L77)
 
 ## Agent Registry and Selection
+
 The Agent Registry is a central component that manages all available development agents, their capabilities, and their suitability for different development tasks. It maintains a collection of agent capabilities that include type, name, description, capabilities, specializations, priority levels, supported phases, triggers, configuration options, and healthcare compliance attributes.
 
 The registry implements sophisticated selection algorithms that consider multiple factors when identifying appropriate agents for a given task. The primary method, `getAgentsForPhase`, filters agents based on phase compatibility, healthcare compliance requirements, and criticality level. For critical features, tertiary agents are excluded to ensure only the most reliable specialists are engaged. The registry also provides a `selectOptimalAgents` method that calculates relevance scores for each agent based on priority, matching triggers, specialization alignment, and compliance requirements.
@@ -161,12 +172,15 @@ TDDAgentRegistry --> OrchestrationContext : "uses"
 ```
 
 **Diagram sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 
 **Section sources**
+
 - [agent-registry.ts](file://tools/orchestration/src/agent-registry.ts#L182-L474)
 
 ## Result Aggregation and Quality Control
+
 The Result Aggregator and Quality Control Orchestrator work together to collect, analyze, and report on outcomes from the development process, ensuring comprehensive quality assessment across multiple dimensions. The Result Aggregator receives outputs from all participating agents and consolidates them into a unified view of the development effort, calculating key metrics such as quality score, success rate, error count, performance score, and compliance score.
 
 The aggregation process involves several analytical steps. First, individual agent results are collected and validated for completeness. Then, composite scores are calculated using weighted averages of quality, performance, and compliance metrics. The system identifies issues and generates actionable recommendations based on detected patterns, such as recurring errors, performance bottlenecks, or compliance violations. Trend analysis is performed on historical results to identify improving, degrading, or stable patterns in development quality.
@@ -198,14 +212,17 @@ R-->>User : Present Findings
 ```
 
 **Diagram sources**
+
 - [result-aggregator.ts](file://tools/orchestration/src/result-aggregator.ts#L25-L514)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L25-L202)
 
 **Section sources**
+
 - [result-aggregator.ts](file://tools/orchestration/src/result-aggregator.ts#L25-L514)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L25-L202)
 
 ## Concrete Workflow Examples
+
 The orchestration framework demonstrates its capabilities through two distinct workflow implementations: the standard TDD workflow and a security-critical healthcare workflow. These examples illustrate how the system adapts to different requirements while maintaining consistent quality standards.
 
 In the standard TDD workflow, the orchestrator follows the classic Red-Green-Refactor pattern. During the RED phase, it engages test coordination and security auditing agents to create comprehensive failing tests. The GREEN phase activates code reviewer and implementation specialist agents to develop minimal functionality that satisfies the tests. Finally, the REFACTOR phase employs architecture review and code quality agents to optimize the implementation without changing behavior. This workflow typically executes in parallel when possible, maximizing efficiency for non-critical features.
@@ -237,14 +254,17 @@ style STRICT fill:#f66,stroke:#333
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L25-L202)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L25-L202)
 
 ## Healthcare Validation Scenarios and Deadlock Prevention
+
 Healthcare validation scenarios present unique challenges due to strict regulatory requirements, sensitive data handling, and the critical nature of medical applications. The orchestration framework addresses these challenges through specialized execution patterns and deadlock prevention mechanisms that ensure reliable processing while maintaining compliance.
 
 In complex healthcare validation scenarios, the primary risk of deadlocks arises from circular dependencies between validation agents, particularly when multiple compliance checks must be performed concurrently. To prevent these issues, the framework implements a timeout configuration system that limits the maximum execution time for each agent and phase. When a timeout occurs, the system automatically escalates the issue and attempts alternative validation approaches, preventing indefinite blocking.
@@ -283,14 +303,17 @@ Failure --> Idle
 ```
 
 **Diagram sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [execution-pattern-selector.ts](file://tools/orchestration/src/execution-pattern-selector.ts#L25-L115)
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [execution-pattern-selector.ts](file://tools/orchestration/src/execution-pattern-selector.ts#L25-L115)
 
 ## Integration with Testing and Quality Tools
+
 The orchestration framework seamlessly integrates with various testing and quality tools through its modular architecture and standardized interfaces. The system acts as a central hub that coordinates specialized tools for static analysis, security scanning, performance testing, and compliance validation, aggregating their results into a unified quality assessment.
 
 The integration is facilitated through the agent-based architecture, where each external tool is represented as a specialized agent with defined capabilities and execution characteristics. For example, a security scanning tool becomes a "security-auditor" agent that participates in relevant phases of the development workflow. The framework provides standardized interfaces for agent communication, result submission, and configuration management, ensuring consistent interaction regardless of the underlying tool technology.
@@ -300,11 +323,13 @@ Quality gates serve as the primary integration point, defining measurable criter
 This integration approach allows organizations to incorporate new testing and quality tools simply by creating corresponding agent implementations. The framework's flexibility supports both open-source and commercial tools, enabling teams to build customized quality assurance pipelines that evolve with changing requirements and technological advancements.
 
 **Section sources**
+
 - [tdd-orchestrator.ts](file://tools/orchestration/src/tdd-orchestrator.ts#L13-L487)
 - [result-aggregator.ts](file://tools/orchestration/src/result-aggregator.ts#L25-L514)
 - [quality-control-orchestrator.ts](file://tools/orchestration/src/quality-control-orchestrator.ts#L25-L202)
 
 ## Conclusion
+
 The Orchestration Framework provides a comprehensive solution for coordinating development processes through intelligent workflow management, agent coordination, and quality control. By integrating the TDD Orchestrator, Workflow Engine, Agent Registry, Execution Pattern Selector, and Result Aggregator, the system creates a cohesive environment that adapts to various development scenarios while maintaining high standards of code quality and regulatory compliance.
 
 The framework's strength lies in its ability to balance flexibility with consistency, allowing customization for specific requirements while enforcing essential quality gates and compliance checks. Its agent-based architecture enables seamless integration with existing testing and quality tools, creating a unified pipeline that aggregates results across multiple dimensions of software quality.

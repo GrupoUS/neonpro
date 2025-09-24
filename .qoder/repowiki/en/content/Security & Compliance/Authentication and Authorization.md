@@ -1,7 +1,7 @@
 # Authentication and Authorization
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts)
@@ -11,6 +11,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Core Components](#core-components)
 3. [JWT-Based Authentication](#jwt-based-authentication)
@@ -28,6 +29,7 @@
 15. [Best Practices for Secure Implementation](#best-practices-for-secure-implementation)
 
 ## Introduction
+
 The NeonPro Healthcare Platform implements a comprehensive authentication and authorization system designed to meet stringent healthcare compliance requirements while providing robust security for sensitive patient data. This document details the implementation of JWT-based authentication, session management, and role-based access control (RBAC) across both frontend and backend services.
 
 The system is built around several core components that work together to provide secure access to platform resources. At its foundation is a JWT-based authentication mechanism that validates user credentials and issues secure tokens for subsequent requests. These tokens are validated through a multi-layered approach that includes signature verification, claim validation, and blacklisting capabilities.
@@ -41,10 +43,12 @@ The authentication system integrates seamlessly with both frontend and backend s
 All components are designed with LGPD and ANVISA compliance in mind, implementing audit logging, data minimization, and consent validation to protect patient privacy and meet regulatory requirements.
 
 **Section sources**
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L100)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L100)
 
 ## Core Components
+
 The authentication and authorization system in the NeonPro Healthcare Platform consists of several interconnected components that work together to provide secure access control. These components include the HealthcareAuthMiddleware, JWTSecurityValidator, EnhancedSessionManager, SessionCookieUtils, and various authentication middleware functions.
 
 The HealthcareAuthMiddleware serves as the primary entry point for authentication and authorization, handling the complete authentication flow from token extraction to session creation and permission validation. It integrates with other components to provide a comprehensive security solution.
@@ -84,22 +88,26 @@ style O fill:#9f9,stroke:#333
 ```
 
 **Diagram sources **
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L864-L2149)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L65-L707)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L92-L797)
 
 **Section sources**
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L2248)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L712)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L1-L799)
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L1-L406)
 
 ## JWT-Based Authentication
+
 The NeonPro Healthcare Platform implements JWT-based authentication using industry-standard security practices with additional healthcare-specific requirements. The system uses HS256 algorithm for token signing with configurable support for HS512, ensuring strong cryptographic protection for authentication tokens.
 
 JWT tokens are issued upon successful login and contain essential claims including issuer (iss), audience (aud), expiration time (exp), issued at time (iat), subject (sub), and custom healthcare-specific claims. The issuer is set to "neonpro-healthcare" and audience to "neonpro-api" to prevent token reuse across different systems.
 
 Token validation follows a comprehensive 10-step process implemented by the JWTSecurityValidator class:
+
 1. Rate limiting check to prevent brute force attacks
 2. Basic token structure validation to ensure proper JWT format
 3. Header analysis to detect potential algorithm confusion attacks
@@ -137,14 +145,17 @@ AuthMiddleware-->>Client : 200 OK + session info
 ```
 
 **Diagram sources **
+
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L65-L707)
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L864-L2149)
 
 **Section sources**
+
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L712)
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L2248)
 
 ## Session Management
+
 The NeonPro Healthcare Platform implements comprehensive session management through the EnhancedSessionManager class, which provides advanced security features beyond basic session tracking. The system manages session lifecycle with multiple timeout mechanisms, IP binding, anomaly detection, and concurrent session limits.
 
 Sessions have two timeout mechanisms: idle timeout and absolute timeout. The idle timeout is set to 30 minutes, meaning sessions expire after 30 minutes of inactivity. The absolute timeout is set to 8 hours, representing the maximum duration a session can remain active regardless of activity. This dual timeout approach balances security with usability for healthcare professionals who may need extended access during shifts.
@@ -185,15 +196,19 @@ style R fill:#F44336,stroke:#333
 ```
 
 **Diagram sources **
+
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L92-L797)
 
 **Section sources**
+
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L1-L799)
 
 ## Role-Based Access Control (RBAC)
+
 The NeonPro Healthcare Platform implements a sophisticated role-based access control (RBAC) system tailored to healthcare workflows and compliance requirements. The system defines 14 distinct roles with hierarchical access levels ranging from 0 (guest) to 10 (super_admin), each with specific permissions that determine access to patient data, medical records, and administrative functions.
 
 Roles are defined in the HealthcareRoleSchema with the following hierarchy:
+
 - guest (level 0): Public access
 - patient, caregiver (level 1): Basic access to personal information
 - receptionist (level 2): Administrative access
@@ -267,16 +282,20 @@ AuthSession --> SessionMetadata : "contains"
 ```
 
 **Diagram sources **
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L565-L855)
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L206-L340)
 
 **Section sources**
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L2248)
 
 ## Middleware Pipeline Integration
+
 The authentication and authorization system integrates with the application's middleware pipeline through a series of composable middleware functions that can be applied to specific routes or groups of routes. This modular approach allows fine-grained control over access policies while maintaining code reusability.
 
 The primary middleware components include:
+
 - authenticationMiddleware: Validates JWT tokens and establishes user context
 - authorizationMiddleware: Enforces role-based access control
 - clinicAccessMiddleware: Ensures users can only access their assigned clinic's data
@@ -296,6 +315,7 @@ app.post('/clinic/:clinicId/patients', clinicAccessMiddleware(), createPatientHa
 The healthcareAuthMiddleware variable in the healthcare routes file demonstrates this pattern, applying authentication to all routes under the healthcare API. It extracts the bearer token from the Authorization header, validates it using Supabase's authentication system, retrieves the user's profile and permissions, and sets the user context for downstream handlers.
 
 Error handling is integrated into the middleware pipeline, with appropriate HTTP status codes returned for different failure scenarios:
+
 - 401 Unauthorized: Missing or invalid authentication credentials
 - 403 Forbidden: Valid authentication but insufficient permissions
 - 400 Bad Request: Malformed requests or invalid parameters
@@ -305,10 +325,12 @@ Logging is implemented throughout the middleware pipeline, recording authenticat
 The middleware system also supports conditional authentication through the optionalAuth function, which attempts to authenticate if credentials are present but does not fail the request if they are missing. This is useful for endpoints that provide additional functionality to authenticated users but remain accessible to unauthenticated users.
 
 **Section sources**
+
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L29-L149)
 - [healthcare.ts](file://apps/api/src/routes/healthcare.ts#L111-L153)
 
 ## Frontend Protection Layer
+
 The frontend protection layer in the NeonPro Healthcare Platform works in conjunction with the backend authentication system to provide a seamless and secure user experience. The frontend implements several security measures to protect against common web vulnerabilities while ensuring smooth interaction with protected routes.
 
 Authentication state is managed through secure session cookies that are HttpOnly, Secure, and SameSite=Strict to prevent XSS and CSRF attacks. The SessionCookieUtils class generates these cookies with cryptographic signatures to ensure integrity and prevent tampering. When a user logs in, the frontend receives session cookies that are automatically sent with subsequent requests.
@@ -322,6 +344,7 @@ CSRF protection is implemented through synchronizer tokens. The frontend retriev
 User interface elements are dynamically rendered based on the user's role and permissions. Buttons and menu items for sensitive operations are only displayed if the user has the required permissions, providing both visual feedback and an additional layer of security.
 
 Error handling in the frontend distinguishes between different types of authentication failures:
+
 - 401 responses trigger automatic logout and redirect to login
 - 403 responses display permission denied messages without logging out
 - Network errors show appropriate connectivity messages
@@ -349,14 +372,17 @@ Note over BackendAPI : All requests include<br/>session cookies automatically
 ```
 
 **Diagram sources **
+
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L31-L404)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L29-L149)
 
 **Section sources**
+
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L1-L406)
 - [authn.ts](file://apps/api/src/middleware/authn.ts#L1-L307)
 
 ## Security Features
+
 The NeonPro Healthcare Platform incorporates multiple advanced security features to protect against common attack vectors and ensure the confidentiality, integrity, and availability of healthcare data. These features work together to create defense-in-depth protection for the authentication and authorization system.
 
 Session fixation protection is implemented by regenerating session IDs upon successful authentication. The EnhancedSessionManager's regenerateSession method creates a new session ID while preserving session data, preventing attackers from hijacking pre-existing sessions. Session IDs are generated using cryptographically secure random number generators with 128 bits of entropy to prevent guessing attacks.
@@ -364,6 +390,7 @@ Session fixation protection is implemented by regenerating session IDs upon succ
 IP binding ties sessions to the client's IP address, preventing session hijacking from different locations. The system allows mobile network tolerance by comparing IP subnets rather than full addresses, accommodating legitimate IP changes when healthcare professionals move between network cells. Rapid IP changes are flagged as potential security incidents.
 
 Anomaly detection monitors for suspicious behavior patterns including:
+
 - Multiple IP changes within a short timeframe
 - User agent changes indicating potential device compromise
 - Consecutive authentication failures suggesting brute force attacks
@@ -372,6 +399,7 @@ Anomaly detection monitors for suspicious behavior patterns including:
 The system calculates a risk score based on detected anomalies and can escalate security measures accordingly, from warnings to requiring MFA or blocking access entirely.
 
 Rate limiting is enforced at multiple levels:
+
 - Authentication attempts limited to 100 per minute per client
 - Password reset requests limited to 5 per hour
 - Account lockout after 5 consecutive failed login attempts for 15 minutes
@@ -379,12 +407,14 @@ Rate limiting is enforced at multiple levels:
 Token blacklisting allows immediate revocation of compromised tokens. When a user logs out or their access is revoked, the token's JTI (JWT ID) or user ID is added to a blacklist with a TTL matching the token's remaining lifetime. During validation, the system checks this blacklist to ensure revoked tokens cannot be used.
 
 Security headers are enforced to protect against common web vulnerabilities:
+
 - Content Security Policy (CSP) to prevent XSS attacks
 - Strict-Transport-Security (HSTS) to enforce HTTPS
 - X-Content-Type-Options to prevent MIME type sniffing
 - X-Frame-Options to prevent clickjacking
 
 The system also implements secure cookie attributes:
+
 - HttpOnly to prevent JavaScript access
 - Secure to ensure transmission over HTTPS only
 - SameSite=Strict to prevent CSRF attacks
@@ -430,16 +460,19 @@ style H fill:#2ecc71,stroke:#333
 ```
 
 **Diagram sources **
+
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L92-L797)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L65-L707)
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L31-L404)
 
 **Section sources**
+
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L1-L799)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L712)
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L1-L406)
 
 ## Token Expiration and Refresh Mechanisms
+
 The NeonPro Healthcare Platform implements a robust token expiration and refresh mechanism to balance security with user experience. The system uses two types of tokens with different lifetimes: access tokens with a 1-hour TTL and refresh tokens with a 1-week TTL.
 
 Access tokens are short-lived to minimize the window of opportunity if a token is compromised. The JWTSecurityValidator enforces this expiration by validating the 'exp' claim in the token payload. When an access token expires, the client must obtain a new one either through re-authentication or by using a refresh token.
@@ -447,6 +480,7 @@ Access tokens are short-lived to minimize the window of opportunity if a token i
 Refresh tokens provide a secure way to obtain new access tokens without requiring users to enter their credentials repeatedly. These long-lived tokens are stored securely in HTTP-only, Secure cookies and are bound to the user's session. When a client needs a new access token, it sends the refresh token to the token refresh endpoint.
 
 The token refresh process involves several security checks:
+
 1. Validation of the refresh token's signature and claims
 2. Verification that the refresh token has not been revoked
 3. Confirmation that the refresh token belongs to the current session
@@ -486,17 +520,21 @@ AuthServer-->>Client : 200 OK + cleared cookies
 ```
 
 **Diagram sources **
+
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L65-L707)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L92-L797)
 
 **Section sources**
+
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L712)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L1-L799)
 
 ## CSRF Protection
+
 The NeonPro Healthcare Platform implements comprehensive CSRF (Cross-Site Request Forgery) protection to prevent unauthorized commands from being transmitted from a user that the website trusts. The system uses a synchronizer token pattern combined with secure cookie attributes to defend against CSRF attacks.
 
 CSRF protection is implemented through three main mechanisms:
+
 1. Synchronizer tokens: Unique tokens generated for each session and included in a custom HTTP header (X-CSRF-Token) for state-changing requests
 2. Secure cookie attributes: Session cookies marked as HttpOnly, Secure, and SameSite=Strict to prevent unauthorized access
 3. Double submission: CSRF token value also stored in a cookie for comparison on the server side
@@ -510,6 +548,7 @@ The SameSite=Strict attribute on cookies prevents them from being sent in cross-
 For AJAX requests, the frontend application automatically includes the CSRF token in the appropriate header. This is handled transparently by the HTTP client library, ensuring all API calls are properly protected.
 
 The system also implements additional CSRF protections:
+
 - Token regeneration on privilege escalation
 - Token invalidation on logout
 - Rate limiting for CSRF token generation
@@ -541,19 +580,24 @@ end
 ```
 
 **Diagram sources **
+
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L31-L404)
 
 **Section sources**
+
 - [session-cookie-utils.ts](file://apps/api/src/security/session-cookie-utils.ts#L1-L406)
 
 ## MFA Integration
+
 The NeonPro Healthcare Platform implements multi-factor authentication (MFA) integration to enhance security for sensitive operations and high-privilege accounts. The MFA system is selectively enforced based on user role, requested action, and contextual risk factors.
 
 MFA requirements are configured in the authentication middleware with two primary triggers:
+
 1. Role-based requirements: Certain roles always require MFA, including doctor, specialist, department_head, system_admin, compliance_officer, emergency_responder, and super_admin
 2. Action-based requirements: Specific sensitive actions require MFA regardless of role, including patient deletion, diagnosis modification, system configuration changes, and data export
 
 The MFA system supports multiple authentication methods:
+
 - Authenticator apps (TOTP)
 - SMS verification codes
 - Biometric authentication
@@ -567,6 +611,7 @@ The session model includes an mfaVerified flag that is set to true once MFA veri
 For emergency situations, the system supports emergency bypass of MFA requirements, but this triggers enhanced audit logging and notifications to compliance officers. Emergency access requires approval from designated roles like department_head or system_admin.
 
 The MFA integration is designed to be user-friendly while maintaining security:
+
 - Remembered devices reduce MFA frequency for trusted devices
 - Push notifications provide convenient verification options
 - Backup codes are available for account recovery
@@ -605,15 +650,19 @@ end
 ```
 
 **Diagram sources **
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L864-L2149)
 
 **Section sources**
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L2248)
 
 ## Emergency Access Protocols
+
 The NeonPro Healthcare Platform implements specialized emergency access protocols to ensure critical healthcare operations can continue during urgent situations while maintaining appropriate security controls and audit trails. These protocols balance the need for immediate access with accountability and compliance requirements.
 
 Emergency access can be granted through several mechanisms:
+
 1. Emergency responder role: Users with the emergency_responder role have elevated privileges during declared emergencies
 2. Temporary privilege escalation: Authorized personnel can request temporary elevated access for specific time periods
 3. Break-glass accounts: Pre-configured emergency accounts with limited, audited access
@@ -621,6 +670,7 @@ Emergency access can be granted through several mechanisms:
 The system requires emergency access approval from designated roles including department_head, system_admin, compliance_officer, and super_admin. This approval can be provided through a dedicated emergency access portal or via secondary authentication channels.
 
 When emergency access is granted, the system creates a special session with the following characteristics:
+
 - Shorter timeout (1 hour vs normal 8 hours)
 - Enhanced audit logging with immediate notification to compliance team
 - Distinct visual indicators in the user interface
@@ -629,6 +679,7 @@ When emergency access is granted, the system creates a special session with the 
 Emergency sessions are clearly distinguished in the audit logs and generate real-time alerts to security personnel. All actions performed during emergency access are logged with additional metadata including the reason for emergency access and approver information.
 
 The system implements several safeguards for emergency access:
+
 - Maximum duration of 1 hour for individual emergency sessions
 - Requirement for justification of emergency access
 - Post-incident review requirements
@@ -659,15 +710,19 @@ end
 ```
 
 **Diagram sources **
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L864-L2149)
 
 **Section sources**
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L2248)
 
 ## Compliance and Audit Logging
+
 The NeonPro Healthcare Platform implements comprehensive compliance and audit logging features to meet LGPD, ANVISA, and other healthcare regulatory requirements. The system maintains detailed records of all authentication and authorization events with appropriate retention periods and access controls.
 
 Audit logging is integrated throughout the authentication and authorization system, capturing key events including:
+
 - Successful and failed login attempts
 - Session creation and termination
 - Permission checks and access decisions
@@ -677,6 +732,7 @@ Audit logging is integrated throughout the authentication and authorization syst
 - Configuration changes
 
 Each audit log entry contains rich metadata to support forensic investigations and compliance audits:
+
 - Timestamp with millisecond precision
 - User identifier (anonymized where appropriate)
 - User role and access level
@@ -696,6 +752,7 @@ Access to audit logs is strictly controlled through role-based access, with only
 The system supports real-time monitoring of audit events through integration with security information and event management (SIEM) systems. Critical events like multiple failed login attempts, privilege escalation, and emergency access trigger immediate alerts to security personnel.
 
 Compliance features include:
+
 - LGPD consent validation with audit of consent status
 - Data retention policies aligned with regulatory requirements
 - Right to erasure implementation with audit of data deletion
@@ -768,100 +825,118 @@ USERS ||--|| COMPLIANCE_CONSENT : "has"
 ```
 
 **Diagram sources **
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L206-L340)
 
 **Section sources**
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L2248)
 
 ## Troubleshooting Common Issues
+
 This section addresses common issues encountered with the authentication and authorization system in the NeonPro Healthcare Platform, providing diagnostic steps and resolution strategies for both developers and support personnel.
 
 ### Token Expiration Issues
+
 **Symptoms**: Users frequently encounter 401 Unauthorized errors despite active sessions.
-**Diagnosis**: 
+**Diagnosis**:
+
 - Check if access tokens are expiring (1-hour TTL)
 - Verify frontend token refresh mechanism is functioning
 - Confirm system clock synchronization between client and server
-**Resolution**:
+  **Resolution**:
 - Ensure frontend implements proactive token refresh before expiration
 - Verify refresh token storage in secure HTTP-only cookies
 - Check network connectivity issues that might interrupt refresh requests
 - Review browser storage limitations that might clear cookies
 
 ### Session Invalidation Problems
+
 **Symptoms**: Sessions persist longer than expected or are terminated prematurely.
 **Diagnosis**:
+
 - Verify idle timeout (30 minutes) and absolute timeout (8 hours) settings
 - Check for IP address changes that might trigger session invalidation
 - Review concurrent session limits (maximum 3 per user)
 - Examine device fingerprinting that might detect suspicious changes
-**Resolution**:
+  **Resolution**:
 - Implement session keep-alive pings for long-running operations
 - Configure appropriate timeout values for different user roles
 - Educate users about closing browser tabs to properly terminate sessions
 - Monitor for legitimate IP changes in mobile environments
 
 ### MFA Challenges
+
 **Symptoms**: Users cannot complete MFA verification or are prompted repeatedly.
 **Diagnosis**:
+
 - Verify time synchronization for TOTP codes
 - Check SMS delivery issues
 - Review grace period configuration (5 minutes)
 - Examine remembered devices functionality
-**Resolution**:
+  **Resolution**:
 - Implement multiple MFA methods as fallback options
 - Provide clear instructions for time synchronization
 - Offer backup codes for account recovery
 - Adjust grace period based on user feedback
 
 ### CSRF Protection Errors
+
 **Symptoms**: Valid requests are rejected with CSRF errors.
 **Diagnosis**:
+
 - Verify SameSite cookie attributes are properly set
 - Check if CSRF tokens are being stripped by proxies
 - Review custom header inclusion in API requests
 - Examine cross-origin request configurations
-**Resolution**:
+  **Resolution**:
 - Ensure frontend includes X-CSRF-Token header in state-changing requests
 - Verify secure context (HTTPS) for all requests
 - Check proxy configurations that might remove custom headers
 - Implement proper CORS configuration for legitimate cross-origin requests
 
 ### Role and Permission Issues
+
 **Symptoms**: Users cannot access resources despite having appropriate roles.
 **Diagnosis**:
+
 - Verify role-to-permission mapping in HealthcareRBAC
 - Check for cached permission data
 - Review dynamic permission changes during sessions
 - Examine MFA requirements for specific actions
-**Resolution**:
+  **Resolution**:
 - Implement permission refresh mechanism after role changes
 - Clear permission caches when user roles are updated
 - Provide clear error messages indicating required permissions
 - Test role assignments thoroughly in staging environment
 
 ### Performance Concerns
+
 **Symptoms**: Authentication requests are slow or timing out.
 **Diagnosis**:
+
 - Review JWT validation complexity
 - Check database queries for user profile retrieval
 - Examine network latency between services
 - Monitor rate limiting impacts
-**Resolution**:
+  **Resolution**:
 - Implement caching for frequently accessed user profiles
 - Optimize database queries with appropriate indexing
 - Consider distributed session storage for high-traffic scenarios
 - Adjust rate limiting thresholds based on legitimate traffic patterns
 
 **Section sources**
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L2248)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L712)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L1-L799)
 
 ## Best Practices for Secure Implementation
+
 Implementing the authentication and authorization system securely requires adherence to several best practices that address both technical and operational aspects. These recommendations ensure the system remains robust against evolving threats while maintaining usability for healthcare professionals.
 
 ### Secure Token Storage
+
 - Store refresh tokens in HTTP-only, Secure cookies to prevent XSS attacks
 - Keep access tokens in memory rather than persistent storage when possible
 - Implement proper cookie attributes: HttpOnly, Secure, SameSite=Strict
@@ -869,6 +944,7 @@ Implementing the authentication and authorization system securely requires adher
 - Regenerate session IDs after authentication to prevent session fixation
 
 ### Strong Cryptographic Practices
+
 - Use HS256 or stronger algorithms for JWT signing
 - Rotate signing keys periodically and maintain proper key management
 - Generate cryptographically secure random values for tokens and secrets
@@ -876,6 +952,7 @@ Implementing the authentication and authorization system securely requires adher
 - Use established cryptographic libraries rather than custom implementations
 
 ### Comprehensive Input Validation
+
 - Validate all authentication inputs on both client and server
 - Implement rate limiting to prevent brute force attacks
 - Use parameterized queries to prevent injection attacks
@@ -883,6 +960,7 @@ Implementing the authentication and authorization system securely requires adher
 - Implement proper error handling that doesn't leak sensitive information
 
 ### Robust Session Management
+
 - Enforce both idle and absolute session timeouts
 - Implement concurrent session limits with appropriate thresholds
 - Use IP binding with mobile network tolerance
@@ -890,6 +968,7 @@ Implementing the authentication and authorization system securely requires adher
 - Provide clear session termination mechanisms
 
 ### Effective Monitoring and Alerting
+
 - Implement comprehensive audit logging for all authentication events
 - Set up real-time alerts for suspicious activities
 - Regularly review logs for potential security incidents
@@ -897,6 +976,7 @@ Implementing the authentication and authorization system securely requires adher
 - Conduct periodic security assessments and penetration testing
 
 ### Secure Development Practices
+
 - Follow the principle of least privilege for role permissions
 - Implement defense-in-depth with multiple security layers
 - Conduct regular security code reviews
@@ -904,6 +984,7 @@ Implementing the authentication and authorization system securely requires adher
 - Use automated security scanning tools in CI/CD pipeline
 
 ### User Education and Training
+
 - Provide clear guidance on password security
 - Educate users about phishing and social engineering risks
 - Train staff on proper emergency access procedures
@@ -911,6 +992,7 @@ Implementing the authentication and authorization system securely requires adher
 - Conduct regular security awareness training
 
 ### Compliance and Governance
+
 - Maintain documentation of security controls and procedures
 - Conduct regular compliance audits
 - Implement proper data retention and disposal policies
@@ -920,6 +1002,7 @@ Implementing the authentication and authorization system securely requires adher
 By following these best practices, organizations can maximize the security benefits of the NeonPro Healthcare Platform's authentication and authorization system while minimizing risks to patient data and system integrity.
 
 **Section sources**
+
 - [authentication-middleware.ts](file://packages/shared/src/services/authentication-middleware.ts#L1-L2248)
 - [jwt-validator.ts](file://apps/api/src/security/jwt-validator.ts#L1-L712)
 - [enhanced-session-manager.ts](file://apps/api/src/security/enhanced-session-manager.ts#L1-L799)

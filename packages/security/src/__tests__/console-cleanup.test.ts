@@ -194,6 +194,7 @@ describe('Security Package Console Logging Cleanup - TDD RED Phase', () => {
         },
         set: vi.fn(),
         get: vi.fn().mockReturnValue('req-123'),
+        header: vi.fn(),
       } as any;
 
       const mockNext = vi.fn();

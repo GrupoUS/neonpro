@@ -9,6 +9,7 @@ Bem-vindo ao programa de onboarding da NeonPro Aesthetic Clinic! Este treinament
 **Meta Principal:** 100% dos novos colaboradores devem completar o treinamento em 30 dias com score mínimo de 85%
 
 **Objetivos Específicos:**
+
 - Compreender a filosofia e valores da NeonPro
 - Dominar o uso do sistema NeonPro
 - Conhecer protocolos de segurança e conformidade
@@ -30,6 +31,7 @@ Bem-vindo ao programa de onboarding da NeonPro Aesthetic Clinic! Este treinament
 ### 🌅 Manhã (4 horas) - Introdução à NeonPro
 
 #### 09:00 - 09:30 - Boas-Vindas e Integração
+
 ```bash
 Atividades:
 - Café de boas-vindas
@@ -40,6 +42,7 @@ Atividades:
 ```
 
 #### 09:30 - 11:00 - Filosofia e Valores NeonPro
+
 ```typescript
 interface CompanyValues {
   mission: {
@@ -66,12 +69,14 @@ interface CompanyValues {
 ```
 
 **Atividades:**
+
 - Apresentação da cultura NeonPro
 - Estudos de caso de sucesso
 - Discussão em grupo sobre valores
 - Alinhamento de expectativas
 
 #### 11:00 - 12:00 - Estrutura Organizacional
+
 ```bash
 Estrutura da clínica:
 - Diretoria Clínica
@@ -93,6 +98,7 @@ Comunicação interna:
 ### 🌞 Tarde (4 horas) - Introdução ao Sistema
 
 #### 13:30 - 15:00 - Visão Geral do Sistema NeonPro
+
 ```typescript
 interface SystemOverview {
   // Módulos principais
@@ -125,6 +131,7 @@ interface SystemOverview {
 ```
 
 #### 15:00 - 17:00 - Prática Inicial com o Sistema
+
 ```bash
 Laboratório prático:
 1. Criação de conta pessoal
@@ -142,6 +149,7 @@ Exercícios práticos:
 ```
 
 #### 17:00 - 17:30 - Reflexão e Perguntas do Dia 1
+
 ```bash
 Atividades de encerramento:
 - Discussão em grupo: "O que aprendi hoje?"
@@ -158,6 +166,7 @@ Atividades de encerramento:
 ### 🌅 Manhã (4 horas) - Módulos Principais
 
 #### 09:00 - 10:30 - Gestão de Pacientes
+
 ```typescript
 interface PatientManagement {
   // Cadastro completo
@@ -188,6 +197,7 @@ interface PatientManagement {
 ```
 
 **Laboratório Prático:**
+
 - Cadastro de novo paciente
 - Upload de documentos
 - Gestão de histórico médico
@@ -195,6 +205,7 @@ interface PatientManagement {
 - Busca e filtragem avançada
 
 #### 10:30 - 12:00 - Agendamento Inteligente
+
 ```typescript
 interface SmartScheduling {
   // Otimização com IA
@@ -225,6 +236,7 @@ interface SmartScheduling {
 ```
 
 **Laboratório Prático:**
+
 - Agendar consulta completa
 - Usar otimização de IA
 - Gerenciar conflitos de agenda
@@ -234,6 +246,7 @@ interface SmartScheduling {
 ### 🌞 Tarde (4 horas) - Planejamento e Documentação
 
 #### 13:30 - 15:00 - Planejamento de Tratamentos com IA
+
 ```typescript
 interface AITreatmentPlanning {
   // Análise de perfil
@@ -264,6 +277,7 @@ interface AITreatmentPlanning {
 ```
 
 **Laboratório Prático:**
+
 - Criar plano de tratamento completo
 - Usar recomendações de IA
 - Personalizar planos para pacientes
@@ -271,6 +285,7 @@ interface AITreatmentPlanning {
 - Documentar plano aprovado
 
 #### 15:00 - 17:00 - Documentação Clínica
+
 ```typescript
 interface ClinicalDocumentation {
   // Prontuário eletrônico
@@ -302,6 +317,7 @@ interface ClinicalDocumentation {
 ```
 
 **Laboratório Prático:**
+
 - Criar prontuário completo
 - Preencher todos os consentimentos
 - Documentar procedimentos
@@ -315,6 +331,7 @@ interface ClinicalDocumentation {
 ### 🌅 Manhã (4 horas) - Fluxos de Trabalho
 
 #### 09:00 - 10:30 - Atendimento ao Cliente
+
 ```typescript
 interface CustomerServiceWorkflow {
   // Fluxo completo
@@ -344,6 +361,7 @@ interface CustomerServiceWorkflow {
 ```
 
 **Laboratório Prático:**
+
 - Simular atendimento completo
 - Gerenciar diferentes cenários
 - Coletar feedback efetivamente
@@ -351,6 +369,7 @@ interface CustomerServiceWorkflow {
 - Criar experiência memorável
 
 #### 10:30 - 12:00 - Gestão Financeira Básica
+
 ```typescript
 interface FinancialManagement {
   // Processos de pagamento
@@ -380,6 +399,7 @@ interface FinancialManagement {
 ```
 
 **Laboratório Prático:**
+
 - Processar pagamentos diversos
 - Gerar faturas e recibos
 - Gerenciar convênios
@@ -389,6 +409,7 @@ interface FinancialManagement {
 ### 🌞 Tarde (4 horas) - Qualidade e Segurança
 
 #### 13:30 - 15:00 - Protocolos de Segurança
+
 ```typescript
 interface SafetyProtocols {
   // Segurança do paciente
@@ -418,6 +439,7 @@ interface SafetyProtocols {
 ```
 
 **Laboratório Prático:**
+
 - Simular emergência médica
 - Responder a vazamento de dados
 - Usar equipamentos de segurança
@@ -425,6 +447,7 @@ interface SafetyProtocols {
 - Documentar incidentes
 
 #### 15:00 - 17:00 - Gestão da Qualidade
+
 ```typescript
 interface QualityManagement {
   // Indicadores de qualidade
@@ -454,6 +477,7 @@ interface QualityManagement {
 ```
 
 **Laboratório Prático:**
+
 - Analisar métricas de qualidade
 - Identificar áreas de melhoria
 - Criar plano de ação
@@ -467,6 +491,7 @@ interface QualityManagement {
 ### 🌅 Manhã (4 horas) - LGPD e Privacidade
 
 #### 09:00 - 10:30 - Conformidade LGPD
+
 ```typescript
 interface LGPDCompliance {
   // Princípios LGPD
@@ -502,6 +527,7 @@ interface LGPDCompliance {
 ```
 
 **Laboratório Prático:**
+
 - Mapear fluxo de dados
 - Realizar avaliação de impacto
 - Gerenciar consentimentos
@@ -509,6 +535,7 @@ interface LGPDCompliance {
 - Notificar violações
 
 #### 10:30 - 12:00 - Conformidade ANVISA e CFM
+
 ```typescript
 interface RegulatoryCompliance {
   // ANVISA
@@ -538,6 +565,7 @@ interface RegulatoryCompliance {
 ```
 
 **Laboratório Prático:**
+
 - Validar registros profissionais
 - Gerenciar produtos ANVISA
 - Aplicar conduta ética
@@ -547,6 +575,7 @@ interface RegulatoryCompliance {
 ### 🌞 Tarde (4 horas) - Treinamento Prático Avançado
 
 #### 13:30 - 15:00 - Simulação de Cenários Reais
+
 ```bash
 Cenários de simulação:
 
@@ -573,6 +602,7 @@ Cenário 3: Paciente insatisfeito
 ```
 
 #### 15:00 - 17:00 - Projeto Final de Integração
+
 ```bash
 Projeto integrador:
 - Trabalho em equipe (grupos de 3-4)
@@ -596,6 +626,7 @@ Avaliação do projeto:
 ### 🌅 Manhã (4 horas) - Avaliação Final
 
 #### 09:00 - 11:00 - Avaliação Teórica
+
 ```bash
 Formato da avaliação:
 - Múltipla escolha: 40 questões
@@ -618,6 +649,7 @@ Recursos permitidos:
 ```
 
 #### 11:00 - 12:00 - Avaliação Prática
+
 ```bash
 Estações práticas:
 
@@ -646,6 +678,7 @@ Estação 3: Conformidade (25 min)
 ### 🌞 Tarde (4 horas) - Integração e Encerramento
 
 #### 13:30 - 15:00 - Feedback e Desenvolvimento
+
 ```bash
 Sessão de feedback:
 - Feedback individual com instrutor
@@ -672,6 +705,7 @@ Mês 3: Foco em excelência e inovação
 ```
 
 #### 15:00 - 16:30 - Cerimônia de Formatura
+
 ```bash
 Programa de encerramento:
 - Apresentação de projetos finais
@@ -691,6 +725,7 @@ Certificado de conclusão:
 ```
 
 #### 16:30 - 17:00 - Próximos Passos
+
 ```bash
 Integração ao trabalho:
 - Buddy System designado
@@ -714,6 +749,7 @@ Compromissos da NeonPro:
 ### 📈 Critérios de Avaliação
 
 #### Sistema de Pontuação
+
 ```typescript
 interface GradingSystem {
   // Distribuição de pontos
@@ -748,6 +784,7 @@ interface GradingSystem {
 ### 🏆 Certificação
 
 #### Níveis de Certificação
+
 ```typescript
 interface CertificationLevels {
   // NeonPro Certified Professional
@@ -777,6 +814,7 @@ interface CertificationLevels {
 ```
 
 #### Recertificação
+
 ```bash
 Processo de recertificação:
 1. Acumular horas de educação continuada
@@ -800,6 +838,7 @@ Benefícios da certificação:
 ### 📖 Materiais de Estudo
 
 #### Recursos Obrigatórios
+
 ```bash
 Materiais fornecidos:
 - Manual completo do sistema NeonPro
@@ -822,6 +861,7 @@ Acesso contínuo:
 ### 🤝 Mentoria e Suporte
 
 #### Sistema de Mentoria
+
 ```typescript
 interface MentorshipProgram {
   // Mentoria estruturada
@@ -858,6 +898,7 @@ interface MentorshipProgram {
 ### ✅ Nosso Compromisso com Você
 
 **Garantias de Treinamento:**
+
 - Instrutores especializados e experientes
 - Conteúdo atualizado e relevante
 - Ambiente de aprendizado seguro
@@ -866,6 +907,7 @@ interface MentorshipProgram {
 - Suporte pós-treinamento
 
 **Seu Compromisso Conosco:**
+
 - Participação ativa e engajada
 - Aplicação prática do aprendizado
 - Busca contínua por excelência
@@ -876,6 +918,7 @@ interface MentorshipProgram {
 ### 🌟 Juntos Rumo à Excelência
 
 **Parceria de Sucesso:**
+
 - Treinamento de qualidade
 - Desenvolvimento contínuo
 - Apoio mútuo
@@ -887,4 +930,4 @@ interface MentorshipProgram {
 
 ---
 
-*Este treinamento é atualizado trimestralmente para refletir as melhores práticas e mudanças regulatórias. Última atualização: Setembro 2025*
+_Este treinamento é atualizado trimestralmente para refletir as melhores práticas e mudanças regulatórias. Última atualização: Setembro 2025_

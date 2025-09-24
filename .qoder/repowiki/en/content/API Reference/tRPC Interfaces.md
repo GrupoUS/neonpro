@@ -1,7 +1,7 @@
 # tRPC Interfaces
 
 <cite>
-**Referenced Files in This Document**   
+**Referenced Files in This Document**
 - [context.ts](file://apps/api/src/trpc/context.ts)
 - [router.ts](file://apps/api/src/trpc/router.ts)
 - [trpc.ts](file://apps/api/src/trpc/trpc.ts)
@@ -13,6 +13,7 @@
 </cite>
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [tRPC Context and Request Flow](#trpc-context-and-request-flow)
 3. [Router Structure and Endpoint Organization](#router-structure-and-endpoint-organization)
@@ -26,9 +27,11 @@
 11. [Error Handling and Custom Error Types](#error-handling-and-custom-error-types)
 
 ## Introduction
+
 The neonpro application implements a comprehensive tRPC interface system that provides end-to-end type safety, healthcare compliance, and robust security for medical data operations. The tRPC implementation follows a contract-first approach with strict validation, audit logging, and row-level security enforcement to meet Brazilian regulatory requirements including LGPD, CFM Resolution 2,314/2022, and ANVISA standards. This documentation details the architecture, implementation patterns, and usage guidelines for the tRPC interfaces across the neonpro platform.
 
 ## tRPC Context and Request Flow
+
 The tRPC context serves as the foundation for request processing, providing essential information and services throughout the middleware chain and procedure execution. The context is created at the beginning of each request and propagated through all subsequent operations.
 
 ```mermaid
@@ -42,12 +45,15 @@ SetDefaults --> ContextReady["Context Ready for Middleware Chain"]
 ```
 
 **Diagram sources**
+
 - [context.ts](file://apps/api/src/trpc/context.ts#L1-L65)
 
 **Section sources**
+
 - [context.ts](file://apps/api/src/trpc/context.ts#L1-L65)
 
 ## Router Structure and Endpoint Organization
+
 The main tRPC router combines domain-specific routers into a unified API surface while maintaining backward compatibility with legacy endpoints. The router structure follows a domain-driven design pattern with specialized routers for different healthcare functions.
 
 ```mermaid
@@ -80,12 +86,15 @@ style APIContractsRouter fill:#7ED321,stroke:#333
 ```
 
 **Diagram sources**
+
 - [router.ts](file://apps/api/src/trpc/router.ts#L1-L107)
 
 **Section sources**
+
 - [router.ts](file://apps/api/src/trpc/router.ts#L1-L107)
 
 ## Procedure Types and Middleware Chain
+
 The tRPC implementation defines multiple procedure types with different middleware chains to handle various security and compliance requirements. Each procedure type applies a specific sequence of middleware functions to enforce appropriate access controls.
 
 ```mermaid
@@ -120,15 +129,19 @@ Telemedicine --> Consent
 ```
 
 **Diagram sources**
+
 - [trpc.ts](file://apps/api/src/trpc/trpc.ts#L1-L187)
 
 **Section sources**
+
 - [trpc.ts](file://apps/api/src/trpc/trpc.ts#L1-L187)
 
 ## Contract-First API Design
+
 The neonpro application implements a contract-first approach using tRPC v11 with comprehensive API contracts defined in the trpc/contracts directory. These contracts define the complete interface for each service, ensuring consistency between server implementation and client consumption.
 
 ### AI Service Contracts
+
 The AI service contracts define endpoints for chat completion, conversation history retrieval, and health analysis with comprehensive input validation and output typing.
 
 ```mermaid
@@ -177,12 +190,15 @@ aiRouter --> HealthcareTRPCError : "throws"
 ```
 
 **Diagram sources**
+
 - [ai.ts](file://apps/api/src/trpc/contracts/ai.ts#L1-L799)
 
 **Section sources**
+
 - [ai.ts](file://apps/api/src/trpc/contracts/ai.ts#L1-L799)
 
 ### Patient Service Contracts
+
 The patient service contracts define endpoints for patient management operations with LGPD compliance validation and audit logging.
 
 ```mermaid
@@ -251,15 +267,19 @@ patientRouter --> PatientsListResponseSchema : "returns"
 ```
 
 **Diagram sources**
+
 - [patient.ts](file://apps/api/src/trpc/contracts/patient.ts#L1-L417)
 
 **Section sources**
+
 - [patient.ts](file://apps/api/src/trpc/contracts/patient.ts#L1-L417)
 
 ## Input Validation and Output Typing
+
 The tRPC implementation uses Zod schemas for comprehensive input validation and TypeScript types for output typing, ensuring end-to-end type safety from server to client.
 
 ### Input Validation Schema
+
 ```mermaid
 erDiagram
 INPUT_SCHEMA {
@@ -298,10 +318,12 @@ class PROCEDURE {
 ```
 
 **Section sources**
+
 - [ai.ts](file://apps/api/src/trpc/contracts/ai.ts#L1-L799)
 - [patient.ts](file://apps/api/src/trpc/contracts/patient.ts#L1-L417)
 
 ## Context Propagation Mechanism
+
 The context propagation mechanism ensures that authentication state, audit metadata, and other contextual information are available throughout the request lifecycle. The context is enhanced by middleware functions as it passes through the middleware chain.
 
 ```mermaid
@@ -327,14 +349,17 @@ Middleware-->>Client : Send response
 ```
 
 **Diagram sources**
+
 - [context.ts](file://apps/api/src/trpc/context.ts#L1-L65)
 - [trpc.ts](file://apps/api/src/trpc/trpc.ts#L1-L187)
 
 **Section sources**
+
 - [context.ts](file://apps/api/src/trpc/context.ts#L1-L65)
 - [trpc.ts](file://apps/api/src/trpc/trpc.ts#L1-L187)
 
 ## Authentication and Authorization Flow
+
 The authentication and authorization flow integrates with the healthcare platform's identity management system to validate user credentials and permissions before allowing access to protected resources.
 
 ```mermaid
@@ -355,14 +380,17 @@ Execute --> Failure["Return Error Response"]
 ```
 
 **Diagram sources**
+
 - [trpc.ts](file://apps/api/src/trpc/trpc.ts#L1-L187)
 - [cfm-validation.ts](file://apps/api/src/trpc/middleware/cfm-validation.ts#L1-L532)
 
 **Section sources**
+
 - [trpc.ts](file://apps/api/src/trpc/trpc.ts#L1-L187)
 - [cfm-validation.ts](file://apps/api/src/trpc/middleware/cfm-validation.ts#L1-L532)
 
 ## Row-Level Security Implementation
+
 The Prisma RLS middleware implements automatic clinic-based data isolation and user context validation to ensure proper multi-tenant access control and data protection.
 
 ```mermaid
@@ -408,12 +436,15 @@ end note
 ```
 
 **Diagram sources**
+
 - [prisma-rls.ts](file://apps/api/src/trpc/middleware/prisma-rls.ts#L1-L526)
 
 **Section sources**
+
 - [prisma-rls.ts](file://apps/api/src/trpc/middleware/prisma-rls.ts#L1-L526)
 
 ## Client-Side Usage Patterns
+
 The client-side usage patterns demonstrate how React components consume the tRPC interfaces with proper typing and error handling.
 
 ```mermaid
@@ -441,10 +472,12 @@ end
 ```
 
 **Section sources**
+
 - [ai.ts](file://apps/api/src/trpc/contracts/ai.ts#L1-L799)
 - [patient.ts](file://apps/api/src/trpc/contracts/patient.ts#L1-L417)
 
 ## Error Handling and Custom Error Types
+
 The error handling system uses custom error types to provide detailed information about failures while maintaining type safety across the API boundary.
 
 ```mermaid
@@ -489,9 +522,11 @@ end note
 ```
 
 **Diagram sources**
+
 - [ai.ts](file://apps/api/src/trpc/contracts/ai.ts#L1-L799)
 - [patient.ts](file://apps/api/src/trpc/contracts/patient.ts#L1-L417)
 
 **Section sources**
+
 - [ai.ts](file://apps/api/src/trpc/contracts/ai.ts#L1-L799)
 - [patient.ts](file://apps/api/src/trpc/contracts/patient.ts#L1-L417)
