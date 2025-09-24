@@ -1,7 +1,7 @@
 {
   "$schema": "https://dprint.dev/schemas/v0.json",
   "includes": [
-    "tools/tests-consolidated/**/*.{ts,tsx,js,jsx,json,md}"
+    "**/*.{ts,tsx,js,jsx,json,md}"
   ],
   "excludes": [
     "**/node_modules/**",
@@ -32,7 +32,6 @@
     "exportDeclaration.spaceSurroundingNamedExports": true,
     "objectExpression.spaceSurroundingProperties": true,
     "objectPattern.spaceSurroundingProperties": true,
-    "typeParameters.spaceSurroundingParameters": false,
     "typeLiteral.spaceSurroundingProperties": true
   },
   "json": {

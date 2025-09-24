@@ -397,7 +397,7 @@ describe('LGPD Data Protection Compliance', () => {
         .limit(5)
 
       if (patients && patients.length > 0) {
-        patients.forEach((patient) => {
+        patients.forEach(patient => {
           // security-auditor: Verify data anonymization patterns
           expect(patient.name).toMatch(/^ANON_\d+$|^Test\s+Patient\s+\d+$/)
           expect(patient.cpf).toMatch(
@@ -469,13 +469,13 @@ describe('LGPD Data Protection Compliance', () => {
         .limit(5)
 
       if (patients && patients.length > 0) {
-        patients.forEach((patient) => {
+        patients.forEach(patient => {
           expect(patient.consent_records).toBeDefined()
           expect(patient.consent_records.length).toBeGreaterThan(0)
 
           // Verify required consent types are present
           const consentTypes = patient.consent_records.map(
-            (c) => c.consent_type,
+            c => c.consent_type,
           )
           expect(consentTypes).toContain('data_processing')
           expect(consentTypes).toContain('medical_treatment')
@@ -483,7 +483,7 @@ describe('LGPD Data Protection Compliance', () => {
           // Verify consent is still valid
           const now = new Date()
           const validConsents = patient.consent_records.filter(
-            (c) => new Date(c.expires_at) > now,
+            c => new Date(c.expires_at) > now,
           )
           expect(validConsents.length).toBeGreaterThan(0)
         })
@@ -870,7 +870,7 @@ describe('GoTrueClient Multi-Instance Management', () => {
       .map(() => createTestSupabaseClient())
 
     // Perform auth operations with all clients
-    const authPromises = clients.map((client) => client.auth.getSession())
+    const authPromises = clients.map(client => client.auth.getSession())
 
     await Promise.all(authPromises)
 
@@ -1071,12 +1071,12 @@ describe('Healthcare Database Security Suite', () => {
       .from('patients')
       .select('*')
       .limit(5)
-    expect(patients?.every((p) => p.clinic_id === 'authorized-clinic')).toBe(
+    expect(patients?.every(p => p.clinic_id === 'authorized-clinic')).toBe(
       true,
     )
 
     // 3. LGPD compliance
-    expect(patients?.every((p) => p.cpf.includes('***'))).toBe(true)
+    expect(patients?.every(p => p.cpf.includes('***'))).toBe(true)
 
     // 4. Audit trail verification
     const { data: auditLogs } = await testClient

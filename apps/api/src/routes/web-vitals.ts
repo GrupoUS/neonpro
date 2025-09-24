@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
 webVitalsRouter.use(
   '*',
   cors({
-    origin: (origin) =>
+    origin: origin =>
       !origin
         ? undefined
         : allowedOrigins.includes(origin)
@@ -46,7 +46,7 @@ const metricsStore = new Map<string, MetricEntry[]>()
 const sessionsStore = new Map<string, SessionInfo>()
 
 // Core Web Vitals reporting endpoint
-webVitalsRouter.post('/api/analytics/web-vitals', async (c) => {
+webVitalsRouter.post('/api/analytics/web-vitals', async c => {
   try {
     const body = await c.req.json()
     const {
@@ -131,7 +131,7 @@ webVitalsRouter.post('/api/analytics/web-vitals', async (c) => {
 })
 
 // Batch metrics endpoint (beacon)
-webVitalsRouter.post('/api/analytics/web-vitals/beacon', async (c) => {
+webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
   try {
     const body = await c.req.json()
     const {
@@ -199,7 +199,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async (c) => {
 })
 
 // Analytics dashboard endpoint
-webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async (c) => {
+webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
   try {
     // Get time range from query params
     const timeRange = c.req.query('timeRange') || '24h'
@@ -209,7 +209,7 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async (c) => {
     const allMetrics: MetricEntry[] = []
     for (const [, metrics] of metricsStore.entries()) {
       const filteredMetrics = metrics.filter(
-        (m) => new Date(m.timestamp) >= since,
+        m => new Date(m.timestamp) >= since,
       )
       allMetrics.push(...filteredMetrics)
     }
@@ -218,9 +218,9 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async (c) => {
       timeRange,
       generatedAt: new Date().toISOString(),
       summary: {
-        totalSessions: new Set(allMetrics.map((m) => m.sessionId)).size,
+        totalSessions: new Set(allMetrics.map(m => m.sessionId)).size,
         totalMetrics: allMetrics.length,
-        uniqueUsers: new Set(allMetrics.map((m) => m._userId).filter(Boolean))
+        uniqueUsers: new Set(allMetrics.map(m => m._userId).filter(Boolean))
           .size,
         timeRangeStart: since.toISOString(),
       },
@@ -283,10 +283,10 @@ async function checkPerformanceThresholds(metric: MetricEntry): Promise<void> {
 
   // Healthcare-specific alerting
   if (
-    performanceLevel === 'poor'
-    && (metric.isPatientView
-      || metric.isAppointmentView
-      || metric.isMedicalRecordView)
+    performanceLevel === 'poor' &&
+    (metric.isPatientView ||
+      metric.isAppointmentView ||
+      metric.isMedicalRecordView)
   ) {
     console.warn(
       `🏥 Healthcare performance issue: ${metric.metric} = ${metric.value} on ${metric.pathname}`,
@@ -303,8 +303,8 @@ function calculateCoreWebVitals(
   const vitals = ['LCP', 'FID', 'CLS', 'FCP', 'TTFB']
   const results: Record<string, MetricAnalysis> = {}
 
-  vitals.forEach((vital) => {
-    const vitalMetrics = metrics.filter((m) => m.metric === vital)
+  vitals.forEach(vital => {
+    const vitalMetrics = metrics.filter(m => m.metric === vital)
     if (vitalMetrics.length === 0) {
       results[vital] = {
         metric: vital,
@@ -317,7 +317,7 @@ function calculateCoreWebVitals(
       return
     }
 
-    const values = vitalMetrics.map((m) => m.value).sort((a, _b) => a - b)
+    const values = vitalMetrics.map(m => m.value).sort((a, _b) => a - b)
     const p50 = values[Math.floor(values.length * 0.5)] || 0
     const p90 = values[Math.floor(values.length * 0.9)] || 0
     const p95 = values[Math.floor(values.length * 0.95)] || 0
@@ -351,7 +351,7 @@ function calculatePerformanceGrade(metrics: MetricEntry[]): {
 
   let goodCount = 0
   let totalCount = 0
-  ;['LCP', 'FID', 'CLS'].forEach((vital) => {
+  ;['LCP', 'FID', 'CLS'].forEach(vital => {
     const metric = coreVitals[vital]
     if (metric && metric.count > 0) {
       totalCount++
@@ -387,23 +387,23 @@ function calculateHealthcareMetrics(metrics: MetricEntry[]): {
   complianceThreshold?: number
 } {
   const healthcareMetrics = metrics.filter(
-    (m) => m.isPatientView || m.isAppointmentView || m.isMedicalRecordView,
+    m => m.isPatientView || m.isAppointmentView || m.isMedicalRecordView,
   )
 
   if (healthcareMetrics.length === 0) {
     return { count: 0 }
   }
 
-  const avgResponseTime = healthcareMetrics.reduce((sum, _m) => sum + m.value, 0)
-    / healthcareMetrics.length
+  const avgResponseTime = healthcareMetrics.reduce((sum, _m) => sum + m.value, 0) /
+    healthcareMetrics.length
 
   return {
     count: healthcareMetrics.length,
     averageResponseTime: Math.round(avgResponseTime),
-    patientViews: healthcareMetrics.filter((m) => m.isPatientView).length,
-    appointmentViews: healthcareMetrics.filter((m) => m.isAppointmentView)
+    patientViews: healthcareMetrics.filter(m => m.isPatientView).length,
+    appointmentViews: healthcareMetrics.filter(m => m.isAppointmentView)
       .length,
-    medicalRecordViews: healthcareMetrics.filter((m) => m.isMedicalRecordView)
+    medicalRecordViews: healthcareMetrics.filter(m => m.isMedicalRecordView)
       .length,
     complianceStatus: avgResponseTime <= 2000 ? 'compliant' : 'needs-improvement',
     complianceThreshold: 2000,
@@ -417,7 +417,7 @@ function calculateDeviceBreakdown(metrics: MetricEntry[]): Array<{
 }> {
   const devices: Record<string, { count: number; sessions: Set<string> }> = {}
 
-  metrics.forEach((metric) => {
+  metrics.forEach(metric => {
     const memory = metric.deviceMemory || 'unknown'
     const cores = metric.hardwareConcurrency || 'unknown'
     const connection = metric.connectionType || 'unknown'
@@ -451,7 +451,7 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
     { metrics: MetricEntry[]; sessions: Set<string> }
   > = {}
 
-  metrics.forEach((metric) => {
+  metrics.forEach(metric => {
     const pathname = metric.pathname || metric.url || 'unknown'
     if (!urls[pathname]) {
       urls[pathname] = { metrics: [], sessions: new Set() }
@@ -466,8 +466,8 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
       metrics: data.metrics.length,
       sessions: data.sessions.size,
       avgValue: Math.round(
-        data.metrics.reduce((sum, _m) => sum + m.value, 0)
-          / data.metrics.length,
+        data.metrics.reduce((sum, _m) => sum + m.value, 0) /
+          data.metrics.length,
       ),
     }))
     .sort((a, _b) => b.metrics - a.metrics)
@@ -480,7 +480,7 @@ function calculateTrends(metrics: MetricEntry[]): Array<{
 }> {
   const trends: Record<number, MetricEntry[]> = {}
 
-  metrics.forEach((metric) => {
+  metrics.forEach(metric => {
     const hour = new Date(metric.timestamp).getHours()
     if (!trends[hour]) {
       trends[hour] = []

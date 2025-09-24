@@ -148,14 +148,14 @@ export function HealthcareForm({
 
   // Error management functions
   const setFieldError = (field: string, fieldErrors: string[]) => {
-    setErrors((prev) => ({
+    setErrors(prev => ({
       ...prev,
       [field]: fieldErrors,
     }))
   }
 
   const clearFieldError = (field: string) => {
-    setErrors((prev) => {
+    setErrors(prev => {
       const newErrors = { ...prev }
       delete newErrors[field]
       return newErrors
@@ -201,7 +201,7 @@ export function HealthcareForm({
       if (patientDataForm) {
         const emergencyValidation = validateEmergencyData(formDataObject)
         if (!emergencyValidation.isValid) {
-          emergencyValidation.errors.forEach((error) => {
+          emergencyValidation.errors.forEach(error => {
             announceError(error)
           })
           setFieldError('emergency', emergencyValidation.errors)
@@ -345,8 +345,8 @@ export function HealthcareForm({
         onSubmit={handleSubmit}
         className={formClasses}
         id={formId}
-        aria-label={ariaLabel
-          || (emergencyForm
+        aria-label={ariaLabel ||
+          (emergencyForm
             ? 'Formulário de emergência médica'
             : 'Formulário de dados de saúde')}
         aria-describedby={`${formId}-description`}
@@ -359,10 +359,10 @@ export function HealthcareForm({
         {/* Form description for screen readers */}
         <div id={`${formId}-description`} className='sr-only'>
           {emergencyForm && 'Formulário para situações de emergência médica. '}
-          {patientDataForm
-            && 'Formulário contendo dados sensíveis do paciente. '}
-          {requireConsent
-            && 'Consentimento LGPD necessário para processamento. '}
+          {patientDataForm &&
+            'Formulário contendo dados sensíveis do paciente. '}
+          {requireConsent &&
+            'Consentimento LGPD necessário para processamento. '}
           Navegue com Tab entre os campos. Use Ctrl+Shift+S para salvamento rápido.
         </div>
 
@@ -382,8 +382,8 @@ export function HealthcareForm({
         )}
 
         {/* Data sensitivity indicator */}
-        {(dataSensitivity === DataSensitivity.RESTRICTED
-          || dataSensitivity === DataSensitivity.CONFIDENTIAL) && (
+        {(dataSensitivity === DataSensitivity.RESTRICTED ||
+          dataSensitivity === DataSensitivity.CONFIDENTIAL) && (
           <div className='healthcare-sensitivity-indicator border-l-4 border-warning bg-warning/10 p-3'>
             <div className='flex items-center gap-2'>
               <span role='img' aria-label='Dados sensíveis'>
@@ -415,7 +415,7 @@ export function HealthcareForm({
               <input
                 type='checkbox'
                 checked={consentGiven}
-                onChange={(e) => setConsentGiven(e.target.checked)}
+                onChange={e => setConsentGiven(e.target.checked)}
                 className='mt-0.5'
                 aria-describedby={`${formId}-consent-description`}
               />

@@ -413,8 +413,8 @@ export class ExternalServiceHealthChecker {
     metrics.totalChecks++
     metrics.successfulChecks++
     metrics.averageResponseTime =
-      (metrics.averageResponseTime * (metrics.totalChecks - 1) + responseTime)
-      / metrics.totalChecks
+      (metrics.averageResponseTime * (metrics.totalChecks - 1) + responseTime) /
+      metrics.totalChecks
     metrics.minResponseTime = Math.min(
       metrics.minResponseTime || responseTime,
       responseTime,
@@ -442,8 +442,8 @@ export class ExternalServiceHealthChecker {
     metrics.totalChecks++
     metrics.failedChecks++
     metrics.averageResponseTime =
-      (metrics.averageResponseTime * (metrics.totalChecks - 1) + responseTime)
-      / metrics.totalChecks
+      (metrics.averageResponseTime * (metrics.totalChecks - 1) + responseTime) /
+      metrics.totalChecks
     metrics.lastFailureTime = new Date()
     metrics.uptime = (metrics.successfulChecks / metrics.totalChecks) * 100
 
@@ -585,7 +585,7 @@ export class ExternalServiceHealthChecker {
     // Keep only recent incidents (last 24 hours)
     const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000)
     this.incidentLog = this.incidentLog.filter(
-      (incident) => incident.timestamp > cutoff,
+      incident => incident.timestamp > cutoff,
     )
   }
 
@@ -601,8 +601,8 @@ export class ExternalServiceHealthChecker {
     if (!_service) return 'medium'
 
     if (
-      service.healthcareCritical
-      && (type === 'COMPLIANCE_VIOLATION' || type === 'HEALTH_CHECK_FAILURE')
+      service.healthcareCritical &&
+      (type === 'COMPLIANCE_VIOLATION' || type === 'HEALTH_CHECK_FAILURE')
     ) {
       return 'critical'
     }
@@ -622,7 +622,7 @@ export class ExternalServiceHealthChecker {
    * Emit health check event
    */
   private emitEvent(event: HealthCheckEvent): void {
-    this.eventCallbacks.forEach((callback) => {
+    this.eventCallbacks.forEach(callback => {
       try {
         callback(event)
       } catch {
@@ -734,7 +734,7 @@ export class ExternalServiceHealthChecker {
       return [...this.incidentLog]
     }
 
-    return this.incidentLog.filter((incident) => incident.timestamp >= since)
+    return this.incidentLog.filter(incident => incident.timestamp >= since)
   }
 
   /**
@@ -781,11 +781,11 @@ export class ExternalServiceHealthChecker {
    */
   destroy(): void {
     // Stop all monitoring
-    this.checkIntervals.forEach((interval) => clearInterval(interval))
+    this.checkIntervals.forEach(interval => clearInterval(interval))
     this.checkIntervals.clear()
 
     // Destroy all circuit breakers
-    this.circuitBreakers.forEach((circuitBreaker) => circuitBreaker.destroy())
+    this.circuitBreakers.forEach(circuitBreaker => circuitBreaker.destroy())
     this.circuitBreakers.clear()
 
     // Clear registries

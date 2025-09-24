@@ -14,7 +14,7 @@ export class TestUtils {
   async clickAndWaitForNavigation(selector: string, url?: string) {
     const [response] = await Promise.all([
       this.page.waitForResponse(
-        url ? (res) => res.url().includes(url) : () => true,
+        url ? res => res.url().includes(url) : () => true,
         { timeout: 10000 },
       ),
       this.page.click(selector),
@@ -74,14 +74,14 @@ export class TestUtils {
 
   async waitForAPIResponse(endpoint: string, timeout = 10000) {
     const response = await this.page.waitForResponse(
-      (res) => res.url().includes(endpoint),
+      res => res.url().includes(endpoint),
       { timeout },
     )
     return response
   }
 
   async getLocalStorageItem(key: string) {
-    return await this.page.evaluate((k) => localStorage.getItem(k), key)
+    return await this.page.evaluate(k => localStorage.getItem(k), key)
   }
 
   async setLocalStorageItem(key: string, value: string) {
@@ -96,7 +96,7 @@ export class TestUtils {
   }
 
   async mockAPIResponse(endpoint: string, mockData: any) {
-    await this.page.route(endpoint, (route) => {
+    await this.page.route(endpoint, route => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',

@@ -223,7 +223,7 @@ export class SecurityUtils {
       /bash/i,
     ]
 
-    return suspiciousPatterns.some((pattern) => pattern.test(input))
+    return suspiciousPatterns.some(pattern => pattern.test(input))
   }
 
   /**
@@ -318,7 +318,7 @@ export class SecurityUtils {
       /welcome/i,
     ]
 
-    if (commonPatterns.some((pattern) => pattern.test(password))) {
+    if (commonPatterns.some(pattern => pattern.test(password))) {
       feedback.push('Password contains common patterns')
       score -= 1
     }
@@ -484,7 +484,7 @@ export class SecureLogger {
    * Secure log method that sanitizes sensitive data
    */
   private static secureLog = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg))
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
     this.originalConsole.log(...sanitizedArgs)
   }
 
@@ -492,7 +492,7 @@ export class SecureLogger {
    * Secure error method that sanitizes sensitive data
    */
   private static secureError = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg))
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
     this.originalConsole.error(...sanitizedArgs)
   }
 
@@ -500,7 +500,7 @@ export class SecureLogger {
    * Secure warn method that sanitizes sensitive data
    */
   private static secureWarn = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg))
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
     this.originalConsole.warn(...sanitizedArgs)
   }
 
@@ -508,7 +508,7 @@ export class SecureLogger {
    * Secure info method that sanitizes sensitive data
    */
   private static secureInfo = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg))
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
     this.originalConsole.info(...sanitizedArgs)
   }
 
@@ -516,7 +516,7 @@ export class SecureLogger {
    * Secure debug method that sanitizes sensitive data
    */
   private static secureDebug = (...args: LogArgument[]): void => {
-    const sanitizedArgs = args.map((arg) => this.sanitizeLogArgument(arg))
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg))
     this.originalConsole.debug(...sanitizedArgs)
   }
 
@@ -565,7 +565,7 @@ export class SecureLogger {
       /;\s*SELECT/gi,
     ]
 
-    sqlPatterns.forEach((pattern) => {
+    sqlPatterns.forEach(pattern => {
       sanitized = sanitized.replace(pattern, '[SQL_QUERY_REDACTED]')
     })
 
@@ -580,7 +580,7 @@ export class SecureLogger {
       /<[^>]*on\w+\s*=[^>]*>/gi,
     ]
 
-    xssPatterns.forEach((pattern) => {
+    xssPatterns.forEach(pattern => {
       sanitized = sanitized.replace(pattern, '[XSS_PAYLOAD_REDACTED]')
     })
 
@@ -597,7 +597,7 @@ export class SecureLogger {
       /api[_-]?key[\s"':]*=[^\s"']*/gi,
     ]
 
-    sensitivePatterns.forEach((pattern) => {
+    sensitivePatterns.forEach(pattern => {
       sanitized = sanitized.replace(pattern, '[SENSITIVE_DATA_REDACTED]')
     })
 
@@ -613,7 +613,7 @@ export class SecureLogger {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.sanitizeLogArgument(item)) as unknown as SanitizedObject
+      return obj.map(item => this.sanitizeLogArgument(item)) as unknown as SanitizedObject
     }
 
     const sanitized: SanitizedObject = {}
@@ -662,7 +662,7 @@ export class SecureLogger {
       'postal',
     ]
 
-    return sensitiveKeys.some((sensitive) => key.toLowerCase().includes(sensitive.toLowerCase()))
+    return sensitiveKeys.some(sensitive => key.toLowerCase().includes(sensitive.toLowerCase()))
   }
 }
 

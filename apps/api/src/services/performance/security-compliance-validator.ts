@@ -137,7 +137,7 @@ export class SecurityComplianceValidator {
 
     const result: SecurityValidationResult = {
       isValid:
-        violations.filter((v) => v.severity === 'critical' || v.severity === 'high').length === 0,
+        violations.filter(v => v.severity === 'critical' || v.severity === 'high').length === 0,
       violations,
       recommendations,
       complianceScore,
@@ -420,7 +420,7 @@ export class SecurityComplianceValidator {
     const recommendations: SecurityRecommendation[] = []
 
     // High-priority recommendations
-    if (violations.some((v) => v.type === 'encryption' && v.severity === 'critical')) {
+    if (violations.some(v => v.type === 'encryption' && v.severity === 'critical')) {
       recommendations.push({
         category: 'encryption',
         priority: 'high',
@@ -432,7 +432,7 @@ export class SecurityComplianceValidator {
       })
     }
 
-    if (violations.some((v) => v.type === 'access_control' && v.severity === 'critical')) {
+    if (violations.some(v => v.type === 'access_control' && v.severity === 'critical')) {
       recommendations.push({
         category: 'access_control',
         priority: 'high',
@@ -444,7 +444,7 @@ export class SecurityComplianceValidator {
     }
 
     // Medium-priority recommendations
-    if (violations.some((v) => v.type === 'audit' && v.severity === 'high')) {
+    if (violations.some(v => v.type === 'audit' && v.severity === 'high')) {
       recommendations.push({
         category: 'audit',
         priority: 'medium',
@@ -456,7 +456,7 @@ export class SecurityComplianceValidator {
       })
     }
 
-    if (violations.some((v) => v.type === 'retention' && v.severity === 'medium')) {
+    if (violations.some(v => v.type === 'retention' && v.severity === 'medium')) {
       recommendations.push({
         category: 'retention',
         priority: 'medium',
@@ -468,7 +468,7 @@ export class SecurityComplianceValidator {
     }
 
     // Low-priority recommendations
-    if (violations.some((v) => v.type === 'data_leak' && v.severity === 'low')) {
+    if (violations.some(v => v.type === 'data_leak' && v.severity === 'low')) {
       recommendations.push({
         category: 'data_minimization',
         priority: 'low',
@@ -547,42 +547,40 @@ export class SecurityComplianceValidator {
    * LGPD compliance checks
    */
   private checkDataSubjectRights(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) =>
+    return !validation.violations.some(v =>
       v.type === 'access_control' && v.severity === 'critical'
     )
   }
 
   private checkConsentManagement(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) =>
+    return !validation.violations.some(v =>
       v.type === 'access_control' && v.description.includes('consent')
     )
   }
 
   private checkDataMinimization(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) =>
+    return !validation.violations.some(v =>
       v.type === 'data_leak' && v.description.includes('minimization')
     )
   }
 
   private checkRetentionPolicies(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) => v.type === 'retention' && v.severity === 'high')
+    return !validation.violations.some(v => v.type === 'retention' && v.severity === 'high')
   }
 
   private checkBreachNotification(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) =>
-      v.type === 'audit' && v.description.includes('breach')
-    )
+    return !validation.violations.some(v => v.type === 'audit' && v.description.includes('breach'))
   }
 
   private checkDataProcessingRecords(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) => v.type === 'audit' && v.severity === 'high')
+    return !validation.violations.some(v => v.type === 'audit' && v.severity === 'high')
   }
 
   /**
    * ANVISA compliance checks
    */
   private checkMedicalDeviceData(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) =>
+    return !validation.violations.some(v =>
       v.type === 'encryption' && v.description.includes('medical')
     )
   }
@@ -592,9 +590,7 @@ export class SecurityComplianceValidator {
   }
 
   private checkAdverseEventReporting(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) =>
-      v.type === 'audit' && v.description.includes('adverse')
-    )
+    return !validation.violations.some(v => v.type === 'audit' && v.description.includes('adverse'))
   }
 
   private checkQualityManagement(validation: SecurityValidationResult): boolean {
@@ -602,28 +598,28 @@ export class SecurityComplianceValidator {
   }
 
   private checkTraceability(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) => v.type === 'audit' && v.severity === 'high')
+    return !validation.violations.some(v => v.type === 'audit' && v.severity === 'high')
   }
 
   /**
    * CFM compliance checks
    */
   private checkPatientConfidentiality(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) => v.type === 'data_leak' && v.severity === 'critical')
+    return !validation.violations.some(v => v.type === 'data_leak' && v.severity === 'critical')
   }
 
   private checkProfessionalAccountability(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) =>
+    return !validation.violations.some(v =>
       v.type === 'audit' && v.description.includes('accountability')
     )
   }
 
   private checkMedicalRecordIntegrity(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) => v.type === 'encryption' && v.severity === 'critical')
+    return !validation.violations.some(v => v.type === 'encryption' && v.severity === 'critical')
   }
 
   private checkTelemedicineStandards(validation: SecurityValidationResult): boolean {
-    return !validation.violations.some((v) =>
+    return !validation.violations.some(v =>
       v.component === 'WebSocket Optimizer' && v.severity === 'critical'
     )
   }
@@ -639,7 +635,7 @@ export class SecurityComplianceValidator {
     let logs = [...this.auditLog]
 
     if (timeRange) {
-      logs = logs.filter((log) => {
+      logs = logs.filter(log => {
         const logTime = new Date(log.timestamp)
         return logTime >= timeRange.start && logTime <= timeRange.end
       })
@@ -685,7 +681,7 @@ export class SecurityComplianceValidator {
         overallScore: latestValidation.complianceScore,
         totalViolations: latestValidation.violations.length,
         criticalViolations:
-          latestValidation.violations.filter((v) => v.severity === 'critical').length,
+          latestValidation.violations.filter(v => v.severity === 'critical').length,
         lastValidation: latestValidation.timestamp,
       },
       frameworks: frameworks as any,
@@ -704,8 +700,8 @@ export class SecurityComplianceValidator {
     owner: string
     deadline: string
   }> {
-    const criticalViolations = validation.violations.filter((v) => v.severity === 'critical')
-    const highViolations = validation.violations.filter((v) => v.severity === 'high')
+    const criticalViolations = validation.violations.filter(v => v.severity === 'critical')
+    const highViolations = validation.violations.filter(v => v.severity === 'high')
 
     return [
       ...criticalViolations.map((violation, _index) => ({

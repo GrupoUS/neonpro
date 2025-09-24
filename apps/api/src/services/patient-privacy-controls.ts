@@ -203,7 +203,7 @@ export class PatientPrivacyControlsService {
     try {
       const consents = await this.consentService.getPatientActiveConsents(patientId)
 
-      return consents.map((consent) => ({
+      return consents.map(consent => ({
         consent,
         canWithdraw: consent.status === ConsentStatus.ACTIVE,
         canModify: consent.status === ConsentStatus.ACTIVE,
@@ -537,7 +537,7 @@ export class PatientPrivacyControlsService {
       // Log preference updates
       await this.logPrivacyActivity('privacy_preferences_updated', patientId, {
         preferencesCount: updatedPreferences.length,
-        controlTypes: preferences.map((p) => p.controlType),
+        controlTypes: preferences.map(p => p.controlType),
       })
 
       return updatedPreferences
@@ -622,7 +622,7 @@ export class PatientPrivacyControlsService {
         throw new Error('Failed to fetch privacy audit trail')
       }
 
-      return (data || []).map((entry) => ({
+      return (data || []).map(entry => ({
         timestamp: new Date(entry.timestamp),
         action: entry.action,
         details: entry.details,
@@ -950,14 +950,14 @@ export class PatientPrivacyControlsService {
       throw new Error('Failed to fetch data access statistics')
     }
 
-    const pending = requests?.filter((r) => r.status === 'pending').length || 0
-    const completed = requests?.filter((r) => r.status === 'completed').length || 0
+    const pending = requests?.filter(r => r.status === 'pending').length || 0
+    const completed = requests?.filter(r => r.status === 'completed').length || 0
     const lastAccessDate = requests
-      ?.filter((r) => r.status === 'completed')
+      ?.filter(r => r.status === 'completed')
       .sort(
         (a, _b) =>
-          new Date(b.processedAt!).getTime()
-          - new Date(a.processedAt!).getTime(),
+          new Date(b.processedAt!).getTime() -
+          new Date(a.processedAt!).getTime(),
       )[0]?.processedAt
 
     return {
@@ -984,8 +984,8 @@ export class PatientPrivacyControlsService {
       throw new Error('Failed to fetch data subject request statistics')
     }
 
-    const pending = requests?.filter((r) => r.status === 'pending').length || 0
-    const completed = requests?.filter((r) => r.status === 'completed').length || 0
+    const pending = requests?.filter(r => r.status === 'pending').length || 0
+    const completed = requests?.filter(r => r.status === 'completed').length || 0
     const lastRequestDate = requests?.sort(
       (a, _b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime(),
     )[0]?.requestedAt

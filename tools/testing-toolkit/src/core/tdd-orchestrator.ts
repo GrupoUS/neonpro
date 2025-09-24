@@ -120,10 +120,10 @@ export class TDDOrchestrator {
       }
 
       // Calculate final success
-      result.success = result.phases.red.success
-        && result.phases.green.success
-        && result.phases.refactor.success
-        && result.qualityGates.failures.length === 0
+      result.success = result.phases.red.success &&
+        result.phases.green.success &&
+        result.phases.refactor.success &&
+        result.qualityGates.failures.length === 0
 
       result.metrics.totalDuration = Math.max(Date.now() - startTime, 1) // Ensure minimum 1ms duration
 
@@ -156,7 +156,7 @@ export class TDDOrchestrator {
     try {
       // Coordinate agents for this phase
       const agentResults = await this.agentCoordinator.execute()
-      const activeAgents = agentResults.map((r) => r.agent)
+      const activeAgents = agentResults.map(r => r.agent)
 
       // Execute TDD phase
       let phaseSuccess = false

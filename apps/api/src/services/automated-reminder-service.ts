@@ -380,8 +380,8 @@ export class AutomatedReminderService {
             : 'failedAt'
         ]: deliveryData.timestamp,
         ...(deliveryData.error && { failedReason: deliveryData.error }),
-        ...(deliveryData.providerMessageId
-          && { providerMessageId: deliveryData.providerMessageId }),
+        ...(deliveryData.providerMessageId &&
+          { providerMessageId: deliveryData.providerMessageId }),
         ...(deliveryData.statusCode && { statusCode: deliveryData.statusCode }),
       }
 
@@ -889,10 +889,10 @@ export class AutomatedReminderService {
 
   private calculateAnalytics(reminders: any[]): ReminderAnalytics {
     const total = reminders.length
-    const delivered = reminders.filter((r) => r.status === 'delivered').length
-    const read = reminders.filter((r) => r.deliveryTracking.readAt).length
-    const responded = reminders.filter((r) => r.deliveryTracking.respondedAt).length
-    const failed = reminders.filter((r) => r.status === 'failed').length
+    const delivered = reminders.filter(r => r.status === 'delivered').length
+    const read = reminders.filter(r => r.deliveryTracking.readAt).length
+    const responded = reminders.filter(r => r.deliveryTracking.respondedAt).length
+    const failed = reminders.filter(r => r.status === 'failed').length
 
     return {
       totalSent: total,
@@ -910,7 +910,7 @@ export class AutomatedReminderService {
   }
 
   private calculateAverageResponseTime(reminders: any[]): number {
-    const respondedReminders = reminders.filter((r) =>
+    const respondedReminders = reminders.filter(r =>
       r.deliveryTracking.readAt && r.deliveryTracking.respondedAt
     )
 
@@ -924,43 +924,43 @@ export class AutomatedReminderService {
   }
 
   private calculateChannelPerformance(reminders: any[]) {
-    const email = reminders.filter((r) => r.type === 'email')
-    const sms = reminders.filter((r) => r.type === 'sms')
-    const whatsapp = reminders.filter((r) => r.type === 'whatsapp')
+    const email = reminders.filter(r => r.type === 'email')
+    const sms = reminders.filter(r => r.type === 'sms')
+    const whatsapp = reminders.filter(r => r.type === 'whatsapp')
 
     return {
       email: email.length > 0
-        ? (email.filter((r) => r.status === 'delivered').length / email.length) * 100
+        ? (email.filter(r => r.status === 'delivered').length / email.length) * 100
         : 0,
       sms: sms.length > 0
-        ? (sms.filter((r) => r.status === 'delivered').length / sms.length) * 100
+        ? (sms.filter(r => r.status === 'delivered').length / sms.length) * 100
         : 0,
       whatsapp: whatsapp.length > 0
-        ? (whatsapp.filter((r) => r.status === 'delivered').length / whatsapp.length) * 100
+        ? (whatsapp.filter(r => r.status === 'delivered').length / whatsapp.length) * 100
         : 0,
     }
   }
 
   private calculateTimingPerformance(reminders: any[]) {
-    const weekBefore = reminders.filter((r) => r.timing === 'week_before')
-    const threeDaysBefore = reminders.filter((r) => r.timing === 'three_days_before')
-    const dayBefore = reminders.filter((r) => r.timing === 'day_before')
-    const twoHoursBefore = reminders.filter((r) => r.timing === 'two_hours_before')
+    const weekBefore = reminders.filter(r => r.timing === 'week_before')
+    const threeDaysBefore = reminders.filter(r => r.timing === 'three_days_before')
+    const dayBefore = reminders.filter(r => r.timing === 'day_before')
+    const twoHoursBefore = reminders.filter(r => r.timing === 'two_hours_before')
 
     return {
       week_before: weekBefore.length > 0
-        ? (weekBefore.filter((r) => r.status === 'delivered').length / weekBefore.length) * 100
+        ? (weekBefore.filter(r => r.status === 'delivered').length / weekBefore.length) * 100
         : 0,
       three_days_before: threeDaysBefore.length > 0
-        ? (threeDaysBefore.filter((r) => r.status === 'delivered').length / threeDaysBefore.length)
-          * 100
+        ? (threeDaysBefore.filter(r => r.status === 'delivered').length / threeDaysBefore.length) *
+          100
         : 0,
       day_before: dayBefore.length > 0
-        ? (dayBefore.filter((r) => r.status === 'delivered').length / dayBefore.length) * 100
+        ? (dayBefore.filter(r => r.status === 'delivered').length / dayBefore.length) * 100
         : 0,
       two_hours_before: twoHoursBefore.length > 0
-        ? (twoHoursBefore.filter((r) => r.status === 'delivered').length / twoHoursBefore.length)
-          * 100
+        ? (twoHoursBefore.filter(r => r.status === 'delivered').length / twoHoursBefore.length) *
+          100
         : 0,
     }
   }
@@ -1005,11 +1005,11 @@ export class AutomatedReminderService {
 
   private setupProtocolHandlers(): void {
     // Set up handlers for AG-UI Protocol messages
-    aguiAppointmentProtocol.on('reminder.sent', async (_message) => {
+    aguiAppointmentProtocol.on('reminder.sent', async _message => {
       // Handle reminder sent notifications
     })
 
-    aguiAppointmentProtocol.on('reminder.failed', async (_message) => {
+    aguiAppointmentProtocol.on('reminder.failed', async _message => {
       // Handle reminder failure notifications
     })
   }

@@ -145,7 +145,7 @@ describe('Patients Real-time Integration API', () => {
         },
       }))
 
-      const requests = connectionRequests.map((req) =>
+      const requests = connectionRequests.map(req =>
         app.request('/api/v2/patients/websocket/connect', {
           method: 'POST',
           headers: {
@@ -157,7 +157,7 @@ describe('Patients Real-time Integration API', () => {
       )
 
       const responses = await Promise.all(requests)
-      const limitedResponse = responses.find((r) => r.status === 429)
+      const limitedResponse = responses.find(r => r.status === 429)
 
       expect(limitedResponse).toBeDefined()
     })
@@ -267,7 +267,7 @@ describe('Patients Real-time Integration API', () => {
       )
 
       const responses = await Promise.all(requests)
-      const limitedResponse = responses.find((r) => r.status === 429)
+      const limitedResponse = responses.find(r => r.status === 429)
 
       expect(limitedResponse).toBeDefined()
     })

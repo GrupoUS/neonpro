@@ -32,7 +32,7 @@ app.use('*', async (c, next) => {
  * POST /api/ai/data-agent
  * Process natural language queries and return structured responses
  */
-app.post('/ai/data-agent', async (c) => {
+app.post('/ai/data-agent', async c => {
   const startTime = Date.now()
 
   try {
@@ -169,7 +169,7 @@ app.post('/ai/data-agent', async (c) => {
               title: 'Consulta Não Entendida',
               text: 'Não consegui entender sua consulta. Aqui estão algumas sugestões:',
             },
-            actions: suggestions.map((suggestion) => ({
+            actions: suggestions.map(suggestion => ({
               id: `suggest_${suggestion.replace(/\s+/g, '')}`,
               label: suggestion,
               type: 'button' as const,
@@ -213,23 +213,23 @@ app.post('/ai/data-agent', async (c) => {
               : null,
           },
           metadata: {
-            processingTime: ottomatorResponse.metadata?.processingTimeMs
-              || Date.now() - startTime,
+            processingTime: ottomatorResponse.metadata?.processingTimeMs ||
+              Date.now() - startTime,
             confidence: ottomatorResponse.response.sources?.[0]?.confidence || 0.8,
             sources: ottomatorResponse.response.sources?.map(
-              (s) => s.title,
+              s => s.title,
             ) || ['NeonPro AI Agent'],
           },
           timestamp: new Date(),
-          processingTime: ottomatorResponse.metadata?.processingTimeMs
-            || Date.now() - startTime,
+          processingTime: ottomatorResponse.metadata?.processingTimeMs ||
+            Date.now() - startTime,
         }
 
         // Add actions from ottomator response
         let ottomatorActions: InteractiveAction[] = []
         if (ottomatorResponse.response.actions) {
           ottomatorActions = ottomatorResponse.response.actions.map(
-            (action) => ({
+            action => ({
               id: crypto.randomUUID(),
               type: action.type as 'button' | 'link' | 'form',
               label: action.label,
@@ -418,7 +418,7 @@ function formatResponse(
           type: 'table' as const,
           content: {
             title: 'Clientes Encontrados',
-            data: data.map((client) => ({
+            data: data.map(client => ({
               id: client.id,
               nome: client.name,
               email: client.email,
@@ -467,7 +467,7 @@ function formatResponse(
           content: {
             title: 'Agendamentos',
             text: `Encontrados ${data.length} agendamentos:`,
-            data: data.map((appt) => ({
+            data: data.map(appt => ({
               id: appt.id,
               cliente: appt.clients?.name || 'N/A',
               data_hora: new Date(appt.datetime).toLocaleString('pt-BR'),

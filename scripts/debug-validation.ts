@@ -66,7 +66,7 @@ async function debugValidation() {
       `Groups: [${
         match
           .slice(1)
-          .map((g) => `"${g}"`)
+          .map(g => `"${g}"`)
           .join(', ')
       }]`,
     )

@@ -260,9 +260,9 @@ const convertV1ToV2Request = (v1Request: any) => {
     emergency_assessment: 'diagnostic_support',
   }
 
-  const v2AnalysisType = analysisTypeMapping[v1Request.analysisType]
-    || v1Request.analysisType
-    || 'structured_data'
+  const v2AnalysisType = analysisTypeMapping[v1Request.analysisType] ||
+    v1Request.analysisType ||
+    'structured_data'
 
   return {
     analysisType: v2AnalysisType,
@@ -356,7 +356,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', v1AnalyzeRequestSchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now()
     const user = c.get('user')
     const v1RequestData = c.req.valid('json')
@@ -427,8 +427,8 @@ app.post(
         return c.json(
           {
             success: false,
-            error: analysisResponse.error
-              || 'Erro interno do serviço de análise de IA',
+            error: analysisResponse.error ||
+              'Erro interno do serviço de análise de IA',
             code: 'AI_SERVICE_ERROR',
             locale: 'pt-BR',
           },

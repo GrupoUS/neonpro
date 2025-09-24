@@ -126,12 +126,12 @@ export class HealthcareError extends Error {
 
     // Sanitize details object
     if (sanitized.details) {
-      Object.keys(sanitized.details).forEach((key) => {
+      Object.keys(sanitized.details).forEach(key => {
         if (
-          key.toLowerCase().includes('email')
-          || key.toLowerCase().includes('phone')
-          || key.toLowerCase().includes('cpf')
-          || key.toLowerCase().includes('address')
+          key.toLowerCase().includes('email') ||
+          key.toLowerCase().includes('phone') ||
+          key.toLowerCase().includes('cpf') ||
+          key.toLowerCase().includes('address')
         ) {
           sanitized.details[key] = '[SANITIZED]'
         }
@@ -250,7 +250,7 @@ export class PatientDataValidationError extends HealthcareError {
   ) {
     const message = `Patient data validation failed: ${
       validationErrors
-        .map((e) => e.field)
+        .map(e => e.field)
         .join(', ')
     }`
 

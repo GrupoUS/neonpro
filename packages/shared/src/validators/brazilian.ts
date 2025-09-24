@@ -443,7 +443,7 @@ export function validateBrazilianAddress(
   // Required fields
   const requiredFields = ['street', 'neighborhood', 'city', 'state', 'cep']
 
-  requiredFields.forEach((field) => {
+  requiredFields.forEach(field => {
     const fieldValue = address[field as keyof BrazilianAddress]
     if (!fieldValue || (typeof fieldValue === 'string' && fieldValue.trim() === '')) {
       errors.push({
@@ -491,8 +491,8 @@ export function createValidationSchema(fields: Record<string, any>): {
 
         // Required field validation
         if (
-          config.required
-          && (!value || (typeof value === 'string' && value.trim() === ''))
+          config.required &&
+          (!value || (typeof value === 'string' && value.trim() === ''))
         ) {
           errors.push({
             field: fieldName,
@@ -554,9 +554,9 @@ export function createValidationSchema(fields: Record<string, any>): {
             break
           case 'crm':
             if (
-              typeof value === 'string'
-              && typeof data.crm_state === 'string'
-              && !validateCRM(value, data.crm_state)
+              typeof value === 'string' &&
+              typeof data.crm_state === 'string' &&
+              !validateCRM(value, data.crm_state)
             ) {
               errors.push({
                 field: fieldName,
@@ -567,9 +567,9 @@ export function createValidationSchema(fields: Record<string, any>): {
             break
           case 'crmv':
             if (
-              typeof value === 'string'
-              && typeof data.crmv_state === 'string'
-              && !validateCRMV(value, data.crmv_state)
+              typeof value === 'string' &&
+              typeof data.crmv_state === 'string' &&
+              !validateCRMV(value, data.crmv_state)
             ) {
               errors.push({
                 field: fieldName,
@@ -686,9 +686,9 @@ export function validateCNS(cns: string): boolean {
 
   // CNS numbers starting with 7, 8 or 9
   if (
-    cleanCNS.startsWith('7')
-    || cleanCNS.startsWith('8')
-    || cleanCNS.startsWith('9')
+    cleanCNS.startsWith('7') ||
+    cleanCNS.startsWith('8') ||
+    cleanCNS.startsWith('9')
   ) {
     return validateCNSType2(cleanCNS)
   }

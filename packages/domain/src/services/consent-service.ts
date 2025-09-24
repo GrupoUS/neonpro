@@ -209,10 +209,10 @@ export class ConsentDomainService {
       now.getTime() + 30 * 24 * 60 * 60 * 1000,
     )
     const expiringSoon = consents.filter(
-      (consent) =>
-        consent.expiresAt
-        && new Date(consent.expiresAt) < thirtyDaysFromNow
-        && consent.status === 'ACTIVE',
+      consent =>
+        consent.expiresAt &&
+        new Date(consent.expiresAt) < thirtyDaysFromNow &&
+        consent.status === 'ACTIVE',
     )
 
     if (expiringSoon.length > 0) {
@@ -228,9 +228,9 @@ export class ConsentDomainService {
 
     // Check for missing essential consents (data processing)
     const hasDataProcessingConsent = consents.some(
-      (consent) =>
-        consent.consentType === 'data_processing'
-        && consent.status === 'ACTIVE',
+      consent =>
+        consent.consentType === 'data_processing' &&
+        consent.status === 'ACTIVE',
     )
 
     if (!hasDataProcessingConsent) {
@@ -249,7 +249,7 @@ export class ConsentDomainService {
     // Determine overall compliance status
     let status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT' = 'COMPLIANT'
     if (
-      violations.some((v) => v.severity === 'HIGH' || v.severity === 'CRITICAL')
+      violations.some(v => v.severity === 'HIGH' || v.severity === 'CRITICAL')
     ) {
       status = 'NON_COMPLIANT'
       isCompliant = false

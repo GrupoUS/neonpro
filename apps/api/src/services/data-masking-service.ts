@@ -269,7 +269,7 @@ export class DataMaskingService {
    */
   private getApplicableRules(_context: MaskingContext): MaskingRule[] {
     return this.maskingRules
-      .filter((rule) => {
+      .filter(rule => {
         // Check context applicability
         if (rule.context !== 'all' && rule.context !== context.viewContext) {
           return false
@@ -279,16 +279,16 @@ export class DataMaskingService {
         if (rule.conditions) {
           // Check user role conditions
           if (
-            rule.conditions.userRole
-            && !rule.conditions.userRole.includes(context.userRole)
+            rule.conditions.userRole &&
+            !rule.conditions.userRole.includes(context.userRole)
           ) {
             return false
           }
 
           // Check purpose conditions
           if (
-            rule.conditions.purpose
-            && !rule.conditions.purpose.some((p) => context.purpose.includes(p))
+            rule.conditions.purpose &&
+            !rule.conditions.purpose.some(p => context.purpose.includes(p))
           ) {
             return false
           }
@@ -301,8 +301,8 @@ export class DataMaskingService {
 
         // Emergency access override for critical healthcare data
         if (
-          context.isEmergencyAccess
-          && rule.dataCategory === LGPDDataCategory.MEDICAL
+          context.isEmergencyAccess &&
+          rule.dataCategory === LGPDDataCategory.MEDICAL
         ) {
           return false // Don't mask medical data during emergency access
         }
@@ -330,18 +330,18 @@ export class DataMaskingService {
       return
     }
 
-    Object.keys(data).forEach((key) => {
+    Object.keys(data).forEach(key => {
       const currentPath = path ? `${path}.${key}` : key
       const value = data[key]
 
       // Apply rules to this field
-      const applicableRules = rules.filter((rule) => {
+      const applicableRules = rules.filter(rule => {
         const fieldNames = Array.isArray(rule.fieldName)
           ? rule.fieldName
           : [rule.fieldName]
         return (
-          fieldNames.includes(key)
-          || fieldNames.some((fieldName) => key.toLowerCase().includes(fieldName.toLowerCase()))
+          fieldNames.includes(key) ||
+          fieldNames.some(fieldName => key.toLowerCase().includes(fieldName.toLowerCase()))
         )
       })
 
@@ -449,15 +449,15 @@ export class DataMaskingService {
     rulesAppliedCount: number,
   ): 'public' | 'restricted' | 'confidential' | 'highly_confidential' {
     if (
-      dataCategories.includes(LGPDDataCategory.MEDICAL)
-      || dataCategories.includes(LGPDDataCategory.BIOMETRIC)
+      dataCategories.includes(LGPDDataCategory.MEDICAL) ||
+      dataCategories.includes(LGPDDataCategory.BIOMETRIC)
     ) {
       return rulesAppliedCount > 0 ? 'highly_confidential' : 'confidential'
     }
 
     if (
-      dataCategories.includes(LGPDDataCategory.FINANCIAL)
-      || dataCategories.includes(LGPDDataCategory.SENSITIVE)
+      dataCategories.includes(LGPDDataCategory.FINANCIAL) ||
+      dataCategories.includes(LGPDDataCategory.SENSITIVE)
     ) {
       return rulesAppliedCount > 0 ? 'confidential' : 'restricted'
     }
@@ -526,7 +526,7 @@ export class DataMaskingService {
    */
   removeRule(ruleId: string): boolean {
     const initialLength = this.maskingRules.length
-    this.maskingRules = this.maskingRules.filter((rule) => rule.id !== ruleId)
+    this.maskingRules = this.maskingRules.filter(rule => rule.id !== ruleId)
     return this.maskingRules.length < initialLength
   }
 
@@ -535,7 +535,7 @@ export class DataMaskingService {
    */
   getRulesForCategory(dataCategory: LGPDDataCategory): MaskingRule[] {
     return this.maskingRules.filter(
-      (rule) => rule.dataCategory === dataCategory,
+      rule => rule.dataCategory === dataCategory,
     )
   }
 
@@ -575,12 +575,12 @@ export class DataMaskingService {
   } {
     const rulesByCategory = {} as Record<LGPDDataCategory, number>
 
-    this.maskingRules.forEach((rule) => {
+    this.maskingRules.forEach(rule => {
       rulesByCategory[rule.dataCategory] = (rulesByCategory[rule.dataCategory] || 0) + 1
     })
 
     const recentActivity = this.auditLog.filter(
-      (entry) => Date.now() - entry.timestamp.getTime() < 24 * 60 * 60 * 1000,
+      entry => Date.now() - entry.timestamp.getTime() < 24 * 60 * 60 * 1000,
     ).length
 
     return {
@@ -636,14 +636,14 @@ export function requiresLGPDMasking(
   const service = new DataMaskingService()
   const rules = service.getApplicableRules(healthcareContext)
 
-  return rules.some((rule) => {
+  return rules.some(rule => {
     const fieldNames = Array.isArray(rule.fieldName)
       ? rule.fieldName
       : [rule.fieldName]
     return (
-      rule.dataCategory === dataCategory
-      && (rule.context === 'all' || rule.context === _context)
-      && fieldNames.some((name) => fieldName.toLowerCase().includes(name.toLowerCase()))
+      rule.dataCategory === dataCategory &&
+      (rule.context === 'all' || rule.context === _context) &&
+      fieldNames.some(name => fieldName.toLowerCase().includes(name.toLowerCase()))
     )
   })
 }

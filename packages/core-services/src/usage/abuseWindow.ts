@@ -71,7 +71,7 @@ class SlidingWindow {
     now: number = Date.now(),
   ): RequestEntry[] {
     const cutoff = now - windowMs
-    return this.requests.filter((req) => req.timestamp >= cutoff)
+    return this.requests.filter(req => req.timestamp >= cutoff)
   }
 
   /**
@@ -79,7 +79,7 @@ class SlidingWindow {
    */
   cleanup(maxWindowMs: number, now: number = Date.now()): void {
     const cutoff = now - maxWindowMs
-    this.requests = this.requests.filter((req) => req.timestamp >= cutoff)
+    this.requests = this.requests.filter(req => req.timestamp >= cutoff)
   }
 
   /**
@@ -131,7 +131,7 @@ export class AbuseWindowTracker {
 
     // Check 60-second window first (more restrictive)
     if (requests60s.length >= this.config.window60s) {
-      const oldestRequest60s = Math.min(...requests60s.map((r) => r.timestamp))
+      const oldestRequest60s = Math.min(...requests60s.map(r => r.timestamp))
       const resetTime60s = oldestRequest60s + this.WINDOW_60S
 
       return {
@@ -146,7 +146,7 @@ export class AbuseWindowTracker {
 
     // Check 10-minute window
     if (requests10m.length >= this.config.window10m) {
-      const oldestRequest10m = Math.min(...requests10m.map((r) => r.timestamp))
+      const oldestRequest10m = Math.min(...requests10m.map(r => r.timestamp))
       const resetTime10m = oldestRequest10m + this.WINDOW_10M
 
       return {
@@ -174,11 +174,11 @@ export class AbuseWindowTracker {
 
     // Calculate next reset time (earliest of the two windows)
     const nextReset60s = requests60s.length > 0
-      ? Math.min(...requests60s.map((r) => r.timestamp)) + this.WINDOW_60S
+      ? Math.min(...requests60s.map(r => r.timestamp)) + this.WINDOW_60S
       : now + this.WINDOW_60S
 
     const nextReset10m = requests10m.length > 0
-      ? Math.min(...requests10m.map((r) => r.timestamp)) + this.WINDOW_10M
+      ? Math.min(...requests10m.map(r => r.timestamp)) + this.WINDOW_10M
       : now + this.WINDOW_10M
 
     return {
@@ -218,7 +218,7 @@ export class AbuseWindowTracker {
 
     // Check limits
     if (requests60s.length >= this.config.window60s) {
-      const oldestRequest60s = Math.min(...requests60s.map((r) => r.timestamp))
+      const oldestRequest60s = Math.min(...requests60s.map(r => r.timestamp))
       return {
         allowed: false,
         remainingRequests: 0,
@@ -230,7 +230,7 @@ export class AbuseWindowTracker {
     }
 
     if (requests10m.length >= this.config.window10m) {
-      const oldestRequest10m = Math.min(...requests10m.map((r) => r.timestamp))
+      const oldestRequest10m = Math.min(...requests10m.map(r => r.timestamp))
       return {
         allowed: false,
         remainingRequests: 0,
@@ -286,10 +286,10 @@ export class AbuseWindowTracker {
       requests10m: requests10m.length,
       totalRequests: allRequests.length,
       oldestRequest: allRequests.length > 0
-        ? Math.min(...allRequests.map((r) => r.timestamp))
+        ? Math.min(...allRequests.map(r => r.timestamp))
         : undefined,
       newestRequest: allRequests.length > 0
-        ? Math.max(...allRequests.map((r) => r.timestamp))
+        ? Math.max(...allRequests.map(r => r.timestamp))
         : undefined,
     }
   }

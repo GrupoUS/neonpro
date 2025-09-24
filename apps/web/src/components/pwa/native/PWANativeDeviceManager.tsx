@@ -107,7 +107,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
 
   const checkDeviceCapabilities = async () => {
     const updatedCapabilities = await Promise.all(
-      capabilities.map(async (capability) => {
+      capabilities.map(async capability => {
         let available = false
         let permission: 'granted' | 'denied' | 'prompt' | 'unsupported' = 'unsupported'
 
@@ -200,7 +200,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
   }
 
   const requestPermission = async (capabilityId: string) => {
-    const capability = capabilities.find((c) => c.id === capabilityId)
+    const capability = capabilities.find(c => c.id === capabilityId)
     if (!capability || !capability.available) return
 
     setIsProcessing(true)
@@ -213,7 +213,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
         case 'camera':
           try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true })
-            stream.getTracks().forEach((track) => track.stop())
+            stream.getTracks().forEach(track => track.stop())
             granted = true
           } catch {
             granted = false
@@ -223,7 +223,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
         case 'microphone':
           try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-            stream.getTracks().forEach((track) => track.stop())
+            stream.getTracks().forEach(track => track.stop())
             granted = true
           } catch {
             granted = false
@@ -270,8 +270,8 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       }
 
       // Update capability status
-      setCapabilities((prev) =>
-        prev.map((cap) =>
+      setCapabilities(prev =>
+        prev.map(cap =>
           cap.id === capabilityId
             ? { ...cap, permission: granted ? 'granted' : 'denied' }
             : cap
@@ -336,7 +336,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-        {capabilities.map((capability) => {
+        {capabilities.map(capability => {
           const Icon = capability.icon
           return (
             <div
@@ -347,10 +347,10 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
                   : 'border-gray-100 bg-gray-50 opacity-50'
               }`}
               onClick={() =>
-                capability.available
-                && capability.permission === 'prompt'
-                && !isProcessing
-                && requestPermission(capability.id)}
+                capability.available &&
+                capability.permission === 'prompt' &&
+                !isProcessing &&
+                requestPermission(capability.id)}
             >
               <div className='flex items-start justify-between'>
                 <div className='flex items-start space-x-3'>
@@ -397,7 +397,7 @@ export const PWANativeDeviceManager: React.FC<PWANativeDeviceManagerProps> = ({
             <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2'>
             </div>
             <span className='text-sm text-blue-800'>
-              Solicitando permissão para {capabilities.find((c) =>
+              Solicitando permissão para {capabilities.find(c =>
                 c.id === selectedCapability
               )?.name}...
             </span>

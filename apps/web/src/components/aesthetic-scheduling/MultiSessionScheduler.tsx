@@ -103,7 +103,7 @@ export function MultiSessionScheduler(
     .getAestheticProcedures.useQuery(
       { limit: 100, offset: 0 },
       {
-        select: (data) => data.procedures || [],
+        select: data => data.procedures || [],
       },
     )
 
@@ -218,7 +218,7 @@ export function MultiSessionScheduler(
                                     type='checkbox'
                                     id={procedure.id}
                                     checked={selectedProcedures.includes(procedure.id)}
-                                    onChange={(e) =>
+                                    onChange={e =>
                                       handleProcedureSelect(procedure.id, e.target.checked)}
                                     className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                                     aria-label={`Selecionar procedimento ${procedure.name}`}
@@ -278,7 +278,7 @@ export function MultiSessionScheduler(
                   <div className='flex gap-2'>
                     <Input
                       type='date'
-                      onChange={(e) => e.target.value && handleAddDate(e.target.value)}
+                      onChange={e => e.target.value && handleAddDate(e.target.value)}
                       min={new Date().toISOString().split('T')[0]}
                       aria-label='Adicionar data preferencial'
                     />
@@ -342,7 +342,7 @@ export function MultiSessionScheduler(
                               type='checkbox'
                               id={professional.id}
                               checked={preferredProfessionals.includes(professional.id)}
-                              onChange={(e) =>
+                              onChange={e =>
                                 handleProfessionalSelect(professional.id, e.target.checked)}
                               className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                               aria-label={`Selecionar profissional ${professional.name}`}
@@ -387,9 +387,9 @@ export function MultiSessionScheduler(
                     <div className='flex gap-2'>
                       <Input
                         value={newRequirement}
-                        onChange={(e) => setNewRequirement(e.target.value)}
+                        onChange={e => setNewRequirement(e.target.value)}
                         placeholder='Adicionar requisito especial'
-                        onKeyPress={(e) => e.key === 'Enter' && handleAddRequirement()}
+                        onKeyPress={e => e.key === 'Enter' && handleAddRequirement()}
                         aria-label='Novo requisito especial'
                       />
                       <Button type='button' onClick={handleAddRequirement}>
@@ -450,9 +450,9 @@ export function MultiSessionScheduler(
                     <div className='flex gap-2'>
                       <Input
                         value={newContraindication}
-                        onChange={(e) => setNewContraindication(e.target.value)}
+                        onChange={e => setNewContraindication(e.target.value)}
                         placeholder='Adicionar contraindicação'
-                        onKeyPress={(e) => e.key === 'Enter' && handleAddContraindication()}
+                        onKeyPress={e => e.key === 'Enter' && handleAddContraindication()}
                         aria-label='Nova contraindicação'
                       />
                       <Button type='button' onClick={handleAddContraindication}>
@@ -480,9 +480,9 @@ export function MultiSessionScheduler(
                     <div className='flex gap-2'>
                       <Input
                         value={newMedication}
-                        onChange={(e) => setNewMedication(e.target.value)}
+                        onChange={e => setNewMedication(e.target.value)}
                         placeholder='Adicionar medicamento'
-                        onKeyPress={(e) => e.key === 'Enter' && handleAddMedication()}
+                        onKeyPress={e => e.key === 'Enter' && handleAddMedication()}
                         aria-label='Novo medicamento'
                       />
                       <Button type='button' onClick={handleAddMedication}>
@@ -510,9 +510,9 @@ export function MultiSessionScheduler(
                     <div className='flex gap-2'>
                       <Input
                         value={newAllergy}
-                        onChange={(e) => setNewAllergy(e.target.value)}
+                        onChange={e => setNewAllergy(e.target.value)}
                         placeholder='Adicionar alergia'
-                        onKeyPress={(e) => e.key === 'Enter' && handleAddAllergy()}
+                        onKeyPress={e => e.key === 'Enter' && handleAddAllergy()}
                         aria-label='Nova alergia'
                       />
                       <Button type='button' onClick={handleAddAllergy}>
@@ -634,9 +634,9 @@ export function MultiSessionScheduler(
           </Button>
           <Button
             type='submit'
-            disabled={selectedProcedures.length === 0
-              || preferredDates.length === 0
-              || isSubmitting}
+            disabled={selectedProcedures.length === 0 ||
+              preferredDates.length === 0 ||
+              isSubmitting}
             className='min-w-32'
           >
             {isSubmitting

@@ -12,7 +12,7 @@ class SimpleSyntaxFixer {
 
   findTestFiles(dir) {
     const testFiles = []
-    const scanDirectory = (currentDir) => {
+    const scanDirectory = currentDir => {
       if (!fs.existsSync(currentDir)) return
 
       const entries = fs.readdirSync(currentDir, { withFileTypes: true })
@@ -21,10 +21,10 @@ class SimpleSyntaxFixer {
         const fullPath = path.join(currentDir, entry.name)
 
         if (
-          entry.isDirectory()
-          && !entry.name.startsWith('.')
-          && entry.name !== 'node_modules'
-          && entry.name !== 'dist'
+          entry.isDirectory() &&
+          !entry.name.startsWith('.') &&
+          entry.name !== 'node_modules' &&
+          entry.name !== 'dist'
         ) {
           scanDirectory(fullPath)
         } else if (
@@ -65,7 +65,7 @@ class SimpleSyntaxFixer {
       fixed = fixed.replace(/catch\s*$/gm, 'catch (error)')
 
       // Fix 4: Missing semicolons in import statements
-      fixed = fixed.replace(/import\s+.*?from\s+['"][^'"]*['"]\s*$/gm, (match) => {
+      fixed = fixed.replace(/import\s+.*?from\s+['"][^'"]*['"]\s*$/gm, match => {
         if (!match.trim().endsWith(';')) {
           return match + ';'
         }

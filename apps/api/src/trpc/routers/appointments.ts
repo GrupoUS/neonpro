@@ -59,8 +59,8 @@ async function validateCFMLicenseRealTime(
 
   // Check if license validation is recent (within 24 hours)
   const lastValidation = professional.lastValidationDate
-  const needsRevalidation = !lastValidation
-    || Date.now() - lastValidation.getTime() > 24 * 60 * 60 * 1000
+  const needsRevalidation = !lastValidation ||
+    Date.now() - lastValidation.getTime() > 24 * 60 * 60 * 1000
 
   if (needsRevalidation) {
     // In production: Call CFM portal API
@@ -109,7 +109,7 @@ async function validateCFMLicenseRealTime(
 
 async function mockCFMValidation(_licenseNumber: string, _state: string) {
   // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 200))
+  await new Promise(resolve => setTimeout(resolve, 200))
 
   return {
     isValid: true,
@@ -256,8 +256,8 @@ function generatePreventionRecommendations(
   }
 
   if (
-    factors.includes('heavy_rain')
-    || factors.includes('extreme_temperature')
+    factors.includes('heavy_rain') ||
+    factors.includes('extreme_temperature')
   ) {
     recommendations.push('send_weather_alert_with_options')
     recommendations.push('offer_telemedicine_alternative')
@@ -324,7 +324,7 @@ async function checkRealTimeAvailability(
     return {
       available: false,
       reason: 'professional_conflict',
-      conflictingAppointments: conflictingAppointments.map((apt) => ({
+      conflictingAppointments: conflictingAppointments.map(apt => ({
         id: apt.id,
         startTime: apt.startTime,
         endTime: apt.endTime,
@@ -565,7 +565,7 @@ function generateAdaptiveReminderSchedule(
   }
 
   // Filter out past dates
-  return schedule.filter((reminder) => reminder.when.getTime() > Date.now())
+  return schedule.filter(reminder => reminder.when.getTime() > Date.now())
 }
 
 /**
@@ -611,8 +611,8 @@ function generateReminderMessage(
   }
 
   return (
-    messages[channel]?.[type]
-    || `Lembrete de consulta: ${dateStr} às ${timeStr}`
+    messages[channel]?.[type] ||
+    `Lembrete de consulta: ${dateStr} às ${timeStr}`
   )
 }
 
@@ -708,7 +708,7 @@ export const appointmentsRouter = router({
         )
 
         // Step 4: Create appointment with comprehensive data
-        const appointment = await ctx.prisma.$transaction(async (prisma) => {
+        const appointment = await ctx.prisma.$transaction(async prisma => {
           const newAppointment = await prisma.appointment.create({
             data: {
               ...input,
@@ -1013,8 +1013,8 @@ export const appointmentsRouter = router({
           type: input.reminderType,
           scheduledFor: new Date(),
           priority: input.urgent ? 'critical' : 'high',
-          message: input.customMessage
-            || generateReminderMessage(
+          message: input.customMessage ||
+            generateReminderMessage(
               input.reminderType,
               'manual',
               appointment.startTime,
@@ -1167,9 +1167,9 @@ export const appointmentsRouter = router({
         ...(patientId && { patientId }),
         ...(professionalId && { professionalId }),
         ...(status && { status }),
-        ...(startDate
-          && endDate
-          && {
+        ...(startDate &&
+          endDate &&
+          {
             startTime: {
               gte: startDate,
               lte: endDate,
@@ -1284,8 +1284,8 @@ export const appointmentsRouter = router({
       // Re-evaluate risk if appointment is being rescheduled
       let riskUpdate = {}
       if (
-        updateData.startTime
-        && updateData.startTime !== appointment.startTime
+        updateData.startTime &&
+        updateData.startTime !== appointment.startTime
       ) {
         const newRiskPrediction = await predictNoShowRiskAdvanced(
           appointment.patientId,
@@ -1363,7 +1363,7 @@ export const appointmentsRouter = router({
         })
       }
 
-      const result = await ctx.prisma.$transaction(async (prisma) => {
+      const result = await ctx.prisma.$transaction(async prisma => {
         // Cancel appointment
         const cancelled = await prisma.appointment.update({
           where: { id: input.appointmentId },

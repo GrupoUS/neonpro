@@ -165,7 +165,7 @@ export function AestheticAIChat({
       clientId,
       specialization: 'aesthetic_procedures',
     },
-    onFinish: (message) => {
+    onFinish: message => {
       if (message.metadata?.emergencyDetected) {
         onEmergencyDetected(message.metadata.severity)
       }
@@ -184,7 +184,7 @@ export function AestheticAIChat({
       </CardHeader>
 
       <ScrollArea className='flex-1 p-4'>
-        {messages.map((message) => (
+        {messages.map(message => (
           <div
             key={message.id}
             className={cn(
@@ -258,8 +258,8 @@ export function AestheticScheduler({
         <div>
           <Label>Procedimento</Label>
           <Select
-            onValueChange={(value) => {
-              const procedure = procedures.find((p) => p.id === value)
+            onValueChange={value => {
+              const procedure = procedures.find(p => p.id === value)
               setSelectedProcedure(procedure)
             }}
           >
@@ -267,7 +267,7 @@ export function AestheticScheduler({
               <SelectValue placeholder='Selecione o procedimento' />
             </SelectTrigger>
             <SelectContent>
-              {procedures.map((procedure) => (
+              {procedures.map(procedure => (
                 <SelectItem key={procedure.id} value={procedure.id}>
                   <div className='flex justify-between w-full'>
                     <span>{procedure.name}</span>
@@ -285,7 +285,7 @@ export function AestheticScheduler({
           <div>
             <Label>Horários Disponíveis</Label>
             <div className='grid grid-cols-2 md:grid-cols-3 gap-2 mt-2'>
-              {availableSlots.map((slot) => (
+              {availableSlots.map(slot => (
                 <Button
                   key={slot.id}
                   variant={selectedSlot?.id === slot.id ? 'default' : 'outline'}
@@ -423,7 +423,7 @@ export const useAestheticClientStore = create<AestheticClientStore>(
         const client = await clientsAPI.getClientWithHistory(clientId)
         const riskScore = await clientsAPI.getNoShowRisk(clientId)
 
-        set((state) => ({
+        set(state => ({
           selectedClient: client,
           riskAssessments: {
             ...state.riskAssessments,
@@ -442,8 +442,8 @@ export const useAestheticClientStore = create<AestheticClientStore>(
       try {
         await clientsAPI.updateAestheticPreferences(clientId, preferences)
 
-        set((state) => ({
-          clients: state.clients.map((c) =>
+        set(state => ({
+          clients: state.clients.map(c =>
             c.id === clientId
               ? { ...c, aestheticPreferences: preferences }
               : c
@@ -458,7 +458,7 @@ export const useAestheticClientStore = create<AestheticClientStore>(
       try {
         const riskScore = await clientsAPI.getNoShowRisk(clientId)
 
-        set((state) => ({
+        set(state => ({
           riskAssessments: {
             ...state.riskAssessments,
             [clientId]: riskScore,
@@ -486,7 +486,7 @@ export function MobileProcedureSelector({
 }) {
   return (
     <div className='grid grid-cols-1 gap-3'>
-      {procedures.map((procedure) => (
+      {procedures.map(procedure => (
         <Button
           key={procedure.id}
           variant='outline'
@@ -675,8 +675,8 @@ export function useMobilePerformance() {
       const connection = (navigator as any).connection
 
       if (
-        connection.effectiveType === 'slow-2g'
-        || connection.effectiveType === '2g'
+        connection.effectiveType === 'slow-2g' ||
+        connection.effectiveType === '2g'
       ) {
         console.warn('Slow connection detected')
         // Enable performance mode

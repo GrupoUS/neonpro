@@ -577,12 +577,12 @@ export class AuditService {
       clinicContext: log.clinic_id ? { clinicId: log.clinic_id } : undefined,
       metadata: log.metadata,
       complianceCheck: {
-        isCompliant: log.compliance_check?.status === 'COMPLIANT'
-          || log.status === 'SUCCESS',
+        isCompliant: log.compliance_check?.status === 'COMPLIANT' ||
+          log.status === 'SUCCESS',
         violations: [],
-        riskLevel: (log.compliance_check?.risk_level
-          || log.risk_level
-          || 'LOW') as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
+        riskLevel: (log.compliance_check?.risk_level ||
+          log.risk_level ||
+          'LOW') as 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
       },
     }
   }
@@ -614,7 +614,7 @@ export class AuditService {
   ): ComplianceReport {
     const totalEvents = logs.length
     const compliantEvents = logs.filter(
-      (log) => log.complianceCheck?.isCompliant === true,
+      log => log.complianceCheck?.isCompliant === true,
     ).length
     const nonCompliantEvents = totalEvents - compliantEvents
 
@@ -627,7 +627,7 @@ export class AuditService {
 
     const violations: Record<string, number> = {}
 
-    logs.forEach((log) => {
+    logs.forEach(log => {
       const riskLevel = log.complianceCheck?.riskLevel || 'LOW'
       if (riskLevel in riskLevels) {
         riskLevels[riskLevel.toLowerCase() as keyof typeof riskLevels]++

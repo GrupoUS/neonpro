@@ -430,7 +430,7 @@ export class DatabaseAuditStorage implements AuditStorage {
       'outcome',
       'description',
     ]
-    const rows = events.map((event) => [
+    const rows = events.map(event => [
       event.timestamp,
       event.eventType,
       event.actor.userId || 'N/A',
@@ -438,7 +438,7 @@ export class DatabaseAuditStorage implements AuditStorage {
       event.details.description,
     ])
 
-    return [headers, ...rows].map((row) => row.join(',')).join('\n')
+    return [headers, ...rows].map(row => row.join(',')).join('\n')
   }
 
   private convertToPDF(events: AuditEvent[]): string {
@@ -489,8 +489,8 @@ export class AuditTrailService {
         id: crypto.randomUUID(),
         timestamp: new Date().toISOString(),
         eventType,
-        severity: options.severity
-          || this.determineSeverity(eventType, options.outcome),
+        severity: options.severity ||
+          this.determineSeverity(eventType, options.outcome),
         outcome: options.outcome || AuditOutcome.SUCCESS,
         actor,
         resource,
@@ -792,8 +792,8 @@ export class AuditTrailService {
     }
 
     return (
-      severityOrder[severity]
-        >= severityOrder[this.config.filtering.minimumSeverity]
+      severityOrder[severity] >=
+        severityOrder[this.config.filtering.minimumSeverity]
     )
   }
 
@@ -970,9 +970,9 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
     // Extract request information
     const userId = req.headers['x-user-id']
     const sessionId = req.headers['x-session-id']
-    const patientId = req.headers['x-patient-id']
-      || req.body?.patientId
-      || req.query?.patientId
+    const patientId = req.headers['x-patient-id'] ||
+      req.body?.patientId ||
+      req.query?.patientId
 
     try {
       // Continue with request

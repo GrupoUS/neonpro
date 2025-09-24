@@ -91,7 +91,7 @@ export async function initializePerformanceOptimization(config: {
         if (validationResult.violations.length > 0) {
           console.warn(
             '[Security] Performance optimization validation found violations:',
-            validationResult.violations.map((v) => `${v.type}: ${v.description}`),
+            validationResult.violations.map(v => `${v.type}: ${v.description}`),
           )
         }
 

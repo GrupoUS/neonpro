@@ -153,7 +153,7 @@ export class PredictiveAnalyticsService {
       // Filter data by period
       const cutoffDate = this.getCutoffDate(period)
       const periodData = historicalData.filter(
-        (billing) => new Date(billing.createdAt) >= cutoffDate,
+        billing => new Date(billing.createdAt) >= cutoffDate,
       )
 
       // Calculate revenue trends
@@ -293,7 +293,7 @@ export class PredictiveAnalyticsService {
   private calculateDailyRevenue(billingData: Billing[]): Array<{ date: string; revenue: number }> {
     const dailyRevenue = new Map<string, number>()
 
-    billingData.forEach((billing) => {
+    billingData.forEach(billing => {
       if (billing.paymentStatus === 'paid') {
         const date = new Date(billing.paymentDate || billing.createdAt).toISOString().split('T')[0]
         dailyRevenue.set(date, (dailyRevenue.get(date) || 0) + billing.total)
@@ -320,7 +320,7 @@ export class PredictiveAnalyticsService {
     // Simple linear regression for trend calculation
     const n = dailyRevenue.length
     const xValues = dailyRevenue.map((_, i) => i)
-    const yValues = dailyRevenue.map((d) => d.revenue)
+    const yValues = dailyRevenue.map(d => d.revenue)
 
     const xMean = xValues.reduce((sum, x) => sum + x, 0) / n
     const yMean = yValues.reduce((sum, y) => sum + y, 0) / n
@@ -384,8 +384,8 @@ export class PredictiveAnalyticsService {
       })
     })
 
-    const overallAverage = dailyRevenue.reduce((sum, d) => sum + d.revenue, 0)
-      / dailyRevenue.length
+    const overallAverage = dailyRevenue.reduce((sum, d) => sum + d.revenue, 0) /
+      dailyRevenue.length
     const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
 
     return Array.from(dayOfWeekRevenue.entries()).map(([day, data]) => {
@@ -419,8 +419,8 @@ export class PredictiveAnalyticsService {
       })
     })
 
-    const overallAverage = dailyRevenue.reduce((sum, d) => sum + d.revenue, 0)
-      / dailyRevenue.length
+    const overallAverage = dailyRevenue.reduce((sum, d) => sum + d.revenue, 0) /
+      dailyRevenue.length
     const months = [
       'Janeiro',
       'Fevereiro',
@@ -474,7 +474,7 @@ export class PredictiveAnalyticsService {
       const current = dailyRevenue[i]
 
       // Check if deviation is significant (> 2 standard deviations)
-      const stdDev = this.calculateStandardDeviation(window.map((d) => d.revenue))
+      const stdDev = this.calculateStandardDeviation(window.map(d => d.revenue))
       const deviation = Math.abs(current.revenue - movingAverage)
 
       if (deviation > 2 * stdDev) {
@@ -531,8 +531,8 @@ export class PredictiveAnalyticsService {
     billingData: Billing[],
   ): Array<{ date: string; revenue: number; features: any }> {
     return billingData
-      .filter((billing) => billing.paymentStatus === 'paid')
-      .map((billing) => ({
+      .filter(billing => billing.paymentStatus === 'paid')
+      .map(billing => ({
         date: billing.createdAt,
         revenue: billing.total,
         features: {
@@ -570,7 +570,7 @@ export class PredictiveAnalyticsService {
 
     const periods = this.getPredictionPeriods(timeframe)
     const trend = this.calculateRevenueTrend(
-      trainingData.map((d) => ({ date: d.date, revenue: d.revenue })),
+      trainingData.map(d => ({ date: d.date, revenue: d.revenue })),
     )
     const baseRevenue = trainingData.length > 0
       ? trainingData.slice(-7).reduce((sum, d) => sum + d.revenue, 0) / 7
@@ -648,10 +648,10 @@ export class PredictiveAnalyticsService {
     const opportunities: string[] = []
 
     // Analyze prediction trends
-    const avgRevenue = predictions.reduce((sum, p) => sum + p.predictedRevenue, 0)
-      / predictions.length
-    const minRevenue = Math.min(...predictions.map((p) => p.predictedRevenue))
-    const maxRevenue = Math.max(...predictions.map((p) => p.predictedRevenue))
+    const avgRevenue = predictions.reduce((sum, p) => sum + p.predictedRevenue, 0) /
+      predictions.length
+    const minRevenue = Math.min(...predictions.map(p => p.predictedRevenue))
+    const maxRevenue = Math.max(...predictions.map(p => p.predictedRevenue))
 
     if (minRevenue < avgRevenue * 0.7) {
       risks.push('Volatilidade significativa na receita projetada')
@@ -670,7 +670,7 @@ export class PredictiveAnalyticsService {
   private categorizeBillingData(billingData: Billing[]): Map<string, Billing[]> {
     const categorized = new Map<string, Billing[]>()
 
-    billingData.forEach((billing) => {
+    billingData.forEach(billing => {
       // Categorize by procedure type or billing type
       const category = billing.billingType
 
@@ -694,13 +694,13 @@ export class PredictiveAnalyticsService {
   }> {
     const totalRevenue = Array.from(categorizedData.values())
       .flat()
-      .filter((b) => b.paymentStatus === 'paid')
+      .filter(b => b.paymentStatus === 'paid')
       .reduce((sum, b) => sum + b.total, 0)
 
     return Array.from(categorizedData.entries())
       .map(([category, billings]) => {
         const revenue = billings
-          .filter((b) => b.paymentStatus === 'paid')
+          .filter(b => b.paymentStatus === 'paid')
           .reduce((sum, b) => sum + b.total, 0)
 
         const contribution = totalRevenue > 0 ? revenue / totalRevenue : 0
@@ -711,11 +711,11 @@ export class PredictiveAnalyticsService {
         const secondHalf = billings.slice(midPoint)
 
         const firstHalfRevenue = firstHalf
-          .filter((b) => b.paymentStatus === 'paid')
+          .filter(b => b.paymentStatus === 'paid')
           .reduce((sum, b) => sum + b.total, 0)
 
         const secondHalfRevenue = secondHalf
-          .filter((b) => b.paymentStatus === 'paid')
+          .filter(b => b.paymentStatus === 'paid')
           .reduce((sum, b) => sum + b.total, 0)
 
         const growth = firstHalfRevenue > 0
@@ -741,8 +741,8 @@ export class PredictiveAnalyticsService {
     const performers = this.identifyTopPerformers(categorizedData)
 
     return performers
-      .filter((p) => p.growth < 0 || p.contribution < 0.05)
-      .map((p) => ({
+      .filter(p => p.growth < 0 || p.contribution < 0.05)
+      .map(p => ({
         category: p.category,
         revenue: p.revenue,
         growth: p.growth,
@@ -776,7 +776,7 @@ export class PredictiveAnalyticsService {
       'Dezembro',
     ]
 
-    billingData.forEach((billing) => {
+    billingData.forEach(billing => {
       if (billing.paymentStatus === 'paid') {
         const month = new Date(billing.createdAt).getMonth()
         const current = monthlyData.get(month) || { total: 0, count: 0 }
@@ -814,17 +814,17 @@ export class PredictiveAnalyticsService {
    * Identify monthly revenue drivers
    */
   private identifyMonthlyDrivers(month: number, billingData: Billing[]): string[] {
-    const monthBillings = billingData.filter((b) =>
-      new Date(b.createdAt).getMonth() === month
-      && b.paymentStatus === 'paid'
+    const monthBillings = billingData.filter(b =>
+      new Date(b.createdAt).getMonth() === month &&
+      b.paymentStatus === 'paid'
     )
 
     const drivers: string[] = []
 
     // Analyze top procedures in this month
     const procedureCounts = new Map<string, number>()
-    monthBillings.forEach((billing) => {
-      billing.items.forEach((item) => {
+    monthBillings.forEach(billing => {
+      billing.items.forEach(item => {
         const procedure = item.procedureCode.description
         procedureCounts.set(procedure, (procedureCounts.get(procedure) || 0) + 1)
       })
@@ -873,7 +873,7 @@ export class PredictiveAnalyticsService {
     }
 
     // Underperformers recommendations
-    underperformers.forEach((underperformer) => {
+    underperformers.forEach(underperformer => {
       if (underperformer.potential > 1000) {
         recommendations.push({
           priority: 'medium',
@@ -885,7 +885,7 @@ export class PredictiveAnalyticsService {
     })
 
     // Seasonal recommendations
-    const highSeasonMonths = seasonalTrends.filter((t) => t.trend === 'up')
+    const highSeasonMonths = seasonalTrends.filter(t => t.trend === 'up')
     if (highSeasonMonths.length > 0) {
       recommendations.push({
         priority: 'high',
@@ -903,7 +903,7 @@ export class PredictiveAnalyticsService {
    */
   private calculateCurrentBalance(billingData: Billing[]): number {
     return billingData
-      .filter((b) => b.paymentStatus === 'paid')
+      .filter(b => b.paymentStatus === 'paid')
       .reduce((sum, b) => sum + b.total, 0)
   }
 
@@ -932,11 +932,11 @@ export class PredictiveAnalyticsService {
     }> = []
 
     const now = new Date()
-    const paidBillings = billingData.filter((b) => b.paymentStatus === 'paid')
-    const pendingBillings = billingData.filter((b) => b.paymentStatus === 'pending')
+    const paidBillings = billingData.filter(b => b.paymentStatus === 'paid')
+    const pendingBillings = billingData.filter(b => b.paymentStatus === 'pending')
 
     // Project inflows from pending payments
-    pendingBillings.forEach((billing) => {
+    pendingBillings.forEach(billing => {
       const dueDate = new Date(billing.dueDate)
       const daysUntilDue = Math.ceil((dueDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
 
@@ -1045,7 +1045,7 @@ export class PredictiveAnalyticsService {
 
     let runningBalance = 0
 
-    cashFlows.forEach((flow) => {
+    cashFlows.forEach(flow => {
       const expectedAmount = flow.amount * flow.probability
       runningBalance += flow.type === 'inflow' ? expectedAmount : -expectedAmount
 
@@ -1076,12 +1076,12 @@ export class PredictiveAnalyticsService {
   private generateCashFlowRecommendations(risks: any[]): string[] {
     const recommendations: string[] = []
 
-    if (risks.some((r) => r.severity === 'high')) {
+    if (risks.some(r => r.severity === 'high')) {
       recommendations.push('Estabelecer linha de crédito emergencial')
       recommendations.push('Renegociar prazos com fornecedores')
     }
 
-    if (risks.some((r) => r.severity === 'medium')) {
+    if (risks.some(r => r.severity === 'medium')) {
       recommendations.push('Implementar política de cobrança antecipada')
       recommendations.push('Revisar cronograma de despesas')
     }
@@ -1098,8 +1098,8 @@ export class PredictiveAnalyticsService {
   private calculateAverageGrowthRate(predictions: any[]): number {
     if (predictions.length < 2) return 0
 
-    const totalGrowth = predictions[predictions.length - 1].predictedRevenue
-      - predictions[0].predictedRevenue
+    const totalGrowth = predictions[predictions.length - 1].predictedRevenue -
+      predictions[0].predictedRevenue
     const averageGrowth = totalGrowth / predictions.length
     const baseRevenue = predictions[0].predictedRevenue
 

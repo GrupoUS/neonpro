@@ -231,9 +231,9 @@ export class EnhancedClientAgentService extends EventEmitter {
       // Step 2: Process OCR if documents provided
       let ocrResults: OCRResult[] = []
       if (
-        message.documents
-        && message.documents.length > 0
-        && this.config.enableOCR
+        message.documents &&
+        message.documents.length > 0 &&
+        this.config.enableOCR
       ) {
         ocrResults = await this.internalProcessDocumentOCR(
           message.documents,
@@ -278,8 +278,8 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       // Step 8: Send welcome communication if enabled
       if (
-        this.config.enableCommunication
-        && message.consent?.marketingConsent
+        this.config.enableCommunication &&
+        message.consent?.marketingConsent
       ) {
         await this.sendWelcomeCommunication(
           clientId,
@@ -293,14 +293,14 @@ export class EnhancedClientAgentService extends EventEmitter {
       // Update metrics
       this.metrics.totalRegistrations++
       this.metrics.successfulRegistrations++
-      this.metrics.averageRegistrationTime = (this.metrics.averageRegistrationTime
-          * (this.metrics.totalRegistrations - 1)
-        + processingTime)
-        / this.metrics.totalRegistrations
+      this.metrics.averageRegistrationTime = (this.metrics.averageRegistrationTime *
+          (this.metrics.totalRegistrations - 1) +
+        processingTime) /
+        this.metrics.totalRegistrations
 
       const response: AguiClientRegistrationResponse = {
         clientId,
-        status: validationResults.every((v) => v.isValid)
+        status: validationResults.every(v => v.isValid)
           ? 'success'
           : 'partial_success',
         validationResults,
@@ -565,8 +565,8 @@ export class EnhancedClientAgentService extends EventEmitter {
       })
 
       // Step 1: Gather retention features
-      const features = message.features
-        || (await this.gatherRetentionFeatures(message.clientId, context))
+      const features = message.features ||
+        (await this.gatherRetentionFeatures(message.clientId, context))
 
       // Step 2: Apply ML prediction model
       const prediction = await this.predictRetentionRisk(
@@ -662,9 +662,9 @@ export class EnhancedClientAgentService extends EventEmitter {
       const _processingTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.communicationSuccessRate = (this.metrics.communicationSuccessRate * 99
-        + (communicationResult.status === 'sent' ? 100 : 0))
-        / 100
+      this.metrics.communicationSuccessRate = (this.metrics.communicationSuccessRate * 99 +
+        (communicationResult.status === 'sent' ? 100 : 0)) /
+        100
 
       const response: AguiClientCommunicationResponse = {
         communicationId: communicationResult.communicationId,
@@ -887,15 +887,15 @@ export class EnhancedClientAgentService extends EventEmitter {
 
       // Step 5: Calculate overall validity
       const overallValidity = combinedResults.every(
-        (result) => result.isValid || result.severity === 'info',
+        result => result.isValid || result.severity === 'info',
       )
 
       const _processingTime = Date.now() - startTime
 
       // Update metrics
-      this.metrics.dataValidationAccuracy = (this.metrics.dataValidationAccuracy * 99
-        + (overallValidity ? 100 : 0))
-        / 100
+      this.metrics.dataValidationAccuracy = (this.metrics.dataValidationAccuracy * 99 +
+        (overallValidity ? 100 : 0)) /
+        100
 
       const response: AguiClientValidationResponse = {
         validationId: uuidv4(),
@@ -959,7 +959,7 @@ export class EnhancedClientAgentService extends EventEmitter {
 
   private async initializeRealtimeSubscriptions(): Promise<void> {
     // Subscribe to client-related real-time events
-    await this.realtimeService.subscribe('clients', '*', (payload) => {
+    await this.realtimeService.subscribe('clients', '*', payload => {
       this.emit('clientUpdate', payload)
     })
   }
@@ -970,7 +970,7 @@ export class EnhancedClientAgentService extends EventEmitter {
   }
 
   private setupEventHandlers(): void {
-    this.aguiService.on('error', (error) => {
+    this.aguiService.on('error', error => {
       this.emit('error', error)
     })
 

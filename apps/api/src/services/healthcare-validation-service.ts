@@ -489,9 +489,9 @@ export class HealthcareValidationService {
       }
 
       if (
-        !data.medications
-        || !Array.isArray(data.medications)
-        || data.medications.length === 0
+        !data.medications ||
+        !Array.isArray(data.medications) ||
+        data.medications.length === 0
       ) {
         errors.push('Prescrição deve conter pelo menos um medicamento')
       }
@@ -534,15 +534,15 @@ export class HealthcareValidationService {
     }
 
     if (
-      data.createdAt
-      && !(data.createdAt instanceof Date || typeof data.createdAt === 'string')
+      data.createdAt &&
+      !(data.createdAt instanceof Date || typeof data.createdAt === 'string')
     ) {
       errors.push('createdAt deve ser uma data ou string de data')
     }
 
     if (
-      data.updatedAt
-      && !(data.updatedAt instanceof Date || typeof data.updatedAt === 'string')
+      data.updatedAt &&
+      !(data.updatedAt instanceof Date || typeof data.updatedAt === 'string')
     ) {
       errors.push('updatedAt deve ser uma data ou string de data')
     }
@@ -593,7 +593,7 @@ export class HealthcareValidationService {
       /^CRO\/[A-Z]{2}\s*\d{6}$/, // CRO/SP 123456
     ]
 
-    return patterns.some((pattern) => pattern.test(licenseNumber))
+    return patterns.some(pattern => pattern.test(licenseNumber))
   }
 
   private validateProfessionalScope(
@@ -631,7 +631,7 @@ export class HealthcareValidationService {
 
   private thisContainsSensitiveData(data: any): boolean {
     const sensitiveFields = ['cpf', 'rg', 'email', 'phone', 'address']
-    return sensitiveFields.some((field) => data[field])
+    return sensitiveFields.some(field => data[field])
   }
 
   private thisContainsExcessiveData(data: any, _entity: string): boolean {
@@ -646,7 +646,7 @@ export class HealthcareValidationService {
       'historicoMedico',
       'resultadosExames',
     ]
-    return highlySensitive.some((field) => data[field])
+    return highlySensitive.some(field => data[field])
   }
 
   private validateCPF(cpf: string): boolean {
@@ -676,8 +676,8 @@ export class HealthcareValidationService {
     const monthDiff = today.getMonth() - birthDate.getMonth()
 
     if (
-      monthDiff < 0
-      || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
     ) {
       age--
     }
@@ -687,6 +687,6 @@ export class HealthcareValidationService {
 
   private thisContainsSensitiveKeywords(content: string): boolean {
     const sensitiveKeywords = ['hiv', 'aids', 'câncer', 'doença terminal']
-    return sensitiveKeywords.some((keyword) => content.toLowerCase().includes(keyword))
+    return sensitiveKeywords.some(keyword => content.toLowerCase().includes(keyword))
   }
 }

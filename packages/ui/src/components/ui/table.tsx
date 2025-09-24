@@ -56,7 +56,7 @@ const TableRow = React.forwardRef<
   React.HTMLAttributes<HTMLTableRowElement>
 >(({ className, children, ...props }, ref) => {
   const sanitizedChildren = React.Children.toArray(children).filter(
-    (child) => !(typeof child === 'string' && child.trim() === ''),
+    child => !(typeof child === 'string' && child.trim() === ''),
   )
   return (
     <tr

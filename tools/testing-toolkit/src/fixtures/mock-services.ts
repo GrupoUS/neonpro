@@ -52,7 +52,7 @@ export class MockAuthService {
 
     return (
       Array.from(this.users.values()).find(
-        (user) => user.id === session.userId,
+        user => user.id === session.userId,
       ) || null
     )
   }
@@ -80,7 +80,7 @@ export class MockPatientService {
 
   async getPatientsByClinic(clinicId: string): Promise<MockPatient[]> {
     return Array.from(this.patients.values()).filter(
-      (p) => p.clinicId === clinicId,
+      p => p.clinicId === clinicId,
     )
   }
 

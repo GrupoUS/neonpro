@@ -190,7 +190,7 @@ export class PWANativeDeviceService {
     const storedCapabilities = stored ? JSON.parse(stored) : {}
 
     // Merge with detected capabilities
-    capabilities.forEach((capability) => {
+    capabilities.forEach(capability => {
       const stored = storedCapabilities[capability.id]
       if (stored) {
         capability.lastUsed = stored.lastUsed ? new Date(stored.lastUsed) : undefined
@@ -302,7 +302,7 @@ export class PWANativeDeviceService {
           height: { ideal: 1080 },
         },
       })
-      stream.getTracks().forEach((track) => track.stop())
+      stream.getTracks().forEach(track => track.stop())
 
       capability.permission = 'granted'
       this.updateCapabilityUsage('camera')
@@ -494,7 +494,7 @@ export class PWANativeDeviceService {
     const capability = this.capabilities.get('location')
     if (!capability?.available) return false
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       navigator.geolocation.getCurrentPosition(
         () => {
           capability.permission = 'granted'
@@ -517,7 +517,7 @@ export class PWANativeDeviceService {
 
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           const location: LocationData = {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
@@ -565,7 +565,7 @@ export class PWANativeDeviceService {
     if (!await this.requestNotificationPermission()) return false
 
     try {
-      await new Promise<void>((resolve) => {
+      await new Promise<void>(resolve => {
         const notification = new Notification(title, {
           body: options.body,
           icon: options.icon || '/icons/icon-192x192.png',
@@ -734,7 +734,7 @@ export class PWANativeDeviceService {
     const usageByCapability: Record<string, number> = {}
     let lastUsedAll: Date | null = null
 
-    capabilities.forEach((cap) => {
+    capabilities.forEach(cap => {
       usageByCapability[cap.id] = cap.usageCount
       if (cap.usageCount > maxUsage) {
         maxUsage = cap.usageCount
@@ -787,7 +787,7 @@ export class PWANativeDeviceService {
   async clearStorage(type?: 'photos' | 'contacts' | 'calendar'): Promise<void> {
     const keysToRemove: string[] = []
 
-    Object.keys(localStorage).forEach((key) => {
+    Object.keys(localStorage).forEach(key => {
       if (type) {
         if (key.includes(type)) keysToRemove.push(key)
       } else {
@@ -795,7 +795,7 @@ export class PWANativeDeviceService {
       }
     })
 
-    keysToRemove.forEach((key) => localStorage.removeItem(key))
+    keysToRemove.forEach(key => localStorage.removeItem(key))
   }
 }
 

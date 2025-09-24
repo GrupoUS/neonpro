@@ -150,7 +150,7 @@ export type AestheticClinicPermission =
 export const ROLE_PERMISSIONS: Record<AestheticClinicRole, AestheticClinicPermission[]> = {
   [AESTHETIC_CLINIC_ROLES.CLINIC_OWNER]: Object.values(AESTHETIC_CLINIC_PERMISSIONS),
   [AESTHETIC_CLINIC_ROLES.MEDICAL_DIRECTOR]: Object.values(AESTHETIC_CLINIC_PERMISSIONS).filter(
-    (p) => !p.includes('security:'),
+    p => !p.includes('security:'),
   ),
   [AESTHETIC_CLINIC_ROLES.AESTHETIC_DOCTOR]: [
     AESTHETIC_CLINIC_PERMISSIONS.PATIENT_READ,
@@ -465,8 +465,8 @@ export class AestheticClinicSecurityService {
 
       // Check for lockout
       if (mfaRecord.failed_attempts >= this.config.mfa.maxAttempts) {
-        const lockoutTime = new Date(mfaRecord.last_failed_attempt).getTime()
-          + this.config.mfa.lockoutDuration
+        const lockoutTime = new Date(mfaRecord.last_failed_attempt).getTime() +
+          this.config.mfa.lockoutDuration
         if (Date.now() < lockoutTime) {
           throw new Error('MFA_ACCOUNT_LOCKED')
         }
@@ -476,8 +476,8 @@ export class AestheticClinicSecurityService {
       const isTokenValid = this.verifyTOTPToken(mfaRecord.secret, verification.token)
 
       // Verify backup code if provided
-      const isBackupCodeValid = verification.backupCode
-        && mfaRecord.backup_codes.includes(verification.backupCode)
+      const isBackupCodeValid = verification.backupCode &&
+        mfaRecord.backup_codes.includes(verification.backupCode)
 
       if (!isTokenValid && !isBackupCodeValid) {
         // Update failed attempts
@@ -517,7 +517,7 @@ export class AestheticClinicSecurityService {
 
       // Remove used backup code
       if (isBackupCodeValid) {
-        const updatedBackupCodes = mfaRecord.backup_codes.filter((code) =>
+        const updatedBackupCodes = mfaRecord.backup_codes.filter(code =>
           code !== verification.backupCode
         )
         await this.supabase
@@ -594,7 +594,7 @@ export class AestheticClinicSecurityService {
       const permissions = new Set<AestheticClinicPermission>()
       for (const roleRecord of userRoles) {
         const rolePermissions = ROLE_PERMISSIONS[roleRecord.role as AestheticClinicRole] || []
-        rolePermissions.forEach((p) => permissions.add(p))
+        rolePermissions.forEach(p => permissions.add(p))
       }
 
       // Check role hierarchy if enabled
@@ -603,7 +603,7 @@ export class AestheticClinicSecurityService {
           const hierarchicalPermissions = this.getHierarchicalPermissions(
             roleRecord.role as AestheticClinicRole,
           )
-          hierarchicalPermissions.forEach((p) => permissions.add(p))
+          hierarchicalPermissions.forEach(p => permissions.add(p))
         }
       }
 
@@ -1033,8 +1033,8 @@ export class AestheticClinicSecurityService {
       .limit(10)
 
     if (userTransactions && userTransactions.length > 0) {
-      const avgAmount = userTransactions.reduce((sum, t) => sum + t.amount, 0)
-        / userTransactions.length
+      const avgAmount = userTransactions.reduce((sum, t) => sum + t.amount, 0) /
+        userTransactions.length
       if (transaction.amount > avgAmount * 3) {
         fraudScore += 30
       }
@@ -1099,7 +1099,7 @@ export class AestheticClinicSecurityService {
 
   private cleanupOldSecurityEvents(): void {
     const cutoffDate = new Date(Date.now() - 24 * 60 * 60 * 1000) // 24 hours ago
-    this.securityEvents = this.securityEvents.filter((event) => event.timestamp > cutoffDate)
+    this.securityEvents = this.securityEvents.filter(event => event.timestamp > cutoffDate)
   }
 
   /**
@@ -1115,18 +1115,18 @@ export class AestheticClinicSecurityService {
     complianceScore: number
   }> {
     const events = clinicId
-      ? this.securityEvents.filter((e) => e.clinicId === clinicId)
+      ? this.securityEvents.filter(e => e.clinicId === clinicId)
       : this.securityEvents
 
     return {
       totalEvents: events.length,
-      criticalEvents: events.filter((e) => e.severity === 'critical').length,
-      highRiskEvents: events.filter((e) => e.severity === 'high').length,
-      mfaVerifications: events.filter((e) => e.eventType === 'mfa_verification').length,
+      criticalEvents: events.filter(e => e.severity === 'critical').length,
+      highRiskEvents: events.filter(e => e.severity === 'high').length,
+      mfaVerifications: events.filter(e => e.eventType === 'mfa_verification').length,
       imageUploads:
-        events.filter((e) => e.eventType === 'image_access' && e.details.action === 'image_upload')
+        events.filter(e => e.eventType === 'image_access' && e.details.action === 'image_upload')
           .length,
-      financialTransactions: events.filter((e) => e.eventType === 'financial_transaction').length,
+      financialTransactions: events.filter(e => e.eventType === 'financial_transaction').length,
       complianceScore: this.calculateComplianceScore(events),
     }
   }
@@ -1136,9 +1136,9 @@ export class AestheticClinicSecurityService {
     const totalEvents = events.length
     if (totalEvents === 0) return 100
 
-    const criticalEvents = events.filter((e) => e.severity === 'critical').length
-    const highRiskEvents = events.filter((e) => e.severity === 'high').length
-    const unresolvedEvents = events.filter((e) => !e.resolved).length
+    const criticalEvents = events.filter(e => e.severity === 'critical').length
+    const highRiskEvents = events.filter(e => e.severity === 'high').length
+    const unresolvedEvents = events.filter(e => !e.resolved).length
 
     const penalty = (criticalEvents * 30) + (highRiskEvents * 15) + (unresolvedEvents * 10)
     return Math.max(0, 100 - (penalty / totalEvents))
@@ -1168,11 +1168,11 @@ export class AestheticClinicSecurityService {
       },
       summary: {
         totalEvents: events?.length || 0,
-        criticalEvents: events?.filter((e) => e.severity === 'critical').length || 0,
-        resolvedEvents: events?.filter((e) => e.resolved).length || 0,
+        criticalEvents: events?.filter(e => e.severity === 'critical').length || 0,
+        resolvedEvents: events?.filter(e => e.resolved).length || 0,
         complianceScore: this.calculateComplianceScore(events || []),
       },
-      events: events?.map((e) => ({
+      events: events?.map(e => ({
         id: e.id,
         eventType: e.event_type,
         severity: e.severity,

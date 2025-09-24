@@ -126,7 +126,7 @@ export class SemanticCacheService {
     const magnitude = Math.sqrt(
       _embedding.reduce((sum, _val) => sum + val * val, 0),
     )
-    return embedding.map((val) => val / magnitude)
+    return embedding.map(val => val / magnitude)
   }
 
   /**
@@ -210,8 +210,8 @@ export class SemanticCacheService {
 
         // 🚨 SECURITY FIX: STRICT patient isolation - ALWAYS require patient ID match
         if (
-          !entry.metadata.patientId
-          || entry.metadata.patientId !== context.patientId
+          !entry.metadata.patientId ||
+          entry.metadata.patientId !== context.patientId
         ) {
           continue // Skip all entries that don't have exact patient ID match
         }
@@ -247,8 +247,8 @@ export class SemanticCacheService {
         )
 
         if (
-          similarity > this.similarityThreshold
-          && similarity > bestSimilarity
+          similarity > this.similarityThreshold &&
+          similarity > bestSimilarity
         ) {
           bestSimilarity = similarity
           bestMatch = entry
@@ -623,7 +623,7 @@ export class SemanticCacheService {
       return true
     }
 
-    return requiredCompliance.every((required) => entryCompliance.includes(required))
+    return requiredCompliance.every(required => entryCompliance.includes(required))
   }
 
   /**

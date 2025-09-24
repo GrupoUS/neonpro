@@ -30,7 +30,7 @@ const cfmValidationSchema = z.object({
   patientId: z.string().min(1, 'Patient ID is required'),
   patientConsent: z
     .boolean()
-    .refine((val) => val === true, 'Patient consent is required'),
+    .refine(val => val === true, 'Patient consent is required'),
 
   // Procedure Information
   procedureType: z.enum([
@@ -331,9 +331,9 @@ async function validateEmergencyProtocols(ctx: any): Promise<void> {
 
   // Validate emergency contact data
   if (
-    !emergencyContact.name
-    || !emergencyContact.phone
-    || !emergencyContact.relationship
+    !emergencyContact.name ||
+    !emergencyContact.phone ||
+    !emergencyContact.relationship
   ) {
     throw new TRPCError({
       code: 'BAD_REQUEST',
@@ -481,7 +481,7 @@ function requiresCFMValidation(path: string): boolean {
     'procedures',
   ]
 
-  return medicalPaths.some((medicalPath) => path.includes(medicalPath))
+  return medicalPaths.some(medicalPath => path.includes(medicalPath))
 }
 
 function isTelemedicineOperation(path: string): boolean {
@@ -493,7 +493,7 @@ function isTelemedicineOperation(path: string): boolean {
     'remote-consultation',
   ]
 
-  return telemedicinePaths.some((telePath) => path.includes(telePath))
+  return telemedicinePaths.some(telePath => path.includes(telePath))
 }
 
 function isProcedureOperation(path: string): boolean {
@@ -505,7 +505,7 @@ function isProcedureOperation(path: string): boolean {
     'treatments.create',
   ]
 
-  return procedurePaths.some((procPath) => path.includes(procPath))
+  return procedurePaths.some(procPath => path.includes(procPath))
 }
 
 /**
@@ -519,7 +519,7 @@ export function validateCFMInput(
   } catch {
     if (error instanceof z.ZodError) {
       const errorMessages = error.errors.map(
-        (err) => `${err.path.join('.')}: ${err.message}`,
+        err => `${err.path.join('.')}: ${err.message}`,
       )
       throw new TRPCError({
         code: 'BAD_REQUEST',

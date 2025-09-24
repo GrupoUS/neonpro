@@ -343,9 +343,9 @@ export class WebRTCSessionService {
 
       // Check if quality is below acceptable thresholds
       if (
-        metrics.packetLoss > 5
-        || metrics.latency > 300
-        || metrics.videoQuality <= 2
+        metrics.packetLoss > 5 ||
+        metrics.latency > 300 ||
+        metrics.videoQuality <= 2
       ) {
         await this.handleQualityIssues(roomId, metrics)
       }

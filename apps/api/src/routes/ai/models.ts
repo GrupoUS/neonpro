@@ -44,28 +44,28 @@ const modelsQuerySchema = z.object({
   status: z.string().optional(),
   includeDetails: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   includeHealth: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   includeMetrics: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   useCase: z.string().optional(),
   includeFallbacks: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   healthcareContext: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   monitorHealth: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
 }) as unknown as z.ZodTypeAny // <-- cast to ZodTypeAny to satisfy zValidator typing
 
@@ -88,10 +88,10 @@ const getServices = async (): Promise<ServiceInterface> => {
   try {
     const mod = await import('../../services/audit-service.js')
     // support: named export AuditService, default export, or exported singleton
-    const AuditCtor = mod.AuditService
-      || mod.default?.AuditService
-      || mod.default
-      || mod.auditService
+    const AuditCtor = mod.AuditService ||
+      mod.default?.AuditService ||
+      mod.default ||
+      mod.auditService
     if (typeof AuditCtor === 'function') {
       // constructor -> instantiate
       auditService = new AuditCtor()
@@ -126,7 +126,7 @@ app.get(
   '/',
   mockAuthMiddleware,
   zValidator('query', modelsQuerySchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now()
     const user = c.get('user')
     const queryParams = c.req.valid('query')
@@ -150,28 +150,28 @@ app.get(
       const validStatuses = ['available', 'limited', 'degraded', 'unavailable']
 
       if (
-        queryParams.provider
-        && !validProviders.includes(queryParams.provider)
+        queryParams.provider &&
+        !validProviders.includes(queryParams.provider)
       ) {
         return c.json(
           {
             success: false,
-            error: 'Parâmetros de filtro inválidos. Provedores válidos: '
-              + validProviders.join(', '),
+            error: 'Parâmetros de filtro inválidos. Provedores válidos: ' +
+              validProviders.join(', '),
           },
           400,
         )
       }
 
       if (
-        queryParams.capability
-        && !validCapabilities.includes(queryParams.capability)
+        queryParams.capability &&
+        !validCapabilities.includes(queryParams.capability)
       ) {
         return c.json(
           {
             success: false,
-            error: 'Parâmetros de filtro inválidos. Capacidades válidas: '
-              + validCapabilities.join(', '),
+            error: 'Parâmetros de filtro inválidos. Capacidades válidas: ' +
+              validCapabilities.join(', '),
           },
           400,
         )
@@ -181,8 +181,8 @@ app.get(
         return c.json(
           {
             success: false,
-            error: 'Parâmetros de filtro inválidos. Status válidos: '
-              + validStatuses.join(', '),
+            error: 'Parâmetros de filtro inválidos. Status válidos: ' +
+              validStatuses.join(', '),
           },
           400,
         )
@@ -195,9 +195,9 @@ app.get(
 
       // Add filters if provided
       if (
-        queryParams.provider
-        || queryParams.capability
-        || queryParams.status
+        queryParams.provider ||
+        queryParams.capability ||
+        queryParams.status
       ) {
         modelsRequest.filters = {}
         if (queryParams.provider) {
@@ -240,8 +240,8 @@ app.get(
         return c.json(
           {
             success: false,
-            error: modelsResponse.error
-              || 'Erro interno do serviço de modelos de IA',
+            error: modelsResponse.error ||
+              'Erro interno do serviço de modelos de IA',
           },
           500,
         )

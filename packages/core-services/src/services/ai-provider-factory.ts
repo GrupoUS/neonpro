@@ -40,7 +40,7 @@ class MockProvider implements AIProviderInterface {
         finishReason: i === words.length - 1 ? 'stop' : undefined,
         provider: 'mock',
       }
-      await new Promise((resolve) => setTimeout(resolve, 25))
+      await new Promise(resolve => setTimeout(resolve, 25))
     }
   }
 }

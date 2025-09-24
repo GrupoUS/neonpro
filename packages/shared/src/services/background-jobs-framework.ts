@@ -510,8 +510,8 @@ export function validateHealthcareContext(
 
   // Emergency jobs must have emergency urgency
   if (
-    jobType === HealthcareJobType.EMERGENCY_NOTIFICATION
-    && _context.urgencyLevel !== 'emergency'
+    jobType === HealthcareJobType.EMERGENCY_NOTIFICATION &&
+    _context.urgencyLevel !== 'emergency'
   ) {
     errors.push(
       'Emergency notification jobs must have emergency urgency level',
@@ -531,8 +531,8 @@ export function validateHealthcareContext(
 
   // LGPD jobs must have consent ID
   if (
-    jobType === HealthcareJobType.LGPD_DATA_PROCESSING
-    && !_context.lgpdConsentId
+    jobType === HealthcareJobType.LGPD_DATA_PROCESSING &&
+    !_context.lgpdConsentId
   ) {
     errors.push('LGPD data processing jobs require lgpdConsentId')
   }
@@ -567,8 +567,8 @@ export function requiresEmergencyProcessing(
 
   // Jobs with emergency context
   if (
-    _context?.urgencyLevel === 'emergency'
-    || _context?.clinicalContext === 'emergency'
+    _context?.urgencyLevel === 'emergency' ||
+    _context?.clinicalContext === 'emergency'
   ) {
     return true
   }
@@ -675,7 +675,7 @@ export class InMemoryJobQueue implements JobQueue {
 
   constructor() {
     // Initialize priority queues
-    Object.values(JobPriority).forEach((priority) => {
+    Object.values(JobPriority).forEach(priority => {
       this.priorityQueues.set(priority, [])
     })
 
@@ -728,11 +728,11 @@ export class InMemoryJobQueue implements JobQueue {
       const queue = this.priorityQueues.get(priority)
       if (queue && queue.length > 0) {
         // Filter jobs by allowed types
-        const eligibleJobs = queue.filter((jobId) => {
+        const eligibleJobs = queue.filter(jobId => {
           const job = this.jobs.get(jobId)
-          return job
-            && job.status === JobStatus.PENDING
-            && allowedTypes.includes(job.type)
+          return job &&
+            job.status === JobStatus.PENDING &&
+            allowedTypes.includes(job.type)
         })
 
         if (eligibleJobs.length > 0) {
@@ -848,9 +848,9 @@ export class InMemoryJobQueue implements JobQueue {
 
   async getJobsByStatus(status: JobStatus, limit = 100): Promise<JobData[]> {
     return Array.from(this.jobs.values())
-      .filter((job) => job.status === status)
+      .filter(job => job.status === status)
       .slice(0, limit)
-      .map((job) => ({ ...job }))
+      .map(job => ({ ...job }))
   }
 
   async getStatistics(): Promise<QueueStatistics> {
@@ -865,10 +865,10 @@ export class InMemoryJobQueue implements JobQueue {
 
     for (const [jobId, job] of Array.from(this.jobs.entries())) {
       if (
-        (job.status === JobStatus.COMPLETED
-          || job.status === JobStatus.FAILED)
-        && job.completedAt
-        && job.completedAt < olderThan
+        (job.status === JobStatus.COMPLETED ||
+          job.status === JobStatus.FAILED) &&
+        job.completedAt &&
+        job.completedAt < olderThan
       ) {
         await this.deleteJob(jobId)
         cleanedCount++
@@ -890,28 +890,28 @@ export class InMemoryJobQueue implements JobQueue {
 
     this.statistics = {
       totalJobs: allJobs.length,
-      pendingJobs: allJobs.filter((j) => j.status === JobStatus.PENDING).length,
-      runningJobs: allJobs.filter((j) => j.status === JobStatus.RUNNING).length,
-      completedJobs: allJobs.filter((j) => j.status === JobStatus.COMPLETED)
+      pendingJobs: allJobs.filter(j => j.status === JobStatus.PENDING).length,
+      runningJobs: allJobs.filter(j => j.status === JobStatus.RUNNING).length,
+      completedJobs: allJobs.filter(j => j.status === JobStatus.COMPLETED)
         .length,
-      failedJobs: allJobs.filter((j) => j.status === JobStatus.FAILED).length,
-      deadLetterJobs: allJobs.filter((j) => j.status === JobStatus.DEAD_LETTER)
+      failedJobs: allJobs.filter(j => j.status === JobStatus.FAILED).length,
+      deadLetterJobs: allJobs.filter(j => j.status === JobStatus.DEAD_LETTER)
         .length,
 
       priorityDistribution: {
         [JobPriority.CRITICAL]: allJobs.filter(
-          (j) => j.priority === JobPriority.CRITICAL,
+          j => j.priority === JobPriority.CRITICAL,
         ).length,
         [JobPriority.HIGH]: allJobs.filter(
-          (j) => j.priority === JobPriority.HIGH,
+          j => j.priority === JobPriority.HIGH,
         ).length,
         [JobPriority.MEDIUM]: allJobs.filter(
-          (j) => j.priority === JobPriority.MEDIUM,
+          j => j.priority === JobPriority.MEDIUM,
         ).length,
-        [JobPriority.LOW]: allJobs.filter((j) => j.priority === JobPriority.LOW)
+        [JobPriority.LOW]: allJobs.filter(j => j.priority === JobPriority.LOW)
           .length,
         [JobPriority.BACKGROUND]: allJobs.filter(
-          (j) => j.priority === JobPriority.BACKGROUND,
+          j => j.priority === JobPriority.BACKGROUND,
         ).length,
       },
 
@@ -920,16 +920,16 @@ export class InMemoryJobQueue implements JobQueue {
       errorRate: this.calculateErrorRate(allJobs),
 
       emergencyJobsProcessed: allJobs.filter(
-        (j) => j.healthcareContext?.urgencyLevel === 'emergency',
+        j => j.healthcareContext?.urgencyLevel === 'emergency',
       ).length,
       patientSafetyJobsProcessed: allJobs.filter(
-        (j) => j.config.patientSafetyRelevant,
+        j => j.config.patientSafetyRelevant,
       ).length,
       complianceJobsCompleted: allJobs.filter(
-        (j) =>
-          j.type === HealthcareJobType.COMPLIANCE_AUDIT
-          || j.type === HealthcareJobType.ANVISA_REPORTING
-          || j.type === HealthcareJobType.LGPD_DATA_PROCESSING,
+        j =>
+          j.type === HealthcareJobType.COMPLIANCE_AUDIT ||
+          j.type === HealthcareJobType.ANVISA_REPORTING ||
+          j.type === HealthcareJobType.LGPD_DATA_PROCESSING,
       ).length,
 
       activeWorkers: 0, // Would be tracked separately in real implementation
@@ -941,7 +941,7 @@ export class InMemoryJobQueue implements JobQueue {
   }
 
   private calculateAverageExecutionTime(jobs: JobData[]): number {
-    const completedJobs = jobs.filter((j) => j.executionTime)
+    const completedJobs = jobs.filter(j => j.executionTime)
     if (completedJobs.length === 0) return 0
 
     const totalTime = completedJobs.reduce(
@@ -954,7 +954,7 @@ export class InMemoryJobQueue implements JobQueue {
   private calculateThroughput(jobs: JobData[]): number {
     const lastHour = new Date(Date.now() - 60 * 60 * 1000)
     const recentJobs = jobs.filter(
-      (j) => j.completedAt && j.completedAt > lastHour,
+      j => j.completedAt && j.completedAt > lastHour,
     )
 
     return recentJobs.length
@@ -962,16 +962,16 @@ export class InMemoryJobQueue implements JobQueue {
 
   private calculateErrorRate(jobs: JobData[]): number {
     const totalJobs = jobs.filter(
-      (j) =>
-        j.status === JobStatus.COMPLETED
-        || j.status === JobStatus.FAILED
-        || j.status === JobStatus.DEAD_LETTER,
+      j =>
+        j.status === JobStatus.COMPLETED ||
+        j.status === JobStatus.FAILED ||
+        j.status === JobStatus.DEAD_LETTER,
     ).length
 
     if (totalJobs === 0) return 0
 
     const failedJobs = jobs.filter(
-      (j) => j.status === JobStatus.FAILED || j.status === JobStatus.DEAD_LETTER,
+      j => j.status === JobStatus.FAILED || j.status === JobStatus.DEAD_LETTER,
     ).length
 
     return failedJobs / totalJobs

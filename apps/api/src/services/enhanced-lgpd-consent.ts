@@ -259,11 +259,11 @@ export class EnhancedLGPDConsentService {
       )
 
       // Check for overlapping consent purposes
-      const overlappingPurposes = validatedData.granularity.processingPurposes.filter((purpose) =>
+      const overlappingPurposes = validatedData.granularity.processingPurposes.filter(purpose =>
         existingConsents.some(
-          (consent) =>
-            consent.granularity.processingPurposes.includes(purpose)
-            && consent.status === ConsentStatus.ACTIVE,
+          consent =>
+            consent.granularity.processingPurposes.includes(purpose) &&
+            consent.status === ConsentStatus.ACTIVE,
         )
       )
 
@@ -543,12 +543,12 @@ export class EnhancedLGPDConsentService {
 
       for (const consent of activeConsents) {
         // Check if all required data categories are covered
-        const hasAllCategories = requiredCategories.every((category) =>
+        const hasAllCategories = requiredCategories.every(category =>
           consent.granularity.dataCategories.includes(category)
         )
 
         // Check if all required purposes are covered
-        const hasAllPurposes = purposes.every((purpose) =>
+        const hasAllPurposes = purposes.every(purpose =>
           consent.granularity.processingPurposes.includes(purpose)
         )
 
@@ -561,27 +561,25 @@ export class EnhancedLGPDConsentService {
       const missingCategories: string[] = []
       const missingPurposes: string[] = []
 
-      requiredCategories.forEach((category) => {
+      requiredCategories.forEach(category => {
         if (
-          !activeConsents.some((consent) => consent.granularity.dataCategories.includes(category))
+          !activeConsents.some(consent => consent.granularity.dataCategories.includes(category))
         ) {
           missingCategories.push(category)
         }
       })
 
-      purposes.forEach((purpose) => {
+      purposes.forEach(purpose => {
         if (
-          !activeConsents.some((consent) =>
-            consent.granularity.processingPurposes.includes(purpose)
-          )
+          !activeConsents.some(consent => consent.granularity.processingPurposes.includes(purpose))
         ) {
           missingPurposes.push(purpose)
         }
       })
 
       const missingRequirements = [
-        ...missingCategories.map((cat) => `Data category: ${cat}`),
-        ...missingPurposes.map((purpose) => `Purpose: ${purpose}`),
+        ...missingCategories.map(cat => `Data category: ${cat}`),
+        ...missingPurposes.map(purpose => `Purpose: ${purpose}`),
       ]
 
       return {
@@ -790,27 +788,27 @@ export class EnhancedLGPDConsentService {
       const statistics = {
         totalConsents: consents.length,
         activeConsents: consents.filter(
-          (c) => c.status === ConsentStatus.ACTIVE,
+          c => c.status === ConsentStatus.ACTIVE,
         ).length,
         withdrawnConsents: consents.filter(
-          (c) => c.status === ConsentStatus.WITHDRAWN,
+          c => c.status === ConsentStatus.WITHDRAWN,
         ).length,
         expiredConsents: consents.filter(
-          (c) => c.status === ConsentStatus.EXPIRED,
+          c => c.status === ConsentStatus.EXPIRED,
         ).length,
         versionDistribution: {} as Record<ConsentVersion, number>,
         dataCategoryDistribution: {} as Record<LGPDDataCategory, number>,
       }
 
       // Calculate version distribution
-      consents.forEach((consent) => {
+      consents.forEach(consent => {
         statistics.versionDistribution[consent.version] =
           (statistics.versionDistribution[consent.version] || 0) + 1
       })
 
       // Calculate data category distribution
-      consents.forEach((consent) => {
-        consent.granularity.dataCategories.forEach((category) => {
+      consents.forEach(consent => {
+        consent.granularity.dataCategories.forEach(category => {
           statistics.dataCategoryDistribution[category] =
             (statistics.dataCategoryDistribution[category] || 0) + 1
         })

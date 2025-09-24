@@ -99,7 +99,7 @@ export class ExportService {
     limit: number = 10,
   ): Promise<ExportJob[]> {
     const userJobs = Array.from(this.ACTIVE_JOBS.values())
-      .filter((job) => job.userId === _userId)
+      .filter(job => job.userId === _userId)
       .sort((a, _b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit)
 
@@ -209,8 +209,8 @@ export class ExportService {
         bloodType: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'][
           Math.floor(Math.random() * 8)
         ],
-        allergies: ['Penicilina', 'Látex', 'Amendoim'][Math.floor(Math.random() * 3)]
-          || [],
+        allergies: ['Penicilina', 'Látex', 'Amendoim'][Math.floor(Math.random() * 3)] ||
+          [],
         medications: ['Dipirona', 'Paracetamol', 'Ibuprofeno'][
           Math.floor(Math.random() * 3)
         ] || [],
@@ -248,11 +248,11 @@ export class ExportService {
   ): Promise<string> {
     const Papa = await import('papaparse')
 
-    const fields = DEFAULT_EXPORT_FIELDS.filter((f) => f.required)
-    const headers = fields.map((f) => f.label)
+    const fields = DEFAULT_EXPORT_FIELDS.filter(f => f.required)
+    const headers = fields.map(f => f.label)
 
-    const csvData = data.map((record) => {
-      return fields.map((field) => {
+    const csvData = data.map(record => {
+      return fields.map(field => {
         const value = record[field.field]
         return field.formatter ? field.formatter(value) : value || ''
       })
@@ -297,8 +297,8 @@ export class ExportService {
         : 0,
       fileSize: job.result?.size || 0,
       averageSpeed: job.progress.processed > 0
-        ? job.progress.processed
-          / ((job.updatedAt.getTime() - job.createdAt.getTime()) / 1000)
+        ? job.progress.processed /
+          ((job.updatedAt.getTime() - job.createdAt.getTime()) / 1000)
         : 0,
     }
   }

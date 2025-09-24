@@ -312,7 +312,7 @@ export const clinicRouter = router({
       // Filter by user access if requested
       if (input.userAccessOnly) {
         const userClinics = await getUserAccessibleClinics(ctx.user.id)
-        clinicIds = userClinics.map((c) => c.clinicId)
+        clinicIds = userClinics.map(c => c.clinicId)
       }
 
       const where = {
@@ -418,8 +418,8 @@ export const clinicRouter = router({
 
       // Check if critical information is being updated
       const cnpjChanged = input.cnpj && input.cnpj !== currentClinic.cnpj
-      const healthLicenseChanged = input.healthLicenseNumber
-        && input.healthLicenseNumber !== currentClinic.healthLicenseNumber
+      const healthLicenseChanged = input.healthLicenseNumber &&
+        input.healthLicenseNumber !== currentClinic.healthLicenseNumber
 
       // Re-validate if critical info changed
       if (cnpjChanged) {
@@ -659,10 +659,10 @@ export const clinicRouter = router({
         data: {
           clinicId: input.clinicId,
           currentStatus: clinic.complianceStatus,
-          lastCheckDate: latestCompliance?.checkDate.toISOString()
-            || new Date().toISOString(),
-          nextCheckDate: latestCompliance?.nextCheckDate.toISOString()
-            || new Date().toISOString(),
+          lastCheckDate: latestCompliance?.checkDate.toISOString() ||
+            new Date().toISOString(),
+          nextCheckDate: latestCompliance?.nextCheckDate.toISOString() ||
+            new Date().toISOString(),
           complianceAreas: {
             businessLicense: {
               isValid: !!clinic.businessLicenseValidatedAt,
@@ -885,11 +885,11 @@ async function sendClinicSetupNotification(_clinic: any): Promise<void> {
 
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {}
-  Object.keys(input).forEach((key) => {
+  Object.keys(input).forEach(key => {
     if (
-      key !== 'id'
-      && input[key] !== undefined
-      && JSON.stringify(input[key]) !== JSON.stringify(current[key])
+      key !== 'id' &&
+      input[key] !== undefined &&
+      JSON.stringify(input[key]) !== JSON.stringify(current[key])
     ) {
       changes[key] = {
         from: current[key],

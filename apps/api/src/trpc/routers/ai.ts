@@ -153,7 +153,7 @@ async function selectOptimalProvider(
   maxCost?: number,
 ): Promise<AIProvider> {
   // Filter providers based on cost constraints
-  let availableProviders = AI_PROVIDERS.filter((provider) => {
+  let availableProviders = AI_PROVIDERS.filter(provider => {
     if (maxCost && provider.costPerToken > maxCost) return false
     return provider.healthScore > 0.8 // Only healthy providers
   })
@@ -167,8 +167,8 @@ async function selectOptimalProvider(
     case 'conversation':
       // Prefer OpenAI for conversations (better Portuguese support)
       return (
-        availableProviders.find((p) => p.name === 'openai')
-        || availableProviders[0]
+        availableProviders.find(p => p.name === 'openai') ||
+        availableProviders[0]
       )
 
     case 'prediction':
@@ -196,7 +196,7 @@ async function callAIProvider(
   prompt: string,
 ): Promise<{ response: string; tokensUsed: number; cost: number }> {
   // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 200 + Math.random() * 300))
+  await new Promise(resolve => setTimeout(resolve, 200 + Math.random() * 300))
 
   // Mock response based on provider
   const responses = {
@@ -224,8 +224,8 @@ async function callAIProvider(
     ? 'analysis'
     : 'conversation'
 
-  const response = responses[provider.name][responseType]
-    || responses[provider.name].conversation
+  const response = responses[provider.name][responseType] ||
+    responses[provider.name].conversation
   const tokensUsed = Math.floor(response.length / 4) // Rough token estimation
   const cost = tokensUsed * provider.costPerToken
 
@@ -799,7 +799,7 @@ Forneça análise de risco e recomendações.`
         let selectedProvider = provider
         if (input.preferred_provider) {
           const preferredProvider = AI_PROVIDERS.find(
-            (p) => p.name === input.preferred_provider,
+            p => p.name === input.preferred_provider,
           )
           if (preferredProvider && preferredProvider.healthScore > 0.8) {
             selectedProvider = preferredProvider
@@ -837,8 +837,8 @@ Forneça análise de risco e recomendações.`
             max_concurrency: selectedProvider.maxConcurrency,
           },
           fallback_providers: AI_PROVIDERS.filter(
-            (p) => p.name !== selectedProvider.name,
-          ).map((p) => ({ name: p.name, health_score: p.healthScore })),
+            p => p.name !== selectedProvider.name,
+          ).map(p => ({ name: p.name, health_score: p.healthScore })),
           compliance: {
             cost_optimized: true,
             health_checked: true,
@@ -892,7 +892,7 @@ Forneça análise de risco e recomendações.`
         for (let i = 0; i < requests.length; i += maxConcurrent) {
           const batch = requests.slice(i, i + maxConcurrent)
 
-          const batchPromises = batch.map(async (request) => {
+          const batchPromises = batch.map(async request => {
             try {
               const provider = await selectOptimalProvider(
                 request.type as any,
@@ -942,8 +942,8 @@ Forneça análise de risco e recomendações.`
             additionalInfo: JSON.stringify({
               action: 'batch_analysis_completed',
               total_requests: requests.length,
-              successful: results.filter((r) => r.status === 'success').length,
-              failed: results.filter((r) => r.status === 'error').length,
+              successful: results.filter(r => r.status === 'success').length,
+              failed: results.filter(r => r.status === 'error').length,
             }),
           },
         })
@@ -953,8 +953,8 @@ Forneça análise de risco e recomendações.`
           total_requests: requests.length,
           results,
           summary: {
-            successful: results.filter((r) => r.status === 'success').length,
-            failed: results.filter((r) => r.status === 'error').length,
+            successful: results.filter(r => r.status === 'success').length,
+            failed: results.filter(r => r.status === 'error').length,
             total_cost: results.reduce((sum, _r) => sum + (r.cost || 0), 0),
           },
           compliance: {

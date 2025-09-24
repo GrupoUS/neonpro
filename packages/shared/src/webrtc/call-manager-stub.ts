@@ -135,11 +135,11 @@ export class RTCCallManagerStub implements RTCCallManager {
 
     // Remove participant from session
     session.participants = session.participants.filter(
-      (p) => p.id !== participantId,
+      p => p.id !== participantId,
     )
     const sessionParticipants = this.participants.get(sessionId) || []
     const updatedParticipants = sessionParticipants.filter(
-      (p) => p.id !== participantId,
+      p => p.id !== participantId,
     )
     this.participants.set(sessionId, updatedParticipants)
 
@@ -160,9 +160,9 @@ export class RTCCallManagerStub implements RTCCallManager {
     session.endTime = new Date().toISOString()
     session.state = 'closed'
     session.duration = Math.floor(
-      (new Date(session.endTime).getTime()
-        - new Date(session.startTime).getTime())
-        / 1000,
+      (new Date(session.endTime).getTime() -
+        new Date(session.startTime).getTime()) /
+        1000,
     )
 
     // Clean up
@@ -196,7 +196,7 @@ export class RTCCallManagerStub implements RTCCallManager {
    */
   async toggleAudio(sessionId: string, participantId: string): Promise<void> {
     const participants = this.participants.get(sessionId)
-    const participant = participants?.find((p) => p.id === participantId)
+    const participant = participants?.find(p => p.id === participantId)
 
     if (participant) {
       participant.mediaState.audioEnabled = !participant.mediaState.audioEnabled
@@ -211,7 +211,7 @@ export class RTCCallManagerStub implements RTCCallManager {
    */
   async toggleVideo(sessionId: string, participantId: string): Promise<void> {
     const participants = this.participants.get(sessionId)
-    const participant = participants?.find((p) => p.id === participantId)
+    const participant = participants?.find(p => p.id === participantId)
 
     if (participant) {
       participant.mediaState.videoEnabled = !participant.mediaState.videoEnabled
@@ -229,7 +229,7 @@ export class RTCCallManagerStub implements RTCCallManager {
     participantId: string,
   ): Promise<void> {
     const participants = this.participants.get(sessionId)
-    const participant = participants?.find((p) => p.id === participantId)
+    const participant = participants?.find(p => p.id === participantId)
 
     if (participant) {
       participant.mediaState.screenShareEnabled = !participant.mediaState.screenShareEnabled

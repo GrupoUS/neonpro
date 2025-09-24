@@ -1258,7 +1258,7 @@ describe('Security Validation', () => {
       })
 
       // Simulate session timeout
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      await new Promise(resolve => setTimeout(resolve, 1000))
 
       const protectedResponse = await testClient.getClients(loginResponse.data.token)
 

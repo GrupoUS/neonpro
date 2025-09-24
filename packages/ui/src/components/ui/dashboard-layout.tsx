@@ -113,9 +113,9 @@ export function DashboardLayout({
   const cardIds = React.Children.toArray(children).map((child, index): string => {
     if (React.isValidElement(child)) {
       return (
-        child.key?.toString()
-        || ((child.props as Record<string, unknown>)?.id as string)
-        || `dashboard-card-${index}`
+        child.key?.toString() ||
+        ((child.props as Record<string, unknown>)?.id as string) ||
+        `dashboard-card-${index}`
       )
     }
     return `dashboard-card-${index}`
@@ -169,9 +169,9 @@ export function DashboardLayout({
         {React.Children.map(children, (child, index) => {
           if (React.isValidElement(child)) {
             // Generate consistent ID for each card
-            const cardId = child.key?.toString()
-              || ((child.props as Record<string, unknown>)?.id as string)
-              || `dashboard-card-${index}`
+            const cardId = child.key?.toString() ||
+              ((child.props as Record<string, unknown>)?.id as string) ||
+              `dashboard-card-${index}`
 
             return React.cloneElement(child as React.ReactElement<Record<string, unknown>>, {
               key: cardId as React.Key,

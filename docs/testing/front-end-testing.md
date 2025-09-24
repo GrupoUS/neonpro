@@ -542,7 +542,7 @@ export const patientHandlers = [
     const patients = createMockPatients(10)
 
     const filtered = search
-      ? patients.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
+      ? patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
       : patients
 
     return res(

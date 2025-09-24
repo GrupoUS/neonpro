@@ -645,8 +645,8 @@ export class HealthcareAuthorizationRules {
 
     // Patient-owned data access
     if (
-      resource.owner?._userId === subject._userId
-      && subject._role === 'patient'
+      resource.owner?._userId === subject._userId &&
+      subject._role === 'patient'
     ) {
       decision = 'permit'
       reasons.push('Patient accessing own data')
@@ -655,8 +655,8 @@ export class HealthcareAuthorizationRules {
     // Healthcare provider access to assigned patients
     if (['doctor', 'nurse', 'specialist'].includes(subject._role)) {
       if (
-        resource.attributes.assignedProvider === subject._userId
-        || resource.attributes.careTeam?.includes(subject._userId)
+        resource.attributes.assignedProvider === subject._userId ||
+        resource.attributes.careTeam?.includes(subject._userId)
       ) {
         decision = 'permit'
         reasons.push('Assigned healthcare provider access')
@@ -751,8 +751,8 @@ export class HealthcareAuthorizationRules {
 
     // Lab technician can write results
     if (
-      subject._role === 'lab_technician'
-      && ['write', 'create', 'update'].includes(action.operation)
+      subject._role === 'lab_technician' &&
+      ['write', 'create', 'update'].includes(action.operation)
     ) {
       decision = 'permit'
       reasons.push('Lab technician result entry authorization')
@@ -760,8 +760,8 @@ export class HealthcareAuthorizationRules {
 
     // Healthcare providers can read results
     if (
-      ['doctor', 'nurse', 'specialist'].includes(subject._role)
-      && action.operation === 'read'
+      ['doctor', 'nurse', 'specialist'].includes(subject._role) &&
+      action.operation === 'read'
     ) {
       decision = 'permit'
       reasons.push('Healthcare provider lab result access')
@@ -925,10 +925,10 @@ export class HealthcareAuthorizationRules {
 
     // Third-party sharing validation (only if not already denied for consent)
     if (
-      decision === 'allow'
-      && compliance.lgpdBasis === 'consent'
-      && !compliance.consentStatus.thirdPartySharing
-      && !resource.attributes.allowSharing
+      decision === 'allow' &&
+      compliance.lgpdBasis === 'consent' &&
+      !compliance.consentStatus.thirdPartySharing &&
+      !resource.attributes.allowSharing
     ) {
       decision = 'deny'
       reasons.push('Third-party sharing not authorized')
@@ -1164,8 +1164,8 @@ export class HealthcareAuthorizationEngine {
 
       // Cache decision
       if (
-        this.config.decisionEngine.enableCaching
-        && decision.decision !== 'indeterminate'
+        this.config.decisionEngine.enableCaching &&
+        decision.decision !== 'indeterminate'
       ) {
         this.cacheDecision(_context, decision)
       }
@@ -1223,7 +1223,7 @@ export class HealthcareAuthorizationEngine {
     const startTime = Date.now()
 
     // Add minimal processing time to ensure evaluationTime > 0
-    await new Promise((resolve) => setTimeout(resolve, 1))
+    await new Promise(resolve => setTimeout(resolve, 1))
 
     // Initialize decision components
     let finalDecision: 'permit' | 'deny' | 'not_applicable' | 'indeterminate' =
@@ -1247,8 +1247,8 @@ export class HealthcareAuthorizationEngine {
 
     // Evaluate LGPD compliance (but don't override permit decisions)
     if (
-      this.config.lgpdCompliance.enableConsentValidation
-      && finalDecision !== 'permit'
+      this.config.lgpdCompliance.enableConsentValidation &&
+      finalDecision !== 'permit'
     ) {
       const lgpdDecision = HealthcareAuthorizationRules.evaluateLGPDCompliance(_context)
       if (lgpdDecision.decision === 'deny') {
@@ -1257,8 +1257,8 @@ export class HealthcareAuthorizationEngine {
         // Map advice to compatible schema types (filter out 'error' severity)
         allAdvice.push(
           ...lgpdDecision.advice
-            .filter((advice) => advice.severity !== 'error')
-            .map((advice) => ({
+            .filter(advice => advice.severity !== 'error')
+            .map(advice => ({
               type: advice.type,
               description: advice.description,
               severity: advice.severity as 'info' | 'warning' | 'critical',
@@ -1904,8 +1904,8 @@ export class HealthcareAuthorizationEngine {
       conditions.push({
         type: 'license_validation',
         description: 'Valid medical license required',
-        satisfied: _context.subject.attributes?.license?.valid
-          && new Date(_context.subject.attributes?.license?.expiry) > new Date(),
+        satisfied: _context.subject.attributes?.license?.valid &&
+          new Date(_context.subject.attributes?.license?.expiry) > new Date(),
       })
     }
 
@@ -1933,9 +1933,9 @@ export class HealthcareAuthorizationEngine {
 
     this.statistics.totalEvaluations++
     this.statistics.averageEvaluationTime =
-      (this.statistics.averageEvaluationTime * (this.statistics.totalEvaluations - 1)
-        + evaluationTime)
-      / this.statistics.totalEvaluations
+      (this.statistics.averageEvaluationTime * (this.statistics.totalEvaluations - 1) +
+        evaluationTime) /
+      this.statistics.totalEvaluations
 
     switch (decision) {
       case 'permit':

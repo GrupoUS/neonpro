@@ -133,8 +133,8 @@ async function _validateANVISACompliance(
 
   // Check for ANVISA-required documentation
   if (
-    procedureDetails.procedureType === 'surgical'
-    || procedureDetails.procedureType === 'laser'
+    procedureDetails.procedureType === 'surgical' ||
+    procedureDetails.procedureType === 'laser'
   ) {
     // Verify procedure has proper ANVISA registration
     const hasAnvisaRegistration = await ctx.prisma.aestheticProcedure.findFirst({
@@ -231,7 +231,7 @@ async function validateAestheticProcedureRequest(
       'surgical',
     ]
 
-    pregnancyContraindicatedProcedures.forEach((procType) => {
+    pregnancyContraindicatedProcedures.forEach(procType => {
       contraindications.push(`${procType} procedures contraindicated during pregnancy`)
     })
     valid = false
@@ -295,10 +295,10 @@ export const aestheticSchedulingRouter = router({
         }
 
         // Step 3: Schedule aesthetic procedures using enhanced service
-        const result = await ctx.prisma.$transaction(async (prisma) => {
+        const result = await ctx.prisma.$transaction(async prisma => {
           const schedulingResult = await aestheticSchedulingService.scheduleAestheticProcedures({
             ...input,
-            preferredDates: input.preferredDates?.map((date) => new Date(date)) || [],
+            preferredDates: input.preferredDates?.map(date => new Date(date)) || [],
           })
 
           if (!schedulingResult.success) {
@@ -314,7 +314,7 @@ export const aestheticSchedulingRouter = router({
 
           // Store appointments in database
           const storedAppointments = await Promise.all(
-            schedulingResult.appointments.map(async (appointment) => {
+            schedulingResult.appointments.map(async appointment => {
               return prisma.appointment.create({
                 data: {
                   id: appointment.id,
@@ -500,7 +500,7 @@ export const aestheticSchedulingRouter = router({
             bookedBy: ctx.userId,
             metadata: {
               preferences: input.preferences,
-              scheduledAppointments: result.appointments.map((apt) => apt.id),
+              scheduledAppointments: result.appointments.map(apt => apt.id),
               recoveryPlan: result.recoveryPlan,
             },
           },
@@ -652,7 +652,7 @@ export const aestheticSchedulingRouter = router({
     .mutation(async ({ ctx, input }) => {
       try {
         // Convert input to aesthetic appointment format
-        const aestheticAppointments = input.appointments.map((apt) => ({
+        const aestheticAppointments = input.appointments.map(apt => ({
           id: apt.id,
           procedureDetails: {
             // Mock procedure details - in real implementation, fetch from database

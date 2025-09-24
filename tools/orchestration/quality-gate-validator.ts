@@ -83,14 +83,14 @@ class QualityGateValidator {
 
     // Calculate overall results
     const summary = {
-      passed: gates.filter((g) => g.status === 'passed').length,
-      failed: gates.filter((g) => g.status === 'failed').length,
-      warnings: gates.filter((g) => g.status === 'warning').length,
+      passed: gates.filter(g => g.status === 'passed').length,
+      failed: gates.filter(g => g.status === 'failed').length,
+      warnings: gates.filter(g => g.status === 'warning').length,
       total: gates.length,
     }
 
-    const requiredGates = gates.filter((g) => this.config.required.includes(g.gate))
-    const requiredPassed = requiredGates.every((g) => g.status === 'passed')
+    const requiredGates = gates.filter(g => this.config.required.includes(g.gate))
+    const requiredPassed = requiredGates.every(g => g.status === 'passed')
 
     const overallScore = gates.reduce((sum, g) => sum + g.score, 0) / gates.length
 
@@ -101,10 +101,10 @@ class QualityGateValidator {
       : 'warning'
 
     const healthcareCompliance = {
-      lgpd: gates.find((g) => g.gate === 'healthcare_compliance')?.status === 'passed' || false,
-      security: gates.find((g) => g.gate === 'security_vulnerabilities')?.status === 'passed'
-        || false,
-      dataProtection: gates.find((g) => g.gate === 'healthcare_compliance')?.score >= 90 || false,
+      lgpd: gates.find(g => g.gate === 'healthcare_compliance')?.status === 'passed' || false,
+      security: gates.find(g => g.gate === 'security_vulnerabilities')?.status === 'passed' ||
+        false,
+      dataProtection: gates.find(g => g.gate === 'healthcare_compliance')?.score >= 90 || false,
     }
 
     return {
@@ -289,7 +289,7 @@ class QualityGateValidator {
         'validateCPF',
         'validateCNPJ',
         'anonymizeData',
-      ].every((fn) => lgpdContent.includes(fn))
+      ].every(fn => lgpdContent.includes(fn))
 
       await fs.access(securityPackage)
 
@@ -369,10 +369,10 @@ class QualityGateValidator {
 | Quality Gate | Status | Score | Threshold | Details |
 |--------------|--------|-------|-----------|---------|
 ${
-      result.gates.map((gate) => {
+      result.gates.map(gate => {
         const statusEmoji = gate.status === 'passed' ? '✅' : gate.status === 'failed' ? '❌' : '⚠️'
         return `| ${
-          gate.gate.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
+          gate.gate.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
         } | ${statusEmoji} ${gate.status.toUpperCase()} | ${gate.score}% | ${gate.threshold} | ${
           gate.details[0] || ''
         } |`
@@ -394,9 +394,9 @@ ${
 ## Detailed Recommendations
 
 ${
-      result.gates.map((gate) =>
-        `### ${gate.gate.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
-${gate.recommendations.map((rec) => `- 📋 ${rec}`).join('\n')}
+      result.gates.map(gate =>
+        `### ${gate.gate.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+${gate.recommendations.map(rec => `- 📋 ${rec}`).join('\n')}
 `
       ).join('\n')
     }

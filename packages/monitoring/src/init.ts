@@ -94,6 +94,6 @@ export function shutdownMonitoring(): void {
     sdk
       .shutdown()
       .then(() => console.log('📊 Monitoring system shut down successfully'))
-      .catch((error) => console.error('Error shutting down monitoring:', error))
+      .catch(error => console.error('Error shutting down monitoring:', error))
   }
 }

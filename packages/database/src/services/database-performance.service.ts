@@ -75,10 +75,10 @@ export class DatabasePerformanceService {
 
     // Check cache first for SELECT operations
     if (
-      operation === 'select'
-      && cacheKey
-      && this.config.enableQueryCaching
-      && !options.forceRefresh
+      operation === 'select' &&
+      cacheKey &&
+      this.config.enableQueryCaching &&
+      !options.forceRefresh
     ) {
       const cached = this.getFromCache<T>(cacheKey)
       if (cached) {
@@ -112,9 +112,9 @@ export class DatabasePerformanceService {
 
       // Cache SELECT results
       if (
-        operation === 'select'
-        && cacheKey
-        && this.config.enableQueryCaching
+        operation === 'select' &&
+        cacheKey &&
+        this.config.enableQueryCaching
       ) {
         this.setToCache(cacheKey, result.data || result, this.config.cacheTTL)
       }
@@ -285,7 +285,7 @@ export class DatabasePerformanceService {
     const start = new Date(timeRange.start).getTime()
     const end = new Date(timeRange.end).getTime()
 
-    return this.metrics.filter((metric) => {
+    return this.metrics.filter(metric => {
       const metricTime = new Date(metric.timestamp).getTime()
       return metricTime >= start && metricTime <= end
     })
@@ -312,9 +312,9 @@ export class DatabasePerformanceService {
       0,
     )
     const slowQueries = relevantMetrics.filter(
-      (metric) => metric.duration > this.config.slowQueryThreshold,
+      metric => metric.duration > this.config.slowQueryThreshold,
     )
-    const errors = relevantMetrics.filter((metric) => !metric.success)
+    const errors = relevantMetrics.filter(metric => !metric.success)
 
     return {
       totalQueries: relevantMetrics.length,
@@ -357,7 +357,7 @@ export class DatabasePerformanceService {
     // Keep only recent metrics (last 24 hours)
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
     this.metrics = this.metrics.filter(
-      (metric) => metric.timestamp > oneDayAgo,
+      metric => metric.timestamp > oneDayAgo,
     )
   }
 

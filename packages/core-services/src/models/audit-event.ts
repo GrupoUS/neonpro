@@ -9,10 +9,10 @@ export const isValidConsentStatus = (status: ConsentStatus): boolean =>
   status === 'valid' || status === 'missing' || status === 'invalid'
 
 export const isValidOutcome = (outcome: AuditOutcome): boolean =>
-  outcome === 'success'
-  || outcome === 'refusal'
-  || outcome === 'error'
-  || outcome === 'limit'
+  outcome === 'success' ||
+  outcome === 'refusal' ||
+  outcome === 'error' ||
+  outcome === 'limit'
 
 export const validateAuditEvent = (evt: AuditEvent): void => {
   if (!isValidConsentStatus(evt.consentStatus)) {

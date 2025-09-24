@@ -102,7 +102,7 @@ export class QueryPerformanceMonitor {
       : 0
 
     const slowQueries = this.metrics.filter(
-      (m) => m.duration > this.slowQueryThreshold,
+      m => m.duration > this.slowQueryThreshold,
     )
     const slowQueryRate = totalQueries > 0 ? (slowQueries.length / totalQueries) * 100 : 0
 
@@ -113,7 +113,7 @@ export class QueryPerformanceMonitor {
 
     // Query frequency analysis
     const queryFrequency: Record<string, number> = {}
-    this.metrics.forEach((m) => {
+    this.metrics.forEach(m => {
       const queryKey = m.query.substring(0, 50) // First 50 chars as key
       queryFrequency[queryKey] = (queryFrequency[queryKey] || 0) + 1
     })
@@ -136,7 +136,7 @@ export class QueryPerformanceMonitor {
     const queryGroups = new Map<string, QueryMetrics[]>()
 
     // Group similar queries
-    this.metrics.forEach((metric) => {
+    this.metrics.forEach(metric => {
       const queryPattern = this.extractQueryPattern(metric._query)
       if (!queryGroups.has(queryPattern)) {
         queryGroups.set(queryPattern, [])
@@ -350,8 +350,8 @@ export class HealthcareQueryOptimizer {
 
     // Add audit trail for sensitive queries
     if (
-      query.includes('patient_records')
-      || query.includes('medical_history')
+      query.includes('patient_records') ||
+      query.includes('medical_history')
     ) {
       // This would integrate with audit logging
       console.warn('Sensitive query executed:', {

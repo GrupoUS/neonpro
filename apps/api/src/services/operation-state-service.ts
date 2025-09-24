@@ -137,8 +137,8 @@ export class OperationStateService {
 
     // Create audit entry for state change
     if (
-      currentState.step !== updates.step
-      || currentState.status !== updates.status
+      currentState.step !== updates.step ||
+      currentState.status !== updates.status
     ) {
       await this.prisma.operationStateAudit.create({
         data: {
@@ -177,7 +177,7 @@ export class OperationStateService {
       take: limit,
     })
 
-    return states.map((state) => this.mapToOperationState(state))
+    return states.map(state => this.mapToOperationState(state))
   }
 
   /**
@@ -197,7 +197,7 @@ export class OperationStateService {
       take: limit,
     })
 
-    return states.map((state) => this.mapToOperationState(state))
+    return states.map(state => this.mapToOperationState(state))
   }
 
   /**
@@ -217,7 +217,7 @@ export class OperationStateService {
       take: limit,
     })
 
-    return states.map((state) => this.mapToOperationState(state))
+    return states.map(state => this.mapToOperationState(state))
   }
 
   /**

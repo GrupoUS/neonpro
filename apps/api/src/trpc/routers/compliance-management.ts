@@ -899,32 +899,32 @@ export const complianceManagementRouter = createTRPCRouter({
 
         // Calculate compliance scores
         const totalAssessments = assessments.length
-        const passedAssessments = assessments.filter((a) => a.status === 'passed').length
+        const passedAssessments = assessments.filter(a => a.status === 'passed').length
         const complianceScore = totalAssessments > 0
           ? (passedAssessments / totalAssessments) * 100
           : 0
 
         // Calculate alert severity breakdown
         const alertBreakdown = {
-          critical: alerts.filter((a) => a.severity_level === 'critical').length,
-          high: alerts.filter((a) => a.severity_level === 'high').length,
-          medium: alerts.filter((a) => a.severity_level === 'medium').length,
-          low: alerts.filter((a) => a.severity_level === 'low').length,
+          critical: alerts.filter(a => a.severity_level === 'critical').length,
+          high: alerts.filter(a => a.severity_level === 'high').length,
+          medium: alerts.filter(a => a.severity_level === 'medium').length,
+          low: alerts.filter(a => a.severity_level === 'low').length,
         }
 
         // Calculate compliance status breakdown
         const complianceStatus = {
-          anvisaActive: anvisaCompliance.filter((a) => a.registration_status === 'active').length,
-          anvisaExpired: anvisaCompliance.filter((a) => a.registration_status === 'expired').length,
-          anvisaExpiringSoon: anvisaCompliance.filter((a) => {
+          anvisaActive: anvisaCompliance.filter(a => a.registration_status === 'active').length,
+          anvisaExpired: anvisaCompliance.filter(a => a.registration_status === 'expired').length,
+          anvisaExpiringSoon: anvisaCompliance.filter(a => {
             const daysUntilExpiry = Math.ceil(
               (new Date(a.expiry_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
             )
             return daysUntilExpiry <= 30 && daysUntilExpiry > 0
           }).length,
-          licensesActive: licenseCompliance.filter((l) => l.license_status === 'active').length,
-          licensesExpired: licenseCompliance.filter((l) => l.license_status === 'expired').length,
-          licensesExpiringSoon: licenseCompliance.filter((l) => {
+          licensesActive: licenseCompliance.filter(l => l.license_status === 'active').length,
+          licensesExpired: licenseCompliance.filter(l => l.license_status === 'expired').length,
+          licensesExpiringSoon: licenseCompliance.filter(l => {
             const daysUntilExpiry = Math.ceil(
               (new Date(l.expiry_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
             )
@@ -976,21 +976,21 @@ export const complianceManagementRouter = createTRPCRouter({
         // Group by regulatory body
         const complianceByBody = categories.reduce((acc, category) => {
           const body = category.regulatory_body
-          const bodyRequirements = requirements.filter((r) => r.category_id === category.id)
-          const bodyAssessments = assessments.filter((a) =>
-            bodyRequirements.some((r) => r.id === a.requirement_id)
+          const bodyRequirements = requirements.filter(r => r.category_id === category.id)
+          const bodyAssessments = assessments.filter(a =>
+            bodyRequirements.some(r => r.id === a.requirement_id)
           )
 
           if (!acc[body]) {
             acc[body] = {
               categoryName: category.name,
               totalRequirements: bodyRequirements.length,
-              completedAssessments: bodyAssessments.filter((a) => a.status === 'passed').length,
-              pendingAssessments: bodyAssessments.filter((a) => a.status === 'pending').length,
-              failedAssessments: bodyAssessments.filter((a) => a.status === 'failed').length,
+              completedAssessments: bodyAssessments.filter(a => a.status === 'passed').length,
+              pendingAssessments: bodyAssessments.filter(a => a.status === 'pending').length,
+              failedAssessments: bodyAssessments.filter(a => a.status === 'failed').length,
               complianceScore: bodyRequirements.length > 0
-                ? (bodyAssessments.filter((a) => a.status === 'passed').length
-                  / bodyRequirements.length) * 100
+                ? (bodyAssessments.filter(a => a.status === 'passed').length /
+                  bodyRequirements.length) * 100
                 : 0,
             }
           }

@@ -184,8 +184,8 @@ export class LGPDConsentManager {
       location: await this.getLocationFromIP(consent.ipAddress),
       deviceInfo: await this.getDeviceInfo(consent.userAgent),
       legalBasis: consent.legalBasis || 'consent',
-      retentionPeriod: consent.retentionPeriod
-        || this.getDefaultRetentionPeriod(consent.consentType),
+      retentionPeriod: consent.retentionPeriod ||
+        this.getDefaultRetentionPeriod(consent.consentType),
       withdrawalMechanism: this.getWithdrawalMechanism(consent.consentType),
       version: '1.0',
       status: 'active',
@@ -295,7 +295,7 @@ export class LGPDConsentManager {
       clientId,
       clientName: client.fullName,
       generatedAt: new Date(),
-      consents: consents.map((consent) => ({
+      consents: consents.map(consent => ({
         id: consent.id,
         consentType: consent.consentType,
         status: consent.status,
@@ -309,9 +309,9 @@ export class LGPDConsentManager {
       })),
       complianceStatus: {
         overallCompliant: this.calculateOverallCompliance(consents),
-        activeConsents: consents.filter((c) => c.status === 'active').length,
-        expiredConsents: consents.filter((c) => c.status === 'expired').length,
-        withdrawnConsents: consents.filter((c) => c.status === 'withdrawn').length,
+        activeConsents: consents.filter(c => c.status === 'active').length,
+        expiredConsents: consents.filter(c => c.status === 'expired').length,
+        withdrawnConsents: consents.filter(c => c.status === 'withdrawn').length,
         nextReviewDate: this.calculateNextReviewDate(consents),
       },
     }
@@ -455,12 +455,12 @@ export class ANVISAComplianceService {
       generatedAt: new Date(),
       summary: {
         totalDevices: devices.length,
-        compliantDevices: devices.filter((d) => d.complianceScore >= 0.8).length,
+        compliantDevices: devices.filter(d => d.complianceScore >= 0.8).length,
         treatmentsUsingMedicalDevices: treatments.length,
         lotUsages: lotUsages.length,
-        activeRecalls: recalls.filter((r) => r.status === 'active').length,
+        activeRecalls: recalls.filter(r => r.status === 'active').length,
       },
-      devices: devices.map((device) => ({
+      devices: devices.map(device => ({
         id: device.id,
         name: device.name,
         registrationNumber: device.registrationNumber,
@@ -471,11 +471,11 @@ export class ANVISAComplianceService {
       })),
       lotTracking: {
         totalLots: lotUsages.length,
-        expiredLots: lotUsages.filter((l) => l.expirationDate < dateRange.start).length,
-        lowStockLots: lotUsages.filter((l) => l.remainingQuantity < l.reorderPoint).length,
-        lotsExpiringSoon: lotUsages.filter((l) =>
-          l.expirationDate >= dateRange.start
-          && l.expirationDate <= addDays(dateRange.end, 30)
+        expiredLots: lotUsages.filter(l => l.expirationDate < dateRange.start).length,
+        lowStockLots: lotUsages.filter(l => l.remainingQuantity < l.reorderPoint).length,
+        lotsExpiringSoon: lotUsages.filter(l =>
+          l.expirationDate >= dateRange.start &&
+          l.expirationDate <= addDays(dateRange.end, 30)
         ).length,
       },
       complianceIssues: this.identifyComplianceIssues(devices, lotUsages),
@@ -500,15 +500,15 @@ export class ANVISATreatmentValidator {
       this.validateSafetyProtocols(treatment),
     ])
 
-    const overallScore = validations.reduce((sum, validation) => sum + validation.score, 0)
-      / validations.length
+    const overallScore = validations.reduce((sum, validation) => sum + validation.score, 0) /
+      validations.length
 
     return {
       valid: overallScore >= 0.8,
       score: overallScore,
       validations,
-      issues: validations.flatMap((v) => v.issues),
-      recommendations: validations.flatMap((v) => v.recommendations),
+      issues: validations.flatMap(v => v.issues),
+      recommendations: validations.flatMap(v => v.recommendations),
       nextReviewDate: this.calculateNextReviewDate(treatment, validations),
     }
   }
@@ -519,15 +519,15 @@ export class ANVISATreatmentValidator {
     }
 
     const deviceValidations = await Promise.all(
-      treatment.requiredDevices.map((device) => this.anvisaService.validateMedicalDevice(device)),
+      treatment.requiredDevices.map(device => this.anvisaService.validateMedicalDevice(device)),
     )
 
-    const validDevices = deviceValidations.filter((v) => v.valid).length
+    const validDevices = deviceValidations.filter(v => v.valid).length
     const score = validDevices / treatment.requiredDevices.length
 
     const issues = deviceValidations
-      .filter((v) => !v.valid)
-      .map((v) => ({
+      .filter(v => !v.valid)
+      .map(v => ({
         type: 'medical_device_compliance',
         severity: 'high',
         description: `Device ${v.deviceId} failed ANVISA validation`,
@@ -570,7 +570,7 @@ export class ANVISATreatmentValidator {
       }
     }
 
-    const certificationsValid = professionals.every((p) => p.certificationValid)
+    const certificationsValid = professionals.every(p => p.certificationValid)
     const score = certificationsValid ? 1.0 : 0.5
 
     const issues = certificationsValid ? [] : [{
@@ -609,15 +609,15 @@ export class CFMComplianceService {
       this.validateContinuingEducation(professional),
     ])
 
-    const overallScore = validations.reduce((sum, validation) => sum + validation.score, 0)
-      / validations.length
+    const overallScore = validations.reduce((sum, validation) => sum + validation.score, 0) /
+      validations.length
 
     return {
       valid: overallScore >= 0.8,
       score: overallScore,
       validations,
-      issues: validations.flatMap((v) => v.issues),
-      recommendations: validations.flatMap((v) => v.recommendations),
+      issues: validations.flatMap(v => v.issues),
+      recommendations: validations.flatMap(v => v.recommendations),
       nextValidationDate: this.calculateNextValidationDate(professional, validations),
     }
   }
@@ -730,16 +730,16 @@ export class CFMComplianceService {
         valid: validations.valid,
         nextReviewDate: validations.nextValidationDate,
         issuesCount: validations.issues.length,
-        criticalIssues: validations.issues.filter((i) => i.severity === 'critical').length,
+        criticalIssues: validations.issues.filter(i => i.severity === 'critical').length,
       },
       certifications: {
-        crmValid: validations.validations.find((v) => v.type === 'crm_registration')?.score === 1.0,
+        crmValid: validations.validations.find(v => v.type === 'crm_registration')?.score === 1.0,
         specializationsValid:
-          validations.validations.find((v) => v.type === 'specialization')?.score === 1.0,
+          validations.validations.find(v => v.type === 'specialization')?.score === 1.0,
         licenseActive:
-          validations.validations.find((v) => v.type === 'license_status')?.score === 1.0,
+          validations.validations.find(v => v.type === 'license_status')?.score === 1.0,
         continuingEducationValid:
-          validations.validations.find((v) => v.type === 'continuing_education')?.score === 1.0,
+          validations.validations.find(v => v.type === 'continuing_education')?.score === 1.0,
       },
       supervision: {
         isSupervisor: supervisedProfessionals.length > 0,
@@ -877,7 +877,7 @@ export class ComplianceMonitoringService {
     const activeRecalls = await this.getActiveRecallNotices()
     for (const recall of activeRecalls) {
       const affectedItems = await this.getAffectedItemsByRecall(recall.id)
-      if (affectedItems.some((item) => item.status === 'in_use')) {
+      if (affectedItems.some(item => item.status === 'in_use')) {
         await this.createComplianceAlert({
           type: 'anvisa_recall_action_required',
           severity: 'critical',
@@ -980,9 +980,9 @@ export class ComplianceMonitoringService {
         overallComplianceScore: (lgpdReport.score + anvisaReport.score + cfmReport.score) / 3,
         frameworksAssessed: ['LGPD', 'ANVISA', 'CFM'],
         totalAudits: lgpdReport.audits + anvisaReport.audits + cfmReport.audits,
-        criticalIssues: lgpdReport.criticalIssues
-          + anvisaReport.criticalIssues
-          + cfmReport.criticalIssues,
+        criticalIssues: lgpdReport.criticalIssues +
+          anvisaReport.criticalIssues +
+          cfmReport.criticalIssues,
         improvementAreas: [
           ...lgpdReport.improvementAreas,
           ...anvisaReport.improvementAreas,

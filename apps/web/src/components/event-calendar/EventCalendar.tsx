@@ -46,27 +46,27 @@ export function EventCalendar({
 
   // Actions
   const setDate = useCallback((date: Date) => {
-    setState((prev) => ({ ...prev, currentDate: date }))
+    setState(prev => ({ ...prev, currentDate: date }))
     onDateChange?.(date)
   }, [onDateChange])
 
   const setView = useCallback((view: CalendarView) => {
-    setState((prev) => ({ ...prev, currentView: view }))
+    setState(prev => ({ ...prev, currentView: view }))
     onViewChange?.(view)
   }, [onViewChange])
 
   const setSelectedEvent = useCallback((event?: CalendarEvent) => {
-    setState((prev) => ({ ...prev, selectedEvent: event }))
+    setState(prev => ({ ...prev, selectedEvent: event }))
   }, [])
 
   const setFilters = useCallback((newFilters: Partial<CalendarFilters>) => {
     const updatedFilters = { ...state.filters, ...newFilters }
-    setState((prev) => ({ ...prev, filters: updatedFilters }))
+    setState(prev => ({ ...prev, filters: updatedFilters }))
     onFiltersChange?.(updatedFilters)
   }, [state.filters, onFiltersChange])
 
   const startCreatingEvent = useCallback((date?: Date, timeSlot?: TimeSlot) => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       isCreatingEvent: true,
       selectedEvent: date
@@ -84,11 +84,11 @@ export function EventCalendar({
   }, [])
 
   const stopCreatingEvent = useCallback(() => {
-    setState((prev) => ({ ...prev, isCreatingEvent: false, selectedEvent: undefined }))
+    setState(prev => ({ ...prev, isCreatingEvent: false, selectedEvent: undefined }))
   }, [])
 
   const setLoading = useCallback((loading: boolean) => {
-    setState((prev) => ({ ...prev, isLoading: loading }))
+    setState(prev => ({ ...prev, isLoading: loading }))
   }, [])
 
   // Event handlers
@@ -128,7 +128,7 @@ export function EventCalendar({
 
   // Render current view
   const renderCurrentView = () => {
-    const filteredEvents = events.filter((event) => {
+    const filteredEvents = events.filter(event => {
       // Apply filters
       if (state.filters.type && !state.filters.type.includes(event.type)) return false
       if (state.filters.status && !state.filters.status.includes(event.status)) return false
@@ -213,9 +213,9 @@ export function EventCalendar({
           event={state.selectedEvent}
           isOpen={!!state.selectedEvent}
           onClose={() => setSelectedEvent(undefined)}
-          onEdit={(event) => {
+          onEdit={event => {
             setSelectedEvent(event)
-            setState((prev) => ({ ...prev, isCreatingEvent: true }))
+            setState(prev => ({ ...prev, isCreatingEvent: true }))
           }}
           onDelete={handleEventDelete}
           canEdit={true}

@@ -229,12 +229,12 @@ export class AIChatMetrics {
     count: number
   } {
     const events = clinicId
-      ? this.events.filter((e) => e.clinicId === clinicId)
+      ? this.events.filter(e => e.clinicId === clinicId)
       : this.events
 
     const responseTimes = events
-      .filter((e) => e.metrics.responseTime)
-      .map((e) => e.metrics.responseTime!)
+      .filter(e => e.metrics.responseTime)
+      .map(e => e.metrics.responseTime!)
       .sort((a, b) => a - b)
 
     if (responseTimes.length === 0) {
@@ -265,7 +265,7 @@ export class AIChatMetrics {
     totalInteractions: number
   } {
     const events = clinicId
-      ? this.events.filter((e) => e.clinicId === clinicId)
+      ? this.events.filter(e => e.clinicId === clinicId)
       : this.events
 
     const totalInteractions = events.length
@@ -302,10 +302,10 @@ export class AIChatMetrics {
     lastHit?: string
   } {
     const events = clinicId
-      ? this.events.filter((e) => e.clinicId === clinicId)
+      ? this.events.filter(e => e.clinicId === clinicId)
       : this.events
 
-    const rateLimitEvents = events.filter((e) => e.eventType === 'rate_limit')
+    const rateLimitEvents = events.filter(e => e.eventType === 'rate_limit')
     const totalInteractions = events.length
     const totalHits = rateLimitEvents.reduce(
       (sum, e) => sum + (e.metrics.rateLimitHits || 0),
@@ -313,8 +313,8 @@ export class AIChatMetrics {
     )
 
     const remainingValues = events
-      .filter((e) => e.metrics.rateLimitRemaining !== undefined)
-      .map((e) => e.metrics.rateLimitRemaining!)
+      .filter(e => e.metrics.rateLimitRemaining !== undefined)
+      .map(e => e.metrics.rateLimitRemaining!)
 
     const averageRemaining = remainingValues.length > 0
       ? remainingValues.reduce((a, b) => a + b, 0) / remainingValues.length

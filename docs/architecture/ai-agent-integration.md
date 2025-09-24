@@ -165,7 +165,7 @@ export class AgentProtocolService {
     this.connections.set(connectionId, connection)
 
     // Set up message handlers
-    ws.on('message', async (data) => {
+    ws.on('message', async data => {
       await this.handleMessage(connectionId, data)
     })
 
@@ -931,9 +931,9 @@ export class AgentHealthCheck {
       }
     })
 
-    const overallStatus = results.every((r) => r.status === 'healthy')
+    const overallStatus = results.every(r => r.status === 'healthy')
       ? 'healthy'
-      : results.some((r) => r.status === 'healthy')
+      : results.some(r => r.status === 'healthy')
       ? 'degraded'
       : 'unhealthy'
 

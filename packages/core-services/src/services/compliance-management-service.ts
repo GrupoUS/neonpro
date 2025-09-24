@@ -619,7 +619,7 @@ export class ComplianceManagementService {
     }
 
     // Generate the report data asynchronously
-    this.generateReportData(data.id).catch((error) => {
+    this.generateReportData(data.id).catch(error => {
       logHealthcareError('compliance', error as Error, {
         method: 'generateReportDataAsync',
         reportId: data.id,
@@ -782,11 +782,12 @@ export class ComplianceManagementService {
         total: assessments.length,
         byStatus: this.groupByType(assessments, 'status' as any),
         byType: this.groupByType(assessments, 'assessment_type' as any),
-        averageScore: assessments.reduce((sum, a) => sum + (a.score || 0), 0) / assessments.length
-          || 0,
-        passRate: assessments.filter((a: any) => a.status === 'passed').length
-          / assessments.length
-          * 100,
+        averageScore:
+          assessments.reduce((sum, a) => sum + (a.score || 0), 0) / assessments.length ||
+          0,
+        passRate: assessments.filter((a: any) => a.status === 'passed').length /
+          assessments.length *
+          100,
       },
       generatedAt: new Date().toISOString(),
     }
@@ -978,9 +979,9 @@ export class ComplianceManagementService {
         startOfMonth.setHours(0, 0, 0, 0)
 
         const existingAssessment = await this.getComplianceAssessments(clinicId)
-        const monthlyAssessment = existingAssessment.find((a) =>
-          (a as any).requirement_id === requirement.id
-          && new Date((a as any).assessment_date) >= startOfMonth
+        const monthlyAssessment = existingAssessment.find(a =>
+          (a as any).requirement_id === requirement.id &&
+          new Date((a as any).assessment_date) >= startOfMonth
         )
 
         if (!monthlyAssessment) {
@@ -1042,9 +1043,7 @@ export class ComplianceManagementService {
   }
 
   private calculateAverageResolutionTime(requests: DataSubjectRequest[]): number {
-    const resolvedRequests = requests.filter((r) =>
-      (r as any).processed_at && (r as any).created_at
-    )
+    const resolvedRequests = requests.filter(r => (r as any).processed_at && (r as any).created_at)
     if (resolvedRequests.length === 0) return 0
 
     const totalTime = resolvedRequests.reduce((sum, request) => {
@@ -1057,7 +1056,7 @@ export class ComplianceManagementService {
   }
 
   private calculateBreachResolutionTime(breaches: DataBreachIncident[]): number {
-    const resolvedBreaches = breaches.filter((b) =>
+    const resolvedBreaches = breaches.filter(b =>
       (b as any).resolution_date && (b as any).discovery_date
     )
     if (resolvedBreaches.length === 0) return 0

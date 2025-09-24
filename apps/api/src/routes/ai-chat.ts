@@ -54,7 +54,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(
   '*',
   cors({
-    origin: (origin) =>
+    origin: origin =>
       !origin
         ? undefined
         : allowedOrigins.includes(origin)
@@ -104,17 +104,17 @@ const redactPII = (text: string): string => {
 }
 
 // Streaming AI response endpoint with Phase 2 provider integration
-app.post('/stream', zValidator('json', ChatRequestSchema), async (c) => {
+app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
   const t0 = startTimer()
   try {
     const { messages, text, locale, clientId, sessionId, model } = c.req.valid('json')
 
     const url = new URL(c.req.url)
-    const mockMode = url.searchParams.get('mock') === 'true'
-      || process.env.AI_CHAT_MOCK_MODE === 'true'
-      || (!process.env.OPENAI_API_KEY
-        && !process.env.ANTHROPIC_API_KEY
-        && !process.env.GOOGLE_AI_API_KEY)
+    const mockMode = url.searchParams.get('mock') === 'true' ||
+      process.env.AI_CHAT_MOCK_MODE === 'true' ||
+      (!process.env.OPENAI_API_KEY &&
+        !process.env.ANTHROPIC_API_KEY &&
+        !process.env.GOOGLE_AI_API_KEY)
 
     // Build AI messages for our provider system
     const aiMessages: AIMessage[] = [
@@ -137,8 +137,8 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async (c) => {
     }
 
     // Extract user prompt for semantic caching
-    const userPrompt = text?.trim()
-      || (Array.isArray(messages) && messages.length > 0
+    const userPrompt = text?.trim() ||
+      (Array.isArray(messages) && messages.length > 0
         ? messages[messages.length - 1]?.content
         : '')
 
@@ -315,9 +315,9 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async (c) => {
     })
 
     // Audit log minimal info
-    const lastText = text
-      || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '')
-      || ''
+    const lastText = text ||
+      (Array.isArray(messages) ? messages[messages.length - 1]?.content : '') ||
+      ''
     console.warn('AI Chat Interaction:', {
       timestamp: new Date().toISOString(),
       sessionId,
@@ -368,7 +368,7 @@ app.post(
       sessionId: z.string(),
     }),
   ),
-  async (c) => {
+  async c => {
     const t0 = startTimer()
     try {
       const { query, sessionId } = c.req.valid('json')
@@ -426,7 +426,7 @@ app.post(
         const response = await AIProviderFactory.generateWithFailover(messages)
         suggestions = response.content
           .split(',')
-          .map((s) => s.trim())
+          .map(s => s.trim())
           .filter(Boolean)
           .slice(0, 5)
       } catch {
@@ -472,7 +472,7 @@ app.post(
 )
 
 // Health check endpoint
-app.get('/health', (c) => {
+app.get('/health', c => {
   const availableProviders = AIProviderFactory.getAvailableProviders()
 
   return c.json({

@@ -210,7 +210,7 @@ function PatientEngagementDashboard() {
 
         <nav className='mt-8 px-2'>
           <div className='space-y-1'>
-            {menuItems.map((item) => (
+            {menuItems.map(item => (
               <Link
                 key={item.label}
                 to={item.href}
@@ -261,7 +261,7 @@ function PatientEngagementDashboard() {
         <div className='bg-white border-b border-gray-200'>
           <nav className='px-4 sm:px-6 lg:px-8'>
             <div className='flex space-x-8'>
-              {tabs.map((tab) => (
+              {tabs.map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}

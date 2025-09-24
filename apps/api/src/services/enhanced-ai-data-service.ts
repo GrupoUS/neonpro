@@ -87,7 +87,7 @@ export class EnhancedAIDataService extends AIDataService {
 
     // Normalize date ranges
     if (sanitized.dateRanges) {
-      sanitized.dateRanges = sanitized.dateRanges.map((range) => ({
+      sanitized.dateRanges = sanitized.dateRanges.map(range => ({
         start: range.start.toISOString().split('T')[0],
         end: range.end.toISOString().split('T')[0],
       }))
@@ -255,14 +255,14 @@ export class EnhancedAIDataService extends AIDataService {
           : hitRate > 0.5
           ? 'good'
           : 'needs_improvement',
-        avgResponseTime: hitRate * this.cacheStats.avgCacheTime
-          + (1 - hitRate) * this.cacheStats.avgDbTime,
+        avgResponseTime: hitRate * this.cacheStats.avgCacheTime +
+          (1 - hitRate) * this.cacheStats.avgDbTime,
         speedImprovement: this.cacheStats.avgDbTime > 0
-          ? ((this.cacheStats.avgDbTime
-            - (hitRate * this.cacheStats.avgCacheTime
-              + (1 - hitRate) * this.cacheStats.avgDbTime))
-            / this.cacheStats.avgDbTime)
-            * 100
+          ? ((this.cacheStats.avgDbTime -
+            (hitRate * this.cacheStats.avgCacheTime +
+              (1 - hitRate) * this.cacheStats.avgDbTime)) /
+            this.cacheStats.avgDbTime) *
+            100
           : 0,
       },
     }

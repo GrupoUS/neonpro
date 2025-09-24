@@ -112,7 +112,7 @@ export class CacheInvalidationStrategy {
     // Invalidate all related queries aggressively
     await Promise.all([
       this.queryClient.invalidateQueries({ queryKey: [tableName] }),
-      ...queryKeys.map((queryKey) => this.queryClient.invalidateQueries({ queryKey })),
+      ...queryKeys.map(queryKey => this.queryClient.invalidateQueries({ queryKey })),
     ])
 
     // Also invalidate related queries (e.g., patient data changes affect appointments)
@@ -192,9 +192,9 @@ export class CacheInvalidationStrategy {
     const criticalFields = ['status', 'priority', 'emergency', 'cancelled']
 
     return criticalFields.some(
-      (field) =>
-        _payload[field] !== undefined
-        && (_payload[field] === 'emergency' || _payload[field] === 'high_priority'),
+      field =>
+        _payload[field] !== undefined &&
+        (_payload[field] === 'emergency' || _payload[field] === 'high_priority'),
     )
   }
 }
@@ -257,8 +257,8 @@ export class EnhancedRealtimeManager {
     )
 
     // Use provided resilience service or create default
-    this.resilienceService = resilienceService
-      || new HealthcareResilienceService(
+    this.resilienceService = resilienceService ||
+      new HealthcareResilienceService(
         require('../resilience').DEFAULT_HEALTHCARE_RESILIENCE_SERVICE_CONFIG,
       )
 
@@ -316,7 +316,7 @@ export class EnhancedRealtimeManager {
           await this.handleEnhancedRealtimeEvent(payload, tableName, options)
         },
       )
-      .subscribe(async (status) => {
+      .subscribe(async status => {
         await this.handleSubscriptionStatus(
           status,
           channelName,
@@ -566,8 +566,8 @@ export class EnhancedRealtimeManager {
     const channelName = `${tableName}-${filter || 'all'}-fallback`
 
     if (
-      !this.fallbackIntervals.has(channelName)
-      && options.fallbackPollingEnabled
+      !this.fallbackIntervals.has(channelName) &&
+      options.fallbackPollingEnabled
     ) {
       this.setupFallbackPolling(tableName, filter, options)
     }
@@ -595,8 +595,8 @@ export class EnhancedRealtimeManager {
     const backoffMs = Math.min(
       this.connectionHealth.retryBackoffMs * Math.pow(2, retryCount),
       30000, // Max 30 seconds
-    )
-      * (0.5 + Math.random() * 0.5) // Add jitter
+    ) *
+      (0.5 + Math.random() * 0.5) // Add jitter
 
     realtimeLogger.info(
       `Retrying enhanced subscription`,
@@ -612,7 +612,7 @@ export class EnhancedRealtimeManager {
     }
 
     // Wait before retry
-    await new Promise((resolve) => setTimeout(resolve, backoffMs))
+    await new Promise(resolve => setTimeout(resolve, backoffMs))
 
     // Retry subscription
     this.subscribeToTable(tableName, filter, options)
@@ -749,7 +749,7 @@ export class EnhancedRealtimeManager {
     await this.queryClient.cancelQueries({ queryKey: [tableName] })
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return (
-        old?.map((item) => item.id === updatedRecord.id ? updatedRecord : item) || []
+        old?.map(item => item.id === updatedRecord.id ? updatedRecord : item) || []
       )
     })
     this.queryClient.setQueryData([tableName, updatedRecord.id], updatedRecord)
@@ -761,7 +761,7 @@ export class EnhancedRealtimeManager {
   ): Promise<void> {
     await this.queryClient.cancelQueries({ queryKey: [tableName] })
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old?.filter((item) => item.id !== deletedRecord.id) || []
+      return old?.filter(item => item.id !== deletedRecord.id) || []
     })
     this.queryClient.removeQueries({ queryKey: [tableName, deletedRecord.id] })
   }
@@ -773,7 +773,7 @@ export class EnhancedRealtimeManager {
     // Force immediate refetch for critical data
     await Promise.all([
       this.queryClient.invalidateQueries({ queryKey: [tableName] }),
-      ...(queryKeys || []).map((queryKey) => this.queryClient.invalidateQueries({ queryKey })),
+      ...(queryKeys || []).map(queryKey => this.queryClient.invalidateQueries({ queryKey })),
     ])
   }
 

@@ -468,38 +468,38 @@ export class AIClinicalDecisionSupport {
     }> = []
 
     // Phase 1: Foundation treatments
-    const foundationProcedures = procedures.filter((p) =>
+    const foundationProcedures = procedures.filter(p =>
       p.recovery.downtime === 'minimal' || p.recovery.downtime === 'none'
     )
 
     if (foundationProcedures.length > 0) {
       phases.push({
         phase: 1,
-        procedures: foundationProcedures.map((p) => p.procedureName),
+        procedures: foundationProcedures.map(p => p.procedureName),
         timeline: 'Weeks 1-4',
         objectives: ['Establish foundation', 'Minimize downtime', 'Build patient confidence'],
       })
     }
 
     // Phase 2: Core treatments
-    const coreProcedures = procedures.filter((p) => p.recovery.downtime === 'moderate')
+    const coreProcedures = procedures.filter(p => p.recovery.downtime === 'moderate')
 
     if (coreProcedures.length > 0) {
       phases.push({
         phase: 2,
-        procedures: coreProcedures.map((p) => p.procedureName),
+        procedures: coreProcedures.map(p => p.procedureName),
         timeline: 'Weeks 5-12',
         objectives: ['Address primary concerns', 'Optimize results', 'Monitor progress'],
       })
     }
 
     // Phase 3: Advanced treatments
-    const advancedProcedures = procedures.filter((p) => p.recovery.downtime === 'significant')
+    const advancedProcedures = procedures.filter(p => p.recovery.downtime === 'significant')
 
     if (advancedProcedures.length > 0) {
       phases.push({
         phase: 3,
-        procedures: advancedProcedures.map((p) => p.procedureName),
+        procedures: advancedProcedures.map(p => p.procedureName),
         timeline: 'Weeks 13-24',
         objectives: ['Advanced correction', 'Fine-tuning results', 'Long-term planning'],
       })
@@ -523,7 +523,7 @@ export class AIClinicalDecisionSupport {
 
     return {
       total,
-      byPhase: phases.map((phase) => ({
+      byPhase: phases.map(phase => ({
         phase: phase.phase,
         cost: phase.procedures.length * 1000, // Placeholder
         procedures: phase.procedures,
@@ -532,14 +532,14 @@ export class AIClinicalDecisionSupport {
   }
 
   private assessOverallRisk(procedures: TreatmentRecommendation[]) {
-    const highRiskProcedures = procedures.filter((p) => p.safety < 0.7)
-    const mediumRiskProcedures = procedures.filter((p) => p.safety >= 0.7 && p.safety < 0.9)
+    const highRiskProcedures = procedures.filter(p => p.safety < 0.7)
+    const mediumRiskProcedures = procedures.filter(p => p.safety >= 0.7 && p.safety < 0.9)
 
     let overall: 'low' | 'medium' | 'high' = 'low'
     if (highRiskProcedures.length > 0) overall = 'high'
     else if (mediumRiskProcedures.length > 0) overall = 'medium'
 
-    const factors = procedures.flatMap((p) => p.risks.map((r) => r.description))
+    const factors = procedures.flatMap(p => p.risks.map(r => r.description))
     const mitigations = [
       'Thorough patient education',
       'Detailed informed consent',
@@ -551,7 +551,7 @@ export class AIClinicalDecisionSupport {
   }
 
   private generateFollowUpSchedule(procedures: TreatmentRecommendation[]) {
-    return procedures.map((p) => ({
+    return procedures.map(p => ({
       procedure: p.procedureName,
       timing: '1-2 weeks post-treatment',
       purpose: 'Assess results and plan next steps',

@@ -192,10 +192,10 @@ export class HTTPSMonitoringService {
 
     // Check for escalation threshold
     const recentAlerts = this.alerts.filter(
-      (a) =>
-        !a.resolved
-        && a.type === alert.type
-        && Date.now() - new Date(a.timestamp).getTime() < 300000, // 5 minutes
+      a =>
+        !a.resolved &&
+        a.type === alert.type &&
+        Date.now() - new Date(a.timestamp).getTime() < 300000, // 5 minutes
     )
 
     if (recentAlerts.length >= this.config.alertThreshold) {
@@ -216,7 +216,7 @@ export class HTTPSMonitoringService {
         severity: alert.severity,
         serverName: alert.metrics.serverName,
         alertCount: this.alerts.filter(
-          (a) => !a.resolved && a.type === alert.type,
+          a => !a.resolved && a.type === alert.type,
         ).length,
       },
       alert.metrics,
@@ -256,9 +256,9 @@ export class HTTPSMonitoringService {
       }
     }
 
-    const handshakeTimes = allMetrics.map((m) => m.handshakeTimeMs)
+    const handshakeTimes = allMetrics.map(m => m.handshakeTimeMs)
     const compliantHandshakes = allMetrics.filter(
-      (m) => m.handshakeTimeMs <= this.config.maxHandshakeTimeMs,
+      m => m.handshakeTimeMs <= this.config.maxHandshakeTimeMs,
     )
 
     const protocolDistribution = allMetrics.reduce(
@@ -279,7 +279,7 @@ export class HTTPSMonitoringService {
 
     const recentAlerts = this.alerts
       .filter(
-        (a) => !a.resolved && Date.now() - new Date(a.timestamp).getTime() < 3600000,
+        a => !a.resolved && Date.now() - new Date(a.timestamp).getTime() < 3600000,
       )
       .sort(
         (a, _b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
@@ -309,7 +309,7 @@ export class HTTPSMonitoringService {
       : Array.from(this.metrics.values()).flat()
 
     if (timeRange) {
-      metrics = metrics.filter((m) => {
+      metrics = metrics.filter(m => {
         const timestamp = new Date(m.clientHelloTime)
         return timestamp >= timeRange.start && timestamp <= timeRange.end
       })
@@ -322,14 +322,14 @@ export class HTTPSMonitoringService {
    * Get active alerts
    */
   getActiveAlerts(): MonitoringAlert[] {
-    return this.alerts.filter((a) => !a.resolved)
+    return this.alerts.filter(a => !a.resolved)
   }
 
   /**
    * Resolve alert
    */
   resolveAlert(alertId: string): void {
-    const alert = this.alerts.find((a) => a.id === alertId)
+    const alert = this.alerts.find(a => a.id === alertId)
     if (alert) {
       alert.resolved = true
       logger.info(
@@ -363,7 +363,7 @@ export class HTTPSMonitoringService {
 
       for (const [serverName, metrics] of this.metrics.entries()) {
         const filteredMetrics = metrics.filter(
-          (m) => m.clientHelloTime > cutoffTime,
+          m => m.clientHelloTime > cutoffTime,
         )
         if (filteredMetrics.length !== metrics.length) {
           this.metrics.set(serverName, filteredMetrics)
@@ -424,7 +424,7 @@ export class HTTPSMonitoringService {
       config: this.config,
       metricsCount: Array.from(this.metrics.values()).flat().length,
       alertsCount: this.alerts.length,
-      activeAlertsCount: this.alerts.filter((a) => !a.resolved).length,
+      activeAlertsCount: this.alerts.filter(a => !a.resolved).length,
     }
   }
 }

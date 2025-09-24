@@ -179,7 +179,7 @@ if (typeof dom !== 'undefined') {
 // Custom test utilities
 
 ;(globalThis as any).testUtils = {
-  waitFor: (ms: number) => new Promise((resolve) => setTimeout(resolve, ms)),
+  waitFor: (ms: number) => new Promise(resolve => setTimeout(resolve, ms)),
   createMockEvent: (type: string, data: any) => ({ type, data, preventDefault: () => {} }),
   createMockResponse: (data: any, status = 200) => ({
     ok: status >= 200 && status < 300,

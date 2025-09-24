@@ -62,7 +62,7 @@ beforeAll(() => {
   // Mock global APIs for consistent testing
   Object.defineProperty(global.window, 'matchMedia', {
     writable: true,
-    value: vi.fn().mockImplementation((query) => ({
+    value: vi.fn().mockImplementation(query => ({
       matches: false,
       media: query,
       onchange: null,

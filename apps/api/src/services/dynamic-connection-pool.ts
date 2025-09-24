@@ -266,8 +266,8 @@ export class DynamicConnectionPoolService {
 
       // Handle errors based on configuration
       if (
-        this.config.enableGracefulDegradation
-        && (await this.shouldDegrade())
+        this.config.enableGracefulDegradation &&
+        (await this.shouldDegrade())
       ) {
         return this.handleGracefulDegradation(query, params, executionTime)
       }
@@ -296,10 +296,10 @@ export class DynamicConnectionPoolService {
 
     // Check various scaling conditions
     return (
-      metrics.utilizationRate > policy.scaleUpThreshold
-      || metrics.averageWaitTime > 1000 // 1 second
-      || metrics.waitingConnections > 3
-      || metrics.healthScore < 60
+      metrics.utilizationRate > policy.scaleUpThreshold ||
+      metrics.averageWaitTime > 1000 || // 1 second
+      metrics.waitingConnections > 3 ||
+      metrics.healthScore < 60
     )
   }
 
@@ -315,10 +315,10 @@ export class DynamicConnectionPoolService {
     const policy = this.getCurrentScalingPolicy()
 
     return (
-      metrics.utilizationRate < policy.scaleDownThreshold
-      && metrics.averageWaitTime < 100
-      && metrics.waitingConnections === 0
-      && this.currentScalingConfig.max > this.config.min * 2
+      metrics.utilizationRate < policy.scaleDownThreshold &&
+      metrics.averageWaitTime < 100 &&
+      metrics.waitingConnections === 0 &&
+      this.currentScalingConfig.max > this.config.min * 2
     )
   }
 
@@ -503,17 +503,17 @@ export class DynamicConnectionPoolService {
 
     // Check time-based patterns
     if (
-      !isWeekend
-      && hour >= HealthcareWorkloadPatterns.peakClinicalHours.start
-      && hour <= HealthcareWorkloadPatterns.peakClinicalHours.end
+      !isWeekend &&
+      hour >= HealthcareWorkloadPatterns.peakClinicalHours.start &&
+      hour <= HealthcareWorkloadPatterns.peakClinicalHours.end
     ) {
       return HealthcareWorkloadPatterns.peakClinicalHours
     }
 
     if (
-      !isWeekend
-      && hour >= HealthcareWorkloadPatterns.lunchLull.start
-      && hour <= HealthcareWorkloadPatterns.lunchLull.end
+      !isWeekend &&
+      hour >= HealthcareWorkloadPatterns.lunchLull.start &&
+      hour <= HealthcareWorkloadPatterns.lunchLull.end
     ) {
       return HealthcareWorkloadPatterns.lunchLull
     }
@@ -523,8 +523,8 @@ export class DynamicConnectionPoolService {
     }
 
     if (
-      hour >= HealthcareWorkloadPatterns.afterHours.start
-      || hour <= HealthcareWorkloadPatterns.afterHours.end
+      hour >= HealthcareWorkloadPatterns.afterHours.start ||
+      hour <= HealthcareWorkloadPatterns.afterHours.end
     ) {
       return HealthcareWorkloadPatterns.afterHours
     }
@@ -621,9 +621,9 @@ export class DynamicConnectionPoolService {
   private async shouldDegrade(): Promise<boolean> {
     const metrics = await this.getMetrics()
     return (
-      metrics.utilizationRate > 95
-      || metrics.healthScore < 40
-      || this.emergencyMode
+      metrics.utilizationRate > 95 ||
+      metrics.healthScore < 40 ||
+      this.emergencyMode
     )
   }
 
@@ -827,11 +827,11 @@ export class DynamicConnectionPoolService {
   private async cleanupOldEvents(): Promise<void> {
     const oneHourAgo = new Date(Date.now() - 3600000)
     this.scalingHistory = this.scalingHistory.filter(
-      (event) => event.timestamp > oneHourAgo,
+      event => event.timestamp > oneHourAgo,
     )
 
     // Cleanup old alerts
-    this.alerts = this.alerts.filter((alert) => {
+    this.alerts = this.alerts.filter(alert => {
       const age = Date.now() - alert.timestamp.getTime()
       return alert.autoResolve ? age < 300000 : age < 3600000 // Keep unresolved alerts for 1 hour
     })
@@ -873,7 +873,7 @@ export class DynamicConnectionPoolService {
     this.alerts.push(alert)
 
     // Notify callbacks
-    this.alertCallbacks.forEach((callback) => callback(alert))
+    this.alertCallbacks.forEach(callback => callback(alert))
 
     // Log alert
     console.warn(`[Dynamic Pool] Alert: ${alert.type} - ${alert.message}`)

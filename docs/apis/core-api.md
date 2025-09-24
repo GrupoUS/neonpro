@@ -92,7 +92,7 @@ app.post(
       consent_given: z.boolean(), // LGPD
     }),
   ),
-  async (c) => {
+  async c => {
     const data = c.req.valid('json')
     const { data: client, error } = await supabase
       .from('clients')
@@ -116,7 +116,7 @@ app.post(
       treatment_type: z.string(),
     }),
   ),
-  async (c) => {
+  async c => {
     const data = c.req.valid('json')
     // Implementation here
     return c.json({ data: appointment })

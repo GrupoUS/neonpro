@@ -538,7 +538,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     const participants: RealtimeParticipant[] = []
 
     Object.values(presenceState).forEach((presences: any[]) => {
-      presences.forEach((presence) => {
+      presences.forEach(presence => {
         if (presence.participant) {
           participants.push(presence.participant)
         }

@@ -76,7 +76,7 @@ function validateUserSession(
  * GET /api/ai/sessions/:sessionId
  * Retrieve conversation session data
  */
-app.get('/ai/sessions/:sessionId', async (c) => {
+app.get('/ai/sessions/:sessionId', async c => {
   try {
     const sessionId = c.req.param('sessionId')
     const payload = c.get('jwtPayload')
@@ -253,10 +253,10 @@ export function cleanupExpiredSessions(): void {
 /**
  * Health check endpoint
  */
-app.get('/ai/sessions/health', async (c) => {
+app.get('/ai/sessions/health', async c => {
   try {
     const activeSessions = Array.from(sessionStore.values()).filter(
-      (s) => s.status === 'active',
+      s => s.status === 'active',
     ).length
 
     const totalSessions = sessionStore.size

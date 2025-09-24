@@ -150,9 +150,9 @@ export class UsageCounter {
   get cacheSavingsPercentage(): number {
     if (this._data.totalCostUsd === 0) return 0
     return (
-      (this._data.cacheSavingsUsd
-        / (this._data.totalCostUsd + this._data.cacheSavingsUsd))
-      * 100
+      (this._data.cacheSavingsUsd /
+        (this._data.totalCostUsd + this._data.cacheSavingsUsd)) *
+      100
     )
   }
 
@@ -439,7 +439,7 @@ export class UsageCounter {
    */
   getBillingMetrics(startDate: Date, endDate: Date): BillingMetrics {
     const relevantRequests = this._recentRequests.filter(
-      (req) => req.createdAt >= startDate && req.createdAt <= endDate,
+      req => req.createdAt >= startDate && req.createdAt <= endDate,
     )
 
     const totalCostUsd = relevantRequests.reduce(
@@ -484,7 +484,7 @@ export class UsageCounter {
     period: 'hour' | 'day' | 'week' | 'month',
   ): UsageAggregation[] {
     return Array.from(this._aggregations.values())
-      .filter((agg) => agg.period === period)
+      .filter(agg => agg.period === period)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
   }
 
@@ -538,7 +538,7 @@ export class UsageCounter {
 
   private updateCacheHitRate(cacheHit: boolean): number {
     const recentCacheHits = this._recentRequests.filter(
-      (req) => req.cacheHit,
+      req => req.cacheHit,
     ).length
     const totalRecent = this._recentRequests.length
 
@@ -548,7 +548,7 @@ export class UsageCounter {
 
   private updateErrorRate(hasError: boolean): number {
     const recentErrors = this._recentRequests.filter(
-      (req) => req.safetyFlags.length > 0 || req.regulatoryFlags.includes('ERROR'),
+      req => req.safetyFlags.length > 0 || req.regulatoryFlags.includes('ERROR'),
     ).length
     const totalRecent = this._recentRequests.length
 
@@ -559,7 +559,7 @@ export class UsageCounter {
   private calculatePeakHours(): number[] {
     const hourCounts = Array.from({ length: 24 }, () => 0)
 
-    this._recentRequests.forEach((req) => {
+    this._recentRequests.forEach(req => {
       const hour = req.createdAt.getHours()
       if (hour !== undefined && hourCounts[hour] !== undefined) {
         hourCounts[hour]++
@@ -576,7 +576,7 @@ export class UsageCounter {
   private getPreferredModels(): EnhancedAIModel[] {
     const modelCounts = new Map<EnhancedAIModel, number>()
 
-    this._recentRequests.forEach((req) => {
+    this._recentRequests.forEach(req => {
       const current = modelCounts.get(req.modelCode) || 0
       modelCounts.set(req.modelCode, current + 1)
     })
@@ -590,7 +590,7 @@ export class UsageCounter {
   private getCommonSpecialties(): MedicalSpecialty[] {
     const specialtyCounts = new Map<MedicalSpecialty, number>()
 
-    this._recentRequests.forEach((req) => {
+    this._recentRequests.forEach(req => {
       if (req.medicalSpecialty) {
         const current = specialtyCounts.get(req.medicalSpecialty) || 0
         specialtyCounts.set(req.medicalSpecialty, current + 1)
@@ -611,7 +611,7 @@ export class UsageCounter {
       'month',
     ]
 
-    periods.forEach((period) => {
+    periods.forEach(period => {
       const key = this.getAggregationKey(usageRecord.createdAt, period)
       const existing = this._aggregations.get(key)
 
@@ -627,8 +627,8 @@ export class UsageCounter {
         }
 
         if (
-          usageRecord.medicalSpecialty
-          && existing.specialtyBreakdown[usageRecord.medicalSpecialty]
+          usageRecord.medicalSpecialty &&
+          existing.specialtyBreakdown[usageRecord.medicalSpecialty]
         ) {
           existing.specialtyBreakdown[usageRecord.medicalSpecialty]++
         } else if (usageRecord.medicalSpecialty) {

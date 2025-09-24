@@ -48,17 +48,20 @@ export { TreatmentPlanningService } from './services/treatment-planning-service'
 // export * from './services/performance-monitoring-service' // Temporarily disabled
 
 // Enhanced Aesthetic Scheduling Services (Decomposed)
+export * from './services/aesthetic-appointment-service'
 export type {
   AestheticAppointment,
-  FollowUpAppointment,
   AestheticProcedureDetails,
+  FollowUpAppointment,
   ProfessionalAssignment,
-  RecoveryPlan
+  RecoveryPlan,
 } from './services/enhanced-aesthetic-scheduling-service'
 export { EnhancedAestheticSchedulingService } from './services/enhanced-aesthetic-scheduling-service'
-export * from './services/aesthetic-appointment-service'
+export type {
+  NoShowPredictionFeatures,
+  NoShowPredictionResult,
+} from './services/no-show-prediction-service'
+export { NoShowPredictionService } from './services/no-show-prediction-service'
 export * from './services/professional-validation-service'
 export * from './services/recovery-planning-service'
-export type { NoShowPredictionFeatures, NoShowPredictionResult } from './services/no-show-prediction-service'
-export { NoShowPredictionService } from './services/no-show-prediction-service'
 export * from './services/treatment-package-service'

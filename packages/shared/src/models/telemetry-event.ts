@@ -244,7 +244,7 @@ export class TelemetryEventValidator {
   static validate(event: Partial<TelemetryEvent>): boolean {
     const required = ['id', 'eventType', 'timestamp', 'severity', '_service']
     return required.every(
-      (field) => event[field as keyof TelemetryEvent] !== undefined,
+      field => event[field as keyof TelemetryEvent] !== undefined,
     )
   }
 
@@ -325,18 +325,18 @@ export class TelemetryEventBuilder {
       ...this.event.healthcareContext,
       ...context,
       // Ensure required fields have defaults
-      dataSensitivity: context?.dataSensitivity
-        ?? this.event.healthcareContext?.dataSensitivity
-        ?? HealthcareDataSensitivity.NONE,
-      complianceFlags: context?.complianceFlags
-        ?? this.event.healthcareContext?.complianceFlags
-        ?? [],
+      dataSensitivity: context?.dataSensitivity ??
+        this.event.healthcareContext?.dataSensitivity ??
+        HealthcareDataSensitivity.NONE,
+      complianceFlags: context?.complianceFlags ??
+        this.event.healthcareContext?.complianceFlags ??
+        [],
     }
 
     // Safely access compliance property
     if (this.event.compliance) {
-      this.event.compliance.piiPresent = this.event.healthcareContext.dataSensitivity
-        !== HealthcareDataSensitivity.NONE
+      this.event.compliance.piiPresent = this.event.healthcareContext.dataSensitivity !==
+        HealthcareDataSensitivity.NONE
     }
     return this
   }
@@ -369,11 +369,11 @@ export class TelemetryEventBuilder {
     }
     // Ensure required fields exist before casting
     if (
-      !event.id
-      || !event.eventType
-      || !event.timestamp
-      || !event.severity
-      || !event._service
+      !event.id ||
+      !event.eventType ||
+      !event.timestamp ||
+      !event.severity ||
+      !event._service
     ) {
       throw new Error('TelemetryEvent missing required fields after build')
     }

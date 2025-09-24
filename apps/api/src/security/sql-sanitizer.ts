@@ -221,7 +221,7 @@ class SQLSanitizer {
     }
 
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )
 
     if (!tableConfig) {
@@ -247,7 +247,7 @@ class SQLSanitizer {
     }
 
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )!
 
     if (!tableConfig.allowedOperations.includes(operation.type)) {
@@ -275,10 +275,10 @@ class SQLSanitizer {
     }
 
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )!
 
-    operation.columns.forEach((column) => {
+    operation.columns.forEach(column => {
       // Check for dangerous patterns in column names
       if (this.containsDangerousPatterns(column)) {
         result.errors.push(`Column '${column}' contains dangerous patterns`)
@@ -346,7 +346,7 @@ class SQLSanitizer {
     }
 
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )!
 
     // Check if operation requires patient consent
@@ -370,7 +370,7 @@ class SQLSanitizer {
   }
 
   private static containsDangerousPatterns(input: string): boolean {
-    return this.DANGEROUS_PATTERNS.some((pattern) => pattern.test(input))
+    return this.DANGEROUS_PATTERNS.some(pattern => pattern.test(input))
   }
 
   private static buildSanitizedQuery(operation: SQLOperation): string {
@@ -384,7 +384,7 @@ class SQLSanitizer {
 
         if (conditions && Object.keys(conditions).length > 0) {
           const whereClause = Object.keys(conditions)
-            .map((key) => `${key} = $${key}`)
+            .map(key => `${key} = $${key}`)
             .join(' AND ')
           query += ` WHERE ${whereClause}`
         }
@@ -407,12 +407,12 @@ class SQLSanitizer {
           throw new Error('UPDATE operations require columns specification')
         }
 
-        const setClause = columns.map((col) => `${col} = $${col}`).join(', ')
+        const setClause = columns.map(col => `${col} = $${col}`).join(', ')
         let updateQuery = `UPDATE ${table} SET ${setClause}`
 
         if (conditions && Object.keys(conditions).length > 0) {
           const whereClause = Object.keys(conditions)
-            .map((key) => `${key} = $${key}`)
+            .map(key => `${key} = $${key}`)
             .join(' AND ')
           updateQuery += ` WHERE ${whereClause}`
         }
@@ -424,7 +424,7 @@ class SQLSanitizer {
 
         if (conditions && Object.keys(conditions).length > 0) {
           const whereClause = Object.keys(conditions)
-            .map((key) => `${key} = $${key}`)
+            .map(key => `${key} = $${key}`)
             .join(' AND ')
           deleteQuery += ` WHERE ${whereClause}`
         } else {
@@ -443,7 +443,7 @@ class SQLSanitizer {
     result: SQLValidationResult,
   ): void {
     const tableConfig = this.ALLOWED_TABLES.find(
-      (t) => t.name === operation.table,
+      t => t.name === operation.table,
     )!
 
     if (!tableConfig.auditRequired) {
@@ -477,7 +477,7 @@ class SQLSanitizer {
    * Quick validation for simple operations
    */
   static isOperationAllowed(operationType: string, tableName: string): boolean {
-    const tableConfig = this.ALLOWED_TABLES.find((t) => t.name === tableName)
+    const tableConfig = this.ALLOWED_TABLES.find(t => t.name === tableName)
     if (!tableConfig) return false
 
     return tableConfig.allowedOperations.includes(
@@ -489,7 +489,7 @@ class SQLSanitizer {
    * Get table configuration
    */
   static getTableConfig(tableName: string): TableConfig | undefined {
-    return this.ALLOWED_TABLES.find((t) => t.name === tableName)
+    return this.ALLOWED_TABLES.find(t => t.name === tableName)
   }
 
   /**

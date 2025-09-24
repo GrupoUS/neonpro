@@ -46,8 +46,8 @@ export function useMedicalHistory(): UseMedicalHistoryReturn {
 
   const handleAddContraindication = () => {
     if (
-      newContraindication.trim()
-      && !medicalHistory.contraindications.includes(newContraindication.trim())
+      newContraindication.trim() &&
+      !medicalHistory.contraindications.includes(newContraindication.trim())
     ) {
       setMedicalHistory({
         ...medicalHistory,
@@ -60,9 +60,7 @@ export function useMedicalHistory(): UseMedicalHistoryReturn {
   const handleRemoveContraindication = (contraindication: string) => {
     setMedicalHistory({
       ...medicalHistory,
-      contraindications: medicalHistory.contraindications.filter((cont) =>
-        cont !== contraindication
-      ),
+      contraindications: medicalHistory.contraindications.filter(cont => cont !== contraindication),
     })
   }
 
@@ -79,7 +77,7 @@ export function useMedicalHistory(): UseMedicalHistoryReturn {
   const handleRemoveMedication = (medication: string) => {
     setMedicalHistory({
       ...medicalHistory,
-      medications: medicalHistory.medications.filter((med) => med !== medication),
+      medications: medicalHistory.medications.filter(med => med !== medication),
     })
   }
 
@@ -96,7 +94,7 @@ export function useMedicalHistory(): UseMedicalHistoryReturn {
   const handleRemoveAllergy = (allergy: string) => {
     setMedicalHistory({
       ...medicalHistory,
-      allergies: medicalHistory.allergies.filter((all) => all !== allergy),
+      allergies: medicalHistory.allergies.filter(all => all !== allergy),
     })
   }
 

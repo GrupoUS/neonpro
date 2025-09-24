@@ -4,7 +4,7 @@ const { calculateCNSChecksum } = require('./dist/index.js')
 console.log('Testing CNS checksum calculation:')
 const testCNS = ['170185783640008', '248596394670018', '712345678901234', '898765432109876']
 
-testCNS.forEach((cns) => {
+testCNS.forEach(cns => {
   const result = calculateCNSChecksum(cns)
   console.log(`${cns}: ${result}`)
 

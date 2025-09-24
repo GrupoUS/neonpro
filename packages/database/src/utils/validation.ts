@@ -66,9 +66,9 @@ export async function validateSchema(): Promise<boolean> {
           AND table_name = ${tableSpec.name}
         `) as { column_name: string }[]
 
-        const existingColumns = columnsResult.map((col) => col.column_name)
+        const existingColumns = columnsResult.map(col => col.column_name)
         const missingColumns = tableSpec.requiredColumns.filter(
-          (col) => !existingColumns.includes(col),
+          col => !existingColumns.includes(col),
         )
 
         if (missingColumns.length > 0) {
@@ -92,7 +92,7 @@ export async function validateSchema(): Promise<boolean> {
           component: 'database-validation',
           table: tableSpec.name,
           action: 'check_table_error',
-        }, error)
+        }, error as Error)
         return false
       }
     }
@@ -151,15 +151,28 @@ export async function checkTablesExist(
           component: 'database-validation',
           table: tableSpec.name,
           action: 'table_validation_failed',
-        }, error)
+        }, error as Error)
         return false
       }
 
       // Verify that all required columns are present in the response
       if (data && data.length > 0) {
         const row = data[0]
+        if (!row) {
+          const { getLogger } = await import('@neonpro/core-services')
+          const logger = getLogger()
+          logger.error(
+            `No data returned from table ${tableSpec.name}`,
+            {
+              component: 'database-validation',
+              table: tableSpec.name,
+              action: 'no_data_returned',
+            },
+          )
+          return false
+        }
         const missingColumns = tableSpec.requiredColumns.filter(
-          (col) => !(col in row),
+          col => !(col in row),
         )
         if (missingColumns.length > 0) {
           const { getLogger } = await import('@neonpro/core-services')
@@ -187,4 +200,33 @@ export async function checkTablesExist(
     }, error)
     return false
   }
+}
+
+/**
+ * Sanitize data for AI processing by removing sensitive information
+ * and ensuring data privacy compliance
+ */
+export function sanitizeForAI<T extends Record<string, any>>(data: T): T {
+  const sensitiveFields = [
+    'cpf',
+    'rg',
+    'email',
+    'phone',
+    'address',
+    'medicalRecordNumber',
+    'insuranceNumber',
+    'creditCard',
+    'password',
+    'secret',
+  ]
+
+  const sanitized = { ...data }
+
+  for (const field of sensitiveFields) {
+    if (field in sanitized) {
+      delete sanitized[field]
+    }
+  }
+
+  return sanitized
 }

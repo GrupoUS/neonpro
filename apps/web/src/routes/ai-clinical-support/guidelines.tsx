@@ -44,7 +44,7 @@ function TreatmentGuidelinesPage() {
       procedureId={loaderData.procedureId}
       category={loaderData.category}
       searchQuery={loaderData.searchQuery}
-      onGuidelineSelect={async (guideline) => {
+      onGuidelineSelect={async guideline => {
         try {
           // Handle guideline selection (e.g., track usage, bookmark, etc.)
           console.warn('Guideline selected:', guideline)

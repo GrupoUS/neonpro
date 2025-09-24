@@ -37,8 +37,8 @@ export class AuditTrailCompatibility {
 
     // Check if this is an operationId query (the misuse pattern)
     if (
-      where.additionalInfo?.path?.includes('operationId')
-      && where.additionalInfo?.equals
+      where.additionalInfo?.path?.includes('operationId') &&
+      where.additionalInfo?.equals
     ) {
       const operationId = where.additionalInfo.equals
 

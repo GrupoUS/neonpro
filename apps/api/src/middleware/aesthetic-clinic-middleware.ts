@@ -487,10 +487,10 @@ export class AestheticClinicMiddleware {
 
   private getClientIP(c: Context): string {
     return (
-      c.req.header('cf-connecting-ip')
-      || c.req.header('x-forwarded-for')
-      || c.req.header('x-real-ip')
-      || 'unknown'
+      c.req.header('cf-connecting-ip') ||
+      c.req.header('x-forwarded-for') ||
+      c.req.header('x-real-ip') ||
+      'unknown'
     )
   }
 
@@ -508,9 +508,7 @@ export class AestheticClinicMiddleware {
     }
 
     const requests = this.requestCounts.get(key)!
-    const validRequests = requests.filter((time) =>
-      now - time < this.getRateLimitWindow(sensitivity)
-    )
+    const validRequests = requests.filter(time => now - time < this.getRateLimitWindow(sensitivity))
 
     if (validRequests.length >= this.getRateLimit(sensitivity)) {
       throw new HTTPException(429, {
@@ -682,7 +680,7 @@ export class AestheticClinicMiddleware {
 
     // Sanitize headers
     const headers = c.req.header()
-    Object.keys(headers).forEach((key) => {
+    Object.keys(headers).forEach(key => {
       const value = headers[key]
       if (value && typeof value === 'string') {
         // Remove potential malicious content

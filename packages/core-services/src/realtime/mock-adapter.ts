@@ -432,7 +432,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
   }
 
   private async delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms))
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   private throwRandomError(code: string): void {

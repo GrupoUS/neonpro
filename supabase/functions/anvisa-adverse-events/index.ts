@@ -19,8 +19,8 @@ import { corsHeaders } from '../_shared/cors.ts'
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 const ANVISA_API_KEY = Deno.env.get('ANVISA_API_KEY')
-const ANVISA_ENDPOINT = Deno.env.get('ANVISA_NOTIFICATION_ENDPOINT')
-  || 'https://notificacoes.anvisa.gov.br/api'
+const ANVISA_ENDPOINT = Deno.env.get('ANVISA_NOTIFICATION_ENDPOINT') ||
+  'https://notificacoes.anvisa.gov.br/api'
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
   throw new Error('Missing required Supabase environment variables')
@@ -153,37 +153,37 @@ function classifyRisk(
 ): RiskClassification {
   // Critical risks - immediate ANVISA notification required
   if (
-    severity === 'critical'
-    || eventType === AdverseEventType.DATA_LOSS
-    || eventType === AdverseEventType.SECURITY_VULNERABILITY
-    || eventType === AdverseEventType.UNAUTHORIZED_ACCESS
+    severity === 'critical' ||
+    eventType === AdverseEventType.DATA_LOSS ||
+    eventType === AdverseEventType.SECURITY_VULNERABILITY ||
+    eventType === AdverseEventType.UNAUTHORIZED_ACCESS
   ) {
     return RiskClassification.CRITICAL
   }
 
   // High risks - 24-48h notification required
   if (
-    severity === 'major'
-    || eventType === AdverseEventType.CALCULATION_ERROR
-    || eventType === AdverseEventType.ALERT_SYSTEM_FAILURE
-    || affectedFunctionality.includes('patient_safety')
+    severity === 'major' ||
+    eventType === AdverseEventType.CALCULATION_ERROR ||
+    eventType === AdverseEventType.ALERT_SYSTEM_FAILURE ||
+    affectedFunctionality.includes('patient_safety')
   ) {
     return RiskClassification.HIGH
   }
 
   // Moderate risks - 7 days notification
   if (
-    severity === 'moderate'
-    || eventType === AdverseEventType.DATA_INTEGRITY_ISSUE
-    || eventType === AdverseEventType.PERFORMANCE_DEGRADATION
+    severity === 'moderate' ||
+    eventType === AdverseEventType.DATA_INTEGRITY_ISSUE ||
+    eventType === AdverseEventType.PERFORMANCE_DEGRADATION
   ) {
     return RiskClassification.MODERATE
   }
 
   // Low risks - monthly reporting
   if (
-    eventType === AdverseEventType.USER_INTERFACE_ERROR
-    || eventType === AdverseEventType.INTEGRATION_FAILURE
+    eventType === AdverseEventType.USER_INTERFACE_ERROR ||
+    eventType === AdverseEventType.INTEGRATION_FAILURE
   ) {
     return RiskClassification.LOW
   }
@@ -482,7 +482,7 @@ function generateRequiredActions(
 /**
  * Main adverse event reporting handler
  */
-serve(async (req) => {
+serve(async req => {
   const startTime = Date.now()
 
   // Handle CORS preflight
@@ -502,11 +502,11 @@ serve(async (req) => {
 
     // Validate required fields
     if (
-      !eventData.eventType
-      || !eventData.severity
-      || !eventData.description
-      || !eventData.clinicId
-      || !eventData.userId
+      !eventData.eventType ||
+      !eventData.severity ||
+      !eventData.description ||
+      !eventData.clinicId ||
+      !eventData.userId
     ) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),

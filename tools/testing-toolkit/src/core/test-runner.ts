@@ -74,14 +74,14 @@ export class TestRunner {
       (sum, result) => sum + result.duration,
       0,
     )
-    const passedTests = this.results.filter((result) => result.passed)
+    const passedTests = this.results.filter(result => result.passed)
     const passRate = this.results.length > 0
       ? (passedTests.length / this.results.length) * 100
       : 0
 
     // Calculate average coverage (if available)
     const testsWithCoverage = this.results.filter(
-      (result) => result.coverage !== undefined,
+      result => result.coverage !== undefined,
     )
     const coverageRate = testsWithCoverage.length > 0
       ? testsWithCoverage.reduce(

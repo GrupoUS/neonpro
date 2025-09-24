@@ -191,11 +191,11 @@ POST_INSTALLATION_VALIDATION:
 
 ```typescript
 interface NeonProHealthcareComponentProps {
-  readonly clientId?: string;
-  readonly userRole: 'admin' | 'aesthetician' | 'coordinator';
-  readonly lgpdCompliant: boolean;
-  readonly variant?: 'primary' | 'secondary' | 'accent' | 'medical';
-  readonly onAuditLog?: (action: string, details?: Record<string, any>) => void;
+  readonly clientId?: string
+  readonly userRole: 'admin' | 'aesthetician' | 'coordinator'
+  readonly lgpdCompliant: boolean
+  readonly variant?: 'primary' | 'secondary' | 'accent' | 'medical'
+  readonly onAuditLog?: (action: string, details?: Record<string, any>) => void
 }
 
 // Enhanced Component Factory
@@ -204,27 +204,27 @@ function createHealthcareComponent<T extends React.ComponentType>(
   componentName: string,
 ) {
   return function NeonProEnhancedComponent(props: NeonProHealthcareComponentProps) {
-    const { userRole, lgpdCompliant, variant = 'primary', onAuditLog } = props;
+    const { userRole, lgpdCompliant, variant = 'primary', onAuditLog } = props
 
     const handleInteraction = useCallback((action: string, details?: any) => {
       onAuditLog?.(`${componentName}_${action}`, {
         userRole,
         timestamp: new Date().toISOString(),
         ...details,
-      });
-    }, [onAuditLog, userRole]);
+      })
+    }, [onAuditLog, userRole])
 
     return (
       <ShadcnComponent
         {...props}
         className={cn(props.className, getNeonProVariantClasses(variant))}
         onClick={(e: React.MouseEvent) => {
-          handleInteraction('click', { target: e.currentTarget.tagName });
-          props.onClick?.(e);
+          handleInteraction('click', { target: e.currentTarget.tagName })
+          props.onClick?.(e)
         }}
       />
-    );
-  };
+    )
+  }
 }
 ```
 

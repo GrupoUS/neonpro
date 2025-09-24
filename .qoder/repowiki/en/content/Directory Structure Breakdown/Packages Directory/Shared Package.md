@@ -416,14 +416,14 @@ function PatientList() {
     {
       tableName: 'patients',
       realtimeOptions: {
-        onInsert: (patient) => console.log('New patient added:', patient),
-        onUpdate: (patient) => console.log('Patient updated:', patient),
+        onInsert: patient => console.log('New patient added:', patient),
+        onUpdate: patient => console.log('Patient updated:', patient),
       },
     },
   )
 
   if (isLoading) return <div>Loading...</div>
-  return <ul>{data?.map((patient) => <li key={patient.id}>{patient.name}</li>)}</ul>
+  return <ul>{data?.map(patient => <li key={patient.id}>{patient.name}</li>)}</ul>
 }
 
 // Example: Route protection

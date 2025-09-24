@@ -5,10 +5,10 @@
  */
 
 import type {
+  AestheticAppointment,
   AestheticProcedureDetails,
-  RecoveryPlan,
   FollowUpAppointment,
-  AestheticAppointment
+  RecoveryPlan,
 } from './enhanced-aesthetic-scheduling-service'
 
 export interface RecoveryAssessment {
@@ -33,21 +33,21 @@ export class RecoveryPlanningService {
    */
   createRecoveryPlan(
     procedures: AestheticProcedureDetails[],
-    _appointments: AestheticAppointment[]
+    _appointments: AestheticAppointment[],
   ): RecoveryPlan {
     if (procedures.length === 0) {
       return this.createEmptyRecoveryPlan()
     }
 
     // Find the maximum recovery period
-    const maxRecovery = Math.max(...procedures.map((p) => p.recoveryPeriodDays))
-    
+    const maxRecovery = Math.max(...procedures.map(p => p.recoveryPeriodDays))
+
     // Determine overall care level
     const careLevel = this.determineCareLevel(procedures)
 
     // Generate combined recovery instructions
     const dailyInstructions = this.generateDailyInstructions(procedures, careLevel)
-    
+
     // Create follow-up appointments
     const followUpAppointments = this.createFollowUpSchedule(procedures, maxRecovery)
 
@@ -58,7 +58,7 @@ export class RecoveryPlanningService {
     const expectedOutcomes = this.generateExpectedOutcomes(procedures)
 
     return {
-      procedureName: procedures.map((p) => p.name).join(' + '),
+      procedureName: procedures.map(p => p.name).join(' + '),
       recoveryPeriodDays: maxRecovery,
       dailyInstructions,
       followUpAppointments,
@@ -72,25 +72,27 @@ export class RecoveryPlanningService {
       warningSigns: this.getWarningSigns(procedures),
       risks: this.getRiskFactors(procedures),
       activityRestrictions: restrictions,
-      careInstructions: dailyInstructions
+      careInstructions: dailyInstructions,
     }
   }
 
   /**
    * Determine recovery care level based on procedures
    */
-  private determineCareLevel(procedures: AestheticProcedureDetails[]): 'low' | 'medium' | 'high' | 'intensive' {
+  private determineCareLevel(
+    procedures: AestheticProcedureDetails[],
+  ): 'low' | 'medium' | 'high' | 'intensive' {
     const severityMap = {
       surgical: 'intensive',
       injectable: 'medium',
       laser: 'high',
       body: 'medium',
       facial: 'low',
-      combination: 'intensive'
+      combination: 'intensive',
     }
 
     const careLevels = procedures.map(p => severityMap[p.procedureType])
-    
+
     // Return the highest care level required
     if (careLevels.includes('intensive')) return 'intensive'
     if (careLevels.includes('high')) return 'high'
@@ -103,10 +105,10 @@ export class RecoveryPlanningService {
    */
   private generateDailyInstructions(
     procedures: AestheticProcedureDetails[],
-    careLevel: 'low' | 'medium' | 'high' | 'intensive'
+    careLevel: 'low' | 'medium' | 'high' | 'intensive',
   ): string[] {
     const instructions: string[] = []
-    
+
     // General instructions for all procedures
     instructions.push('Keep treated area clean and moisturized')
     instructions.push('Avoid sun exposure on treated areas')
@@ -149,7 +151,7 @@ export class RecoveryPlanningService {
    */
   private createFollowUpSchedule(
     procedures: AestheticProcedureDetails[],
-    maxRecovery: number
+    maxRecovery: number,
   ): FollowUpAppointment[] {
     const followUps: FollowUpAppointment[] = []
 
@@ -158,7 +160,7 @@ export class RecoveryPlanningService {
       dayNumber: 7,
       purpose: 'Initial healing assessment',
       durationMinutes: 15,
-      inPerson: true
+      inPerson: true,
     })
 
     // Progress check (2-4 weeks based on recovery period)
@@ -167,7 +169,7 @@ export class RecoveryPlanningService {
       dayNumber: progressCheckDay,
       purpose: 'Progress evaluation and adjustment',
       durationMinutes: 20,
-      inPerson: true
+      inPerson: true,
     })
 
     // Final assessment (based on recovery period)
@@ -176,7 +178,7 @@ export class RecoveryPlanningService {
       dayNumber: finalAssessmentDay,
       purpose: 'Final results assessment',
       durationMinutes: 30,
-      inPerson: true
+      inPerson: true,
     })
 
     // Long-term follow-up for surgical procedures
@@ -185,7 +187,7 @@ export class RecoveryPlanningService {
         dayNumber: 90,
         purpose: 'Long-term results evaluation',
         durationMinutes: 45,
-        inPerson: true
+        inPerson: true,
       })
     }
 
@@ -197,7 +199,7 @@ export class RecoveryPlanningService {
    */
   private generateActivityRestrictions(procedures: AestheticProcedureDetails[]): string[] {
     const restrictions: string[] = []
-    
+
     const hasSurgical = procedures.some(p => p.procedureType === 'surgical')
     const hasInjectable = procedures.some(p => p.procedureType === 'injectable')
     const hasLaser = procedures.some(p => p.procedureType === 'laser')
@@ -234,9 +236,9 @@ export class RecoveryPlanningService {
    */
   private generateExpectedOutcomes(procedures: AestheticProcedureDetails[]): string[] {
     const outcomes: string[] = []
-    
+
     const maxRecovery = Math.max(...procedures.map(p => p.recoveryPeriodDays))
-    
+
     outcomes.push(`Initial healing: 1-2 weeks`)
     outcomes.push(`Significant improvement: ${Math.ceil(maxRecovery / 2)}-${maxRecovery} days`)
     outcomes.push(`Final results: ${maxRecovery}-${Math.ceil(maxRecovery * 1.5)} days`)
@@ -268,7 +270,7 @@ export class RecoveryPlanningService {
    */
   private createRecoveryPhases(
     _procedures: AestheticProcedureDetails[],
-    maxRecovery: number
+    maxRecovery: number,
   ): Array<{
     phase: string
     days: number
@@ -283,9 +285,9 @@ export class RecoveryPlanningService {
           'Rest and avoid activity',
           'Apply cold compresses',
           'Take prescribed medications',
-          'Monitor for complications'
+          'Monitor for complications',
         ],
-        milestones: ['Swelling begins to subside', 'Initial healing starts']
+        milestones: ['Swelling begins to subside', 'Initial healing starts'],
       },
       {
         phase: 'Early Recovery',
@@ -293,9 +295,9 @@ export class RecoveryPlanningService {
         instructions: [
           'Gradually increase activity',
           'Follow skincare routine',
-          'Attend follow-up appointments'
+          'Attend follow-up appointments',
         ],
-        milestones: ['Visible improvement begins', 'Most side effects resolve']
+        milestones: ['Visible improvement begins', 'Most side effects resolve'],
       },
       {
         phase: 'Active Recovery',
@@ -303,10 +305,10 @@ export class RecoveryPlanningService {
         instructions: [
           'Resume normal activities',
           'Use recommended products',
-          'Protect from sun exposure'
+          'Protect from sun exposure',
         ],
-        milestones: ['Significant improvement visible', 'Final results developing']
-      }
+        milestones: ['Significant improvement visible', 'Final results developing'],
+      },
     ]
   }
 
@@ -321,7 +323,7 @@ export class RecoveryPlanningService {
       'Pus or unusual discharge',
       'Numbness or tingling that persists',
       'Difficulty breathing or swallowing',
-      'Chest pain or palpitations'
+      'Chest pain or palpitations',
     ]
 
     // Procedure-specific warning signs
@@ -343,7 +345,7 @@ export class RecoveryPlanningService {
    */
   private getRiskFactors(procedures: AestheticProcedureDetails[]): string[] {
     const riskFactors: string[] = []
-    
+
     for (const procedure of procedures) {
       if (procedure.procedureType === 'surgical') {
         riskFactors.push('Infection', 'Bleeding', 'Scarring', 'Anesthesia risks')
@@ -366,7 +368,7 @@ export class RecoveryPlanningService {
     return [
       'Emergency Hotline: +55 11 9999-9999',
       'Clinic Reception: +55 11 8888-8888',
-      'After Hours Emergency: +55 11 7777-7777'
+      'After Hours Emergency: +55 11 7777-7777',
     ]
   }
 
@@ -381,7 +383,7 @@ export class RecoveryPlanningService {
       followUpAppointments: [],
       emergencyContacts: [],
       restrictions: [],
-      expectedOutcomes: []
+      expectedOutcomes: [],
     }
   }
 
@@ -391,12 +393,12 @@ export class RecoveryPlanningService {
   updateRecoveryPlanForPatient(
     plan: RecoveryPlan,
     patientId: string,
-    customNotes?: string
+    customNotes?: string,
   ): RecoveryPlan {
     return {
       ...plan,
       patientId,
-      customNotes: customNotes || plan.customNotes
+      customNotes: customNotes || plan.customNotes,
     }
   }
 

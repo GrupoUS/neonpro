@@ -85,10 +85,10 @@ export class ErrorMapper {
 
     // Permission/Authorization errors
     if (
-      errorName.includes('permission')
-      || errorName.includes('auth')
-      || errorMessage.includes('unauthorized')
-      || errorMessage.includes('forbidden')
+      errorName.includes('permission') ||
+      errorName.includes('auth') ||
+      errorMessage.includes('unauthorized') ||
+      errorMessage.includes('forbidden')
     ) {
       return {
         code: 'PERMISSION_DENIED',
@@ -127,10 +127,10 @@ export class ErrorMapper {
 
     // AI/LLM service errors
     if (
-      errorMessage.includes('openai')
-      || errorMessage.includes('ai service')
-      || errorMessage.includes('model')
-      || errorMessage.includes('llm')
+      errorMessage.includes('openai') ||
+      errorMessage.includes('ai service') ||
+      errorMessage.includes('model') ||
+      errorMessage.includes('llm')
     ) {
       return {
         code: 'AI_SERVICE_ERROR',
@@ -151,10 +151,10 @@ export class ErrorMapper {
 
     // Database/Network errors
     if (
-      errorMessage.includes('database')
-      || errorMessage.includes('connection')
-      || errorMessage.includes('network')
-      || errorMessage.includes('timeout')
+      errorMessage.includes('database') ||
+      errorMessage.includes('connection') ||
+      errorMessage.includes('network') ||
+      errorMessage.includes('timeout')
     ) {
       return {
         code: 'SERVICE_UNAVAILABLE',
@@ -174,9 +174,9 @@ export class ErrorMapper {
 
     // PII/Data protection errors
     if (
-      errorMessage.includes('pii')
-      || errorMessage.includes('redaction')
-      || errorMessage.includes('sensitive')
+      errorMessage.includes('pii') ||
+      errorMessage.includes('redaction') ||
+      errorMessage.includes('sensitive')
     ) {
       return {
         code: 'DATA_PROTECTION_ERROR',
@@ -281,9 +281,9 @@ export class ErrorMapper {
       },
       metadata: mapped.metadata,
       // Include stack trace only for server errors
-      ...(mapped.statusCode >= 500
-        && error instanceof Error
-        && { stack: error.stack }),
+      ...(mapped.statusCode >= 500 &&
+        error instanceof Error &&
+        { stack: error.stack }),
     }
   }
 }

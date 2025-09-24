@@ -55,11 +55,11 @@ export function initializeSentry(): void {
 
       if (event.contexts?.trace?.data) {
         const _data = event.contexts.trace.data
-        Object.keys(data).forEach((key) => {
+        Object.keys(data).forEach(key => {
           if (
-            key.toLowerCase().includes('patient')
-            || key.toLowerCase().includes('cpf')
-            || key.toLowerCase().includes('health')
+            key.toLowerCase().includes('patient') ||
+            key.toLowerCase().includes('cpf') ||
+            key.toLowerCase().includes('health')
           ) {
             delete data[key]
           }
@@ -85,12 +85,12 @@ export function initializeSentry(): void {
     beforeBreadcrumb(breadcrumb) {
       // Filter out sensitive data from breadcrumbs
       if (breadcrumb.data) {
-        Object.keys(breadcrumb.data).forEach((key) => {
+        Object.keys(breadcrumb.data).forEach(key => {
           if (
-            key.toLowerCase().includes('password')
-            || key.toLowerCase().includes('token')
-            || key.toLowerCase().includes('cpf')
-            || key.toLowerCase().includes('patient')
+            key.toLowerCase().includes('password') ||
+            key.toLowerCase().includes('token') ||
+            key.toLowerCase().includes('cpf') ||
+            key.toLowerCase().includes('patient')
           ) {
             breadcrumb.data![key] = '[Redacted]'
           }
@@ -198,9 +198,9 @@ export function extractHealthcareContext(
   additionalContext?: Record<string, any>,
 ): HealthcareErrorContext {
   const context: HealthcareErrorContext = {
-    requestId: request?.headers?.['x-request-id']
-      || request?.headers?.['x-trace-id']
-      || undefined,
+    requestId: request?.headers?.['x-request-id'] ||
+      request?.headers?.['x-trace-id'] ||
+      undefined,
     endpoint: request?.url ? sanitizeUrl(request.url) : undefined,
     method: request?.method,
     timestamp: new Date(),
@@ -216,12 +216,12 @@ export function extractHealthcareContext(
 
   // Add additional non-sensitive context
   if (additionalContext) {
-    Object.keys(additionalContext).forEach((key) => {
+    Object.keys(additionalContext).forEach(key => {
       if (
-        !key.toLowerCase().includes('patient')
-        && !key.toLowerCase().includes('cpf')
-        && !key.toLowerCase().includes('password')
-        && !key.toLowerCase().includes('token')
+        !key.toLowerCase().includes('patient') &&
+        !key.toLowerCase().includes('cpf') &&
+        !key.toLowerCase().includes('password') &&
+        !key.toLowerCase().includes('token')
       ) {
         ;(context as any)[key] = additionalContext[key]
       }
@@ -246,7 +246,7 @@ function sanitizeUrl(url: string): string {
       'health_data',
       'password',
     ]
-    sensitiveParams.forEach((param) => {
+    sensitiveParams.forEach(param => {
       urlObj.searchParams.delete(param)
     })
 

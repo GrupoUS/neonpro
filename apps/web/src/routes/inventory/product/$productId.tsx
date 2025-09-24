@@ -301,7 +301,7 @@ function ProductDetail() {
                   Lotes Ativos
                 </dt>
                 <dd className='text-2xl font-semibold text-gray-900'>
-                  {batches.filter((b) => b.status === 'active').length}
+                  {batches.filter(b => b.status === 'active').length}
                 </dd>
               </dl>
             </div>
@@ -462,7 +462,7 @@ function ProductDetail() {
                 </Link>
               </div>
               <div className='divide-y divide-gray-200'>
-                {batches.map((batch) => (
+                {batches.map(batch => (
                   <div key={batch.id} className='py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center space-x-4'>
@@ -511,7 +511,7 @@ function ProductDetail() {
             <div className='space-y-4'>
               <h3 className='text-lg font-medium text-gray-900'>Histórico de Movimentações</h3>
               <div className='divide-y divide-gray-200'>
-                {transactions.map((transaction) => (
+                {transactions.map(transaction => (
                   <div key={transaction.id} className='py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center space-x-4'>

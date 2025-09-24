@@ -165,8 +165,8 @@ export class CopilotKitSessionIntegration {
           codeExecution: true,
           webSearch: true,
           fileAnalysis: true,
-          aestheticConsultation: options.enableAestheticFeatures
-            ?? this.config.enableAestheticFeatures,
+          aestheticConsultation: options.enableAestheticFeatures ??
+            this.config.enableAestheticFeatures,
           photoAnalysis: options.enableAestheticFeatures ?? this.config.enableAestheticFeatures,
           treatmentPlanning: options.enableAestheticFeatures ?? this.config.enableAestheticFeatures,
         },
@@ -358,7 +358,7 @@ export class CopilotKitSessionIntegration {
       'paciente',
     ]
 
-    const hasAestheticContent = aestheticKeywords.some((keyword) =>
+    const hasAestheticContent = aestheticKeywords.some(keyword =>
       message.content.toLowerCase().includes(keyword)
     )
 
@@ -511,7 +511,7 @@ export class CopilotKitSessionIntegration {
         console.warn(`CopilotKit WebSocket connected for session ${sessionId}`)
       }
 
-      ws.onmessage = async (event) => {
+      ws.onmessage = async event => {
         try {
           const message = JSON.parse(event.data)
           await this.handleRealtimeMessage(sessionId, message)
@@ -525,7 +525,7 @@ export class CopilotKitSessionIntegration {
         console.warn(`CopilotKit WebSocket disconnected for session ${sessionId}`)
       }
 
-      ws.onerror = (error) => {
+      ws.onerror = error => {
         console.error('CopilotKit WebSocket error:', error)
         this.activeConnections.delete(sessionId)
       }
@@ -757,8 +757,8 @@ export class CopilotKitSessionIntegration {
     sessionState.performanceMetrics = {
       averageResponseTime: avgTime,
       totalProcessingTime: totalTime,
-      requestsPerSecond: sessionState.messageCount
-        / ((Date.now() - sessionState.connectedAt.getTime()) / 1000),
+      requestsPerSecond: sessionState.messageCount /
+        ((Date.now() - sessionState.connectedAt.getTime()) / 1000),
     }
 
     this.sessionStates.set(sessionId, sessionState)

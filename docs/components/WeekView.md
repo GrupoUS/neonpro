@@ -50,7 +50,7 @@ function WeeklySchedule() {
       allDay: false,
       color: 'primary',
     }
-    setEvents((prev) => [...prev, newEvent])
+    setEvents(prev => [...prev, newEvent])
   }
 
   return (
@@ -168,16 +168,16 @@ interface PositionedEvent {
 ```typescript
 // Calculate position for overlapping events
 const calculateEventPositions = (events: CalendarEvent[]) => {
-  const positionedEvents = events.map((event) => {
+  const positionedEvents = events.map(event => {
     const startMinutes = event.start.getHours() * 60 + event.start.getMinutes()
     const endMinutes = event.end.getHours() * 60 + event.end.getMinutes()
     const duration = endMinutes - startMinutes
 
     // Find overlapping events
     const overlapping = events.filter(
-      (other) =>
-        other.id !== event.id
-        && !(other.end <= event.start || other.start >= event.end),
+      other =>
+        other.id !== event.id &&
+        !(other.end <= event.start || other.start >= event.end),
     )
 
     // Calculate width based on number of overlapping events
@@ -275,7 +275,7 @@ const timeSlots = Array.from({ length: 24 }, (_, hour) => ({
           aria-label={`${format(day.date, 'EEEE')} at ${slot.label}`}
           tabIndex={0}
           onClick={() => handleTimeSlotClick(day.date, slot.time)}
-          onKeyDown={(e) => handleKeydown(e, day.date, slot.time)}
+          onKeyDown={e => handleKeydown(e, day.date, slot.time)}
         >
           {/* Event content */}
         </div>
@@ -394,7 +394,7 @@ const weekEvents = useMemo(() => {
   const weekEnd = endOfWeek(currentDate)
 
   return events.filter(
-    (event) => event.start >= weekStart && event.end <= weekEnd,
+    event => event.start >= weekStart && event.end <= weekEnd,
   )
 }, [events, currentDate])
 ```
@@ -475,7 +475,7 @@ function WeekViewWithRedux() {
       currentDate={currentDate}
       events={events}
       loading={loading}
-      onEventSelect={(event) => dispatch(selectEvent(event))}
+      onEventSelect={event => dispatch(selectEvent(event))}
       onEventCreate={handleEventCreate}
     />
   )

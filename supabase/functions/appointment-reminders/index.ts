@@ -537,7 +537,7 @@ async function logReminderDelivery(
 /**
  * Main appointment reminder handler
  */
-serve(async (req) => {
+serve(async req => {
   const startTime = Date.now()
 
   // Handle CORS preflight
@@ -557,9 +557,9 @@ serve(async (req) => {
 
     // Validate required fields
     if (
-      !requestData.appointmentId
-      || !requestData.patientId
-      || !requestData.clinicId
+      !requestData.appointmentId ||
+      !requestData.patientId ||
+      !requestData.clinicId
     ) {
       return new Response(
         JSON.stringify({ error: 'Missing required fields' }),
@@ -627,15 +627,15 @@ serve(async (req) => {
     }
 
     // Send reminders through preferred channels
-    const channels = requestData.preferredChannels.filter((channel) =>
+    const channels = requestData.preferredChannels.filter(channel =>
       patientPrefs.allowedChannels.includes(channel)
     )
 
     // WhatsApp delivery
     if (
-      channels.includes('whatsapp')
-      && patientPrefs.whatsappConsent
-      && patientPrefs.phone
+      channels.includes('whatsapp') &&
+      patientPrefs.whatsappConsent &&
+      patientPrefs.phone
     ) {
       const message = replaceTemplateVariables(
         template.whatsapp?.message || '',
@@ -704,7 +704,7 @@ serve(async (req) => {
 
     const response: ReminderResponse = {
       success: Object.values(deliveryStatus).some(
-        (status) => status.status === 'sent',
+        status => status.status === 'sent',
       ),
       reminderJobId,
       deliveryStatus,

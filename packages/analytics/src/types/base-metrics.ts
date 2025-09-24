@@ -323,7 +323,7 @@ export type MetricUpdate = Partial<
  * Type guard to check if a metric is a healthcare metric
  */
 export function isHealthcareMetric(metric: BaseMetric): boolean {
-  return metric.complianceFrameworks.some((framework) =>
+  return metric.complianceFrameworks.some(framework =>
     ['LGPD', 'ANVISA', 'CFM', 'HIPAA'].includes(framework)
   )
 }
@@ -333,8 +333,8 @@ export function isHealthcareMetric(metric: BaseMetric): boolean {
  */
 export function requiresComplianceAudit(metric: BaseMetric): boolean {
   return (
-    isHealthcareMetric(metric)
-    && ['HIGH', 'CRITICAL'].includes(metric.riskLevel)
+    isHealthcareMetric(metric) &&
+    ['HIGH', 'CRITICAL'].includes(metric.riskLevel)
   )
 }
 
@@ -521,7 +521,7 @@ export function aggregateMetrics(
 ): number {
   if (metrics.length === 0) return 0
 
-  const values = metrics.map((m) => m.value)
+  const values = metrics.map(m => m.value)
 
   switch (aggregation) {
     case 'sum':

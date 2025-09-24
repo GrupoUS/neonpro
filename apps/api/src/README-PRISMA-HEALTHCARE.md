@@ -84,7 +84,7 @@ app.use(
 )
 
 // Use in route handlers
-app.get('/patients', async (c) => {
+app.get('/patients', async c => {
   const { prisma } = getHealthcareContext(c)
   const patients = await prisma.findPatientsInClinic(c.get('clinicId'))
   return c.json(patients)

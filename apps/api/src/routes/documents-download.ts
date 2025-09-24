@@ -52,7 +52,7 @@ const app = new Hono<DocumentDownloadContext>()
  * GET /api/v1/patient-documents/{documentId}/download
  * Download a patient document securely
  */
-app.get('/:documentId/download', requireAuth(), async (c) => {
+app.get('/:documentId/download', requireAuth(), async c => {
   try {
     // Parse and validate parameters
     const rawParams = {
@@ -111,9 +111,9 @@ app.get('/:documentId/download', requireAuth(), async (c) => {
         file_size: document.file_size,
         disposition,
         preview,
-        ip_address: c.req.header('x-forwarded-for')
-          || c.req.header('x-real-ip')
-          || 'unknown',
+        ip_address: c.req.header('x-forwarded-for') ||
+          c.req.header('x-real-ip') ||
+          'unknown',
         user_agent: c.req.header('user-agent') || 'unknown',
       },
     })
@@ -222,7 +222,7 @@ app.get('/:documentId/download', requireAuth(), async (c) => {
  * GET /api/v1/patient-documents/{documentId}/preview
  * Get document preview/thumbnail
  */
-app.get('/:documentId/preview', requireAuth(), async (c) => {
+app.get('/:documentId/preview', requireAuth(), async c => {
   try {
     const documentId = c.req.param('documentId')
     const user = c.get('user')

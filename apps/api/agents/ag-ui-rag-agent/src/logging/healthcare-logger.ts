@@ -98,7 +98,7 @@ export class HealthcareLogger {
 
     try {
       const { error } = await this.supabase.from('audit_logs').insert(
-        logsToFlush.map((log) => ({
+        logsToFlush.map(log => ({
           action: log.action,
           resource_type: log.resource_type,
           resource_id: log.resource_id,
@@ -418,7 +418,7 @@ export class HealthcareLogger {
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.sanitizeData(item))
+      return data.map(item => this.sanitizeData(item))
     }
 
     const sanitized = { ...data }
@@ -466,9 +466,9 @@ export class HealthcareLogger {
     if (!domain) return '[INVALID_EMAIL]'
 
     const maskedUsername = username.length > 2
-      ? username[0]
-        + '*'.repeat(username.length - 2)
-        + username[username.length - 1]
+      ? username[0] +
+        '*'.repeat(username.length - 2) +
+        username[username.length - 1]
       : '***'
 
     return `${maskedUsername}@${domain}`

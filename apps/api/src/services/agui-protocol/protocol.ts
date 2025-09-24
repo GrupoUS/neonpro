@@ -74,9 +74,9 @@ export class AguiProtocol extends EventEmitter {
       this.connections.set(connectionId, connection)
 
       // Set up message handler
-      ws.on('message', (data) => this.handleMessage(connectionId, data))
+      ws.on('message', data => this.handleMessage(connectionId, data))
       ws.on('close', () => this.handleDisconnect(connectionId))
-      ws.on('error', (error) => this.handleError(connectionId, error))
+      ws.on('error', error => this.handleError(connectionId, error))
 
       // Send hello message
       this.sendHello(connection)
@@ -161,10 +161,10 @@ export class AguiProtocol extends EventEmitter {
 
       // Basic structure validation
       if (
-        !message.id
-        || !message.type
-        || !message.timestamp
-        || !message.sessionId
+        !message.id ||
+        !message.type ||
+        !message.timestamp ||
+        !message.sessionId
       ) {
         return null
       }
@@ -203,9 +203,9 @@ export class AguiProtocol extends EventEmitter {
         break
       case 'feedback':
         if (
-          typeof message.payload?.rating !== 'number'
-          || message.payload.rating < 1
-          || message.payload.rating > 5
+          typeof message.payload?.rating !== 'number' ||
+          message.payload.rating < 1 ||
+          message.payload.rating > 5
         ) {
           return 'Feedback rating must be a number between 1 and 5'
         }
@@ -676,8 +676,8 @@ export class AguiProtocol extends EventEmitter {
     // Clean up inactive connections
     for (const [connectionId, connection] of this.connections.entries()) {
       if (
-        now - connection.lastActivity.getTime()
-          > this.config.connectionTimeout
+        now - connection.lastActivity.getTime() >
+          this.config.connectionTimeout
       ) {
         connection.ws.close(1000, 'Connection timeout')
         this.connections.delete(connectionId)
@@ -690,9 +690,9 @@ export class AguiProtocol extends EventEmitter {
    */
   private getClientIp(_request: any): string {
     return (
-      request.headers['x-forwarded-for']
-      || _request.connection.remoteAddress
-      || _request.socket.remoteAddress
+      request.headers['x-forwarded-for'] ||
+      _request.connection.remoteAddress ||
+      _request.socket.remoteAddress
     )
   }
 

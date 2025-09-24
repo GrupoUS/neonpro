@@ -52,7 +52,7 @@ Este guia documenta as características de acessibilidade implementadas nos comp
 <AccessibleChatMessage
   message={message}
   isUser={false}
-  onAction={(action) => console.log(action)}
+  onAction={action => console.log(action)}
 />
 ```
 
@@ -140,7 +140,7 @@ test('renders with proper ARIA attributes', () => {
 test('supports keyboard navigation', () => {
   const { container } = render(<AccessibleChatMessage message={mockMessage} />)
   const buttons = container.querySelectorAll('button')
-  buttons.forEach((button) => {
+  buttons.forEach(button => {
     expect(button).toHaveAttribute('tabindex', '0')
   })
 })

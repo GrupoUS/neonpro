@@ -175,7 +175,7 @@ export class TestSuiteCoordinator {
       const duration = performance.now() - startTime
       const overallMetrics = this.calculateOverallMetrics(categoryResults)
       const success = Object.values(categoryResults).every(
-        (result) => result.success,
+        result => result.success,
       )
 
       logger.constitutional(
@@ -309,7 +309,7 @@ export class TestSuiteCoordinator {
 
     // Execute categories in parallel
     const results = await Promise.all(
-      categories.map((category) =>
+      categories.map(category =>
         this.executeCategoryTests(category, groupedCommands[category], options)
       ),
     )
@@ -455,7 +455,7 @@ export class TestSuiteCoordinator {
     const commandMultiplier = commands.length * 0.5
     const totalTime = baseTime + commandMultiplier * 1000
 
-    await new Promise((resolve) => setTimeout(resolve, totalTime))
+    await new Promise(resolve => setTimeout(resolve, totalTime))
   }
 
   /**
@@ -497,7 +497,7 @@ export class TestSuiteCoordinator {
     categoryResults: Record<TestCategory, CategoryTestResult>,
   ) {
     const allMetrics = Object.values(categoryResults).map(
-      (result) => result.metrics,
+      result => result.metrics,
     )
 
     const totalTests = allMetrics.reduce(
@@ -518,8 +518,8 @@ export class TestSuiteCoordinator {
     )
 
     const coverage = allMetrics.length > 0
-      ? allMetrics.reduce((sum, metrics) => sum + metrics.coverage, 0)
-        / allMetrics.length
+      ? allMetrics.reduce((sum, metrics) => sum + metrics.coverage, 0) /
+        allMetrics.length
       : 0
 
     return {

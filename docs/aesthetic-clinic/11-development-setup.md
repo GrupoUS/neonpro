@@ -678,8 +678,8 @@ import { app } from '../src/app'
 export const testPrisma = new PrismaClient({
   datasources: {
     db: {
-      url: process.env.TEST_DATABASE_URL
-        || 'postgresql://postgres:postgres@localhost:5432/neonpro_test',
+      url: process.env.TEST_DATABASE_URL ||
+        'postgresql://postgres:postgres@localhost:5432/neonpro_test',
     },
   },
 })

@@ -111,8 +111,8 @@ export class PatientIdentityService {
       if (enableBiometric) {
         biometricVerification = await this.performBiometricVerification(patientId)
         if (
-          !biometricVerification.faceMatch
-          || !biometricVerification.livenessDetected
+          !biometricVerification.faceMatch ||
+          !biometricVerification.livenessDetected
         ) {
           fraudIndicators.push('Biometric verification failed')
           riskScore += 30
@@ -307,15 +307,15 @@ export class PatientIdentityService {
     documents: PatientIdentityDocument[],
     biometric?: BiometricVerification,
   ): 'basic' | 'enhanced' | 'biometric' {
-    const verifiedDocs = documents.filter((doc) => doc.verified)
+    const verifiedDocs = documents.filter(doc => doc.verified)
 
     if (biometric && biometric.faceMatch && biometric.livenessDetected) {
       return 'biometric'
     }
 
     if (
-      verifiedDocs.length >= 2
-      && verifiedDocs.some((doc) => doc.type === 'cpf')
+      verifiedDocs.length >= 2 &&
+      verifiedDocs.some(doc => doc.type === 'cpf')
     ) {
       return 'enhanced'
     }
@@ -333,13 +333,13 @@ export class PatientIdentityService {
     const inconsistencies: string[] = []
 
     // Check CPF consistency
-    const cpfDoc = documents.find((doc) => doc.type === 'cpf' && doc.verified)
+    const cpfDoc = documents.find(doc => doc.type === 'cpf' && doc.verified)
     if (cpfDoc && patient.cpf && patient.cpf !== cpfDoc.number) {
       inconsistencies.push('CPF mismatch between document and patient record')
     }
 
     // Check RG consistency
-    const rgDoc = documents.find((doc) => doc.type === 'rg' && doc.verified)
+    const rgDoc = documents.find(doc => doc.type === 'rg' && doc.verified)
     if (rgDoc && patient.rg && patient.rg !== rgDoc.number) {
       inconsistencies.push('RG mismatch between document and patient record')
     }
@@ -357,11 +357,11 @@ export class PatientIdentityService {
    */
   private checkCFMCompliance(documents: PatientIdentityDocument[]): boolean {
     // CFM Resolution 2314/2022 Article 6 requires secure and reliable identification
-    const verifiedDocs = documents.filter((doc) => doc.verified)
+    const verifiedDocs = documents.filter(doc => doc.verified)
 
     // Must have at least one verified primary document (CPF or RG)
     const hasPrimaryDoc = verifiedDocs.some(
-      (doc) => doc.type === 'cpf' || doc.type === 'rg',
+      doc => doc.type === 'cpf' || doc.type === 'rg',
     )
 
     // Must have adequate verification level
@@ -664,8 +664,8 @@ export class PatientIdentityService {
 
       // Validate CRM matches
       if (
-        physician.crm_number !== crmNumber
-        || physician.crm_state !== crmState
+        physician.crm_number !== crmNumber ||
+        physician.crm_state !== crmState
       ) {
         errors.push('CRM number or state mismatch')
       } else {

@@ -47,7 +47,7 @@ async function testParallelExecution() {
     console.error(`✅ Optimized ${agents.length} agents for parallel execution`)
     console.error(`   - Input agents: ${agents.join(', ')}`)
     console.error(
-      `   - Optimized agents: ${optimized.map((a) => a.name).join(', ')}`,
+      `   - Optimized agents: ${optimized.map(a => a.name).join(', ')}`,
     )
 
     const groups = agentRegistry.getAgentCoordinationGroups(agents, 'parallel')
@@ -72,7 +72,7 @@ async function testParallelExecution() {
     for (const pattern of patterns) {
       const workflows = workflowEngine
         .getAvailableWorkflows()
-        .filter((w) => w.includes(pattern))
+        .filter(w => w.includes(pattern))
       console.log(`   - ${pattern}: ${workflows.length} workflows`)
     }
 
@@ -151,14 +151,14 @@ async function testParallelExecution() {
       totalAgents: agentRegistry.getAllAgents().length,
       healthcareAgents: agentRegistry
         .getAllAgents()
-        .filter((a) => a.healthcareCompliance).length,
+        .filter(a => a.healthcareCompliance).length,
       parallelCapableAgents: agentRegistry
         .getAllAgents()
         .filter(
-          (a) =>
-            a.capabilities.includes('code-analysis')
-            || a.capabilities.includes('security-audit')
-            || a.capabilities.includes('architecture-review'),
+          a =>
+            a.capabilities.includes('code-analysis') ||
+            a.capabilities.includes('security-audit') ||
+            a.capabilities.includes('architecture-review'),
         ).length,
     }
 
@@ -202,7 +202,7 @@ async function testParallelExecution() {
 
 // Run the tests
 testParallelExecution()
-  .then((success) => {
+  .then(success => {
     if (success) {
       console.log('\n✨ Test Suite: PASSED')
       process.exit(0)
@@ -211,7 +211,7 @@ testParallelExecution()
       process.exit(1)
     }
   })
-  .catch((error) => {
+  .catch(error => {
     console.error('💥 Test Suite crashed:', error)
     process.exit(1)
   })

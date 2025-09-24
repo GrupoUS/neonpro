@@ -55,7 +55,7 @@ const PatientAssessmentSchema = z.object({
     currency: z.enum(['BRL', 'USD', 'EUR'], {
       errorMap: () => ({ message: 'Moeda inválida' }),
     }),
-  }).refine((data) => data.max >= data.min, {
+  }).refine(data => data.max >= data.min, {
     message: 'Valor máximo deve ser maior ou igual ao mínimo',
     path: ['max'],
   }),
@@ -446,7 +446,7 @@ export const aiClinicalSupportRouter = router({
 
         // Validate compliance for each recommendation
         const complianceResults = await Promise.all(
-          recommendations.map(async (rec) => {
+          recommendations.map(async rec => {
             const [cfmCompliance, anvisaCompliance] = await Promise.all([
               validateCFMCompliance(rec, ctx),
               validateANVISACompliance(rec, ctx),
@@ -664,7 +664,7 @@ export const aiClinicalSupportRouter = router({
 
         // Enhanced compliance validation
         const enhancedAnalyses = await Promise.all(
-          analyses.map(async (analysis) => {
+          analyses.map(async analysis => {
             const cfmCompliance = await validateCFMCompliance(analysis, ctx)
 
             return {
@@ -696,7 +696,7 @@ export const aiClinicalSupportRouter = router({
             additionalInfo: JSON.stringify({
               action: 'contraindications_analyzed',
               proceduresCount: input.procedureIds.length,
-              hasAbsoluteContraindications: enhancedAnalyses.some((a) =>
+              hasAbsoluteContraindications: enhancedAnalyses.some(a =>
                 a.absoluteContraindications.length > 0
               ),
             }),
@@ -707,9 +707,9 @@ export const aiClinicalSupportRouter = router({
           analyses: enhancedAnalyses,
           summary: {
             totalProcedures: input.procedureIds.length,
-            safeProcedures: enhancedAnalyses.filter((a) => a.canProceed).length,
-            contraindicatedProcedures: enhancedAnalyses.filter((a) => !a.canProceed).length,
-            overallRisk: enhancedAnalyses.some((a) => a.absoluteContraindications.length > 0)
+            safeProcedures: enhancedAnalyses.filter(a => a.canProceed).length,
+            contraindicatedProcedures: enhancedAnalyses.filter(a => !a.canProceed).length,
+            overallRisk: enhancedAnalyses.some(a => a.absoluteContraindications.length > 0)
               ? 'high'
               : 'medium',
           },
@@ -1064,7 +1064,7 @@ export const aiClinicalSupportRouter = router({
           treatments,
           summary: {
             totalTreatments: treatments.length,
-            completedTreatments: treatments.filter((t) => t.status === 'completed').length,
+            completedTreatments: treatments.filter(t => t.status === 'completed').length,
             totalSessions: treatments.length,
             lastTreatment: treatments[0]?.startTime || null,
           },

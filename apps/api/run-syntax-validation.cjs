@@ -29,10 +29,10 @@ class TestFileSyntaxValidator {
         const fullPath = path.join(dir, entry.name)
 
         if (
-          entry.isDirectory()
-          && !entry.name.startsWith('.')
-          && entry.name !== 'node_modules'
-          && entry.name !== 'dist'
+          entry.isDirectory() &&
+          !entry.name.startsWith('.') &&
+          entry.name !== 'node_modules' &&
+          entry.name !== 'dist'
         ) {
           scanDirectory(fullPath, depth + 1)
         } else if (entry.isFile() && this.isTestFile(entry.name)) {
@@ -203,15 +203,15 @@ class TestFileSyntaxValidator {
 
     const summary = {
       totalFiles: results.length,
-      filesWithErrors: results.filter((r) => r.hasSyntaxErrors).length,
+      filesWithErrors: results.filter(r => r.hasSyntaxErrors).length,
       totalErrors: results.reduce((sum, r) => sum + r.errors.length, 0),
       totalWarnings: results.reduce((sum, r) => sum + r.warnings.length, 0),
       errorTypes: {},
     }
 
     // Count error types
-    results.forEach((result) => {
-      result.errors.forEach((error) => {
+    results.forEach(result => {
+      result.errors.forEach(error => {
         const errorType = error.message.split(':')[0]
         summary.errorTypes[errorType] = (summary.errorTypes[errorType] || 0) + 1
       })
@@ -243,7 +243,7 @@ class TestFileSyntaxValidator {
 
     // Show files with most errors
     const filesWithErrors = results
-      .filter((r) => r.hasSyntaxErrors)
+      .filter(r => r.hasSyntaxErrors)
       .sort((a, b) => b.errors.length - a.errors.length)
       .slice(0, 10)
 
@@ -255,16 +255,16 @@ class TestFileSyntaxValidator {
     // Show specific error examples
     console.log('\n🔍 Error Examples:')
     const firstFewErrors = results
-      .filter((r) => r.errors.length > 0)
+      .filter(r => r.errors.length > 0)
       .slice(0, 5)
-      .map((r) => ({
+      .map(r => ({
         file: r.filePath,
         errors: r.errors.slice(0, 3),
       }))
 
     firstFewErrors.forEach(({ file, errors }) => {
       console.log(`\n   File: ${path.relative(this.basePath, file)}`)
-      errors.forEach((error) => {
+      errors.forEach(error => {
         console.log(`      Line ${error.line}: ${error.message}`)
         console.log(`         Code: ${error.code.trim()}`)
       })
@@ -274,9 +274,9 @@ class TestFileSyntaxValidator {
     const importIssues = results.reduce((sum, r) => sum + r.importErrors.length, 0)
     if (importIssues > 0) {
       console.log(`\n📦 Import Issues Found: ${importIssues}`)
-      results.filter((r) => r.importErrors.length > 0).slice(0, 3).forEach((file) => {
+      results.filter(r => r.importErrors.length > 0).slice(0, 3).forEach(file => {
         console.log(`   ${path.relative(this.basePath, file.filePath)}:`)
-        file.importErrors.slice(0, 2).forEach((issue) => {
+        file.importErrors.slice(0, 2).forEach(issue => {
           console.log(`      ${issue}`)
         })
       })

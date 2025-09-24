@@ -114,7 +114,7 @@ await fetch('/api/telemedicine/webrtc/offer', {
 })
 
 // Handle ICE candidates
-peerConnection.onicecandidate = async (event) => {
+peerConnection.onicecandidate = async event => {
   if (event.candidate) {
     await fetch('/api/telemedicine/webrtc/candidate', {
       method: 'POST',

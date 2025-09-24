@@ -292,9 +292,9 @@ router.get('/clients/:id', async (req, res) => {
 
 ```typescript
 // WebSocket event handling
-websocketOptimizer.on('connection', (connection) => {
+websocketOptimizer.on('connection', connection => {
   // Handle real-time updates for aesthetic clinic data
-  connection.socket.on('message', async (message) => {
+  connection.socket.on('message', async message => {
     // Process real-time requests with performance optimization
   })
 })

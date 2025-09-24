@@ -30,7 +30,7 @@ function TreatmentPackageSchedulerPage() {
     <TreatmentPackageScheduler
       packages={packages || []}
       procedures={procedures || []}
-      onSchedulePackage={async (data) => {
+      onSchedulePackage={async data => {
         try {
           const result = await api.aestheticScheduling.scheduleTreatmentPackage(data)
           return result

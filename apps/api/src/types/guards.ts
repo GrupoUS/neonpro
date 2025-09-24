@@ -18,10 +18,10 @@ export const isObject = <T extends Record<string, unknown>>(
   value: unknown,
   guard?: (obj: Record<string, unknown>) => obj is T,
 ): value is T =>
-  typeof value === 'object'
-  && value !== null
-  && !Array.isArray(value)
-  && (guard ? guard(value as Record<string, unknown>) : true)
+  typeof value === 'object' &&
+  value !== null &&
+  !Array.isArray(value) &&
+  (guard ? guard(value as Record<string, unknown>) : true)
 
 export const isDefined = <T>(value: T | undefined | null): value is T =>
   value !== undefined && value !== null
@@ -39,8 +39,8 @@ export const isValidDate = (value: unknown): value is Date =>
   value instanceof Date && !isNaN(value.getTime())
 
 export const isValidUUID = (value: unknown): value is string =>
-  isString(value)
-  && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+  isString(value) &&
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
 
 // Healthcare-specific type guards
 export const isValidCPF = (value: unknown): value is string => {
@@ -104,11 +104,11 @@ export const isValidPaginationParams = (
   return isObject(
     value,
     (obj): obj is { page: number; pageSize: number } =>
-      isNumber(obj.page)
-      && obj.page > 0
-      && isNumber(obj.pageSize)
-      && obj.pageSize > 0
-      && obj.pageSize <= 100,
+      isNumber(obj.page) &&
+      obj.page > 0 &&
+      isNumber(obj.pageSize) &&
+      obj.pageSize > 0 &&
+      obj.pageSize <= 100,
   )
 }
 
@@ -121,8 +121,8 @@ export const isValidSortParams = (
   return isObject(
     value,
     (obj): obj is { sortBy: string; sortOrder: 'asc' | 'desc' } =>
-      isNonEmptyString(obj.sortBy)
-      && (obj.sortOrder === 'asc' || obj.sortOrder === 'desc'),
+      isNonEmptyString(obj.sortBy) &&
+      (obj.sortOrder === 'asc' || obj.sortOrder === 'desc'),
   )
 }
 
@@ -234,7 +234,7 @@ export const isSafeHeaderValue = (value: unknown): value is string => {
     /vbscript:/i,
     /on\w+\s*=/i,
   ]
-  return !dangerousPatterns.some((pattern) => pattern.test(value))
+  return !dangerousPatterns.some(pattern => pattern.test(value))
 }
 
 export const isSafeRedirectUrl = (value: unknown): value is string => {

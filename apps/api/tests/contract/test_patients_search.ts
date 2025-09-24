@@ -269,7 +269,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
         .send(searchRequest)
         .expect(200)
 
-      response.body.results.forEach((patient) => {
+      response.body.results.forEach(patient => {
         expect(patient.gender).toBe('female')
       })
     })
@@ -288,7 +288,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
         .send(searchRequest)
         .expect(200)
 
-      response.body.results.forEach((patient) => {
+      response.body.results.forEach(patient => {
         expect(patient.address.city).toBe('São Paulo')
         expect(patient.address.state).toBe('SP')
       })
@@ -312,7 +312,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
       // Calculate ages and verify they're in range
       const currentYear = new Date().getFullYear()
-      response.body.results.forEach((patient) => {
+      response.body.results.forEach(patient => {
         const birthYear = new Date(patient.dateOfBirth).getFullYear()
         const age = currentYear - birthYear
         expect(age).toBeGreaterThanOrEqual(30)
@@ -336,7 +336,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
         .send(searchRequest)
         .expect(200)
 
-      response.body.results.forEach((patient) => {
+      response.body.results.forEach(patient => {
         const birthDate = new Date(patient.dateOfBirth)
         expect(birthDate.getFullYear()).toBeGreaterThanOrEqual(1980)
         expect(birthDate.getFullYear()).toBeLessThanOrEqual(1990)
@@ -364,7 +364,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
         .send(searchRequest)
         .expect(200)
 
-      response.body.results.forEach((patient) => {
+      response.body.results.forEach(patient => {
         expect(patient.name).toContain('Silva')
         expect(patient.gender).toBe('female')
         expect(patient.address.state).toBe('SP')
@@ -451,7 +451,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
         .send(searchRequest)
         .expect(200)
 
-      const names = response.body.results.map((p) => p.name)
+      const names = response.body.results.map(p => p.name)
       const sortedNames = [...names].sort()
       expect(names).toEqual(sortedNames)
     })

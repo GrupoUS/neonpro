@@ -209,8 +209,8 @@ export class MockHealthcareFactory {
     if (checkDigit1 >= 10) checkDigit1 = 0
 
     // Calculate second check digit
-    sum = digits.reduce((acc, digit, index) => acc + digit * (11 - index), 0)
-      + checkDigit1 * 2
+    sum = digits.reduce((acc, digit, index) => acc + digit * (11 - index), 0) +
+      checkDigit1 * 2
     let checkDigit2 = 11 - (sum % 11)
     if (checkDigit2 >= 10) checkDigit2 = 0
 

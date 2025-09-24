@@ -175,7 +175,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   protected emitEvent(event: IngestionEvent): void {
     const handlers = this.eventHandlers.get(event.eventType)
     if (handlers) {
-      handlers.forEach((handler) => handler(event))
+      handlers.forEach(handler => handler(event))
     }
   }
 
@@ -485,7 +485,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         validRecords: valid.length,
         invalidRecords: invalid.length,
         errors: [...validationErrors, ...transformationErrors].map(
-          (e) => e.message,
+          e => e.message,
         ),
         warnings: [],
       },

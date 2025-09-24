@@ -57,7 +57,7 @@ const crudRequestSchema = z.object({
 // Create tRPC handler for Hono integration
 const tRPCHandle = trpcServer({
   router: appRouter,
-  createContext: async (opts) => {
+  createContext: async opts => {
     // Create context similar to existing tRPC context
     const headers = opts.req.headers
     const userId = headers.get('x-user-id') || 'user-123'
@@ -84,7 +84,7 @@ app.post(
   requireAuth,
   requireAIAccess,
   zValidator('json', crudRequestSchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now()
     const _user = c.get('user')
     const _userId = c.get('userId')
@@ -148,9 +148,9 @@ app.post(
         userId,
         action: mapStepToAuditAction(requestData.step),
         resourceType: 'ai_crud_operation',
-        resourceId: responseData.data?.intentId
-          || responseData.data?.executionId
-          || 'unknown',
+        resourceId: responseData.data?.intentId ||
+          responseData.data?.executionId ||
+          'unknown',
         details: {
           step: requestData.step,
           operation: requestData.operation,
@@ -199,9 +199,9 @@ app.post(
 
       return c.json({
         success: true,
-        operationId: responseData.data?.intentId
-          || responseData.data?.executionId
-          || 'crud-op-456',
+        operationId: responseData.data?.intentId ||
+          responseData.data?.executionId ||
+          'crud-op-456',
         data: responseData.data,
         performance: {
           executionTime: processingTime,
@@ -256,7 +256,7 @@ app.get(
   '/crud/status/:operationId',
   requireAuth,
   requireAIAccess,
-  async (c) => {
+  async c => {
     const operationId = c.req.param('operationId')
     const _user = c.get('user')
     const _userId = c.get('userId')
@@ -312,7 +312,7 @@ app.get(
 )
 
 // GET endpoint to list supported entities
-app.get('/crud/entities', requireAuth, requireAIAccess, async (c) => {
+app.get('/crud/entities', requireAuth, requireAIAccess, async c => {
   const _user = c.get('user')
   const _userId = c.get('userId')
   const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown'

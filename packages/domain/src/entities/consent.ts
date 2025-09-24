@@ -175,7 +175,7 @@ export class ConsentValidator {
     consent: ConsentRecord,
     requiredDataTypes: string[],
   ): boolean {
-    return requiredDataTypes.every((type) => consent.dataTypes.includes(type))
+    return requiredDataTypes.every(type => consent.dataTypes.includes(type))
   }
 
   /**

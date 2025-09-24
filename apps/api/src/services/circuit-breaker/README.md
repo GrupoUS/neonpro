@@ -119,7 +119,7 @@ console.log('Overall health:', healthStatus.overall)
 console.log('Services:', Object.keys(healthStatus.services))
 
 // Listen for health events
-healthChecker.onEvent((event) => {
+healthChecker.onEvent(event => {
   console.log('Health event:', {
     type: event.type,
     service: event.serviceName,
@@ -368,13 +368,13 @@ const criticalServices = [
   'ai-agent',
 ]
 
-criticalServices.forEach((serviceName) => {
+criticalServices.forEach(serviceName => {
   const circuitBreaker = createCircuitBreaker(
     serviceName,
     HEALTHCARE_CIRCUIT_CONFIG,
   )
 
-  circuitBreaker.onEvent((event) => {
+  circuitBreaker.onEvent(event => {
     if (event.type === 'STATE_CHANGE' && event.toState === 'OPEN') {
       // Alert operations team
       sendAlert(`${serviceName} circuit breaker opened`)
@@ -519,7 +519,7 @@ test('should monitor service health', async () => {
 
 ```typescript
 // Enable detailed logging
-circuitBreaker.onEvent((event) => {
+circuitBreaker.onEvent(event => {
   console.log('Circuit Breaker Event:', {
     type: event.type,
     timestamp: event.timestamp,
@@ -529,7 +529,7 @@ circuitBreaker.onEvent((event) => {
 })
 
 // Monitor health checks
-healthChecker.onEvent((event) => {
+healthChecker.onEvent(event => {
   console.log('Health Check Event:', {
     type: event.type,
     service: event.serviceName,

@@ -185,7 +185,7 @@ export class SessionCookieUtils {
   private static generateCSRFToken(): string {
     const array = new Uint8Array(32)
     crypto.getRandomValues(array)
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join(
       '',
     )
   }
@@ -208,9 +208,9 @@ export class SessionCookieUtils {
     const _data = encoder.encode(sessionId)
     const key = encoder.encode(secretKey)
 
-    return crypto.subtle.sign('HMAC', key, data).then((signature) => {
+    return crypto.subtle.sign('HMAC', key, data).then(signature => {
       const signatureArray = new Uint8Array(signature)
-      return Array.from(signatureArray, (byte) => byte.toString(16).padStart(2, '0')).join('')
+      return Array.from(signatureArray, byte => byte.toString(16).padStart(2, '0')).join('')
     })
   }
 
@@ -229,7 +229,7 @@ export class SessionCookieUtils {
   ): Record<string, string> {
     const cookies: Record<string, string> = {}
 
-    cookieHeader.split(';').forEach((cookie) => {
+    cookieHeader.split(';').forEach(cookie => {
       const [name, ...valueParts] = cookie.trim().split('=')
       if (name && valueParts.length > 0) {
         cookies[name.trim()] = valueParts.join('=').trim()
@@ -289,8 +289,8 @@ export class SessionCookieUtils {
 
     // Check for secure SameSite value
     if (
-      cookieHeader.includes('SameSite=None')
-      && !cookieHeader.includes('Secure')
+      cookieHeader.includes('SameSite=None') &&
+      !cookieHeader.includes('Secure')
     ) {
       warnings.push('SameSite=None requires Secure flag')
     }
@@ -355,8 +355,8 @@ export class SessionCookieUtils {
 
     const cookies = this.parseCookieHeader(cookieHeader)
     return !!(
-      cookies[this.SESSION_COOKIE_NAME]
-      && cookies[this.SESSION_SIGNATURE_COOKIE_NAME]
+      cookies[this.SESSION_COOKIE_NAME] &&
+      cookies[this.SESSION_SIGNATURE_COOKIE_NAME]
     )
   }
 

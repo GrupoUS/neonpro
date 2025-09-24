@@ -106,7 +106,7 @@ export function useCreatePatient() {
 
       return data as Patient
     },
-    onSuccess: (newPatient) => {
+    onSuccess: newPatient => {
       // Invalidate and refetch patients list
       queryClient.invalidateQueries({
         queryKey: patientKeys.lists(),
@@ -118,7 +118,7 @@ export function useCreatePatient() {
         newPatient,
       )
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error creating patient:', error)
     },
   })
@@ -144,7 +144,7 @@ export function useUpdatePatient() {
 
       return data as Patient
     },
-    onSuccess: (updatedPatient) => {
+    onSuccess: updatedPatient => {
       // Update the patient in the cache
       queryClient.setQueryData(
         patientKeys.detail(updatedPatient.id),
@@ -156,7 +156,7 @@ export function useUpdatePatient() {
         queryKey: patientKeys.lists(),
       })
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error updating patient:', error)
     },
   })
@@ -179,7 +179,7 @@ export function useDeletePatient() {
 
       return id
     },
-    onSuccess: (deletedId) => {
+    onSuccess: deletedId => {
       // Remove the patient from the cache
       queryClient.removeQueries({
         queryKey: patientKeys.detail(deletedId),
@@ -190,7 +190,7 @@ export function useDeletePatient() {
         queryKey: patientKeys.lists(),
       })
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Error deleting patient:', error)
     },
   })

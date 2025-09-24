@@ -115,7 +115,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', chatRequestSchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now()
     const _user = c.get('user')
     const requestData = c.req.valid('json')
@@ -247,9 +247,9 @@ app.post(
         resourceType: 'ai_conversation',
         resourceId: requestData.streaming
           ? responseData.streamId
-          : requestData.conversationId
-            || responseData.conversationId
-            || 'new_conversation',
+          : requestData.conversationId ||
+            responseData.conversationId ||
+            'new_conversation',
         details: auditDetails,
         ipAddress,
         userAgent,
@@ -442,7 +442,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', sessionRequestSchema),
-  async (c) => {
+  async c => {
     const _user = c.get('user')
     const requestData = c.req.valid('json')
 
@@ -459,8 +459,8 @@ app.post(
       const model = requestData.model || 'gpt-4o'
 
       if (
-        !validCombinations[provider]
-        || !validCombinations[provider].includes(model)
+        !validCombinations[provider] ||
+        !validCombinations[provider].includes(model)
       ) {
         return c.json(
           {
@@ -473,11 +473,11 @@ app.post(
       }
 
       // Check LGPD consent (mock validation for testing)
-      const hasLGPDConsent = requestData.lgpdConsent === true
-        || (requestData.lgpdConsent
-          && typeof requestData.lgpdConsent === 'object'
-          && requestData.lgpdConsent.dataProcessing === true)
-        || requestData.context?.lgpdConsent?.dataProcessing === true
+      const hasLGPDConsent = requestData.lgpdConsent === true ||
+        (requestData.lgpdConsent &&
+          typeof requestData.lgpdConsent === 'object' &&
+          requestData.lgpdConsent.dataProcessing === true) ||
+        requestData.context?.lgpdConsent?.dataProcessing === true
       if (!hasLGPDConsent) {
         return c.json(
           {
@@ -504,9 +504,9 @@ app.post(
 
       // Add Brazilian context
       if (
-        requestData.healthcareContext === 'brazilian_healthcare'
-        || requestData.language === 'pt-BR'
-        || requestData.context?.language === 'pt-BR'
+        requestData.healthcareContext === 'brazilian_healthcare' ||
+        requestData.language === 'pt-BR' ||
+        requestData.context?.language === 'pt-BR'
       ) {
         responseData.context = {
           language: 'pt-BR',
@@ -547,7 +547,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', messageRequestSchema),
-  async (c) => {
+  async c => {
     const _user = c.get('user')
     const sessionId = c.req.param('sessionId')
     const requestData = c.req.valid('json')
@@ -568,8 +568,8 @@ app.post(
 
       // Check if session exists (mock validation)
       const validTestSessions = ['550e8400-e29b-41d4-a716-446655440000']
-      const isValidSession = validTestSessions.includes(sessionId)
-        || sessionId.startsWith('session-')
+      const isValidSession = validTestSessions.includes(sessionId) ||
+        sessionId.startsWith('session-')
 
       if (!isValidSession) {
         return c.json(

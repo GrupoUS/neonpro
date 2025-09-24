@@ -241,7 +241,7 @@ export class DatabasePerformanceService {
    * Generate index recommendations based on query patterns
    */
   generateIndexRecommendations(): IndexRecommendation[] {
-    return HEALTHCARE_RECOMMENDED_INDEXES.map((index) => ({
+    return HEALTHCARE_RECOMMENDED_INDEXES.map(index => ({
       ...index,
       estimatedImprovement: this.calculateIndexImprovement(index),
       healthcareRelevant: this.isHealthcareRelevant(index.table),

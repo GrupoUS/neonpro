@@ -67,7 +67,7 @@ export function EnhancedTable<TData extends RowData = Record<string, unknown>>(
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup: HeaderGroup<TData>) => (
             <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
+              {headerGroup.headers.map(header => (
                 <TableHead
                   key={header.id}
                   style={{
@@ -108,10 +108,10 @@ export function EnhancedTable<TData extends RowData = Record<string, unknown>>(
                   {row.getVisibleCells().map((cell: Cell<TData, unknown>) => (
                     <TableCell
                       key={cell.id}
-                      onClick={(e) => {
+                      onClick={e => {
                         if (
-                          stopRowClickPredicate
-                          && stopRowClickPredicate(cell)
+                          stopRowClickPredicate &&
+                          stopRowClickPredicate(cell)
                         ) {
                           e.stopPropagation()
                         }

@@ -230,7 +230,7 @@ export class BillingService {
       },
     ]
 
-    sampleProcedures.forEach((proc) => {
+    sampleProcedures.forEach(proc => {
       this.procedureCodes.set(proc.cbhpmCode, proc)
     })
 
@@ -295,9 +295,9 @@ export class BillingService {
     try {
       // Validate required fields
       if (
-        !billingData.patientId
-        || !billingData.clinicId
-        || !billingData.professionalId
+        !billingData.patientId ||
+        !billingData.clinicId ||
+        !billingData.professionalId
       ) {
         return {
           success: false,
@@ -340,8 +340,8 @@ export class BillingService {
         total,
         paymentStatus: PaymentStatus.PENDING,
         paymentMethod: billingData.paymentMethod,
-        dueDate: billingData.dueDate
-          || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        dueDate: billingData.dueDate ||
+          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         healthPlan: billingData.healthPlan,
         taxInfo: billingData.taxInfo,
         notes: billingData.notes,
@@ -364,7 +364,7 @@ export class BillingService {
       if (!validationResult.success) {
         return {
           success: false,
-          errors: validationResult.error.errors.map((err) => ({
+          errors: validationResult.error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
             code: 'VALIDATION_ERROR',
@@ -427,43 +427,43 @@ export class BillingService {
       // Apply filters
       if (options.patientId) {
         allBillings = allBillings.filter(
-          (billing) => billing.patientId === options.patientId,
+          billing => billing.patientId === options.patientId,
         )
       }
 
       if (options.clinicId) {
         allBillings = allBillings.filter(
-          (billing) => billing.clinicId === options.clinicId,
+          billing => billing.clinicId === options.clinicId,
         )
       }
 
       if (options.professionalId) {
         allBillings = allBillings.filter(
-          (billing) => billing.professionalId === options.professionalId,
+          billing => billing.professionalId === options.professionalId,
         )
       }
 
       if (options.billingType) {
         allBillings = allBillings.filter(
-          (billing) => billing.billingType === options.billingType,
+          billing => billing.billingType === options.billingType,
         )
       }
 
       if (options.paymentStatus) {
         allBillings = allBillings.filter(
-          (billing) => billing.paymentStatus === options.paymentStatus,
+          billing => billing.paymentStatus === options.paymentStatus,
         )
       }
 
       if (options.dateFrom) {
         allBillings = allBillings.filter(
-          (billing) => new Date(billing.createdAt) >= options.dateFrom!,
+          billing => new Date(billing.createdAt) >= options.dateFrom!,
         )
       }
 
       if (options.dateTo) {
         allBillings = allBillings.filter(
-          (billing) => new Date(billing.createdAt) <= options.dateTo!,
+          billing => new Date(billing.createdAt) <= options.dateTo!,
         )
       }
 
@@ -622,35 +622,35 @@ export class BillingService {
 
       // Filter by clinic
       if (clinicId) {
-        billings = billings.filter((billing) => billing.clinicId === clinicId)
+        billings = billings.filter(billing => billing.clinicId === clinicId)
       }
 
       // Filter by date range
       if (dateFrom) {
         billings = billings.filter(
-          (billing) => new Date(billing.createdAt) >= dateFrom,
+          billing => new Date(billing.createdAt) >= dateFrom,
         )
       }
 
       if (dateTo) {
         billings = billings.filter(
-          (billing) => new Date(billing.createdAt) <= dateTo,
+          billing => new Date(billing.createdAt) <= dateTo,
         )
       }
 
       // Calculate summary
       const totalRevenue = billings
-        .filter((b) => b.paymentStatus === PaymentStatus.PAID)
+        .filter(b => b.paymentStatus === PaymentStatus.PAID)
         .reduce((sum, b) => sum + b.total, 0)
 
       const totalPending = billings
-        .filter((b) => b.paymentStatus === PaymentStatus.PENDING)
+        .filter(b => b.paymentStatus === PaymentStatus.PENDING)
         .reduce((sum, b) => sum + b.total, 0)
 
       const totalPaid = totalRevenue
 
       const totalOverdue = billings
-        .filter((b) => b.paymentStatus === PaymentStatus.OVERDUE)
+        .filter(b => b.paymentStatus === PaymentStatus.OVERDUE)
         .reduce((sum, b) => sum + b.total, 0)
 
       const averageTicket = billings.length > 0
@@ -662,9 +662,9 @@ export class BillingService {
         (acc, type) => {
           acc[type] = billings
             .filter(
-              (b) =>
-                b.billingType === type
-                && b.paymentStatus === PaymentStatus.PAID,
+              b =>
+                b.billingType === type &&
+                b.paymentStatus === PaymentStatus.PAID,
             )
             .reduce((sum, b) => sum + b.total, 0)
           return acc
@@ -725,8 +725,8 @@ export class BillingService {
     const monthRevenue: Record<string, number> = {}
 
     billings
-      .filter((b) => b.paymentStatus === PaymentStatus.PAID)
-      .forEach((billing) => {
+      .filter(b => b.paymentStatus === PaymentStatus.PAID)
+      .forEach(billing => {
         const date = new Date(billing.paymentDate || billing.createdAt)
         const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
         monthRevenue[monthKey] = (monthRevenue[monthKey] || 0) + billing.total
@@ -746,9 +746,9 @@ export class BillingService {
     const procedureStats: Record<string, { count: number; revenue: number }> = {}
 
     billings
-      .filter((b) => b.paymentStatus === PaymentStatus.PAID)
-      .forEach((billing) => {
-        billing.items.forEach((item) => {
+      .filter(b => b.paymentStatus === PaymentStatus.PAID)
+      .forEach(billing => {
+        billing.items.forEach(item => {
           const key = item.procedureCode.description
           if (!procedureStats[key]) {
             procedureStats[key] = { count: 0, revenue: 0 }

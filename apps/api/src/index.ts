@@ -18,7 +18,7 @@ async function startServer() {
       serve({
         fetch: app.fetch,
         port,
-      }, (info) => {
+      }, info => {
         secureLogger.info(`API server listening on http://localhost:${info.port}`)
         secureLogger.info(
           `WebSocket server initialized for AG-UI Protocol on http://localhost:${info.port}`,
@@ -50,7 +50,7 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'))
 process.on('SIGINT', () => gracefulShutdown('SIGINT'))
 
 // Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   secureLogger.error('Uncaught Exception', error)
   gracefulShutdown('uncaughtException')
 })

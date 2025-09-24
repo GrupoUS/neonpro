@@ -84,8 +84,8 @@ export class AestheticCacheService {
       pattern: 'treatment_catalog_*',
       ttl: 300, // 5 minutes
       priority: 'high',
-      condition: (data) => data.category && data.skinType,
-      prefetchFn: async (_key) => {
+      condition: data => data.category && data.skinType,
+      prefetchFn: async _key => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() }
       },
@@ -96,8 +96,8 @@ export class AestheticCacheService {
       pattern: 'client_profile_*',
       ttl: 600, // 10 minutes
       priority: 'medium',
-      condition: (data) => data.clientId && data.lastActivity,
-      prefetchFn: async (_key) => {
+      condition: data => data.clientId && data.lastActivity,
+      prefetchFn: async _key => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() }
       },
@@ -108,8 +108,8 @@ export class AestheticCacheService {
       pattern: 'availability_*',
       ttl: 60, // 1 minute
       priority: 'high',
-      condition: (data) => data.location && data.date,
-      prefetchFn: async (_key) => {
+      condition: data => data.location && data.date,
+      prefetchFn: async _key => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() }
       },
@@ -120,8 +120,8 @@ export class AestheticCacheService {
       pattern: 'pricing_*',
       ttl: 1800, // 30 minutes
       priority: 'low',
-      condition: (data) => data.treatmentId,
-      prefetchFn: async (_key) => {
+      condition: data => data.treatmentId,
+      prefetchFn: async _key => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() }
       },
@@ -265,7 +265,7 @@ export class AestheticCacheService {
 
     if (pattern) {
       const regex = new RegExp(pattern.replace(/\*/g, '.*'))
-      keys = keys.filter((key) => regex.test(key))
+      keys = keys.filter(key => regex.test(key))
     }
 
     return keys
@@ -383,7 +383,7 @@ export class AestheticCacheService {
     const start = new Date(timeframe.start)
     const end = new Date(timeframe.end)
 
-    return analytics.filter((entry) => {
+    return analytics.filter(entry => {
       const timestamp = new Date(entry.timestamp)
       return timestamp >= start && timestamp <= end
     })

@@ -187,7 +187,7 @@ export const patientsRouter = router({
         )
 
         // Create patient with LGPD compliance
-        const patient = await ctx.prisma.$transaction(async (prisma) => {
+        const patient = await ctx.prisma.$transaction(async prisma => {
           // Create patient record
           const newPatient = await prisma.patient.create({
             data: {
@@ -439,7 +439,7 @@ export const patientsRouter = router({
         ])
 
         // Apply data minimization to each patient
-        const minimizedPatients = patients.map((patient) => {
+        const minimizedPatients = patients.map(patient => {
           const consent = patient.lgpdConsents[0]
           return minimizePatientData(
             patient,
@@ -586,7 +586,7 @@ export const patientsRouter = router({
           },
         )
 
-        const _result = await ctx.prisma.$transaction(async (prisma) => {
+        const _result = await ctx.prisma.$transaction(async prisma => {
           // Update consent status
           await prisma.lGPDConsent.updateMany({
             where: {
@@ -666,7 +666,7 @@ export const patientsRouter = router({
         orderBy: { createdAt: 'desc' },
       })
 
-      const activeConsent = consents.find((c) => c.isActive)
+      const activeConsent = consents.find(c => c.isActive)
 
       return {
         patientId: input.id,

@@ -543,7 +543,7 @@ export class ConsentService {
 
       // Check for expired consents
       const expiredConsents = consents.filter(
-        (consent) => consent.expiresAt && new Date(consent.expiresAt) < now,
+        consent => consent.expiresAt && new Date(consent.expiresAt) < now,
       )
 
       if (expiredConsents.length > 0) {
@@ -552,7 +552,7 @@ export class ConsentService {
 
       // Check for consents without proper expiration dates
       const consentsWithoutExpiration = consents.filter(
-        (consent) => !consent.expiresAt && consent.consentType !== 'EMERGENCY',
+        consent => !consent.expiresAt && consent.consentType !== 'EMERGENCY',
       )
 
       if (consentsWithoutExpiration.length > 0) {
@@ -568,9 +568,9 @@ export class ConsentService {
         now.getDate(),
       )
       const oldConsents = consents.filter(
-        (consent) =>
-          new Date(consent.grantedAt) < twoYearsAgo
-          && consent.consentType !== 'EMERGENCY',
+        consent =>
+          new Date(consent.grantedAt) < twoYearsAgo &&
+          consent.consentType !== 'EMERGENCY',
       )
 
       if (oldConsents.length > 0) {
@@ -580,8 +580,8 @@ export class ConsentService {
       }
 
       // Check for missing sensitive data handling
-      const sensitiveConsents = consents.filter((consent) =>
-        consent.dataTypes.some((type) =>
+      const sensitiveConsents = consents.filter(consent =>
+        consent.dataTypes.some(type =>
           [
             'medical_records',
             'diagnosis',
@@ -593,7 +593,7 @@ export class ConsentService {
 
       if (sensitiveConsents.length > 0) {
         const sensitiveWithoutExpiration = sensitiveConsents.filter(
-          (consent) => !consent.expiresAt,
+          consent => !consent.expiresAt,
         )
         if (sensitiveWithoutExpiration.length > 0) {
           violations.push(

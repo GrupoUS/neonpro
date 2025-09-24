@@ -173,7 +173,7 @@ export class GoogleCalendarService {
           dateTime: eventData.end.toISOString(),
           timeZone: eventData.timeZone,
         },
-        attendees: eventData.attendees.map((email) => ({ email })),
+        attendees: eventData.attendees.map(email => ({ email })),
         recurrence: eventData.recurrence,
       }
 
@@ -220,7 +220,7 @@ export class GoogleCalendarService {
         }
       }
       if (updates.attendees) {
-        updateData.attendees = updates.attendees.map((email) => ({ email }))
+        updateData.attendees = updates.attendees.map(email => ({ email }))
       }
 
       const response = await this.executeWithRetry(() =>
@@ -285,7 +285,7 @@ export class GoogleCalendarService {
         endTime,
       })
 
-      return events.map((event) => this.transformEvent(event))
+      return events.map(event => this.transformEvent(event))
     } catch (error) {
       this.logger.error('Error retrieving events', { error })
       throw new Error(`Failed to retrieve events: ${error.message}`)
@@ -330,8 +330,8 @@ export class GoogleCalendarService {
 
         // Handle rate limiting (429) and quota exceeded (403)
         if (
-          error.code === 429
-          || (error.code === 403 && error.message.includes('quota'))
+          error.code === 429 ||
+          (error.code === 403 && error.message.includes('quota'))
         ) {
           const delay = Math.pow(2, attempt) * 1000 + Math.random() * 1000
           this.logger.warn('Rate limit hit, retrying', {
@@ -340,7 +340,7 @@ export class GoogleCalendarService {
             error: error.message,
           })
 
-          await new Promise((resolve) => setTimeout(resolve, delay))
+          await new Promise(resolve => setTimeout(resolve, delay))
           continue
         }
 
@@ -727,13 +727,13 @@ export class ComplianceService {
     recommendations: string[]
   }> {
     const relevantLogs = this.auditLogs.filter(
-      (log) => log.timestamp >= startDate && log.timestamp <= endDate,
+      log => log.timestamp >= startDate && log.timestamp <= endDate,
     )
 
     const violations = relevantLogs.filter(
-      (log) => log.complianceFlags.length > 0,
+      log => log.complianceFlags.length > 0,
     )
-    const criticalViolations = violations.filter((log) => log.complianceFlags.includes('CRITICAL'))
+    const criticalViolations = violations.filter(log => log.complianceFlags.includes('CRITICAL'))
 
     return {
       totalOperations: relevantLogs.length,
@@ -754,7 +754,7 @@ export class ComplianceService {
     ]
 
     const dataString = JSON.stringify(data)
-    return patientDataPatterns.some((pattern) => pattern.test(dataString))
+    return patientDataPatterns.some(pattern => pattern.test(dataString))
   }
 
   private async hasPatientConsent(
@@ -778,7 +778,7 @@ export class ComplianceService {
       'location',
       'attendees',
     ]
-    return dataFields.every((field) => allowedFields.includes(field))
+    return dataFields.every(field => allowedFields.includes(field))
   }
 
   private followsRetentionPolicy(data: any): boolean {
@@ -837,8 +837,8 @@ export class ComplianceService {
 
   private isValidAppointmentDuration(appointmentData: any): boolean {
     // TODO: Implement duration validation based on procedure type
-    const duration = new Date(appointmentData.endTime).getTime()
-      - new Date(appointmentData.startTime).getTime()
+    const duration = new Date(appointmentData.endTime).getTime() -
+      new Date(appointmentData.startTime).getTime()
     const durationMinutes = duration / (1000 * 60)
 
     // Basic validation - should be between 15 minutes and 4 hours
@@ -851,7 +851,7 @@ export class ComplianceService {
     // Analyze common violation patterns
     const violationCounts = violations.reduce(
       (acc, log) => {
-        log.complianceFlags.forEach((flag) => {
+        log.complianceFlags.forEach(flag => {
           acc[flag] = (acc[flag] || 0) + 1
         })
         return acc
@@ -1075,8 +1075,8 @@ export class CompliantCalendarService {
         eventUpdates.end = new Date(updates.appointmentData.endTime)
       }
       if (
-        updates.appointmentData.procedureType
-        || updates.appointmentData.patientName
+        updates.appointmentData.procedureType ||
+        updates.appointmentData.patientName
       ) {
         eventUpdates.summary = `${
           updates.appointmentData.procedureType || updates.appointmentData.originalProcedureType
@@ -1126,9 +1126,9 @@ export class CalendarController {
 
       // Validate input
       if (
-        !appointmentData.procedureType
-        || !appointmentData.startTime
-        || !appointmentData.endTime
+        !appointmentData.procedureType ||
+        !appointmentData.startTime ||
+        !appointmentData.endTime
       ) {
         res
           .status(400)
@@ -1546,8 +1546,8 @@ export class CalendarMonitoring {
     this.logger.info('Calendar service metrics', this.metrics)
 
     // Alert on high error rates
-    const errorRate = this.metrics.failedOperations
-      / (this.metrics.successfulOperations + this.metrics.failedOperations)
+    const errorRate = this.metrics.failedOperations /
+      (this.metrics.successfulOperations + this.metrics.failedOperations)
 
     if (errorRate > 0.05) {
       // 5% error rate threshold

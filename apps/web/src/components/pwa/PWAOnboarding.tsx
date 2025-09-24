@@ -70,7 +70,7 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
         onClick: async () => {
           if (!isInstalled) {
             await installPWA()
-            setCompletedSteps((prev) => new Set([...prev, 1]))
+            setCompletedSteps(prev => new Set([...prev, 1]))
           }
         },
         primary: !isInstalled,
@@ -86,7 +86,7 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
         label: 'Ativar Notificações',
         onClick: async () => {
           await requestNotificationPermission()
-          setCompletedSteps((prev) => new Set([...prev, 2]))
+          setCompletedSteps(prev => new Set([...prev, 2]))
         },
         primary: true,
       },
@@ -247,7 +247,7 @@ export const PWAOnboarding: React.FC<PWAOnboardingProps> = ({
         <div className='space-y-2'>
           <h4 className='text-sm font-medium text-gray-900'>Configurações concluídas:</h4>
           <div className='space-y-1'>
-            {steps.slice(1).map((step) => (
+            {steps.slice(1).map(step => (
               <div key={step.id} className='flex items-center space-x-2'>
                 {completedSteps.has(step.id) || (step.id === 1 && isInstalled)
                   ? <CheckCircle className='h-4 w-4 text-green-500' />

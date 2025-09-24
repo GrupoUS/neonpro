@@ -65,11 +65,11 @@ async function analyzeTelemedicineService(): Promise<SecurityIssue[]> {
 
     // Sensitive logging
     if (
-      line.includes('console.log')
-      && (line.toLowerCase().includes('session')
-        || line.toLowerCase().includes('patient')
-        || line.toLowerCase().includes('medical')
-        || line.toLowerCase().includes('audit'))
+      line.includes('console.log') &&
+      (line.toLowerCase().includes('session') ||
+        line.toLowerCase().includes('patient') ||
+        line.toLowerCase().includes('medical') ||
+        line.toLowerCase().includes('audit'))
     ) {
       issues.push({
         type: 'sensitive_logging',
@@ -86,8 +86,8 @@ async function analyzeTelemedicineService(): Promise<SecurityIssue[]> {
 
     // Insecure memory storage
     if (
-      line.includes('Map<string, TelemedicineSession>')
-      || (line.includes('activeSessions') && line.includes('Map'))
+      line.includes('Map<string, TelemedicineSession>') ||
+      (line.includes('activeSessions') && line.includes('Map'))
     ) {
       issues.push({
         type: 'insecure_storage',
@@ -114,12 +114,12 @@ async function generateSecurityReport(): Promise<void> {
   const issues = await analyzeTelemedicineService()
 
   // Group by severity
-  const critical = issues.filter((i) => i.severity === 'critical')
-  const high = issues.filter((i) => i.severity === 'high')
-  const medium = issues.filter((i) => i.severity === 'medium')
+  const critical = issues.filter(i => i.severity === 'critical')
+  const high = issues.filter(i => i.severity === 'high')
+  const medium = issues.filter(i => i.severity === 'medium')
 
   console.log(`🚨 CRITICAL ISSUES: ${critical.length}`)
-  critical.forEach((issue) => {
+  critical.forEach(issue => {
     console.log(`  📍 Line ${issue.line}: ${issue.description}`)
     console.log(`     Code: ${issue.code}`)
     console.log(`     LGPD Compliant: ${issue.lgpdCompliance ? '✅' : '❌'}`)
@@ -128,7 +128,7 @@ async function generateSecurityReport(): Promise<void> {
   })
 
   console.log(`⚠️  HIGH ISSUES: ${high.length}`)
-  high.forEach((issue) => {
+  high.forEach(issue => {
     console.log(`  📍 Line ${issue.line}: ${issue.description}`)
     console.log(`     Code: ${issue.code}`)
     console.log(`     LGPD Compliant: ${issue.lgpdCompliance ? '✅' : '❌'}`)
@@ -137,7 +137,7 @@ async function generateSecurityReport(): Promise<void> {
   })
 
   console.log(`⚡ MEDIUM ISSUES: ${medium.length}`)
-  medium.forEach((issue) => {
+  medium.forEach(issue => {
     console.log(`  📍 Line ${issue.line}: ${issue.description}`)
     console.log(`     Code: ${issue.code}`)
     console.log()
@@ -148,10 +148,10 @@ async function generateSecurityReport(): Promise<void> {
   console.log('='.repeat(30))
   console.log(`Total Issues: ${issues.length}`)
   console.log(
-    `LGPD Violations: ${issues.filter((i) => !i.lgpdCompliance).length}`,
+    `LGPD Violations: ${issues.filter(i => !i.lgpdCompliance).length}`,
   )
   console.log(
-    `CFM Violations: ${issues.filter((i) => !i.cfmCompliance).length}`,
+    `CFM Violations: ${issues.filter(i => !i.cfmCompliance).length}`,
   )
   console.log()
 

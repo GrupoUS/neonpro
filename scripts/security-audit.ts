@@ -67,12 +67,12 @@ async function main() {
 
     if (auditResults.issues.length > 0) {
       console.log('\n⚠️  CRITICAL ISSUES:')
-      auditResults.issues.forEach((issue) => console.log(`  - ${issue}`))
+      auditResults.issues.forEach(issue => console.log(`  - ${issue}`))
     }
 
     if (auditResults.recommendations.length > 0) {
       console.log('\n💡 RECOMMENDATIONS:')
-      auditResults.recommendations.forEach((rec) => console.log(`  - ${rec}`))
+      auditResults.recommendations.forEach(rec => console.log(`  - ${rec}`))
     }
 
     // Test service health

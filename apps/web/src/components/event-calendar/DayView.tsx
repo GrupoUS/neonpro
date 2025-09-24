@@ -22,7 +22,7 @@ export function DayView({
   }
 
   const getEventsForTimeSlot = (slot: any) => {
-    return events.filter((event) => {
+    return events.filter(event => {
       const eventStart = new Date(event.start)
       const eventEnd = new Date(event.end)
       const slotStart = new Date(slot.start)
@@ -65,7 +65,7 @@ export function DayView({
                       top: `${eventIndex * 24}px`,
                       height: '20px',
                     }}
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation()
                       onEventClick(event)
                     }}

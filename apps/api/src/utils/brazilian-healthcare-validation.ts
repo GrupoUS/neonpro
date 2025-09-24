@@ -105,18 +105,18 @@ export const BrazilianHealthcareSchemas = {
       .max(100, 'Nome deve ter no máximo 100 caracteres'),
     cpf: z
       .string()
-      .transform((val) => val.replace(/[^\d]/g, ''))
-      .refine((val) => val.length === 11, 'CPF deve ter 11 dígitos')
+      .transform(val => val.replace(/[^\d]/g, ''))
+      .refine(val => val.length === 11, 'CPF deve ter 11 dígitos')
       .refine(validateCPF, 'CPF inválido'),
-    birth_date: z.string().refine((val) => {
+    birth_date: z.string().refine(val => {
       const date = new Date(val)
       return !isNaN(date.getTime()) && date < new Date()
     }, 'Data de nascimento inválida'),
     phone: z
       .string()
-      .transform((val) => val.replace(/[^\d]/g, ''))
+      .transform(val => val.replace(/[^\d]/g, ''))
       .refine(
-        (val) => val.length === 10 || val.length === 11,
+        val => val.length === 10 || val.length === 11,
         'Telefone inválido',
       ),
     email: z.string().email('E-mail inválido').optional().nullable(),
@@ -151,8 +151,8 @@ export const BrazilianHealthcareSchemas = {
       .max(100, 'Nome da clínica deve ter no máximo 100 caracteres'),
     tax_id: z
       .string()
-      .transform((val) => val.replace(/[^\d]/g, ''))
-      .refine((val) => val.length === 14, 'CNPJ deve ter 14 dígitos')
+      .transform(val => val.replace(/[^\d]/g, ''))
+      .refine(val => val.length === 14, 'CNPJ deve ter 14 dígitos')
       .refine(validateCNPJ, 'CNPJ inválido'),
     anvisa_license: z
       .string()
@@ -179,7 +179,7 @@ export const BrazilianHealthcareSchemas = {
       'cancelled',
       'no_show',
     ]),
-    scheduled_at: z.string().refine((val) => {
+    scheduled_at: z.string().refine(val => {
       const date = new Date(val)
       return !isNaN(date.getTime()) && date > new Date()
     }, 'Data do agendamento deve ser futura'),
@@ -245,7 +245,7 @@ export const validateBrazilianHealthcareData = {
     const result = BrazilianHealthcareSchemas.Patient.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
-        (err) => `${err.path.join('.')}: ${err.message}`,
+        err => `${err.path.join('.')}: ${err.message}`,
       )
       throw new Error(`Validação de paciente falhou: ${errors.join(', ')}`)
     }
@@ -256,7 +256,7 @@ export const validateBrazilianHealthcareData = {
     const result = BrazilianHealthcareSchemas.Professional.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
-        (err) => `${err.path.join('.')}: ${err.message}`,
+        err => `${err.path.join('.')}: ${err.message}`,
       )
       throw new Error(`Validação de profissional falhou: ${errors.join(', ')}`)
     }
@@ -267,7 +267,7 @@ export const validateBrazilianHealthcareData = {
     const result = BrazilianHealthcareSchemas.Clinic.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
-        (err) => `${err.path.join('.')}: ${err.message}`,
+        err => `${err.path.join('.')}: ${err.message}`,
       )
       throw new Error(`Validação de clínica falhou: ${errors.join(', ')}`)
     }
@@ -278,7 +278,7 @@ export const validateBrazilianHealthcareData = {
     const result = BrazilianHealthcareSchemas.Appointment.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
-        (err) => `${err.path.join('.')}: ${err.message}`,
+        err => `${err.path.join('.')}: ${err.message}`,
       )
       throw new Error(`Validação de agendamento falhou: ${errors.join(', ')}`)
     }
@@ -289,7 +289,7 @@ export const validateBrazilianHealthcareData = {
     const result = BrazilianHealthcareSchemas.FinancialTransaction.safeParse(data)
     if (!result.success) {
       const errors = result.error.errors.map(
-        (err) => `${err.path.join('.')}: ${err.message}`,
+        err => `${err.path.join('.')}: ${err.message}`,
       )
       throw new Error(
         `Validação de transação financeira falhou: ${errors.join(', ')}`,
@@ -317,7 +317,7 @@ export const checkAppointmentConflict = (
     newStart.getTime() + newAppointment.duration_hours * 60 * 60 * 1000,
   )
 
-  return appointments.some((apt) => {
+  return appointments.some(apt => {
     if (apt.professional_id !== newAppointment.professional_id) return false
 
     const aptStart = new Date(apt.scheduled_at)

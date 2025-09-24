@@ -430,7 +430,7 @@ export class LGPDDataSubjectService {
 
       // Generate explanations for each decision
       const explanations = await Promise.all(
-        automatedDecisions.map((decision) => this.generateDecisionExplanation(decision)),
+        automatedDecisions.map(decision => this.generateDecisionExplanation(decision)),
       )
 
       const explanationReport = {
@@ -566,7 +566,7 @@ export class LGPDDataSubjectService {
         take: limit,
       })
 
-      const formattedRequests = requests.map((request) => this.mapToDataSubjectRequest(request))
+      const formattedRequests = requests.map(request => this.mapToDataSubjectRequest(request))
 
       return {
         success: true,
@@ -799,8 +799,8 @@ export class LGPDDataSubjectService {
       decisionDate: decision.createdAt,
       decisionType: decision.action,
       logic: decision.metadata?.decisionLogic || 'Automated processing logic',
-      impact: decision.metadata?.impactAssessment
-        || 'No significant impact identified',
+      impact: decision.metadata?.impactAssessment ||
+        'No significant impact identified',
       humanReviewAvailable: true,
       contestationProcess: 'Contact support to contest this decision',
       factors: decision.metadata?.factors || [],

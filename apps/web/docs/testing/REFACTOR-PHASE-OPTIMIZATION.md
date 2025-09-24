@@ -115,12 +115,12 @@ beforeAll(() => {
 
 afterEach(() => {
   // Reset but don't recreate mocks
-  mockInstances.forEach((mock) => mock.reset())
+  mockInstances.forEach(mock => mock.reset())
 })
 
 afterAll(() => {
   // Clean up all instances
-  mockInstances.forEach((mock) => mock.destroy())
+  mockInstances.forEach(mock => mock.destroy())
   mockInstances.clear()
 })
 ```

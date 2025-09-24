@@ -110,7 +110,7 @@ export class WebSocketOptimizer extends EventEmitter {
       this.handleConnection(socket, request)
     })
 
-    wss.on('error', (error) => {
+    wss.on('error', error => {
       this.metrics.errors.connectionErrors++
       this.emit('error', error)
     })
@@ -504,7 +504,7 @@ export class WebSocketOptimizer extends EventEmitter {
    * Send message to specific channel subscribers
    */
   sendToChannel(channel: string, message: any): number {
-    return this.broadcast(message, (connection) => connection.subscriptions.has(channel))
+    return this.broadcast(message, connection => connection.subscriptions.has(channel))
   }
 
   /**
@@ -638,10 +638,10 @@ export class WebSocketOptimizer extends EventEmitter {
 
   private validateMessage(message: any): boolean {
     return (
-      message
-      && typeof message === 'object'
-      && message.type
-      && typeof message.type === 'string'
+      message &&
+      typeof message === 'object' &&
+      message.type &&
+      typeof message.type === 'string'
     )
   }
 
@@ -743,7 +743,7 @@ export class WebSocketOptimizer extends EventEmitter {
     averageSubscriptions: number
     topChannels: Array<{ channel: string; subscribers: number }>
   } {
-    const activeConnections = Array.from(this.connections.values()).filter((c) => c.isActive)
+    const activeConnections = Array.from(this.connections.values()).filter(c => c.isActive)
 
     const channelCounts = new Map<string, number>()
     let totalSubscriptions = 0

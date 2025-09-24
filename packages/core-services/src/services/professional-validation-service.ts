@@ -6,7 +6,7 @@
 
 import type {
   AestheticProcedureDetails,
-  ProfessionalAssignment
+  ProfessionalAssignment,
 } from './enhanced-aesthetic-scheduling-service'
 
 export interface ProfessionalDetails {
@@ -36,7 +36,7 @@ export class ProfessionalValidationService {
   async validateProfessionalCertifications(
     professionalId: string,
     procedureIds: string[],
-    procedures: Map<string, AestheticProcedureDetails>
+    procedures: Map<string, AestheticProcedureDetails>,
   ): Promise<{
     isValid: boolean
     missingCertifications: string[]
@@ -49,7 +49,7 @@ export class ProfessionalValidationService {
         isValid: false,
         missingCertifications: ['Professional not found'],
         experienceLevel: 0,
-        warnings: []
+        warnings: [],
       }
     }
 
@@ -78,18 +78,23 @@ export class ProfessionalValidationService {
       // Check experience level
       if (professional.experienceLevel < procedure.minExperienceLevel) {
         missingCertifications.push(
-          `${procedure.name}: Insufficient experience (requires ${procedure.minExperienceLevel}+ years, has ${professional.experienceLevel})`
+          `${procedure.name}: Insufficient experience (requires ${procedure.minExperienceLevel}+ years, has ${professional.experienceLevel})`,
         )
         isValid = false
       }
 
       // Check council-specific requirements
-      if (procedure.procedureType === 'injectable' && !['CFM', 'CNEP'].includes(professional.councilType || '')) {
+      if (
+        procedure.procedureType === 'injectable' &&
+        !['CFM', 'CNEP'].includes(professional.councilType || '')
+      ) {
         warnings.push(`${procedure.name}: Consider medical council validation for injectables`)
       }
 
       if (procedure.procedureType === 'surgical' && professional.councilType !== 'CFM') {
-        missingCertifications.push(`${procedure.name}: Surgical procedures require CFM certification`)
+        missingCertifications.push(
+          `${procedure.name}: Surgical procedures require CFM certification`,
+        )
         isValid = false
       }
     }
@@ -98,7 +103,7 @@ export class ProfessionalValidationService {
       isValid,
       missingCertifications,
       experienceLevel: professional.experienceLevel,
-      warnings
+      warnings,
     }
   }
 
@@ -107,7 +112,7 @@ export class ProfessionalValidationService {
    */
   async findSuitableProfessionals(
     procedure: AestheticProcedureDetails,
-    preferredProfessionals?: string[]
+    preferredProfessionals?: string[],
   ): Promise<ProfessionalDetails[]> {
     const allProfessionals = Array.from(this.professionals.values())
     const suitable: ProfessionalDetails[] = []
@@ -146,14 +151,14 @@ export class ProfessionalValidationService {
    */
   async createProfessionalAssignments(
     procedures: AestheticProcedureDetails[],
-    preferredProfessionals?: string[]
+    preferredProfessionals?: string[],
   ): Promise<ProfessionalAssignment[]> {
     const assignments: ProfessionalAssignment[] = []
 
     for (const procedure of procedures) {
       const suitableProfessionals = await this.findSuitableProfessionals(
         procedure,
-        preferredProfessionals
+        preferredProfessionals,
       )
 
       if (suitableProfessionals.length > 0) {
@@ -170,7 +175,7 @@ export class ProfessionalValidationService {
 
           // Assign assistant if required
           if (procedure.specialRequirements.includes('assistant_required')) {
-            const assistant = suitableProfessionals.find((p) => p.role === 'assistant')
+            const assistant = suitableProfessionals.find(p => p.role === 'assistant')
             if (assistant) {
               assignments.push({
                 professionalId: assistant.id,
@@ -184,7 +189,7 @@ export class ProfessionalValidationService {
 
           // Assign anesthesiologist for surgical procedures
           if (procedure.procedureType === 'surgical') {
-            const anesthesiologist = suitableProfessionals.find((p) => p.role === 'anesthesiologist')
+            const anesthesiologist = suitableProfessionals.find(p => p.role === 'anesthesiologist')
             if (anesthesiologist) {
               assignments.push({
                 professionalId: anesthesiologist.id,
@@ -208,12 +213,14 @@ export class ProfessionalValidationService {
   async getProfessionalAvailability(
     professionalId: string,
     startDate: Date,
-    endDate: Date
-  ): Promise<Array<{
-    start: Date
-    end: Date
-    available: boolean
-  }>> {
+    endDate: Date,
+  ): Promise<
+    Array<{
+      start: Date
+      end: Date
+      available: boolean
+    }>
+  > {
     const professional = this.professionals.get(professionalId)
     if (!professional) return []
 
@@ -229,7 +236,7 @@ export class ProfessionalValidationService {
       availability.push({
         start: new Date(current),
         end: new Date(current.getTime() + 60 * 60 * 1000), // 1 hour slots
-        available: Math.random() > 0.3 // 70% availability
+        available: Math.random() > 0.3, // 70% availability
       })
       current.setHours(current.getHours() + 1)
     }
@@ -243,15 +250,15 @@ export class ProfessionalValidationService {
   async isProfessionalAvailable(
     professionalId: string,
     startTime: Date,
-    endTime: Date
+    endTime: Date,
   ): Promise<boolean> {
     const availability = await this.getProfessionalAvailability(
       professionalId,
       new Date(startTime.getTime() - 24 * 60 * 60 * 1000), // 1 day before
-      new Date(endTime.getTime() + 24 * 60 * 60 * 1000) // 1 day after
+      new Date(endTime.getTime() + 24 * 60 * 60 * 1000), // 1 day after
     )
 
-    return availability.some(slot => 
+    return availability.some(slot =>
       slot.start <= startTime && slot.end >= endTime && slot.available
     )
   }
@@ -282,13 +289,13 @@ export class ProfessionalValidationService {
     if (!professional) {
       return {
         isValid: false,
-        warnings: ['Professional not found']
+        warnings: ['Professional not found'],
       }
     }
 
     // Mock implementation - would integrate with council APIs
     const warnings: string[] = []
-    
+
     // Check if license is expiring soon (within 30 days)
     // const thirtyDaysFromNow = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     // if (professional.licenseExpiry && professional.licenseExpiry <= thirtyDaysFromNow) {
@@ -298,7 +305,7 @@ export class ProfessionalValidationService {
     return {
       isValid: professional.activeLicense,
       // expires: professional.licenseExpiry,
-      warnings
+      warnings,
     }
   }
 

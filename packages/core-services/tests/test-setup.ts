@@ -60,8 +60,8 @@ export const aiTestUtils = {
       'google',
     ]
 
-    return output.some((log) =>
-      apiKeyPatterns.some((pattern) =>
+    return output.some(log =>
+      apiKeyPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     )
@@ -98,8 +98,8 @@ export const aiTestUtils = {
       'oxygen saturation',
     ]
 
-    return output.some((log) =>
-      patientDataPatterns.some((pattern) =>
+    return output.some(log =>
+      patientDataPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     )
@@ -121,8 +121,8 @@ export const aiTestUtils = {
       'presence_penalty_test',
     ]
 
-    return output.some((log) =>
-      configPatterns.some((pattern) =>
+    return output.some(log =>
+      configPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     )
@@ -145,8 +145,8 @@ export const aiTestUtils = {
       'credits',
     ]
 
-    return output.some((log) =>
-      billingPatterns.some((pattern) =>
+    return output.some(log =>
+      billingPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     )
@@ -168,8 +168,8 @@ export const aiTestUtils = {
       'deploy_id',
     ]
 
-    return output.some((log) =>
-      metricPatterns.some((pattern) =>
+    return output.some(log =>
+      metricPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     )
@@ -188,9 +188,9 @@ export const aiTestUtils = {
       'metadata',
     ]
 
-    return output.some((call) => {
+    return output.some(call => {
       const logStr = JSON.stringify(call)
-      return requiredFields.some((field) => logStr.includes(field))
+      return requiredFields.some(field => logStr.includes(field))
     })
   },
 
@@ -209,8 +209,8 @@ export const aiTestUtils = {
       'api_endpoint',
     ]
 
-    return output.some((log) =>
-      integrationPatterns.some((pattern) =>
+    return output.some(log =>
+      integrationPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     )

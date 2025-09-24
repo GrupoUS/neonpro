@@ -182,9 +182,9 @@ export function validateMedicalTerminology(term: string): boolean {
 
   const normalizedTerm = term.toLowerCase().trim()
   return validTerms.some(
-    (validTerm) =>
-      validTerm.toLowerCase().includes(normalizedTerm)
-      || normalizedTerm.includes(validTerm.toLowerCase()),
+    validTerm =>
+      validTerm.toLowerCase().includes(normalizedTerm) ||
+      normalizedTerm.includes(validTerm.toLowerCase()),
   )
 }
 
@@ -226,7 +226,7 @@ export function validateAIOutputSafety(response: string): boolean {
   }
 
   // Check for required medical disclaimers
-  const hasDisclaimer = missingDisclaimerPatterns.some((pattern) => pattern.test(response))
+  const hasDisclaimer = missingDisclaimerPatterns.some(pattern => pattern.test(response))
 
   if (!hasDisclaimer && response.length > 100) {
     auditLogger.logSecurityEvent({
@@ -261,12 +261,12 @@ export class AIRateLimiter {
 
     // Remove requests older than 1 hour
     const recentRequests = userRequests.filter(
-      (time) => now - time < 60 * 1000,
+      time => now - time < 60 * 1000,
     )
 
     // Check minute limit
     const minuteRequests = recentRequests.filter(
-      (time) => now - time < 60 * 1000,
+      time => now - time < 60 * 1000,
     )
 
     if (minuteRequests.length >= RATE_LIMITS.requestsPerMinute) {
@@ -304,7 +304,7 @@ export class AIRateLimiter {
     const entries = Array.from(this.requests.entries())
     for (const [key, requests] of entries) {
       const recentRequests = requests.filter(
-        (time) => now - time < 60 * 60 * 1000,
+        time => now - time < 60 * 60 * 1000,
       )
 
       if (recentRequests.length === 0) {

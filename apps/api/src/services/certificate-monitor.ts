@@ -275,16 +275,16 @@ export class CertificateMonitor {
     const ipMatches = sansLine.match(/IP Address:([^,\s]+)/g)
 
     if (dnsMatches) {
-      sans.push(...dnsMatches.map((match) => match.replace('DNS:', '')))
+      sans.push(...dnsMatches.map(match => match.replace('DNS:', '')))
     }
     if (emailMatches) {
-      sans.push(...emailMatches.map((match) => match.replace('email:', '')))
+      sans.push(...emailMatches.map(match => match.replace('email:', '')))
     }
     if (uriMatches) {
-      sans.push(...uriMatches.map((match) => match.replace('URI:', '')))
+      sans.push(...uriMatches.map(match => match.replace('URI:', '')))
     }
     if (ipMatches) {
-      sans.push(...ipMatches.map((match) => match.replace('IP Address:', '')))
+      sans.push(...ipMatches.map(match => match.replace('IP Address:', '')))
     }
 
     return sans
@@ -332,9 +332,9 @@ export class CertificateMonitor {
 
     // Attempt auto-renewal if configured
     if (
-      this.config.autoRenew
-      && alertType === 'critical'
-      && this.config.renewalCommand
+      this.config.autoRenew &&
+      alertType === 'critical' &&
+      this.config.renewalCommand
     ) {
       await this.attemptAutoRenewal(alert)
     }
@@ -438,7 +438,7 @@ export class CertificateMonitor {
       }
 
       // Check if renewal was successful by verifying certificate again
-      await new Promise((resolve) => setTimeout(resolve, 5000)) // Wait for renewal
+      await new Promise(resolve => setTimeout(resolve, 5000)) // Wait for renewal
       await this.checkCertificate()
 
       this.logger.logSystemEvent('auto_renewal_success', {
@@ -521,7 +521,7 @@ export class CertificateMonitor {
 
     // Restart monitoring with new config
     this.stop()
-    this.start().catch(async (error) => {
+    this.start().catch(async error => {
       await this.logger.logError('certificate_monitor_restart_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),

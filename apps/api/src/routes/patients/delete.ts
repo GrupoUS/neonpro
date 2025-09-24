@@ -32,7 +32,7 @@ const DeletePatientQuerySchema = z.object({
   schedule_anonymization: z.coerce.boolean().optional(),
 })
 
-app.delete('/:id', requireAuth, dataProtection.clientView, async (c) => {
+app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
   try {
     const userId = c.get('userId')
     const params = c.req.param()
@@ -45,7 +45,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async (c) => {
         {
           success: false,
           error: 'Parâmetros inválidos',
-          errors: paramsValidation.error.errors.map((err) => ({
+          errors: paramsValidation.error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -61,7 +61,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async (c) => {
         {
           success: false,
           error: 'Parâmetros de consulta inválidos',
-          errors: queryValidation.error.errors.map((err) => ({
+          errors: queryValidation.error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -130,12 +130,12 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async (c) => {
     }
 
     // Determine deletion type and reason
-    const deletionReason = reason
-      || (lgpdRequest === 'data_subject_deletion'
+    const deletionReason = reason ||
+      (lgpdRequest === 'data_subject_deletion'
         ? 'data_subject_request'
         : 'administrative_deletion')
-    const requestedDeletionType = deletion_type
-      || (lgpdRequest === 'data_subject_deletion'
+    const requestedDeletionType = deletion_type ||
+      (lgpdRequest === 'data_subject_deletion'
         ? 'data_subject_request'
         : 'soft_delete')
 
@@ -183,8 +183,8 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async (c) => {
     let deletionResult
 
     if (
-      deletionType === 'anonymization'
-      || deletionType === 'data_subject_request'
+      deletionType === 'anonymization' ||
+      deletionType === 'data_subject_request'
     ) {
       // Process anonymization
       const anonymizationResult = await lgpdService.anonymizePatientData({
@@ -243,7 +243,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async (c) => {
         requestedBy: userId,
         reason: deletionReason,
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('LGPD data deletion processing failed:', err)
       })
 
@@ -275,7 +275,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async (c) => {
         complianceContext: 'LGPD',
         sensitivityLevel: 'critical',
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Audit logging failed:', err)
       })
 
@@ -296,7 +296,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async (c) => {
           priority: 'high',
           lgpdConsent: true,
         })
-        .catch((err) => {
+        .catch(err => {
           console.error('Deletion notification failed:', err)
         })
     }

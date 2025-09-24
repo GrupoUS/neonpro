@@ -118,10 +118,10 @@ export class HTTPSServerManager {
     }
 
     if (
-      !config.port
-      || typeof config.port !== 'number'
-      || config.port < 1
-      || config.port > 65535
+      !config.port ||
+      typeof config.port !== 'number' ||
+      config.port < 1 ||
+      config.port > 65535
     ) {
       throw new Error(
         'Port is required and must be a valid number between 1 and 65535',
@@ -141,10 +141,10 @@ export class HTTPSServerManager {
     }
 
     if (
-      config.httpPort
-      && (typeof config.httpPort !== 'number'
-        || config.httpPort < 1
-        || config.httpPort > 65535)
+      config.httpPort &&
+      (typeof config.httpPort !== 'number' ||
+        config.httpPort < 1 ||
+        config.httpPort > 65535)
     ) {
       throw new Error('HTTP port must be a valid number between 1 and 65535')
     }
@@ -200,7 +200,7 @@ export class HTTPSServerManager {
       // Configure server settings
       this.configureServer(this.httpsServer)
 
-      this.httpsServer.on('secureConnection', (tlsSocket) => {
+      this.httpsServer.on('secureConnection', tlsSocket => {
         this.metrics.totalConnections++
         this.metrics.activeConnections++
 
@@ -299,7 +299,7 @@ export class HTTPSServerManager {
       })
     })
 
-    this.httpServer.on('error', (error) => {
+    this.httpServer.on('error', error => {
       this.logger.logError('http_redirect_server_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         port: this.config.httpPort,
@@ -314,12 +314,12 @@ export class HTTPSServerManager {
 
     // Configure timeouts
     server.timeout = this.config.timeout || HTTPS_CONSTANTS.SERVER.TIMEOUT
-    server.keepAliveTimeout = this.config.keepAliveTimeout
-      || HTTPS_CONSTANTS.SERVER.KEEP_ALIVE_TIMEOUT
+    server.keepAliveTimeout = this.config.keepAliveTimeout ||
+      HTTPS_CONSTANTS.SERVER.KEEP_ALIVE_TIMEOUT
     server.headersTimeout = HTTPS_CONSTANTS.SERVER.HEADERS_TIMEOUT
 
     // Handle server errors
-    server.on('error', (error) => {
+    server.on('error', error => {
       this.logger.logError(LOGGING_CONSTANTS.EVENTS.SERVER_ERROR, {
         error: error instanceof Error ? error.message : 'Unknown error',
         port: this.config.port,
@@ -339,7 +339,7 @@ export class HTTPSServerManager {
     })
 
     // Handle TLS errors
-    server.on('tlsClientError', (error) => {
+    server.on('tlsClientError', error => {
       this.logger.logError('tls_client_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
@@ -347,7 +347,7 @@ export class HTTPSServerManager {
     })
 
     // Handle connection timeout
-    server.on('timeout', (socket) => {
+    server.on('timeout', socket => {
       this.logger.logWarning(LOGGING_CONSTANTS.EVENTS.CONNECTION_TIMEOUT, {
         remoteAddress: socket.remoteAddress,
         timestamp: new Date().toISOString(),
@@ -378,19 +378,19 @@ export class HTTPSServerManager {
         resolve()
       })
 
-      this.httpsServer.on('error', (error) => {
+      this.httpsServer.on('error', error => {
         reject(error)
       })
     })
   }
 
   public stop(): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const stopPromises: Promise<void>[] = []
 
       if (this.httpsServer) {
         stopPromises.push(
-          new Promise<void>((closeResolve) => {
+          new Promise<void>(closeResolve => {
             this.httpsServer!.close(() => {
               this.logger.logSystemEvent(
                 LOGGING_CONSTANTS.EVENTS.HTTPS_SERVER_STOPPED,
@@ -407,7 +407,7 @@ export class HTTPSServerManager {
 
       if (this.httpServer) {
         stopPromises.push(
-          new Promise<void>((closeResolve) => {
+          new Promise<void>(closeResolve => {
             this.httpServer!.close(() => {
               this.logger.logSystemEvent('http_redirect_server_stopped', {
                 port: this.config.httpPort,
@@ -445,8 +445,8 @@ export class HTTPSServerManager {
 
   private updateAverageResponseTime(responseTime: number): void {
     const alpha = HTTPS_CONSTANTS.METRICS.RESPONSE_TIME_SMOOTHING_FACTOR
-    this.metrics.averageResponseTime = alpha * responseTime
-      + (1 - alpha) * this.metrics.averageResponseTime
+    this.metrics.averageResponseTime = alpha * responseTime +
+      (1 - alpha) * this.metrics.averageResponseTime
   }
 
   public getCertificateInfo() {

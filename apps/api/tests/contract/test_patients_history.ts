@@ -201,7 +201,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .expect(200)
 
       const creationEntry = response.body.history.find(
-        (entry) => entry.action === 'created',
+        entry => entry.action === 'created',
       )
       expect(creationEntry).toBeDefined()
       expect(creationEntry.actorType).toBeDefined()
@@ -215,13 +215,13 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .expect(200)
 
       const updateEntries = response.body.history.filter(
-        (entry) => entry.action === 'updated',
+        entry => entry.action === 'updated',
       )
       expect(updateEntries.length).toBeGreaterThan(0)
 
       // Should have entries for name update, medical history update, and consent update
-      const nameUpdate = updateEntries.find((entry) =>
-        entry.changes?.some((change) => change.field === 'name')
+      const nameUpdate = updateEntries.find(entry =>
+        entry.changes?.some(change => change.field === 'name')
       )
       expect(nameUpdate).toBeDefined()
     })
@@ -233,7 +233,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .expect(200)
 
       const accessEntries = response.body.history.filter(
-        (entry) => entry.action === 'accessed',
+        entry => entry.action === 'accessed',
       )
       expect(accessEntries.length).toBeGreaterThan(0)
       expect(response.body.summary.accessCount).toBeGreaterThan(0)
@@ -248,14 +248,14 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .expect(200)
 
       const updateEntry = response.body.history.find(
-        (entry) => entry.action === 'updated' && entry.changes,
+        entry => entry.action === 'updated' && entry.changes,
       )
 
       if (updateEntry) {
         expect(updateEntry.changes).toBeDefined()
         expect(updateEntry.changes.length).toBeGreaterThan(0)
 
-        updateEntry.changes.forEach((change) => {
+        updateEntry.changes.forEach(change => {
           expect(change.field).toBeDefined()
           expect(change.changeType).toBeDefined()
           // oldValue and newValue are optional but should be present for updates
@@ -276,13 +276,13 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .expect(200)
 
       const medicalEntries = response.body.history.filter(
-        (entry) => entry.action === 'medical_updated',
+        entry => entry.action === 'medical_updated',
       )
 
       if (medicalEntries.length > 0) {
         const medicalEntry = medicalEntries[0]
         expect(medicalEntry.changes).toBeDefined()
-        const allergyChange = medicalEntry.changes.find((change) =>
+        const allergyChange = medicalEntry.changes.find(change =>
           change.field.includes('allergies')
         )
         expect(allergyChange).toBeDefined()
@@ -298,7 +298,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .expect(200)
 
       const consentEntries = response.body.history.filter(
-        (entry) => entry.action === 'consents_updated',
+        entry => entry.action === 'consents_updated',
       )
 
       if (consentEntries.length > 0) {
@@ -319,7 +319,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200)
 
-      response.body.history.forEach((entry) => {
+      response.body.history.forEach(entry => {
         expect(['updated', 'accessed']).toContain(entry.action)
       })
     })
@@ -337,7 +337,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200)
 
-      response.body.history.forEach((entry) => {
+      response.body.history.forEach(entry => {
         const entryDate = new Date(entry.timestamp)
         expect(entryDate.getTime()).toBeGreaterThanOrEqual(yesterday.getTime())
         expect(entryDate.getTime()).toBeLessThanOrEqual(tomorrow.getTime())
@@ -383,7 +383,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200)
 
-      response.body.history.forEach((entry) => {
+      response.body.history.forEach(entry => {
         expect(entry.actorType).toBeDefined()
         expect(entry.actorId).toBeDefined()
         expect(entry.actorName).toBeDefined()
@@ -397,10 +397,10 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .expect(200)
 
       const userEntries = response.body.history.filter(
-        (entry) => entry.actorType === 'user' || entry.actorType === 'api',
+        entry => entry.actorType === 'user' || entry.actorType === 'api',
       )
 
-      userEntries.forEach((entry) => {
+      userEntries.forEach(entry => {
         if (entry.metadata) {
           expect(entry.metadata.ipAddress).toBeDefined()
           expect(entry.metadata.source).toBeDefined()
@@ -414,7 +414,7 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200)
 
-      response.body.history.forEach((entry) => {
+      response.body.history.forEach(entry => {
         expect(entry.actorType).toBe('user')
       })
     })
@@ -428,12 +428,12 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .expect(200)
 
       const dataProcessingEntries = response.body.history.filter(
-        (entry) => entry.lgpdInfo && entry.lgpdInfo.consentStatus !== undefined,
+        entry => entry.lgpdInfo && entry.lgpdInfo.consentStatus !== undefined,
       )
 
       expect(dataProcessingEntries.length).toBeGreaterThan(0)
 
-      dataProcessingEntries.forEach((entry) => {
+      dataProcessingEntries.forEach(entry => {
         expect(entry.lgpdInfo.consentStatus).toBeDefined()
         expect(entry.lgpdInfo.legalBasis).toBeDefined()
         expect(entry.lgpdInfo.dataCategories).toBeDefined()
@@ -460,11 +460,11 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200)
 
-      const consentWithdrawal = response.body.history.find((entry) =>
+      const consentWithdrawal = response.body.history.find(entry =>
         entry.changes?.some(
-          (change) =>
-            change.field === 'marketingCommunications'
-            && change.newValue === false,
+          change =>
+            change.field === 'marketingCommunications' &&
+            change.newValue === false,
         )
       )
 

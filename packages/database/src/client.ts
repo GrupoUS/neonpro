@@ -263,8 +263,8 @@ export const closeDatabaseConnections = async () => {
 
 // Handle process termination
 if (
-  typeof process !== 'undefined'
-  && typeof (process as any).on === 'function'
+  typeof process !== 'undefined' &&
+  typeof (process as any).on === 'function'
 ) {
   process.on('SIGINT', closeDatabaseConnections)
   process.on('SIGTERM', closeDatabaseConnections)

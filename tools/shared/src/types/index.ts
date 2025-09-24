@@ -204,12 +204,12 @@ export class ConfigurationError extends ToolError {
 // Export type guards
 export function isLogEntry(obj: any): obj is LogEntry {
   return (
-    obj
-    && typeof obj === 'object'
-    && typeof obj.timestamp === 'string'
-    && typeof obj.level === 'number'
-    && typeof obj.message === 'string'
-    && typeof obj.context === 'object'
+    obj &&
+    typeof obj === 'object' &&
+    typeof obj.timestamp === 'string' &&
+    typeof obj.level === 'number' &&
+    typeof obj.message === 'string' &&
+    typeof obj.context === 'object'
   )
 }
 
@@ -219,10 +219,10 @@ export function isResult<T>(obj: any): obj is Result<T> {
 
 export function isValidationResult(obj: any): obj is ValidationResult {
   return (
-    obj
-    && typeof obj === 'object'
-    && typeof obj.valid === 'boolean'
-    && Array.isArray(obj.errors)
-    && Array.isArray(obj.warnings)
+    obj &&
+    typeof obj === 'object' &&
+    typeof obj.valid === 'boolean' &&
+    Array.isArray(obj.errors) &&
+    Array.isArray(obj.warnings)
   )
 }

@@ -50,7 +50,7 @@ const exportSchema = z.object({
 exportRouter.post(
   '/export',
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
-  async (c) => {
+  async c => {
     try {
       const _userId = c.get('jwtPayload').sub
       if (!_userId) {
@@ -127,7 +127,7 @@ exportRouter.post(
 exportRouter.get(
   '/export/:jobId',
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
-  async (c) => {
+  async c => {
     try {
       const _userId = c.get('jwtPayload').sub
       if (!_userId) {
@@ -174,7 +174,7 @@ exportRouter.get(
 exportRouter.delete(
   '/export/:jobId',
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
-  async (c) => {
+  async c => {
     try {
       const _userId = c.get('jwtPayload').sub
       if (!_userId) {
@@ -211,7 +211,7 @@ exportRouter.delete(
 exportRouter.get(
   '/export/:jobId/download',
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
-  async (c) => {
+  async c => {
     try {
       const _userId = c.get('jwtPayload').sub
       if (!_userId) {
@@ -263,7 +263,7 @@ exportRouter.get(
 exportRouter.get(
   '/export',
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
-  async (c) => {
+  async c => {
     try {
       const _userId = c.get('jwtPayload').sub
       if (!_userId) {
@@ -293,7 +293,7 @@ exportRouter.get(
 exportRouter.get(
   '/export/:jobId/metrics',
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
-  async (c) => {
+  async c => {
     try {
       const _userId = c.get('jwtPayload').sub
       if (!_userId) {
@@ -330,7 +330,7 @@ exportRouter.get(
   },
 )
 
-exportRouter.get('/export/meta/formats', async (c) => {
+exportRouter.get('/export/meta/formats', async c => {
   try {
     const formats = await ExportService.getExportFormats()
     return c.json({
@@ -352,7 +352,7 @@ exportRouter.get('/export/meta/formats', async (c) => {
 exportRouter.get(
   '/export/meta/fields',
   jwt({ secret: process.env.JWT_SECRET || 'default-secret' }),
-  async (c) => {
+  async c => {
     try {
       const fields = await ExportService.getExportFields()
       return c.json({

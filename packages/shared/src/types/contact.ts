@@ -306,13 +306,13 @@ export function createContact(
 
 // Get primary contact
 export function getPrimaryContact(contacts: Contact[]): Contact | undefined {
-  return contacts.find((contact) => contact.isPrimary)
+  return contacts.find(contact => contact.isPrimary)
 }
 
 // Get emergency contacts sorted by priority
 export function getEmergencyContacts(contacts: Contact[]): Contact[] {
   return contacts
-    .filter((contact) => contact.isEmergency)
+    .filter(contact => contact.isEmergency)
     .sort(
       (a, b) => (a.emergencyPriority || 999) - (b.emergencyPriority || 999),
     )
@@ -361,7 +361,7 @@ export function getContactsByType(
   contacts: Contact[],
   type: ContactType,
 ): Contact[] {
-  return contacts.filter((contact) => contact.type === type)
+  return contacts.filter(contact => contact.type === type)
 }
 
 // Update contact verification status
@@ -396,7 +396,7 @@ export function getContactStatistics(contacts: Contact[]): {
     emergency: 0,
   }
 
-  contacts.forEach((contact) => {
+  contacts.forEach(contact => {
     // Count by type
     stats.byType[contact.type] = (stats.byType[contact.type] || 0) + 1
 

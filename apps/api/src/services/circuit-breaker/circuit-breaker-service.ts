@@ -212,11 +212,11 @@ export class CircuitBreakerService {
       }, this.config.requestTimeout)
 
       operation()
-        .then((result) => {
+        .then(result => {
           clearTimeout(timeout)
           resolve(result)
         })
-        .catch((error) => {
+        .catch(error => {
           clearTimeout(timeout)
           reject(error)
         })
@@ -383,8 +383,8 @@ export class CircuitBreakerService {
     this.metrics.lastSuccessTime = new Date()
 
     // Update response time average
-    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1)
-      + responseTime
+    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) +
+      responseTime
     this.metrics.averageResponseTime = totalResponseTime / this.metrics.totalRequests
 
     // Add to history
@@ -415,8 +415,8 @@ export class CircuitBreakerService {
     this.metrics.lastFailureTime = new Date()
 
     // Update response time average (even for failures)
-    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1)
-      + responseTime
+    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) +
+      responseTime
     this.metrics.averageResponseTime = totalResponseTime / this.metrics.totalRequests
 
     // Add to history
@@ -481,7 +481,7 @@ export class CircuitBreakerService {
   private cleanupHistory(): void {
     const cutoff = new Date(Date.now() - this.config.monitoringPeriod)
     this.requestHistory = this.requestHistory.filter(
-      (req) => req.timestamp > cutoff,
+      req => req.timestamp > cutoff,
     )
 
     if (this.requestHistory.length > this.maxHistorySize) {
@@ -524,16 +524,16 @@ export class CircuitBreakerService {
     try {
       // For circuit breaker health, we check recent success rate
       const recentRequests = this.requestHistory.filter(
-        (req) => req.timestamp > new Date(Date.now() - this.config.monitoringPeriod),
+        req => req.timestamp > new Date(Date.now() - this.config.monitoringPeriod),
       )
 
       if (recentRequests.length === 0) {
         status = 'UNKNOWN'
       } else {
-        const successRate = recentRequests.filter((req) => req.success).length
-          / recentRequests.length
-        const avgResponseTime = recentRequests.reduce((sum, _req) => sum + req.responseTime, 0)
-          / recentRequests.length
+        const successRate = recentRequests.filter(req => req.success).length /
+          recentRequests.length
+        const avgResponseTime = recentRequests.reduce((sum, _req) => sum + req.responseTime, 0) /
+          recentRequests.length
 
         if (successRate >= 0.9 && avgResponseTime < 3000) {
           status = 'HEALTHY'
@@ -584,7 +584,7 @@ export class CircuitBreakerService {
    * Emit circuit breaker event
    */
   private emitEvent(event: CircuitBreakerEvent): void {
-    this.eventCallbacks.forEach((callback) => {
+    this.eventCallbacks.forEach(callback => {
       try {
         callback(event)
       } catch {
@@ -694,8 +694,8 @@ export class CircuitBreakerRegistry {
     config?: CircuitBreakerConfig,
   ): CircuitBreakerService {
     if (!this.circuitBreakers.has(serviceName)) {
-      const circuitConfig = config
-        || (serviceName.includes('healthcare') || serviceName.includes('patient')
+      const circuitConfig = config ||
+        (serviceName.includes('healthcare') || serviceName.includes('patient')
           ? HEALTHCARE_CIRCUIT_CONFIG
           : STANDARD_CIRCUIT_CONFIG)
 
@@ -732,7 +732,7 @@ export class CircuitBreakerRegistry {
    * Reset all circuit breakers
    */
   resetAll(): void {
-    this.circuitBreakers.forEach((circuitBreaker) => {
+    this.circuitBreakers.forEach(circuitBreaker => {
       circuitBreaker.forceReset()
     })
   }

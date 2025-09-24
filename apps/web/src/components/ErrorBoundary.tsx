@@ -39,8 +39,8 @@ export class ErrorBoundary extends React.Component<
               Oops! Algo deu errado
             </h2>
             <p className='text-gray-600 mb-6'>
-              {this.state.error?.message
-                || 'Ocorreu um erro inesperado. Por favor, tente novamente.'}
+              {this.state.error?.message ||
+                'Ocorreu um erro inesperado. Por favor, tente novamente.'}
             </p>
             <button
               onClick={() => {

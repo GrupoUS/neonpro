@@ -60,13 +60,13 @@ function sanitizeData(
   }
 
   if (Array.isArray(data)) {
-    return data.map((item) => sanitizeData(item, sensitiveFields))
+    return data.map(item => sanitizeData(item, sensitiveFields))
   }
 
   const sanitized: any = {}
 
   for (const [key, value] of Object.entries(data)) {
-    const isSensitive = sensitiveFields.some((field) =>
+    const isSensitive = sensitiveFields.some(field =>
       key.toLowerCase().includes(field.toLowerCase())
     )
 
@@ -92,7 +92,7 @@ function extractActionAndResource(
   // Extract resource from path
   const pathParts = path
     .split('/')
-    .filter((part) => part && !part.match(/^v\d+$/))
+    .filter(part => part && !part.match(/^v\d+$/))
   const resource = pathParts[0] || 'unknown'
 
   // Map HTTP methods to actions
@@ -125,10 +125,10 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
     // Extract request information
     const method = c.req.method
     const path = c.req.path
-    const ip = c.req.header('x-forwarded-for')
-      || c.req.header('x-real-ip')
-      || c.req.header('cf-connecting-ip')
-      || 'unknown'
+    const ip = c.req.header('x-forwarded-for') ||
+      c.req.header('x-real-ip') ||
+      c.req.header('cf-connecting-ip') ||
+      'unknown'
     const userAgent = c.req.header('user-agent') || 'unknown'
     const requestId = c.get('requestId') || 'unknown'
 
@@ -142,10 +142,10 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
     const { action, resource } = extractActionAndResource(method, path)
 
     // Extract resource ID from path or query params
-    const resourceId = c.req.param('id')
-      || c.req.param('patientId')
-      || c.req.param('appointmentId')
-      || c.req.query('id')
+    const resourceId = c.req.param('id') ||
+      c.req.param('patientId') ||
+      c.req.param('appointmentId') ||
+      c.req.query('id')
 
     // Prepare base audit entry
     const baseAuditEntry: Partial<AuditLogEntry> = {

@@ -248,7 +248,7 @@ class AestheticProfessionalsService {
         validated.councilType,
         validated.councilLicense,
       )
-        .catch((err) => logger.error('License validation failed', { error: err }))
+        .catch(err => logger.error('License validation failed', { error: err }))
 
       return {
         success: true,
@@ -331,7 +331,7 @@ class AestheticProfessionalsService {
 
       return {
         success: true,
-        data: professionals.map((p) => this.mapProfessionalFromDb(p)),
+        data: professionals.map(p => this.mapProfessionalFromDb(p)),
       }
     } catch (error) {
       logger.error('Get professionals by clinic error', { error, clinicId })
@@ -463,7 +463,7 @@ class AestheticProfessionalsService {
 
       return {
         success: true,
-        data: professionals.map((p) => this.mapProfessionalFromDb(p)),
+        data: professionals.map(p => this.mapProfessionalFromDb(p)),
       }
     } catch (error) {
       logger.error('Get professionals by specialization error', {
@@ -551,12 +551,12 @@ class AestheticProfessionalsService {
       }
 
       const totalAppointments = appointments.length
-      const completedAppointments = appointments.filter((apt) => apt.status === 'COMPLETED').length
-      const noShows = appointments.filter((apt) => apt.status === 'NO_SHOW').length
+      const completedAppointments = appointments.filter(apt => apt.status === 'COMPLETED').length
+      const noShows = appointments.filter(apt => apt.status === 'NO_SHOW').length
       const noShowRate = totalAppointments > 0 ? (noShows / totalAppointments) * 100 : 0
 
       const revenueGenerated = appointments
-        .filter((apt) => apt.status === 'COMPLETED')
+        .filter(apt => apt.status === 'COMPLETED')
         .reduce((sum, apt) => sum + (apt.price || 0), 0)
 
       // Group procedures by type
@@ -633,7 +633,7 @@ class AestheticProfessionalsService {
     licenseNumber: string,
   ): Promise<boolean> {
     // Mock validation - replace with actual council API integrations
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
 
     // Basic format validation based on council type
     switch (councilType) {

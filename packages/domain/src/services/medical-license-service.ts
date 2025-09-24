@@ -373,7 +373,7 @@ export class MedicalLicenseDomainService {
     try {
       // Check state-specific telemedicine regulations
       const stateCouncil = this.stateCouncils.find(
-        (council) => council.state === state,
+        council => council.state === state,
       )
 
       if (!stateCouncil) {
@@ -439,24 +439,24 @@ export class MedicalLicenseDomainService {
     telemedicineCompliant: boolean
   } {
     // CFM compliance: Active registration
-    const cfmCompliant = cfmRegistration.registrationStatus === 'active'
-      && (!cfmRegistration.expiryDate || cfmRegistration.expiryDate > new Date())
+    const cfmCompliant = cfmRegistration.registrationStatus === 'active' &&
+      (!cfmRegistration.expiryDate || cfmRegistration.expiryDate > new Date())
 
     // State compliance: Authorized in the requested states
     const requestedStatesList = requestedStates || [state]
-    const stateCompliant = requestedStatesList.every((requestedState) =>
+    const stateCompliant = requestedStatesList.every(requestedState =>
       telemedicineAuth.authorizedStates.includes(requestedState)
     )
 
     // Specialty compliance: Authorized for the requested specialty
-    const specialtyCompliant = !requestedSpecialty
-      || telemedicineAuth.authorizedSpecialties.includes(requestedSpecialty)
-      || telemedicineAuth.authorizedSpecialties.includes('Clínica Médica')
+    const specialtyCompliant = !requestedSpecialty ||
+      telemedicineAuth.authorizedSpecialties.includes(requestedSpecialty) ||
+      telemedicineAuth.authorizedSpecialties.includes('Clínica Médica')
 
     // Telemedicine compliance: Valid authorization and no blocking restrictions
-    const telemedicineCompliant = telemedicineAuth.isValid
-      && cfmRegistration.telemedicineAuthorized
-      && !telemedicineAuth.emergencyOnly
+    const telemedicineCompliant = telemedicineAuth.isValid &&
+      cfmRegistration.telemedicineAuthorized &&
+      !telemedicineAuth.emergencyOnly
 
     return {
       cfmCompliant,
@@ -493,8 +493,8 @@ export class MedicalLicenseDomainService {
 
     // Expiry risks
     if (
-      cfmRegistration.expiryDate
-      && cfmRegistration.expiryDate <= new Date()
+      cfmRegistration.expiryDate &&
+      cfmRegistration.expiryDate <= new Date()
     ) {
       indicators.push('CFM registration has expired')
     }
@@ -517,7 +517,7 @@ export class MedicalLicenseDomainService {
     // State authorization risks
     const requestedStatesList = requestedStates || [state]
     const unauthorizedStates = requestedStatesList.filter(
-      (s) => !telemedicineAuth.authorizedStates.includes(s),
+      s => !telemedicineAuth.authorizedStates.includes(s),
     )
 
     if (unauthorizedStates.length > 0) {
@@ -528,16 +528,16 @@ export class MedicalLicenseDomainService {
 
     // Specialty authorization risks
     if (
-      requestedSpecialty
-      && !telemedicineAuth.authorizedSpecialties.includes(requestedSpecialty)
+      requestedSpecialty &&
+      !telemedicineAuth.authorizedSpecialties.includes(requestedSpecialty)
     ) {
       indicators.push(`Not authorized for specialty: ${requestedSpecialty}`)
     }
 
     // Verification freshness risks
     const daysSinceVerification = Math.floor(
-      (new Date().getTime() - cfmRegistration.lastVerification.getTime())
-        / (1000 * 60 * 60 * 24),
+      (new Date().getTime() - cfmRegistration.lastVerification.getTime()) /
+        (1000 * 60 * 60 * 24),
     )
 
     if (daysSinceVerification > 30) {
@@ -548,8 +548,8 @@ export class MedicalLicenseDomainService {
 
     // Restrictions
     if (
-      cfmRegistration.restrictions
-      && cfmRegistration.restrictions.length > 0
+      cfmRegistration.restrictions &&
+      cfmRegistration.restrictions.length > 0
     ) {
       indicators.push(
         `CFM restrictions: ${cfmRegistration.restrictions.join(', ')}`,
@@ -612,7 +612,7 @@ export class MedicalLicenseDomainService {
    */
   private isValidState(state: string): boolean {
     return this.stateCouncils.some(
-      (council) => council.state === state.toUpperCase(),
+      council => council.state === state.toUpperCase(),
     )
   }
 
@@ -627,7 +627,7 @@ export class MedicalLicenseDomainService {
     _requestedStates: string[],
   ): string[] {
     const stateCouncil = this.stateCouncils.find(
-      (council) => council.state === state.toUpperCase(),
+      council => council.state === state.toUpperCase(),
     )
 
     if (!stateCouncil || !stateCouncil.telemedicineRegulations.allowed) {
@@ -656,7 +656,7 @@ export class MedicalLicenseDomainService {
     requestedStates: string[],
   ): string[] {
     const stateCouncil = this.stateCouncils.find(
-      (council) => council.state === state.toUpperCase(),
+      council => council.state === state.toUpperCase(),
     )
 
     if (!stateCouncil) {
@@ -668,7 +668,7 @@ export class MedicalLicenseDomainService {
     // Add restrictions for interstate practice
     const requestedStatesList = requestedStates || [state]
     const unauthorizedStates = requestedStatesList.filter(
-      (s) => s.toUpperCase() !== state.toUpperCase(),
+      s => s.toUpperCase() !== state.toUpperCase(),
     )
 
     if (unauthorizedStates.length > 0) {
@@ -690,13 +690,13 @@ export class MedicalLicenseDomainService {
     // Check if any requested state has emergency-only restrictions
     const requestedStatesList = requestedStates || [state]
 
-    return requestedStatesList.some((requestedState) => {
+    return requestedStatesList.some(requestedState => {
       const stateCouncil = this.stateCouncils.find(
-        (council) => council.state === requestedState.toUpperCase(),
+        council => council.state === requestedState.toUpperCase(),
       )
 
       return stateCouncil?.telemedicineRegulations.restrictions.some(
-        (restriction) => restriction.toLowerCase().includes('emergency'),
+        restriction => restriction.toLowerCase().includes('emergency'),
       )
     })
   }
@@ -824,10 +824,10 @@ export class MedicalLicenseDomainService {
     try {
       const verification = await this.verifyMedicalLicense(_request)
 
-      const authorized = verification.complianceStatus.cfmCompliant
-        && verification.complianceStatus.stateCompliant
-        && verification.complianceStatus.specialtyCompliant
-        && verification.complianceStatus.telemedicineCompliant
+      const authorized = verification.complianceStatus.cfmCompliant &&
+        verification.complianceStatus.stateCompliant &&
+        verification.complianceStatus.specialtyCompliant &&
+        verification.complianceStatus.telemedicineCompliant
 
       return {
         authorized,

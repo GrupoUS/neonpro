@@ -9,7 +9,7 @@ import { Hono } from 'hono'
 const app = new Hono()
 
 // Stripe webhook endpoint
-app.post('/stripe/webhook', async (c) => {
+app.post('/stripe/webhook', async c => {
   try {
     const body = await c.req.text()
     const signature = c.req.header('stripe-signature')

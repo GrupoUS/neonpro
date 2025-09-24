@@ -557,8 +557,8 @@ export class AnalyticsService implements AnalyticsService {
       .from('analytics_configurations')
       .update({
         ...(validatedConfig.name && { name: validatedConfig.name }),
-        ...(validatedConfig.configuration !== undefined
-          && { configuration: validatedConfig.configuration }),
+        ...(validatedConfig.configuration !== undefined &&
+          { configuration: validatedConfig.configuration }),
         ...(validatedConfig.isActive !== undefined && { is_active: validatedConfig.isActive }),
         updated_at: new Date().toISOString(),
       })
@@ -601,7 +601,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get analytics configurations: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       AnalyticsConfigurationSchema.parse({
         ...item,
         clinicId: item.clinic_id,
@@ -656,14 +656,14 @@ export class AnalyticsService implements AnalyticsService {
       .update({
         ...(validatedKPI.name !== undefined && { name: validatedKPI.name }),
         ...(validatedKPI.description !== undefined && { description: validatedKPI.description }),
-        ...(validatedKPI.calculationFormula !== undefined
-          && { calculation_formula: validatedKPI.calculationFormula }),
+        ...(validatedKPI.calculationFormula !== undefined &&
+          { calculation_formula: validatedKPI.calculationFormula }),
         ...(validatedKPI.unit !== undefined && { unit: validatedKPI.unit }),
         ...(validatedKPI.targetValue !== undefined && { target_value: validatedKPI.targetValue }),
-        ...(validatedKPI.benchmarkValue !== undefined
-          && { benchmark_value: validatedKPI.benchmarkValue }),
-        ...(validatedKPI.aggregationType !== undefined
-          && { aggregation_type: validatedKPI.aggregationType }),
+        ...(validatedKPI.benchmarkValue !== undefined &&
+          { benchmark_value: validatedKPI.benchmarkValue }),
+        ...(validatedKPI.aggregationType !== undefined &&
+          { aggregation_type: validatedKPI.aggregationType }),
         ...(validatedKPI.frequency !== undefined && { frequency: validatedKPI.frequency }),
         ...(validatedKPI.isActive !== undefined && { is_active: validatedKPI.isActive }),
         updated_at: new Date().toISOString(),
@@ -712,7 +712,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get KPI definitions: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       KPIDefinitionSchema.parse({
         ...item,
         clinicId: item.clinic_id,
@@ -784,14 +784,14 @@ export class AnalyticsService implements AnalyticsService {
       .from('bi_dashboards')
       .update({
         ...(validatedDashboard.name !== undefined && { name: validatedDashboard.name }),
-        ...(validatedDashboard.description !== undefined
-          && { description: validatedDashboard.description }),
-        ...(validatedDashboard.layoutConfig !== undefined
-          && { layout_config: validatedDashboard.layoutConfig }),
-        ...(validatedDashboard.isPublic !== undefined
-          && { is_public: validatedDashboard.isPublic }),
-        ...(validatedDashboard.isTemplate !== undefined
-          && { is_template: validatedDashboard.isTemplate }),
+        ...(validatedDashboard.description !== undefined &&
+          { description: validatedDashboard.description }),
+        ...(validatedDashboard.layoutConfig !== undefined &&
+          { layout_config: validatedDashboard.layoutConfig }),
+        ...(validatedDashboard.isPublic !== undefined &&
+          { is_public: validatedDashboard.isPublic }),
+        ...(validatedDashboard.isTemplate !== undefined &&
+          { is_template: validatedDashboard.isTemplate }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -858,7 +858,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get BI dashboards: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       BIDashboardSchema.parse({
         ...item,
         clinicId: item.clinic_id,
@@ -939,19 +939,19 @@ export class AnalyticsService implements AnalyticsService {
     const { data, error } = await this.supabase
       .from('dashboard_widgets')
       .update({
-        ...(validatedWidget.widgetType !== undefined
-          && { widget_type: validatedWidget.widgetType }),
+        ...(validatedWidget.widgetType !== undefined &&
+          { widget_type: validatedWidget.widgetType }),
         ...(validatedWidget.title !== undefined && { title: validatedWidget.title }),
-        ...(validatedWidget.dataSource !== undefined
-          && { data_source: validatedWidget.dataSource }),
-        ...(validatedWidget.configuration !== undefined
-          && { configuration: validatedWidget.configuration }),
+        ...(validatedWidget.dataSource !== undefined &&
+          { data_source: validatedWidget.dataSource }),
+        ...(validatedWidget.configuration !== undefined &&
+          { configuration: validatedWidget.configuration }),
         ...(validatedWidget.positionX !== undefined && { position_x: validatedWidget.positionX }),
         ...(validatedWidget.positionY !== undefined && { position_y: validatedWidget.positionY }),
         ...(validatedWidget.width !== undefined && { width: validatedWidget.width }),
         ...(validatedWidget.height !== undefined && { height: validatedWidget.height }),
-        ...(validatedWidget.refreshInterval !== undefined
-          && { refresh_interval: validatedWidget.refreshInterval }),
+        ...(validatedWidget.refreshInterval !== undefined &&
+          { refresh_interval: validatedWidget.refreshInterval }),
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
@@ -997,7 +997,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get dashboard widgets: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       DashboardWidgetSchema.parse({
         ...item,
         dashboardId: item.dashboard_id,
@@ -1056,12 +1056,12 @@ export class AnalyticsService implements AnalyticsService {
       .from('scheduled_reports')
       .update({
         ...(validatedReport.name !== undefined && { name: validatedReport.name }),
-        ...(validatedReport.description !== undefined
-          && { description: validatedReport.description }),
-        ...(validatedReport.reportType !== undefined
-          && { report_type: validatedReport.reportType }),
-        ...(validatedReport.scheduleConfig !== undefined
-          && { schedule_config: validatedReport.scheduleConfig }),
+        ...(validatedReport.description !== undefined &&
+          { description: validatedReport.description }),
+        ...(validatedReport.reportType !== undefined &&
+          { report_type: validatedReport.reportType }),
+        ...(validatedReport.scheduleConfig !== undefined &&
+          { schedule_config: validatedReport.scheduleConfig }),
         ...(validatedReport.recipients !== undefined && { recipients: validatedReport.recipients }),
         ...(validatedReport.format !== undefined && { format: validatedReport.format }),
         ...(validatedReport.isActive !== undefined && { is_active: validatedReport.isActive }),
@@ -1134,7 +1134,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get scheduled reports: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       ScheduledReportSchema.parse({
         ...item,
         clinicId: item.clinic_id,
@@ -1217,12 +1217,12 @@ export class AnalyticsService implements AnalyticsService {
       .from('predictive_models')
       .update({
         ...(validatedModel.name !== undefined && { name: validatedModel.name }),
-        ...(validatedModel.modelConfig !== undefined
-          && { model_config: validatedModel.modelConfig }),
-        ...(validatedModel.trainingDataConfig !== undefined
-          && { training_data_config: validatedModel.trainingDataConfig }),
-        ...(validatedModel.accuracyScore !== undefined
-          && { accuracy_score: validatedModel.accuracyScore }),
+        ...(validatedModel.modelConfig !== undefined &&
+          { model_config: validatedModel.modelConfig }),
+        ...(validatedModel.trainingDataConfig !== undefined &&
+          { training_data_config: validatedModel.trainingDataConfig }),
+        ...(validatedModel.accuracyScore !== undefined &&
+          { accuracy_score: validatedModel.accuracyScore }),
         ...(validatedModel.isActive !== undefined && { is_active: validatedModel.isActive }),
         updated_at: new Date().toISOString(),
       })
@@ -1293,7 +1293,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get predictive models: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       PredictiveModelSchema.parse({
         ...item,
         clinicId: item.clinic_id,
@@ -1421,8 +1421,8 @@ export class AnalyticsService implements AnalyticsService {
       .update({
         ...(validatedAlert.name !== undefined && { name: validatedAlert.name }),
         ...(validatedAlert.alertType !== undefined && { alert_type: validatedAlert.alertType }),
-        ...(validatedAlert.conditionConfig !== undefined
-          && { condition_config: validatedAlert.conditionConfig }),
+        ...(validatedAlert.conditionConfig !== undefined &&
+          { condition_config: validatedAlert.conditionConfig }),
         ...(validatedAlert.severity !== undefined && { severity: validatedAlert.severity }),
         ...(validatedAlert.recipients !== undefined && { recipients: validatedAlert.recipients }),
         ...(validatedAlert.isActive !== undefined && { is_active: validatedAlert.isActive }),
@@ -1498,7 +1498,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get analytics alerts: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       AnalyticsAlertSchema.parse({
         ...item,
         clinicId: item.clinic_id,
@@ -1633,7 +1633,7 @@ export class AnalyticsService implements AnalyticsService {
       return false
     }
 
-    const values = data.map((d) => d.metric_value)
+    const values = data.map(d => d.metric_value)
     const mean = values.reduce((a, b) => a + b, 0) / values.length
     const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length
     const stdDev = Math.sqrt(variance)
@@ -1679,7 +1679,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get analytics data: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       AnalyticsDataWarehouseSchema.parse({
         ...item,
         clinicId: item.clinic_id,
@@ -1722,7 +1722,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get performance metrics: ${error.message}`)
     }
 
-    return data.map((item) =>
+    return data.map(item =>
       PerformanceMetricsSchema.parse({
         ...item,
         clinicId: item.clinic_id,
@@ -1783,8 +1783,8 @@ export class AnalyticsService implements AnalyticsService {
     const groups: { [key: string]: any[] } = {}
 
     // Group by dimensions
-    data.forEach((item) => {
-      const key = dimensions.map((dim) => item[dim] || 'all').join('|')
+    data.forEach(item => {
+      const key = dimensions.map(dim => item[dim] || 'all').join('|')
       if (!groups[key]) {
         groups[key] = []
       }
@@ -1793,12 +1793,12 @@ export class AnalyticsService implements AnalyticsService {
 
     // Aggregate values
     const result: any = {}
-    Object.keys(groups).forEach((key) => {
+    Object.keys(groups).forEach(key => {
       const values = groups[key]
       let aggregatedValue: number
 
       // Filter out undefined values and ensure numeric values
-      const numericValues = values?.filter((val) => typeof val === 'number' && !isNaN(val)) || []
+      const numericValues = values?.filter(val => typeof val === 'number' && !isNaN(val)) || []
 
       if (numericValues.length === 0) {
         // No valid numeric values, return 0
@@ -1889,7 +1889,7 @@ export class AnalyticsService implements AnalyticsService {
     const comparisonMetrics = this.aggregateByMetrics(comparisonData)
 
     const result: any = {}
-    Object.keys(baselineMetrics).forEach((metric) => {
+    Object.keys(baselineMetrics).forEach(metric => {
       const baseline = baselineMetrics[metric]
       const comparison = comparisonMetrics[metric] || 0
       const change = baseline > 0 ? ((comparison - baseline) / baseline) * 100 : 0
@@ -1908,7 +1908,7 @@ export class AnalyticsService implements AnalyticsService {
   private aggregateByMetrics(data: any[]): any {
     const metrics: { [key: string]: number } = {}
 
-    data.forEach((item) => {
+    data.forEach(item => {
       if (!metrics[item.metric_name]) {
         metrics[item.metric_name] = 0
       }
@@ -1921,7 +1921,7 @@ export class AnalyticsService implements AnalyticsService {
   private generateInsights(metrics: any, _comparisonType: string): string[] {
     const insights: string[] = []
 
-    Object.keys(metrics).forEach((metric) => {
+    Object.keys(metrics).forEach(metric => {
       const { baseline, comparison, change } = metrics[metric]
 
       if (Math.abs(change) > 10) {
@@ -1956,7 +1956,7 @@ export class AnalyticsService implements AnalyticsService {
   private generateRecommendations(insights: string[], _comparisonType: string): string[] {
     const recommendations: string[] = []
 
-    insights.forEach((insight) => {
+    insights.forEach(insight => {
       if (insight.includes('aumentou') && insight.includes('pacientes')) {
         recommendations.push(
           'Considere expandir a capacidade de atendimento ou adicionar mais profissionais',
@@ -2024,7 +2024,7 @@ export class AnalyticsService implements AnalyticsService {
       throw new Error(`Failed to get data exports: ${error.message}`)
     }
 
-    return data.map((item) => ({
+    return data.map(item => ({
       ...item,
       clinicId: item.clinic_id,
       requestType: item.request_type,
@@ -2153,7 +2153,7 @@ export class AnalyticsService implements AnalyticsService {
         })
 
         return {
-          data: timeSeriesData.map((item) => ({
+          data: timeSeriesData.map(item => ({
             date: item.date,
             value: item.metricValue,
           })),
@@ -2230,7 +2230,7 @@ export class AnalyticsService implements AnalyticsService {
     // Simple heuristic based on appointment frequency
     if (data.length < 2) return 0.5
 
-    const appointments = data.map((d) => new Date(d.appointment_date).getTime())
+    const appointments = data.map(d => new Date(d.appointment_date).getTime())
     const intervals: number[] = []
     for (let i = 1; i < appointments.length; i++) {
       intervals.push((appointments[i - 1] || 0) - (appointments[i] || 0))

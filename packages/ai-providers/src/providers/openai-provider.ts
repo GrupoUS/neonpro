@@ -1,10 +1,10 @@
-import OpenAI from 'openai'
 import type {
   AIProviderInterface,
   GenerateAnswerInput,
   GenerateAnswerResult,
   StreamChunk,
 } from '@neonpro/types'
+import OpenAI from 'openai'
 
 /**
  * OpenAI Provider Implementation
@@ -25,7 +25,7 @@ export class OpenAIProvider implements AIProviderInterface {
       temperature?: number
       baseURL?: string
       timeout?: number
-    } = {}
+    } = {},
   ) {
     if (!apiKey) {
       throw new Error('OpenAI API key is required')
@@ -46,7 +46,7 @@ export class OpenAIProvider implements AIProviderInterface {
   async generateAnswer(input: GenerateAnswerInput): Promise<GenerateAnswerResult> {
     try {
       const messages = this.formatMessages(input)
-      
+
       const response = await this.client.chat.completions.create({
         model: this.model,
         messages,
@@ -71,15 +71,19 @@ export class OpenAIProvider implements AIProviderInterface {
         tokensUsed: usage?.total_tokens,
         model: this.model,
         provider: 'openai',
-        finishReason: (choice.finish_reason === 'tool_calls' ? 'function_call' : choice.finish_reason) || 'stop',
+        finishReason:
+          (choice.finish_reason === 'tool_calls' ? 'function_call' : choice.finish_reason) ||
+          'stop',
         metadata: {
           finishReason: choice.finish_reason,
           systemFingerprint: response.system_fingerprint,
-          usage: usage ? {
-            promptTokens: usage.prompt_tokens,
-            completionTokens: usage.completion_tokens,
-            totalTokens: usage.total_tokens,
-          } : undefined,
+          usage: usage
+            ? {
+              promptTokens: usage.prompt_tokens,
+              completionTokens: usage.completion_tokens,
+              totalTokens: usage.total_tokens,
+            }
+            : undefined,
         },
       }
     } catch (error) {
@@ -104,14 +108,16 @@ export class OpenAIProvider implements AIProviderInterface {
 
       for await (const chunk of stream) {
         const delta = chunk.choices[0]?.delta?.content || ''
-        
+
         if (delta) {
           yield {
             content: delta,
             delta,
             finished: false,
             provider: 'openai',
-            finishReason: (chunk.choices[0]?.finish_reason === 'tool_calls' ? 'function_call' : chunk.choices[0]?.finish_reason) || undefined,
+            finishReason: (chunk.choices[0]?.finish_reason === 'tool_calls'
+              ? 'function_call'
+              : chunk.choices[0]?.finish_reason) || undefined,
             metadata: {
               model: this.model,
             },
@@ -137,7 +143,9 @@ export class OpenAIProvider implements AIProviderInterface {
   /**
    * Format messages for OpenAI API
    */
-  private formatMessages(input: GenerateAnswerInput): OpenAI.Chat.Completions.ChatCompletionMessageParam[] {
+  private formatMessages(
+    input: GenerateAnswerInput,
+  ): OpenAI.Chat.Completions.ChatCompletionMessageParam[] {
     const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = []
 
     // Add system message if provided
@@ -161,7 +169,8 @@ export class OpenAIProvider implements AIProviderInterface {
    * Format system message with healthcare compliance
    */
   private formatSystemMessage(systemMessage: string): string {
-    const healthcareContext = `You are assisting with a Brazilian aesthetic clinic management system. 
+    const healthcareContext =
+      `You are assisting with a Brazilian aesthetic clinic management system. 
     Important guidelines:
     - Follow LGPD (Brazilian GDPR) for patient data privacy
     - Provide information relevant to aesthetic procedures (botox, fillers, facial treatments)
@@ -285,6 +294,9 @@ export class OpenAIProvider implements AIProviderInterface {
 }
 
 // Factory function
-export function createOpenAIProvider(apiKey: string, options?: ConstructorParameters<typeof OpenAIProvider>[1]): OpenAIProvider {
+export function createOpenAIProvider(
+  apiKey: string,
+  options?: ConstructorParameters<typeof OpenAIProvider>[1],
+): OpenAIProvider {
   return new OpenAIProvider(apiKey, options)
 }

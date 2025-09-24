@@ -43,7 +43,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
     refetchOnWindowFocus: options.refetchOnWindowFocus ?? false,
     refetchOnReconnect: true,
     retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
     enabled: options.enabled ?? true,
     ...options,
   })
@@ -150,9 +150,9 @@ export function useRealtimeMutation<T extends { id: string }>(
       const previousData = queryClient.getQueryData<T[]>(queryKey)
 
       // Optimistically update
-      queryClient.setQueryData<T[]>(queryKey, (old) => {
+      queryClient.setQueryData<T[]>(queryKey, old => {
         return (
-          old?.map((item) => item.id === updatedItem.id ? updatedItem : item) ?? []
+          old?.map(item => item.id === updatedItem.id ? updatedItem : item) ?? []
         )
       })
 

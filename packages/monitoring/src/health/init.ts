@@ -56,8 +56,8 @@ export async function runHealthChecks(): Promise<HealthStatus> {
   })
 
   // Determine overall status
-  const failedChecks = checks.filter((check) => check.status === 'fail')
-  const warningChecks = checks.filter((check) => check.status === 'warn')
+  const failedChecks = checks.filter(check => check.status === 'fail')
+  const warningChecks = checks.filter(check => check.status === 'warn')
 
   let status: 'healthy' | 'degraded' | 'unhealthy'
   if (failedChecks.length > 0) {
@@ -118,7 +118,7 @@ async function checkDatabaseHealth(): Promise<HealthCheck> {
   try {
     // Simple database ping (would need actual DB connection)
     // For now, just simulate a successful check
-    await new Promise((resolve) => setTimeout(resolve, 10))
+    await new Promise(resolve => setTimeout(resolve, 10))
 
     return {
       name: 'database',
@@ -145,7 +145,7 @@ async function checkAIProvidersHealth(): Promise<HealthCheck> {
   try {
     // Check AI provider availability (would need actual API calls)
     // For now, just simulate a successful check
-    await new Promise((resolve) => setTimeout(resolve, 50))
+    await new Promise(resolve => setTimeout(resolve, 50))
 
     return {
       name: 'ai-providers',

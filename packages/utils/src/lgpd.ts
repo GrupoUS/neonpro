@@ -438,7 +438,7 @@ export function anonymizeData<T>(data: T): AnonymizedData<T> {
   }
 
   if (Array.isArray(data)) {
-    return data.map((item) => {
+    return data.map(item => {
       if (item === null || typeof item !== 'object') {
         return typeof item === 'string' ? redactPII(item) : (item as any)
       }

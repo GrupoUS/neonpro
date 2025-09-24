@@ -51,7 +51,7 @@ copilotBridge.use('*', async (c: Context, next: Next) => {
  * CopilotKit Chat Completions Endpoint
  * Handles streaming chat responses from AG-UI backend
  */
-copilotBridge.post('/chat/completions', async (c) => {
+copilotBridge.post('/chat/completions', async c => {
   const requestId = crypto.randomUUID()
   const startTime = Date.now()
 
@@ -100,7 +100,7 @@ copilotBridge.post('/chat/completions', async (c) => {
 
     if (stream) {
       // Return streaming response for real-time UI updates
-      return streamText(c, async (stream) => {
+      return streamText(c, async stream => {
         // Send initial response
         const response = formatCopilotResponse(
           agentResponse,
@@ -340,7 +340,7 @@ function formatCopilotResponse(
 /**
  * Health check endpoint for CopilotKit bridge
  */
-copilotBridge.get('/health', (c) => {
+copilotBridge.get('/health', c => {
   return c.json({
     status: 'healthy',
     _service: 'copilot-bridge',
@@ -363,7 +363,7 @@ copilotBridge.get('/health', (c) => {
 /**
  * Models endpoint for CopilotKit compatibility
  */
-copilotBridge.get('/models', (c) => {
+copilotBridge.get('/models', c => {
   return c.json({
     object: 'list',
     data: [

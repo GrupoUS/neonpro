@@ -193,8 +193,8 @@ export class AgentConfigManager {
       name: 'NeonPro AI Agent',
       version: '1.0.0',
       description: 'AI-powered healthcare assistant for NeonPro platform',
-      environment: (process.env.NODE_ENV as 'development' | 'staging' | 'production')
-        || 'development',
+      environment: (process.env.NODE_ENV as 'development' | 'staging' | 'production') ||
+        'development',
 
       host: process.env.HOST || 'localhost',
       port: parseInt(process.env.PORT || '8080'),

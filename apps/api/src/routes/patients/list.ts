@@ -101,7 +101,7 @@ app.openapi(
     requiredPermissions: ['patient_read'],
     logAccess: true,
   }),
-  async (c) => {
+  async c => {
     const startTime = Date.now()
 
     try {
@@ -117,9 +117,9 @@ app.openapi(
       if (gender) filters.gender = gender
 
       // Get client IP and User-Agent for audit logging
-      const ipAddress = c.req.header('X-Real-IP')
-        || c.req.header('X-Forwarded-For')
-        || 'unknown'
+      const ipAddress = c.req.header('X-Real-IP') ||
+        c.req.header('X-Forwarded-For') ||
+        'unknown'
       const userAgent = c.req.header('User-Agent') || 'unknown'
 
       // Validate LGPD data access permissions

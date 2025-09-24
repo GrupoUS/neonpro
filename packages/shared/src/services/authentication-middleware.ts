@@ -820,8 +820,8 @@ export class HealthcareRBAC {
     const fullPermission = `${resourceType}:${operation}:full` as HealthcarePermission
 
     return (
-      this.hasPermission(userRole, permission)
-      || this.hasPermission(userRole, fullPermission)
+      this.hasPermission(userRole, permission) ||
+      this.hasPermission(userRole, fullPermission)
     )
   }
 
@@ -1314,7 +1314,7 @@ export class HealthcareAuthMiddleware {
     const cookieToken = c.req
       .header('cookie')
       ?.split(';')
-      .find((cookie) => cookie.trim().startsWith('auth_token='))
+      .find(cookie => cookie.trim().startsWith('auth_token='))
       ?.split('=')[1]
 
     if (cookieToken) {
@@ -1478,9 +1478,9 @@ export class HealthcareAuthMiddleware {
             Date.now() + this.config.session.absoluteTimeout * 1000,
           ).toISOString(),
           ipAddress: this.anonymizeIP(
-            c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
-              || c.req.header('x-real-ip')
-              || 'unknown',
+            c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
+              c.req.header('x-real-ip') ||
+              'unknown',
           ),
           userAgent: c.req.header('user-agent') || 'unknown',
           deviceType: this.detectDeviceType(c.req.header('user-agent')),
@@ -1575,15 +1575,15 @@ export class HealthcareAuthMiddleware {
 
     // Check concurrent session limit
     const userSessions = Array.from(this.activeSessions.values()).filter(
-      (s) => s._userId === session._userId,
+      s => s._userId === session._userId,
     )
 
     if (userSessions.length > this.config.session.maxConcurrentSessions) {
       // Remove oldest session
       const oldestSession = userSessions.sort(
         (a, _b) =>
-          new Date(a.sessionMetadata.lastActivity).getTime()
-          - new Date(_b.sessionMetadata.lastActivity).getTime(),
+          new Date(a.sessionMetadata.lastActivity).getTime() -
+          new Date(_b.sessionMetadata.lastActivity).getTime(),
       )[0]
 
       if (oldestSession) {
@@ -1688,8 +1688,8 @@ export class HealthcareAuthMiddleware {
 
     // Emergency bypass
     if (
-      this.config.mfa.emergencyBypass
-      && session.sessionMetadata.workflowContext?.emergencyMode
+      this.config.mfa.emergencyBypass &&
+      session.sessionMetadata.workflowContext?.emergencyMode
     ) {
       return false
     }
@@ -1905,9 +1905,9 @@ export class HealthcareAuthMiddleware {
       endpoint: c.req.path,
       method: c.req.method,
       ipAddress: this.anonymizeIP(
-        c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
-          || c.req.header('x-real-ip')
-          || 'unknown',
+        c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
+          c.req.header('x-real-ip') ||
+          'unknown',
       ),
       userAgent: c.req.header('user-agent'),
       errorCode: authResult.errorCode,
@@ -1976,8 +1976,8 @@ export class HealthcareAuthMiddleware {
       const idleTime = now - lastActivity
 
       if (
-        expirationTime < now
-        || idleTime > this.config.session.idleTimeout * 1000
+        expirationTime < now ||
+        idleTime > this.config.session.idleTimeout * 1000
       ) {
         expiredSessions.push(sessionId)
       }
@@ -2067,9 +2067,9 @@ export class HealthcareAuthMiddleware {
       return 'medical_device'
     }
     if (
-      ua.includes('mobile')
-      || ua.includes('android')
-      || ua.includes('iphone')
+      ua.includes('mobile') ||
+      ua.includes('android') ||
+      ua.includes('iphone')
     ) {
       return 'mobile'
     }

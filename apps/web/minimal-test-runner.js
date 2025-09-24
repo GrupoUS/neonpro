@@ -55,7 +55,7 @@ console.warn('✅ DOM environment setup complete')
 
 // Mock React and testing library for basic component testing
 const React = {
-  useState: (initial) => [initial, () => {}],
+  useState: initial => [initial, () => {}],
   useEffect: () => {},
   createElement: (type, props, ...children) => {
     const element = document.createElement(type === 'div' ? 'div' : 'span')
@@ -76,7 +76,7 @@ global.React = React
 
 // Simple testing library mock
 const _testingLibrary = {
-  render: (component) => {
+  render: component => {
     const container = document.createElement('div')
     container.id = 'root'
 
@@ -88,14 +88,14 @@ const _testingLibrary = {
     document.body.appendChild(container)
 
     const screen = {
-      getByTestId: (testId) => {
+      getByTestId: testId => {
         const element = document.querySelector(`[data-testid="${testId}"]`)
         if (!element) {
           throw new Error(`Unable to find an element with the testid: ${testId}`)
         }
         return element
       },
-      queryByTestId: (testId) => {
+      queryByTestId: testId => {
         return document.querySelector(`[data-testid="${testId}"]`)
       },
     }
@@ -103,7 +103,7 @@ const _testingLibrary = {
     return { container, screen }
   },
   fireEvent: {
-    click: (element) => {
+    click: element => {
       element.click()
     },
     change: (element, value) => {
@@ -111,15 +111,15 @@ const _testingLibrary = {
       element.dispatchEvent(new Event('change', { bubbles: true }))
     },
   },
-  waitFor: async (callback) => {
-    await new Promise((resolve) => setTimeout(resolve, 0))
+  waitFor: async callback => {
+    await new Promise(resolve => setTimeout(resolve, 0))
     return callback()
   },
 }
 
 // Mock vi functions
 const vi = {
-  fn: (impl) => {
+  fn: impl => {
     const mockFn = impl || (() => {})
     mockFn.mock = {
       calls: [],
@@ -136,8 +136,8 @@ const vi = {
     return mockFn
   },
   clearAllMocks: () => {},
-  beforeEach: (callback) => callback(),
-  afterEach: (callback) => callback(),
+  beforeEach: callback => callback(),
+  afterEach: callback => callback(),
   describe: (name, callback) => {
     console.warn(`\n📋 ${name}`)
     callback()
@@ -151,8 +151,8 @@ const vi = {
       throw error
     }
   },
-  expect: (actual) => ({
-    toBe: (expected) => {
+  expect: actual => ({
+    toBe: expected => {
       if (actual !== expected) {
         throw new Error(`Expected ${expected} but got ${actual}`)
       }

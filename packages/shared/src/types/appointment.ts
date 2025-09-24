@@ -145,12 +145,12 @@ export function checkAppointmentConflict(
 ): boolean {
   // Check if proposed appointment overlaps with existing one
   return (
-    (proposed.startTime >= existing.startTime
-      && proposed.startTime < existing.endTime)
-    || (proposed.endTime > existing.startTime
-      && proposed.endTime <= existing.endTime)
-    || (proposed.startTime <= existing.startTime
-      && proposed.endTime >= existing.endTime)
+    (proposed.startTime >= existing.startTime &&
+      proposed.startTime < existing.endTime) ||
+    (proposed.endTime > existing.startTime &&
+      proposed.endTime <= existing.endTime) ||
+    (proposed.startTime <= existing.startTime &&
+      proposed.endTime >= existing.endTime)
   )
 }
 
@@ -307,8 +307,8 @@ export function createAppointment(
     status: AppointmentStatus.SCHEDULED,
     createdAt: now,
     updatedAt: now,
-    duration: data.duration
-      || calculateAppointmentDuration(data.startTime, data.endTime),
+    duration: data.duration ||
+      calculateAppointmentDuration(data.startTime, data.endTime),
   }
 }
 
@@ -319,7 +319,7 @@ export function getAppointmentsInRange(
   endDate: Date,
 ): Appointment[] {
   return appointments.filter(
-    (appointment) => appointment.startTime >= startDate && appointment.startTime <= endDate,
+    appointment => appointment.startTime >= startDate && appointment.startTime <= endDate,
   )
 }
 
@@ -334,10 +334,10 @@ export function getUpcomingAppointments(
 
   return appointments
     .filter(
-      (appointment) =>
-        appointment.startTime >= now
-        && appointment.startTime <= futureDate
-        && appointment.status !== AppointmentStatus.CANCELLED,
+      appointment =>
+        appointment.startTime >= now &&
+        appointment.startTime <= futureDate &&
+        appointment.status !== AppointmentStatus.CANCELLED,
     )
     .sort((a, b) => a.startTime.getTime() - b.startTime.getTime())
 }
@@ -353,7 +353,7 @@ export function needsReminder(appointment: Appointment): boolean {
   const hoursUntilAppointment = (appointmentTime.getTime() - now.getTime()) / (1000 * 60 * 60)
 
   return appointment.reminderSettings.timeBefore.some(
-    (hours) => Math.abs(hoursUntilAppointment - hours) < 0.5, // Within 30 minutes of reminder time
+    hours => Math.abs(hoursUntilAppointment - hours) < 0.5, // Within 30 minutes of reminder time
   )
 }
 
@@ -369,7 +369,7 @@ export function getAppointmentStatistics(appointments: Appointment[]): {
   let totalDuration = 0
   let noShows = 0
 
-  appointments.forEach((appointment) => {
+  appointments.forEach(appointment => {
     byStatus[appointment.status] = (byStatus[appointment.status] || 0) + 1
 
     if (appointment.duration) {

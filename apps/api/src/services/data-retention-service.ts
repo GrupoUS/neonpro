@@ -255,7 +255,7 @@ export class DataRetentionService {
     customRetentionDate?: Date,
   ): Promise<CleanupJob> {
     try {
-      const policy = this.policies.find((p) => p.id === policyId)
+      const policy = this.policies.find(p => p.id === policyId)
       if (!policy) {
         throw new Error(`Retention policy not found: ${policyId}`)
       }
@@ -317,7 +317,7 @@ export class DataRetentionService {
   async executeCleanupJob(jobId: string): Promise<CleanupExecution> {
     try {
       const job = await this.getCleanupJob(jobId)
-      const policy = this.policies.find((p) => p.id === job.policyId)
+      const policy = this.policies.find(p => p.id === job.policyId)
 
       if (!policy) {
         throw new Error(`Policy not found for job: ${jobId}`)
@@ -365,8 +365,8 @@ export class DataRetentionService {
         // Calculate performance metrics
         const executionTime = Date.now() - execution.startTime.getTime()
         execution.endTime = new Date()
-        execution.performance.recordsPerSecond = execution.recordsProcessed
-          / (executionTime / 1000)
+        execution.performance.recordsPerSecond = execution.recordsProcessed /
+          (executionTime / 1000)
 
         // Update job status
         await this.updateJobStatus(jobId, 'completed', {
@@ -812,7 +812,7 @@ export class DataRetentionService {
       }
 
       for (const chunk of chunks) {
-        const promises = chunk.map(async (job) => {
+        const promises = chunk.map(async job => {
           try {
             const execution = await this.executeCleanupJob(job.id)
             results.jobsProcessed++
@@ -881,14 +881,14 @@ export class DataRetentionService {
 
       // Calculate policies by category
       const policiesByCategory = {} as Record<LGPDDataCategory, number>
-      this.policies.forEach((policy) => {
-        policiesByCategory[policy.dataCategory] = (policiesByCategory[policy.dataCategory] || 0)
-          + 1
+      this.policies.forEach(policy => {
+        policiesByCategory[policy.dataCategory] = (policiesByCategory[policy.dataCategory] || 0) +
+          1
       })
 
       return {
         totalPolicies: this.policies.length,
-        enabledPolicies: this.policies.filter((p) => p.enabled).length,
+        enabledPolicies: this.policies.filter(p => p.enabled).length,
         scheduledJobs: scheduledJobs || 0,
         activeJobs: this.activeJobs.size,
         completedJobs24h: completedJobs24h || 0,
@@ -913,7 +913,7 @@ export class DataRetentionService {
    * Enable/disable retention policy
    */
   togglePolicy(policyId: string, enabled: boolean): boolean {
-    const policy = this.policies.find((p) => p.id === policyId)
+    const policy = this.policies.find(p => p.id === policyId)
     if (policy) {
       policy.enabled = enabled
       policy.updatedAt = new Date()

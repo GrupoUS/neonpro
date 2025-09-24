@@ -32,7 +32,7 @@ export interface SecurityHeadersConfig {
 export function createCORSConfig(): CORSConfig {
   const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
     .split(',')
-    .map((origin) => origin.trim())
+    .map(origin => origin.trim())
     .filter(Boolean)
 
   return {

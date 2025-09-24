@@ -63,7 +63,7 @@ export class AIProviderRouterService {
     this.config_manager.initializeProviders(provider_configs)
 
     // Initialize health monitoring for each provider
-    provider_configs.forEach((config) => {
+    provider_configs.forEach(config => {
       this.health_monitor.initializeProviderHealth(config.provider, config)
       this.initializeProviderMetrics(config.provider)
     })
@@ -73,7 +73,7 @@ export class AIProviderRouterService {
       this.config_manager.initializeDefaultProviders()
       // Initialize health for default providers
       const default_configs = this.config_manager.getAllProviderConfigs()
-      default_configs.forEach((config) => {
+      default_configs.forEach(config => {
         this.health_monitor.initializeProviderHealth(config.provider, config)
         this.initializeProviderMetrics(config.provider)
       })
@@ -159,8 +159,8 @@ export class AIProviderRouterService {
 
       // Cache successful response (if enabled and appropriate)
       if (
-        validated_request.ai_config.cache_enabled
-        && this.shouldCacheResponse(validated_request, response)
+        validated_request.ai_config.cache_enabled &&
+        this.shouldCacheResponse(validated_request, response)
       ) {
         await this.cacheResponse(validated_request, response)
       }
@@ -308,8 +308,8 @@ export class AIProviderRouterService {
 
       // Check preferred providers
       if (
-        request.ai_config.preferred_providers
-        && request.ai_config.preferred_providers.length > 0
+        request.ai_config.preferred_providers &&
+        request.ai_config.preferred_providers.length > 0
       ) {
         if (!request.ai_config.preferred_providers.includes(config.provider)) {
           continue
@@ -458,9 +458,9 @@ export class AIProviderRouterService {
     // For emergency, prioritize fastest response with highest compliance
     return this.selectLatencyOptimizedProvider(
       providers.filter(
-        (p) =>
-          p.healthcare_compliance.lgpd_approved
-          && p.healthcare_compliance.anvisa_certified,
+        p =>
+          p.healthcare_compliance.lgpd_approved &&
+          p.healthcare_compliance.anvisa_certified,
       ),
       request,
     )
@@ -581,7 +581,7 @@ export class AIProviderRouterService {
     // Add fallback providers if enabled
     if (request.ai_config.fallback_enabled) {
       const fallback_providers = this.getAvailableProviders(request)
-        .filter((p) => p.provider !== provider.provider)
+        .filter(p => p.provider !== provider.provider)
         .slice(0, 2) // Maximum 2 fallback providers
 
       providers_to_try.push(...fallback_providers)
@@ -672,7 +672,7 @@ export class AIProviderRouterService {
     provider: ProviderConfig,
     _request: RoutingRequest,
   ): AIModelConfig | null {
-    const eligible_models = provider.models.filter((model) => {
+    const eligible_models = provider.models.filter(model => {
       // Check model category
       if (model.category !== request.ai_config.model_category) {
         return false
@@ -680,8 +680,8 @@ export class AIProviderRouterService {
 
       // Check healthcare compliance
       if (
-        request.healthcare_context.contains_pii
-        && !model.healthcare_config.patient_data_processing
+        request.healthcare_context.contains_pii &&
+        !model.healthcare_config.patient_data_processing
       ) {
         return false
       }
@@ -696,9 +696,9 @@ export class AIProviderRouterService {
 
       // Check latency constraints
       if (
-        request.routing_config.max_latency_ms
-        && model.performance_config.max_latency_ms
-          > request.routing_config.max_latency_ms
+        request.routing_config.max_latency_ms &&
+        model.performance_config.max_latency_ms >
+          request.routing_config.max_latency_ms
       ) {
         return false
       }
@@ -755,7 +755,7 @@ export class AIProviderRouterService {
 
     // Simulate API call latency
     const latency_simulation = Math.random() * 1000 + 500
-    await new Promise((resolve) => setTimeout(resolve, latency_simulation))
+    await new Promise(resolve => setTimeout(resolve, latency_simulation))
 
     // Generate mock response based on healthcare context
     const response_content = this.generateMockResponse(
@@ -830,8 +830,8 @@ export class AIProviderRouterService {
     }
 
     return (
-      responses[use_case]
-      || 'Resposta gerada pelo sistema de IA para contexto de saúde, em conformidade com LGPD e regulamentações brasileiras.'
+      responses[use_case] ||
+      'Resposta gerada pelo sistema de IA para contexto de saúde, em conformidade com LGPD e regulamentações brasileiras.'
     )
   }
 
@@ -904,8 +904,8 @@ export class AIProviderRouterService {
     response: RoutingResponse,
   ): Promise<void> {
     if (
-      !request.healthcare_context.patient_id
-      || request.healthcare_context.is_emergency
+      !request.healthcare_context.patient_id ||
+      request.healthcare_context.is_emergency
     ) {
       return // Don't cache emergency data
     }
@@ -991,7 +991,7 @@ export class AIProviderRouterService {
    */
   private async performHealthCheck(): Promise<void> {
     const all_configs = this.config_manager.getAllProviderConfigs()
-    const health_promises = all_configs.map(async (config) => {
+    const health_promises = all_configs.map(async config => {
       await this.health_monitor.performProviderHealthCheck(
         config.provider,
         config,
@@ -1072,8 +1072,8 @@ export class AIProviderRouterService {
   getAvailableProvidersList(): AIProvider[] {
     const enabled_configs = this.config_manager.getEnabledProviders()
     return enabled_configs
-      .map((config) => config.provider)
-      .filter((provider) => {
+      .map(config => config.provider)
+      .filter(provider => {
         return this.health_monitor.isProviderAvailable(provider)
       })
   }

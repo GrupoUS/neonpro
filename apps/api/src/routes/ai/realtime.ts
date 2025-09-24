@@ -50,7 +50,7 @@ app.use(
  * POST /api/ai/realtime/subscribe
  * Create a new real-time subscription
  */
-app.post('/subscribe', async (c) => {
+app.post('/subscribe', async c => {
   try {
     const requestId = c.req.header('X-Request-ID') || uuidv4()
     const start = Date.now()
@@ -160,7 +160,7 @@ app.post('/subscribe', async (c) => {
  * DELETE /api/ai/realtime/unsubscribe/:subscriptionId
  * Remove a real-time subscription
  */
-app.delete('/unsubscribe/:subscriptionId', async (c) => {
+app.delete('/unsubscribe/:subscriptionId', async c => {
   try {
     const requestId = c.req.header('X-Request-ID') || uuidv4()
     const subscriptionId = c.req.param('subscriptionId')
@@ -246,7 +246,7 @@ app.delete('/unsubscribe/:subscriptionId', async (c) => {
  * GET /api/ai/realtime/analytics
  * Get real-time analytics (admin only)
  */
-app.get('/analytics', async (c) => {
+app.get('/analytics', async c => {
   try {
     const requestId = c.req.header('X-Request-ID') || uuidv4()
     const start = Date.now()
@@ -327,7 +327,7 @@ app.get('/analytics', async (c) => {
  * GET /api/ai/realtime/subscriptions
  * Get user's active subscriptions
  */
-app.get('/subscriptions', async (c) => {
+app.get('/subscriptions', async c => {
   try {
     const requestId = c.req.header('X-Request-ID') || uuidv4()
     const start = Date.now()
@@ -382,7 +382,7 @@ app.get('/subscriptions', async (c) => {
 
     return c.json({
       success: true,
-      data: subscriptions.map((sub) => ({
+      data: subscriptions.map(sub => ({
         id: sub.id,
         _userId: sub.userId,
         sessionId: sub.sessionId,
@@ -414,7 +414,7 @@ app.get('/subscriptions', async (c) => {
 /**
  * Health check endpoint
  */
-app.get('/health', (c) => {
+app.get('/health', c => {
   return c.json({
     status: 'healthy',
     _service: 'realtime-subscriptions',

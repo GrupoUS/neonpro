@@ -280,7 +280,7 @@ export class LGPDConsentService {
       orderBy: { createdAt: 'desc' },
     })
 
-    return consents.map((consent) => this.mapToConsentRecord(consent))
+    return consents.map(consent => this.mapToConsentRecord(consent))
   }
 
   /**
@@ -341,14 +341,14 @@ export class LGPDConsentService {
         patientId,
         generatedAt: new Date().toISOString(),
         activeConsents: consents,
-        consentHistory: auditEntries.map((entry) => ({
+        consentHistory: auditEntries.map(entry => ({
           action: entry.action,
           timestamp: entry.createdAt,
           metadata: entry.metadata,
         })),
         summary: {
           totalConsents: consents.length,
-          purposes: consents.map((c) => c.purpose),
+          purposes: consents.map(c => c.purpose),
           lastActivity: auditEntries[0]?.createdAt,
         },
       }

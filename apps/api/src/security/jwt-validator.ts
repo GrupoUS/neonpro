@@ -416,7 +416,7 @@ export class JWTSecurityValidator {
 
     if (Array.isArray(aud)) {
       // At least one audience must be allowed
-      const hasValidAudience = aud.some((a) => this.config.allowedAudiences.includes(a))
+      const hasValidAudience = aud.some(a => this.config.allowedAudiences.includes(a))
       if (!hasValidAudience) {
         return {
           isValid: false,
@@ -582,9 +582,9 @@ export class JWTSecurityValidator {
     }
 
     // Get client identifier (IP address or session ID)
-    const clientIp = context.req.header('x-forwarded-for')
-      || context.req.header('x-real-ip')
-      || 'unknown'
+    const clientIp = context.req.header('x-forwarded-for') ||
+      context.req.header('x-real-ip') ||
+      'unknown'
 
     const sessionId = context.req.header('x-session-id') || clientIp
     const now = Date.now()

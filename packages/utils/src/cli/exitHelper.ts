@@ -109,7 +109,7 @@ export function exitError(
  * Handle uncaught exceptions with proper JSON error output
  */
 export function setupGlobalErrorHandling(): void {
-  process.on('uncaughtException', (error) => {
+  process.on('uncaughtException', error => {
     exitError('Uncaught exception occurred', 1, {
       details: {
         name: error.name,
@@ -121,7 +121,7 @@ export function setupGlobalErrorHandling(): void {
     })
   })
 
-  process.on('unhandledRejection', (reason) => {
+  process.on('unhandledRejection', reason => {
     exitError('Unhandled promise rejection', 1, {
       details: {
         reason: String(reason),
@@ -143,10 +143,10 @@ export function validateExitResult(result: unknown): result is ExitResult {
   const r = result as Record<string, unknown>
 
   return (
-    (r.status === 'ok' || r.status === 'error')
-    && typeof r.code === 'number'
-    && (r.message === undefined || typeof r.message === 'string')
-    && (r.details === undefined
-      || (typeof r.details === 'object' && r.details !== null))
+    (r.status === 'ok' || r.status === 'error') &&
+    typeof r.code === 'number' &&
+    (r.message === undefined || typeof r.message === 'string') &&
+    (r.details === undefined ||
+      (typeof r.details === 'object' && r.details !== null))
   )
 }

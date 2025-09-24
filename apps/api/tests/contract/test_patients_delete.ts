@@ -313,7 +313,7 @@ describe('DELETE /api/v2/patients/{id} - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200)
 
-      const patientIds = response.body.data.map((p) => p.id)
+      const patientIds = response.body.data.map(p => p.id)
       expect(patientIds).not.toContain(testPatientId)
     })
 

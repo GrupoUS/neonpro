@@ -86,7 +86,7 @@ export function useRecoveryPlan(options: UseRecoveryPlanOptions = {}) {
         })
       }
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Erro ao criar plano de recuperação:', error)
     },
   })

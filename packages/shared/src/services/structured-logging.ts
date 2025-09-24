@@ -752,8 +752,8 @@ export class StructuredLogger {
 
       // Output to console if enabled and in development
       if (
-        this.config.outputs.console
-        && (process.env.NODE_ENV === 'development' || level === 'emergency')
+        this.config.outputs.console &&
+        (process.env.NODE_ENV === 'development' || level === 'emergency')
       ) {
         this.outputToConsole(sanitizedEntry)
       }
@@ -851,8 +851,8 @@ export class StructuredLogger {
     let dataClassification: LGPDCompliance['dataClassification'] = 'internal'
 
     if (
-      _context?.healthcare?.patientContext
-      || _context?.technical?.userContext
+      _context?.healthcare?.patientContext ||
+      _context?.technical?.userContext
     ) {
       dataClassification = 'confidential'
     }
@@ -871,8 +871,8 @@ export class StructuredLogger {
       retentionPeriod: this.config.lgpdCompliance.dataRetentionDays,
       requiresConsent: this.config.lgpdCompliance.requireExplicitConsent && containsPII,
       anonymized: this.config.lgpdCompliance.anonymizeByDefault,
-      auditRequired: ['critical', 'alert', 'emergency'].includes(level)
-        || _context?.healthcare?.patientContext !== undefined,
+      auditRequired: ['critical', 'alert', 'emergency'].includes(level) ||
+        _context?.healthcare?.patientContext !== undefined,
     }
   }
 
@@ -891,7 +891,7 @@ export class StructuredLogger {
 
     if (data) {
       for (const key of Object.keys(data)) {
-        if (piiFields.some((field) => key.toLowerCase().includes(field))) {
+        if (piiFields.some(field => key.toLowerCase().includes(field))) {
           return true
         }
       }
@@ -899,8 +899,8 @@ export class StructuredLogger {
 
     // Check context for PII indicators
     if (
-      _context?.technical?.userContext?.ipAddress
-      || _context?.healthcare?.patientContext
+      _context?.technical?.userContext?.ipAddress ||
+      _context?.healthcare?.patientContext
     ) {
       return true
     }
@@ -949,7 +949,7 @@ export class StructuredLogger {
     ]
 
     let redactedText = text
-    piiPatterns.forEach((pattern) => {
+    piiPatterns.forEach(pattern => {
       redactedText = redactedText.replace(pattern, '[REDACTED]')
     })
 
@@ -973,14 +973,14 @@ export class StructuredLogger {
       'token',
     ]
 
-    Object.keys(redactedObj).forEach((key) => {
-      if (piiFields.some((field) => key.toLowerCase().includes(field))) {
+    Object.keys(redactedObj).forEach(key => {
+      if (piiFields.some(field => key.toLowerCase().includes(field))) {
         redactedObj[key] = '[REDACTED]'
       } else if (typeof redactedObj[key] === 'string') {
         redactedObj[key] = this.redactPIIFromText(redactedObj[key] as string)
       } else if (
-        typeof redactedObj[key] === 'object'
-        && redactedObj[key] !== null
+        typeof redactedObj[key] === 'object' &&
+        redactedObj[key] !== null
       ) {
         redactedObj[key] = this.redactPIIFromObject(
           redactedObj[key] as Record<string, unknown>,
@@ -1099,7 +1099,7 @@ export class StructuredLogger {
         flushLogCount: logsToFlush.length,
       } as any)
       // Re-add logs to buffer for retry (keep only critical ones)
-      const criticalLogs = logsToFlush.filter((log) =>
+      const criticalLogs = logsToFlush.filter(log =>
         ['critical', 'alert', 'emergency'].includes(log.level)
       )
       this.logBuffer.unshift(...criticalLogs)

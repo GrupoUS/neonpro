@@ -396,8 +396,8 @@ export class AestheticAnalysisService {
 
       // Check pregnancy/breastfeeding (would be in patient history)
       if (
-        request.lifestyle_factors?.smoking
-        && recommendation.procedure.category === 'laser'
+        request.lifestyle_factors?.smoking &&
+        recommendation.procedure.category === 'laser'
       ) {
         contraindications.push({
           procedure_id: recommendation.procedure.id,
@@ -436,7 +436,7 @@ export class AestheticAnalysisService {
     skinType: string,
   ): Promise<AestheticAssessmentResult['educational_content']> {
     // Generate educational content based on procedures and skin type
-    const content = procedures.map((procedure) => ({
+    const content = procedures.map(procedure => ({
       title: `Understanding ${procedure.name}`,
       description:
         `Educational content for ${procedure.name} treatment suitable for ${skinType} skin type`,
@@ -521,10 +521,10 @@ export class AestheticAnalysisService {
 
     return Promise.resolve(
       mockProcedures.filter(
-        (p) =>
-          (condition.condition_id === 'wrinkles'
-            && p.category === 'neurotoxin')
-          || (condition.condition_id === 'volume_loss' && p.category === 'filler'),
+        p =>
+          (condition.condition_id === 'wrinkles' &&
+            p.category === 'neurotoxin') ||
+          (condition.condition_id === 'volume_loss' && p.category === 'filler'),
       ),
     )
   }
@@ -639,9 +639,7 @@ export class AestheticAnalysisService {
     const granted = Array.isArray(consent.granted_permissions)
       ? consent.granted_permissions
       : []
-    const hasAllPermissions = requiredPermissions.every((permission) =>
-      granted.includes(permission)
-    )
+    const hasAllPermissions = requiredPermissions.every(permission => granted.includes(permission))
 
     if (!hasAllPermissions) {
       throw new Error('LGPD_INSUFFICIENT_CONSENT')
@@ -682,11 +680,11 @@ export class AestheticAnalysisService {
   ): Partial<AestheticAssessmentResult> {
     // Keep only procedure IDs and recommendation counts for audit
     return {
-      recommended_procedures: result.recommended_procedures.map((r) => ({
+      recommended_procedures: result.recommended_procedures.map(r => ({
         procedure: { id: r.procedure.id, category: r.procedure.category },
         priority: r.priority,
       })) as any,
-      contraindications: result.contraindications.map((c) => ({
+      contraindications: result.contraindications.map(c => ({
         procedure_id: c.procedure_id,
         severity: c.severity,
       })) as any,

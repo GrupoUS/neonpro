@@ -195,7 +195,7 @@ export class EnhancedTelemedicineRealtime {
     this.setupEmergencyHandlers(channel, sessionId)
 
     // Subscribe to channel
-    channel.subscribe(async (status) => {
+    channel.subscribe(async status => {
       if (status === 'SUBSCRIBED') {
         console.warn(`✅ Telemedicine session ${sessionId} channel active`)
 
@@ -310,7 +310,7 @@ export class EnhancedTelemedicineRealtime {
     channel: RealtimeChannel,
     sessionId: string,
   ): void {
-    channel.on('broadcast', { event: 'encrypted_message' }, async (payload) => {
+    channel.on('broadcast', { event: 'encrypted_message' }, async payload => {
       const message = payload.payload as TelemedicineMessage
 
       // Decrypt message if encrypted
@@ -339,8 +339,8 @@ export class EnhancedTelemedicineRealtime {
 
       // Handle emergency messages
       if (
-        message.priority === 'critical'
-        || message.messageType === 'emergency'
+        message.priority === 'critical' ||
+        message.messageType === 'emergency'
       ) {
         await this.handleEmergencyMessage(sessionId, message)
       }
@@ -356,7 +356,7 @@ export class EnhancedTelemedicineRealtime {
     })
 
     // Handle session updates
-    channel.on('broadcast', { event: 'session_update' }, (payload) => {
+    channel.on('broadcast', { event: 'session_update' }, payload => {
       const update = payload.payload as SessionUpdate
       console.warn(
         `🔄 Session update in ${sessionId}:`,
@@ -408,7 +408,7 @@ export class EnhancedTelemedicineRealtime {
     channel: RealtimeChannel,
     sessionId: string,
   ): void {
-    channel.on('broadcast', { event: 'emergency_alert' }, async (payload) => {
+    channel.on('broadcast', { event: 'emergency_alert' }, async payload => {
       const alert = payload.payload
       console.warn(`🚨 EMERGENCY ALERT in session ${sessionId}:`, alert)
 
@@ -517,21 +517,21 @@ export class EnhancedTelemedicineRealtime {
     const { latency, packetLoss, jitter } = metrics
 
     if (
-      latency <= QUALITY_THRESHOLDS.excellent.latency
-      && packetLoss <= QUALITY_THRESHOLDS.excellent.packetLoss
-      && jitter <= QUALITY_THRESHOLDS.excellent.jitter
+      latency <= QUALITY_THRESHOLDS.excellent.latency &&
+      packetLoss <= QUALITY_THRESHOLDS.excellent.packetLoss &&
+      jitter <= QUALITY_THRESHOLDS.excellent.jitter
     ) {
       return 'excellent'
     } else if (
-      latency <= QUALITY_THRESHOLDS.good.latency
-      && packetLoss <= QUALITY_THRESHOLDS.good.packetLoss
-      && jitter <= QUALITY_THRESHOLDS.good.jitter
+      latency <= QUALITY_THRESHOLDS.good.latency &&
+      packetLoss <= QUALITY_THRESHOLDS.good.packetLoss &&
+      jitter <= QUALITY_THRESHOLDS.good.jitter
     ) {
       return 'good'
     } else if (
-      latency <= QUALITY_THRESHOLDS.fair.latency
-      && packetLoss <= QUALITY_THRESHOLDS.fair.packetLoss
-      && jitter <= QUALITY_THRESHOLDS.fair.jitter
+      latency <= QUALITY_THRESHOLDS.fair.latency &&
+      packetLoss <= QUALITY_THRESHOLDS.fair.packetLoss &&
+      jitter <= QUALITY_THRESHOLDS.fair.jitter
     ) {
       return 'fair'
     } else {

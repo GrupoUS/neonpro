@@ -181,8 +181,8 @@ export function HealthcareThemeProvider({
     updateTheme({
       dataSensitivityLevel: level,
       // Auto-enable audit mode for sensitive data
-      auditMode: level === DataSensitivity.RESTRICTED
-        || level === DataSensitivity.CONFIDENTIAL,
+      auditMode: level === DataSensitivity.RESTRICTED ||
+        level === DataSensitivity.CONFIDENTIAL,
     })
   }
 

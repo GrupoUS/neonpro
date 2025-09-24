@@ -176,7 +176,7 @@ class PatientIdentityService {
 
       // Calculate data retention date
       const maxRetention = Math.max(
-        ...validated.consentTypes.map((type) =>
+        ...validated.consentTypes.map(type =>
           RETENTION_POLICIES[type.toUpperCase() as keyof typeof RETENTION_POLICIES] || 365
         ),
       )
@@ -352,7 +352,7 @@ class PatientIdentityService {
 
       // Enrich patient data
       const enrichedPatients = await Promise.all(
-        (patients || []).map(async (patient) => {
+        (patients || []).map(async patient => {
           const riskProfile = await this.calculateRiskProfile(patient.id)
           const demographics = await this.getPatientDemographics(patient.id)
           const preferences = await this.getPatientPreferences(patient.id)
@@ -519,7 +519,7 @@ class PatientIdentityService {
 
       return {
         success: true,
-        data: consents.map((c) => this.mapConsentFromDb(c)),
+        data: consents.map(c => this.mapConsentFromDb(c)),
       }
     } catch (error) {
       logger.error('Get patient consents error', { error, patientId })
@@ -592,7 +592,7 @@ class PatientIdentityService {
     patientId: string,
     consentTypes: LGPDConsentType[],
   ): Promise<void> {
-    const consentRecords = consentTypes.map((type) => ({
+    const consentRecords = consentTypes.map(type => ({
       patient_id: patientId,
       consent_type: type,
       status: CONSENT_STATUS.ACTIVE,
@@ -622,7 +622,7 @@ class PatientIdentityService {
       .eq('patient_id', patientId)
 
     const totalAppointments = appointments?.length || 0
-    const noShows = appointments?.filter((apt) => apt.status === 'NO_SHOW').length || 0
+    const noShows = appointments?.filter(apt => apt.status === 'NO_SHOW').length || 0
     const noShowRisk = totalAppointments > 0 ? (noShows / totalAppointments) * 100 : 0
 
     return {
@@ -675,7 +675,7 @@ class PatientIdentityService {
 
     // Calculate max retention period from active consents
     const maxRetention = Math.max(
-      ...consents.map((c) =>
+      ...consents.map(c =>
         RETENTION_POLICIES[c.consent_type.toUpperCase() as keyof typeof RETENTION_POLICIES]
       ),
     )

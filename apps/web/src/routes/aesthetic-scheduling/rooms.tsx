@@ -34,7 +34,7 @@ function RoomAllocationPage() {
       appointmentId={loaderData.appointmentId}
       treatmentPlanId={loaderData.treatmentPlanId}
       date={loaderData.date ? new Date(loaderData.date) : new Date()}
-      onRoomAllocation={async (allocation) => {
+      onRoomAllocation={async allocation => {
         try {
           const result = await api.aestheticScheduling.createRoomAllocation(allocation)
           return result

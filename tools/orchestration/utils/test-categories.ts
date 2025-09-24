@@ -15,6 +15,6 @@ export const TEST_CATEGORIES = {
   [TestCategory.BACKEND]: TestCategory.BACKEND,
   [TestCategory.DATABASE]: TestCategory.DATABASE,
   [TestCategory.QUALITY]: TestCategory.QUALITY,
-} as const;
+} as const
 
-export type TestCategoryType = keyof typeof TEST_CATEGORIES;
+export type TestCategoryType = keyof typeof TEST_CATEGORIES

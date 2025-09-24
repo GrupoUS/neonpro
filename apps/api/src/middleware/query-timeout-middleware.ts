@@ -218,11 +218,11 @@ export class QueryTimeoutMiddleware {
   private extractUserId(req: Request): string | undefined {
     // Extract user ID from various possible sources
     return (
-      (req.headers['x-user-id'] as string)
-      || (req.headers['user-id'] as string)
-      || (req.query?.userId as string)
-      || (req.body?.userId as string)
-      || req.user?.id
+      (req.headers['x-user-id'] as string) ||
+      (req.headers['user-id'] as string) ||
+      (req.query?.userId as string) ||
+      (req.body?.userId as string) ||
+      req.user?.id
     )
   }
 
@@ -250,7 +250,7 @@ export class QueryTimeoutMiddleware {
    */
   private cleanupMetrics(): void {
     const oneHourAgo = Date.now() - 3600000
-    this.metrics = this.metrics.filter((m) => m.endTime > oneHourAgo)
+    this.metrics = this.metrics.filter(m => m.endTime > oneHourAgo)
   }
 
   /**
@@ -269,7 +269,7 @@ export class QueryTimeoutMiddleware {
   getTimeoutStats() {
     const stats = {
       totalQueries: this.metrics.length,
-      timedOutQueries: this.metrics.filter((m) => m.timedOut).length,
+      timedOutQueries: this.metrics.filter(m => m.timedOut).length,
       timeoutRate: 0,
       averageResponseTime: 0,
       averageTimeout: 0,
@@ -281,10 +281,10 @@ export class QueryTimeoutMiddleware {
 
     if (stats.totalQueries > 0) {
       stats.timeoutRate = (stats.timedOutQueries / stats.totalQueries) * 100
-      stats.averageResponseTime = this.metrics.reduce((sum, _m) => sum + m.duration, 0)
-        / stats.totalQueries
-      stats.averageTimeout = this.metrics.reduce((sum, _m) => sum + m.timeout, 0)
-        / stats.totalQueries
+      stats.averageResponseTime = this.metrics.reduce((sum, _m) => sum + m.duration, 0) /
+        stats.totalQueries
+      stats.averageTimeout = this.metrics.reduce((sum, _m) => sum + m.timeout, 0) /
+        stats.totalQueries
     }
 
     return stats
@@ -297,8 +297,8 @@ export class QueryTimeoutMiddleware {
     const routeTimeouts: Record<string, number> = {}
 
     this.metrics
-      .filter((m) => m.timedOut)
-      .forEach((m) => {
+      .filter(m => m.timedOut)
+      .forEach(m => {
         routeTimeouts[m.route] = (routeTimeouts[m.route] || 0) + 1
       })
 
@@ -319,7 +319,7 @@ export class QueryTimeoutMiddleware {
       '>2000ms': 0,
     }
 
-    this.metrics.forEach((m) => {
+    this.metrics.forEach(m => {
       const percentage = (m.duration / m.timeout) * 100
       if (percentage < 25) ranges['<500ms']++
       else if (percentage < 50) ranges['500-1000ms']++
@@ -400,7 +400,7 @@ export class QueryTimeoutMiddleware {
   forceTimeout(queryIds: string[]): number {
     let timeoutCount = 0
 
-    queryIds.forEach((queryId) => {
+    queryIds.forEach(queryId => {
       const activeQuery = this.activeQueries.get(queryId)
       if (activeQuery) {
         // This would need to be integrated with your request handling system

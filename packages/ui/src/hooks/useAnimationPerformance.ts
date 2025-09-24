@@ -97,8 +97,8 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
   const hasScreen = typeof screen !== 'undefined'
 
   const hasTouch = hasWindow && hasNavigator
-    ? 'ontouchstart' in window
-      || ((navigator as NavigatorWithTouch).maxTouchPoints || 0) > 0
+    ? 'ontouchstart' in window ||
+      ((navigator as NavigatorWithTouch).maxTouchPoints || 0) > 0
     : false
 
   const userAgent = hasNavigator ? navigator.userAgent : ''
@@ -113,14 +113,14 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
   // GPU detection
   let hasGPU = false
   // Avoid calling canvas.getContext in test/jsdom where it throws a Not implemented error
-  const isTestEnv = (typeof process !== 'undefined'
-    && (process as ProcessWithEnv).env?.VITEST)
-    || (hasNavigator && /jsdom/i.test(navigator.userAgent || ''))
+  const isTestEnv = (typeof process !== 'undefined' &&
+    (process as ProcessWithEnv).env?.VITEST) ||
+    (hasNavigator && /jsdom/i.test(navigator.userAgent || ''))
   if (hasDocument && !isTestEnv) {
     try {
       const canvas = document.createElement('canvas')
-      const gl = canvas.getContext
-        && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+      const gl = canvas.getContext &&
+        (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
       hasGPU = !!gl
     } catch {
       hasGPU = false
@@ -301,7 +301,7 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
     async (callback: () => void): Promise<number> => {
       const startTime = performance.now()
 
-      await new Promise<void>((resolve) => {
+      await new Promise<void>(resolve => {
         requestAnimationFrame(() => {
           callback()
           resolve()
@@ -313,8 +313,8 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
     [],
   )
 
-  const supportsRAF = typeof requestAnimationFrame !== 'undefined'
-    && typeof window !== 'undefined'
+  const supportsRAF = typeof requestAnimationFrame !== 'undefined' &&
+    typeof window !== 'undefined'
 
   return {
     capabilities,

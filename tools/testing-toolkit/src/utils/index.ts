@@ -10,7 +10,7 @@ export type { HealthcarePerformanceBudget } from './performance'
 export * from './test-helpers'
 
 // Common test utilities
-export const wait = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
+export const wait = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms))
 
 export const waitFor = async (
   condition: () => boolean | Promise<boolean>,

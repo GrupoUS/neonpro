@@ -167,23 +167,23 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     ],
     handler: async (query: string) => {
       try {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'searching',
           searchQuery: query,
         }))
 
         // Simulate search delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 1000))
 
         // Search in mock database
-        const results = mockPatients.filter((patient) =>
-          patient.name.toLowerCase().includes(query.toLowerCase())
-          || patient.contact.toLowerCase().includes(query.toLowerCase())
-          || patient.id === query
+        const results = mockPatients.filter(patient =>
+          patient.name.toLowerCase().includes(query.toLowerCase()) ||
+          patient.contact.toLowerCase().includes(query.toLowerCase()) ||
+          patient.id === query
         )
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           searchResults: results,
@@ -192,7 +192,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
         // Log data access for LGPD compliance
         if (config?.compliance.auditLogging) {
-          setState((prev) => ({
+          setState(prev => ({
             ...prev,
             compliance: {
               ...prev.compliance,
@@ -214,7 +214,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to search patients'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -261,13 +261,13 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       notes?: string,
     ) => {
       try {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'registering',
         }))
 
         // Simulate registration delay
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        await new Promise(resolve => setTimeout(resolve, 1500))
 
         // Create new patient
         const newPatient: Patient = {
@@ -287,7 +287,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
         // Add to mock database (in real implementation, this would be an API call)
         mockPatients.push(newPatient)
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           selectedPatient: newPatient,
@@ -305,7 +305,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
         // Log data access for LGPD compliance
         if (config?.compliance.auditLogging) {
-          setState((prev) => ({
+          setState(prev => ({
             ...prev,
             compliance: {
               ...prev.compliance,
@@ -327,7 +327,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to register patient'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -343,16 +343,16 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     ],
     handler: async (patientId: string, updates: Record<string, any>) => {
       try {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'updating',
         }))
 
         // Simulate update delay
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 1000))
 
         // Find and update patient
-        const patientIndex = mockPatients.findIndex((p) => p.id === patientId)
+        const patientIndex = mockPatients.findIndex(p => p.id === patientId)
         if (patientIndex === -1) {
           throw new Error('Patient not found')
         }
@@ -364,7 +364,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
         mockPatients[patientIndex] = updatedPatient
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           selectedPatient: updatedPatient,
@@ -384,7 +384,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to update patient'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -399,7 +399,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
     ],
     handler: async (patientId: string) => {
       try {
-        const patient = mockPatients.find((p) => p.id === patientId)
+        const patient = mockPatients.find(p => p.id === patientId)
         if (!patient) {
           throw new Error('Patient not found')
         }
@@ -412,7 +412,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
           totalTreatments: patient.treatments.length,
         }
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           selectedPatient: patient,
           currentOperation: 'viewing',
@@ -431,7 +431,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
   // Handle form changes
   const handleFormChange = useCallback((field: string, value: any) => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       formData: {
         ...prev.formData,
@@ -442,7 +442,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
   // Handle patient selection
   const handlePatientSelect = useCallback((patient: Patient) => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       selectedPatient: patient,
       currentOperation: 'viewing',
@@ -450,7 +450,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
     // Log access for LGPD compliance
     if (config?.compliance.auditLogging) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         compliance: {
           ...prev.compliance,
@@ -479,7 +479,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
     try {
       // This would trigger the CopilotKit action
-      await new Promise((resolve) => setTimeout(resolve, 1000)) // Simulate action call
+      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate action call
 
       // For demo purposes, update state directly
       const newPatient: Patient = {
@@ -498,7 +498,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
 
       mockPatients.push(newPatient)
 
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         currentOperation: 'idle',
         selectedPatient: newPatient,
@@ -579,7 +579,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
             <Input
               placeholder='Buscar por nome, contato ou ID...'
               value={state.searchQuery}
-              onChange={(e) => handleFormChange('searchQuery', e.target.value)}
+              onChange={e => handleFormChange('searchQuery', e.target.value)}
               className='flex-1'
             />
             <Button
@@ -594,7 +594,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
           {state.searchResults.length > 0 && (
             <div className='space-y-2'>
               <h4 className='text-sm font-medium'>Resultados ({state.searchResults.length})</h4>
-              {state.searchResults.map((patient) => (
+              {state.searchResults.map(patient => (
                 <div
                   key={patient.id}
                   className='flex items-center justify-between p-3 border rounded-lg cursor-pointer hover:bg-gray-50'
@@ -634,7 +634,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
               <Input
                 id='name'
                 value={state.formData.name || ''}
-                onChange={(e) => handleFormChange('name', e.target.value)}
+                onChange={e => handleFormChange('name', e.target.value)}
                 placeholder='Nome completo do paciente'
               />
             </div>
@@ -643,13 +643,13 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
               <Input
                 id='contact'
                 value={state.formData.contact || ''}
-                onChange={(e) => handleFormChange('contact', e.target.value)}
+                onChange={e => handleFormChange('contact', e.target.value)}
                 placeholder='Email ou telefone'
               />
             </div>
             <div>
               <Label htmlFor='contactType'>Tipo de Contato</Label>
-              <Select onValueChange={(value) => handleFormChange('contactType', value)}>
+              <Select onValueChange={value => handleFormChange('contactType', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder='Selecione o tipo' />
                 </SelectTrigger>
@@ -665,12 +665,12 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
                 id='dateOfBirth'
                 type='date'
                 value={state.formData.dateOfBirth || ''}
-                onChange={(e) => handleFormChange('dateOfBirth', e.target.value)}
+                onChange={e => handleFormChange('dateOfBirth', e.target.value)}
               />
             </div>
             <div>
               <Label htmlFor='gender'>Gênero</Label>
-              <Select onValueChange={(value) => handleFormChange('gender', value)}>
+              <Select onValueChange={value => handleFormChange('gender', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder='Selecione o gênero' />
                 </SelectTrigger>
@@ -687,7 +687,7 @@ export const NeonProClientAgent: React.FC<ClientAgentProps> = ({
             <Textarea
               id='notes'
               value={state.formData.notes || ''}
-              onChange={(e) => handleFormChange('notes', e.target.value)}
+              onChange={e => handleFormChange('notes', e.target.value)}
               placeholder='Informações adicionais sobre o paciente...'
               rows={3}
             />

@@ -178,8 +178,8 @@ export class AIAppointmentSchedulingService {
 
       // Contact method preference
       if (
-        patient.preferredContactMethod === 'email'
-        && !patient.communicationPreferences?.['email_enabled']
+        patient.preferredContactMethod === 'email' &&
+        !patient.communicationPreferences?.['email_enabled']
       ) {
         riskScore += 8
         riskFactors.push('Limited communication options')
@@ -559,8 +559,8 @@ export class AIAppointmentSchedulingService {
     // Simple slot generation algorithm
     for (const professional of professionals) {
       if (
-        context.preferredProfessionals.length > 0
-        && !context.preferredProfessionals.includes(professional.id)
+        context.preferredProfessionals.length > 0 &&
+        !context.preferredProfessionals.includes(professional.id)
       ) {
         continue
       }
@@ -586,19 +586,19 @@ export class AIAppointmentSchedulingService {
           const slotEnd = new Date(currentSlot.getTime() + slotDuration * 60000)
 
           // Check for conflicts
-          const hasConflict = existingAppointments.some((apt) =>
-            apt.professionalId === professional.id
-            && apt.startTime < slotEnd
-            && apt.endTime > currentSlot
+          const hasConflict = existingAppointments.some(apt =>
+            apt.professionalId === professional.id &&
+            apt.startTime < slotEnd &&
+            apt.endTime > currentSlot
           )
 
           if (!hasConflict) {
             // Find available room
-            const availableRoom = rooms.find((room) =>
-              !existingAppointments.some((apt) =>
-                apt.roomId === room.id
-                && apt.startTime < slotEnd
-                && apt.endTime > currentSlot
+            const availableRoom = rooms.find(room =>
+              !existingAppointments.some(apt =>
+                apt.roomId === room.id &&
+                apt.startTime < slotEnd &&
+                apt.endTime > currentSlot
               )
             )
 
@@ -656,7 +656,7 @@ export class AIAppointmentSchedulingService {
 
     // Check professional utilization
     const professionalLoad = new Map<string, number>()
-    appointments.forEach((apt) => {
+    appointments.forEach(apt => {
       const current = professionalLoad.get(apt.professionalId) || 0
       professionalLoad.set(apt.professionalId, current + 1)
     })
@@ -669,7 +669,7 @@ export class AIAppointmentSchedulingService {
 
     // Check room utilization
     const roomLoad = new Map<string, number>()
-    appointments.forEach((apt) => {
+    appointments.forEach(apt => {
       if (apt.roomId) {
         const current = roomLoad.get(apt.roomId) || 0
         roomLoad.set(apt.roomId, current + 1)
@@ -731,9 +731,9 @@ export class AIAppointmentSchedulingService {
         const apt2 = appointments[j]
 
         if (
-          apt1.professionalId === apt2.professionalId
-          && apt1.startTime < apt2.endTime
-          && apt1.endTime > apt2.startTime
+          apt1.professionalId === apt2.professionalId &&
+          apt1.startTime < apt2.endTime &&
+          apt1.endTime > apt2.startTime
         ) {
           conflicts.push({
             type: 'overlap',

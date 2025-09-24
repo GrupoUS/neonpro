@@ -48,7 +48,7 @@ export class WorkflowEngine {
     for (const phase of executionPlan.phases) {
       const phaseStartTime = Date.now()
 
-      const agentResults: AgentResult[] = phase.agents.map((agent) => ({
+      const agentResults: AgentResult[] = phase.agents.map(agent => ({
         agentName: agent,
         success: true,
         result: {

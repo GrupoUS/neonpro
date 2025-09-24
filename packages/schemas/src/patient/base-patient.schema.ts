@@ -10,7 +10,7 @@ export const BasePatientSchema = z.object({
     .string()
     .min(1, 'Nome é obrigatório')
     .max(100, 'Nome não pode ter mais de 100 caracteres')
-    .transform((val) => val.trim()),
+    .transform(val => val.trim()),
   email: z.string().email('Email inválido').optional().nullable(),
   phone: z.string().optional().nullable(),
   gender: z

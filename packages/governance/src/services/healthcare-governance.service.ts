@@ -329,10 +329,10 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
 
       if (clinicId) {
         // Filter by clinicId if provided (implementation depends on your data structure)
-        return baseMetrics.filter((metric) =>
-          (metric as any).clinicId === clinicId
-          || !filters
-          || this.matchesFilters(metric, filters)
+        return baseMetrics.filter(metric =>
+          (metric as any).clinicId === clinicId ||
+          !filters ||
+          this.matchesFilters(metric, filters)
         )
       }
 
@@ -520,12 +520,12 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
 
       return {
         totalKPIs: kpiMetrics.length,
-        normalizedKPIs: kpiMetrics.filter((k) => k.category === 'normalized').length,
+        normalizedKPIs: kpiMetrics.filter(k => k.category === 'normalized').length,
         normalizationRate: kpiMetrics.length > 0
-          ? (kpiMetrics.filter((k) => k.category === 'normalized').length / kpiMetrics.length) * 100
+          ? (kpiMetrics.filter(k => k.category === 'normalized').length / kpiMetrics.length) * 100
           : 0,
         dataQualityScore: 85, // Placeholder - calculate based on actual data
-        criticalKPIs: kpiMetrics.filter((k) => k.threshold && k.currentValue < k.threshold).length,
+        criticalKPIs: kpiMetrics.filter(k => k.threshold && k.currentValue < k.threshold).length,
         trends: {
           normalizationTrend: 'improving',
           qualityTrend: 'stable',
@@ -584,14 +584,14 @@ export class HealthcareGovernanceServiceImpl implements HealthcareGovernanceServ
   private formatComplianceData(
     complianceStatus: ComplianceStatus[],
   ): HealthcareDashboardData['compliance'] {
-    const hipaaCompliance = complianceStatus.find((c) => c.framework === 'HIPAA') || {
+    const hipaaCompliance = complianceStatus.find(c => c.framework === 'HIPAA') || {
       score: 0,
       status: 'NON_COMPLIANT',
       violations: 0,
       lastAudit: new Date().toISOString(),
     }
 
-    const lgpdCompliance = complianceStatus.find((c) => c.framework === 'LGPD') || {
+    const lgpdCompliance = complianceStatus.find(c => c.framework === 'LGPD') || {
       score: 0,
       status: 'NON_COMPLIANT',
       violations: 0,

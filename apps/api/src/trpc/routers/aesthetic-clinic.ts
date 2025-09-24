@@ -311,13 +311,13 @@ export const aestheticClinicRouter = router({
             ...(input.concerns !== undefined && { concerns: input.concerns }),
             ...(input.expectations !== undefined && { expectations: input.expectations }),
             ...(input.budgetRange !== undefined && { budgetRange: input.budgetRange }),
-            ...(input.preferredContactMethod !== undefined
-              && { preferredContactMethod: input.preferredContactMethod }),
-            ...(input.marketingConsent !== undefined
-              && { marketingConsent: input.marketingConsent }),
+            ...(input.preferredContactMethod !== undefined &&
+              { preferredContactMethod: input.preferredContactMethod }),
+            ...(input.marketingConsent !== undefined &&
+              { marketingConsent: input.marketingConsent }),
             ...(input.photoConsent !== undefined && { photoConsent: input.photoConsent }),
-            ...(input.emergencyContact !== undefined
-              && { emergencyContact: input.emergencyContact }),
+            ...(input.emergencyContact !== undefined &&
+              { emergencyContact: input.emergencyContact }),
             ...(input.notes !== undefined && { notes: input.notes }),
             updatedBy: ctx._userId,
             updatedAt: new Date(),
@@ -335,7 +335,7 @@ export const aestheticClinicRouter = router({
             details: {
               operation: 'update_aesthetic_client_profile',
               clientName: updatedClient.fullName,
-              updatedFields: Object.keys(input).filter((key) => key !== 'id'),
+              updatedFields: Object.keys(input).filter(key => key !== 'id'),
             },
             riskLevel: RiskLevel.MEDIUM,
             status: AuditStatus.COMPLETED,

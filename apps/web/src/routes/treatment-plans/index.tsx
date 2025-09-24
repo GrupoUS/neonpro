@@ -94,10 +94,10 @@ function TreatmentPlansDashboard() {
     }
   }
 
-  const filteredPlans = plans.filter((plan) => {
-    const matchesSearch = plan.plan_name.toLowerCase().includes(searchTerm.toLowerCase())
-      || plan.patient.name.toLowerCase().includes(searchTerm.toLowerCase())
-      || plan.professional.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPlans = plans.filter(plan => {
+    const matchesSearch = plan.plan_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      plan.patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      plan.professional.name.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = selectedStatus === 'all' || plan.status === selectedStatus
     const matchesPriority = selectedPriority === 'all' || plan.priority_level === selectedPriority
     return matchesSearch && matchesStatus && matchesPriority
@@ -279,7 +279,7 @@ function TreatmentPlansDashboard() {
                   Urgentes
                 </dt>
                 <dd className='text-2xl font-semibold text-gray-900'>
-                  {plans.filter((p) => p.priority_level === 'urgent').length}
+                  {plans.filter(p => p.priority_level === 'urgent').length}
                 </dd>
               </dl>
             </div>
@@ -334,14 +334,14 @@ function TreatmentPlansDashboard() {
                   placeholder='Buscar planos...'
                   className='block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                 />
               </div>
               <div className='relative'>
                 <select
                   className='block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
                   value={selectedStatus}
-                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  onChange={e => setSelectedStatus(e.target.value)}
                 >
                   <option value='all'>Todos Status</option>
                   <option value='draft'>Rascunho</option>
@@ -355,7 +355,7 @@ function TreatmentPlansDashboard() {
                 <select
                   className='block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md'
                   value={selectedPriority}
-                  onChange={(e) => setSelectedPriority(e.target.value)}
+                  onChange={e => setSelectedPriority(e.target.value)}
                 >
                   <option value='all'>Todas Prioridades</option>
                   <option value='low'>Baixa</option>
@@ -369,7 +369,7 @@ function TreatmentPlansDashboard() {
         </div>
 
         <div className='divide-y divide-gray-200'>
-          {filteredPlans.map((plan) => (
+          {filteredPlans.map(plan => (
             <div key={plan.id} className='px-6 py-4'>
               <div className='flex items-center justify-between'>
                 <div className='flex items-center space-x-4'>

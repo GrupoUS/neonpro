@@ -156,7 +156,7 @@ export class PatientDocumentService {
             checksum: checksum_sha256,
           },
         })
-        .catch((_error) => {
+        .catch(_error => {
           /* swallow audit errors */
         })
     }

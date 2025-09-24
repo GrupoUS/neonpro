@@ -151,7 +151,7 @@ export function setupOpenAPIDocumentation(app: OpenAPIHono<Environment>) {
   app.doc('/openapi.json', finalSpec)
 
   // Swagger UI endpoint
-  app.get('/docs', (c) => {
+  app.get('/docs', c => {
     const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -217,12 +217,12 @@ export function setupOpenAPIDocumentation(app: OpenAPIHono<Environment>) {
   })
 
   // API documentation redirect
-  app.get('/documentation', (c) => {
+  app.get('/documentation', c => {
     return c.redirect('/docs')
   })
 
   // Health check for documentation
-  app.get('/docs/health', (c) => {
+  app.get('/docs/health', c => {
     return c.json({
       status: 'ok',
       documentation: 'available',

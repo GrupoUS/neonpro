@@ -204,7 +204,7 @@ export const ClientRegistrationAgent: React.FC<
   // Update CopilotKit state
   const updateAgentState = useCallback(
     (updates: Partial<typeof state>) => {
-      setState((prev) => ({ ...prev, ...updates }))
+      setState(prev => ({ ...prev, ...updates }))
     },
     [setState],
   )
@@ -249,7 +249,7 @@ export const ClientRegistrationAgent: React.FC<
       const { data: _data, error } = await supabase.storage
         .from('client-documents')
         .upload(fileName, file, {
-          onUploadProgress: (progress) => {
+          onUploadProgress: progress => {
             setUploadProgress((progress.loaded / progress.total) * 100)
           },
         })
@@ -274,7 +274,7 @@ export const ClientRegistrationAgent: React.FC<
         [documentType]: file,
       }
 
-      setRegistrationData((prev) => ({
+      setRegistrationData(prev => ({
         ...prev,
         documents: updatedDocuments,
       }))
@@ -291,7 +291,7 @@ export const ClientRegistrationAgent: React.FC<
       }
     } catch (error) {
       console.error('Document upload failed:', error)
-      setValidationMessages((prev) => [
+      setValidationMessages(prev => [
         ...prev,
         {
           field: 'documents',
@@ -313,7 +313,7 @@ export const ClientRegistrationAgent: React.FC<
     _file: File,
   ) => {
     // In real implementation, this would call the backend OCR service
-    await new Promise((resolve) => setTimeout(resolve, 2000)) // Simulate processing
+    await new Promise(resolve => setTimeout(resolve, 2000)) // Simulate processing
 
     const mockOCRResult = {
       documentType,
@@ -356,12 +356,12 @@ export const ClientRegistrationAgent: React.FC<
     })
 
     if (Object.keys(updates).length > 0) {
-      setRegistrationData((prev) => ({
+      setRegistrationData(prev => ({
         ...prev,
         ...updates,
       }))
 
-      setAiSuggestions((prev) => [...prev, ...suggestions])
+      setAiSuggestions(prev => [...prev, ...suggestions])
 
       // Update CopilotKit state
       updateAgentState({
@@ -492,7 +492,7 @@ export const ClientRegistrationAgent: React.FC<
     _data: Partial<ClientRegistrationData>,
   ) => {
     // In real implementation, this would call the enhanced client agent service
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise(resolve => setTimeout(resolve, 2000))
 
     return {
       success: true,
@@ -508,7 +508,7 @@ export const ClientRegistrationAgent: React.FC<
     const subField = fieldPath[1]
 
     if (subField) {
-      setRegistrationData((prev) => ({
+      setRegistrationData(prev => ({
         ...prev,
         [field]: {
           ...prev[field as keyof ClientRegistrationData],
@@ -516,14 +516,14 @@ export const ClientRegistrationAgent: React.FC<
         },
       }))
     } else {
-      setRegistrationData((prev) => ({
+      setRegistrationData(prev => ({
         ...prev,
         [field]: suggestion.value,
       }))
     }
 
     // Remove suggestion
-    setAiSuggestions((prev) => prev.filter((s) => s.field !== suggestion.field))
+    setAiSuggestions(prev => prev.filter(s => s.field !== suggestion.field))
   }
 
   // Render step content
@@ -537,7 +537,7 @@ export const ClientRegistrationAgent: React.FC<
               <Input
                 id='fullName'
                 value={registrationData.personalInfo?.fullName || ''}
-                onChange={(e) => handleFieldChange('personalInfo.fullName', e.target.value)}
+                onChange={e => handleFieldChange('personalInfo.fullName', e.target.value)}
                 placeholder='Nome completo do cliente'
               />
             </div>
@@ -548,7 +548,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='cpf'
                   value={registrationData.personalInfo?.cpf || ''}
-                  onChange={(e) => handleFieldChange('personalInfo.cpf', e.target.value)}
+                  onChange={e => handleFieldChange('personalInfo.cpf', e.target.value)}
                   placeholder='000.000.000-00'
                 />
               </div>
@@ -559,7 +559,7 @@ export const ClientRegistrationAgent: React.FC<
                   id='dateOfBirth'
                   type='date'
                   value={registrationData.personalInfo?.dateOfBirth || ''}
-                  onChange={(e) =>
+                  onChange={e =>
                     handleFieldChange(
                       'personalInfo.dateOfBirth',
                       e.target.value,
@@ -575,7 +575,7 @@ export const ClientRegistrationAgent: React.FC<
                   id='email'
                   type='email'
                   value={registrationData.personalInfo?.email || ''}
-                  onChange={(e) => handleFieldChange('personalInfo.email', e.target.value)}
+                  onChange={e => handleFieldChange('personalInfo.email', e.target.value)}
                   placeholder='email@exemplo.com'
                 />
               </div>
@@ -585,7 +585,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='phone'
                   value={registrationData.personalInfo?.phone || ''}
-                  onChange={(e) => handleFieldChange('personalInfo.phone', e.target.value)}
+                  onChange={e => handleFieldChange('personalInfo.phone', e.target.value)}
                   placeholder='(11) 99999-9999'
                 />
               </div>
@@ -602,7 +602,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='street'
                   value={registrationData.address?.street || ''}
-                  onChange={(e) => handleFieldChange('address.street', e.target.value)}
+                  onChange={e => handleFieldChange('address.street', e.target.value)}
                   placeholder='Nome da rua'
                 />
               </div>
@@ -612,7 +612,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='number'
                   value={registrationData.address?.number || ''}
-                  onChange={(e) => handleFieldChange('address.number', e.target.value)}
+                  onChange={e => handleFieldChange('address.number', e.target.value)}
                   placeholder='123'
                 />
               </div>
@@ -623,7 +623,7 @@ export const ClientRegistrationAgent: React.FC<
               <Input
                 id='complement'
                 value={registrationData.address?.complement || ''}
-                onChange={(e) => handleFieldChange('address.complement', e.target.value)}
+                onChange={e => handleFieldChange('address.complement', e.target.value)}
                 placeholder='Apto 123'
               />
             </div>
@@ -633,7 +633,7 @@ export const ClientRegistrationAgent: React.FC<
               <Input
                 id='neighborhood'
                 value={registrationData.address?.neighborhood || ''}
-                onChange={(e) => handleFieldChange('address.neighborhood', e.target.value)}
+                onChange={e => handleFieldChange('address.neighborhood', e.target.value)}
                 placeholder='Bairro'
               />
             </div>
@@ -644,7 +644,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='city'
                   value={registrationData.address?.city || ''}
-                  onChange={(e) => handleFieldChange('address.city', e.target.value)}
+                  onChange={e => handleFieldChange('address.city', e.target.value)}
                   placeholder='São Paulo'
                 />
               </div>
@@ -653,7 +653,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Label htmlFor='state'>Estado *</Label>
                 <Select
                   value={registrationData.address?.state || ''}
-                  onValueChange={(value) => handleFieldChange('address.state', value)}
+                  onValueChange={value => handleFieldChange('address.state', value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder='UF' />
@@ -695,7 +695,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='zipCode'
                   value={registrationData.address?.zipCode || ''}
-                  onChange={(e) => handleFieldChange('address.zipCode', e.target.value)}
+                  onChange={e => handleFieldChange('address.zipCode', e.target.value)}
                   placeholder='00000-000'
                 />
               </div>
@@ -712,7 +712,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='emergencyName'
                   value={registrationData.emergencyContact?.name || ''}
-                  onChange={(e) => handleFieldChange('emergencyContact.name', e.target.value)}
+                  onChange={e => handleFieldChange('emergencyContact.name', e.target.value)}
                   placeholder='Nome completo'
                 />
               </div>
@@ -722,7 +722,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='emergencyRelationship'
                   value={registrationData.emergencyContact?.relationship || ''}
-                  onChange={(e) =>
+                  onChange={e =>
                     handleFieldChange(
                       'emergencyContact.relationship',
                       e.target.value,
@@ -738,7 +738,7 @@ export const ClientRegistrationAgent: React.FC<
                 <Input
                   id='emergencyPhone'
                   value={registrationData.emergencyContact?.phone || ''}
-                  onChange={(e) => handleFieldChange('emergencyContact.phone', e.target.value)}
+                  onChange={e => handleFieldChange('emergencyContact.phone', e.target.value)}
                   placeholder='(11) 99999-9999'
                 />
               </div>
@@ -749,7 +749,7 @@ export const ClientRegistrationAgent: React.FC<
                   id='emergencyEmail'
                   type='email'
                   value={registrationData.emergencyContact?.email || ''}
-                  onChange={(e) => handleFieldChange('emergencyContact.email', e.target.value)}
+                  onChange={e => handleFieldChange('emergencyContact.email', e.target.value)}
                   placeholder='email@exemplo.com'
                 />
               </div>
@@ -765,10 +765,10 @@ export const ClientRegistrationAgent: React.FC<
               <Textarea
                 id='allergies'
                 value={registrationData.medicalHistory?.allergies?.join(', ') || ''}
-                onChange={(e) =>
+                onChange={e =>
                   handleFieldChange(
                     'medicalHistory.allergies',
-                    e.target.value.split(',').map((s) => s.trim()),
+                    e.target.value.split(',').map(s => s.trim()),
                   )}
                 placeholder='Liste as alergias separadas por vírgula'
                 rows={3}
@@ -780,10 +780,10 @@ export const ClientRegistrationAgent: React.FC<
               <Textarea
                 id='medications'
                 value={registrationData.medicalHistory?.medications?.join(', ') || ''}
-                onChange={(e) =>
+                onChange={e =>
                   handleFieldChange(
                     'medicalHistory.medications',
-                    e.target.value.split(',').map((s) => s.trim()),
+                    e.target.value.split(',').map(s => s.trim()),
                   )}
                 placeholder='Liste os medicamentos separados por vírgula'
                 rows={3}
@@ -795,10 +795,10 @@ export const ClientRegistrationAgent: React.FC<
               <Textarea
                 id='conditions'
                 value={registrationData.medicalHistory?.conditions?.join(', ') || ''}
-                onChange={(e) =>
+                onChange={e =>
                   handleFieldChange(
                     'medicalHistory.conditions',
-                    e.target.value.split(',').map((s) => s.trim()),
+                    e.target.value.split(',').map(s => s.trim()),
                   )}
                 placeholder='Liste as condições médicas separadas por vírgula'
                 rows={3}
@@ -812,10 +812,10 @@ export const ClientRegistrationAgent: React.FC<
                 value={registrationData.medicalHistory?.previousTreatments?.join(
                   ', ',
                 ) || ''}
-                onChange={(e) =>
+                onChange={e =>
                   handleFieldChange(
                     'medicalHistory.previousTreatments',
-                    e.target.value.split(',').map((s) => s.trim()),
+                    e.target.value.split(',').map(s => s.trim()),
                   )}
                 placeholder='Liste os tratamentos anteriores separados por vírgula'
                 rows={3}
@@ -827,7 +827,7 @@ export const ClientRegistrationAgent: React.FC<
               <Textarea
                 id='medicalNotes'
                 value={registrationData.medicalHistory?.notes || ''}
-                onChange={(e) => handleFieldChange('medicalHistory.notes', e.target.value)}
+                onChange={e => handleFieldChange('medicalHistory.notes', e.target.value)}
                 placeholder='Observações importantes sobre o histórico médico'
                 rows={4}
               />
@@ -849,7 +849,7 @@ export const ClientRegistrationAgent: React.FC<
                   <Input
                     type='file'
                     accept='image/*,.pdf'
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files?.[0]
                       if (file) handleDocumentUpload('idCard', file)
                     }}
@@ -870,7 +870,7 @@ export const ClientRegistrationAgent: React.FC<
                   <Input
                     type='file'
                     accept='image/*,.pdf'
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files?.[0]
                       if (file) handleDocumentUpload('medicalRecord', file)
                     }}
@@ -895,7 +895,7 @@ export const ClientRegistrationAgent: React.FC<
                   <Input
                     type='file'
                     accept='image/*,.pdf'
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files?.[0]
                       if (file) handleDocumentUpload('consentForm', file)
                     }}
@@ -918,7 +918,7 @@ export const ClientRegistrationAgent: React.FC<
                   <Input
                     type='file'
                     accept='image/*,.pdf'
-                    onChange={(e) => {
+                    onChange={e => {
                       const file = e.target.files?.[0]
                       if (file) handleDocumentUpload('insuranceCard', file)
                     }}
@@ -958,7 +958,7 @@ export const ClientRegistrationAgent: React.FC<
                   type='checkbox'
                   id='treatmentConsent'
                   checked={registrationData.consent?.treatmentConsent || false}
-                  onChange={(e) =>
+                  onChange={e =>
                     handleFieldChange(
                       'consent.treatmentConsent',
                       e.target.checked,
@@ -978,7 +978,7 @@ export const ClientRegistrationAgent: React.FC<
                   type='checkbox'
                   id='dataSharingConsent'
                   checked={registrationData.consent?.dataSharingConsent || false}
-                  onChange={(e) =>
+                  onChange={e =>
                     handleFieldChange(
                       'consent.dataSharingConsent',
                       e.target.checked,
@@ -998,7 +998,7 @@ export const ClientRegistrationAgent: React.FC<
                   type='checkbox'
                   id='marketingConsent'
                   checked={registrationData.consent?.marketingConsent || false}
-                  onChange={(e) =>
+                  onChange={e =>
                     handleFieldChange(
                       'consent.marketingConsent',
                       e.target.checked,
@@ -1017,7 +1017,7 @@ export const ClientRegistrationAgent: React.FC<
                   type='checkbox'
                   id='emergencyContactConsent'
                   checked={registrationData.consent?.emergencyContactConsent || false}
-                  onChange={(e) =>
+                  onChange={e =>
                     handleFieldChange(
                       'consent.emergencyContactConsent',
                       e.target.checked,
@@ -1103,10 +1103,10 @@ export const ClientRegistrationAgent: React.FC<
                 <Card>
                   <CardContent className='pt-4'>
                     <div className='space-y-2 text-sm'>
-                      {registrationData.medicalHistory?.allergies
-                        && registrationData.medicalHistory.allergies.length
-                          > 0
-                        && (
+                      {registrationData.medicalHistory?.allergies &&
+                        registrationData.medicalHistory.allergies.length >
+                          0 &&
+                        (
                           <div>
                             <strong>Alergias:</strong>{' '}
                             {registrationData.medicalHistory.allergies.join(
@@ -1114,10 +1114,10 @@ export const ClientRegistrationAgent: React.FC<
                             )}
                           </div>
                         )}
-                      {registrationData.medicalHistory?.medications
-                        && registrationData.medicalHistory.medications.length
-                          > 0
-                        && (
+                      {registrationData.medicalHistory?.medications &&
+                        registrationData.medicalHistory.medications.length >
+                          0 &&
+                        (
                           <div>
                             <strong>Medicamentos:</strong>{' '}
                             {registrationData.medicalHistory.medications.join(
@@ -1125,10 +1125,10 @@ export const ClientRegistrationAgent: React.FC<
                             )}
                           </div>
                         )}
-                      {registrationData.medicalHistory?.conditions
-                        && registrationData.medicalHistory.conditions.length
-                          > 0
-                        && (
+                      {registrationData.medicalHistory?.conditions &&
+                        registrationData.medicalHistory.conditions.length >
+                          0 &&
+                        (
                           <div>
                             <strong>Condições:</strong>{' '}
                             {registrationData.medicalHistory.conditions.join(

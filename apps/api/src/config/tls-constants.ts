@@ -165,7 +165,7 @@ export const getAllCiphers = (): TLSCipherSuite[] => [
 ]
 
 export const isWeakCipher = (cipher: string): cipher is WeakCipher =>
-  TLS_CONSTANTS.WEAK_CIPHERS.some((weak) => cipher.includes(weak))
+  TLS_CONSTANTS.WEAK_CIPHERS.some(weak => cipher.includes(weak))
 
 export const getDefaultTLSVersion = () => TLS_CONSTANTS.SECURITY.MIN_TLS_VERSION
 

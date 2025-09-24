@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
       lib: {
         entry: 'src/index.ts',
         name: 'NeonProAPI',
-        fileName: (format) => `index.${format}${isEdge ? '.edge' : ''}`,
+        fileName: format => `index.${format}${isEdge ? '.edge' : ''}`,
         formats: ['es'],
       },
 

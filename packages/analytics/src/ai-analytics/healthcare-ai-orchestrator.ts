@@ -191,7 +191,7 @@ export class HealthcareAIOrchestrator {
   ): Promise<'compliant' | 'warning' | 'violation'> {
     // Check if all insights are generated with compliance
     const hasCompliantInsights = insights.every(
-      (insight) => insight.metadata.complianceStatus === 'compliant',
+      insight => insight.metadata.complianceStatus === 'compliant',
     )
 
     return hasCompliantInsights ? 'compliant' : 'warning'
@@ -204,7 +204,7 @@ export class HealthcareAIOrchestrator {
     // Determine status based on insights and compliance
     const hasIssues = compliance.issues.length > 0
     const hasLowConfidenceInsights = insights.insights.some(
-      (insight) => insight.confidence < 0.5,
+      insight => insight.confidence < 0.5,
     )
     const complianceScore = compliance.overallScore
 

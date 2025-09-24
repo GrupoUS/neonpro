@@ -15,7 +15,7 @@ export function useProfessionalSelection(): UseProfessionalSelectionReturn {
     if (checked) {
       setPreferredProfessionals([...preferredProfessionals, professionalId])
     } else {
-      setPreferredProfessionals(preferredProfessionals.filter((id) => id !== professionalId))
+      setPreferredProfessionals(preferredProfessionals.filter(id => id !== professionalId))
     }
   }
 

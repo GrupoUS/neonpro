@@ -238,8 +238,8 @@ export class PatientService {
       console.error('Error creating patient:', error)
 
       if (
-        error instanceof HealthcareComplianceError
-        || error instanceof UnauthorizedHealthcareAccessError
+        error instanceof HealthcareComplianceError ||
+        error instanceof UnauthorizedHealthcareAccessError
       ) {
         throw error
       }
@@ -303,8 +303,8 @@ export class PatientService {
       console.error('Error getting patient by ID:', error)
 
       if (
-        error instanceof HealthcareComplianceError
-        || error instanceof UnauthorizedHealthcareAccessError
+        error instanceof HealthcareComplianceError ||
+        error instanceof UnauthorizedHealthcareAccessError
       ) {
         throw error
       }
@@ -435,7 +435,7 @@ export class PatientService {
       ])
 
       // Convert Prisma results to Patient interface
-      const patients = patientRecords.map((record) => this.convertPrismaToPatient(record))
+      const patients = patientRecords.map(record => this.convertPrismaToPatient(record))
 
       const totalPages = Math.ceil(totalCount / limit)
 
@@ -455,8 +455,8 @@ export class PatientService {
       console.error('Error listing patients:', error)
 
       if (
-        error instanceof HealthcareComplianceError
-        || error instanceof UnauthorizedHealthcareAccessError
+        error instanceof HealthcareComplianceError ||
+        error instanceof UnauthorizedHealthcareAccessError
       ) {
         throw error
       }
@@ -473,8 +473,8 @@ export class PatientService {
   private convertPrismaToPatient(record: any): Patient {
     return {
       id: record.id,
-      name: record.fullName
-        || `${record.givenNames?.join(' ')} ${record.familyName}`,
+      name: record.fullName ||
+        `${record.givenNames?.join(' ')} ${record.familyName}`,
       cpf: record.cpf || '',
       email: record.email || '',
       phone: record.phonePrimary || '',
@@ -603,8 +603,8 @@ export class PatientService {
       console.error('Error finding patient by CPF:', error)
 
       if (
-        error instanceof HealthcareComplianceError
-        || error instanceof UnauthorizedHealthcareAccessError
+        error instanceof HealthcareComplianceError ||
+        error instanceof UnauthorizedHealthcareAccessError
       ) {
         throw error
       }
@@ -664,8 +664,8 @@ export class PatientService {
       }
 
       if (
-        updateData.phone
-        && updateData.phone !== existingPatient.phonePrimary
+        updateData.phone &&
+        updateData.phone !== existingPatient.phonePrimary
       ) {
         const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/
         if (!phoneRegex.test(updateData.phone)) {
@@ -707,8 +707,8 @@ export class PatientService {
       console.error('Error updating patient:', error)
 
       if (
-        error instanceof HealthcareComplianceError
-        || error instanceof UnauthorizedHealthcareAccessError
+        error instanceof HealthcareComplianceError ||
+        error instanceof UnauthorizedHealthcareAccessError
       ) {
         throw error
       }
@@ -769,8 +769,8 @@ export class PatientService {
       console.error('Error deleting patient:', error)
 
       if (
-        error instanceof HealthcareComplianceError
-        || error instanceof UnauthorizedHealthcareAccessError
+        error instanceof HealthcareComplianceError ||
+        error instanceof UnauthorizedHealthcareAccessError
       ) {
         throw error
       }

@@ -719,11 +719,11 @@ export class APIContractUtils {
 
     // Validate patient data endpoints
     const patientDataEndpoints = contract.endpoints.filter(
-      (e) => e.healthcareContext.involvesPatientData,
+      e => e.healthcareContext.involvesPatientData,
     )
     if (
-      patientDataEndpoints.length > 0
-      && !contract.healthcareCompliance.auditRequirements
+      patientDataEndpoints.length > 0 &&
+      !contract.healthcareCompliance.auditRequirements
     ) {
       issues.push('Audit logging is required for APIs processing patient data')
     }

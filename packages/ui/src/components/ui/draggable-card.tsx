@@ -126,8 +126,8 @@ export const DraggableCard = ({
         const currentVelocityY = velocityY.get()
 
         const velocityMagnitude = Math.sqrt(
-          currentVelocityX * currentVelocityX
-            + currentVelocityY * currentVelocityY,
+          currentVelocityX * currentVelocityX +
+            currentVelocityY * currentVelocityY,
         )
         const bounce = Math.min(0.8, velocityMagnitude / 1000)
 

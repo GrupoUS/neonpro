@@ -751,9 +751,9 @@ Responda APENAS em formato JSON:
     const aiWeight = 0.25 // AI provides additional insights
 
     return (
-      historicalRisk * historicalWeight
-      + behavioralRisk * behavioralWeight
-      + aiRisk * aiWeight
+      historicalRisk * historicalWeight +
+      behavioralRisk * behavioralWeight +
+      aiRisk * aiWeight
     )
   }
 
@@ -777,12 +777,12 @@ Responda APENAS em formato JSON:
     accuracy: number
   } {
     // Calculate completeness based on available data
-    const totalFields = Object.keys(profile.behaviorFactors).length
-      + Object.keys(profile.riskFactors).length
-      + 5 // demographic fields
-    const completedFields = Object.values(profile.behaviorFactors).filter((v) => v > 0).length
-      + Object.values(profile.riskFactors).filter((v) => v > 0).length
-      + 5
+    const totalFields = Object.keys(profile.behaviorFactors).length +
+      Object.keys(profile.riskFactors).length +
+      5 // demographic fields
+    const completedFields = Object.values(profile.behaviorFactors).filter(v => v > 0).length +
+      Object.values(profile.riskFactors).filter(v => v > 0).length +
+      5
     const completeness = completedFields / totalFields
 
     // Calculate recency based on last update
@@ -1049,12 +1049,13 @@ Responda APENAS em formato JSON:
 
     const metrics = this.modelPerformanceMetrics.get(modelKey)!
     metrics.totalPredictions++
-    metrics.averageProcessingTime = (metrics.averageProcessingTime * (metrics.totalPredictions - 1)
-      + prediction.processingTime)
-      / metrics.totalPredictions
-    metrics.averageConfidence = (metrics.averageConfidence * (metrics.totalPredictions - 1)
-      + prediction.confidenceScore)
-      / metrics.totalPredictions
+    metrics.averageProcessingTime =
+      (metrics.averageProcessingTime * (metrics.totalPredictions - 1) +
+        prediction.processingTime) /
+      metrics.totalPredictions
+    metrics.averageConfidence = (metrics.averageConfidence * (metrics.totalPredictions - 1) +
+      prediction.confidenceScore) /
+      metrics.totalPredictions
     metrics.riskDistribution[prediction.riskLevel]++
     metrics.lastUpdated = new Date()
 

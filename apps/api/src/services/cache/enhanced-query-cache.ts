@@ -514,7 +514,7 @@ export class EnhancedQueryCacheService {
       // Cleanup expired entries
       const cleanupResults = await this.cacheService.cleanup()
       let totalCleaned = 0
-      cleanupResults.forEach((count) => (totalCleaned += count))
+      cleanupResults.forEach(count => (totalCleaned += count))
 
       if (totalCleaned > 0) {
         details.push(`Cleaned up ${totalCleaned} expired entries`)
@@ -687,7 +687,7 @@ export class EnhancedQueryCacheService {
     const categories: string[] = []
 
     if (response.sources) {
-      response.sources.forEach((source) => {
+      response.sources.forEach(source => {
         switch (source.type) {
           case 'patient_data':
             categories.push('patient_records')
@@ -732,8 +732,8 @@ export class EnhancedQueryCacheService {
   ): CacheDataSensitivity {
     // Check for patient data
     if (
-      _query._context?.patientId
-      || response.content.toLowerCase().includes('paciente')
+      _query._context?.patientId ||
+      response.content.toLowerCase().includes('paciente')
     ) {
       return CacheDataSensitivity.CONFIDENTIAL
     }
@@ -745,8 +745,8 @@ export class EnhancedQueryCacheService {
 
     // Check for sensitive health information
     if (
-      response.content.toLowerCase().includes('diagnóstico')
-      || response.content.toLowerCase().includes('tratamento')
+      response.content.toLowerCase().includes('diagnóstico') ||
+      response.content.toLowerCase().includes('tratamento')
     ) {
       return CacheDataSensitivity.RESTRICTED
     }
@@ -790,8 +790,8 @@ export class EnhancedQueryCacheService {
 
     // Audit sensitive queries
     if (
-      this.determineSensitivity(_query, response)
-        === CacheDataSensitivity.RESTRICTED
+      this.determineSensitivity(_query, response) ===
+        CacheDataSensitivity.RESTRICTED
     ) {
       return true
     }
@@ -841,12 +841,12 @@ export class EnhancedQueryCacheService {
    */
   private validateCacheEntry(entry: QueryCacheEntry): boolean {
     return !!(
-      entry
-      && typeof entry === 'object'
-      && entry.response
-      && typeof entry.timestamp === 'string'
-      && entry.ttl > 0
-      && entry._userId
+      entry &&
+      typeof entry === 'object' &&
+      entry.response &&
+      typeof entry.timestamp === 'string' &&
+      entry.ttl > 0 &&
+      entry._userId
     )
   }
 

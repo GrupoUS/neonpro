@@ -40,9 +40,9 @@ class SecretManager {
       provider: config.provider,
       encryption: config.encryption ?? true,
       auditTrail: config.auditTrail ?? true,
-      encryptionKey: config.encryptionKey
-        || process.env.SECRET_ENCRYPTION_KEY
-        || this.generateEncryptionKey(),
+      encryptionKey: config.encryptionKey ||
+        process.env.SECRET_ENCRYPTION_KEY ||
+        this.generateEncryptionKey(),
       vaultUrl: config.vaultUrl || process.env.VAULT_URL || '',
       vaultToken: config.vaultToken || process.env.VAULT_TOKEN || '',
     }
@@ -54,8 +54,8 @@ class SecretManager {
   private generateEncryptionKey(): string {
     const key = crypto.randomBytes(32).toString('hex')
     logger.warn(
-      'Generated new encryption key. Store this securely: SECRET_ENCRYPTION_KEY='
-        + key,
+      'Generated new encryption key. Store this securely: SECRET_ENCRYPTION_KEY=' +
+        key,
     )
     return key
   }
@@ -106,7 +106,7 @@ class SecretManager {
       'SUPABASE_ANON_KEY',
     ]
 
-    secretKeys.forEach((key) => {
+    secretKeys.forEach(key => {
       const value = process.env[key]
       if (value) {
         this.setSecret(key, value, false) // Don't audit initial loading
@@ -315,7 +315,7 @@ class SecretManager {
   public healthCheck(): { status: 'healthy' | 'unhealthy'; details: any } {
     const requiredSecrets = ['DATABASE_URL', 'JWT_SECRET']
     const missingSecrets = requiredSecrets.filter(
-      (secret) => !this.hasSecret(secret),
+      secret => !this.hasSecret(secret),
     )
 
     if (missingSecrets.length > 0) {

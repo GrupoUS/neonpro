@@ -293,12 +293,12 @@ export const HealthcareSelect = forwardRef<
       // Filter by search term if searchable
       if (searchable && searchTerm) {
         options = options.filter(
-          (option) =>
-            option.label.toLowerCase().includes(searchTerm.toLowerCase())
-            || option.description
+          option =>
+            option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            option.description
               ?.toLowerCase()
-              .includes(searchTerm.toLowerCase())
-            || option.medicalCode
+              .includes(searchTerm.toLowerCase()) ||
+            option.medicalCode
               ?.toLowerCase()
               .includes(searchTerm.toLowerCase()),
         )
@@ -314,7 +314,7 @@ export const HealthcareSelect = forwardRef<
       const groups: Record<string, HealthcareSelectOption[]> = {}
       const ungrouped: HealthcareSelectOption[] = []
 
-      effectiveOptions.forEach((option) => {
+      effectiveOptions.forEach(option => {
         if (option.group) {
           if (!groups[option.group]) {
             groups[option.group] = []
@@ -372,7 +372,7 @@ export const HealthcareSelect = forwardRef<
 
       // Check if value exists in options
       const validOption = effectiveOptions.find(
-        (option) => option.value === valueToValidate,
+        option => option.value === valueToValidate,
       )
       if (valueToValidate && !validOption) {
         errors.push('Opção inválida selecionada')
@@ -391,7 +391,7 @@ export const HealthcareSelect = forwardRef<
         } catch (_validationError) {
           if (_validationError instanceof z.ZodError) {
             errors.push(
-              ..._validationError.errors.map((error) => error.message),
+              ..._validationError.errors.map(error => error.message),
             )
           }
         }
@@ -414,7 +414,7 @@ export const HealthcareSelect = forwardRef<
       setInternalValue(newValue)
 
       // Find selected option
-      const selectedOption = effectiveOptions.find((option) => option.value === newValue) || null
+      const selectedOption = effectiveOptions.find(option => option.value === newValue) || null
 
       // Validate on change if enabled
       if (validateOnChange) {
@@ -525,8 +525,8 @@ export const HealthcareSelect = forwardRef<
       // Visual state
       {
         'border-destructive focus:ring-destructive': showError,
-        'border-warning': effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL
-          && !showError,
+        'border-warning': effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL &&
+          !showError,
         'border-destructive bg-destructive/5':
           effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError,
       },
@@ -585,7 +585,7 @@ export const HealthcareSelect = forwardRef<
             type='text'
             placeholder='Search options...'
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className='w-full px-3 py-2 text-sm border border-input rounded-md mb-2'
           />
         )}
@@ -626,7 +626,7 @@ export const HealthcareSelect = forwardRef<
             ? (
               <>
                 {/* Ungrouped options */}
-                {groupedOptions.ungrouped.map((option) => (
+                {groupedOptions.ungrouped.map(option => (
                   <option
                     key={option.value}
                     value={option.value}
@@ -645,7 +645,7 @@ export const HealthcareSelect = forwardRef<
                 {Object.entries(groupedOptions.groups).map(
                   ([groupName, groupOptions]) => (
                     <optgroup key={groupName} label={groupName}>
-                      {groupOptions.map((option) => (
+                      {groupOptions.map(option => (
                         <option
                           key={option.value}
                           value={option.value}
@@ -666,7 +666,7 @@ export const HealthcareSelect = forwardRef<
             )
             : (
               // Flat options
-              effectiveOptions.map((option) => (
+              effectiveOptions.map(option => (
                 <option
                   key={option.value}
                   value={option.value}
@@ -706,8 +706,8 @@ export const HealthcareSelect = forwardRef<
         )}
 
         {/* Data sensitivity indicator */}
-        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED
-          || effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
+        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED ||
+          effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
           <p className='text-xs text-muted-foreground flex items-center gap-1'>
             <span role='img' aria-label='Dados protegidos'>
               🔒

@@ -159,9 +159,9 @@ export class ReminderScheduler {
           const appointment = scheduledReminder.appointments
 
           if (
-            !appointment
-            || appointment.status === 'cancelled'
-            || appointment.status === 'completed'
+            !appointment ||
+            appointment.status === 'cancelled' ||
+            appointment.status === 'completed'
           ) {
             // Cancel the reminder
             await this.updateScheduledReminder(scheduledReminder.id, {
@@ -266,7 +266,7 @@ export class ReminderScheduler {
         }
 
         // Small delay between reminders to avoid rate limits
-        await new Promise((resolve) => setTimeout(resolve, 200))
+        await new Promise(resolve => setTimeout(resolve, 200))
       }
 
       const processingTime = Date.now() - startTime
@@ -310,8 +310,8 @@ export class ReminderScheduler {
 
       // Skip if appointment is not suitable for reminders
       if (
-        appointment.status === 'cancelled'
-        || appointment.status === 'completed'
+        appointment.status === 'cancelled' ||
+        appointment.status === 'completed'
       ) {
         return { scheduled: 0, reminders: [] }
       }
@@ -338,8 +338,8 @@ export class ReminderScheduler {
       // Create scheduled reminders for each active schedule
       for (const schedule of schedules) {
         const reminderTime = new Date(
-          appointmentDateTime.getTime()
-            - schedule.hours_before_appointment * 60 * 60 * 1000,
+          appointmentDateTime.getTime() -
+            schedule.hours_before_appointment * 60 * 60 * 1000,
         )
 
         // Only schedule if reminder time is in the future
@@ -578,8 +578,8 @@ export const reminderScheduler = new ReminderScheduler()
 
 // Auto-start scheduler in production
 if (
-  process.env.NODE_ENV === 'production'
-  && process.env.AUTO_START_SCHEDULER === 'true'
+  process.env.NODE_ENV === 'production' &&
+  process.env.AUTO_START_SCHEDULER === 'true'
 ) {
   reminderScheduler.startScheduler(5) // Check every 5 minutes
 }

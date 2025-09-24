@@ -447,74 +447,74 @@ export class OperationLog {
 
     // Apply date filters
     if (filters.startDate) {
-      entries = entries.filter((e) => e.timestamp >= filters.startDate!)
+      entries = entries.filter(e => e.timestamp >= filters.startDate!)
     }
     if (filters.endDate) {
-      entries = entries.filter((e) => e.timestamp <= filters.endDate!)
+      entries = entries.filter(e => e.timestamp <= filters.endDate!)
     }
 
     // Apply category filters
     if (filters.categories && filters.categories.length > 0) {
-      entries = entries.filter((e) => filters.categories!.includes(e.category))
+      entries = entries.filter(e => filters.categories!.includes(e.category))
     }
 
     // Apply severity filters
     if (filters.severities && filters.severities.length > 0) {
-      entries = entries.filter((e) => filters.severities!.includes(e.severity))
+      entries = entries.filter(e => filters.severities!.includes(e.severity))
     }
 
     // Apply clinic filters
     if (filters.clinicIds && filters.clinicIds.length > 0) {
-      entries = entries.filter((e) => filters.clinicIds!.includes(e.clinicId))
+      entries = entries.filter(e => filters.clinicIds!.includes(e.clinicId))
     }
 
     // Apply user filters
     if (filters.userIds && filters.userIds.length > 0) {
       entries = entries.filter(
-        (e) => e._userId && filters.userIds!.includes(e._userId),
+        e => e._userId && filters.userIds!.includes(e._userId),
       )
     }
 
     // Apply operation filters
     if (filters.operations && filters.operations.length > 0) {
-      entries = entries.filter((e) => filters.operations!.includes(e.operation))
+      entries = entries.filter(e => filters.operations!.includes(e.operation))
     }
 
     // Apply compliance filters
     if (
-      filters.complianceFrameworks
-      && filters.complianceFrameworks.length > 0
+      filters.complianceFrameworks &&
+      filters.complianceFrameworks.length > 0
     ) {
-      entries = entries.filter((e) =>
-        e.complianceFrameworks.some((f) => filters.complianceFrameworks!.includes(f))
+      entries = entries.filter(e =>
+        e.complianceFrameworks.some(f => filters.complianceFrameworks!.includes(f))
       )
     }
 
     // Apply personal data filter
     if (filters.personalDataOnly) {
-      entries = entries.filter((e) => e.personalDataInvolved)
+      entries = entries.filter(e => e.personalDataInvolved)
     }
 
     // Apply error filter
     if (filters.errorOnly) {
       entries = entries.filter(
-        (e) => e.severity === 'error' || e.severity === 'critical' || e.errorDetails,
+        e => e.severity === 'error' || e.severity === 'critical' || e.errorDetails,
       )
     }
 
     // Apply tag filters
     if (filters.tags && filters.tags.length > 0) {
-      entries = entries.filter((e) => filters.tags!.some((tag) => e.tags.includes(tag)))
+      entries = entries.filter(e => filters.tags!.some(tag => e.tags.includes(tag)))
     }
 
     // Apply text search
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase()
       entries = entries.filter(
-        (e) =>
-          e.operation.toLowerCase().includes(query)
-          || e.description.toLowerCase().includes(query)
-          || e.tags.some((tag) => tag.toLowerCase().includes(query)),
+        e =>
+          e.operation.toLowerCase().includes(query) ||
+          e.description.toLowerCase().includes(query) ||
+          e.tags.some(tag => tag.toLowerCase().includes(query)),
       )
     }
 
@@ -594,9 +594,9 @@ export class OperationLog {
     endDate?: Date,
   ): LogAggregation[] {
     return Array.from(this._aggregations.values())
-      .filter((agg) => agg.period === period)
-      .filter((agg) => !startDate || agg.timestamp >= startDate)
-      .filter((agg) => !endDate || agg.timestamp <= endDate)
+      .filter(agg => agg.period === period)
+      .filter(agg => !startDate || agg.timestamp >= startDate)
+      .filter(agg => !endDate || agg.timestamp <= endDate)
       .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
   }
 
@@ -617,7 +617,7 @@ export class OperationLog {
     const complianceLogs = this.queryLogs({
       startDate,
       endDate,
-    }).filter((log) => log.complianceFrameworks.length > 0)
+    }).filter(log => log.complianceFrameworks.length > 0)
 
     const byFramework: Record<ComplianceFramework, number> = {
       LGPD: 0,
@@ -767,7 +767,7 @@ export class OperationLog {
       'month',
     ]
 
-    periods.forEach((period) => {
+    periods.forEach(period => {
       const key = this.getAggregationKey(entry.timestamp, period)
       const existing = this._aggregations.get(key)
 
@@ -783,12 +783,12 @@ export class OperationLog {
             ...existing.counts.bySeverity,
             [entry.severity]: (existing.counts.bySeverity[entry.severity] || 0) + 1,
           },
-          errors: existing.counts.errors
-            + (entry.severity === 'error' || entry.severity === 'critical'
+          errors: existing.counts.errors +
+            (entry.severity === 'error' || entry.severity === 'critical'
               ? 1
               : 0),
-          complianceEvents: existing.counts.complianceEvents
-            + (entry.complianceFrameworks.length > 0 ? 1 : 0),
+          complianceEvents: existing.counts.complianceEvents +
+            (entry.complianceFrameworks.length > 0 ? 1 : 0),
         }
 
         const updatedPerformance = {
@@ -800,10 +800,10 @@ export class OperationLog {
         }
 
         const updatedCompliance = {
-          personalDataEvents: existing.compliance.personalDataEvents
-            + (entry.personalDataInvolved ? 1 : 0),
-          consentIssues: existing.compliance.consentIssues
-            + (entry.consentStatus !== 'valid' ? 1 : 0),
+          personalDataEvents: existing.compliance.personalDataEvents +
+            (entry.personalDataInvolved ? 1 : 0),
+          consentIssues: existing.compliance.consentIssues +
+            (entry.consentStatus !== 'valid' ? 1 : 0),
           regulatoryFlags: Array.from(
             new Set([
               ...existing.compliance.regulatoryFlags,

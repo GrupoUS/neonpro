@@ -213,7 +213,7 @@ export async function getSuggestionsFromAI(_query: string, webHints: string[]) {
   })
   return result.text
     .split(',')
-    .map((s) => s.trim())
+    .map(s => s.trim())
     .filter(Boolean)
     .slice(0, 5)
 }

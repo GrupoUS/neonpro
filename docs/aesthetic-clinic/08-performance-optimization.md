@@ -26,25 +26,25 @@ import { lazy } from 'react'
 
 // Lazy loading route components
 const ClientManagement = lazy(() =>
-  import('~/components/aesthetic/client-management/ClientManagement').then((m) => ({
+  import('~/components/aesthetic/client-management/ClientManagement').then(m => ({
     default: m.ClientManagement,
   }))
 )
 
 const TreatmentPlanner = lazy(() =>
-  import('~/components/aesthetic/treatment-planning/TreatmentPlanner').then((m) => ({
+  import('~/components/aesthetic/treatment-planning/TreatmentPlanner').then(m => ({
     default: m.TreatmentPlanner,
   }))
 )
 
 const AICalendarScheduler = lazy(() =>
-  import('~/components/aesthetic/scheduling/AICalendarScheduler').then((m) => ({
+  import('~/components/aesthetic/scheduling/AICalendarScheduler').then(m => ({
     default: m.AICalendarScheduler,
   }))
 )
 
 const ComplianceDashboard = lazy(() =>
-  import('~/components/aesthetic/compliance/ComplianceDashboard').then((m) => ({
+  import('~/components/aesthetic/compliance/ComplianceDashboard').then(m => ({
     default: m.ComplianceDashboard,
   }))
 )
@@ -57,25 +57,25 @@ const routeTree = createRoute({
   createRoute({
     path: '/clients',
     component: ClientManagement,
-    loader: () => import('~/hooks/useClients').then((m) => ({ default: m.useClients })),
+    loader: () => import('~/hooks/useClients').then(m => ({ default: m.useClients })),
     shouldReload: () => false, // Prevent unnecessary reloads
   }),
   createRoute({
     path: '/treatments',
     component: TreatmentPlanner,
-    loader: () => import('~/hooks/useTreatments').then((m) => ({ default: m.useTreatments })),
+    loader: () => import('~/hooks/useTreatments').then(m => ({ default: m.useTreatments })),
     shouldReload: () => false,
   }),
   createRoute({
     path: '/scheduling',
     component: AICalendarScheduler,
-    loader: () => import('~/hooks/useScheduling').then((m) => ({ default: m.useScheduling })),
+    loader: () => import('~/hooks/useScheduling').then(m => ({ default: m.useScheduling })),
     shouldReload: () => false,
   }),
   createRoute({
     path: '/compliance',
     component: ComplianceDashboard,
-    loader: () => import('~/hooks/useCompliance').then((m) => ({ default: m.useCompliance })),
+    loader: () => import('~/hooks/useCompliance').then(m => ({ default: m.useCompliance })),
     shouldReload: () => false,
   }),
 ])
@@ -118,9 +118,9 @@ export const OptimizedClientList: React.FC<ClientListProps> = memo(
     // Memoized filtered and sorted clients
     const filteredClients = useMemo(() => {
       return clients
-        .filter((client) => {
-          const matchesSearch = client.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-            || client.email.toLowerCase().includes(searchTerm.toLowerCase())
+        .filter(client => {
+          const matchesSearch = client.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            client.email.toLowerCase().includes(searchTerm.toLowerCase())
           const matchesStatus = filterStatus === 'all' || client.status === filterStatus
           return matchesSearch && matchesStatus
         })
@@ -201,7 +201,7 @@ export const OptimizedClientList: React.FC<ClientListProps> = memo(
               position: 'relative',
             }}
           >
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            {rowVirtualizer.getVirtualItems().map(virtualRow => {
               const client = filteredClients[virtualRow.index]
               return (
                 <div
@@ -236,7 +236,7 @@ const ClientListItem: React.FC<{ client: AestheticClientProfile }> = memo(({ cli
   const initials = useMemo(() => {
     return client.fullName
       .split(' ')
-      .map((word) => word[0])
+      .map(word => word[0])
       .join('')
       .substring(0, 2)
       .toUpperCase()
@@ -453,7 +453,7 @@ export class CompressionMiddleware {
       '/api/v1/analytics/realtime',
     ]
 
-    return !nonCacheablePaths.some((path) => req.path.startsWith(path))
+    return !nonCacheablePaths.some(path => req.path.startsWith(path))
   }
 
   private generateCacheKey(req: Request): string {
@@ -781,8 +781,8 @@ export class ConnectionPoolManager {
       this.metrics.waitingRequests = Math.max(0, this.metrics.waitingRequests - 1)
       this.metrics.totalQueries++
       this.metrics.averageQueryTime =
-        (this.metrics.averageQueryTime * (this.metrics.totalQueries - 1) + waitTime)
-        / this.metrics.totalQueries
+        (this.metrics.averageQueryTime * (this.metrics.totalQueries - 1) + waitTime) /
+        this.metrics.totalQueries
 
       return connection
     } catch (error) {
@@ -839,7 +839,7 @@ export class ConnectionPoolManager {
     ]
 
     const upperQuery = query.toUpperCase()
-    return analyticsKeywords.some((keyword) => upperQuery.includes(keyword))
+    return analyticsKeywords.some(keyword => upperQuery.includes(keyword))
   }
 
   private startMetricsCollection(): void {
@@ -1177,7 +1177,7 @@ export class PerformanceMonitoringService {
     return {
       timestamp: Date.now(),
       metrics: Object.fromEntries(latestMetrics),
-      alerts: this.alerts.filter((a) => !a.resolved),
+      alerts: this.alerts.filter(a => !a.resolved),
       summary: {
         overall: this.calculateOverallHealth(),
         responseTime: latestMetrics.get('responseTime')?.value || 0,
@@ -1233,18 +1233,18 @@ export class PerformanceMonitoringService {
 
     // Calculate metrics for the time period
     for (const [name, metrics] of this.metrics) {
-      const periodMetrics = metrics.filter((m) =>
-        m.timestamp >= timeRange.start.getTime()
-        && m.timestamp <= timeRange.end.getTime()
+      const periodMetrics = metrics.filter(m =>
+        m.timestamp >= timeRange.start.getTime() &&
+        m.timestamp <= timeRange.end.getTime()
       )
 
       if (periodMetrics.length > 0) {
         report.metrics[name] = {
           count: periodMetrics.length,
           average: periodMetrics.reduce((sum, m) => sum + m.value, 0) / periodMetrics.length,
-          min: Math.min(...periodMetrics.map((m) => m.value)),
-          max: Math.max(...periodMetrics.map((m) => m.value)),
-          percentile95: this.calculatePercentile(periodMetrics.map((m) => m.value), 95),
+          min: Math.min(...periodMetrics.map(m => m.value)),
+          max: Math.max(...periodMetrics.map(m => m.value)),
+          percentile95: this.calculatePercentile(periodMetrics.map(m => m.value), 95),
         }
       }
     }

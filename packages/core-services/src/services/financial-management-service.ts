@@ -499,7 +499,7 @@ export class FinancialManagementService {
     let taxAmount = 0
     let discountAmount = 0
 
-    const invoiceItems = validatedInvoice.items.map((item) => {
+    const invoiceItems = validatedInvoice.items.map(item => {
       const totalPrice = item.quantity * item.unitPrice
       const taxAmountItem = totalPrice * item.taxRate / 100
       const discountAmountItem = totalPrice * item.discountPercentage / 100
@@ -554,7 +554,7 @@ export class FinancialManagementService {
     }
 
     // Create invoice items
-    const itemsWithInvoiceId = invoiceItems.map((item) => ({
+    const itemsWithInvoiceId = invoiceItems.map(item => ({
       ...item,
       invoice_id: invoiceData.id,
     }))
@@ -624,7 +624,7 @@ export class FinancialManagementService {
       throw new Error(`Failed to fetch invoices: ${error.message}`)
     }
 
-    return data.map((invoice) => ({
+    return data.map(invoice => ({
       ...invoice,
       items: invoice.invoice_items,
     })) || []
@@ -741,9 +741,9 @@ export class FinancialManagementService {
   ): Promise<ProfessionalCommission> {
     const validatedCommission = ProfessionalCommissionInputSchema.parse(commission)
 
-    const commissionAmount = validatedCommission.baseAmount
-      * validatedCommission.commissionRate
-      / 100
+    const commissionAmount = validatedCommission.baseAmount *
+      validatedCommission.commissionRate /
+      100
 
     const { data, error } = await this.supabase
       .from('professional_commissions')
@@ -928,8 +928,8 @@ export class FinancialManagementService {
       .gte('issue_date', previousMonthStart)
       .lte('issue_date', previousMonthEnd)
 
-    const previousMonthRevenue = previousRevenue?.reduce((sum, inv) => sum + inv.total_amount, 0)
-      || 0
+    const previousMonthRevenue = previousRevenue?.reduce((sum, inv) => sum + inv.total_amount, 0) ||
+      0
 
     // Calculate monthly growth
     const monthlyGrowth = previousMonthRevenue > 0
@@ -945,8 +945,8 @@ export class FinancialManagementService {
       .gte('transaction_date', currentMonthStart)
       .lte('transaction_date', currentMonthEnd)
 
-    const totalExpenses = currentExpenses?.reduce((sum, payment) => sum + payment.net_amount, 0)
-      || 0
+    const totalExpenses = currentExpenses?.reduce((sum, payment) => sum + payment.net_amount, 0) ||
+      0
 
     // Net profit
     const netProfit = totalRevenue - totalExpenses
@@ -959,8 +959,8 @@ export class FinancialManagementService {
       .in('status', ['draft', 'pending'])
 
     const now: string = new Date().toISOString().split('T')[0] || ''
-    const pendingCount = pendingInvoices?.filter((inv) => (inv.due_date || '') >= now).length || 0
-    const overdueCount = pendingInvoices?.filter((inv) => (inv.due_date || '') < now).length || 0
+    const pendingCount = pendingInvoices?.filter(inv => (inv.due_date || '') >= now).length || 0
+    const overdueCount = pendingInvoices?.filter(inv => (inv.due_date || '') < now).length || 0
 
     // Upcoming appointments
     const { data: upcomingAppointments } = await this.supabase
@@ -998,7 +998,7 @@ export class FinancialManagementService {
       .lte('created_at', currentMonthEnd)
 
     const serviceRevenue = new Map<string, { revenue: number; count: number }>()
-    topServicesData?.forEach((item) => {
+    topServicesData?.forEach(item => {
       const current = serviceRevenue.get(item.description) || { revenue: 0, count: 0 }
       serviceRevenue.set(item.description, {
         revenue: current.revenue + item.total_price,

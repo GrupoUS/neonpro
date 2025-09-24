@@ -178,14 +178,14 @@ export class LGPDComplianceValidator {
         LGPDDataCategory.GENETIC_DATA,
       ]
 
-      const hasSensitiveData = dataCategories.some((cat) => sensitiveCategories.includes(cat))
+      const hasSensitiveData = dataCategories.some(cat => sensitiveCategories.includes(cat))
 
       if (hasSensitiveData) {
         // Sensitive data requires specific consent or legal authorization
         if (
-          legalBasis !== LGPDLegalBasis.CONSENT
-          && legalBasis !== LGPDLegalBasis.HEALTH_PROTECTION
-          && legalBasis !== LGPDLegalBasis.LEGAL_OBLIGATION
+          legalBasis !== LGPDLegalBasis.CONSENT &&
+          legalBasis !== LGPDLegalBasis.HEALTH_PROTECTION &&
+          legalBasis !== LGPDLegalBasis.LEGAL_OBLIGATION
         ) {
           violations.push(
             'Sensitive data processing requires consent or legal authorization (LGPD Art. 11)',
@@ -291,7 +291,7 @@ export class LGPDComplianceValidator {
 
       if (originalConsents.length === 0) return false
 
-      const originalPurposes = originalConsents.map((c) => c.purpose)
+      const originalPurposes = originalConsents.map(c => c.purpose)
 
       // Define compatible purposes
       const compatiblePurposes: Record<string, string[]> = {
@@ -313,7 +313,7 @@ export class LGPDComplianceValidator {
       const isOriginalPurpose = originalPurposes.includes(
         currentPurpose.toString(),
       )
-      const isCompatiblePurpose = originalPurposes.some((original) =>
+      const isCompatiblePurpose = originalPurposes.some(original =>
         compatiblePurposes[original]?.includes(currentPurpose)
       )
 
@@ -352,7 +352,7 @@ export class LGPDComplianceValidator {
     const necessaryCategories = necessaryData[purpose] || []
 
     // Check if all requested categories are necessary for the purpose
-    return dataCategories.every((category) => necessaryCategories.includes(category))
+    return dataCategories.every(category => necessaryCategories.includes(category))
   }
 
   /**

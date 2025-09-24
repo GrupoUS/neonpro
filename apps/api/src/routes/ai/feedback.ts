@@ -41,8 +41,8 @@ function validateFeedbackRequest(
   if (!body.messageId) {
     errors.push('Message ID is required')
   } else if (
-    typeof body.messageId !== 'string'
-    || body.messageId.trim().length === 0
+    typeof body.messageId !== 'string' ||
+    body.messageId.trim().length === 0
   ) {
     errors.push('Message ID must be a non-empty string')
   }
@@ -63,8 +63,8 @@ function validateFeedbackRequest(
     }
 
     if (
-      body.feedback.helpful !== undefined
-      && typeof body.feedback.helpful !== 'boolean'
+      body.feedback.helpful !== undefined &&
+      typeof body.feedback.helpful !== 'boolean'
     ) {
       errors.push('Helpful flag must be a boolean')
     }
@@ -157,7 +157,7 @@ async function triggerFeedbackImprovements(
  * POST /api/ai/sessions/:sessionId/feedback
  * Submit feedback for agent responses
  */
-app.post('/ai/sessions/:sessionId/feedback', async (c) => {
+app.post('/ai/sessions/:sessionId/feedback', async c => {
   try {
     const sessionId = c.req.param('sessionId')
     const payload = c.get('jwtPayload')
@@ -233,7 +233,7 @@ app.post('/ai/sessions/:sessionId/feedback', async (c) => {
  * GET /api/ai/sessions/:sessionId/feedback/stats
  * Get feedback statistics for a session (admin only)
  */
-app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
+app.get('/ai/sessions/:sessionId/feedback/stats', async c => {
   try {
     const sessionId = c.req.param('sessionId')
     const payload = c.get('jwtPayload')
@@ -283,14 +283,14 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
     )
 
     const helpfulResponses = sessionFeedback.filter(
-      (f) => f.helpful === true,
+      f => f.helpful === true,
     ).length
     const helpfulPercentage = totalFeedback > 0 ? (helpfulResponses / totalFeedback) * 100 : 0
 
     const recentComments = sessionFeedback
-      .filter((f) => f.comment)
+      .filter(f => f.comment)
       .slice(-5) // Last 5 comments
-      .map((f) => ({
+      .map(f => ({
         rating: f.rating,
         comment: f.comment,
         timestamp: f.timestamp,
@@ -326,7 +326,7 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
  * GET /api/ai/feedback/admin/overview
  * Get system-wide feedback overview (admin only)
  */
-app.get('/ai/feedback/admin/overview', async (c) => {
+app.get('/ai/feedback/admin/overview', async c => {
   try {
     const payload = c.get('jwtPayload')
     const userRole = payload.role as UserRole
@@ -372,14 +372,14 @@ app.get('/ai/feedback/admin/overview', async (c) => {
     )
 
     const helpfulResponses = allFeedback.filter(
-      (f) => f.helpful === true,
+      f => f.helpful === true,
     ).length
     const helpfulPercentage = totalFeedback > 0 ? (helpfulResponses / totalFeedback) * 100 : 0
 
     // Identify top issues from low ratings and comments
-    const lowRatings = allFeedback.filter((f) => f.rating <= 2 && f.comment)
+    const lowRatings = allFeedback.filter(f => f.rating <= 2 && f.comment)
     const topIssues = lowRatings
-      .map((f) => ({
+      .map(f => ({
         comment: f.comment,
         rating: f.rating,
         sessionId: f.sessionId,
@@ -393,7 +393,7 @@ app.get('/ai/feedback/admin/overview', async (c) => {
         (a, _b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )
       .slice(-10)
-      .map((f) => ({
+      .map(f => ({
         rating: f.rating,
         helpful: f.helpful,
         timestamp: f.timestamp,
@@ -429,10 +429,10 @@ app.get('/ai/feedback/admin/overview', async (c) => {
 /**
  * Health check endpoint
  */
-app.get('/ai/feedback/health', async (c) => {
+app.get('/ai/feedback/health', async c => {
   try {
     const totalFeedback = feedbackStore.size
-    const recentFeedback = Array.from(feedbackStore.values()).filter((f) => {
+    const recentFeedback = Array.from(feedbackStore.values()).filter(f => {
       const feedbackTime = new Date(f.timestamp).getTime()
       const hourAgo = Date.now() - 60 * 60 * 1000
       return feedbackTime > hourAgo

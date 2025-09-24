@@ -392,9 +392,9 @@ export class AestheticSessionHandler {
 
       // Initialize treatment workflow if enabled
       if (
-        this.config.enableTreatmentWorkflow
-        && options.enableWorkflow !== false
-        && options.treatmentType
+        this.config.enableTreatmentWorkflow &&
+        options.enableWorkflow !== false &&
+        options.treatmentType
       ) {
         aestheticSession.currentWorkflow = await this.initializeTreatmentWorkflow(
           sessionId,
@@ -456,7 +456,7 @@ export class AestheticSessionHandler {
       }
 
       const workflow = aestheticSession.currentWorkflow
-      const stepProgress = workflow.steps.find((s) => s.stepId === stepId)
+      const stepProgress = workflow.steps.find(s => s.stepId === stepId)
 
       if (!stepProgress) {
         throw new Error(`Workflow step ${stepId} not found`)
@@ -480,7 +480,7 @@ export class AestheticSessionHandler {
 
       // Process step based on type
       let stepResult: any
-      const stepConfig = this.config.treatmentWorkflowSteps.find((s) => s.id === stepId)
+      const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === stepId)
 
       if (stepConfig) {
         stepResult = await this.executeWorkflowStep(sessionId, stepConfig, data)
@@ -503,7 +503,7 @@ export class AestheticSessionHandler {
 
       if (nextStep) {
         // Mark next step as in progress
-        const nextStepProgress = workflow.steps.find((s) => s.stepId === nextStep)
+        const nextStepProgress = workflow.steps.find(s => s.stepId === nextStep)
         if (nextStepProgress) {
           nextStepProgress.status = 'in_progress'
           nextStepProgress.startedAt = new Date()
@@ -516,8 +516,8 @@ export class AestheticSessionHandler {
       }
 
       // Update workflow
-      workflow.currentStep = workflow.steps.findIndex((s) => s.stepId === nextStep)
-        ?? workflow.steps.length
+      workflow.currentStep = workflow.steps.findIndex(s => s.stepId === nextStep) ??
+        workflow.steps.length
       this.treatmentWorkflows.set(sessionId, workflow)
 
       // Update aesthetic session
@@ -659,7 +659,7 @@ export class AestheticSessionHandler {
 
       // Get assessment form configuration
       const formConfig = this.config.clientAssessmentConfig.assessmentForms.find(
-        (f) => f.id === formId,
+        f => f.id === formId,
       )
 
       if (!formConfig) {
@@ -800,7 +800,7 @@ export class AestheticSessionHandler {
         case 'update':
           // Find existing consent and update it
           const existingConsent = aestheticSession.consentRecords.find(
-            (c) => c.type === consentAction.consentType && c.granted,
+            c => c.type === consentAction.consentType && c.granted,
           )
 
           if (!existingConsent) {
@@ -820,7 +820,7 @@ export class AestheticSessionHandler {
         case 'expire':
           // Find and expire existing consent
           const activeConsent = aestheticSession.consentRecords.find(
-            (c) => c.type === consentAction.consentType && c.granted,
+            c => c.type === consentAction.consentType && c.granted,
           )
 
           if (!activeConsent) {
@@ -842,7 +842,7 @@ export class AestheticSessionHandler {
       if (consentAction.type === 'update' || consentAction.type === 'expire') {
         // Consent already exists in array, just update the reference
         const index = aestheticSession.consentRecords.findIndex(
-          (c) => c.id === consentRecord.id,
+          c => c.id === consentRecord.id,
         )
         if (index !== -1) {
           aestheticSession.consentRecords[index] = consentRecord
@@ -1136,7 +1136,7 @@ export class AestheticSessionHandler {
       id: this.generateWorkflowId(),
       treatmentType,
       currentStep: 0,
-      steps: this.config.treatmentWorkflowSteps.map((step) => ({
+      steps: this.config.treatmentWorkflowSteps.map(step => ({
         stepId: step.id,
         status: step.dependencies?.length ? 'pending' : 'in_progress',
         data: {},
@@ -1159,7 +1159,7 @@ export class AestheticSessionHandler {
     workflow: TreatmentWorkflow,
     stepId: string,
   ): Promise<string[]> {
-    const stepConfig = this.config.treatmentWorkflowSteps.find((s) => s.id === stepId)
+    const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === stepId)
     if (!stepConfig?.dependencies?.length) {
       return []
     }
@@ -1167,7 +1167,7 @@ export class AestheticSessionHandler {
     const errors: string[] = []
 
     for (const dependency of stepConfig.dependencies) {
-      const dependencyStep = workflow.steps.find((s) => s.stepId === dependency)
+      const dependencyStep = workflow.steps.find(s => s.stepId === dependency)
 
       if (!dependencyStep || dependencyStep.status !== 'completed') {
         errors.push(`Dependency ${dependency} not completed`)
@@ -1178,7 +1178,7 @@ export class AestheticSessionHandler {
   }
 
   private async validateStepData(stepId: string, data: Record<string, any>): Promise<string[]> {
-    const stepConfig = this.config.treatmentWorkflowSteps.find((s) => s.id === stepId)
+    const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === stepId)
     if (!stepConfig) {
       return ['Step configuration not found']
     }
@@ -1320,7 +1320,7 @@ export class AestheticSessionHandler {
     workflow: TreatmentWorkflow,
     currentStepId: string,
   ): Promise<string | undefined> {
-    const currentStepIndex = workflow.steps.findIndex((s) => s.stepId === currentStepId)
+    const currentStepIndex = workflow.steps.findIndex(s => s.stepId === currentStepId)
     if (currentStepIndex === -1) {
       return undefined
     }
@@ -1328,7 +1328,7 @@ export class AestheticSessionHandler {
     // Find next available step
     for (let i = currentStepIndex + 1; i < workflow.steps.length; i++) {
       const nextStep = workflow.steps[i]
-      const stepConfig = this.config.treatmentWorkflowSteps.find((s) => s.id === nextStep.stepId)
+      const stepConfig = this.config.treatmentWorkflowSteps.find(s => s.id === nextStep.stepId)
 
       // Check if step can be accessed (dependencies met)
       if (stepConfig && !stepConfig.dependencies?.length) {
@@ -1337,8 +1337,8 @@ export class AestheticSessionHandler {
 
       // Check dependencies
       if (stepConfig && stepConfig.dependencies) {
-        const dependenciesMet = stepConfig.dependencies.every((depId) =>
-          workflow.steps.find((s) => s.stepId === depId && s.status === 'completed')
+        const dependenciesMet = stepConfig.dependencies.every(depId =>
+          workflow.steps.find(s => s.stepId === depId && s.status === 'completed')
         )
 
         if (dependenciesMet) {
@@ -1359,7 +1359,7 @@ export class AestheticSessionHandler {
     }
 
     const photoConsent = aestheticSession.consentRecords.find(
-      (c) => c.type === 'photo' && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
+      c => c.type === 'photo' && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
     )
 
     if (!photoConsent) {
@@ -1449,8 +1449,8 @@ export class AestheticSessionHandler {
           : null
 
       case 'range':
-        return typeof value === 'number'
-            && (value < validation.value.min || value > validation.value.max)
+        return typeof value === 'number' &&
+            (value < validation.value.min || value > validation.value.max)
           ? validation.message
           : null
 
@@ -1471,7 +1471,7 @@ export class AestheticSessionHandler {
     }
 
     if (scoringLogic.type === 'average') {
-      const values = Object.values(responses).map((v) => Number(v) || 0)
+      const values = Object.values(responses).map(v => Number(v) || 0)
       return values.reduce((sum, val) => sum + val, 0) / values.length
     }
 
@@ -1515,7 +1515,7 @@ export class AestheticSessionHandler {
     const requiredConsents = ['treatment', 'photo']
     for (const consentType of requiredConsents) {
       const activeConsent = aestheticSession.consentRecords.find(
-        (c) => c.type === consentType && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
+        c => c.type === consentType && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
       )
 
       if (!activeConsent) {
@@ -1530,7 +1530,7 @@ export class AestheticSessionHandler {
 
     // Check data retention
     const cutoffDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) // 1 year
-    const oldPhotos = aestheticSession.photoHistory.filter((p) => p.date < cutoffDate)
+    const oldPhotos = aestheticSession.photoHistory.filter(p => p.date < cutoffDate)
 
     if (oldPhotos.length > 0) {
       flags.push({
@@ -1545,7 +1545,7 @@ export class AestheticSessionHandler {
       overall,
       flags,
       lastAudit: new Date(),
-      recommendations: flags.map((f) => f.resolution || `Address ${f.description}`),
+      recommendations: flags.map(f => f.resolution || `Address ${f.description}`),
     }
   }
 
@@ -1557,7 +1557,7 @@ export class AestheticSessionHandler {
 
     const sessionDuration = Date.now() - aestheticSession.createdAt.getTime()
     const completedSteps =
-      aestheticSession.currentWorkflow?.steps.filter((s) => s.status === 'completed').length || 0
+      aestheticSession.currentWorkflow?.steps.filter(s => s.status === 'completed').length || 0
     const totalSteps = aestheticSession.currentWorkflow?.steps.length || 0
 
     return {
@@ -1581,7 +1581,7 @@ export class AestheticSessionHandler {
 
     for (const type of requiredTypes) {
       const activeConsent = consentRecords.find(
-        (c) => c.type === type && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
+        c => c.type === type && c.granted && (!c.expiresAt || c.expiresAt > new Date()),
       )
 
       if (activeConsent) {
@@ -1597,11 +1597,11 @@ export class AestheticSessionHandler {
       return 100
     }
 
-    const completedSteps = workflow.steps.filter((s) => s.status === 'completed').length
+    const completedSteps = workflow.steps.filter(s => s.status === 'completed').length
     const estimatedTimePerStep = 30 // minutes
-    const _actualTime = Date.now()
-      - workflow.estimatedCompletion.getTime()
-      + (workflow.steps.length * estimatedTimePerStep * 60 * 1000)
+    const _actualTime = Date.now() -
+      workflow.estimatedCompletion.getTime() +
+      (workflow.steps.length * estimatedTimePerStep * 60 * 1000)
 
     return Math.min(100, (completedSteps / workflow.steps.length) * 100)
   }
@@ -1657,7 +1657,7 @@ export class AestheticSessionHandler {
 
     // Follow-up recommendations
     const overdueFollowUps = aestheticSession.treatmentHistory.filter(
-      (t) => t.followUpRequired && t.followUpDate && t.followUpDate < new Date(),
+      t => t.followUpRequired && t.followUpDate && t.followUpDate < new Date(),
     )
 
     if (overdueFollowUps.length > 0) {

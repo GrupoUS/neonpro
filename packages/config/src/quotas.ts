@@ -338,10 +338,10 @@ export function calculateQuotaStatus(
     ? 0
     : (currentUsage.monthlyQueries / quotaConfig.monthlyQueries) * 100
 
-  const canMakeRequest = monthlyRemaining > 0
-    && dailyRemaining > 0
-    && costRemaining > 0
-    && currentUsage.concurrentRequests < quotaConfig.concurrentRequests
+  const canMakeRequest = monthlyRemaining > 0 &&
+    dailyRemaining > 0 &&
+    costRemaining > 0 &&
+    currentUsage.concurrentRequests < quotaConfig.concurrentRequests
 
   return {
     monthlyQuotaRemaining: monthlyRemaining,
@@ -401,7 +401,7 @@ export function shouldApplySemanticCache(
 
   // Simple similarity check (in production, use more sophisticated NLP)
   const maxSimilarity = Math.max(
-    ...previousQueries.map((prev) =>
+    ...previousQueries.map(prev =>
       calculateStringSimilarity(query.toLowerCase(), prev.toLowerCase())
     ),
   )
@@ -452,8 +452,8 @@ export function generateUsageAlerts(
   }
 
   // Check cost warnings
-  const costUsagePercentage = 1
-    - quotaStatus.costBudgetRemaining / quotaStatus.planLimits.costBudgetUsd
+  const costUsagePercentage = 1 -
+    quotaStatus.costBudgetRemaining / quotaStatus.planLimits.costBudgetUsd
   if (costUsagePercentage >= alertConfig.costWarningThreshold) {
     alerts.push({
       type: costUsagePercentage >= 0.95 ? 'critical' : 'warning',
@@ -466,8 +466,8 @@ export function generateUsageAlerts(
   }
 
   // Check daily limit warnings
-  const dailyUsagePercentage = 1
-    - quotaStatus.dailyQuotaRemaining / quotaStatus.planLimits.dailyRateLimit
+  const dailyUsagePercentage = 1 -
+    quotaStatus.dailyQuotaRemaining / quotaStatus.planLimits.dailyRateLimit
   if (dailyUsagePercentage >= alertConfig.dailyLimitWarningThreshold) {
     alerts.push({
       type: dailyUsagePercentage >= 0.95 ? 'critical' : 'warning',
@@ -509,7 +509,7 @@ function calculateStringSimilarity(str1: string, str2: string): number {
   const set1 = new Set(str1.split(' '))
   const set2 = new Set(str2.split(' '))
 
-  const intersection = new Set([...set1].filter((x) => set2.has(x)))
+  const intersection = new Set([...set1].filter(x => set2.has(x)))
   const union = new Set([...set1, ...set2])
 
   return intersection.size / union.size

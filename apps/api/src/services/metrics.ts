@@ -142,7 +142,7 @@ export class HealthcareMetricsService {
       },
     ]
 
-    defaultKPIs.forEach((kpi) => this.kpis.set(kpi.id, kpi))
+    defaultKPIs.forEach(kpi => this.kpis.set(kpi.id, kpi))
   }
 
   /**
@@ -320,12 +320,12 @@ export class HealthcareMetricsService {
         }
       }
 
-      const values = data.map((d) => d.value)
+      const values = data.map(d => d.value)
       const compliantCount = data.filter(
-        (d) =>
-          d.compliance_flags.lgpd_compliant
-          && d.compliance_flags.cfm_validated
-          && d.compliance_flags.anvisa_compliant,
+        d =>
+          d.compliance_flags.lgpd_compliant &&
+          d.compliance_flags.cfm_validated &&
+          d.compliance_flags.anvisa_compliant,
       ).length
 
       const aggregation: MetricAggregation = {
@@ -401,8 +401,8 @@ export class HealthcareMetricsService {
           totalScore += kpiScore * weight
 
           if (
-            status.complianceStatus === 'violation'
-            && kpi.complianceLevel === 'critical'
+            status.complianceStatus === 'violation' &&
+            kpi.complianceLevel === 'critical'
           ) {
             criticalViolations++
           }
@@ -483,7 +483,7 @@ export class HealthcareMetricsService {
         return { success: false, error: 'Failed to get recent alerts' }
       }
 
-      const alerts = data.map((record) => ({
+      const alerts = data.map(record => ({
         type: record.type as HealthcareMetricType,
         message: this.generateAlertMessage(record),
         severity: this.determineSeverity(record) as

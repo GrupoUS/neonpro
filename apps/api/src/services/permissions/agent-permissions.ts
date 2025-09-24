@@ -217,9 +217,9 @@ export class AgentPermissionService {
     // Check cache first
     const cached = this.cache.get(cacheKey)
     if (
-      cached
-      && cached.expires > Date.now()
-      && cached.version === this.cacheVersion
+      cached &&
+      cached.expires > Date.now() &&
+      cached.version === this.cacheVersion
     ) {
       return [cached.permissions]
     }
@@ -244,17 +244,17 @@ export class AgentPermissionService {
         throw error
       }
 
-      const roles: UserRole[] = data?.map((role) => ({
+      const roles: UserRole[] = data?.map(role => ({
         id: this.sanitizeString(role.id),
         _role: this.validateRoleType(role._role),
         clinicId: role.clinic_id
           ? this.sanitizeString(role.clinic_id)
           : undefined,
-        permissions: role.role_permissions?.map((rp) =>
+        permissions: role.role_permissions?.map(rp =>
           this.sanitizePermissionString(rp.permission)
-        )
-          || [],
-        scopes: role.role_permissions?.map((rp) => this.sanitizeScopeString(rp.scope)) || [],
+        ) ||
+          [],
+        scopes: role.role_permissions?.map(rp => this.sanitizeScopeString(rp.scope)) || [],
       })) || []
 
       // Cache the result with size limit
@@ -286,8 +286,8 @@ export class AgentPermissionService {
 
     // Check if role has the base permission
     if (
-      !role.permissions.includes(basePermission)
-      && !role.permissions.includes('*:*')
+      !role.permissions.includes(basePermission) &&
+      !role.permissions.includes('*:*')
     ) {
       return { granted: false, reason: 'Role lacks required permission' }
     }
@@ -565,8 +565,8 @@ export class AgentPermissionService {
     const roles = await this.getUserRoles(userId)
     const effectivePermissions = new Set<string>()
 
-    roles.forEach((role) => {
-      role.permissions.forEach((permission) => {
+    roles.forEach(role => {
+      role.permissions.forEach(permission => {
         effectivePermissions.add(permission)
       })
     })
@@ -895,7 +895,7 @@ export class AgentPermissionService {
             schema: 'public',
             table: 'user_roles',
           },
-          (payload) => {
+          payload => {
             this.handleRoleChange(payload)
           },
         )
@@ -906,11 +906,11 @@ export class AgentPermissionService {
             schema: 'public',
             table: 'role_permissions',
           },
-          (payload) => {
+          payload => {
             this.handlePermissionChange(payload)
           },
         )
-        .subscribe((status) => {
+        .subscribe(status => {
           console.warn('Real-time permission invalidation status:', status)
         }) // Store channel for cleanup
       ;(this as any).realtimeChannel = channel

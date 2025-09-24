@@ -57,7 +57,7 @@ function TreatmentPredictionPage() {
       patientId={loaderData.patientId}
       treatmentPlanId={loaderData.treatmentPlanId}
       procedureIds={loaderData.procedureIds}
-      onPredictionUpdate={async (prediction) => {
+      onPredictionUpdate={async prediction => {
         try {
           // Store prediction in local state or send to backend
           console.warn('Treatment prediction updated:', prediction)

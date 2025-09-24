@@ -96,25 +96,25 @@ function NewProduct() {
   }
 
   const handleInputChange = (field: keyof ProductFormData, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFormData(prev => ({ ...prev, [field]: value }))
   }
 
   const addContraindication = () => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       contraindications: [...prev.contraindications, ''],
     }))
   }
 
   const removeContraindication = (index: number) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       contraindications: prev.contraindications.filter((_, i) => i !== index),
     }))
   }
 
   const updateContraindication = (index: number, value: string) => {
-    setFormData((prev) => ({
+    setFormData(prev => ({
       ...prev,
       contraindications: prev.contraindications.map((item, i) => i === index ? value : item),
     }))
@@ -150,7 +150,7 @@ function NewProduct() {
                   required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  onChange={e => handleInputChange('name', e.target.value)}
                 />
               </div>
               <div>
@@ -162,7 +162,7 @@ function NewProduct() {
                   required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.sku}
-                  onChange={(e) => handleInputChange('sku', e.target.value)}
+                  onChange={e => handleInputChange('sku', e.target.value)}
                 />
               </div>
               <div>
@@ -173,7 +173,7 @@ function NewProduct() {
                   type='text'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.barcode}
-                  onChange={(e) => handleInputChange('barcode', e.target.value)}
+                  onChange={e => handleInputChange('barcode', e.target.value)}
                 />
               </div>
               <div>
@@ -184,10 +184,10 @@ function NewProduct() {
                   required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.category_id}
-                  onChange={(e) => handleInputChange('category_id', e.target.value)}
+                  onChange={e => handleInputChange('category_id', e.target.value)}
                 >
                   <option value=''>Selecione uma categoria</option>
-                  {categories.map((category) => (
+                  {categories.map(category => (
                     <option key={category.id} value={category.id}>
                       {category.name}
                     </option>
@@ -202,7 +202,7 @@ function NewProduct() {
                   required
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.unit_of_measure}
-                  onChange={(e) => handleInputChange('unit_of_measure', e.target.value)}
+                  onChange={e => handleInputChange('unit_of_measure', e.target.value)}
                 >
                   <option value='un'>Unidade</option>
                   <option value='ml'>Mililitro</option>
@@ -220,7 +220,7 @@ function NewProduct() {
                   type='text'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.manufacturer}
-                  onChange={(e) => handleInputChange('manufacturer', e.target.value)}
+                  onChange={e => handleInputChange('manufacturer', e.target.value)}
                 />
               </div>
             </div>
@@ -232,7 +232,7 @@ function NewProduct() {
                 rows={3}
                 className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                 value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                onChange={e => handleInputChange('description', e.target.value)}
               />
             </div>
           </div>
@@ -251,7 +251,7 @@ function NewProduct() {
                   step='0.01'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.min_stock_level}
-                  onChange={(e) => handleInputChange('min_stock_level', parseFloat(e.target.value))}
+                  onChange={e => handleInputChange('min_stock_level', parseFloat(e.target.value))}
                 />
               </div>
               <div>
@@ -264,7 +264,7 @@ function NewProduct() {
                   step='0.01'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.max_stock_level}
-                  onChange={(e) => handleInputChange('max_stock_level', parseFloat(e.target.value))}
+                  onChange={e => handleInputChange('max_stock_level', parseFloat(e.target.value))}
                 />
               </div>
               <div>
@@ -277,7 +277,7 @@ function NewProduct() {
                   step='0.01'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.reorder_point}
-                  onChange={(e) => handleInputChange('reorder_point', parseFloat(e.target.value))}
+                  onChange={e => handleInputChange('reorder_point', parseFloat(e.target.value))}
                 />
               </div>
             </div>
@@ -297,7 +297,7 @@ function NewProduct() {
                   step='0.01'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.cost_price}
-                  onChange={(e) => handleInputChange('cost_price', parseFloat(e.target.value))}
+                  onChange={e => handleInputChange('cost_price', parseFloat(e.target.value))}
                 />
               </div>
               <div>
@@ -310,7 +310,7 @@ function NewProduct() {
                   step='0.01'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.selling_price}
-                  onChange={(e) => handleInputChange('selling_price', parseFloat(e.target.value))}
+                  onChange={e => handleInputChange('selling_price', parseFloat(e.target.value))}
                 />
               </div>
             </div>
@@ -328,7 +328,7 @@ function NewProduct() {
                   type='text'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.anvisa_registration}
-                  onChange={(e) => handleInputChange('anvisa_registration', e.target.value)}
+                  onChange={e => handleInputChange('anvisa_registration', e.target.value)}
                 />
               </div>
               <div>
@@ -339,7 +339,7 @@ function NewProduct() {
                   type='text'
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.supplier}
-                  onChange={(e) => handleInputChange('supplier', e.target.value)}
+                  onChange={e => handleInputChange('supplier', e.target.value)}
                 />
               </div>
             </div>
@@ -349,7 +349,7 @@ function NewProduct() {
                   type='checkbox'
                   className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
                   checked={formData.requires_refrigeration}
-                  onChange={(e) => handleInputChange('requires_refrigeration', e.target.checked)}
+                  onChange={e => handleInputChange('requires_refrigeration', e.target.checked)}
                 />
                 <label className='ml-2 block text-sm text-gray-700'>
                   Requer Refrigeração
@@ -360,7 +360,7 @@ function NewProduct() {
                   type='checkbox'
                   className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
                   checked={formData.is_controlled_substance}
-                  onChange={(e) => handleInputChange('is_controlled_substance', e.target.checked)}
+                  onChange={e => handleInputChange('is_controlled_substance', e.target.checked)}
                 />
                 <label className='ml-2 block text-sm text-gray-700'>
                   Substância Controlada
@@ -371,7 +371,7 @@ function NewProduct() {
                   type='checkbox'
                   className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
                   checked={formData.expiry_required}
-                  onChange={(e) => handleInputChange('expiry_required', e.target.checked)}
+                  onChange={e => handleInputChange('expiry_required', e.target.checked)}
                 />
                 <label className='ml-2 block text-sm text-gray-700'>
                   Requer Validade
@@ -382,7 +382,7 @@ function NewProduct() {
                   type='checkbox'
                   className='h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded'
                   checked={formData.batch_tracking_required}
-                  onChange={(e) => handleInputChange('batch_tracking_required', e.target.checked)}
+                  onChange={e => handleInputChange('batch_tracking_required', e.target.checked)}
                 />
                 <label className='ml-2 block text-sm text-gray-700'>
                   Rastreio por Lote
@@ -403,7 +403,7 @@ function NewProduct() {
                   rows={3}
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.usage_instructions}
-                  onChange={(e) => handleInputChange('usage_instructions', e.target.value)}
+                  onChange={e => handleInputChange('usage_instructions', e.target.value)}
                 />
               </div>
               <div>
@@ -414,7 +414,7 @@ function NewProduct() {
                   rows={2}
                   className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                   value={formData.storage_conditions}
-                  onChange={(e) => handleInputChange('storage_conditions', e.target.value)}
+                  onChange={e => handleInputChange('storage_conditions', e.target.value)}
                 />
               </div>
               <div>
@@ -428,7 +428,7 @@ function NewProduct() {
                         type='text'
                         className='flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
                         value={contraindication}
-                        onChange={(e) =>
+                        onChange={e =>
                           updateContraindication(index, e.target.value)}
                         placeholder='Adicionar contraindicação'
                       />
@@ -464,7 +464,7 @@ function NewProduct() {
               rows={3}
               className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500'
               value={formData.notes}
-              onChange={(e) => handleInputChange('notes', e.target.value)}
+              onChange={e => handleInputChange('notes', e.target.value)}
             />
           </div>
 

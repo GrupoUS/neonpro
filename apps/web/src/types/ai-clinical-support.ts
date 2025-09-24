@@ -416,7 +416,7 @@ export const PatientAssessmentSchema = z.object({
     min: z.number().min(0, 'Valor mínimo não pode ser negativo'),
     max: z.number().min(0, 'Valor máximo não pode ser negativo'),
     currency: z.enum(['BRL', 'USD', 'EUR']),
-  }).refine((data) => data.max >= data.min, {
+  }).refine(data => data.max >= data.min, {
     message: 'Valor máximo deve ser maior ou igual ao mínimo',
     path: ['max'],
   }),

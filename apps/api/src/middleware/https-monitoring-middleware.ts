@@ -67,7 +67,7 @@ export class HTTPSMonitoringMiddleware {
           // Record metrics asynchronously
           httpsMonitoringService
             .recordHandshakeMetrics(metrics)
-            .catch((error) => {
+            .catch(error => {
               logger.error(
                 'https_monitoring_middleware',
                 'Failed to record handshake metrics',
@@ -196,7 +196,7 @@ export class HTTPSMonitoringMiddleware {
     const skipPaths = ['/health', '/v1/health', '/metrics', '/ready', '/live']
     const path = req.path || req.url || ''
 
-    if (skipPaths.some((skipPath) => path.startsWith(skipPath))) {
+    if (skipPaths.some(skipPath => path.startsWith(skipPath))) {
       return false
     }
 
@@ -332,7 +332,7 @@ export class HTTPSMonitoringMiddleware {
 
         httpsMonitoringService
           .recordHandshakeMetrics(metrics)
-          .catch((error) => {
+          .catch(error => {
             logger.error(
               'https_monitoring_middleware',
               'Failed to record handshake metrics',

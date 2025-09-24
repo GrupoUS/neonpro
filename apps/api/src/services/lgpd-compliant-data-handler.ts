@@ -134,7 +134,7 @@ export class LGPDCompliantDataHandler {
       },
     ]
 
-    fields.forEach((field) => {
+    fields.forEach(field => {
       this.sensitiveFields.set(field.path, field)
     })
   }
@@ -187,7 +187,7 @@ export class LGPDCompliantDataHandler {
     const scanObject = (obj: any, currentPath: string = ''): void => {
       if (typeof obj !== 'object' || obj === null) return
 
-      Object.keys(obj).forEach((key) => {
+      Object.keys(obj).forEach(key => {
         const newPath = currentPath ? `${currentPath}.${key}` : key
 
         if (typeof obj[key] === 'object' && obj[key] !== null) {
@@ -313,12 +313,12 @@ export class LGPDCompliantDataHandler {
       const missingConsents: string[] = []
 
       // Check if we have valid consent for each data category
-      dataCategories.forEach((category) => {
+      dataCategories.forEach(category => {
         const requiredConsent = this.getRequiredConsentType(category)
         const hasConsent = validConsents.some(
-          (consent) =>
-            consent.consent_type === requiredConsent
-            && consent.purpose.toLowerCase().includes(purpose.toLowerCase()),
+          consent =>
+            consent.consent_type === requiredConsent &&
+            consent.purpose.toLowerCase().includes(purpose.toLowerCase()),
         )
 
         if (!hasConsent) {
@@ -482,8 +482,8 @@ export class LGPDCompliantDataHandler {
               lgpd_consent_given: true,
               lgpd_consent_date: message.consent?.consentDate,
               data_retention_until: new Date(
-                Date.now()
-                  + this.config.dataRetentionPeriod * 24 * 60 * 60 * 1000,
+                Date.now() +
+                  this.config.dataRetentionPeriod * 24 * 60 * 60 * 1000,
               ).toISOString(),
             },
           ])
@@ -542,8 +542,8 @@ export class LGPDCompliantDataHandler {
       let consentId: string
 
       if (
-        message.consentAction === 'grant'
-        || message.consentAction === 'update'
+        message.consentAction === 'grant' ||
+        message.consentAction === 'update'
       ) {
         const { data: consent, error } = await this.supabase
           .from('lgpd_consents')
@@ -552,14 +552,14 @@ export class LGPDCompliantDataHandler {
               patient_id: message.clientId,
               consent_type: message.consentType.toUpperCase() as any,
               status: 'ACTIVE',
-              purpose: message.consentData?.purpose
-                || this.getDefaultPurpose(message.consentType),
+              purpose: message.consentData?.purpose ||
+                this.getDefaultPurpose(message.consentType),
               data_recipients: message.consentData?.dataRecipients || [],
               retention_period: message.consentData?.retentionPeriod || '5 years',
               expires_at: message.effectiveDate
                 ? new Date(
-                  new Date(message.effectiveDate).getTime()
-                    + 5 * 365 * 24 * 60 * 60 * 1000,
+                  new Date(message.effectiveDate).getTime() +
+                    5 * 365 * 24 * 60 * 60 * 1000,
                 ).toISOString()
                 : undefined,
             },
@@ -757,7 +757,7 @@ export class LGPDCompliantDataHandler {
       ])
 
       const passedChecks = checks.filter(
-        (check) => check.status === 'fulfilled' && check.value,
+        check => check.status === 'fulfilled' && check.value,
       ).length
       const totalChecks = checks.length
 

@@ -606,7 +606,7 @@ export function calculateClinicalRiskScore(kpis: ClinicalKPI[]): {
   const criticalAreas: string[] = []
   const recommendations: string[] = []
 
-  kpis.forEach((kpi) => {
+  kpis.forEach(kpi => {
     let kpiScore = 0
 
     // Calculate score based on risk level

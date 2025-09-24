@@ -13,7 +13,7 @@ const testFiles = [
 ]
 
 console.warn('📁 Checking test files...')
-testFiles.forEach((file) => {
+testFiles.forEach(file => {
   const filePath = path.join(process.cwd(), file)
   if (fs.existsSync(filePath)) {
     console.warn(`✅ ${file} exists`)
@@ -45,7 +45,7 @@ const configFiles = [
   'src/test/global-setup.ts',
 ]
 
-configFiles.forEach((file) => {
+configFiles.forEach(file => {
   const filePath = path.join(process.cwd(), file)
   if (fs.existsSync(filePath)) {
     console.warn(`✅ ${file} exists`)

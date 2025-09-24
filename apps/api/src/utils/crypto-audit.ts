@@ -177,8 +177,8 @@ export class CryptographicAuditLogger {
 
       // Validate sequence number
       if (
-        previousEntry
-        && entry.sequenceNumber !== previousEntry.sequenceNumber + 1
+        previousEntry &&
+        entry.sequenceNumber !== previousEntry.sequenceNumber + 1
       ) {
         return false
       }
@@ -295,8 +295,8 @@ export class CryptographicAuditLogger {
       )
 
       const category = this.categorizeAuditEvent(entry.eventType)
-      const retentionDays = retentionPeriods[category as keyof typeof retentionPeriods]
-        || retentionPeriods.system
+      const retentionDays = retentionPeriods[category as keyof typeof retentionPeriods] ||
+        retentionPeriods.system
 
       if (!retentionAnalysis.categories[category]) {
         retentionAnalysis.categories[category] = {
@@ -457,8 +457,8 @@ export class CryptographicAuditLogger {
     }
 
     // Flag users with excessive access
-    const averageUserAccess = Object.values(userAccess).reduce((a, _b) => a + b, 0)
-      / Object.keys(userAccess).length
+    const averageUserAccess = Object.values(userAccess).reduce((a, _b) => a + b, 0) /
+      Object.keys(userAccess).length
     for (const [userId, count] of Object.entries(userAccess)) {
       if (count > averageUserAccess * 3) {
         anomalies.push({
@@ -471,8 +471,8 @@ export class CryptographicAuditLogger {
     }
 
     // Flag IPs with excessive access
-    const averageIpAccess = Object.values(ipAccess).reduce((a, _b) => a + b, 0)
-      / Object.keys(ipAccess).length
+    const averageIpAccess = Object.values(ipAccess).reduce((a, _b) => a + b, 0) /
+      Object.keys(ipAccess).length
     for (const [ip, count] of Object.entries(ipAccess)) {
       if (count > averageIpAccess * 5) {
         anomalies.push({

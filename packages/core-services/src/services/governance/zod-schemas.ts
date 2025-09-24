@@ -64,7 +64,7 @@ const phiPatientSchema = z.object({
   id: z.string().uuid().optional(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  dateOfBirth: z.date().refine((d) => d.getTime() <= Date.now(), {
+  dateOfBirth: z.date().refine(d => d.getTime() <= Date.now(), {
     message: 'Birth date cannot be in future',
   }),
   cpf: z
@@ -131,7 +131,7 @@ const kpiSchema = z.object({
       totalPatients: z.number().int().min(1),
       ageRange: z
         .object({ min: z.number().int().min(0), max: z.number().int().min(0) })
-        .refine((r) => r.min <= r.max, {
+        .refine(r => r.min <= r.max, {
           message: 'ageRange.min must be <= max',
         }),
       conditions: z.array(z.string()).optional(),

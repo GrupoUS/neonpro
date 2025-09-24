@@ -32,7 +32,7 @@ async function testIntegration(): Promise<void> {
 
 // Run the test if this script is executed directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  testIntegration().catch((error) => {
+  testIntegration().catch(error => {
     console.error('Test execution failed:', error)
     process.exit(1)
   })

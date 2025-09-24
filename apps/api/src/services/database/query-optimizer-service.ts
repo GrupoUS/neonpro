@@ -120,17 +120,17 @@ export class QueryOptimizerService {
       this.connectionMetrics.totalConnections++
     })
 
-    this.pool.on('acquire', (_client) => {
+    this.pool.on('acquire', _client => {
       this.connectionMetrics.activeConnections++
       this.connectionMetrics.idleConnections--
     })
 
-    this.pool.on('release', (_client) => {
+    this.pool.on('release', _client => {
       this.connectionMetrics.activeConnections--
       this.connectionMetrics.idleConnections++
     })
 
-    this.pool.on('remove', (_client) => {
+    this.pool.on('remove', _client => {
       this.connectionMetrics.totalConnections--
     })
 
@@ -267,11 +267,11 @@ export class QueryOptimizerService {
       }, timeout)
 
       this.pool!.query(query, params)
-        .then((result) => {
+        .then(result => {
           clearTimeout(timer)
           resolve(result.rows as T[])
         })
-        .catch((error) => {
+        .catch(error => {
           clearTimeout(timer)
           reject(error)
         })
@@ -473,9 +473,9 @@ export class QueryOptimizerService {
       cacheHitRate: this.calculateCacheHitRate(),
       averageExecutionTimeMs: this.calculateAverageExecutionTime(),
       slowQueries: this.queryMetrics.filter(
-        (m) => m.executionTimeMs > this.slowQueryThreshold,
+        m => m.executionTimeMs > this.slowQueryThreshold,
       ).length,
-      failedQueries: this.queryMetrics.filter((m) => !m.success).length,
+      failedQueries: this.queryMetrics.filter(m => !m.success).length,
       topSlowQueries: this.getTopSlowQueries(5),
       mostUsedIndexes: this.getMostUsedIndexes(5),
       executionTimeDistribution: this.getExecutionTimeDistribution(),
@@ -492,8 +492,8 @@ export class QueryOptimizerService {
 
     // Remove unnecessary ORDER BY clauses for large datasets
     if (
-      optimizedQuery.includes('ORDER BY')
-      && !optimizedQuery.includes('LIMIT')
+      optimizedQuery.includes('ORDER BY') &&
+      !optimizedQuery.includes('LIMIT')
     ) {
       const limitMatch = optimizedQuery.match(/LIMIT\s+(\d+)/)
       if (!limitMatch || parseInt(limitMatch[1]) > 1000) {
@@ -506,8 +506,8 @@ export class QueryOptimizerService {
 
     // Add LIMIT to prevent large result sets
     if (
-      !optimizedQuery.includes('LIMIT')
-      && !optimizedQuery.match(/INSERT|UPDATE|DELETE/)
+      !optimizedQuery.includes('LIMIT') &&
+      !optimizedQuery.match(/INSERT|UPDATE|DELETE/)
     ) {
       optimizedQuery += ' LIMIT 1000'
     }
@@ -537,10 +537,10 @@ export class QueryOptimizerService {
    * Calculate cache hit rate
    */
   private calculateCacheHitRate(): number {
-    const relevantQueries = this.queryMetrics.filter((m) => m.success)
+    const relevantQueries = this.queryMetrics.filter(m => m.success)
     if (relevantQueries.length === 0) return 0
 
-    const cacheHits = relevantQueries.filter((m) => m.cacheHit).length
+    const cacheHits = relevantQueries.filter(m => m.cacheHit).length
     return (cacheHits / relevantQueries.length) * 100
   }
 
@@ -548,7 +548,7 @@ export class QueryOptimizerService {
    * Calculate average execution time
    */
   private calculateAverageExecutionTime(): number {
-    const successfulQueries = this.queryMetrics.filter((m) => m.success)
+    const successfulQueries = this.queryMetrics.filter(m => m.success)
     if (successfulQueries.length === 0) return 0
 
     const totalTime = successfulQueries.reduce(
@@ -563,7 +563,7 @@ export class QueryOptimizerService {
    */
   private getTopSlowQueries(limit: number) {
     return this.queryMetrics
-      .filter((m) => m.success)
+      .filter(m => m.success)
       .sort((a, _b) => b.executionTimeMs - a.executionTimeMs)
       .slice(0, limit)
   }
@@ -574,8 +574,8 @@ export class QueryOptimizerService {
   private getMostUsedIndexes(limit: number) {
     const indexCounts: Record<string, number> = {}
 
-    this.queryMetrics.forEach((m) => {
-      m.indexesUsed.forEach((index) => {
+    this.queryMetrics.forEach(m => {
+      m.indexesUsed.forEach(index => {
         indexCounts[index] = (indexCounts[index] || 0) + 1
       })
     })
@@ -598,8 +598,8 @@ export class QueryOptimizerService {
     }
 
     this.queryMetrics
-      .filter((m) => m.success)
-      .forEach((m) => {
+      .filter(m => m.success)
+      .forEach(m => {
         if (m.executionTimeMs < 100) ranges['<100ms']++
         else if (m.executionTimeMs < 500) ranges['100-500ms']++
         else if (m.executionTimeMs < 1000) ranges['500-1000ms']++

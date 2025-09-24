@@ -31,7 +31,7 @@ type BalanceResponse = {
   consent: { required: boolean; missing?: string[] }
 }
 
-app.post('/treatments/new', zValidator('json', NewTreatmentsRequest), (c) => {
+app.post('/treatments/new', zValidator('json', NewTreatmentsRequest), c => {
   const data: TreatmentsResponse = {
     items: [
       {
@@ -53,7 +53,7 @@ app.post('/treatments/new', zValidator('json', NewTreatmentsRequest), (c) => {
   return c.json(data)
 })
 
-app.post('/patient/balance', zValidator('json', PatientBalanceRequest), (c) => {
+app.post('/patient/balance', zValidator('json', PatientBalanceRequest), c => {
   const { patientId } = c.req.valid('json')
   const resp: BalanceResponse = {
     patientId,

@@ -451,7 +451,7 @@ export class GoogleCalendarService {
         dateTime: eventData.end.toISOString(),
         timeZone: 'America/Sao_Paulo',
       },
-      attendees: eventData.attendees?.map((email) => ({ email })),
+      attendees: eventData.attendees?.map(email => ({ email })),
     }
 
     try {
@@ -517,7 +517,7 @@ export class CalendarSyncService {
         if (error.code === 429 || error.code === 403) {
           // Rate limited, implement exponential backoff
           const delay = Math.pow(2, attempt) * 1000
-          await new Promise((resolve) => setTimeout(resolve, delay))
+          await new Promise(resolve => setTimeout(resolve, delay))
           continue
         }
 

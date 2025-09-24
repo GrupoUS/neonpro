@@ -191,7 +191,7 @@ export class TDDAgentRegistry {
    * Initialize default agents
    */
   private initializeDefaultAgents(): void {
-    DEFAULT_AGENTS.forEach((agent) => {
+    DEFAULT_AGENTS.forEach(agent => {
       this.agents.set(agent.type, agent)
       this.agentStats.set(agent.type, {
         executionCount: 0,
@@ -250,10 +250,10 @@ export class TDDAgentRegistry {
     // Handle undefined or empty context gracefully
     if (!context || !context.healthcareCompliance) {
       // Return all agents that support the phase if context is invalid
-      return Array.from(this.agents.values()).filter((agent) => agent.phases.includes(phase))
+      return Array.from(this.agents.values()).filter(agent => agent.phases.includes(phase))
     }
 
-    const agents = Array.from(this.agents.values()).filter((agent) => {
+    const agents = Array.from(this.agents.values()).filter(agent => {
       // Check if agent supports the phase
       if (!agent.phases.includes(phase)) {
         return false
@@ -263,14 +263,14 @@ export class TDDAgentRegistry {
       if (context.healthcareCompliance.required) {
         if (!agent.healthcareCompliance) return false
         if (
-          context.healthcareCompliance.lgpd
-          && !agent.healthcareCompliance.lgpd
+          context.healthcareCompliance.lgpd &&
+          !agent.healthcareCompliance.lgpd
         ) {
           return false
         }
         if (
-          context.healthcareCompliance.anvisa
-          && !agent.healthcareCompliance.anvisa
+          context.healthcareCompliance.anvisa &&
+          !agent.healthcareCompliance.anvisa
         ) {
           return false
         }
@@ -281,8 +281,8 @@ export class TDDAgentRegistry {
 
       // Filter based on criticality level (exclude tertiary agents for critical features)
       if (
-        context.criticalityLevel === 'critical'
-        && agent.priority === 'tertiary'
+        context.criticalityLevel === 'critical' &&
+        agent.priority === 'tertiary'
       ) {
         return false
       }
@@ -297,9 +297,7 @@ export class TDDAgentRegistry {
    * Get agents for specific capability
    */
   getAgentsForCapability(capability: string): AgentCapability[] {
-    return Array.from(this.agents.values()).filter((agent) =>
-      agent.capabilities.includes(capability)
-    )
+    return Array.from(this.agents.values()).filter(agent => agent.capabilities.includes(capability))
   }
 
   /**
@@ -308,9 +306,9 @@ export class TDDAgentRegistry {
   selectOptimalAgents(context: OrchestrationContext): AgentCapability[] {
     // Handle undefined or incomplete context gracefully
     if (
-      !context
-      || !context.requirements
-      || !Array.isArray(context.requirements)
+      !context ||
+      !context.requirements ||
+      !Array.isArray(context.requirements)
     ) {
       // Return all agents in default order if context is invalid
       return this.getAllAgents()
@@ -319,7 +317,7 @@ export class TDDAgentRegistry {
     const allAgents = this.getAllAgents()
 
     // Calculate scores for each agent
-    const scoredAgents = allAgents.map((agent) => ({
+    const scoredAgents = allAgents.map(agent => ({
       agent,
       score: this.calculateAgentScore(agent, context),
     }))
@@ -327,7 +325,7 @@ export class TDDAgentRegistry {
     // Sort by score (highest first)
     scoredAgents.sort((a, b) => b.score - a.score)
 
-    return scoredAgents.map((item) => item.agent)
+    return scoredAgents.map(item => item.agent)
   }
 
   /**
@@ -354,17 +352,17 @@ export class TDDAgentRegistry {
 
     // Bonus for matching triggers
     const matchingTriggers = agent.triggers.filter(
-      (trigger) =>
-        context.featureName.toLowerCase().includes(trigger.toLowerCase())
-        || context.requirements.some((req) => req.toLowerCase().includes(trigger.toLowerCase())),
+      trigger =>
+        context.featureName.toLowerCase().includes(trigger.toLowerCase()) ||
+        context.requirements.some(req => req.toLowerCase().includes(trigger.toLowerCase())),
     )
     score += matchingTriggers.length * 10
 
     // Bonus for matching specializations
     const matchingSpecializations = agent.specializations.filter(
-      (spec) =>
-        context.featureName.toLowerCase().includes(spec.toLowerCase())
-        || context.featureType.toLowerCase().includes(spec.toLowerCase()),
+      spec =>
+        context.featureName.toLowerCase().includes(spec.toLowerCase()) ||
+        context.featureType.toLowerCase().includes(spec.toLowerCase()),
     )
     score += matchingSpecializations.length * 15
 
@@ -375,8 +373,8 @@ export class TDDAgentRegistry {
         complianceScore += 25
       }
       if (
-        context.healthcareCompliance.anvisa
-        && agent.healthcareCompliance.anvisa
+        context.healthcareCompliance.anvisa &&
+        agent.healthcareCompliance.anvisa
       ) {
         complianceScore += 25
       }

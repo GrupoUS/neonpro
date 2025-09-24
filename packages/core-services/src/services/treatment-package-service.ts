@@ -1,7 +1,7 @@
 /**
  * Treatment Package Service (T017)
  * Handles treatment package management, pricing, and bundling logic for aesthetic procedures
- * 
+ *
  * Features:
  * - Package creation and management with Brazilian pricing
  * - Multi-procedure bundle pricing with volume discounts
@@ -11,8 +11,8 @@
  * - Brazilian market pricing strategies
  */
 
-import type { AestheticProcedureDetails } from './enhanced-aesthetic-scheduling-service'
 import { AestheticAppointmentService } from './aesthetic-appointment-service'
+import type { AestheticProcedureDetails } from './enhanced-aesthetic-scheduling-service'
 
 export interface TreatmentPackage {
   id: string
@@ -136,7 +136,7 @@ export class TreatmentPackageService {
 
     // Apply filters
     if (filters.procedureType) {
-      packages = packages.filter(pkg => 
+      packages = packages.filter(pkg =>
         pkg.procedures.some(proc => proc.procedureType === filters.procedureType)
       )
     }
@@ -172,7 +172,10 @@ export class TreatmentPackageService {
     }
 
     // Apply customizations
-    const customizedPackage = this.applyCustomizations(treatmentPackage, request.customizations || [])
+    const customizedPackage = this.applyCustomizations(
+      treatmentPackage,
+      request.customizations || [],
+    )
 
     // Calculate pricing with customizations
     const pricing = this.calculatePackagePricing(customizedPackage, request.customizations || [])
@@ -310,15 +313,18 @@ export class TreatmentPackageService {
    */
   private validateProcedureCompatibility(procedures: AestheticProcedureDetails[]): void {
     const procedureTypes = procedures.map(p => p.procedureType)
-    
+
     // Check for incompatible combinations
     const incompatibleCombinations = [
       ['surgical', 'injectable'], // Cannot mix surgical and injectable in same session
-      ['surgical', 'laser'],      // Cannot mix surgical and laser in same session
+      ['surgical', 'laser'], // Cannot mix surgical and laser in same session
     ]
 
     for (const [type1, type2] of incompatibleCombinations) {
-      if (type1 && type2 && procedureTypes.includes(type1 as any) && procedureTypes.includes(type2 as any)) {
+      if (
+        type1 && type2 && procedureTypes.includes(type1 as any) &&
+        procedureTypes.includes(type2 as any)
+      ) {
         throw new Error(`Cannot combine ${type1} and ${type2} procedures in same package`)
       }
     }
@@ -336,19 +342,24 @@ export class TreatmentPackageService {
   private calculatePackageMetrics(package_: TreatmentPackage): void {
     package_.totalSessions = package_.procedures.length
     package_.totalDurationMinutes = package_.procedures.reduce(
-      (sum, proc) => sum + this.appointmentService.calculateDuration(proc.baseDurationMinutes, proc.variableDurationFactors || []),
-      0
+      (sum, proc) =>
+        sum +
+        this.appointmentService.calculateDuration(
+          proc.baseDurationMinutes,
+          proc.variableDurationFactors || [],
+        ),
+      0,
     )
-    
+
     // Calculate base price without discount
     const basePrice = package_.procedures.reduce((sum, _proc) => sum + 1000, 0) // Mock price
-    
+
     // Apply package discount
     package_.totalPrice = Math.round(basePrice * (1 - package_.packageDiscount))
-    
+
     // Calculate maximum recovery period
     package_.recoveryPeriodDays = Math.max(...package_.procedures.map(p => p.recoveryPeriodDays))
-    
+
     // Set recommended interval based on procedures
     package_.recommendedIntervalWeeks = this.calculateRecommendedInterval(package_.procedures)
   }
@@ -357,11 +368,12 @@ export class TreatmentPackageService {
    * Calculates recommended interval between sessions
    */
   private calculateRecommendedInterval(procedures: AestheticProcedureDetails[]): number {
-    const avgRecovery = procedures.reduce((sum, p) => sum + p.recoveryPeriodDays, 0) / procedures.length
-    
-    if (avgRecovery <= 7) return 1   // Weekly for light procedures
-    if (avgRecovery <= 14) return 2  // Biweekly for medium procedures
-    if (avgRecovery <= 21) return 3  // Every 3 weeks for heavier procedures
+    const avgRecovery = procedures.reduce((sum, p) => sum + p.recoveryPeriodDays, 0) /
+      procedures.length
+
+    if (avgRecovery <= 7) return 1 // Weekly for light procedures
+    if (avgRecovery <= 14) return 2 // Biweekly for medium procedures
+    if (avgRecovery <= 21) return 3 // Every 3 weeks for heavier procedures
     return 4 // Monthly for intensive procedures
   }
 
@@ -404,7 +416,7 @@ export class TreatmentPackageService {
   ): TreatmentPackagePricing {
     const customizationFees = customizations.reduce((sum, c) => sum + c.priceImpact, 0)
     const basePrice = package_.procedures.reduce((sum, _p) => sum + 1000, 0) // Mock price
-    
+
     const totalPrice = package_.totalPrice + customizationFees
 
     // Generate payment options
@@ -499,7 +511,7 @@ export class TreatmentPackageService {
    */
   private generatePackageDescription(procedures: AestheticProcedureDetails[]): string {
     const procedureNames = procedures.map(p => p.name)
-    
+
     if (procedureNames.length === 1) {
       return `Pacote de ${procedureNames[0]?.toLowerCase() || 'procedimento'}`
     }

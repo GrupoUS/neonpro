@@ -314,9 +314,9 @@ function applyRLSPolicies(
     if (!result.allowed) {
       // If any policy fails, check for fallback
       if (
-        result.fallbackPolicy
-        && modelConfig.emergencyAccess
-        && rlsContext.isEmergency
+        result.fallbackPolicy &&
+        modelConfig.emergencyAccess &&
+        rlsContext.isEmergency
       ) {
         const fallbackPolicy = RLS_POLICIES[result.fallbackPolicy]
         const fallbackResult = fallbackPolicy(rlsContext, model, operation)
@@ -368,10 +368,10 @@ function createRLSEnforcedPrisma(
 
       // If it's a model delegate (like prisma.patient, prisma.appointment)
       if (
-        typeof originalValue === 'object'
-        && originalValue !== null
-        && typeof prop === 'string'
-        && prop !== 'constructor'
+        typeof originalValue === 'object' &&
+        originalValue !== null &&
+        typeof prop === 'string' &&
+        prop !== 'constructor'
       ) {
         return new Proxy(originalValue, {
           get(modelTarget, modelProp) {
@@ -397,8 +397,8 @@ function createRLSEnforcedPrisma(
                 if (!rlsResult.allowed) {
                   throw new TRPCError({
                     code: 'FORBIDDEN',
-                    message: rlsResult.errorMessage
-                      || 'Access denied by Row Level Security policy',
+                    message: rlsResult.errorMessage ||
+                      'Access denied by Row Level Security policy',
                   })
                 }
 

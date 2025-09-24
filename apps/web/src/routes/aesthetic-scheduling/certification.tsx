@@ -30,7 +30,7 @@ function CertificationValidatorPage() {
     <CertificationValidator
       professionals={professionals || []}
       procedures={procedures || []}
-      onValidation={async (data) => {
+      onValidation={async data => {
         try {
           const result = await api.aestheticScheduling.validateProfessionalCertifications(data)
           return result

@@ -44,10 +44,10 @@ export class AIService {
     // Inference heuristic: only treat as enhanced when BOTH low daysSinceScheduled (<=2) AND previousNoShows > 0
     const daysSince = req.data.daysSinceScheduled
     const prevNoShows = req.data.previousNoShows
-    const inferredEnhanced = typeof daysSince === 'number'
-      && typeof prevNoShows === 'number'
-      && daysSince <= 2
-      && prevNoShows > 0
+    const inferredEnhanced = typeof daysSince === 'number' &&
+      typeof prevNoShows === 'number' &&
+      daysSince <= 2 &&
+      prevNoShows > 0
     const enhanced = req.enhanced === true || inferredEnhanced
 
     if (enhanced) {

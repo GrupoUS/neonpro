@@ -80,7 +80,7 @@ const runCommand = (
       shell: process.platform === 'win32',
     })
 
-    child.on('close', (code) => {
+    child.on('close', code => {
       if (code === 0) {
         resolvePromise()
       } else {
@@ -200,7 +200,7 @@ const filterWorkflows = (packages?: string[]): ToolWorkflow[] => {
     return TOOL_WORKFLOWS
   }
 
-  const normalized = new Set(packages.map((pkg) => pkg.trim()))
+  const normalized = new Set(packages.map(pkg => pkg.trim()))
   return TOOL_WORKFLOWS.filter((workflow: ToolWorkflow) => normalized.has(workflow.id))
 }
 
@@ -209,7 +209,7 @@ const summarize = (outcomes: WorkflowOutcome[]): void => {
     (acc, outcome) => acc + outcome.duration,
     0,
   )
-  const summary = outcomes.map((outcome) => ({
+  const summary = outcomes.map(outcome => ({
     workflow: outcome.workflow,
     duration: `${outcome.duration.toFixed(0)} ms`,
     steps: outcome.steps.length,
@@ -278,7 +278,7 @@ export const orchestrateTools = async (
       mode: options.mode,
       concurrency: options.mode === 'parallel' ? options.concurrency : 1,
       dryRun: options.dryRun,
-      workflows: workflows.map((item) => item.displayName),
+      workflows: workflows.map(item => item.displayName),
     }),
   )
 

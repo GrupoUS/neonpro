@@ -154,7 +154,7 @@ export async function evaluateSecurityPolicies(_context: {
   requiredActions: string[]
 }> {
   const policies = Array.from(securityPolicies.values()).filter(
-    (p) => p.enabled,
+    p => p.enabled,
   )
   const appliedPolicies: string[] = []
   const requiredActions: string[] = []

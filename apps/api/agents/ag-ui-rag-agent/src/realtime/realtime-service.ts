@@ -81,7 +81,7 @@ export class RealtimeService {
       this.handleReconnect()
     })
 
-    this.realtimeClient.onError((error) => {
+    this.realtimeClient.onError(error => {
       this.logger.logError('realtime_error', {
         error: error?.message || 'Unknown realtime error',
         timestamp: new Date().toISOString(),
@@ -108,7 +108,7 @@ export class RealtimeService {
       timestamp: new Date().toISOString(),
     })
 
-    await new Promise((resolve) => setTimeout(resolve, delay))
+    await new Promise(resolve => setTimeout(resolve, delay))
 
     try {
       await this.realtimeClient.connect()
@@ -122,7 +122,7 @@ export class RealtimeService {
   }
 
   private resubscribeAll(): void {
-    this.subscriptions.forEach((subscription) => {
+    this.subscriptions.forEach(subscription => {
       this.subscribeToTable(
         subscription.type,
         subscription.filters,
@@ -369,7 +369,7 @@ export class RealtimeService {
 
   async unsubscribeAll(): Promise<void> {
     const unsubscribePromises = Array.from(this.subscriptions.keys()).map(
-      (id) => this.unsubscribe(id),
+      id => this.unsubscribe(id),
     )
     await Promise.all(unsubscribePromises)
   }
@@ -437,7 +437,7 @@ export class RealtimeService {
   async broadcastMessage(message: RealtimeMessage): Promise<void> {
     try {
       // Broadcast to relevant subscribers based on message type
-      this.subscriptions.forEach((subscription) => {
+      this.subscriptions.forEach(subscription => {
         const shouldReceive = this.shouldReceiveMessage(subscription, message)
         if (shouldReceive) {
           subscription.callback(message)
@@ -465,21 +465,21 @@ export class RealtimeService {
     switch (subscription.type) {
       case 'conversations':
         return (
-          message.type === 'conversation_update'
-          && subscription.filters.userId === message.userId
-          && subscription.filters.clinicId === message.clinicId
+          message.type === 'conversation_update' &&
+          subscription.filters.userId === message.userId &&
+          subscription.filters.clinicId === message.clinicId
         )
 
       case 'messages':
         return (
-          message.type === 'message'
-          && subscription.filters.conversationId === message.conversationId
+          message.type === 'message' &&
+          subscription.filters.conversationId === message.conversationId
         )
 
       case 'sessions':
         return (
-          message.type === 'session_update'
-          && subscription.filters.userId === message.userId
+          message.type === 'session_update' &&
+          subscription.filters.userId === message.userId
         )
 
       case 'system':
@@ -492,7 +492,7 @@ export class RealtimeService {
 
   private countPotentialRecipients(message: RealtimeMessage): number {
     let count = 0
-    this.subscriptions.forEach((subscription) => {
+    this.subscriptions.forEach(subscription => {
       if (this.shouldReceiveMessage(subscription, message)) {
         count++
       }
@@ -506,7 +506,7 @@ export class RealtimeService {
 
   getSubscriptionsByType(): Record<string, number> {
     const counts: Record<string, number> = {}
-    this.subscriptions.forEach((subscription) => {
+    this.subscriptions.forEach(subscription => {
       counts[subscription.type] = (counts[subscription.type] || 0) + 1
     })
     return counts

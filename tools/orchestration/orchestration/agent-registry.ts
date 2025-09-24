@@ -92,11 +92,11 @@ export class TDDAgentRegistry {
 
   // Method names expected by tests
   getAgentsForPhase(phase: string, _context?: any): AgentCapability[] {
-    return this.getAllAgents().filter((agent) => agent.phases.includes(phase as any))
+    return this.getAllAgents().filter(agent => agent.phases.includes(phase as any))
   }
 
   getAgentsForCapability(capability: string): AgentCapability[] {
-    return this.getAllAgents().filter((agent) => agent.capabilities.includes(capability))
+    return this.getAllAgents().filter(agent => agent.capabilities.includes(capability))
   }
 
   selectOptimalAgents(_context: any, _requirements?: any): AgentCapability[] {
@@ -113,7 +113,7 @@ export class TDDAgentRegistry {
   ): boolean {
     if (typeof agentOrName === 'string' && capability) {
       const agent = Array.from(this.agents.values()).find(
-        (a) => a.name === agentOrName,
+        a => a.name === agentOrName,
       )
       return agent?.capabilities?.includes(capability) || false
     } else if (typeof agentOrName === 'object') {
@@ -129,7 +129,7 @@ export class TDDAgentRegistry {
 
   updateAgentConfiguration(agentName: string, config: any): boolean {
     const agent = Array.from(this.agents.values()).find(
-      (a) => a.name === agentName,
+      a => a.name === agentName,
     )
     if (agent) {
       Object.assign(agent.configuration, config)
@@ -157,8 +157,8 @@ export class TDDAgentRegistry {
       stats.executionCount++
       stats.lastExecution = new Date()
       stats.averageExecutionTime =
-        (stats.averageExecutionTime * (stats.executionCount - 1) + duration)
-        / stats.executionCount
+        (stats.averageExecutionTime * (stats.executionCount - 1) + duration) /
+        stats.executionCount
 
       const successCount = Math.floor(
         stats.successRate * (stats.executionCount - 1),

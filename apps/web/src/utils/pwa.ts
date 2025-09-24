@@ -29,7 +29,7 @@ export class PWAIndexedDB {
         resolve()
       }
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result
 
         // Store for offline data
@@ -193,8 +193,8 @@ export class PWAPushManager {
       this.subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: this.urlBase64ToUint8Array(
-          process.env.VITE_VAPID_PUBLIC_KEY
-            || 'BH2jO8W3j8Z2gF3h6K9L1mN3pQ6rT2yV5bX8cF4j7H1k9L2mN3pQ6rT2yV5bX8cF4j7H',
+          process.env.VITE_VAPID_PUBLIC_KEY ||
+            'BH2jO8W3j8Z2gF3h6K9L1mN3pQ6rT2yV5bX8cF4j7H1k9L2mN3pQ6rT2yV5bX8cF4j7H',
         ),
       })
 
@@ -388,7 +388,7 @@ export class PWAStatus {
 
   private updateStatus(key: string, value: any): void {
     ;(this as any)[key] = value
-    this.listeners.get(key)?.forEach((callback) => callback(value))
+    this.listeners.get(key)?.forEach(callback => callback(value))
   }
 
   isOnline(): boolean {

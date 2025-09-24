@@ -375,19 +375,19 @@ export class AIAppointmentRepository {
         orderBy: { startTime: 'desc' },
       })
 
-      return appointments.map((apt) => {
+      return appointments.map(apt => {
         const appointmentDate = new Date(apt.startTime)
         const patientAge = apt.patient.birthDate
           ? Math.floor(
-            (appointmentDate.getTime() - new Date(apt.patient.birthDate).getTime())
-              / (365.25 * 24 * 60 * 60 * 1000),
+            (appointmentDate.getTime() - new Date(apt.patient.birthDate).getTime()) /
+              (365.25 * 24 * 60 * 60 * 1000),
           )
           : undefined
 
         const timeSinceLastAppointment = apt.patient.lastVisitDate
           ? Math.floor(
-            (appointmentDate.getTime() - new Date(apt.patient.lastVisitDate).getTime())
-              / (24 * 60 * 60 * 1000),
+            (appointmentDate.getTime() - new Date(apt.patient.lastVisitDate).getTime()) /
+              (24 * 60 * 60 * 1000),
           )
           : 0
 
@@ -464,7 +464,7 @@ export class AIAppointmentRepository {
 
       for (const professional of professionals) {
         // Calculate current utilization
-        const professionalAppointments = appointments.filter((apt) =>
+        const professionalAppointments = appointments.filter(apt =>
           apt.professionalId === professional.id
         )
         const totalHours = professionalAppointments.reduce((sum, apt) => {
@@ -525,7 +525,7 @@ export class AIAppointmentRepository {
         },
       })
 
-      return appointments.map((apt) => {
+      return appointments.map(apt => {
         const scheduledDuration = apt.duration || 30 // Default 30 minutes
         const actualDuration = apt.actualStartTime && apt.actualEndTime
           ? (apt.actualEndTime.getTime() - apt.actualStartTime.getTime()) / (1000 * 60)
@@ -679,16 +679,17 @@ export class AIAppointmentRepository {
       prisma.professional.findMany({ where: { clinicId, isActive: true } }),
     ])
 
-    const noShows = appointments.filter((apt) => apt.status === 'no_show')
+    const noShows = appointments.filter(apt => apt.status === 'no_show')
     const noShowRate = totalAppointments > 0 ? (noShows.length / totalAppointments) * 100 : 0
-    const averageNoShowRisk = appointments.reduce((sum, apt) => sum + (apt.noShowRiskScore || 0), 0)
-      / appointments.length
+    const averageNoShowRisk =
+      appointments.reduce((sum, apt) => sum + (apt.noShowRiskScore || 0), 0) /
+      appointments.length
 
     const averageWaitTime = appointments
-      .filter((apt) => apt.checkInTime && apt.actualStartTime)
+      .filter(apt => apt.checkInTime && apt.actualStartTime)
       .reduce((sum, apt) => {
-        const waitTime = (apt.actualStartTime!.getTime() - apt.checkInTime!.getTime())
-          / (1000 * 60)
+        const waitTime = (apt.actualStartTime!.getTime() - apt.checkInTime!.getTime()) /
+          (1000 * 60)
         return sum + waitTime
       }, 0) / appointments.length
 
@@ -728,7 +729,7 @@ export class AIAppointmentRepository {
   private calculatePeakHours(appointments: any[]) {
     const hourCounts = new Map<number, number>()
 
-    appointments.forEach((apt) => {
+    appointments.forEach(apt => {
       const hour = new Date(apt.startTime).getHours()
       hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1)
     })
@@ -746,7 +747,7 @@ export class AIAppointmentRepository {
   private calculateServiceTypePopularity(appointments: any[], serviceTypes: any[]) {
     const serviceCounts = new Map<string, { count: number; revenue: number }>()
 
-    appointments.forEach((apt) => {
+    appointments.forEach(apt => {
       const current = serviceCounts.get(apt.serviceTypeId) || { count: 0, revenue: 0 }
       serviceCounts.set(apt.serviceTypeId, {
         count: current.count + 1,
@@ -756,7 +757,7 @@ export class AIAppointmentRepository {
 
     return Array.from(serviceCounts.entries())
       .map(([serviceTypeId, data]) => {
-        const serviceType = serviceTypes.find((st) => st.id === serviceTypeId)
+        const serviceType = serviceTypes.find(st => st.id === serviceTypeId)
         return {
           serviceTypeId,
           name: serviceType?.name || 'Unknown',
@@ -776,7 +777,7 @@ export class AIAppointmentRepository {
       totalEfficiency: number
     }>()
 
-    appointments.forEach((apt) => {
+    appointments.forEach(apt => {
       const current = professionalStats.get(apt.professionalId) || {
         total: 0,
         completed: 0,
@@ -790,14 +791,14 @@ export class AIAppointmentRepository {
         completed: current.completed + (apt.status === 'completed' ? 1 : 0),
         totalRating: current.totalRating + (apt.patientSatisfactionScore || 0),
         ratingCount: current.ratingCount + (apt.patientSatisfactionScore ? 1 : 0),
-        totalEfficiency: current.totalEfficiency
-          + (apt.noShowRiskScore ? 100 - apt.noShowRiskScore : 50),
+        totalEfficiency: current.totalEfficiency +
+          (apt.noShowRiskScore ? 100 - apt.noShowRiskScore : 50),
       })
     })
 
     return Array.from(professionalStats.entries())
       .map(([professionalId, stats]) => {
-        const professional = professionals.find((p) => p.id === professionalId)
+        const professional = professionals.find(p => p.id === professionalId)
         return {
           professionalId,
           name: professional?.fullName || 'Unknown',
@@ -811,7 +812,7 @@ export class AIAppointmentRepository {
   }
 
   private generatePredictiveInsights(appointments: any[], _dateRange?: { start: Date; end: Date }) {
-    const highRiskAppointments = appointments.filter((apt) => (apt.noShowRiskScore || 0) > 70)
+    const highRiskAppointments = appointments.filter(apt => (apt.noShowRiskScore || 0) > 70)
 
     return {
       upcomingHighRisk: highRiskAppointments.length,
@@ -862,11 +863,11 @@ export class AIAppointmentRepository {
     appointments: any[],
     rooms: any[],
   ): any | undefined {
-    return rooms.find((room) =>
-      !appointments.some((apt) =>
-        apt.roomId === room.id
-        && apt.startTime < slot.end
-        && apt.endTime > slot.start
+    return rooms.find(room =>
+      !appointments.some(apt =>
+        apt.roomId === room.id &&
+        apt.startTime < slot.end &&
+        apt.endTime > slot.start
       )
     )
   }
@@ -920,8 +921,8 @@ export class AIAppointmentRepository {
 
     // Reward accurate duration prediction
     if (data.actualDuration) {
-      const durationAccuracy = 1
-        - Math.abs(data.scheduledDuration - data.actualDuration) / data.scheduledDuration
+      const durationAccuracy = 1 -
+        Math.abs(data.scheduledDuration - data.actualDuration) / data.scheduledDuration
       efficiency += durationAccuracy * 0.3
     }
 
@@ -963,7 +964,7 @@ export class AIAppointmentRepository {
       const dayOfWeek = current.getDay()
       const weekDay = [1, 2, 3, 4].includes(dayOfWeek) // Monday-Thursday
 
-      const historicalAvg = historicalData.filter((apt) => {
+      const historicalAvg = historicalData.filter(apt => {
         const aptDate = new Date(apt.startTime)
         return aptDate.getDay() === dayOfWeek
       }).length
@@ -982,7 +983,7 @@ export class AIAppointmentRepository {
   }
 
   private generateStaffingRecommendations(predictedVolume: any[]) {
-    return predictedVolume.map((volume) => ({
+    return predictedVolume.map(volume => ({
       date: volume.date,
       recommendedProfessionals: Math.ceil(volume.predictedAppointments / 8), // 8 appointments per professional per day
       recommendedRooms: Math.ceil(volume.predictedAppointments / 12), // 12 appointments per room per day

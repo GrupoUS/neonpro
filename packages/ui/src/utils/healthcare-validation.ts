@@ -135,9 +135,9 @@ export const healthcareValidationSchemas = {
 
       // Check if date is valid
       if (
-        date.getDate() !== day
-        || date.getMonth() !== month - 1
-        || date.getFullYear() !== year
+        date.getDate() !== day ||
+        date.getMonth() !== month - 1 ||
+        date.getFullYear() !== year
       ) {
         return false
       }
@@ -330,13 +330,13 @@ export function validateAccessibilityRequirements(element: HTMLElement): {
 
   // Check for proper labeling
   if (
-    element.tagName === 'INPUT'
-    || element.tagName === 'SELECT'
-    || element.tagName === 'TEXTAREA'
+    element.tagName === 'INPUT' ||
+    element.tagName === 'SELECT' ||
+    element.tagName === 'TEXTAREA'
   ) {
-    const label = element.getAttribute('aria-label')
-      || element.getAttribute('aria-labelledby')
-      || document.querySelector(`label[for="${element.id}"]`)
+    const label = element.getAttribute('aria-label') ||
+      element.getAttribute('aria-labelledby') ||
+      document.querySelector(`label[for="${element.id}"]`)
 
     if (!label) {
       violations.push('Campo sem rótulo acessível')
@@ -353,8 +353,8 @@ export function validateAccessibilityRequirements(element: HTMLElement): {
 
   // Check for required field indication
   if (
-    element.hasAttribute('required')
-    && !element.getAttribute('aria-required')
+    element.hasAttribute('required') &&
+    !element.getAttribute('aria-required')
   ) {
     violations.push('Campo obrigatório sem indicação acessível')
   }
@@ -374,7 +374,7 @@ export function anonymizePatientData(
   // Remove or hash sensitive identifiers
   const sensitiveFields = ['cpf', 'name', 'phone', 'email', 'address']
 
-  sensitiveFields.forEach((field) => {
+  sensitiveFields.forEach(field => {
     if (anonymized[field]) {
       // Replace with anonymized placeholder
       anonymized[field] = `[ANONIMIZADO_${field.toUpperCase()}]`
@@ -392,7 +392,7 @@ export function anonymizePatientData(
     'duration',
   ]
 
-  Object.keys(anonymized).forEach((key) => {
+  Object.keys(anonymized).forEach(key => {
     if (!allowedFields.includes(key) && sensitiveFields.includes(key)) {
       delete anonymized[key]
     }

@@ -215,7 +215,7 @@ export class FinancialAIAgent {
         // Apply automated optimizations with high confidence
         if (aiOptimizations.suggestions.length > 0) {
           const highConfidenceSuggestions = aiOptimizations.suggestions.filter(
-            (s) => s.confidence > 0.85,
+            s => s.confidence > 0.85,
           )
 
           // Apply optimizations (in real implementation, would require user confirmation)
@@ -586,8 +586,8 @@ export class FinancialAIAgent {
         features: this.config.features,
         alerts: {
           total: this.alerts.size,
-          anomalies: Array.from(this.alerts.values()).filter((a) => 'type' in a).length,
-          fraudAlerts: Array.from(this.alerts.values()).filter((a) => 'riskScore' in a).length,
+          anomalies: Array.from(this.alerts.values()).filter(a => 'type' in a).length,
+          fraudAlerts: Array.from(this.alerts.values()).filter(a => 'riskScore' in a).length,
         },
         uptime: Date.now(), // In real implementation, would track actual uptime
         lastActivity: new Date().toISOString(),

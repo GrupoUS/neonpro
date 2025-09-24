@@ -232,7 +232,7 @@ export const SHA256HashSchema = v.pipe(
   v.length(64, 'Hash SHA-256 deve ter exatamente 64 caracteres'),
   v.regex(/^[a-f0-9]{64}$/i, 'Hash deve estar em formato hexadecimal válido'),
   v.check(validateSHA256Hash, 'Hash SHA-256 inválido'),
-  v.transform((value) => value.toLowerCase() as ConsentHash),
+  v.transform(value => value.toLowerCase() as ConsentHash),
 )
 
 /**
@@ -245,7 +245,7 @@ export const TimestampTokenSchema = v.pipe(
   v.minLength(20, 'Token de timestamp deve ter pelo menos 20 caracteres'),
   v.maxLength(500, 'Token de timestamp não pode exceder 500 caracteres'),
   v.check(validateTimestampToken, 'Token de timestamp inválido'),
-  v.transform((value) => value as TimestampToken),
+  v.transform(value => value as TimestampToken),
 )
 
 /**
@@ -261,7 +261,7 @@ export const DigitalSignatureSchema = v.pipe(
     /^[A-Za-z0-9+/=]+$/,
     'Assinatura digital deve estar em formato base64',
   ),
-  v.transform((value) => value as DigitalSignature),
+  v.transform(value => value as DigitalSignature),
 )
 
 /**
@@ -275,7 +275,7 @@ export const RetentionPeriodSchema = v.pipe(
     validateRetentionPeriod,
     'Período de retenção inválido para dados de saúde',
   ),
-  v.transform((value) => value.toLowerCase()),
+  v.transform(value => value.toLowerCase()),
 )
 
 /**
@@ -677,7 +677,7 @@ export const validateHealthcareCompliance = (consent: {
   processing_purpose: string
 }): boolean => {
   // Check if health data requires proper legal basis
-  const hasHealthData = consent.data_categories.some((cat) =>
+  const hasHealthData = consent.data_categories.some(cat =>
     [
       'health_data',
       'sensitive_personal',

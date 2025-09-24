@@ -352,7 +352,7 @@ export class PerformanceMonitor {
     let metrics = Array.from(this.metrics.values())
 
     if (timeRange) {
-      metrics = metrics.filter((metric) =>
+      metrics = metrics.filter(metric =>
         metric.startTime >= timeRange.start && metric.startTime <= timeRange.end
       )
     }
@@ -386,13 +386,13 @@ export class PerformanceMonitor {
 
     const totalDuration = metrics.reduce((sum, metric) => sum + (metric.duration || 0), 0)
     const slowRequests =
-      metrics.filter((metric) =>
+      metrics.filter(metric =>
         metric.duration && metric.duration > this.thresholds.warningThreshold
       ).length
-    const errors = metrics.filter((metric) => metric.statusCode && metric.statusCode >= 400).length
-    const cacheHits = metrics.filter((metric) => metric.cacheHit).length
+    const errors = metrics.filter(metric => metric.statusCode && metric.statusCode >= 400).length
+    const cacheHits = metrics.filter(metric => metric.cacheHit).length
 
-    const memoryUsage = metrics.map((metric) => metric.memoryUsage?.heapUsed || 0)
+    const memoryUsage = metrics.map(metric => metric.memoryUsage?.heapUsed || 0)
     const averageMemory = memoryUsage.reduce((sum, usage) => sum + usage, 0) / memoryUsage.length
     const peakMemory = Math.max(...memoryUsage)
 

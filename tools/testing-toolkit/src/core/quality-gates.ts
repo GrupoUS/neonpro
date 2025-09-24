@@ -58,7 +58,7 @@ export class QualityGateValidator {
    * Validate a single quality gate
    */
   validateGate(gateName: string, actualValue: number): QualityGateResult {
-    const gate = this.gates.find((g) => g.name === gateName)
+    const gate = this.gates.find(g => g.name === gateName)
 
     if (!gate) {
       throw new Error(`Quality gate '${gateName}' not found`)
@@ -107,8 +107,8 @@ export class QualityGateValidator {
       }
     })
 
-    const failedResults = results.filter((r) => !r.passed)
-    const criticalFailures = failedResults.filter((r) => r.critical)
+    const failedResults = results.filter(r => !r.passed)
+    const criticalFailures = failedResults.filter(r => r.critical)
     const passed = criticalFailures.length === 0
 
     const summary = passed
@@ -127,7 +127,7 @@ export class QualityGateValidator {
    * Add or update a quality gate
    */
   addGate(gate: QualityGateConfig): void {
-    const existingIndex = this.gates.findIndex((g) => g.name === gate.name)
+    const existingIndex = this.gates.findIndex(g => g.name === gate.name)
 
     if (existingIndex >= 0) {
       this.gates[existingIndex] = gate
@@ -152,7 +152,7 @@ export class QualityGateValidator {
     lines.push('==================')
     lines.push('')
 
-    results.forEach((result) => {
+    results.forEach(result => {
       const status = result.passed ? '✅ PASS' : '❌ FAIL'
       const critical = result.critical ? ' (CRITICAL)' : ''
       lines.push(`${status} ${result.gate}${critical}`)
@@ -160,10 +160,10 @@ export class QualityGateValidator {
       lines.push('')
     })
 
-    const passedCount = results.filter((r) => r.passed).length
+    const passedCount = results.filter(r => r.passed).length
     const totalCount = results.length
     const criticalFailures = results.filter(
-      (r) => !r.passed && r.critical,
+      r => !r.passed && r.critical,
     ).length
 
     lines.push(`Summary: ${passedCount}/${totalCount} gates passed`)

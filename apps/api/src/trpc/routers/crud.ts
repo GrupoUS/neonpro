@@ -619,13 +619,13 @@ export const crudRouter = router({
    */
   getSupportedEntities: protectedProcedure.query(() => {
     return {
-      entities: SUPPORTED_ENTITIES.map((entity) => ({
+      entities: SUPPORTED_ENTITIES.map(entity => ({
         name: entity,
         operations: CRUD_OPERATIONS,
         description: getEntityDescription(entity),
         requiredFields: getRequiredFields(entity),
       })),
-      operations: CRUD_OPERATIONS.map((op) => ({
+      operations: CRUD_OPERATIONS.map(op => ({
         name: op,
         description: getOperationDescription(op),
       })),
@@ -661,7 +661,7 @@ async function handleIntentStep(
 
   if (!schemaValidation.success) {
     const errors = schemaValidation.error.errors.map(
-      (err) => `Campo ${err.path.join('.')}: ${err.message}`,
+      err => `Campo ${err.path.join('.')}: ${err.message}`,
     )
 
     // Create sanitized error without exposing internal validation details
@@ -705,8 +705,8 @@ async function handleIntentStep(
   )
 
   // Check if confirmation is required
-  const confirmationRequired = !input.options?.skipConfirmation
-    && ['create', 'update', 'delete'].includes(input.operation)
+  const confirmationRequired = !input.options?.skipConfirmation &&
+    ['create', 'update', 'delete'].includes(input.operation)
 
   // Determine if consent is required
   const consentRequired = [

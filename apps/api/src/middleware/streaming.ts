@@ -191,7 +191,7 @@ export function mergeSSEStreams(
   return new ReadableStream({
     async start(controller) {
       try {
-        const readers = streams.map((stream) => stream.getReader())
+        const readers = streams.map(stream => stream.getReader())
 
         const readPromises = readers.map(async (reader, index) => {
           try {

@@ -163,10 +163,10 @@ export class LGPDComplianceHelper {
 
       // Check if all required data categories are covered
       const consentedCategories = consentRecords.flatMap(
-        (record) => record.dataCategories,
+        record => record.dataCategories,
       )
       const missingCategories = dataCategories.filter(
-        (category) => !consentedCategories.includes(category),
+        category => !consentedCategories.includes(category),
       )
 
       const isValid = missingCategories.length === 0
@@ -324,8 +324,8 @@ export class HealthcareAppointmentHelper {
       }
 
       // Short notice appointments (+15 points)
-      const hoursUntilAppointment = (new Date(appointment.startTime).getTime() - Date.now())
-        / (1000 * 60 * 60)
+      const hoursUntilAppointment = (new Date(appointment.startTime).getTime() - Date.now()) /
+        (1000 * 60 * 60)
       if (hoursUntilAppointment < 24) {
         riskScore += 15
       }
@@ -482,7 +482,7 @@ export class PatientDataHelper {
       'lgpdConsentGiven',
     ]
 
-    const missingFields = requiredFields.filter((field) => !patientData[field])
+    const missingFields = requiredFields.filter(field => !patientData[field])
 
     const warnings: string[] = []
 

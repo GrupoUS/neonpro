@@ -213,8 +213,8 @@ export class Plan {
 
     // Check concurrent requests
     if (
-      _request.concurrentRequests
-      && _request.concurrentRequests > this.concurrentRequests
+      _request.concurrentRequests &&
+      _request.concurrentRequests > this.concurrentRequests
     ) {
       issues.push(
         `Muitas solicitações simultâneas (${_request.concurrentRequests} > ${this.concurrentRequests})`,
@@ -307,8 +307,8 @@ export class Plan {
 
     // Check data retention requirements
     if (
-      requirement.dataRetentionDays
-      && this.dataRetentionDays < requirement.dataRetentionDays
+      requirement.dataRetentionDays &&
+      this.dataRetentionDays < requirement.dataRetentionDays
     ) {
       violations.push(
         `Retenção de dados insuficiente: requer ${requirement.dataRetentionDays} dias, atual ${this.dataRetentionDays}`,
@@ -340,7 +340,7 @@ export class Plan {
     costDifference?: string
   } {
     const missingFeatures = desiredFeatures.filter(
-      (feature) => !this.hasFeature(feature),
+      feature => !this.hasFeature(feature),
     )
 
     if (missingFeatures.length === 0) {
@@ -363,7 +363,7 @@ export class Plan {
         if (!tier) continue
         const plan = new Plan(tier)
 
-        if (desiredFeatures.every((feature) => plan.hasFeature(feature))) {
+        if (desiredFeatures.every(feature => plan.hasFeature(feature))) {
           recommendedPlan = tier
           break
         }
@@ -392,8 +392,8 @@ export class Plan {
       }
 
       if (
-        upgradePlan.hasLgpdEnhancedFeatures
-        && !this.hasLgpdEnhancedFeatures
+        upgradePlan.hasLgpdEnhancedFeatures &&
+        !this.hasLgpdEnhancedFeatures
       ) {
         additionalBenefits.push('Recursos LGPD avançados')
       }
@@ -467,7 +467,7 @@ export class Plan {
    */
   static getAllPlans(): Plan[] {
     return (['free', 'trial', 'pro', 'enterprise'] as SubscriptionTier[]).map(
-      (tier) => new Plan(tier),
+      tier => new Plan(tier),
     )
   }
 

@@ -172,17 +172,17 @@ export function RoomAllocation({
   }
 
   const isTimeSlotAvailable = (roomId: string, timeSlot: { start: Date; end: Date }) => {
-    const roomSchedule = schedules?.find((s) => s.roomId === roomId)
+    const roomSchedule = schedules?.find(s => s.roomId === roomId)
     if (!roomSchedule) return true
 
-    return !roomSchedule.appointments.some((appointment) => {
+    return !roomSchedule.appointments.some(appointment => {
       const appointmentStart = parseISO(appointment.startTime)
       const appointmentEnd = parseISO(appointment.endTime)
 
       return (
-        (timeSlot.start >= appointmentStart && timeSlot.start < appointmentEnd)
-        || (timeSlot.end > appointmentStart && timeSlot.end <= appointmentEnd)
-        || (timeSlot.start <= appointmentStart && timeSlot.end >= appointmentEnd)
+        (timeSlot.start >= appointmentStart && timeSlot.start < appointmentEnd) ||
+        (timeSlot.end > appointmentStart && timeSlot.end <= appointmentEnd) ||
+        (timeSlot.start <= appointmentStart && timeSlot.end >= appointmentEnd)
       )
     })
   }
@@ -216,7 +216,7 @@ export function RoomAllocation({
           <Input
             type='date'
             value={format(selectedDate, 'yyyy-MM-dd')}
-            onChange={(e) => setSelectedDate(new Date(e.target.value))}
+            onChange={e => setSelectedDate(new Date(e.target.value))}
             className='w-auto'
           />
           <Button
@@ -251,7 +251,7 @@ export function RoomAllocation({
               <div>
                 <div className='text-sm text-gray-500'>Disponíveis</div>
                 <div className='text-lg font-bold'>
-                  {rooms?.filter((r) => r.status === 'available').length || 0}
+                  {rooms?.filter(r => r.status === 'available').length || 0}
                 </div>
               </div>
             </div>
@@ -267,8 +267,8 @@ export function RoomAllocation({
                 <div className='text-lg font-bold'>
                   {schedules
                     ? Math.round(
-                      (schedules.filter((s) => s.appointments.length > 0).length / schedules.length)
-                        * 100,
+                      (schedules.filter(s => s.appointments.length > 0).length / schedules.length) *
+                        100,
                     )
                     : 0}%
                 </div>
@@ -332,7 +332,7 @@ export function RoomAllocation({
               </CardHeader>
               <CardContent>
                 <div className='space-y-3'>
-                  {rooms?.map((room) => (
+                  {rooms?.map(room => (
                     <div
                       key={room.id}
                       className='flex items-center justify-between p-3 border rounded-lg'
@@ -389,13 +389,13 @@ export function RoomAllocation({
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {schedules?.map((schedule) => {
+                  {schedules?.map(schedule => {
                     const utilizationRate = (schedule.appointments.length / 12) * 100 // 12 hours business day
                     return (
                       <div key={schedule.roomId} className='space-y-2'>
                         <div className='flex items-center justify-between'>
                           <span className='text-sm font-medium'>
-                            {rooms?.find((r) => r.id === schedule.roomId)?.name}
+                            {rooms?.find(r => r.id === schedule.roomId)?.name}
                           </span>
                           <span className='text-sm text-gray-600'>
                             {Math.round(utilizationRate)}% utilizado
@@ -422,26 +422,23 @@ export function RoomAllocation({
             </CardHeader>
             <CardContent>
               <div className='space-y-4'>
-                {timeSlots.map((timeSlot) => (
+                {timeSlots.map(timeSlot => (
                   <div key={timeSlot.id} className='border rounded-lg p-4'>
                     <div className='flex items-center justify-between mb-3'>
                       <h4 className='font-medium'>{timeSlot.id}</h4>
                       <div className='flex items-center gap-2'>
                         <span className='text-sm text-gray-500'>
-                          {rooms?.filter((r) =>
-                            isTimeSlotAvailable(r.id, timeSlot)
-                          ).length} salas disponíveis
+                          {rooms?.filter(r => isTimeSlotAvailable(r.id, timeSlot)).length}{' '}
+                          salas disponíveis
                         </span>
                       </div>
                     </div>
 
                     <div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3'>
-                      {rooms?.map((room) => {
+                      {rooms?.map(room => {
                         const isAvailable = isTimeSlotAvailable(room.id, timeSlot)
-                        const appointment = schedules?.find((s) =>
-                          s.roomId === room.id
-                        )?.appointments
-                          .find((a) => {
+                        const appointment = schedules?.find(s => s.roomId === room.id)?.appointments
+                          .find(a => {
                             const start = parseISO(a.startTime)
                             const end = parseISO(a.endTime)
                             return timeSlot.start >= start && timeSlot.start < end
@@ -491,7 +488,7 @@ export function RoomAllocation({
               </CardHeader>
               <CardContent>
                 <div className='space-y-3'>
-                  {rooms?.filter((r) => r.status === 'available').map((room) => (
+                  {rooms?.filter(r => r.status === 'available').map(room => (
                     <div
                       key={room.id}
                       className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -557,7 +554,7 @@ export function RoomAllocation({
                 {selectedRoom
                   ? (
                     <div className='space-y-3'>
-                      {timeSlots.map((timeSlot) => {
+                      {timeSlots.map(timeSlot => {
                         const isAvailable = isTimeSlotAvailable(selectedRoom, timeSlot)
                         return (
                           <div
@@ -605,7 +602,7 @@ export function RoomAllocation({
                   <div>
                     <span className='text-sm text-gray-500'>Sala:</span>
                     <div className='font-medium'>
-                      {rooms?.find((r) => r.id === selectedRoom)?.name}
+                      {rooms?.find(r => r.id === selectedRoom)?.name}
                     </div>
                   </div>
                   <div>

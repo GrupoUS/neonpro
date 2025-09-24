@@ -189,12 +189,12 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
     const initialStatus: ConsentStatus = {} as ConsentStatus
 
     // Set required consents to true by default
-    requiredConsents.forEach((consent) => {
+    requiredConsents.forEach(consent => {
       initialStatus[consent] = true
     })
 
     // Set optional consents to false by default
-    optionalConsents.forEach((consent) => {
+    optionalConsents.forEach(consent => {
       initialStatus[consent] = false
     })
 
@@ -225,7 +225,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
           analyticsConsent: ConsentType.ANALYTICS,
         }
 
-        const hasAllRequired = requiredConsents.every((consent) => {
+        const hasAllRequired = requiredConsents.every(consent => {
           // Find matching schema property for this consent type
           const schemaKey = Object.entries(schemaToConsent).find(
             ([, consentType]) => consentType === consent,
@@ -284,7 +284,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
       return
     }
 
-    setConsentStatus((prev) => ({
+    setConsentStatus(prev => ({
       ...prev,
       [consentType]: granted,
     }))
@@ -300,7 +300,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   // Handle accept all
   const handleAcceptAll = () => {
     const allAccepted: ConsentStatus = {} as ConsentStatus
-    allConsents.forEach((consent) => {
+    allConsents.forEach(consent => {
       allAccepted[consent] = true
     })
 
@@ -313,12 +313,12 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
     const requiredOnly: ConsentStatus = {} as ConsentStatus
 
     // Accept required
-    requiredConsents.forEach((consent) => {
+    requiredConsents.forEach(consent => {
       requiredOnly[consent] = true
     })
 
     // Reject optional
-    optionalConsents.forEach((consent) => {
+    optionalConsents.forEach(consent => {
       requiredOnly[consent] = false
     })
 
@@ -435,7 +435,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
             Tipos de Dados Processados:
           </h3>
           <ul className='text-xs text-muted-foreground space-y-1'>
-            {dataTypes.map((dataType) => (
+            {dataTypes.map(dataType => (
               <li key={dataType} className='flex items-start gap-2'>
                 <span>•</span>
                 <span>{dataTypeDescriptions[dataType]}</span>
@@ -447,7 +447,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
             Finalidades do Tratamento:
           </h3>
           <ul className='text-xs text-muted-foreground space-y-1'>
-            {processingPurposes.map((purpose) => (
+            {processingPurposes.map(purpose => (
               <li key={purpose} className='flex items-start gap-2'>
                 <span>•</span>
                 <span>{purposeDescriptions[purpose]}</span>
@@ -469,7 +469,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
 
             {showDetails && (
               <div className='space-y-3 border rounded-md p-3'>
-                {allConsents.map((consentType) => {
+                {allConsents.map(consentType => {
                   const info = consentDescriptions[consentType]
                   const isRequired = requiredConsents.includes(consentType)
 
@@ -480,7 +480,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
                         id={`consent-${consentType}`}
                         checked={consentStatus[consentType]}
                         disabled={isRequired}
-                        onChange={(e) => handleConsentChange(consentType, e.target.checked)}
+                        onChange={e => handleConsentChange(consentType, e.target.checked)}
                         className='mt-1'
                         aria-describedby={`consent-${consentType}-desc`}
                       />
@@ -498,8 +498,8 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
                           id={`consent-${consentType}-desc`}
                           className='text-xs text-muted-foreground mt-1'
                         >
-                          {info?.description
-                            || 'Consentimento para processamento de dados'}
+                          {info?.description ||
+                            'Consentimento para processamento de dados'}
                         </p>
                       </div>
                     </div>
@@ -544,7 +544,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
                 href={privacyPolicyUrl}
                 target='blank'
                 rel='noopener noreferrer'
-                onClick={(e) => {
+                onClick={e => {
                   e.preventDefault()
                   onPrivacyPolicyView?.()
                 }}
@@ -559,7 +559,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
                 href={dataProcessingUrl}
                 target='blank'
                 rel='noopener noreferrer'
-                onClick={(e) => {
+                onClick={e => {
                   e.preventDefault()
                   onDataProcessingView?.()
                 }}

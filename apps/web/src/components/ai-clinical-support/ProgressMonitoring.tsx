@@ -326,13 +326,13 @@ export function ProgressMonitoring({
                 <Label htmlFor='session'>Sessão</Label>
                 <Select
                   value={newUpdate.sessionId}
-                  onValueChange={(value) => setNewUpdate((prev) => ({ ...prev, sessionId: value }))}
+                  onValueChange={value => setNewUpdate(prev => ({ ...prev, sessionId: value }))}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder='Selecione a sessão' />
                   </SelectTrigger>
                   <SelectContent>
-                    {progress.sessions.map((session) => (
+                    {progress.sessions.map(session => (
                       <SelectItem key={session.id} value={session.id}>
                         Sessão {session.sessionNumber} - {formatDate(session.scheduledDate)}
                       </SelectItem>
@@ -349,8 +349,8 @@ export function ProgressMonitoring({
                   min='0'
                   max='100'
                   value={newUpdate.progressPercentage}
-                  onChange={(e) =>
-                    setNewUpdate((prev) => ({
+                  onChange={e =>
+                    setNewUpdate(prev => ({
                       ...prev,
                       progressPercentage: parseInt(e.target.value) || 0,
                     }))}
@@ -366,8 +366,8 @@ export function ProgressMonitoring({
                 min='1'
                 max='10'
                 value={newUpdate.satisfaction}
-                onChange={(e) =>
-                  setNewUpdate((prev) => ({
+                onChange={e =>
+                  setNewUpdate(prev => ({
                     ...prev,
                     satisfaction: parseInt(e.target.value) || 5,
                   }))}
@@ -380,7 +380,7 @@ export function ProgressMonitoring({
                 id='notes'
                 placeholder='Observações sobre o progresso...'
                 value={newUpdate.notes}
-                onChange={(e) => setNewUpdate((prev) => ({ ...prev, notes: e.target.value }))}
+                onChange={e => setNewUpdate(prev => ({ ...prev, notes: e.target.value }))}
               />
             </div>
 
@@ -390,7 +390,7 @@ export function ProgressMonitoring({
                 id='sideEffects'
                 placeholder='Efeitos colaterais observados...'
                 value={newUpdate.sideEffects}
-                onChange={(e) => setNewUpdate((prev) => ({ ...prev, sideEffects: e.target.value }))}
+                onChange={e => setNewUpdate(prev => ({ ...prev, sideEffects: e.target.value }))}
               />
             </div>
 
@@ -427,7 +427,7 @@ export function ProgressMonitoring({
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {progress.goals.map((goal) => (
+                  {progress.goals.map(goal => (
                     <div key={goal.id} className='space-y-2'>
                       <div className='flex items-center justify-between'>
                         <span className='text-sm font-medium'>{goal.description}</span>
@@ -481,7 +481,7 @@ export function ProgressMonitoring({
         {/* Sessions */}
         <TabsContent value='sessions' className='space-y-4'>
           <div className='grid grid-cols-1 gap-4'>
-            {progress.sessions.map((session) => <SessionCard key={session.id} session={session} />)}
+            {progress.sessions.map(session => <SessionCard key={session.id} session={session} />)}
           </div>
         </TabsContent>
 

@@ -77,8 +77,8 @@ export interface ComplianceEvent {
 
 // Default configuration for healthcare telemetry
 export const DEFAULT_HEALTHCARE_TELEMETRY_CONFIG: HealthcareTelemetryConfig = {
-  enabled: process.env.NODE_ENV === 'production'
-    || process.env.ENABLE_TRACING === 'true',
+  enabled: process.env.NODE_ENV === 'production' ||
+    process.env.ENABLE_TRACING === 'true',
   serviceName: 'neonpro-healthcare-platform',
   serviceVersion: process.env.APP_VERSION || '1.0.0',
   environment: process.env.NODE_ENV || 'development',
@@ -89,15 +89,15 @@ export const DEFAULT_HEALTHCARE_TELEMETRY_CONFIG: HealthcareTelemetryConfig = {
 
   exporters: {
     traces: {
-      endpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        || 'http://localhost:4318/v1/traces',
+      endpoint: process.env.OTEL_EXPORTER_OTLP_TRACES_ENDPOINT ||
+        'http://localhost:4318/v1/traces',
       apiKey: process.env.OTEL_API_KEY,
       batchSize: 100,
       timeoutMs: 5000,
     },
     metrics: {
-      endpoint: process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        || 'http://localhost:4318/v1/metrics',
+      endpoint: process.env.OTEL_EXPORTER_OTLP_METRICS_ENDPOINT ||
+        'http://localhost:4318/v1/metrics',
       apiKey: process.env.OTEL_API_KEY,
       intervalMs: 30000,
     },

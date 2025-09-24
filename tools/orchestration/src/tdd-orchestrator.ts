@@ -346,7 +346,7 @@ export class TDDOrchestrator {
       success,
       results: results
         .map((r, index) => r.result || `result${index + 1}`)
-        .filter((r) => r !== null),
+        .filter(r => r !== null),
       agentResults: results,
     }
   }
@@ -395,7 +395,7 @@ export class TDDOrchestrator {
    * Calculate overall quality score from agent results
    */
   private calculateQualityScore(results: AgentResult[]): number {
-    const scores = results.map((result) => {
+    const scores = results.map(result => {
       if (typeof result.quality === 'number') {
         return result.quality
       } else if (typeof result.quality === 'object' && result.quality?.score) {
@@ -423,9 +423,9 @@ export class TDDOrchestrator {
     }
 
     // Update average duration
-    this.metrics.averageDuration = (this.metrics.averageDuration * (this.metrics.totalCycles - 1)
-      + duration)
-      / this.metrics.totalCycles
+    this.metrics.averageDuration = (this.metrics.averageDuration * (this.metrics.totalCycles - 1) +
+      duration) /
+      this.metrics.totalCycles
   }
 
   /**

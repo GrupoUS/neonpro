@@ -405,8 +405,8 @@ export class PredictiveAnalyticsService {
 
       // If no valid insights were generated, throw an error
       if (
-        validInsights.length === 0
-        && insights.some((insight) => insight === null)
+        validInsights.length === 0 &&
+        insights.some(insight => insight === null)
       ) {
         throw new Error('Failed to generate predictive insights')
       }

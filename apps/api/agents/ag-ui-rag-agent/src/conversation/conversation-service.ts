@@ -258,12 +258,12 @@ export class ConversationService {
       let filteredConversations = conversations
       if (params.patientId) {
         filteredConversations = filteredConversations.filter(
-          (conv) => conv.patientId === params.patientId,
+          conv => conv.patientId === params.patientId,
         )
       }
       if (params.status) {
         filteredConversations = filteredConversations.filter(
-          (conv) => conv.status === params.status,
+          conv => conv.status === params.status,
         )
       }
 
@@ -388,9 +388,9 @@ export class ConversationService {
       )
 
       // Filter by search query and additional filters
-      const filteredConversations = conversations.filter((conv) => {
+      const filteredConversations = conversations.filter(conv => {
         // Search in title and messages
-        const searchText = `${conv.title} ${conv.messages.map((m) => m.content).join(' ')}`
+        const searchText = `${conv.title} ${conv.messages.map(m => m.content).join(' ')}`
           .toLowerCase()
         const matchesQuery = searchText.includes(query.toLowerCase())
 
@@ -482,10 +482,10 @@ export class ConversationService {
 
     return (
       conversations.find(
-        (conv) =>
-          conv.sessionId === request.sessionId
-          && conv.status === 'active'
-          && conv.patientId === request.patientId,
+        conv =>
+          conv.sessionId === request.sessionId &&
+          conv.status === 'active' &&
+          conv.patientId === request.patientId,
       ) || null
     )
   }
@@ -505,18 +505,18 @@ export class ConversationService {
     if (lowerMessage.includes('help') || lowerMessage.includes('how to')) {
       return 'help_request'
     } else if (
-      lowerMessage.includes('appointment')
-      || lowerMessage.includes('schedule')
+      lowerMessage.includes('appointment') ||
+      lowerMessage.includes('schedule')
     ) {
       return 'appointment_related'
     } else if (
-      lowerMessage.includes('patient')
-      || lowerMessage.includes('medical')
+      lowerMessage.includes('patient') ||
+      lowerMessage.includes('medical')
     ) {
       return 'patient_inquiry'
     } else if (
-      lowerMessage.includes('billing')
-      || lowerMessage.includes('payment')
+      lowerMessage.includes('billing') ||
+      lowerMessage.includes('payment')
     ) {
       return 'billing_inquiry'
     } else {
@@ -572,7 +572,7 @@ export class ConversationService {
       ...additionalContext,
       patientId: conversation.patientId,
       clinicId: conversation.clinicId,
-      messageHistory: history?.map((m) => ({ _role: m.role, content: m.content })) || [],
+      messageHistory: history?.map(m => ({ _role: m.role, content: m.content })) || [],
     }
 
     return {

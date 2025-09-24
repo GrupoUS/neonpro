@@ -12,7 +12,7 @@ appointments.use('*', requireAuth)
 appointments.use('*', dataProtection.appointments)
 
 // Get all appointments (with LGPD consent validation and multi-tenant scoping)
-appointments.get('/', async (c) => {
+appointments.get('/', async c => {
   try {
     const clinicId = c.get('clinicId')
     if (!clinicId) {
@@ -65,7 +65,7 @@ appointments.get('/', async (c) => {
 })
 
 // Get appointments for a specific patient (with LGPD consent validation and multi-tenant scoping)
-appointments.get('/patient/:patientId', async (c) => {
+appointments.get('/patient/:patientId', async c => {
   try {
     const patientId = c.req.param('patientId')
     const clinicId = c.get('clinicId')
@@ -136,7 +136,7 @@ import { hasConflict } from '../utils/appointments'
 appointments.post(
   '/',
   zValidator('json', AppointmentCreateSchema),
-  async (c) => {
+  async c => {
     const _data = c.req.valid('json')
     try {
       const startTime = new Date(data.startTime)
@@ -188,7 +188,7 @@ appointments.post(
 appointments.put(
   '/:id',
   zValidator('json', AppointmentUpdateSchema),
-  async (c) => {
+  async c => {
     const id = c.req.param('id')
     const payload = c.req.valid('json')
     try {

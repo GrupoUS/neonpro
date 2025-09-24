@@ -15,8 +15,8 @@ export default async function handler(req: Request): Promise<Response> {
 
   try {
     if (
-      contentType.includes('application/reports+json')
-      || contentType.includes('application/json')
+      contentType.includes('application/reports+json') ||
+      contentType.includes('application/json')
     ) {
       body = await req.json()
     } else if (contentType.includes('application/csp-report')) {

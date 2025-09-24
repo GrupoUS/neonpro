@@ -249,7 +249,7 @@ export class CrudIntentParser {
       'possivelmente',
       'poderia',
     ]
-    const hasUncertainty = uncertaintyWords.some((word) => normalizedText.includes(word))
+    const hasUncertainty = uncertaintyWords.some(word => normalizedText.includes(word))
 
     for (const [intentType, patterns] of Object.entries(this.intentPatterns)) {
       let maxConfidence = 0
@@ -268,9 +268,9 @@ export class CrudIntentParser {
           if (pattern.length >= 3) {
             // Partial word match (medium confidence)
             const partialMatches = words.filter(
-              (word) =>
-                word.length >= 3
-                && (word.includes(pattern) || pattern.includes(word)),
+              word =>
+                word.length >= 3 &&
+                (word.includes(pattern) || pattern.includes(word)),
             )
             if (partialMatches.length > 0) {
               maxConfidence = Math.max(maxConfidence, 0.6) // Reduced confidence
@@ -279,9 +279,9 @@ export class CrudIntentParser {
 
             // Start of word match (lower confidence)
             const startMatches = words.filter(
-              (word) =>
-                word.length >= 3
-                && (word.startsWith(pattern) || pattern.startsWith(word)),
+              word =>
+                word.length >= 3 &&
+                (word.startsWith(pattern) || pattern.startsWith(word)),
             )
             if (startMatches.length > 0) {
               maxConfidence = Math.max(maxConfidence, 0.5) // Reduced confidence
@@ -293,9 +293,9 @@ export class CrudIntentParser {
       // Boost confidence for SQL-like patterns - but only if we already have some confidence
       if (maxConfidence > 0.3) {
         if (
-          intentType === 'READ'
-          && (normalizedText.includes('where')
-            || normalizedText.includes('select'))
+          intentType === 'READ' &&
+          (normalizedText.includes('where') ||
+            normalizedText.includes('select'))
         ) {
           maxConfidence = Math.max(maxConfidence, 0.85)
         }
@@ -306,8 +306,8 @@ export class CrudIntentParser {
           maxConfidence = Math.max(maxConfidence, 0.85)
         }
         if (
-          intentType === 'CREATE'
-          && (normalizedText.includes('into') || normalizedText.includes('values'))
+          intentType === 'CREATE' &&
+          (normalizedText.includes('into') || normalizedText.includes('values'))
         ) {
           maxConfidence = Math.max(maxConfidence, 0.85)
         }
@@ -374,9 +374,9 @@ export class CrudIntentParser {
 
           // Skip if this is already captured as another entity type
           const existingEntity = entities.find(
-            (e) =>
-              e.value.toLowerCase() === value.toLowerCase()
-              && e.type !== 'VALUE',
+            e =>
+              e.value.toLowerCase() === value.toLowerCase() &&
+              e.type !== 'VALUE',
           )
 
           if (!existingEntity) {
@@ -426,8 +426,8 @@ export class CrudIntentParser {
         if (!tableName) continue
         // Skip common words that aren't table names
         if (
-          tableName
-          && ![
+          tableName &&
+          ![
             'with',
             'where',
             'by',
@@ -459,9 +459,9 @@ export class CrudIntentParser {
         if (!fieldName) continue
         // Check if this field is already captured to avoid duplicates
         const existingField = entities.find(
-          (e) =>
-            e.type === 'FIELD'
-            && e.value.toLowerCase() === fieldName.toLowerCase(),
+          e =>
+            e.type === 'FIELD' &&
+            e.value.toLowerCase() === fieldName.toLowerCase(),
         )
         if (!existingField) {
           entities.push({
@@ -549,9 +549,9 @@ export class CrudIntentParser {
     return filters.filter(
       (filter, index, self) =>
         // Remove duplicates based on field and value
-        index
-          === self.findIndex(
-            (f) => f.field === filter.field && f.value === filter.value,
+        index ===
+          self.findIndex(
+            f => f.field === filter.field && f.value === filter.value,
           ),
     )
   }

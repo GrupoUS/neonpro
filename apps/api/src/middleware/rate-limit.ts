@@ -32,7 +32,7 @@ class ChatRateLimiter {
 
     // Clean up old requests outside the window
     const cutoff = now - windowMs
-    existing.requests = existing.requests.filter((time) => time > cutoff)
+    existing.requests = existing.requests.filter(time => time > cutoff)
 
     // Check if limit exceeded
     if (existing.requests.length >= maxRequests) {
@@ -58,7 +58,7 @@ class ChatRateLimiter {
 
     // Clean up old requests
     const cutoff = now - windowMs
-    existing.requests = existing.requests.filter((time) => time > cutoff)
+    existing.requests = existing.requests.filter(time => time > cutoff)
 
     return Math.max(0, maxRequests - existing.requests.length)
   }
@@ -86,9 +86,9 @@ export function chatRateLimit() {
       // Get user identifier
       const user = c.get('user')
       const userId = user?.id || c.get('userId') || 'anonymous'
-      const ip = c.req.header('x-forwarded-for')
-        || c.req.header('x-real-ip')
-        || 'unknown'
+      const ip = c.req.header('x-forwarded-for') ||
+        c.req.header('x-real-ip') ||
+        'unknown'
 
       // Use userId if available, otherwise fall back to IP
       const rateLimitKey = userId !== 'anonymous' ? `user:${userId}` : `ip:${ip}`

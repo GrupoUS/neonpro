@@ -428,17 +428,17 @@ export class RealtimeAvailabilityService {
         const slotEnd = new Date(currentSlot.getTime() + 15 * 60000)
 
         // Check for conflicts
-        const hasConflict = professional.appointments.some((apt) =>
+        const hasConflict = professional.appointments.some(apt =>
           apt.startTime < slotEnd && apt.endTime > currentSlot
         )
 
         if (!hasConflict) {
           // Find available room
-          const availableRoom = rooms.find((room) =>
-            !professional.appointments.some((apt) =>
-              apt.roomId === room.id
-              && apt.startTime < slotEnd
-              && apt.endTime > currentSlot
+          const availableRoom = rooms.find(room =>
+            !professional.appointments.some(apt =>
+              apt.roomId === room.id &&
+              apt.startTime < slotEnd &&
+              apt.endTime > currentSlot
             )
           )
 
@@ -489,9 +489,9 @@ export class RealtimeAvailabilityService {
 
         // Check for professional overlap
         if (
-          apt1.professionalId === apt2.professionalId
-          && apt1.startTime < apt2.endTime
-          && apt1.endTime > apt2.startTime
+          apt1.professionalId === apt2.professionalId &&
+          apt1.startTime < apt2.endTime &&
+          apt1.endTime > apt2.startTime
         ) {
           conflicts.push({
             id: `overlap_${apt1.id}_${apt2.id}`,
@@ -511,10 +511,10 @@ export class RealtimeAvailabilityService {
 
         // Check for room overlap
         if (
-          apt1.roomId === apt2.roomId
-          && apt1.roomId
-          && apt1.startTime < apt2.endTime
-          && apt1.endTime > apt2.startTime
+          apt1.roomId === apt2.roomId &&
+          apt1.roomId &&
+          apt1.startTime < apt2.endTime &&
+          apt1.endTime > apt2.startTime
         ) {
           conflicts.push({
             id: `room_overlap_${apt1.id}_${apt2.id}`,
@@ -596,9 +596,9 @@ export class RealtimeAvailabilityService {
 
     for (const apt of appointments) {
       // Check for back-to-back appointments without breaks
-      const nextAppointment = appointments.find((other) =>
-        other.professionalId === apt.professionalId
-        && other.startTime.getTime() === apt.endTime.getTime()
+      const nextAppointment = appointments.find(other =>
+        other.professionalId === apt.professionalId &&
+        other.startTime.getTime() === apt.endTime.getTime()
       )
 
       if (nextAppointment) {
@@ -620,9 +620,9 @@ export class RealtimeAvailabilityService {
       }
 
       // Check for maximum daily appointments
-      const dailyAppointments = appointments.filter((other) =>
-        other.professionalId === apt.professionalId
-        && other.startTime.toDateString() === apt.startTime.toDateString()
+      const dailyAppointments = appointments.filter(other =>
+        other.professionalId === apt.professionalId &&
+        other.startTime.toDateString() === apt.startTime.toDateString()
       )
 
       if (dailyAppointments.length > 12) {
@@ -713,7 +713,7 @@ export class RealtimeAvailabilityService {
 
     // Appointment density factor
     const sameDayAppointments =
-      appointments.filter((apt) => apt.startTime.toDateString() === slotTime.toDateString()).length
+      appointments.filter(apt => apt.startTime.toDateString() === slotTime.toDateString()).length
 
     if (sameDayAppointments > 8) efficiency -= 0.1
     if (sameDayAppointments < 4) efficiency -= 0.05
@@ -884,7 +884,7 @@ export class RealtimeAvailabilityService {
 
   private setupProtocolHandlers(): void {
     // Set up handlers for AG-UI Protocol messages
-    aguiAppointmentProtocol.on('availability.updated', async (message) => {
+    aguiAppointmentProtocol.on('availability.updated', async message => {
       // Handle availability updates from other services
       this.updateQueue.push({
         type: 'slot_added',
@@ -894,7 +894,7 @@ export class RealtimeAvailabilityService {
       })
     })
 
-    aguiAppointmentProtocol.on('availability.conflict_detected', async (message) => {
+    aguiAppointmentProtocol.on('availability.conflict_detected', async message => {
       // Handle conflict detection notifications
       this.updateQueue.push({
         type: 'conflict_detected',

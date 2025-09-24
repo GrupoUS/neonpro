@@ -93,7 +93,7 @@ export class AgentCoordinator {
   ): AgentCoordinationPlan {
     const availableAgents = this.getAgentsForCategory(category)
     const phaseAgents = this.getAgentsForPhase(phase)
-    const eligibleAgents = availableAgents.filter((agent) => phaseAgents.includes(agent))
+    const eligibleAgents = availableAgents.filter(agent => phaseAgents.includes(agent))
 
     let primaryAgent: AgentName
     let supportAgents: AgentName[]
@@ -104,9 +104,9 @@ export class AgentCoordinator {
       case 'red':
         primaryAgent = 'test'
         supportAgents = eligibleAgents.filter(
-          (agent) =>
-            agent !== 'test'
-            && ['architect-review', 'test-auditor'].includes(agent),
+          agent =>
+            agent !== 'test' &&
+            ['architect-review', 'test-auditor'].includes(agent),
         )
         workflow = 'sequential'
         qualityGates = [
@@ -121,7 +121,7 @@ export class AgentCoordinator {
       case 'green':
         primaryAgent = 'code-reviewer'
         supportAgents = eligibleAgents.filter(
-          (agent) => agent !== 'code-reviewer',
+          agent => agent !== 'code-reviewer',
         )
         workflow = 'sequential'
         qualityGates = [
@@ -137,7 +137,7 @@ export class AgentCoordinator {
       case 'refactor':
         primaryAgent = 'tdd-orchestrator'
         supportAgents = eligibleAgents.filter(
-          (agent) => agent !== 'tdd-orchestrator',
+          agent => agent !== 'tdd-orchestrator',
         )
         workflow = options.parallel ? 'parallel' : 'hierarchical'
         qualityGates = [
@@ -203,7 +203,7 @@ export class AgentCoordinator {
       // Execute support agents based on workflow
       if (plan.workflow === 'parallel') {
         const supportResults = await Promise.all(
-          plan.supportAgents.map((agent) => this.executeAgent(agent, plan.category, plan.phase)),
+          plan.supportAgents.map(agent => this.executeAgent(agent, plan.category, plan.phase)),
         )
 
         plan.supportAgents.forEach((agent, index) => {
@@ -226,7 +226,7 @@ export class AgentCoordinator {
       }
 
       const allGatesPassed = Object.values(qualityGateResults).every(
-        (passed) => passed,
+        passed => passed,
       )
 
       logger.constitutional(
@@ -283,7 +283,7 @@ export class AgentCoordinator {
     logger.info(`Executing ${agent} for ${category}:${phase}`)
 
     // Simulate processing time
-    await new Promise((resolve) => setTimeout(resolve, 100))
+    await new Promise(resolve => setTimeout(resolve, 100))
 
     return {
       agent,

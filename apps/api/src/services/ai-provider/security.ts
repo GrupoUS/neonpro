@@ -19,8 +19,8 @@ export class AISecurityManager {
   validateAndSanitizeRequest(_request: RoutingRequest): RoutingRequest {
     // Validate healthcare context
     if (
-      request.healthcare_context.contains_pii
-      && !request.healthcare_context.patient_id
+      request.healthcare_context.contains_pii &&
+      !request.healthcare_context.patient_id
     ) {
       throw new Error(
         'LGPD Violation: Patient ID required when PII is present',
@@ -155,8 +155,8 @@ export class AISecurityManager {
     ]
 
     if (
-      anvisa_required_use_cases.includes(healthcare_context.use_case)
-      && !compliance.anvisa_certified
+      anvisa_required_use_cases.includes(healthcare_context.use_case) &&
+      !compliance.anvisa_certified
     ) {
       return false
     }
@@ -169,8 +169,8 @@ export class AISecurityManager {
     ]
 
     if (
-      cfm_required_use_cases.includes(healthcare_context.use_case)
-      && !compliance.cfm_approved
+      cfm_required_use_cases.includes(healthcare_context.use_case) &&
+      !compliance.cfm_approved
     ) {
       return false
     }

@@ -153,7 +153,7 @@ async function validateCFMCompliance(
 
   // Check procedure-specific certifications
   const requiredCertifications = getRequiredCertifications(procedureType)
-  const hasRequiredCerts = requiredCertifications.every((cert) =>
+  const hasRequiredCerts = requiredCertifications.every(cert =>
     professional.certifications.includes(cert)
   )
 
@@ -471,7 +471,7 @@ export const aestheticClinicRouter = router({
               searchCriteria,
               resultsCount: searchResult.clients.length,
               totalResults: searchResult.total,
-              filters: Object.keys(input).filter((key) => input[key] !== undefined),
+              filters: Object.keys(input).filter(key => input[key] !== undefined),
               lgpdCompliant: true,
             }),
           },

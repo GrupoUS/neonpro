@@ -49,8 +49,8 @@ const sensitivePatterns = [
 // Redact sensitive data from log messages
 function redactSensitiveData(message: string): string {
   let redactedMessage = message
-  sensitivePatterns.forEach((pattern) => {
-    redactedMessage = redactedMessage.replace(pattern, (match) => {
+  sensitivePatterns.forEach(pattern => {
+    redactedMessage = redactedMessage.replace(pattern, match => {
       return match.replace(/"[^"]+"/g, '"[REDACTED]"')
     })
   })
@@ -63,7 +63,7 @@ const healthcareFormat = format.combine(
     format: 'YYYY-MM-DD HH:mm:ss.SSS',
   }),
   format.errors({ stack: true }),
-  format((info) => {
+  format(info => {
     // Redact sensitive data from the message
     if (info.message && typeof info.message === 'string') {
       info.message = redactSensitiveData(info.message)

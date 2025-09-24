@@ -161,8 +161,8 @@ export function updateSessionStatistics(
   }
 
   if (message.metadata?.responseTime) {
-    const totalResponseTime = updatedStats.avgResponseTime * (updatedStats.messageCount - 1)
-      + message.metadata.responseTime
+    const totalResponseTime = updatedStats.avgResponseTime * (updatedStats.messageCount - 1) +
+      message.metadata.responseTime
     updatedStats.avgResponseTime = totalResponseTime / updatedStats.messageCount
   }
 

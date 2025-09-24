@@ -149,7 +149,7 @@ const searchCriteriaSchema = z.object({
 
 const app = new Hono()
 
-app.post('/', requireAuth, dataProtection.clientView, async (c) => {
+app.post('/', requireAuth, dataProtection.clientView, async c => {
   const startTime = Date.now()
 
   try {
@@ -164,13 +164,13 @@ app.post('/', requireAuth, dataProtection.clientView, async (c) => {
     // Determine search type based on criteria
     let searchType = searchCriteria.searchType
     if (
-      !searchCriteria.query
-      && Object.keys(searchCriteria.filters).length > 0
+      !searchCriteria.query &&
+      Object.keys(searchCriteria.filters).length > 0
     ) {
       searchType = 'structured'
     } else if (
-      searchCriteria.query
-      && Object.keys(searchCriteria.filters).length > 0
+      searchCriteria.query &&
+      Object.keys(searchCriteria.filters).length > 0
     ) {
       searchType = 'advanced'
     }
@@ -289,7 +289,7 @@ app.post('/', requireAuth, dataProtection.clientView, async (c) => {
         {
           success: false,
           error: 'Dados de busca inválidos',
-          errors: error.errors.map((err) => ({
+          errors: error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),

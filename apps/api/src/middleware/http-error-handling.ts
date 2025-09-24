@@ -196,11 +196,11 @@ function getErrorCode(status: number): string {
  */
 function isValidationError(error: any): boolean {
   return (
-    error.name === 'ValidationError'
-    || error.name === 'ZodError'
-    || error.name === 'ValibotError'
-    || (error.message && error.message.includes('validation'))
-    || Array.isArray(error.errors)
+    error.name === 'ValidationError' ||
+    error.name === 'ZodError' ||
+    error.name === 'ValibotError' ||
+    (error.message && error.message.includes('validation')) ||
+    Array.isArray(error.errors)
   )
 }
 
@@ -209,12 +209,12 @@ function isValidationError(error: any): boolean {
  */
 function isDatabaseError(error: any): boolean {
   return (
-    error.name === 'PrismaClientKnownRequestError'
-    || error.name === 'PrismaClientUnknownRequestError'
-    || error.name === 'PrismaClientValidationError'
-    || error.name === 'DatabaseError'
-    || error.name === 'SequelizeError'
-    || (error.code && typeof error.code === 'string' && error.code.startsWith('P')) // Prisma error codes
+    error.name === 'PrismaClientKnownRequestError' ||
+    error.name === 'PrismaClientUnknownRequestError' ||
+    error.name === 'PrismaClientValidationError' ||
+    error.name === 'DatabaseError' ||
+    error.name === 'SequelizeError' ||
+    (error.code && typeof error.code === 'string' && error.code.startsWith('P')) // Prisma error codes
   )
 }
 
@@ -223,15 +223,15 @@ function isDatabaseError(error: any): boolean {
  */
 function isAuthError(error: any): boolean {
   return (
-    error.name === 'AuthenticationError'
-    || error.name === 'AuthorizationError'
-    || error.name === 'UnauthorizedError'
-    || error.name === 'ForbiddenError'
-    || (error.message
-      && (error.message.toLowerCase().includes('unauthorized')
-        || error.message.toLowerCase().includes('forbidden')
-        || error.message.toLowerCase().includes('access denied')
-        || error.message.toLowerCase().includes('not authorized')))
+    error.name === 'AuthenticationError' ||
+    error.name === 'AuthorizationError' ||
+    error.name === 'UnauthorizedError' ||
+    error.name === 'ForbiddenError' ||
+    (error.message &&
+      (error.message.toLowerCase().includes('unauthorized') ||
+        error.message.toLowerCase().includes('forbidden') ||
+        error.message.toLowerCase().includes('access denied') ||
+        error.message.toLowerCase().includes('not authorized')))
   )
 }
 
@@ -240,15 +240,15 @@ function isAuthError(error: any): boolean {
  */
 function isNetworkError(error: any): boolean {
   return (
-    error.name === 'TimeoutError'
-    || error.name === 'NetworkError'
-    || error.name === 'FetchError'
-    || error.code === 'ECONNREFUSED'
-    || error.code === 'ENOTFOUND'
-    || error.code === 'ETIMEDOUT'
-    || (error.message
-      && (error.message.includes('timeout')
-        || error.message.includes('network')
-        || error.message.includes('connection')))
+    error.name === 'TimeoutError' ||
+    error.name === 'NetworkError' ||
+    error.name === 'FetchError' ||
+    error.code === 'ECONNREFUSED' ||
+    error.code === 'ENOTFOUND' ||
+    error.code === 'ETIMEDOUT' ||
+    (error.message &&
+      (error.message.includes('timeout') ||
+        error.message.includes('network') ||
+        error.message.includes('connection')))
   )
 }

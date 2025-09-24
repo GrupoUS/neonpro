@@ -23,7 +23,7 @@ export function useSpecialRequirements(): UseSpecialRequirementsReturn {
   }
 
   const handleRemoveRequirement = (requirement: string) => {
-    setSpecialRequirements(specialRequirements.filter((req) => req !== requirement))
+    setSpecialRequirements(specialRequirements.filter(req => req !== requirement))
   }
 
   return {

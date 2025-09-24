@@ -347,7 +347,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       // Remove prefix from returned keys
       const prefix = this.redisConfig.keyPrefix || ''
-      return keys.map((key) => key.startsWith(prefix) ? key.substring(prefix.length) : key)
+      return keys.map(key => key.startsWith(prefix) ? key.substring(prefix.length) : key)
     } catch (error) {
       logHealthcareError('redis-cache', error as Error, {
         method: 'getKeys',
@@ -461,7 +461,7 @@ export class RedisCacheBackend implements CacheBackend {
         })
       })
 
-      this.redis.on('error', (error) => {
+      this.redis.on('error', error => {
         logHealthcareError('redis-cache', error as Error, {
           method: 'initializeRedis',
           component: 'redis-cache',
@@ -489,7 +489,7 @@ export class RedisCacheBackend implements CacheBackend {
       })
 
       // Connect to Redis
-      this.redis.connect().catch((error) => {
+      this.redis.connect().catch(error => {
         logHealthcareError('redis-cache', error as Error, {
           method: 'initializeRedis',
           component: 'redis-cache',
@@ -523,7 +523,7 @@ export class RedisCacheBackend implements CacheBackend {
           maxRetries: this.maxRetries,
           event: 'connection_retry',
         })
-        this.redis.connect().catch((error) => {
+        this.redis.connect().catch(error => {
           logHealthcareError('redis-cache', error as Error, {
             method: 'handleConnectionError',
             component: 'redis-cache',
@@ -650,9 +650,9 @@ export class RedisCacheBackend implements CacheBackend {
       const parsed = JSON.parse(jsonString, (key, value) => {
         // Prevent prototype pollution
         if (
-          key === '__proto__'
-          || key === 'constructor'
-          || key === 'prototype'
+          key === '__proto__' ||
+          key === 'constructor' ||
+          key === 'prototype'
         ) {
           return undefined
         }
@@ -733,13 +733,13 @@ export class RedisCacheBackend implements CacheBackend {
    */
   private validateCacheEntry(entry: unknown): boolean {
     return !!(
-      entry
-      && typeof entry === 'object'
-      && (entry as Record<string, unknown>).key
-      && typeof (entry as Record<string, unknown>).createdAt === 'string'
-      && typeof (entry as Record<string, unknown>).lastAccessedAt === 'string'
-      && typeof (entry as Record<string, unknown>).accessCount === 'number'
-      && (entry as Record<string, unknown>).sensitivity
+      entry &&
+      typeof entry === 'object' &&
+      (entry as Record<string, unknown>).key &&
+      typeof (entry as Record<string, unknown>).createdAt === 'string' &&
+      typeof (entry as Record<string, unknown>).lastAccessedAt === 'string' &&
+      typeof (entry as Record<string, unknown>).accessCount === 'number' &&
+      (entry as Record<string, unknown>).sensitivity
     )
   }
 

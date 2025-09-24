@@ -1,15 +1,46 @@
 import {
   Appointment,
-  AppointmentFilter,
-  AppointmentQueryOptions,
+  AppointmentFilters,
   AppointmentRepository as IAppointmentRepository,
-  AppointmentSearchResult,
   AppointmentStatus,
-  CreateAppointmentRequest,
-  UpdateAppointmentRequest,
 } from '@neonpro/domain'
 import { SupabaseClient } from '@supabase/supabase-js'
-import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
+import { logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
+
+// Local type definitions for request/response objects
+interface AppointmentQueryOptions {
+  limit?: number
+  offset?: number
+  sortBy?: 'date' | 'status' | 'priority'
+  sortOrder?: 'asc' | 'desc'
+}
+
+interface AppointmentSearchResult {
+  appointments: Appointment[]
+  total: number
+  filters: AppointmentFilters
+}
+
+interface CreateAppointmentRequest {
+  patientId: string
+  professionalId: string
+  clinicId: string
+  startTime: Date
+  endTime: Date
+  type: string
+  status: AppointmentStatus
+  priority?: string
+  notes?: string
+}
+
+interface UpdateAppointmentRequest {
+  id: string
+  startTime?: Date
+  endTime?: Date
+  status?: AppointmentStatus
+  priority?: string
+  notes?: string
+}
 
 /**
  * Supabase implementation of AppointmentRepository
@@ -34,7 +65,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         .single()
 
       if (error) {
-        logHealthcareError('database', error, { method: 'findById', appointmentId: id })
+        logHealthcareError('database', error as Error, { method: 'findById', appointmentId: id })
         return null
       }
 
@@ -42,7 +73,7 @@ export class AppointmentRepository implements IAppointmentRepository {
 
       return this.mapDatabaseAppointmentToDomain(data)
     } catch (error) {
-      logHealthcareError('database', error, { method: 'findById', appointmentId: id })
+      logHealthcareError('database', error as Error, { method: 'findById', appointmentId: id })
       return null
     }
   }

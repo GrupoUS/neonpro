@@ -63,7 +63,7 @@ export const monitoringConfig = {
     ],
 
     // Before send callback for sensitive data filtering
-    beforeSend: (event) => {
+    beforeSend: event => {
       if (event.request && event.request.headers) {
         // Filter sensitive headers
         const sensitiveHeaders = [
@@ -73,7 +73,7 @@ export const monitoringConfig = {
           'proxy-authorization',
         ]
         event.request.headers = Object.keys(event.request.headers)
-          .filter((key) => !sensitiveHeaders.includes(key.toLowerCase()))
+          .filter(key => !sensitiveHeaders.includes(key.toLowerCase()))
           .reduce((obj, key) => {
             obj[key] = event.request.headers[key]
             return obj
@@ -97,9 +97,9 @@ export const monitoringConfig = {
             'patient_id',
           ]
           const maskData = (obj: any) => {
-            Object.keys(obj).forEach((key) => {
+            Object.keys(obj).forEach(key => {
               if (
-                sensitiveFields.some((field) => key.toLowerCase().includes(field))
+                sensitiveFields.some(field => key.toLowerCase().includes(field))
               ) {
                 obj[key] = '***MASKED***'
               } else if (typeof obj[key] === 'object' && obj[key] !== null) {

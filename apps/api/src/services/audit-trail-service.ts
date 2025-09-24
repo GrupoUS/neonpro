@@ -350,82 +350,76 @@ export class AuditTrailService {
 
       // Apply filters
       if (filters.startDate) {
-        filteredEvents = filteredEvents.filter((event) => event.timestamp >= filters.startDate!)
+        filteredEvents = filteredEvents.filter(event => event.timestamp >= filters.startDate!)
       }
 
       if (filters.endDate) {
-        filteredEvents = filteredEvents.filter((event) => event.timestamp <= filters.endDate!)
+        filteredEvents = filteredEvents.filter(event => event.timestamp <= filters.endDate!)
       }
 
       if (filters.userIds?.length) {
-        filteredEvents = filteredEvents.filter((event) => filters.userIds!.includes(event.userId))
+        filteredEvents = filteredEvents.filter(event => filters.userIds!.includes(event.userId))
       }
 
       if (filters.eventTypes?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
+        filteredEvents = filteredEvents.filter(event =>
           filters.eventTypes!.includes(event.eventType)
         )
       }
 
       if (filters.categories?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
+        filteredEvents = filteredEvents.filter(event =>
           filters.categories!.includes(event.category)
         )
       }
 
       if (filters.severities?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
+        filteredEvents = filteredEvents.filter(event =>
           filters.severities!.includes(event.severity)
         )
       }
 
       if (filters.resourceTypes?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
+        filteredEvents = filteredEvents.filter(event =>
           filters.resourceTypes!.includes(event.resourceType)
         )
       }
 
       if (filters.patientIds?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
+        filteredEvents = filteredEvents.filter(event =>
           event.patientId && filters.patientIds!.includes(event.patientId)
         )
       }
 
       if (filters.clinicIds?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
-          filters.clinicIds!.includes(event.clinicId)
-        )
+        filteredEvents = filteredEvents.filter(event => filters.clinicIds!.includes(event.clinicId))
       }
 
       if (filters.complianceFrameworks?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
-          event.complianceFrameworks.some((framework) =>
+        filteredEvents = filteredEvents.filter(event =>
+          event.complianceFrameworks.some(framework =>
             filters.complianceFrameworks!.includes(framework)
           )
         )
       }
 
       if (filters.dataSensitivities?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
+        filteredEvents = filteredEvents.filter(event =>
           filters.dataSensitivities!.includes(event.dataSensitivity)
         )
       }
 
       if (filters.riskScores?.min !== undefined) {
-        filteredEvents = filteredEvents.filter((event) =>
-          event.riskScore >= filters.riskScores!.min!
-        )
+        filteredEvents = filteredEvents.filter(event => event.riskScore >= filters.riskScores!.min!)
       }
 
       if (filters.riskScores?.max !== undefined) {
-        filteredEvents = filteredEvents.filter((event) =>
-          event.riskScore <= filters.riskScores!.max!
-        )
+        filteredEvents = filteredEvents.filter(event => event.riskScore <= filters.riskScores!.max!)
       }
 
       if (filters.tags?.length) {
-        filteredEvents = filteredEvents.filter((event) =>
-          filters.tags!.some((tag) => event.metadata.tags.includes(tag))
+        filteredEvents = filteredEvents.filter(event =>
+          filters.tags!.some(tag => event.metadata.tags.includes(tag))
         )
       }
 
@@ -482,7 +476,7 @@ export class AuditTrailService {
         eventsByDay: this.groupByDate(events),
         riskScoreDistribution: this.calculateRiskDistribution(events),
         complianceScore: this.calculateComplianceScore(events),
-        investigationRequired: events.filter((e) => e.metadata.requiresInvestigation).length,
+        investigationRequired: events.filter(e => e.metadata.requiresInvestigation).length,
         trends: this.calculateTrends(events),
       }
     } catch {
@@ -512,9 +506,9 @@ export class AuditTrailService {
       const events = await this.getAuditEvents(reportFilters)
       const analytics = await this.getAuditAnalytics(reportFilters)
 
-      const criticalEvents = events.filter((e) => e.severity === AUDIT_SEVERITY.CRITICAL)
-      const highRiskEvents = events.filter((e) => e.riskScore >= 0.8)
-      const complianceViolations = events.filter((e) => e.status === AUDIT_STATUS.FAILURE)
+      const criticalEvents = events.filter(e => e.severity === AUDIT_SEVERITY.CRITICAL)
+      const highRiskEvents = events.filter(e => e.riskScore >= 0.8)
+      const complianceViolations = events.filter(e => e.status === AUDIT_STATUS.FAILURE)
 
       const recommendations = this.generateRecommendations(analytics)
 
@@ -576,7 +570,7 @@ export class AuditTrailService {
       this.investigations.set(investigation.id, investigation)
 
       // Update audit event metadata
-      const auditEvent = this.auditEvents.find((e) => e.id === eventId)
+      const auditEvent = this.auditEvents.find(e => e.id === eventId)
       if (auditEvent) {
         auditEvent.metadata.investigationStatus = 'pending'
       }
@@ -620,7 +614,7 @@ export class AuditTrailService {
 
       // Update audit event metadata if resolved
       if (updates.status === 'resolved') {
-        const auditEvent = this.auditEvents.find((e) => e.id === investigation.eventId)
+        const auditEvent = this.auditEvents.find(e => e.id === investigation.eventId)
         if (auditEvent) {
           auditEvent.metadata.investigationStatus = 'resolved'
           auditEvent.metadata.investigationNotes = updates.resolution
@@ -654,13 +648,13 @@ export class AuditTrailService {
 
     if (filters) {
       if (filters.status) {
-        investigations = investigations.filter((i) => i.status === filters.status)
+        investigations = investigations.filter(i => i.status === filters.status)
       }
       if (filters.priority) {
-        investigations = investigations.filter((i) => i.priority === filters.priority)
+        investigations = investigations.filter(i => i.priority === filters.priority)
       }
       if (filters.assignedTo) {
-        investigations = investigations.filter((i) => i.assignedTo === filters.assignedTo)
+        investigations = investigations.filter(i => i.assignedTo === filters.assignedTo)
       }
     }
 
@@ -687,17 +681,17 @@ export class AuditTrailService {
   async cleanupExpiredEvents(): Promise<number> {
     try {
       const now = new Date()
-      const expiredEvents = this.auditEvents.filter((event) =>
+      const expiredEvents = this.auditEvents.filter(event =>
         event.retentionPolicy.autoDelete && event.retentionPolicy.retainUntil <= now
       )
 
       const count = expiredEvents.length
 
       // Remove from memory
-      this.auditEvents = this.auditEvents.filter((event) => !expiredEvents.includes(event))
+      this.auditEvents = this.auditEvents.filter(event => !expiredEvents.includes(event))
 
       // Delete from database
-      await this.deleteExpiredEventsFromDB(expiredEvents.map((e) => e.id))
+      await this.deleteExpiredEventsFromDB(expiredEvents.map(e => e.id))
 
       logger.info('Expired audit events cleaned up', { count })
 
@@ -723,7 +717,7 @@ export class AuditTrailService {
       return
     }
 
-    this.auditEvents = data.map((event) => ({
+    this.auditEvents = data.map(event => ({
       ...event,
       timestamp: new Date(event.timestamp),
       retentionPolicy: {
@@ -750,7 +744,7 @@ export class AuditTrailService {
       return
     }
 
-    data.forEach((investigation) => {
+    data.forEach(investigation => {
       this.investigations.set(investigation.id, {
         ...investigation,
         requestedAt: new Date(investigation.requested_at),
@@ -791,10 +785,10 @@ export class AuditTrailService {
     event: Omit<AuditEvent, 'id' | 'timestamp' | 'retentionPolicy' | 'metadata'>,
   ): boolean {
     return (
-      event.severity === AUDIT_SEVERITY.CRITICAL
-      || event.riskScore >= 0.8
-      || event.status === AUDIT_STATUS.FAILURE
-      || event.category === AUDIT_CATEGORY.SECURITY
+      event.severity === AUDIT_SEVERITY.CRITICAL ||
+      event.riskScore >= 0.8 ||
+      event.status === AUDIT_STATUS.FAILURE ||
+      event.category === AUDIT_CATEGORY.SECURITY
     )
   }
 
@@ -861,7 +855,7 @@ export class AuditTrailService {
   }
 
   private async notifyRealTimeCallbacks(event: AuditEvent): Promise<void> {
-    this.realTimeCallbacks.forEach((callback) => {
+    this.realTimeCallbacks.forEach(callback => {
       try {
         callback(event)
       } catch {
@@ -918,7 +912,7 @@ export class AuditTrailService {
       critical: 0,
     }
 
-    events.forEach((event) => {
+    events.forEach(event => {
       if (event.riskScore < 0.3) distribution.low++
       else if (event.riskScore < 0.6) distribution.medium++
       else if (event.riskScore < 0.8) distribution.high++
@@ -931,9 +925,9 @@ export class AuditTrailService {
   private calculateComplianceScore(events: AuditEvent[]): number {
     if (events.length === 0) return 1.0
 
-    const compliantEvents = events.filter((event) =>
-      event.status === AUDIT_STATUS.SUCCESS
-      && event.complianceFrameworks.length > 0
+    const compliantEvents = events.filter(event =>
+      event.status === AUDIT_STATUS.SUCCESS &&
+      event.complianceFrameworks.length > 0
     ).length
 
     return compliantEvents / events.length
@@ -949,9 +943,9 @@ export class AuditTrailService {
     const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
     const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-    const dailyEvents = events.filter((e) => e.timestamp >= oneDayAgo).length
-    const weeklyEvents = events.filter((e) => e.timestamp >= oneWeekAgo).length
-    const monthlyEvents = events.filter((e) => e.timestamp >= oneMonthAgo).length
+    const dailyEvents = events.filter(e => e.timestamp >= oneDayAgo).length
+    const weeklyEvents = events.filter(e => e.timestamp >= oneWeekAgo).length
+    const monthlyEvents = events.filter(e => e.timestamp >= oneMonthAgo).length
 
     return {
       dailyChange: dailyEvents,

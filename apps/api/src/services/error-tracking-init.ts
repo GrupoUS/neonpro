@@ -65,8 +65,8 @@ export async function initializeErrorTracking(): Promise<void> {
     // Even if initialization fails, we should continue with the application
     // but log the failure for monitoring
     if (
-      typeof process !== 'undefined'
-      && process.env.NODE_ENV === 'production'
+      typeof process !== 'undefined' &&
+      process.env.NODE_ENV === 'production'
     ) {
       console.error(
         'Error tracking initialization failure in production - this should be investigated',
@@ -213,7 +213,7 @@ export async function forceErrorTracking(
       captureException,
       _setLevel,
     } = await import('@sentry/node')
-    withScope((scope) => {
+    withScope(scope => {
       scope.setTag('test', true)
       scope.setTag('severity', severity)
       scope.setLevel(severity === 'critical' ? 'fatal' : (severity as any))

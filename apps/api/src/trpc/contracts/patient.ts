@@ -242,7 +242,7 @@ export const patientRouter = router({
 
       // Track changes for audit
       const changes = {}
-      Object.keys(input).forEach((key) => {
+      Object.keys(input).forEach(key => {
         if (key !== 'id' && input[key] !== currentPatient[key]) {
           changes[key] = {
             from: currentPatient[key],

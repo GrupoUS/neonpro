@@ -428,7 +428,7 @@ export class AestheticAguiProtocol extends EventEmitter {
       treatments,
       totalCount: treatments.length,
       filters: payload.filters,
-      relevanceScores: treatments.map((t) => ({ treatmentId: t.id, score: t.relevanceScore })),
+      relevanceScores: treatments.map(t => ({ treatmentId: t.id, score: t.relevanceScore })),
       recommendations: await this.generateTreatmentRecommendations(treatments, payload),
       availability: await this.checkTreatmentsAvailability(treatments),
       processingTime: Date.now() - Date.now(),
@@ -748,16 +748,17 @@ export class AestheticAguiProtocol extends EventEmitter {
   private updateMetrics(processingTime: number, success: boolean): void {
     // Update average response time
     this.metrics.averageResponseTime =
-      (this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) + processingTime)
-      / this.metrics.totalRequests
+      (this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) + processingTime) /
+      this.metrics.totalRequests
 
     // Update success/error rates
     if (success) {
-      this.metrics.successRate = (this.metrics.successRate * (this.metrics.totalRequests - 1) + 100)
-        / this.metrics.totalRequests
+      this.metrics.successRate =
+        (this.metrics.successRate * (this.metrics.totalRequests - 1) + 100) /
+        this.metrics.totalRequests
     } else {
-      this.metrics.errorRate = (this.metrics.errorRate * (this.metrics.totalRequests - 1) + 100)
-        / this.metrics.totalRequests
+      this.metrics.errorRate = (this.metrics.errorRate * (this.metrics.totalRequests - 1) + 100) /
+        this.metrics.totalRequests
     }
   }
 

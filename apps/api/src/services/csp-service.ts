@@ -49,7 +49,7 @@ export interface CSPViolation {
  */
 export function generateCSP(policy: ContentSecurityPolicy): string {
   const directives = policy.directives
-    .map((directive) => `${directive.name} ${directive.values.join(' ')}`)
+    .map(directive => `${directive.name} ${directive.values.join(' ')}`)
     .join('; ')
 
   return directives

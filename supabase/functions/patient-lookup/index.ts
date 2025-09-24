@@ -146,8 +146,8 @@ function applyDataMinimization(
     metadata: {
       hasActiveTreatment: !!patient.last_visit_date,
       hasAllergies: Array.isArray(patient.allergies) && patient.allergies.length > 0,
-      hasChronicConditions: Array.isArray(patient.chronic_conditions)
-        && patient.chronic_conditions.length > 0,
+      hasChronicConditions: Array.isArray(patient.chronic_conditions) &&
+        patient.chronic_conditions.length > 0,
       insuranceStatus: patient.insurance_provider ? 'active' : 'unknown',
       accessLevel: 'limited',
     },
@@ -301,7 +301,7 @@ async function hashValue(value: string): Promise<string> {
   const data = encoder.encode(value)
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
   const hashArray = Array.from(new Uint8Array(hashBuffer))
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 /**
@@ -337,8 +337,8 @@ async function validateConsent(
 
   // Check data retention period
   if (
-    patient.data_retention_until
-    && new Date(patient.data_retention_until) < new Date()
+    patient.data_retention_until &&
+    new Date(patient.data_retention_until) < new Date()
   ) {
     return { isValid: false, status: 'retention_expired' }
   }
@@ -427,7 +427,7 @@ function buildSearchQuery(
 /**
  * Main patient lookup handler
  */
-serve(async (req) => {
+serve(async req => {
   const startTime = Date.now()
 
   // Handle CORS preflight
@@ -449,10 +449,10 @@ serve(async (req) => {
 
     // Validate required fields
     if (
-      !requestData.searchType
-      || !requestData.searchValue
-      || !requestData.clinicId
-      || !requestData.requesterId
+      !requestData.searchType ||
+      !requestData.searchValue ||
+      !requestData.clinicId ||
+      !requestData.requesterId
     ) {
       return new Response(
         JSON.stringify({
@@ -517,8 +517,8 @@ serve(async (req) => {
             requestData.purpose,
           )
           if (
-            !consentValidation.isValid
-            && requestData.purpose !== 'emergency'
+            !consentValidation.isValid &&
+            requestData.purpose !== 'emergency'
           ) {
             overallConsentStatus = consentValidation.status
             continue // Skip patients without valid consent

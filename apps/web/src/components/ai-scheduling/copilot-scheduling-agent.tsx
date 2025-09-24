@@ -139,7 +139,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     ],
     handler: async (name: string, contact: string, preferences: string[] = []) => {
       try {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentStep: 'gathering_info',
           patientInfo: { name, contact, preferences },
@@ -196,9 +196,9 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
       accessibility: string[] = [],
     ) => {
       try {
-        const parsedDates = preferredDates.map((date) => parseISO(date))
+        const parsedDates = preferredDates.map(date => parseISO(date))
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentStep: 'finding_slots',
           appointmentRequirements: {
@@ -231,12 +231,12 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     ],
     handler: async (slotId: string) => {
       try {
-        const selectedSlot = state.availableSlots.find((slot) => slot.id === slotId)
+        const selectedSlot = state.availableSlots.find(slot => slot.id === slotId)
         if (!selectedSlot) {
           throw new Error('Selected slot not found')
         }
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentStep: 'confirming',
           selectedSlot: slotId,
@@ -259,7 +259,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     ],
     handler: async (patientId: string) => {
       try {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentStep: 'scheduling',
         }))
@@ -267,7 +267,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
         // Schedule the appointment
         const appointmentId = await scheduleAppointment(patientId)
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentStep: 'completed',
         }))
@@ -294,11 +294,11 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
     try {
       // Get date range for search
       const startDate = preferredDates.length > 0
-        ? new Date(Math.min(...preferredDates.map((d) => d.getTime())))
+        ? new Date(Math.min(...preferredDates.map(d => d.getTime())))
         : new Date()
 
       const endDate = preferredDates.length > 0
-        ? new Date(Math.max(...preferredDates.map((d) => d.getTime())))
+        ? new Date(Math.max(...preferredDates.map(d => d.getTime())))
         : addDays(startDate, 7)
 
       // Get real-time availability
@@ -309,7 +309,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
 
       // Filter and format slots based on requirements
       const suitableSlots = availability.availableSlots
-        .filter((slot) => {
+        .filter(slot => {
           const slotDuration = (slot.end.getTime() - slot.start.getTime()) / (1000 * 60)
           return slotDuration >= duration
         })
@@ -329,14 +329,14 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
           'Morning slots have higher attendance rates',
           'Consider mid-week appointments for better availability',
         ],
-        riskFactors: availability.conflicts.map((conflict) => conflict.description),
+        riskFactors: availability.conflicts.map(conflict => conflict.description),
         recommendations: [
           'Book 2-3 days in advance for optimal availability',
           'Consider telemedicine options for urgent cases',
         ],
       }
 
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         availableSlots: suitableSlots,
         optimization,
@@ -353,7 +353,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
         throw new Error('No time slot selected')
       }
 
-      const selectedSlot = state.availableSlots.find((slot) => slot.id === state.selectedSlot)
+      const selectedSlot = state.availableSlots.find(slot => slot.id === state.selectedSlot)
       if (!selectedSlot) {
         throw new Error('Selected slot not found')
       }
@@ -412,16 +412,16 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
                   <div key={step} className='flex items-center'>
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                        state.currentStep === step
-                          || (state.currentStep !== 'idle'
-                            && [
+                        state.currentStep === step ||
+                          (state.currentStep !== 'idle' &&
+                            [
                               'gathering_info',
                               'finding_slots',
                               'confirming',
                               'scheduling',
                               'completed',
-                            ].includes(state.currentStep)
-                            && [
+                            ].includes(state.currentStep) &&
+                            [
                                 'gathering_info',
                                 'finding_slots',
                                 'confirming',
@@ -435,7 +435,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
                       {index + 1}
                     </div>
                     <span className='ml-2 text-sm font-medium text-gray-900'>
-                      {step.replace('_', ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                      {step.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                     </span>
                   </div>
                 ))}
@@ -516,7 +516,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
                 Available Time Slots
               </h3>
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                {state.availableSlots.slice(0, 6).map((slot) => (
+                {state.availableSlots.slice(0, 6).map(slot => (
                   <div
                     key={slot.id}
                     className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -525,7 +525,7 @@ export const CopilotSchedulingAgent: React.FC<SchedulingAgentProps> = ({
                         : 'border-gray-300 hover:border-gray-400'
                     }`}
                     onClick={() => {
-                      setState((prev) => ({
+                      setState(prev => ({
                         ...prev,
                         selectedSlot: slot.id,
                       }))

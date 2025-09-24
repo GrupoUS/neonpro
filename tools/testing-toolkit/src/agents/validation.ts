@@ -74,8 +74,8 @@ export function validateTDDCycle(phases: Record<string, boolean>): {
   completionRate: number
 } {
   const requiredPhases = ['red-phase', 'green-phase', 'refactor-phase']
-  const missingPhases = requiredPhases.filter((phase) => !phases[phase])
-  const completedPhases = requiredPhases.filter((phase) => phases[phase])
+  const missingPhases = requiredPhases.filter(phase => !phases[phase])
+  const completedPhases = requiredPhases.filter(phase => phases[phase])
 
   return {
     compliant: missingPhases.length === 0,
@@ -104,9 +104,9 @@ export function validateHealthcareCompliance(data: any): {
   }
 
   if (
-    !data.auditTrail
-    || !Array.isArray(data.auditTrail)
-    || data.auditTrail.length === 0
+    !data.auditTrail ||
+    !Array.isArray(data.auditTrail) ||
+    data.auditTrail.length === 0
   ) {
     violations.push(
       'Missing or incomplete audit trail (LGPD/ANVISA violation)',
@@ -114,9 +114,9 @@ export function validateHealthcareCompliance(data: any): {
   }
 
   if (
-    !data.incidentReports
-    || !Array.isArray(data.incidentReports)
-    || data.incidentReports.length === 0
+    !data.incidentReports ||
+    !Array.isArray(data.incidentReports) ||
+    data.incidentReports.length === 0
   ) {
     violations.push(
       'Missing incident response records (LGPD/ANVISA violation)',
@@ -130,7 +130,7 @@ export function validateHealthcareCompliance(data: any): {
   // Determine risk level
   let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low'
   if (violations.length > 0) {
-    if (violations.some((v) => v.includes('consent') || v.includes('audit'))) {
+    if (violations.some(v => v.includes('consent') || v.includes('audit'))) {
       riskLevel = 'critical'
     } else if (violations.length > 2) {
       riskLevel = 'high'
@@ -157,7 +157,7 @@ export function generateAgentRecommendations(
   const recommendations: string[] = []
 
   if (!validationResult.passed) {
-    validationResult.failures.forEach((failure) => {
+    validationResult.failures.forEach(failure => {
       const [metric] = failure.split(':')
 
       switch (agent) {

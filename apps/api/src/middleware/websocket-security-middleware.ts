@@ -103,8 +103,8 @@ export class WebSocketSecurityMiddleware {
 
     // Check origin restrictions
     if (
-      this.config.allowedOrigins.length > 0
-      && !this.config.allowedOrigins.includes(origin)
+      this.config.allowedOrigins.length > 0 &&
+      !this.config.allowedOrigins.includes(origin)
     ) {
       this.logSecurityEvent({
         type: 'connection_attempt',
@@ -216,8 +216,8 @@ export class WebSocketSecurityMiddleware {
 
     // Check rate limiting
     if (
-      this.config.enableRateLimiting
-      && !this.checkMessageRate(connectionId)
+      this.config.enableRateLimiting &&
+      !this.checkMessageRate(connectionId)
     ) {
       this.logSecurityEvent({
         type: 'rate_limit',
@@ -264,8 +264,8 @@ export class WebSocketSecurityMiddleware {
 
     // Check if user already has too many connections
     if (
-      this.config.enableRateLimiting
-      && !this.checkUserConnectionLimits(userId)
+      this.config.enableRateLimiting &&
+      !this.checkUserConnectionLimits(userId)
     ) {
       this.logSecurityEvent({
         type: 'rate_limit',
@@ -342,12 +342,12 @@ export class WebSocketSecurityMiddleware {
    */
   private getClientIP(_request: any): string {
     return (
-      request.headers['x-forwarded-for']
-      || request.headers['x-real-ip']
-      || request.connection.remoteAddress
-      || request.socket.remoteAddress
-      || request.info.remoteAddress
-      || 'unknown'
+      request.headers['x-forwarded-for'] ||
+      request.headers['x-real-ip'] ||
+      request.connection.remoteAddress ||
+      request.socket.remoteAddress ||
+      request.info.remoteAddress ||
+      'unknown'
     )
       .split(',')[0]
       .trim()
@@ -432,8 +432,8 @@ export class WebSocketSecurityMiddleware {
   private checkUserConnectionLimits(_userId: string): boolean {
     const userConnections = this.userConnections.get(userId)
     return (
-      !userConnections
-      || userConnections.size < this.config.maxConnectionsPerUser
+      !userConnections ||
+      userConnections.size < this.config.maxConnectionsPerUser
     )
   }
 
@@ -452,7 +452,7 @@ export class WebSocketSecurityMiddleware {
 
     // Clean old timestamps
     const validTimestamps = timestamps.filter(
-      (timestamp) => now - timestamp < windowMs,
+      timestamp => now - timestamp < windowMs,
     )
     this.messageTimestamps.set(connectionId, validTimestamps)
 
@@ -487,7 +487,7 @@ export class WebSocketSecurityMiddleware {
       /onerror=/i,
     ]
 
-    return !dangerousPatterns.some((pattern) => pattern.test(messageStr))
+    return !dangerousPatterns.some(pattern => pattern.test(messageStr))
   }
 
   /**
@@ -498,7 +498,7 @@ export class WebSocketSecurityMiddleware {
     if (!connections) return false
 
     // Check for rapid connection attempts
-    const recentConnections = Array.from(connections).filter((connectionId) => {
+    const recentConnections = Array.from(connections).filter(connectionId => {
       const connection = this.connections.get(connectionId)
       return connection && Date.now() - connection.connectedAt < 60000 // Last minute
     })
@@ -520,7 +520,7 @@ export class WebSocketSecurityMiddleware {
       /^$/, // Empty user agent
     ]
 
-    return suspiciousPatterns.some((pattern) => pattern.test(userAgent))
+    return suspiciousPatterns.some(pattern => pattern.test(userAgent))
   }
 
   /**
@@ -635,7 +635,7 @@ export class WebSocketSecurityMiddleware {
     connectionDistribution: Record<string, number>
   } {
     const recentEvents = this.securityEvents.filter(
-      (event) => Date.now() - event.timestamp < 3600000, // Last hour
+      event => Date.now() - event.timestamp < 3600000, // Last hour
     )
 
     const connectionDistribution = recentEvents.reduce(
@@ -675,7 +675,7 @@ export class WebSocketSecurityMiddleware {
       // Disconnect all connections from this IP
       const ipConnections = this.ipConnections.get(ip)
       if (ipConnections) {
-        ipConnections.forEach((connectionId) => {
+        ipConnections.forEach(connectionId => {
           this.untrackConnection(connectionId)
         })
       }

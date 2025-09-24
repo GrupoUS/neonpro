@@ -16,7 +16,7 @@ export class ProviderConfigManager {
    * Initialize providers from configuration array
    */
   initializeProviders(providerConfigs: ProviderConfig[]): void {
-    providerConfigs.forEach((config) => {
+    providerConfigs.forEach(config => {
       this.providers.set(config.provider, config)
     })
   }
@@ -285,7 +285,7 @@ export class ProviderConfigManager {
    * Get enabled providers only
    */
   getEnabledProviders(): ProviderConfig[] {
-    return this.getAllProviderConfigs().filter((config) => config.enabled)
+    return this.getAllProviderConfigs().filter(config => config.enabled)
   }
 
   /**
@@ -293,7 +293,7 @@ export class ProviderConfigManager {
    */
   getProviderByName(providerName: string): ProviderConfig | undefined {
     const provider = Object.values(AIProviderOpt).find(
-      (p) => p === providerName,
+      p => p === providerName,
     )
     return provider ? this.getProviderConfig(provider) : undefined
   }

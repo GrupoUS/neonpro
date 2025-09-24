@@ -249,7 +249,7 @@ function AnalyticsDashboard() {
               { id: 'reports', name: 'Relatórios', icon: Download },
               { id: 'predictions', name: 'Previsões', icon: Brain },
               { id: 'exports', name: 'Exportações', icon: Download },
-            ].map((tab) => (
+            ].map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
@@ -350,7 +350,7 @@ function AnalyticsDashboard() {
                 </Link>
               </div>
               <div className='divide-y divide-gray-200'>
-                {alerts.map((alert) => (
+                {alerts.map(alert => (
                   <div key={alert.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center'>
@@ -424,7 +424,7 @@ function AnalyticsDashboard() {
                   lastUpdated: '3 horas atrás',
                   isPublic: false,
                 },
-              ].map((dashboard) => (
+              ].map(dashboard => (
                 <div
                   key={dashboard.id}
                   className='bg-white rounded-lg shadow hover:shadow-md transition-shadow'
@@ -526,7 +526,7 @@ function AnalyticsDashboard() {
                     frequency: 'Diário',
                     isActive: true,
                   },
-                ].map((kpi) => (
+                ].map(kpi => (
                   <div key={kpi.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center space-x-4'>
@@ -610,7 +610,7 @@ function AnalyticsDashboard() {
                   <h3 className='text-lg font-medium text-gray-900'>Alertas Recentes</h3>
                 </div>
                 <div className='divide-y divide-gray-200'>
-                  {alerts.map((alert) => (
+                  {alerts.map(alert => (
                     <div key={alert.id} className='px-6 py-4'>
                       <div className='flex items-center justify-between'>
                         <div className='flex items-center'>
@@ -674,7 +674,7 @@ function AnalyticsDashboard() {
                 </div>
               </div>
               <div className='divide-y divide-gray-200'>
-                {reports.map((report) => (
+                {reports.map(report => (
                   <div key={report.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex items-center space-x-4'>
@@ -718,7 +718,7 @@ function AnalyticsDashboard() {
             </div>
 
             <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-              {models.map((model) => (
+              {models.map(model => (
                 <div
                   key={model.id}
                   className='bg-white rounded-lg shadow hover:shadow-md transition-shadow'

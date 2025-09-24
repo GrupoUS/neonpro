@@ -302,7 +302,7 @@ export class AestheticRAGService {
   async queryTreatmentCatalog(query: TreatmentCatalogQuery): Promise<AestheticTreatment[]> {
     const treatments = this.knowledgeBase.get('treatments') || []
 
-    let filteredTreatments = treatments.filter((treatment) => {
+    let filteredTreatments = treatments.filter(treatment => {
       // Category filter
       if (query.category && treatment.category !== query.category) {
         return false
@@ -315,7 +315,7 @@ export class AestheticRAGService {
 
       // Concerns filter
       if (query.concerns && query.concerns.length > 0) {
-        const hasMatchingConcern = query.concerns.some((concern) =>
+        const hasMatchingConcern = query.concerns.some(concern =>
           treatment.concerns.includes(concern)
         )
         if (!hasMatchingConcern) {
@@ -326,8 +326,8 @@ export class AestheticRAGService {
       // Budget filter
       if (query.budget) {
         if (
-          treatment.priceRange.min > query.budget.max
-          || treatment.priceRange.max < query.budget.min
+          treatment.priceRange.min > query.budget.max ||
+          treatment.priceRange.max < query.budget.min
         ) {
           return false
         }
@@ -344,7 +344,7 @@ export class AestheticRAGService {
     // Sort by relevance
     filteredTreatments = this.sortByRelevance(filteredTreatments, query)
 
-    return filteredTreatments.map((treatment) => ({
+    return filteredTreatments.map(treatment => ({
       ...treatment,
       relevanceScore: this.calculateRelevanceScore(treatment, query),
     }))
@@ -435,9 +435,9 @@ export class AestheticRAGService {
   async assessSkinType(assessment: SkinAssessmentData): Promise<SkinAssessmentResult> {
     // Mock skin assessment - in real implementation, this would use AI image analysis
     const skinType = this.determineSkinType(assessment.answers, assessment.concerns)
-    const _skinProfile = this.knowledgeBase.get('skin_types')?.find((st) => st.type === skinType)
+    const _skinProfile = this.knowledgeBase.get('skin_types')?.find(st => st.type === skinType)
 
-    const concerns = assessment.concerns.map((concern) => ({
+    const concerns = assessment.concerns.map(concern => ({
       concern,
       severity: this.assessConcernSeverity(concern, assessment.answers),
       recommendations: this.getRecommendationsForConcern(concern, skinType),
@@ -553,7 +553,7 @@ export class AestheticRAGService {
 
   // Helper Methods
   private applyFilters(treatments: any[], filters: Record<string, any>): any[] {
-    return treatments.filter((treatment) => {
+    return treatments.filter(treatment => {
       for (const [key, value] of Object.entries(filters)) {
         if (treatment[key] !== value) {
           return false
@@ -581,7 +581,7 @@ export class AestheticRAGService {
 
     // Concern matches
     if (query.concerns) {
-      const concernMatches = query.concerns.filter((concern) =>
+      const concernMatches = query.concerns.filter(concern =>
         treatment.concerns.includes(concern)
       ).length
       score += (concernMatches / query.concerns.length) * 40
@@ -669,17 +669,17 @@ export class AestheticRAGService {
 
   private getRecommendedProducts(skinType: string, concerns: string[]): any[] {
     const products = this.knowledgeBase.get('products') || []
-    return products.filter((product) =>
-      product.skinTypes.includes(skinType)
-      || product.concerns.some((concern) => concerns.includes(concern))
+    return products.filter(product =>
+      product.skinTypes.includes(skinType) ||
+      product.concerns.some(concern => concerns.includes(concern))
     )
   }
 
   private getRecommendedTreatments(skinType: string, concerns: string[]): any[] {
     const treatments = this.knowledgeBase.get('treatments') || []
-    return treatments.filter((treatment) =>
-      treatment.skinTypes.includes(skinType)
-      || treatment.concerns.some((concern) => concerns.includes(concern))
+    return treatments.filter(treatment =>
+      treatment.skinTypes.includes(skinType) ||
+      treatment.concerns.some(concern => concerns.includes(concern))
     )
   }
 

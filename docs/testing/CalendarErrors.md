@@ -519,8 +519,8 @@ const useBrowserCompatibility = () => {
     }
 
     const isSupported =
-      supportedBrowsers[browser.name as keyof typeof supportedBrowsers]?.minVersion
-        <= browser.version
+      supportedBrowsers[browser.name as keyof typeof supportedBrowsers]?.minVersion <=
+        browser.version
 
     setIsCompatible(isSupported)
 
@@ -584,7 +584,7 @@ const useRetry = (fn: Function, maxRetries = 3) => {
         if (i === maxRetries - 1) break
 
         // Wait before retrying
-        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)))
+        await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)))
       }
     }
 
@@ -630,7 +630,7 @@ const useDegradedMode = () => {
         setMode('offline')
       } else {
         // Check if we can recover to full mode
-        checkApiHealth().then((isHealthy) => {
+        checkApiHealth().then(isHealthy => {
           setMode(isHealthy ? 'full' : 'basic')
         })
       }
@@ -713,7 +713,7 @@ const usePerformanceMonitor = () => {
       // Measure render performance
       const end = performance.now()
 
-      setMetrics((prev) => ({
+      setMetrics(prev => ({
         ...prev,
         renderTime: end - start,
         eventCount: events.length,

@@ -31,14 +31,14 @@ export const createContext = (opts: CreateHTTPContextOptions) => {
   // Extract user information from request headers or JWT
   const userId = req.headers['x-user-id'] as string
   const clinicId = req.headers['x-clinic-id'] as string
-  const requestId = (req.headers['x-request-id'] as string)
-    || `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+  const requestId = (req.headers['x-request-id'] as string) ||
+    `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
 
   // Collect audit metadata for LGPD compliance
   const auditMeta = {
-    ipAddress: (req.headers['x-forwarded-for'] as string)
-      || req.socket.remoteAddress
-      || 'unknown',
+    ipAddress: (req.headers['x-forwarded-for'] as string) ||
+      req.socket.remoteAddress ||
+      'unknown',
     userAgent: req.headers['user-agent'] || 'unknown',
     sessionId: req.headers['x-session-id'] as string,
     timestamp: new Date(),

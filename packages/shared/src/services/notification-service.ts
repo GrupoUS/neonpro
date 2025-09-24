@@ -651,7 +651,7 @@ export class NotificationService {
       'normal',
       'low',
     ]
-    priorities.forEach((priority) => {
+    priorities.forEach(priority => {
       this.notificationQueue.set(priority, [])
     })
   }
@@ -992,7 +992,7 @@ export class NotificationService {
    * Process notification batch
    */
   private async processBatch(notifications: Notification[]): Promise<void> {
-    const promises = notifications.map((notification) => this.processNotification(notification))
+    const promises = notifications.map(notification => this.processNotification(notification))
     await Promise.allSettled(promises)
   }
 
@@ -1003,8 +1003,8 @@ export class NotificationService {
     try {
       // Check if scheduled for future delivery
       if (
-        notification.scheduledAt
-        && new Date(notification.scheduledAt) > new Date()
+        notification.scheduledAt &&
+        new Date(notification.scheduledAt) > new Date()
       ) {
         // Re-queue for later
         this.addToQueue(notification)
@@ -1013,8 +1013,8 @@ export class NotificationService {
 
       // Check if expired
       if (
-        notification.expiresAt
-        && new Date(notification.expiresAt) < new Date()
+        notification.expiresAt &&
+        new Date(notification.expiresAt) < new Date()
       ) {
         await this.updateNotificationStatus(notification.id, 'expired')
         return
@@ -1055,7 +1055,7 @@ export class NotificationService {
     let notification: Notification | undefined
 
     for (const [_priority, queue] of Array.from(this.notificationQueue.entries())) {
-      const index = queue.findIndex((n) => n.id === notificationId)
+      const index = queue.findIndex(n => n.id === notificationId)
       if (index !== -1) {
         notification = queue.splice(index, 1)[0]
         break
@@ -1265,8 +1265,8 @@ export class NotificationService {
 
     // For emergency and critical notifications, voice delivery is essential
     if (
-      notification.priority === 'emergency'
-      || notification.priority === 'critical'
+      notification.priority === 'emergency' ||
+      notification.priority === 'critical'
     ) {
       // Use secure logging for LGPD compliance
       const { maskSensitiveData } = await import('@neonpro/security')
@@ -1363,16 +1363,16 @@ export class NotificationService {
   ): Promise<{ allowed: boolean; retryAfter?: number }> {
     // Emergency notifications bypass all rate limits
     if (
-      notification.priority === 'emergency'
-      && this.config.healthcareSettings.emergencyBypass
+      notification.priority === 'emergency' &&
+      this.config.healthcareSettings.emergencyBypass
     ) {
       return { allowed: true }
     }
 
     // Patient safety notifications bypass rate limits
     if (
-      notification.category === 'patient_safety_alert'
-      && this.config.healthcareSettings.patientSafetyPriority
+      notification.category === 'patient_safety_alert' &&
+      this.config.healthcareSettings.patientSafetyPriority
     ) {
       return { allowed: true }
     }
@@ -1424,9 +1424,9 @@ export class NotificationService {
   private async validateConsent(notification: Notification): Promise<boolean> {
     // Skip consent validation for emergency notifications
     if (
-      notification.priority === 'emergency'
-      || notification.category === 'emergency_notification'
-      || notification.category === 'patient_safety_alert'
+      notification.priority === 'emergency' ||
+      notification.category === 'emergency_notification' ||
+      notification.category === 'patient_safety_alert'
     ) {
       // Use secure logging for LGPD compliance
       const { maskSensitiveData } = await import('@neonpro/security')
@@ -1523,7 +1523,7 @@ export class NotificationService {
     overrideDelay?: number,
   ): Promise<void> {
     const lastAttempt = notification.deliveryAttempts
-      .filter((attempt) => attempt.channel === channel)
+      .filter(attempt => attempt.channel === channel)
       .sort(
         (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )[0]

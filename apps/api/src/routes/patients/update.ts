@@ -69,7 +69,7 @@ const UpdatePatientSchema = z.object({
   notes: z.string().max(1000).optional(),
 })
 
-app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
+app.put('/:id', requireAuth, dataProtection.clientView, async c => {
   try {
     const userId = c.get('userId')
     const params = c.req.param()
@@ -82,7 +82,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
         {
           success: false,
           error: 'Parâmetros inválidos',
-          errors: paramsValidation.error.errors.map((err) => ({
+          errors: paramsValidation.error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -98,7 +98,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
         {
           success: false,
           error: 'Dados de entrada inválidos',
-          errors: bodyValidation.error.errors.map((err) => ({
+          errors: bodyValidation.error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -118,7 +118,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
 
     // Get changed fields for validation and audit
     const changedFields = Object.keys(updateData).filter(
-      (key) => updateData[key] !== undefined,
+      key => updateData[key] !== undefined,
     )
 
     // Validate user access to update specific patient fields
@@ -144,8 +144,8 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
     // Validate LGPD data update permissions
     const lgpdService = new LGPDService()
     if (
-      updateData.lgpdConsent
-      || changedFields.some((field) => ['cpf', 'healthcareInfo'].includes(field))
+      updateData.lgpdConsent ||
+      changedFields.some(field => ['cpf', 'healthcareInfo'].includes(field))
     ) {
       const lgpdValidation = await lgpdService.validateDataUpdate({
         patientId,
@@ -219,14 +219,14 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
     const oldValues: Record<string, any> = {}
     const newValues: Record<string, any> = {}
 
-    changedFields.forEach((field) => {
+    changedFields.forEach(field => {
       oldValues[field] = currentPatient[field]
       newValues[field] = updatedPatient[field]
     })
 
     // Determine sensitivity level based on changed fields
     const sensitiveFields = ['cpf', 'healthcareInfo', 'lgpdConsent']
-    const sensitivityLevel = changedFields.some((field) => sensitiveFields.includes(field))
+    const sensitivityLevel = changedFields.some(field => sensitiveFields.includes(field))
       ? 'critical'
       : 'high'
 
@@ -243,7 +243,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
           oldValues,
           newValues,
           reason: 'Patient data update',
-          sensitiveDataChanged: changedFields.some((field) => sensitiveFields.includes(field)),
+          sensitiveDataChanged: changedFields.some(field => sensitiveFields.includes(field)),
           healthcareProfessional,
           healthcareContext,
         },
@@ -252,7 +252,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
         complianceContext: 'LGPD',
         sensitivityLevel,
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Audit logging failed:', err)
       })
 
@@ -265,7 +265,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
           reason: 'Patient consent update',
           updatedBy: userId,
         })
-        .catch((err) => {
+        .catch(err => {
           console.error('Failed to update consent record:', err)
         })
     }
@@ -273,8 +273,8 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
     // Send update notification
     const notificationService = new NotificationService()
     if (
-      updatedPatient.email
-      && updatedPatient.lgpdConsent?.marketing !== false
+      updatedPatient.email &&
+      updatedPatient.lgpdConsent?.marketing !== false
     ) {
       await notificationService
         .sendNotification({
@@ -289,7 +289,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async (c) => {
           priority: 'medium',
           lgpdConsent: true,
         })
-        .catch((err) => {
+        .catch(err => {
           console.error('Update notification failed:', err)
         })
     }

@@ -363,8 +363,8 @@ export const healthcareServicesRouter = router({
             _userId: ctx.userId,
 
             status: AuditStatus.SUCCESS,
-            riskLevel: prediction.riskLevel === 'very_high'
-                || prediction.riskLevel === 'high'
+            riskLevel: prediction.riskLevel === 'very_high' ||
+                prediction.riskLevel === 'high'
               ? RiskLevel.HIGH
               : RiskLevel.MEDIUM,
             details: {
@@ -813,7 +813,7 @@ export const healthcareServicesRouter = router({
               reason: input.reason,
               location: input.location,
               emergencyContactsNotified: result.emergencyContacts.filter(
-                (c) => c.notified,
+                c => c.notified,
               ).length,
               nearestHospital: result.nearestHospital?.name,
             },
@@ -888,8 +888,8 @@ export const healthcareServicesRouter = router({
             _userId: ctx.userId,
 
             status: result.success ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
-            riskLevel: !result.complianceReport.cfmCompliant
-                || !result.complianceReport.lgpdCompliant
+            riskLevel: !result.complianceReport.cfmCompliant ||
+                !result.complianceReport.lgpdCompliant
               ? RiskLevel.HIGH
               : RiskLevel.LOW,
             details: {
@@ -1105,9 +1105,9 @@ export const healthcareServicesRouter = router({
             overallComplianceScore: dashboardData.overallComplianceScore,
             recommendationsCount: dashboardData.recommendations.length,
             servicesIncluded: Object.keys(dashboardData).filter(
-              (key) =>
-                dashboardData[key] !== null
-                && ![
+              key =>
+                dashboardData[key] !== null &&
+                ![
                   'overallComplianceScore',
                   'criticalIssues',
                   'recommendations',

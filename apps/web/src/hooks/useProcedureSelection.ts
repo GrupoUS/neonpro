@@ -19,7 +19,7 @@ export function useProcedureSelection(): UseProcedureSelectionReturn {
     if (checked) {
       setSelectedProcedures([...selectedProcedures, procedureId])
     } else {
-      setSelectedProcedures(selectedProcedures.filter((id) => id !== procedureId))
+      setSelectedProcedures(selectedProcedures.filter(id => id !== procedureId))
     }
   }
 

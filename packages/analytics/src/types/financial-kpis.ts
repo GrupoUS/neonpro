@@ -497,7 +497,7 @@ export function calculateFinancialHealthScore(kpis: FinancialKPI[]): {
     impact: number
   }> = []
 
-  kpis.forEach((kpi) => {
+  kpis.forEach(kpi => {
     const weight = categoryWeights[kpi.category] || 0
     const targetValue = kpi.targetValue || kpi.value
     const performance = kpi.value / targetValue
@@ -561,8 +561,8 @@ export function validateBrazilianFinancialCompliance(kpi: FinancialKPI): {
 
   // ANS requirements for supplementary health insurance
   if (
-    kpi.category === 'insurance_claims'
-    && kpi.healthcareContext.payerMix?.private_insurance
+    kpi.category === 'insurance_claims' &&
+    kpi.healthcareContext.payerMix?.private_insurance
   ) {
     requirements.push('ANS quality indicators reporting required')
     recommendations.push('Monitor ANS benchmarks for reimbursement rates')
@@ -616,7 +616,7 @@ export function calculatePayerMixDiversity(
   const dominantPayer =
     proportions.reduce((max, current) => current.proportion > max.proportion ? current : max).payer
 
-  const concentration = Math.max(...proportions.map((p) => p.proportion)) * 100
+  const concentration = Math.max(...proportions.map(p => p.proportion)) * 100
 
   const riskLevel: RiskLevel = concentration > 70 ? 'HIGH' : concentration > 50 ? 'MEDIUM' : 'LOW'
 

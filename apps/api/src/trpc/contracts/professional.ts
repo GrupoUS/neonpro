@@ -119,7 +119,7 @@ export const professionalRouter = router({
       // Create default working hours if not provided
       if (input.workingHours && input.workingHours.length > 0) {
         await ctx.prisma.professionalWorkingHours.createMany({
-          data: input.workingHours.map((wh) => ({
+          data: input.workingHours.map(wh => ({
             ...wh,
             professionalId: professional.id,
           })),
@@ -319,7 +319,7 @@ export const professionalRouter = router({
           select: { id: true },
         })
 
-        professionalIds = availableProfessionals.map((p) => p.id)
+        professionalIds = availableProfessionals.map(p => p.id)
 
         // Filter out professionals with conflicting appointments
         const conflictingAppointments = await ctx.prisma.appointment.findMany({
@@ -327,14 +327,14 @@ export const professionalRouter = router({
             professionalId: { in: professionalIds },
             scheduledDate: {
               gte: new Date(
-                availableDate.toDateString()
-                  + ' '
-                  + input.availabilityTimeSlot.startTime,
+                availableDate.toDateString() +
+                  ' ' +
+                  input.availabilityTimeSlot.startTime,
               ),
               lt: new Date(
-                availableDate.toDateString()
-                  + ' '
-                  + input.availabilityTimeSlot.endTime,
+                availableDate.toDateString() +
+                  ' ' +
+                  input.availabilityTimeSlot.endTime,
               ),
             },
             status: { in: ['scheduled', 'confirmed', 'in_progress'] },
@@ -343,10 +343,10 @@ export const professionalRouter = router({
         })
 
         const busyProfessionalIds = new Set(
-          conflictingAppointments.map((a) => a.professionalId),
+          conflictingAppointments.map(a => a.professionalId),
         )
         professionalIds = professionalIds.filter(
-          (id) => !busyProfessionalIds.has(id),
+          id => !busyProfessionalIds.has(id),
         )
       }
 
@@ -431,10 +431,10 @@ export const professionalRouter = router({
       await validateClinicAccess(ctx.user.id, currentProfessional.clinicId)
 
       // Check if license information is being updated
-      const licenseChanged = (input.licenseNumber
-        && input.licenseNumber !== currentProfessional.licenseNumber)
-        || (input.licenseType
-          && input.licenseType !== currentProfessional.licenseType)
+      const licenseChanged = (input.licenseNumber &&
+        input.licenseNumber !== currentProfessional.licenseNumber) ||
+        (input.licenseType &&
+          input.licenseType !== currentProfessional.licenseType)
 
       let licenseValidation = null
       if (licenseChanged) {
@@ -528,7 +528,7 @@ export const professionalRouter = router({
 
         // Create new working hours
         await ctx.prisma.professionalWorkingHours.createMany({
-          data: input.workingHours.map((wh) => ({
+          data: input.workingHours.map(wh => ({
             ...wh,
             professionalId: input.id,
           })),
@@ -875,11 +875,11 @@ async function sendProfessionalWelcomeNotification(
 
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {} as Record<string, any>
-  Object.keys(input).forEach((key) => {
+  Object.keys(input).forEach(key => {
     if (
-      key !== 'id'
-      && input[key] !== undefined
-      && input[key] !== current[key]
+      key !== 'id' &&
+      input[key] !== undefined &&
+      input[key] !== current[key]
     ) {
       changes[key] = {
         from: current[key],

@@ -911,14 +911,14 @@ export class AestheticDataHandlingService {
 
   private async analyzeAccessPattern(accessLog: DataAccessLog): Promise<void> {
     // Simple anomaly detection - can be enhanced with ML models
-    const recentLogs = this.accessLogs.filter((log) => {
+    const recentLogs = this.accessLogs.filter(log => {
       const logTime = new Date(log.timestamp)
       const accessTime = new Date(accessLog.timestamp)
       return (accessTime.getTime() - logTime.getTime()) <= 3600000 // 1 hour
     })
 
     // Check for excessive access
-    const userAccessCount = recentLogs.filter((log) => log.userId === accessLog.userId).length
+    const userAccessCount = recentLogs.filter(log => log.userId === accessLog.userId).length
     if (userAccessCount > 100) {
       await this.triggerSuspiciousActivityAlert({
         type: 'excessive_access',
@@ -955,7 +955,7 @@ export class AestheticDataHandlingService {
     }
 
     // Check if consent exists and is valid
-    const validConsent = dataSubject.consents.find((consent) => {
+    const validConsent = dataSubject.consents.find(consent => {
       const now = new Date()
       const isExpired = consent.expiresAt ? new Date(consent.expiresAt) < now : false
       const isWithdrawn = consent.withdrawnAt ? new Date(consent.withdrawnAt) < now : false
@@ -1019,7 +1019,7 @@ export class AestheticDataHandlingService {
       return false
     }
 
-    const consent = dataSubject.consents.find((c) => c.id === consentId)
+    const consent = dataSubject.consents.find(c => c.id === consentId)
     if (!consent) {
       return false
     }
@@ -1154,11 +1154,11 @@ export class AestheticDataHandlingService {
 
     for (const [key, value] of Object.entries(updates)) {
       if (
-        key === 'personalData'
-        || key === 'healthData'
-        || key === 'financialData'
-        || key === 'biometricData'
-        || key === 'contactData'
+        key === 'personalData' ||
+        key === 'healthData' ||
+        key === 'financialData' ||
+        key === 'biometricData' ||
+        key === 'contactData'
       ) {
         processedUpdates[key] = await this.encryptSensitiveData(value)
       } else {
@@ -1199,7 +1199,7 @@ export class AestheticDataHandlingService {
     const patterns: any[] = []
 
     // Check for multiple failed access attempts
-    const failedAttempts = logs.filter((log) =>
+    const failedAttempts = logs.filter(log =>
       log.action === 'delete' && log.riskLevel === 'critical'
     )
     if (failedAttempts.length > 10) {
@@ -1212,7 +1212,7 @@ export class AestheticDataHandlingService {
     }
 
     // Check for bulk data access
-    const bulkAccess = logs.filter((log) => log.action === 'export').length
+    const bulkAccess = logs.filter(log => log.action === 'export').length
     if (bulkAccess > 5) {
       patterns.push({
         type: 'bulk_data_access',
@@ -1413,7 +1413,7 @@ export class AestheticDataHandlingService {
     const requiredFields = this.getRequiredFieldsForPurpose(purpose)
     const dataFields = Object.keys(data)
 
-    return dataFields.every((field) => requiredFields.includes(field))
+    return dataFields.every(field => requiredFields.includes(field))
   }
 
   private validatePurposeLimitation(purpose: string, userRole: string): boolean {
@@ -1487,21 +1487,21 @@ export class AestheticDataHandlingService {
 
     if (filters) {
       if (filters.userId) {
-        filteredLogs = filteredLogs.filter((log) => log.userId === filters.userId)
+        filteredLogs = filteredLogs.filter(log => log.userId === filters.userId)
       }
       if (filters.dataSubjectId) {
-        filteredLogs = filteredLogs.filter((log) => log.dataSubjectId === filters.dataSubjectId)
+        filteredLogs = filteredLogs.filter(log => log.dataSubjectId === filters.dataSubjectId)
       }
       if (filters.action) {
-        filteredLogs = filteredLogs.filter((log) => log.action === filters.action)
+        filteredLogs = filteredLogs.filter(log => log.action === filters.action)
       }
       if (filters.startDate) {
-        filteredLogs = filteredLogs.filter((log) =>
+        filteredLogs = filteredLogs.filter(log =>
           new Date(log.timestamp) >= new Date(filters.startDate)
         )
       }
       if (filters.endDate) {
-        filteredLogs = filteredLogs.filter((log) =>
+        filteredLogs = filteredLogs.filter(log =>
           new Date(log.timestamp) <= new Date(filters.endDate)
         )
       }
@@ -1537,7 +1537,7 @@ export class AestheticDataHandlingService {
     const now = new Date()
     const last30Days = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
 
-    const recentLogs = this.accessLogs.filter((log) => new Date(log.timestamp) >= last30Days)
+    const recentLogs = this.accessLogs.filter(log => new Date(log.timestamp) >= last30Days)
 
     return {
       period: {
@@ -1551,7 +1551,7 @@ export class AestheticDataHandlingService {
       accessByRiskLevel: this.groupByRiskLevel(recentLogs),
       consentGranted: this.dataSubjects.size,
       consentWithdrawn: Array.from(this.dataSubjects.values()).reduce(
-        (sum, subject) => sum + subject.consents.filter((c) => c.withdrawnAt).length,
+        (sum, subject) => sum + subject.consents.filter(c => c.withdrawnAt).length,
         0,
       ),
       dataRetentionPolicies: Array.from(this.retentionPolicies.values()),
@@ -1586,8 +1586,7 @@ export class AestheticDataHandlingService {
       return 100
     }
 
-    const compliantActions =
-      logs.filter((log) => log.consentVerified && log.encryptionApplied).length
+    const compliantActions = logs.filter(log => log.consentVerified && log.encryptionApplied).length
 
     return Math.round((compliantActions / logs.length) * 100)
   }
@@ -1595,9 +1594,9 @@ export class AestheticDataHandlingService {
   // Health Check
   async healthCheck(): Promise<boolean> {
     try {
-      return this.sensitiveFields.size > 0
-        && this.retentionPolicies.size > 0
-        && this.encryptionKeys.size > 0
+      return this.sensitiveFields.size > 0 &&
+        this.retentionPolicies.size > 0 &&
+        this.encryptionKeys.size > 0
     } catch {
       return false
     }

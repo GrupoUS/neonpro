@@ -12,7 +12,7 @@ class QuickSyntaxFixer {
 
   findTestFiles(dir) {
     const testFiles = []
-    const scanDirectory = (currentDir) => {
+    const scanDirectory = currentDir => {
       if (!fs.existsSync(currentDir)) return
 
       const entries = fs.readdirSync(currentDir, { withFileTypes: true })
@@ -21,10 +21,10 @@ class QuickSyntaxFixer {
         const fullPath = path.join(currentDir, entry.name)
 
         if (
-          entry.isDirectory()
-          && !entry.name.startsWith('.')
-          && entry.name !== 'node_modules'
-          && entry.name !== 'dist'
+          entry.isDirectory() &&
+          !entry.name.startsWith('.') &&
+          entry.name !== 'node_modules' &&
+          entry.name !== 'dist'
         ) {
           scanDirectory(fullPath)
         } else if (entry.isFile() && entry.name.endsWith('.test.ts')) {
@@ -49,7 +49,7 @@ class QuickSyntaxFixer {
 
       // Fix 2: Missing array properties that are accessed
       if (fixed.includes('.consents?.') && !fixed.includes('consents: [')) {
-        fixed = fixed.replace(/(consentRecord[^}]*})/g, (match) => {
+        fixed = fixed.replace(/(consentRecord[^}]*})/g, match => {
           if (match.includes('consents?.') && !match.includes('consents:')) {
             return match.replace('}', '  consents: [],\n}')
           }

@@ -240,7 +240,7 @@ export class NotificationService {
       },
     ]
 
-    defaultTemplates.forEach((template) => {
+    defaultTemplates.forEach(template => {
       this.templates.set(template.templateId, template)
     })
   }
@@ -577,7 +577,7 @@ export class NotificationService {
       let renderedContent = template.content
       const missingVariables: string[] = []
 
-      template.variables.forEach((variable) => {
+      template.variables.forEach(variable => {
         const value = params.data[variable]
         if (value !== undefined) {
           const regex = new RegExp(`{{${variable}}}`, 'g')
@@ -671,13 +671,13 @@ export class NotificationService {
 
       // Apply filters
       if (filters.channel) {
-        templates = templates.filter((t) => t.channel === filters.channel)
+        templates = templates.filter(t => t.channel === filters.channel)
       }
       if (filters.language) {
-        templates = templates.filter((t) => t.language === filters.language)
+        templates = templates.filter(t => t.language === filters.language)
       }
       if (filters.category) {
-        templates = templates.filter((t) => t.category === filters.category)
+        templates = templates.filter(t => t.category === filters.category)
       }
 
       return {
@@ -969,31 +969,31 @@ export class NotificationService {
 
       const byPriority = {
         critical: this.notificationQueue.filter(
-          (n) => n.notification.priority === 'critical',
+          n => n.notification.priority === 'critical',
         ).length,
         high: this.notificationQueue.filter(
-          (n) => n.notification.priority === 'high',
+          n => n.notification.priority === 'high',
         ).length,
         medium: this.notificationQueue.filter(
-          (n) => n.notification.priority === 'medium',
+          n => n.notification.priority === 'medium',
         ).length,
         low: this.notificationQueue.filter(
-          (n) => n.notification.priority === 'low',
+          n => n.notification.priority === 'low',
         ).length,
       }
 
       const byChannel = {
         email: this.notificationQueue.filter(
-          (n) => n.notification.channel === 'email',
+          n => n.notification.channel === 'email',
         ).length,
         sms: this.notificationQueue.filter(
-          (n) => n.notification.channel === 'sms',
+          n => n.notification.channel === 'sms',
         ).length,
         whatsapp: this.notificationQueue.filter(
-          (n) => n.notification.channel === 'whatsapp',
+          n => n.notification.channel === 'whatsapp',
         ).length,
         push: this.notificationQueue.filter(
-          (n) => n.notification.channel === 'push',
+          n => n.notification.channel === 'push',
         ).length,
       }
 

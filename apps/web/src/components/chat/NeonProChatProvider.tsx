@@ -128,7 +128,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
 
   // Set active agent
   const setActiveAgent = useCallback((agentType: ChatAgentState['type']) => {
-    const agent = agents.find((a) => a.type === agentType)
+    const agent = agents.find(a => a.type === agentType)
     if (agent) {
       setActiveAgentId(agent.id)
     }
@@ -141,7 +141,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
   ) => {
     if (!config) return
 
-    const agentIndex = agents.findIndex((a) => a.type === agentType)
+    const agentIndex = agents.findIndex(a => a.type === agentType)
     if (agentIndex === -1) return
 
     const agent = agents[agentIndex]
@@ -213,16 +213,16 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
   // Clear chat history
   const clearChat = useCallback((agentType?: ChatAgentState['type']) => {
     if (agentType) {
-      setAgents((prev) =>
-        prev.map((agent) =>
+      setAgents(prev =>
+        prev.map(agent =>
           agent.type === agentType
             ? { ...agent, messages: [], status: 'idle' }
             : agent
         )
       )
     } else {
-      setAgents((prev) =>
-        prev.map((agent) => ({
+      setAgents(prev =>
+        prev.map(agent => ({
           ...agent,
           messages: [],
           status: 'idle',
@@ -233,7 +233,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
 
   // Export chat history
   const exportChat = useCallback(async (agentType: ChatAgentState['type']) => {
-    const agent = agents.find((a) => a.type === agentType)
+    const agent = agents.find(a => a.type === agentType)
     if (!agent || !config) return ''
 
     // LGPD compliance: Anonymize sensitive data before export
@@ -243,7 +243,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
       exportedAt: new Date().toISOString(),
       exportedBy: config.userId,
       messageCount: agent.messages.length,
-      messages: agent.messages.map((msg) => ({
+      messages: agent.messages.map(msg => ({
         id: msg.id,
         role: msg.role,
         content: msg.content,
@@ -263,7 +263,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
   }, [agents, config])
 
   // Get active agent
-  const activeAgent = agents.find((agent) => agent.id === activeAgentId) || null
+  const activeAgent = agents.find(agent => agent.id === activeAgentId) || null
 
   const value: ChatContextType = {
     config,

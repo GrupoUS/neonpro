@@ -48,8 +48,8 @@ export class TDDAgentRegistry {
   ]
 
   getParallelOptimizedAgents(agentNames: string[]): Agent[] {
-    return agentNames.map((name) => {
-      const agent = this.agents.find((a) => a.name === name)
+    return agentNames.map(name => {
+      const agent = this.agents.find(a => a.name === name)
       return agent || { name, type: 'unknown', capabilities: [] }
     })
   }

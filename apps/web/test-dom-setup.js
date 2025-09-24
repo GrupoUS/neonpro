@@ -68,7 +68,7 @@ console.warn('Test div content:', document.querySelector('[data-testid="test-div
 try {
   // Create a simple screen object similar to testing-library
   const screen = {
-    getByTestId: (testId) => {
+    getByTestId: testId => {
       const element = document.querySelector(`[data-testid="${testId}"]`)
       if (!element) {
         throw new Error(`Unable to find an element with the testid: ${testId}`)

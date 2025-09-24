@@ -254,15 +254,15 @@ export const SessionManagementUtils = {
     }
 
     if (
-      config.enhancedConfig?.maxConcurrentSessions
-      && config.enhancedConfig.maxConcurrentSessions < 1
+      config.enhancedConfig?.maxConcurrentSessions &&
+      config.enhancedConfig.maxConcurrentSessions < 1
     ) {
       errors.push('Max concurrent sessions must be at least 1')
     }
 
     if (
-      config.enhancedConfig?.defaultExpirationMs
-      && config.enhancedConfig.defaultExpirationMs < 60000
+      config.enhancedConfig?.defaultExpirationMs &&
+      config.enhancedConfig.defaultExpirationMs < 60000
     ) {
       errors.push('Default expiration must be at least 60 seconds')
     }

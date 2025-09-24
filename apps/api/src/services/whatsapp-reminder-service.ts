@@ -283,8 +283,8 @@ export class WhatsAppReminderService {
 
         // 5. Fallback to SMS if WhatsApp fails
         if (
-          reminder.preferredChannel === 'sms'
-          || reminder.preferredChannel === 'whatsapp'
+          reminder.preferredChannel === 'sms' ||
+          reminder.preferredChannel === 'whatsapp'
         ) {
           try {
             const smsResult = await this.sendSmsMessage(
@@ -403,8 +403,8 @@ export class WhatsAppReminderService {
       // Check if consent is still valid (not revoked)
       const consentDate = new Date(consent.consent_date)
       const now = new Date()
-      const monthsSinceConsent = (now.getTime() - consentDate.getTime())
-        / (1000 * 60 * 60 * 24 * 30)
+      const monthsSinceConsent = (now.getTime() - consentDate.getTime()) /
+        (1000 * 60 * 60 * 24 * 30)
 
       // LGPD requires periodic consent revalidation for marketing communications
       // For healthcare reminders, consent is generally valid until explicitly revoked
@@ -771,18 +771,18 @@ export class WhatsAppReminderService {
       // Process appointment confirmation responses
       let responseAction = null
       if (
-        messageText.includes('confirmar')
-        || messageText.includes('confirm')
+        messageText.includes('confirmar') ||
+        messageText.includes('confirm')
       ) {
         responseAction = 'confirmed'
       } else if (
-        messageText.includes('cancelar')
-        || messageText.includes('cancel')
+        messageText.includes('cancelar') ||
+        messageText.includes('cancel')
       ) {
         responseAction = 'cancelled'
       } else if (
-        messageText.includes('reagendar')
-        || messageText.includes('reschedule')
+        messageText.includes('reagendar') ||
+        messageText.includes('reschedule')
       ) {
         responseAction = 'reschedule_requested'
       }
@@ -915,7 +915,7 @@ export class WhatsAppReminderService {
       const batch = reminders.slice(i, i + batchSize)
 
       const batchResults = await Promise.allSettled(
-        batch.map((reminder) => this.sendAppointmentReminder(reminder)),
+        batch.map(reminder => this.sendAppointmentReminder(reminder)),
       )
 
       batchResults.forEach((result, _index) => {
@@ -938,7 +938,7 @@ export class WhatsAppReminderService {
 
       // Rate limiting: wait between batches
       if (i + batchSize < reminders.length) {
-        await new Promise((resolve) => setTimeout(resolve, 1000)) // 1 second delay
+        await new Promise(resolve => setTimeout(resolve, 1000)) // 1 second delay
       }
     }
 
@@ -996,7 +996,7 @@ export class WhatsAppReminderService {
             successful: batchResult.success,
             failed: batchResult.failed,
             processing_time_ms: processingTime,
-            clinic_ids: [...new Set(reminders.map((r) => r.clinicId))],
+            clinic_ids: [...new Set(reminders.map(r => r.clinicId))],
           },
           created_at: new Date().toISOString(),
         })
@@ -1068,10 +1068,10 @@ export class WhatsAppReminderService {
 
       const totalSent = logs.length
       const delivered = logs.filter(
-        (log) => log.status === 'delivered' || log.status === 'read',
+        log => log.status === 'delivered' || log.status === 'read',
       ).length
-      const read = logs.filter((log) => log.status === 'read').length
-      const fallbackUsed = logs.filter((log) => log.fallback_used).length
+      const read = logs.filter(log => log.status === 'read').length
+      const fallbackUsed = logs.filter(log => log.fallback_used).length
 
       // Get response count
       const { data: responses } = await this.supabase

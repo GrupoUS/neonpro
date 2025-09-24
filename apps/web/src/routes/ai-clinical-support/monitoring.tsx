@@ -44,7 +44,7 @@ function ProgressMonitoringPage() {
     <ProgressMonitoring
       patientId={loaderData.patientId}
       treatmentPlanId={loaderData.treatmentPlanId || treatmentPlans?.[0]?.id}
-      onUpdateProgress={async (update) => {
+      onUpdateProgress={async update => {
         try {
           const result = await api.aiClinicalSupport.addProgressUpdate(update)
           return result

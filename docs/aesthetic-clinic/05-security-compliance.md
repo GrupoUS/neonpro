@@ -177,8 +177,8 @@ export class PermissionManager {
 
     for (const permission of userPermissions) {
       if (
-        this.matchesResource(permission.resource, resource)
-        && this.matchesAction(permission.action, action)
+        this.matchesResource(permission.resource, resource) &&
+        this.matchesAction(permission.action, action)
       ) {
         // Check conditions
         if (permission.conditions) {
@@ -222,8 +222,8 @@ export class PermissionManager {
         return context?.professionalId === userId
 
       case 'certified_for_treatment':
-        return context?.treatmentId
-          && await this.isCertifiedForTreatment(userId, context.treatmentId)
+        return context?.treatmentId &&
+          await this.isCertifiedForTreatment(userId, context.treatmentId)
 
       case 'basic_info_only':
         return this.isBasicInfoUpdate(context?.updateFields)
@@ -361,7 +361,7 @@ export class DataProtectionService {
     const dataBuffer = encoder.encode(data + (salt || ''))
     const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer)
     return Array.from(new Uint8Array(hashBuffer))
-      .map((b) => b.toString(16).padStart(2, '0'))
+      .map(b => b.toString(16).padStart(2, '0'))
       .join('')
   }
 }
@@ -478,7 +478,7 @@ export class SQLSanitizer {
     if (typeof obj !== 'object' || obj === null) return obj
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.sanitizeObject(item))
+      return obj.map(item => this.sanitizeObject(item))
     }
 
     const sanitized: any = {}
@@ -637,9 +637,9 @@ export class AuditService {
       'lgpd_request',
     ]
 
-    return complianceEvents.includes(event.eventType)
-      || event.resourceType.startsWith('compliance_')
-      || event.action.includes('compliance')
+    return complianceEvents.includes(event.eventType) ||
+      event.resourceType.startsWith('compliance_') ||
+      event.action.includes('compliance')
   }
 
   private calculateRiskLevel(
@@ -695,11 +695,11 @@ export class AuditService {
   }
 
   private requiresReview(event: Omit<AuditEvent, 'id' | 'timestamp'>): boolean {
-    return event.riskLevel === 'high'
-      || event.riskLevel === 'critical'
-      || event.complianceRelevant
-      || event.action === 'delete'
-      || event.action === 'export'
+    return event.riskLevel === 'high' ||
+      event.riskLevel === 'critical' ||
+      event.complianceRelevant ||
+      event.action === 'delete' ||
+      event.action === 'export'
   }
 
   async getAuditEvents(filters: AuditFilters): Promise<AuditEvent[]> {
@@ -719,7 +719,7 @@ export class AuditService {
       totalEvents: events.length,
       eventsByType: this.groupEventsByType(events),
       eventsByRisk: this.groupEventsByRisk(events),
-      pendingReviews: events.filter((e) => e.requiresReview && e.reviewStatus === 'pending'),
+      pendingReviews: events.filter(e => e.requiresReview && e.reviewStatus === 'pending'),
       complianceScore: this.calculateComplianceScore(events),
       recommendations: this.generateRecommendations(events),
     }
@@ -1011,7 +1011,7 @@ export class SecurityMonitoringService {
 
   async getSecurityDashboard(): Promise<SecurityDashboard> {
     const activeAlerts = Array.from(this.alerts.values())
-      .filter((alert) => !alert.resolved)
+      .filter(alert => !alert.resolved)
 
     return {
       metrics: this.metrics,
@@ -1034,8 +1034,8 @@ export class SecurityMonitoringService {
       totalSecurityEvents: events.length,
       eventsByType: this.groupEventsByType(events),
       eventsBySeverity: this.groupEventsBySeverity(events),
-      resolvedAlerts: events.filter((e) => e.reviewStatus === 'approved').length,
-      pendingAlerts: events.filter((e) => e.reviewStatus === 'pending').length,
+      resolvedAlerts: events.filter(e => e.reviewStatus === 'approved').length,
+      pendingAlerts: events.filter(e => e.reviewStatus === 'pending').length,
       securityScore: this.calculateSecurityScore(events),
       recommendations: this.generateSecurityRecommendations(events),
     }

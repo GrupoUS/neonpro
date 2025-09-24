@@ -274,8 +274,8 @@ export class AuditDomainService {
 
     // If high or critical severity, trigger immediate alerts
     if (
-      severity === AuditSeverity.HIGH
-      || severity === AuditSeverity.CRITICAL
+      severity === AuditSeverity.HIGH ||
+      severity === AuditSeverity.CRITICAL
     ) {
       await this.handleSecurityAlert(auditEvent)
     }

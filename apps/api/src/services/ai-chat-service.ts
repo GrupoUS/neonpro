@@ -265,8 +265,8 @@ export class AIChatService {
 
       const responseTime = Date.now() - startTime
       const response: AIResponse = {
-        response: mockResponses[request.provider as keyof typeof mockResponses]
-          || 'Resposta padrão',
+        response: mockResponses[request.provider as keyof typeof mockResponses] ||
+          'Resposta padrão',
         provider: request.provider,
         model: request.model,
         responseTime,
@@ -500,7 +500,7 @@ export class AIChatService {
   > {
     try {
       const patientConversations = Array.from(this.conversations.values())
-        .filter((conv) => conv.patientId === patientId)
+        .filter(conv => conv.patientId === patientId)
         .sort((a, _b) => b.updatedAt.getTime() - a.updatedAt.getTime())
 
       return {
@@ -618,8 +618,8 @@ export class AIChatService {
         'desmaio',
         'sangramento',
       ]
-      const hasUrgentSymptoms = params.messages.some((msg) =>
-        urgentKeywords.some((keyword) => msg.content.toLowerCase().includes(keyword))
+      const hasUrgentSymptoms = params.messages.some(msg =>
+        urgentKeywords.some(keyword => msg.content.toLowerCase().includes(keyword))
       )
 
       return {
@@ -709,7 +709,7 @@ export class AIChatService {
 
       // Anonymize conversation data
       conversation.title = `CONVERSA ANONIMIZADA - ${Date.now()}`
-      conversation.messages = conversation.messages.map((msg) => ({
+      conversation.messages = conversation.messages.map(msg => ({
         ...msg,
         content: `MENSAGEM ANONIMIZADA - ${Date.now()}`,
       }))

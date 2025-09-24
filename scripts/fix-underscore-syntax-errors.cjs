@@ -128,7 +128,7 @@ function fixUnderscoreSyntaxErrors() {
       if (errorsFixed > 0) {
         fs.writeFileSync(filePath, newContent, 'utf8')
         console.log(`✅ Fixed ${filePath}:`)
-        changes.forEach((change) => console.log(`   - ${change}`))
+        changes.forEach(change => console.log(`   - ${change}`))
         console.log(`   Total errors fixed: ${errorsFixed}\n`)
       }
 

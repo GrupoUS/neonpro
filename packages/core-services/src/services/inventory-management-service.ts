@@ -194,11 +194,11 @@ export class InventoryManagementService {
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30)
 
     return {
-      valid: batches.filter((batch) => !batch.expiryDate || batch.expiryDate > thirtyDaysFromNow),
-      expiringSoon: batches.filter((batch) =>
+      valid: batches.filter(batch => !batch.expiryDate || batch.expiryDate > thirtyDaysFromNow),
+      expiringSoon: batches.filter(batch =>
         batch.expiryDate && batch.expiryDate <= thirtyDaysFromNow && batch.expiryDate > now
       ),
-      expired: batches.filter((batch) => batch.expiryDate && batch.expiryDate <= now),
+      expired: batches.filter(batch => batch.expiryDate && batch.expiryDate <= now),
     }
   }
 
@@ -475,7 +475,7 @@ export class InventoryManagementService {
 
     if (error) throw new Error(`Failed to check low stock alerts: ${error.message}`)
 
-    return (data || []).map((item) => {
+    return (data || []).map(item => {
       const product = item.products as any
       const severity = item.days_of_stock < 7
         ? 'critical'
@@ -605,8 +605,8 @@ export class InventoryManagementService {
 
     // Calculate summary
     const totalProducts = products?.length || 0
-    const lowStockItems = stockLevels?.filter((s) => s.stock_status === 'low').length || 0
-    const criticalStockItems = stockLevels?.filter((s) => s.stock_status === 'critical').length || 0
+    const lowStockItems = stockLevels?.filter(s => s.stock_status === 'low').length || 0
+    const criticalStockItems = stockLevels?.filter(s => s.stock_status === 'critical').length || 0
 
     const totalInventoryValue = products?.reduce((sum, product) => {
       const stock = stockLevels?.find((s: any) => s.product_id === product.id)
@@ -614,13 +614,13 @@ export class InventoryManagementService {
     }, 0) || 0
 
     const monthlyUsageValue = usage?.reduce((sum, record) => {
-      const product = products?.find((p) => p.id === (record as any).product_id)
+      const product = products?.find(p => p.id === (record as any).product_id)
       return sum + ((product as any)?.selling_price || 0) * (record as any).quantity_used
     }, 0) || 0
 
     // Get top selling products
     const productUsage = usage?.reduce((acc, record) => {
-      const product = products?.find((p) => p.id === (record as any).product_id)
+      const product = products?.find(p => p.id === (record as any).product_id)
       if (!product) return acc
 
       if (!acc[(record as any).product_id]) {
@@ -633,8 +633,8 @@ export class InventoryManagementService {
       }
 
       acc[(record as any).product_id].quantityUsed += (record as any).quantity_used
-      acc[(record as any).product_id].revenue += (product as any).selling_price
-        * (record as any).quantity_used
+      acc[(record as any).product_id].revenue += (product as any).selling_price *
+        (record as any).quantity_used
 
       return acc
     }, {} as Record<string, any>)
@@ -667,10 +667,11 @@ export class InventoryManagementService {
 
     return {
       summary,
-      products: products.map((p) => ({
+      products: products.map(p => ({
         ...p,
-        inventoryValue: (p as any).inventory_stock_levels?.[0]?.currentStock * (p as any).costPrice
-          || 0,
+        inventoryValue:
+          (p as any).inventory_stock_levels?.[0]?.currentStock * (p as any).costPrice ||
+          0,
       })),
       alerts,
       generatedAt: new Date().toISOString(),

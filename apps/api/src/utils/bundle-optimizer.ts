@@ -160,7 +160,7 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
         failedModules,
       )
       throw new Error(
-        `Critical healthcare modules failed: ${failedModules.map((f) => f.module).join(', ')}`,
+        `Critical healthcare modules failed: ${failedModules.map(f => f.module).join(', ')}`,
       )
     }
 
@@ -229,7 +229,7 @@ export class HealthcareBundleAnalyzer {
     const withinLimits = this.isWithinHealthcareLimits()
 
     const criticalModuleMetrics = HEALTHCARE_BUNDLE_CONFIG.criticalModules
-      .map((module) => this.metrics.get(module))
+      .map(module => this.metrics.get(module))
       .filter(Boolean) as BundleMetrics[]
 
     const recommendations = this.generateOptimizationRecommendations()
@@ -257,16 +257,16 @@ export class HealthcareBundleAnalyzer {
 
     // Check for slow loading critical modules
     const slowCriticalModules = Array.from(this.metrics.values()).filter(
-      (metric) =>
-        HEALTHCARE_BUNDLE_CONFIG.criticalModules.includes(metric.module)
-        && metric.loadTime > 100,
+      metric =>
+        HEALTHCARE_BUNDLE_CONFIG.criticalModules.includes(metric.module) &&
+        metric.loadTime > 100,
     )
 
     if (slowCriticalModules.length > 0) {
       recommendations.push(
         `Critical healthcare modules loading slowly: ${
           slowCriticalModules
-            .map((m) => m.module)
+            .map(m => m.module)
             .join(', ')
         }`,
       )
@@ -274,16 +274,16 @@ export class HealthcareBundleAnalyzer {
 
     // Check for large non-critical modules
     const largeNonCriticalModules = Array.from(this.metrics.values()).filter(
-      (metric) =>
-        !HEALTHCARE_BUNDLE_CONFIG.criticalModules.includes(metric.module)
-        && metric.size > 50000,
+      metric =>
+        !HEALTHCARE_BUNDLE_CONFIG.criticalModules.includes(metric.module) &&
+        metric.size > 50000,
     )
 
     if (largeNonCriticalModules.length > 0) {
       recommendations.push(
         `Consider lazy loading large modules: ${
           largeNonCriticalModules
-            .map((m) => m.module)
+            .map(m => m.module)
             .join(', ')
         }`,
       )
@@ -317,7 +317,7 @@ export function createHealthcareRouteLoader<T>(
 
   // Preload if specified (for critical healthcare routes)
   if (preload && typeof window !== 'undefined') {
-    routeImport().catch((error) => {
+    routeImport().catch(error => {
       console.error('Failed to preload healthcare route:', error)
     })
   }
@@ -378,8 +378,8 @@ export class HealthcareEdgePerformanceMonitor {
     if (metrics.length === 0) return 0
 
     return (
-      _metrics.reduce((sum, _metric) => sum + metric.loadTime, 0)
-      / metrics.length
+      _metrics.reduce((sum, _metric) => sum + metric.loadTime, 0) /
+      metrics.length
     )
   }
 }

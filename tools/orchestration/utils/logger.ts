@@ -11,48 +11,48 @@ export enum LogLevel {
 }
 
 export interface Logger {
-  log(message: string, ...args: any[]): void;
-  info(message: string, ...args: any[]): void;
-  warn(message: string, ...args: any[]): void;
-  error(message: string, ...args: any[]): void;
-  constitutional(level: LogLevel, message: string, metadata?: Record<string, any>): void;
+  log(message: string, ...args: any[]): void
+  info(message: string, ...args: any[]): void
+  warn(message: string, ...args: any[]): void
+  error(message: string, ...args: any[]): void
+  constitutional(level: LogLevel, message: string, metadata?: Record<string, any>): void
 }
 
 export function createLogger(name: string, level: LogLevel = LogLevel.INFO): Logger {
   const logger: Logger = {
     log(message: string, ...args: any[]) {
       if (level <= LogLevel.DEBUG) {
-        console.log(`[${name}] ${message}`, ...args);
+        console.log(`[${name}] ${message}`, ...args)
       }
     },
 
     info(message: string, ...args: any[]) {
       if (level <= LogLevel.INFO) {
-        console.info(`[${name}] ${message}`, ...args);
+        console.info(`[${name}] ${message}`, ...args)
       }
     },
 
     warn(message: string, ...args: any[]) {
       if (level <= LogLevel.WARN) {
-        console.warn(`[${name}] ${message}`, ...args);
+        console.warn(`[${name}] ${message}`, ...args)
       }
     },
 
     error(message: string, ...args: any[]) {
       if (level <= LogLevel.ERROR) {
-        console.error(`[${name}] ${message}`, ...args);
+        console.error(`[${name}] ${message}`, ...args)
       }
     },
 
     constitutional(level: LogLevel, message: string, metadata?: Record<string, any>): void {
-      const logMessage = `[${name}] [CONSTITUTIONAL] ${message}`;
+      const logMessage = `[${name}] [CONSTITUTIONAL] ${message}`
       if (metadata) {
-        logger.log(logMessage, metadata);
+        logger.log(logMessage, metadata)
       } else {
-        logger.log(logMessage);
+        logger.log(logMessage)
       }
     },
-  };
+  }
 
-  return logger;
+  return logger
 }

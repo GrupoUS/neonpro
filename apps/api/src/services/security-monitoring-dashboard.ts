@@ -151,8 +151,8 @@ export class SecurityMonitoringDashboardService {
     // Check cache first
     const cached = this.metricsCache.get(cacheKey)
     if (
-      cached
-      && Date.now() - cached.timestamp.getTime() < this.dashboardUpdateInterval
+      cached &&
+      Date.now() - cached.timestamp.getTime() < this.dashboardUpdateInterval
     ) {
       return cached
     }
@@ -177,14 +177,14 @@ export class SecurityMonitoringDashboardService {
       const metrics: SecurityMetrics = {
         timestamp: new Date(),
         totalRequests: data?.length || 0,
-        deniedRequests: data?.filter((log) => !log.access_granted).length || 0,
-        securityScore: data?.reduce((acc, _log) => acc + log.security_score, 0)
-            / (data?.length || 1) || 0,
-        threatLevel: data?.reduce((acc, _log) => acc + log.threat_level, 0)
-            / (data?.length || 1) || 0,
+        deniedRequests: data?.filter(log => !log.access_granted).length || 0,
+        securityScore: data?.reduce((acc, _log) => acc + log.security_score, 0) /
+            (data?.length || 1) || 0,
+        threatLevel: data?.reduce((acc, _log) => acc + log.threat_level, 0) /
+            (data?.length || 1) || 0,
         alerts: data
-          ?.filter((log) => log.threat_level > 50)
-          .map((log) => ({
+          ?.filter(log => log.threat_level > 50)
+          .map(log => ({
             type: 'THREAT_DETECTED' as const,
             severity: log.threat_level > 75 ? 'HIGH' : ('MEDIUM' as const),
             description: log.reason,
@@ -253,10 +253,10 @@ export class SecurityMonitoringDashboardService {
       const alerts = data || []
 
       return {
-        critical: alerts.filter((alert) => alert.severity === 'CRITICAL'),
-        high: alerts.filter((alert) => alert.severity === 'HIGH'),
-        medium: alerts.filter((alert) => alert.severity === 'MEDIUM'),
-        low: alerts.filter((alert) => alert.severity === 'LOW'),
+        critical: alerts.filter(alert => alert.severity === 'CRITICAL'),
+        high: alerts.filter(alert => alert.severity === 'HIGH'),
+        medium: alerts.filter(alert => alert.severity === 'MEDIUM'),
+        low: alerts.filter(alert => alert.severity === 'LOW'),
       }
     } catch {
       logger.error('Failed to get alerts by severity', error)
@@ -310,7 +310,7 @@ export class SecurityMonitoringDashboardService {
         .fill(0)
         .map((_, hour) => ({ hour, requests: 0, threats: 0 }))
 
-      logs.forEach((log) => {
+      logs.forEach(log => {
         // By role (extract from user data or metadata)
         const role = log.metadata?.userRole || 'unknown'
         if (!byRole[role]) {
@@ -335,15 +335,15 @@ export class SecurityMonitoringDashboardService {
       })
 
       // Calculate averages
-      Object.keys(byRole).forEach((role) => {
+      Object.keys(byRole).forEach(role => {
         const _data = byRole[role]
         data.score = data.score / data.requests
       })
 
-      Object.keys(byEndpoint).forEach((endpoint) => {
+      Object.keys(byEndpoint).forEach(endpoint => {
         const _data = byEndpoint[endpoint]
         data.avgThreat = logs
-          .filter((log) => log.table_name === endpoint)
+          .filter(log => log.table_name === endpoint)
           .reduce((acc, _log) => acc + log.threat_level, 0) / data.requests
       })
 
@@ -428,9 +428,9 @@ export class SecurityMonitoringDashboardService {
       const { data } = await query
       const logs = data || []
 
-      const uniqueUsers = new Set(logs.map((log) => log.user_id))
-      const avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0)
-        / logs.length
+      const uniqueUsers = new Set(logs.map(log => log.user_id))
+      const avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0) /
+        logs.length
       const avgThreatLevel = logs.reduce((acc, _log) => acc + log.threat_level, 0) / logs.length
 
       return {
@@ -508,15 +508,15 @@ export class SecurityMonitoringDashboardService {
       // Calculate summary
       report.summary.totalRequests = logs.length
       report.summary.deniedRequests = logs.filter(
-        (log) => !log.access_granted,
+        log => !log.access_granted,
       ).length
       report.summary.securityIncidents = logs.filter(
-        (log) => log.threat_level > 70,
+        log => log.threat_level > 70,
       ).length
-      report.summary.avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0)
-        / logs.length
+      report.summary.avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0) /
+        logs.length
       report.summary.maxThreatLevel = Math.max(
-        ...logs.map((log) => log.threat_level),
+        ...logs.map(log => log.threat_level),
       )
 
       // Analyze threats
@@ -586,7 +586,7 @@ export class SecurityMonitoringDashboardService {
           schema: 'public',
           table: 'security_alerts',
         },
-        (payload) => {
+        payload => {
           logger.info('🚨 Real-time security alert', _payload)
           // Trigger real-time notifications
           this.handleRealTimeAlert(payload.new)
@@ -636,7 +636,7 @@ export class SecurityMonitoringDashboardService {
   private getTopThreatTypes(logs: any[]): string[] {
     const threatTypes: Record<string, number> = {}
 
-    logs.forEach((log) => {
+    logs.forEach(log => {
       if (log.threat_level > 50) {
         const type = log.reason || 'Unknown threat'
         threatTypes[type] = (threatTypes[type] || 0) + 1
@@ -715,7 +715,7 @@ export class SecurityMonitoringDashboardService {
   }> {
     const threatTypes: Record<string, { count: number; maxThreat: number }> = {}
 
-    logs.forEach((log) => {
+    logs.forEach(log => {
       if (log.threat_level > 30) {
         const type = log.reason || 'Unknown'
         if (!threatTypes[type]) {
@@ -750,7 +750,7 @@ export class SecurityMonitoringDashboardService {
     let score = 100
 
     // Check for high threat levels
-    const highThreatLogs = logs.filter((log) => log.threat_level > 70)
+    const highThreatLogs = logs.filter(log => log.threat_level > 70)
     if (highThreatLogs.length > 0) {
       issues.push(
         `${highThreatLogs.length} high-threat security events detected`,
@@ -761,7 +761,7 @@ export class SecurityMonitoringDashboardService {
     }
 
     // Check for failed access attempts
-    const failedAccess = logs.filter((log) => !log.access_granted)
+    const failedAccess = logs.filter(log => !log.access_granted)
     const failedAccessRate = failedAccess.length / logs.length
     if (failedAccessRate > 0.1) {
       issues.push(
@@ -795,8 +795,8 @@ export class SecurityMonitoringDashboardService {
     const recommendations: string[] = []
 
     // Analyze patterns and generate recommendations
-    const failedAccess = logs.filter((log) => !log.access_granted)
-    const highThreatLogs = logs.filter((log) => log.threat_level > 70)
+    const failedAccess = logs.filter(log => !log.access_granted)
+    const highThreatLogs = logs.filter(log => log.threat_level > 70)
 
     if (failedAccess.length > 0) {
       recommendations.push(
@@ -811,7 +811,7 @@ export class SecurityMonitoringDashboardService {
     }
 
     // Check for unusual access times
-    const offHoursAccess = logs.filter((log) => {
+    const offHoursAccess = logs.filter(log => {
       const hour = new Date(log.timestamp).getHours()
       return hour < 6 || hour > 22
     })
@@ -824,7 +824,7 @@ export class SecurityMonitoringDashboardService {
 
     // Check for suspicious IPs
     const ipCounts: Record<string, number> = {}
-    logs.forEach((log) => {
+    logs.forEach(log => {
       if (log.ip_address) {
         ipCounts[log.ip_address] = (ipCounts[log.ip_address] || 0) + 1
       }
@@ -892,7 +892,7 @@ export class SecurityMonitoringDashboardService {
         { count: number; totalThreat: number; totalScore: number }
       > = {}
 
-      logs.forEach((log) => {
+      logs.forEach(log => {
         const date = new Date(log.timestamp).toISOString().split('T')[0]
         if (!dateGroups[date]) {
           dateGroups[date] = { count: 0, totalThreat: 0, totalScore: 0 }
@@ -905,15 +905,15 @@ export class SecurityMonitoringDashboardService {
       const sortedDates = Object.keys(dateGroups).sort()
 
       return {
-        requests: sortedDates.map((date) => ({
+        requests: sortedDates.map(date => ({
           date,
           count: dateGroups[date].count,
         })),
-        threats: sortedDates.map((date) => ({
+        threats: sortedDates.map(date => ({
           date,
           level: dateGroups[date].totalThreat / dateGroups[date].count,
         })),
-        securityScores: sortedDates.map((date) => ({
+        securityScores: sortedDates.map(date => ({
           date,
           score: dateGroups[date].totalScore / dateGroups[date].count,
         })),

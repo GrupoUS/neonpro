@@ -275,7 +275,7 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
                     <Input
                       placeholder='123.456.789-00'
                       {...field}
-                      onChange={(e) => {
+                      onChange={e => {
                         const value = e.target.value.replace(/\D/g, '')
                         field.onChange(value)
                       }}
@@ -309,7 +309,7 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
                     <Input
                       placeholder='(11) 98765-4321'
                       {...field}
-                      onChange={(e) => {
+                      onChange={e => {
                         const value = e.target.value.replace(/\D/g, '')
                         field.onChange(value)
                       }}
@@ -513,7 +513,7 @@ const ClientRegistrationForm: React.FC<ClientRegistrationFormProps> = ({
                     <Input
                       placeholder='(11) 98765-4321'
                       {...field}
-                      onChange={(e) => {
+                      onChange={e => {
                         const value = e.target.value.replace(/\D/g, '')
                         field.onChange(value)
                       }}
@@ -754,7 +754,7 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
                         size='sm'
                         className='mt-2 w-full'
                         onClick={() => {
-                          const treatment = treatments.find((t) =>
+                          const treatment = treatments.find(t =>
                             t.id === rec.treatmentId
                           )
                           if (treatment) {
@@ -795,7 +795,7 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
             )
             : (
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-                {treatments.map((treatment) => (
+                {treatments.map(treatment => (
                   <Card key={treatment.id} className='cursor-pointer hover:bg-accent/50'>
                     <CardHeader className='pb-2'>
                       <CardTitle className='text-sm'>{treatment.name}</CardTitle>
@@ -829,11 +829,11 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
                         className='mt-2 w-full'
                         onClick={() =>
                           handleAddTreatment(treatment)}
-                        disabled={selectedTreatments.some((t) =>
+                        disabled={selectedTreatments.some(t =>
                           t.treatment.id === treatment.id
                         )}
                       >
-                        {selectedTreatments.some((t) => t.treatment.id === treatment.id)
+                        {selectedTreatments.some(t => t.treatment.id === treatment.id)
                           ? 'Adicionado'
                           : 'Adicionar ao Plano'}
                       </Button>
@@ -869,7 +869,7 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
                         <Input
                           type='number'
                           value={treatment.sessions}
-                          onChange={(e) => {
+                          onChange={e => {
                             const newTreatments = [...selectedTreatments]
                             newTreatments[index].sessions = parseInt(e.target.value) || 1
                             setSelectedTreatments(newTreatments)
@@ -883,7 +883,7 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
                         <Input
                           type='number'
                           value={treatment.intervalDays}
-                          onChange={(e) => {
+                          onChange={e => {
                             const newTreatments = [...selectedTreatments]
                             newTreatments[index].intervalDays = parseInt(e.target.value) || 7
                             setSelectedTreatments(newTreatments)
@@ -926,7 +926,7 @@ const TreatmentPlanner: React.FC<TreatmentPlannerProps> = ({
               clientId,
               professionalId: professionalId || professionals[0]?.id,
               name: `Plano de Tratamento - ${client?.fullName}`,
-              treatments: selectedTreatments.map((t) => ({
+              treatments: selectedTreatments.map(t => ({
                 treatmentId: t.treatment.id,
                 sessions: t.sessions,
                 intervalDays: t.intervalDays,
@@ -1003,7 +1003,7 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
           ],
           professionalAvailability: true,
           roomAvailability: true,
-          minimumDuration: treatments.find((t) => t.id === treatmentId)?.durationMinutes || 30,
+          minimumDuration: treatments.find(t => t.id === treatmentId)?.durationMinutes || 30,
           maximumDuration: 120,
           avoidProfessionalConflicts: true,
           considerNoShowRisk: true,
@@ -1056,7 +1056,7 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
             </CardHeader>
             <CardContent>
               <div className='grid grid-cols-7 gap-1 mb-4'>
-                {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((day) => (
+                {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
                   <div
                     key={day}
                     className='text-center text-sm font-medium text-muted-foreground p-2'
@@ -1099,7 +1099,7 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
             </CardHeader>
             <CardContent>
               <div className='space-y-2'>
-                {generateTimeSlots().map((slot) => (
+                {generateTimeSlots().map(slot => (
                   <Button
                     key={slot.start}
                     variant={selectedTimeSlot?.start === slot.start ? 'default' : 'outline'}
@@ -1199,7 +1199,7 @@ const AICalendarScheduler: React.FC<AICalendarSchedulerProps> = ({
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {professionals.map((prof) => (
+              {professionals.map(prof => (
                 <Card
                   key={prof.id}
                   className='cursor-pointer hover:bg-accent/50'
@@ -1464,8 +1464,8 @@ const LGPDConsentModal: React.FC<LGPDConsentModalProps> = ({
                   <Checkbox
                     id='dataProcessing'
                     checked={consentData.dataProcessing}
-                    onCheckedChange={(checked) =>
-                      setConsentData((prev) => ({ ...prev, dataProcessing: !!checked }))}
+                    onCheckedChange={checked =>
+                      setConsentData(prev => ({ ...prev, dataProcessing: !!checked }))}
                   />
                   <div className='space-y-1'>
                     <Label htmlFor='dataProcessing' className='font-medium'>
@@ -1482,8 +1482,8 @@ const LGPDConsentModal: React.FC<LGPDConsentModalProps> = ({
                   <Checkbox
                     id='communication'
                     checked={consentData.communication}
-                    onCheckedChange={(checked) =>
-                      setConsentData((prev) => ({ ...prev, communication: !!checked }))}
+                    onCheckedChange={checked =>
+                      setConsentData(prev => ({ ...prev, communication: !!checked }))}
                   />
                   <div className='space-y-1'>
                     <Label htmlFor='communication' className='font-medium'>
@@ -1500,8 +1500,8 @@ const LGPDConsentModal: React.FC<LGPDConsentModalProps> = ({
                   <Checkbox
                     id='marketing'
                     checked={consentData.marketing}
-                    onCheckedChange={(checked) =>
-                      setConsentData((prev) => ({ ...prev, marketing: !!checked }))}
+                    onCheckedChange={checked =>
+                      setConsentData(prev => ({ ...prev, marketing: !!checked }))}
                   />
                   <div className='space-y-1'>
                     <Label htmlFor='marketing' className='font-medium'>
@@ -1652,7 +1652,7 @@ const AestheticClinicDashboard: React.FC<AestheticClinicDashboardProps> = ({
                 <CartesianGrid strokeDasharray='3 3' />
                 <XAxis dataKey='period' />
                 <YAxis />
-                <Tooltip formatter={(value) => formatCurrency(value as number)} />
+                <Tooltip formatter={value => formatCurrency(value as number)} />
                 <Line type='monotone' dataKey='revenue' stroke='#8884d8' strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
@@ -1736,7 +1736,7 @@ const AestheticClinicDashboard: React.FC<AestheticClinicDashboardProps> = ({
         </CardHeader>
         <CardContent>
           <div className='space-y-4'>
-            {analytics?.compliance?.alerts?.map((alert) => (
+            {analytics?.compliance?.alerts?.map(alert => (
               <Alert key={alert.id} className={getAlertVariant(alert.severity)}>
                 <AlertTriangle className='h-4 w-4' />
                 <AlertTitle>{alert.title}</AlertTitle>

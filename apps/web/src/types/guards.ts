@@ -18,10 +18,10 @@ export const isObject = <T extends Record<string, unknown>>(
   value: unknown,
   guard?: (obj: Record<string, unknown>) => obj is T,
 ): value is T =>
-  typeof value === 'object'
-  && value !== null
-  && !Array.isArray(value)
-  && (guard ? guard(value as Record<string, unknown>) : true)
+  typeof value === 'object' &&
+  value !== null &&
+  !Array.isArray(value) &&
+  (guard ? guard(value as Record<string, unknown>) : true)
 
 export const isDefined = <T>(value: T | undefined | null): value is T =>
   value !== undefined && value !== null
@@ -100,7 +100,7 @@ export const createTypeGuard = <T>(checker: (value: unknown) => value is T) => c
 export const combineGuards = <T>(
   guards: Array<(value: unknown) => value is T>,
 ): (value: unknown) => value is T => {
-  return (value: unknown): value is T => guards.some((guard) => guard(value))
+  return (value: unknown): value is T => guards.some(guard => guard(value))
 }
 
 // Sanitization functions for security

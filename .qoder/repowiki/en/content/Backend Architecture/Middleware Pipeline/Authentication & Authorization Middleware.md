@@ -354,7 +354,7 @@ To implement a protected route that requires authentication, use the `requireAut
 ```typescript
 import { requireAuth } from './middleware/auth'
 
-app.get('/api/protected', requireAuth(), async (c) => {
+app.get('/api/protected', requireAuth(), async c => {
   const user = c.get('user')
   return c.json({ message: `Hello ${user.name}`, userId: user.id })
 })
@@ -368,12 +368,12 @@ For routes that require specific roles, pass the allowed roles to the `requireAu
 import { requireAuth } from './middleware/auth'
 
 // Only admins and clinic admins can access this route
-app.get('/api/admin-data', requireAuth(['admin', 'clinic_admin']), async (c) => {
+app.get('/api/admin-data', requireAuth(['admin', 'clinic_admin']), async c => {
   // Implementation here
 })
 
 // Only professionals can access patient data
-app.get('/api/patients/:id', requireAuth(['professional', 'admin']), async (c) => {
+app.get('/api/patients/:id', requireAuth(['professional', 'admin']), async c => {
   const patientId = c.req.param('id')
   const user = c.get('user')
 
@@ -398,7 +398,7 @@ const permissionService = new AgentPermissionService(
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 )
 
-app.post('/api/agent-sessions', requireAuth(), async (c) => {
+app.post('/api/agent-sessions', requireAuth(), async c => {
   const user = c.get('user')
   const sessionId = generateSessionId()
 

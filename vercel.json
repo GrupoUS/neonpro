@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "installCommand": "bun install",
-  "buildCommand": "mkdir -p dist && echo '<!DOCTYPE html><html lang=\"pt-BR\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>NeonPro - Healthcare Platform</title><style>body{font-family:system-ui,sans-serif;margin:0;background:linear-gradient(135deg,#667eea,#764ba2);color:white;min-height:100vh;display:flex;align-items:center;justify-content:center}.container{text-align:center;padding:2rem}.header h1{font-size:3rem;margin-bottom:1rem}.tech-list{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin:2rem 0}.tech-item{background:rgba(255,255,255,0.2);padding:0.5rem 1rem;border-radius:20px}</style></head><body><div class=\"container\"><header class=\"header\"><h1>🏥 NeonPro</h1><p>Healthcare Platform for Brazilian Aesthetic Clinics</p><p>Plataforma de gestão para clínicas estéticas brasileiras</p></header><div class=\"tech-list\"><span class=\"tech-item\">React 19</span><span class=\"tech-item\">TanStack Router</span><span class=\"tech-item\">TypeScript</span><span class=\"tech-item\">Tailwind CSS</span><span class=\"tech-item\">tRPC</span><span class=\"tech-item\">Supabase</span><span class=\"tech-item\">Bun</span><span class=\"tech-item\">Turborepo</span></div><p>🚀 Deploy realizado com sucesso!</p><p>📋 Monorepo com +10 módulos prontos</p></div></body></html>' > dist/index.html",
+  "buildCommand": "bun run build:vercel",
   "outputDirectory": "dist",
   "framework": null
 }

@@ -36,7 +36,7 @@ export function formatAuditReport(report: AuditReport): string {
   lines.push(`Total size: ${formatBytes(report.scan.totalSize)}`)
   if (report.scan.warnings.length > 0) {
     lines.push('Warnings:')
-    report.scan.warnings.forEach((warning) => lines.push(`  • ${warning}`))
+    report.scan.warnings.forEach(warning => lines.push(`  • ${warning}`))
   } else {
     lines.push('Warnings: none')
   }
@@ -46,7 +46,7 @@ export function formatAuditReport(report: AuditReport): string {
   lines.push(`Total imports: ${report.dependency.totalImports}`)
   if (report.dependency.unusedFiles.length > 0) {
     lines.push('Potentially unused files:')
-    report.dependency.unusedFiles.forEach((file) => lines.push(`  • ${file}`))
+    report.dependency.unusedFiles.forEach(file => lines.push(`  • ${file}`))
   } else {
     lines.push('Potentially unused files: none')
   }
@@ -56,7 +56,7 @@ export function formatAuditReport(report: AuditReport): string {
   if (report.recommendations.length === 0) {
     lines.push('  • No outstanding issues detected. Great job!')
   } else {
-    report.recommendations.forEach((rec) => lines.push(`  • ${rec}`))
+    report.recommendations.forEach(rec => lines.push(`  • ${rec}`))
   }
 
   return lines.join('\n')

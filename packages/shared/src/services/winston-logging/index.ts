@@ -209,9 +209,9 @@ export function createCorrelationMiddleware(
 ) {
   return (req: any, res: any, next: any) => {
     // Generate or extract correlation ID
-    const correlationId = req.headers['x-correlation-id']
-      || req.headers['x-request-id']
-      || loggerInstance.generateCorrelationId()
+    const correlationId = req.headers['x-correlation-id'] ||
+      req.headers['x-request-id'] ||
+      loggerInstance.generateCorrelationId()
 
     // Set correlation ID in logger
     loggerInstance.setCorrelationId(correlationId)
@@ -252,7 +252,7 @@ export function setupGlobalErrorHandling(
   loggerInstance: EnhancedStructuredLogger = enhancedLogger,
 ) {
   if (typeof process !== 'undefined') {
-    process.on('uncaughtException', (error) => {
+    process.on('uncaughtException', error => {
       loggerInstance.emergency('Uncaught Exception', {
         error: error.message,
         stack: error.stack,

@@ -35,7 +35,7 @@ const getHandler = async (c: any) => {
         {
           success: false,
           error: 'Parâmetros inválidos',
-          errors: validationResult.error.errors.map((err) => ({
+          errors: validationResult.error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),
@@ -152,7 +152,7 @@ const getHandler = async (c: any) => {
         complianceContext: 'LGPD',
         sensitivityLevel: 'high',
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Audit logging failed:', err)
         return { success: false }
       })
@@ -160,8 +160,8 @@ const getHandler = async (c: any) => {
     const responseTime = Date.now() - startTime
 
     // Check consent expiration
-    const consentStatus = patientData.lgpdConsent?.expiresAt
-        && new Date(patientData.lgpdConsent.expiresAt) < new Date()
+    const consentStatus = patientData.lgpdConsent?.expiresAt &&
+        new Date(patientData.lgpdConsent.expiresAt) < new Date()
       ? 'expired'
       : 'valid'
 

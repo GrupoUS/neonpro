@@ -312,7 +312,7 @@ export class HealthcareProfessionalAuthorizationService {
 
     // Check specialty permissions
     const specialtyPermissions = professional.specialties
-      .map((specialty) => SPECIALTY_PERMISSIONS[specialty])
+      .map(specialty => SPECIALTY_PERMISSIONS[specialty])
       .filter(Boolean)
 
     // Build authorization result
@@ -334,10 +334,10 @@ export class HealthcareProfessionalAuthorizationService {
 
     // Add specialty-specific restrictions
     if (specialtyPermissions.length > 0) {
-      specialtyPermissions.forEach((sp) => {
+      specialtyPermissions.forEach(sp => {
         if (
-          sp.requiresSupervision
-          && !authorizationResult.restrictions.includes('requires_supervision')
+          sp.requiresSupervision &&
+          !authorizationResult.restrictions.includes('requires_supervision')
         ) {
           authorizationResult.restrictions.push('requires_supervision')
         }
@@ -388,8 +388,8 @@ export class HealthcareProfessionalAuthorizationService {
 
       // Check if validation is recent (within 24 hours)
       const validationExpiry = new Date(Date.now() - 24 * 60 * 60 * 1000)
-      const needsRevalidation = !professional.cfmLastValidated
-        || professional.cfmLastValidated < validationExpiry
+      const needsRevalidation = !professional.cfmLastValidated ||
+        professional.cfmLastValidated < validationExpiry
 
       if (needsRevalidation) {
         // Implement real CFM API integration with fallback
@@ -503,15 +503,15 @@ export class HealthcareProfessionalAuthorizationService {
     if (authorization.isAuthorized && restrictions.length > 0) {
       // Additional restriction checks can be implemented here
       if (
-        restrictions.includes('no_prescribing')
-        && operation === 'create_prescription'
+        restrictions.includes('no_prescribing') &&
+        operation === 'create_prescription'
       ) {
         authorization.isAuthorized = false
       }
 
       if (
-        restrictions.includes('no_diagnosis')
-        && operation.includes('medical_record')
+        restrictions.includes('no_diagnosis') &&
+        operation.includes('medical_record')
       ) {
         authorization.isAuthorized = false
       }

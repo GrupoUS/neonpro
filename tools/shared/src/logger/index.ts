@@ -242,7 +242,7 @@ export class UnifiedLogger extends EventEmitter {
       result += `\n  ${color}Error:${resetColor} ${entry.error.name}: ${entry.error.message}`
       if (entry.error.stack && this.config.includeStackTrace) {
         const stackLines = entry.error.stack.split('\n').slice(1, 4)
-        stackLines.forEach((line) => {
+        stackLines.forEach(line => {
           result += `\n    ${line.trim()}`
         })
       }
@@ -250,8 +250,8 @@ export class UnifiedLogger extends EventEmitter {
 
     // Metadata
     if (
-      entry.context.metadata
-      && Object.keys(entry.context.metadata).length > 0
+      entry.context.metadata &&
+      Object.keys(entry.context.metadata).length > 0
     ) {
       result += `\n  📋 Metadata: ${JSON.stringify(entry.context.metadata, null, 2)}`
     }
@@ -319,8 +319,8 @@ export class UnifiedLogger extends EventEmitter {
 
     // Error log
     if (
-      error
-      && (entry.level === LogLevel.ERROR || entry.level === LogLevel.CRITICAL)
+      error &&
+      (entry.level === LogLevel.ERROR || entry.level === LogLevel.CRITICAL)
     ) {
       const errorPath = join(this.config.logDirectory, error)
       try {
@@ -369,9 +369,9 @@ export class UnifiedLogger extends EventEmitter {
     try {
       const files = readdirSync(this.config.logDirectory)
         .filter(
-          (file) => file.endsWith('.log') && file.startsWith(this.config.name),
+          file => file.endsWith('.log') && file.startsWith(this.config.name),
         )
-        .map((file) => ({
+        .map(file => ({
           name: file,
           path: join(this.config.logDirectory, file),
           stats: statSync(join(this.config.logDirectory, file)),
@@ -380,7 +380,7 @@ export class UnifiedLogger extends EventEmitter {
 
       if (files.length > this.config.maxFiles) {
         const filesToDelete = files.slice(this.config.maxFiles)
-        filesToDelete.forEach((file) => {
+        filesToDelete.forEach(file => {
           unlinkSync(file.path)
         })
       }

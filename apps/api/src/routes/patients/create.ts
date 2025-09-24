@@ -45,7 +45,7 @@ const LGPDConsentSchema = z.object({
   dataProcessing: z
     .boolean()
     .refine(
-      (val) => val === true,
+      val => val === true,
       'Consentimento para processamento de dados é obrigatório',
     ),
   marketing: z.boolean().optional(),
@@ -138,7 +138,7 @@ app.openapi(
   createPatientRoute,
   requireAuth,
   dataProtection.clientView,
-  async (c) => {
+  async c => {
     try {
       const userId = c.get('userId')
       // TODO: Implement patient creation logic
@@ -148,9 +148,9 @@ app.openapi(
       const patientData = c.req.valid('json')
 
       // Get client IP and User-Agent for audit logging
-      const ipAddress = c.req.header('X-Real-IP')
-        || c.req.header('X-Forwarded-For')
-        || 'unknown'
+      const ipAddress = c.req.header('X-Real-IP') ||
+        c.req.header('X-Forwarded-For') ||
+        'unknown'
       const userAgent = c.req.header('User-Agent') || 'unknown'
       const healthcareProfessional = c.req.header('X-Healthcare-Professional')
 
@@ -212,7 +212,7 @@ app.openapi(
           legalBasis: 'consent',
           collectionMethod: 'online_form',
         })
-        .catch((err) => {
+        .catch(err => {
           console.error('Failed to create consent record:', err)
         })
 
@@ -243,7 +243,7 @@ app.openapi(
             },
           },
         )
-        .catch((err) => {
+        .catch(err => {
           console.error('Audit logging failed:', err)
         })
 
@@ -262,7 +262,7 @@ app.openapi(
             priority: 'medium',
             lgpdConsent: true,
           })
-          .catch((err) => {
+          .catch(err => {
             console.error('Welcome notification failed:', err)
           })
       }

@@ -253,8 +253,8 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
   ): Promise<void> {
     // LGPD compliance checks
     if (
-      message.dataClassification === 'sensitive'
-      || message.dataClassification === 'confidential'
+      message.dataClassification === 'sensitive' ||
+      message.dataClassification === 'confidential'
     ) {
       // In production, verify consent exists for processing sensitive data
       this.log(
@@ -286,8 +286,8 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     this.auditLog.push({
       ...message,
       // Ensure no sensitive data leaks in logs
-      payload: message.dataClassification === 'sensitive'
-          || message.dataClassification === 'confidential'
+      payload: message.dataClassification === 'sensitive' ||
+          message.dataClassification === 'confidential'
         ? '[REDACTED]'
         : message.payload,
     })
@@ -328,7 +328,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   private async simulateNetworkDelay(): Promise<void> {
     if (this.options.networkLatency && this.options.networkLatency > 0) {
-      await new Promise((resolve) => setTimeout(resolve, this.options.networkLatency))
+      await new Promise(resolve => setTimeout(resolve, this.options.networkLatency))
     }
   }
 

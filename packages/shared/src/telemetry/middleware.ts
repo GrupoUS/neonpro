@@ -19,10 +19,10 @@ function extractHealthcareContext(
   const method = c.req.method
 
   // Determine if this is a patient data operation
-  const isPatientDataInvolved = url.includes('/patient')
-    || url.includes('/medical-record')
-    || url.includes('/appointment')
-    || url.includes('/prescription')
+  const isPatientDataInvolved = url.includes('/patient') ||
+    url.includes('/medical-record') ||
+    url.includes('/appointment') ||
+    url.includes('/prescription')
 
   // Determine compliance level based on route
   let complianceLevel: ComplianceLevel = ComplianceLevel.PUBLIC
@@ -144,8 +144,8 @@ function recordApiMetrics(
 ) {
   // Only record metrics in production or when enabled
   if (
-    process.env.NODE_ENV !== 'production'
-    && process.env.ENABLE_METRICS !== 'true'
+    process.env.NODE_ENV !== 'production' &&
+    process.env.ENABLE_METRICS !== 'true'
   ) {
     return
   }
@@ -242,8 +242,8 @@ export function complianceAuditMiddleware() {
 
     // Only audit sensitive operations
     if (
-      healthcareContext['healthcare.compliance_level'] === 'sensitive'
-      || healthcareContext['healthcare.patient_data_involved']
+      healthcareContext['healthcare.compliance_level'] === 'sensitive' ||
+      healthcareContext['healthcare.patient_data_involved']
     ) {
       const auditEvent = {
         timestamp: new Date().toISOString(),
@@ -283,10 +283,10 @@ function sanitizeUrlForAudit(url: string): string {
 // Get client IP address
 function getClientIp(c: Context): string {
   return (
-    c.req.header('x-forwarded-for')
-    || c.req.header('x-real-ip')
-    || c.req.header('cf-connecting-ip')
-    || 'unknown'
+    c.req.header('x-forwarded-for') ||
+    c.req.header('x-real-ip') ||
+    c.req.header('cf-connecting-ip') ||
+    'unknown'
   )
 }
 

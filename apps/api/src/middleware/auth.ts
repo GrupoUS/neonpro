@@ -197,7 +197,7 @@ export function requirePermission(requiredPermissions: string | string[]) {
       })
     }
 
-    const hasPermission = permissions.some((permission) => user.permissions.includes(permission))
+    const hasPermission = permissions.some(permission => user.permissions.includes(permission))
 
     if (!hasPermission) {
       logger.warn('Access denied - insufficient permissions', {

@@ -770,7 +770,7 @@ export function validateHealthcareDocuments(
       | 'phone'
   }>,
 ): HealthcareValidationResult[] {
-  return documents.map((doc) => validateHealthcareDocument(doc.value, doc.type))
+  return documents.map(doc => validateHealthcareDocument(doc.value, doc.type))
 }
 
 /**

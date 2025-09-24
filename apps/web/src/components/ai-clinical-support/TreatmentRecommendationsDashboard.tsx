@@ -70,9 +70,9 @@ export function TreatmentRecommendationsDashboard({
   })
 
   const handleRecommendationToggle = (recommendationId: string) => {
-    setSelectedRecommendations((prev) =>
+    setSelectedRecommendations(prev =>
       prev.includes(recommendationId)
-        ? prev.filter((id) => id !== recommendationId)
+        ? prev.filter(id => id !== recommendationId)
         : [...prev, recommendationId]
     )
   }
@@ -80,7 +80,7 @@ export function TreatmentRecommendationsDashboard({
   const handleCreateTreatmentPlan = async () => {
     if (selectedRecommendations.length === 0) return
 
-    const selectedRecs = recommendations?.recommendations.filter((r) =>
+    const selectedRecs = recommendations?.recommendations.filter(r =>
       selectedRecommendations.includes(r.id)
     )
 
@@ -253,8 +253,8 @@ export function TreatmentRecommendationsDashboard({
           </div>
 
           {recommendations.recommendations
-            .filter((r) => r.priority === 'high' || r.priority === 'medium')
-            .map((recommendation) => (
+            .filter(r => r.priority === 'high' || r.priority === 'medium')
+            .map(recommendation => (
               <RecommendationCard
                 key={recommendation.id}
                 recommendation={recommendation}
@@ -270,8 +270,8 @@ export function TreatmentRecommendationsDashboard({
         {/* Alternative Treatments */}
         <TabsContent value='alternatives' className='space-y-4'>
           {recommendations.recommendations
-            .filter((r) => r.priority === 'low' || r.priority === 'alternative')
-            .map((recommendation) => (
+            .filter(r => r.priority === 'low' || r.priority === 'alternative')
+            .map(recommendation => (
               <RecommendationCard
                 key={recommendation.id}
                 recommendation={recommendation}
@@ -296,7 +296,7 @@ export function TreatmentRecommendationsDashboard({
             <CardContent>
               <div className='space-y-4'>
                 {recommendations.recommendations
-                  .filter((r) => r.priority === 'high' || r.priority === 'medium')
+                  .filter(r => r.priority === 'high' || r.priority === 'medium')
                   .sort((a, b) => a.recommendedPhase - b.recommendedPhase)
                   .map((recommendation, index) => (
                     <div key={recommendation.id} className='flex items-start gap-4'>
@@ -324,7 +324,7 @@ export function TreatmentRecommendationsDashboard({
           {treatmentHistory && treatmentHistory.treatments.length > 0
             ? (
               <div className='space-y-4'>
-                {treatmentHistory.treatments.map((treatment) => (
+                {treatmentHistory.treatments.map(treatment => (
                   <Card key={treatment.id}>
                     <CardContent className='p-4'>
                       <div className='flex items-center justify-between'>

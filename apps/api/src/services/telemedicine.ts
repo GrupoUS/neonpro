@@ -509,8 +509,8 @@ export class TelemedicineService {
 
     // Video quality check
     if (
-      qualityMetrics.videoResolution !== '720p'
-      && qualityMetrics.videoResolution !== '1080p'
+      qualityMetrics.videoResolution !== '720p' &&
+      qualityMetrics.videoResolution !== '1080p'
     ) {
       recommendations.push('Melhorar qualidade de vídeo para pelo menos 720p')
       if (session.sessionType === TELEMEDICINE_SESSION_TYPES.TELEDIAGNOSIS) {
@@ -734,7 +734,7 @@ export class TelemedicineService {
       ]
 
       session.emergencyEscalation.emergencyContacts = emergencyContacts.map(
-        (contact) => ({
+        contact => ({
           name: contact.name,
           phone: contact.phone,
           _role: contact.role,
@@ -825,8 +825,8 @@ export class TelemedicineService {
       const endTime = new Date()
       const duration = session.actualStartTime
         ? Math.round(
-          (endTime.getTime() - session.actualStartTime.getTime())
-            / (1000 * 60),
+          (endTime.getTime() - session.actualStartTime.getTime()) /
+            (1000 * 60),
         )
         : 0
 
@@ -947,7 +947,7 @@ export class TelemedicineService {
     const requiredMethods = this.getRequiredAuthMethods(
       authContext.securityLevel,
     )
-    const hasRequiredMethods = requiredMethods.every((method) =>
+    const hasRequiredMethods = requiredMethods.every(method =>
       authContext.authenticationMethods.includes(method as any)
     )
 
@@ -1139,7 +1139,7 @@ export class TelemedicineService {
     }>
   > {
     // Mock implementation - would integrate with notification services
-    return contacts.map((contact) => ({
+    return contacts.map(contact => ({
       ...contact,
       notified: true, // Simulate successful notification
     }))
@@ -1173,8 +1173,8 @@ export class TelemedicineService {
     }
 
     if (
-      session.sessionType === TELEMEDICINE_SESSION_TYPES.TELEDIAGNOSIS
-      && session.qualityMetrics.qualityScore < 80
+      session.sessionType === TELEMEDICINE_SESSION_TYPES.TELEDIAGNOSIS &&
+      session.qualityMetrics.qualityScore < 80
     ) {
       cfmCompliant = false
       issues.push('Quality standards not met for telediagnosis')
@@ -1182,8 +1182,8 @@ export class TelemedicineService {
 
     // LGPD compliance checks
     if (
-      session.communicationChannel.recordingEnabled
-      && !session.communicationChannel.recordingConsent
+      session.communicationChannel.recordingEnabled &&
+      !session.communicationChannel.recordingConsent
     ) {
       lgpdCompliant = false
       issues.push('Recording without explicit consent violates LGPD')
@@ -1322,9 +1322,9 @@ export class TelemedicineService {
       : 0
 
     const complianceIssues = activeSessions.filter(
-      (session) =>
-        session.cfmCompliance.complianceScore < 80
-        || session.qualityMetrics.qualityScore < 70,
+      session =>
+        session.cfmCompliance.complianceScore < 80 ||
+        session.qualityMetrics.qualityScore < 70,
     ).length
 
     return {

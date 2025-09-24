@@ -459,7 +459,7 @@ function CoordinationDashboard() {
         {/* Tabs */}
         <div className='border-b border-gray-200 mb-6'>
           <nav className='-mb-px flex space-x-8'>
-            {['overview', 'teams', 'referrals', 'sessions', 'messages'].map((tab) => (
+            {['overview', 'teams', 'referrals', 'sessions', 'messages'].map(tab => (
               <button
                 key={tab}
                 onClick={() => setSelectedTab(tab)}
@@ -488,7 +488,7 @@ function CoordinationDashboard() {
                 <h3 className='text-lg font-medium text-gray-900'>Equipes Recentes</h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {teams.slice(0, 3).map((team) => (
+                {teams.slice(0, 3).map(team => (
                   <div key={team.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div>
@@ -515,7 +515,7 @@ function CoordinationDashboard() {
                 <h3 className='text-lg font-medium text-gray-900'>Encaminhamentos Recentes</h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {referrals.slice(0, 3).map((referral) => (
+                {referrals.slice(0, 3).map(referral => (
                   <div key={referral.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div>
@@ -548,7 +548,7 @@ function CoordinationDashboard() {
                 <h3 className='text-lg font-medium text-gray-900'>Próximas Sessões</h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {sessions.slice(0, 3).map((session) => (
+                {sessions.slice(0, 3).map(session => (
                   <div key={session.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div>
@@ -581,7 +581,7 @@ function CoordinationDashboard() {
                 <h3 className='text-lg font-medium text-gray-900'>Discussões Recentes</h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {threads.slice(0, 3).map((thread) => (
+                {threads.slice(0, 3).map(thread => (
                   <div key={thread.id} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div className='flex-1'>
@@ -612,7 +612,7 @@ function CoordinationDashboard() {
               </button>
             </div>
             <div className='divide-y divide-gray-200'>
-              {teams.map((team) => (
+              {teams.map(team => (
                 <div key={team.id} className='px-6 py-4'>
                   <div className='flex items-center justify-between'>
                     <div>
@@ -651,7 +651,7 @@ function CoordinationDashboard() {
               </button>
             </div>
             <div className='divide-y divide-gray-200'>
-              {referrals.map((referral) => (
+              {referrals.map(referral => (
                 <div key={referral.id} className='px-6 py-4'>
                   <div className='flex items-center justify-between'>
                     <div>
@@ -706,7 +706,7 @@ function CoordinationDashboard() {
               </button>
             </div>
             <div className='divide-y divide-gray-200'>
-              {sessions.map((session) => (
+              {sessions.map(session => (
                 <div key={session.id} className='px-6 py-4'>
                   <div className='flex items-center justify-between'>
                     <div>
@@ -760,7 +760,7 @@ function CoordinationDashboard() {
               </button>
             </div>
             <div className='divide-y divide-gray-200'>
-              {threads.map((thread) => (
+              {threads.map(thread => (
                 <div key={thread.id} className='px-6 py-4'>
                   <div className='flex items-center justify-between'>
                     <div className='flex-1'>

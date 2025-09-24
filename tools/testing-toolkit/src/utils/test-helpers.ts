@@ -98,8 +98,7 @@ export function createMock<T extends Record<string, any>>(
 /**
  * Sleep for a specified number of milliseconds
  */
-export const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms))
+export const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms))
 
 /**
  * Create a deferred promise for testing async scenarios
@@ -127,7 +126,7 @@ export function expectObjectToHaveProperties<T extends Record<string, any>>(
   obj: T,
   properties: (keyof T)[],
 ): void {
-  properties.forEach((prop) => {
+  properties.forEach(prop => {
     expect(obj).toHaveProperty(prop as string)
     expect(obj[prop]).toBeDefined()
   })

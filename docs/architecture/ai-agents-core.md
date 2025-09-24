@@ -34,14 +34,14 @@ related:
 
 ```typescript
 // Essential AI agent endpoints
-;/api/agents
-  / chat // Chat interface
-  / api
-  / agents
-  / query // Database queries
-  / api
-  / agents
-  / actions // Action execution
+;/api/agents /
+  chat / // Chat interface
+  api /
+  agents /
+  query / // Database queries
+  api /
+  agents /
+  actions // Action execution
 ```
 
 ## Performance Targets

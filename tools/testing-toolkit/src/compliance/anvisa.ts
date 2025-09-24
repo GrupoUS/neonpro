@@ -40,10 +40,10 @@ export class ANVISAValidator {
    */
   static validateClinicalWorkflows(data: ANVISATestData): boolean {
     return (
-      Array.isArray(data.clinicalWorkflows)
-      && data.clinicalWorkflows.length > 0
-      && data.clinicalWorkflows.every(
-        (workflow) => typeof workflow === 'string' && workflow.length > 0,
+      Array.isArray(data.clinicalWorkflows) &&
+      data.clinicalWorkflows.length > 0 &&
+      data.clinicalWorkflows.every(
+        workflow => typeof workflow === 'string' && workflow.length > 0,
       )
     )
   }
@@ -54,10 +54,10 @@ export class ANVISAValidator {
   static validateRiskManagement(data: ANVISATestData): boolean {
     const rm = data.riskManagement
     return (
-      rm.riskAssessmentCompleted === true
-      && Array.isArray(rm.mitigationStrategies)
-      && rm.mitigationStrategies.length > 0
-      && Array.isArray(rm.residualRisks)
+      rm.riskAssessmentCompleted === true &&
+      Array.isArray(rm.mitigationStrategies) &&
+      rm.mitigationStrategies.length > 0 &&
+      Array.isArray(rm.residualRisks)
     )
   }
 
@@ -67,10 +67,10 @@ export class ANVISAValidator {
   static validatePostMarketSurveillance(data: ANVISATestData): boolean {
     const pms = data.postMarketSurveillance
     return (
-      pms.enabled === true
-      && typeof pms.reportingMechanism === 'string'
-      && pms.reportingMechanism.length > 0
-      && pms.adverseEventTracking === true
+      pms.enabled === true &&
+      typeof pms.reportingMechanism === 'string' &&
+      pms.reportingMechanism.length > 0 &&
+      pms.adverseEventTracking === true
     )
   }
 

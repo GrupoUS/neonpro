@@ -285,7 +285,7 @@ export function maskName(
   const { maskChar = '*', visibleStart = 1 } = options
   const names = name.split(' ')
 
-  return names.map((namepart) => {
+  return names.map(namepart => {
     // For visibleStart 0, mask everything
     if (visibleStart === 0) {
       return maskChar.repeat(namepart.length)
@@ -385,7 +385,7 @@ export function maskPatientData(
       } else {
         // Enhanced: mask first character of each name part
         const names = masked.name.split(' ')
-        masked.name = names.map((namePart) => {
+        masked.name = names.map(namePart => {
           if (namePart.length <= 2) return namePart // Keep short names as is
           return namePart.slice(0, 1) + '*'.repeat(namePart.length - 1)
         }).join(' ')
@@ -595,7 +595,7 @@ export function anonymizePersonalData(
       }
     } else {
       // Check if this is a nested field path
-      const nestedField = fieldsToAnonymize.find((field) => field.startsWith(`${key}.`))
+      const nestedField = fieldsToAnonymize.find(field => field.startsWith(`${key}.`))
       if (nestedField) {
         // This is a parent of a nested field, preserve it
         anonymizedData[key] = value
@@ -607,7 +607,7 @@ export function anonymizePersonalData(
   })
 
   // Process nested field paths
-  fieldsToAnonymize.forEach((fieldPath) => {
+  fieldsToAnonymize.forEach(fieldPath => {
     if (fieldPath.includes('.')) {
       const parts = fieldPath.split('.')
       let currentValue: unknown = data
@@ -664,16 +664,16 @@ export function isDataAnonymized(data: Record<string, unknown>): boolean {
 
   // Check if all sensitive fields are present and anonymized
   const sensitiveFieldValues = sensitiveFields
-    .filter((field) => field in data)
-    .map((field) => data[field])
+    .filter(field => field in data)
+    .map(field => data[field])
 
   // If no sensitive fields, consider not anonymized
   if (sensitiveFieldValues.length === 0) return false
 
   // All sensitive fields must be anonymized
-  return sensitiveFieldValues.every((value) =>
-    typeof value === 'string'
-    && commonAnonymizedPatterns.some((pattern) => value.includes(pattern))
+  return sensitiveFieldValues.every(value =>
+    typeof value === 'string' &&
+    commonAnonymizedPatterns.some(pattern => value.includes(pattern))
   )
 }
 
@@ -706,10 +706,10 @@ export function generatePrivacyReport(
 
       // If value looks similar to original, it's a risk
       if (
-        originalValue
-        && value.length > 3
-        && originalValue.length > 3
-        && value.toLowerCase().includes(originalValue.toLowerCase().substring(0, 3))
+        originalValue &&
+        value.length > 3 &&
+        originalValue.length > 3 &&
+        value.toLowerCase().includes(originalValue.toLowerCase().substring(0, 3))
       ) {
         complianceScore -= 15
         risks.push(`Insufficient masking in field: ${key}`)
@@ -754,7 +754,7 @@ export function generatePrivacyReport(
   const sensitiveFields = ['name', 'cpf', 'email', 'phone']
   const anonymizedFields = metadata.fieldsAnonymized || []
 
-  sensitiveFields.forEach((field) => {
+  sensitiveFields.forEach(field => {
     if (originalData[field] && !anonymizedFields.includes(field)) {
       complianceScore -= 10
       risks.push(`Sensitive field ${field} not anonymized`)

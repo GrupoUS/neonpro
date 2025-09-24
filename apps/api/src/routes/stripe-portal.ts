@@ -26,7 +26,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(
   '*',
   cors({
-    origin: (origin) =>
+    origin: origin =>
       !origin
         ? undefined
         : allowedOrigins.includes(origin)
@@ -47,7 +47,7 @@ const supabase = createClient(
  * Create Stripe Customer Portal Session
  * POST /api/stripe/create-portal-session
  */
-app.post('/create-portal-session', async (c) => {
+app.post('/create-portal-session', async c => {
   try {
     // Get user ID from request body
     const { userId: _userId } = await c.req.json()
@@ -110,7 +110,7 @@ app.post('/create-portal-session', async (c) => {
  * Get Customer Portal Configuration
  * GET /api/stripe/portal-config
  */
-app.get('/portal-config', async (c) => {
+app.get('/portal-config', async c => {
   try {
     // Import Stripe
     const Stripe = (await import('stripe')).default
@@ -149,7 +149,7 @@ app.get('/portal-config', async (c) => {
  * Create Customer in Stripe (if needed)
  * POST /api/stripe/create-customer
  */
-app.post('/create-customer', async (c) => {
+app.post('/create-customer', async c => {
   try {
     const { userId, email, name } = await c.req.json()
 
@@ -207,7 +207,7 @@ app.post('/create-customer', async (c) => {
  * Health check endpoint
  * GET /api/stripe/health
  */
-app.get('/health', (c) => {
+app.get('/health', c => {
   return c.json({
     status: 'healthy',
     _service: 'stripe-portal',

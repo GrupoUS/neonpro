@@ -432,7 +432,7 @@ export class HealthcareQueryOptimizer {
         )
 
         // Process batch results
-        batchResults.forEach((result) => {
+        batchResults.forEach(result => {
           if (result.status === 'fulfilled') {
             if (result.value.success) {
               results.created++
@@ -638,8 +638,8 @@ export class HealthcareQueryOptimizer {
 
     // Log slow queries
     if (
-      duration > this.config.slowQueryThreshold
-      && this.config.enableQueryLogging
+      duration > this.config.slowQueryThreshold &&
+      this.config.enableQueryLogging
     ) {
       console.warn(`Slow query detected: ${duration}ms`)
     }

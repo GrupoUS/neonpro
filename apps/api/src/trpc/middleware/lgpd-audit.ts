@@ -95,10 +95,10 @@ function generateCryptographicProof(
 function classifyDataCategory(path: string, input: any): string {
   if (path.includes('patient')) {
     if (
-      input?.bloodType
-      || input?.allergies
-      || input?.chronicConditions
-      || input?.currentMedications
+      input?.bloodType ||
+      input?.allergies ||
+      input?.chronicConditions ||
+      input?.currentMedications
     ) {
       return LGPD_DATA_CATEGORIES.HEALTH
     }
@@ -140,10 +140,10 @@ function applyDataMinimization(
   ] || DATA_MINIMIZATION_RULES.summary
 
   if (Array.isArray(data)) {
-    return data.map((item) => {
+    return data.map(item => {
       if (typeof item === 'object' && item !== null) {
         const minimized: any = {}
-        allowedFields.forEach((field) => {
+        allowedFields.forEach(field => {
           if (item[field] !== undefined) {
             minimized[field] = item[field]
           }
@@ -155,7 +155,7 @@ function applyDataMinimization(
   }
 
   const minimized: any = {}
-  allowedFields.forEach((field) => {
+  allowedFields.forEach(field => {
     if (data[field] !== undefined) {
       minimized[field] = data[field]
     }
@@ -187,8 +187,8 @@ export const lgpdAuditMiddleware = async ({
 
     const dataCategory = classifyDataCategory(path, input)
     const isPatientData = path.includes('patient') || path.includes('appointment')
-    const isSensitiveData = dataCategory === LGPD_DATA_CATEGORIES.HEALTH
-      || dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
+    const isSensitiveData = dataCategory === LGPD_DATA_CATEGORIES.HEALTH ||
+      dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
 
     // Generate cryptographic proof for sensitive operations
     let cryptographicProof = null
@@ -302,8 +302,8 @@ function calculateRiskLevel(
   dataCategory: string,
 ): RiskLevel {
   if (
-    dataCategory === LGPD_DATA_CATEGORIES.HEALTH
-    || dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
+    dataCategory === LGPD_DATA_CATEGORIES.HEALTH ||
+    dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
   ) {
     return type === 'mutation' ? RiskLevel.HIGH : RiskLevel.MEDIUM
   }

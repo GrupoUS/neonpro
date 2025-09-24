@@ -141,7 +141,7 @@ export class Logger {
     this.logBatch = []
 
     try {
-      await Promise.all(batch.map((entry) => this.writeToLog(entry)))
+      await Promise.all(batch.map(entry => this.writeToLog(entry)))
     } catch (error) {
       console.error('Failed to process log batch:', error)
       // Re-add failed entries to the batch for retry

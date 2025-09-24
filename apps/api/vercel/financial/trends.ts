@@ -26,10 +26,10 @@ export async function GET(request: Request) {
           value: Math.round(currentValue),
           change: i > 0
             ? Math.round(
-              ((currentValue - data[i - 1]?.value || currentValue)
-                / (data[i - 1]?.value || currentValue))
-                * 100
-                * 100,
+              ((currentValue - data[i - 1]?.value || currentValue) /
+                (data[i - 1]?.value || currentValue)) *
+                100 *
+                100,
             ) / 100
             : 0,
         })
@@ -104,10 +104,10 @@ export async function GET(request: Request) {
       ),
       growth: trendData.length > 1
         ? Math.round(
-          ((trendData[trendData.length - 1].value - trendData[0].value)
-            / trendData[0].value)
-            * 100
-            * 100,
+          ((trendData[trendData.length - 1].value - trendData[0].value) /
+            trendData[0].value) *
+            100 *
+            100,
         ) / 100
         : 0,
       trend: trendData.length > 1

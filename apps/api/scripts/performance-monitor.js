@@ -94,12 +94,12 @@ class HealthcarePerformanceMonitor {
     console.warn(`🔍 Performing health check at ${new Date().toISOString()}`)
 
     const results = await Promise.allSettled(
-      COMPLIANCE_ENDPOINTS.map((endpoint) => this.checkEndpoint(endpoint)),
+      COMPLIANCE_ENDPOINTS.map(endpoint => this.checkEndpoint(endpoint)),
     )
 
     // Calculate metrics
     const successfulChecks = results.filter(
-      (result) => result.status === 'fulfilled',
+      result => result.status === 'fulfilled',
     ).length
     const totalChecks = results.length
 
@@ -141,7 +141,7 @@ class HealthcarePerformanceMonitor {
             'X-Health-Check': 'true',
           },
         },
-        (response) => {
+        response => {
           const responseTime = Date.now() - startTime
 
           // Store response time metrics
@@ -172,7 +172,7 @@ class HealthcarePerformanceMonitor {
         },
       )
 
-      request.on('error', (error) => {
+      request.on('error', error => {
         const responseTime = Date.now() - startTime
         console.warn(`  ${endpoint}: ERROR - ${error.message}`)
         reject(error)
@@ -265,8 +265,8 @@ class HealthcarePerformanceMonitor {
    */
   generatePerformanceReport() {
     const avgResponseTime = this.metrics.responseTime.length > 0
-      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0)
-        / this.metrics.responseTime.length
+      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) /
+        this.metrics.responseTime.length
       : 0
 
     console.warn('\n📊 HEALTHCARE PERFORMANCE SUMMARY')
@@ -306,10 +306,10 @@ class HealthcarePerformanceMonitor {
     const errorRateCompliant = this.metrics.errorRate <= HEALTHCARE_SLA.maxErrorRate
     const bundleSizeCompliant = this.metrics.bundleSize <= HEALTHCARE_SLA.maxBundleSize
 
-    const overallCompliant = responseTimeCompliant
-      && availabilityCompliant
-      && errorRateCompliant
-      && bundleSizeCompliant
+    const overallCompliant = responseTimeCompliant &&
+      availabilityCompliant &&
+      errorRateCompliant &&
+      bundleSizeCompliant
 
     console.warn(
       `\nSLA Compliance: ${overallCompliant ? '✅ MEETING' : '❌ FAILING'} healthcare requirements`,
@@ -338,8 +338,8 @@ class HealthcarePerformanceMonitor {
   generateFinalReport() {
     const totalChecks = this.metrics.responseTime.length
     const avgResponseTime = totalChecks > 0
-      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0)
-        / totalChecks
+      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) /
+        totalChecks
       : 0
 
     const report = {
@@ -383,15 +383,15 @@ class HealthcarePerformanceMonitor {
    */
   isHealthcareSlaCompliant() {
     const avgResponseTime = this.metrics.responseTime.length > 0
-      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0)
-        / this.metrics.responseTime.length
+      ? this.metrics.responseTime.reduce((sum, time) => sum + time, 0) /
+        this.metrics.responseTime.length
       : 0
 
     return (
-      avgResponseTime <= HEALTHCARE_SLA.maxResponseTime
-      && this.metrics.availability >= HEALTHCARE_SLA.minAvailability
-      && this.metrics.errorRate <= HEALTHCARE_SLA.maxErrorRate
-      && this.metrics.bundleSize <= HEALTHCARE_SLA.maxBundleSize
+      avgResponseTime <= HEALTHCARE_SLA.maxResponseTime &&
+      this.metrics.availability >= HEALTHCARE_SLA.minAvailability &&
+      this.metrics.errorRate <= HEALTHCARE_SLA.maxErrorRate &&
+      this.metrics.bundleSize <= HEALTHCARE_SLA.maxBundleSize
     )
   }
 
@@ -431,7 +431,7 @@ class HealthcarePerformanceMonitor {
 if (require.main === module) {
   const monitor = new HealthcarePerformanceMonitor()
   monitor.startTime = Date.now()
-  monitor.startMonitoring().catch((error) => {
+  monitor.startMonitoring().catch(error => {
     console.error('Healthcare performance monitoring failed:', error)
     process.exit(1)
   })

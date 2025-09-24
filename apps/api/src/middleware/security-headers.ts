@@ -113,7 +113,7 @@ export class SecurityHeadersMiddleware {
             'X-XSS-Protection',
             'Referrer-Policy',
             'Permissions-Policy',
-          ].filter((header) => res.getHeader(header)),
+          ].filter(header => res.getHeader(header)),
           timestamp: new Date().toISOString(),
         })
 
@@ -334,9 +334,9 @@ export function httpsRedirectMiddleware(
   next: NextFunction,
 ): void {
   if (
-    process.env.NODE_ENV === 'production'
-    && !req.secure
-    && req.get('x-forwarded-proto') !== 'https'
+    process.env.NODE_ENV === 'production' &&
+    !req.secure &&
+    req.get('x-forwarded-proto') !== 'https'
   ) {
     const httpsUrl = `https://${req.get('host')}${req.url}`
     res.redirect(301, httpsUrl)

@@ -79,11 +79,11 @@ export function PatientAssessmentForm(
 
   // Generate recommendations mutation
   const generateMutation = trpc.aiClinicalSupport.generateTreatmentRecommendations.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries(['patients', patientId])
       onSuccess?.(data.recommendations)
     },
-    onError: (error) => {
+    onError: error => {
       onError?.(error as Error)
     },
   })
@@ -215,7 +215,7 @@ export function PatientAssessmentForm(
         .medicalHistory![field as keyof typeof assessmentData.medicalHistory] as string[]
       : assessmentData[field]
 
-    handleArrayFieldChange(field, currentValues.filter((item) => item !== value), isMedicalHistory)
+    handleArrayFieldChange(field, currentValues.filter(item => item !== value), isMedicalHistory)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -341,7 +341,7 @@ export function PatientAssessmentForm(
                       ))}
                     </div>
                     <Select
-                      onValueChange={(value) => {
+                      onValueChange={value => {
                         if (value && !assessmentData.skinConditions?.includes(value)) {
                           handleAddTag('skinConditions', value, commonSkinConditions)
                         }
@@ -352,10 +352,8 @@ export function PatientAssessmentForm(
                       </SelectTrigger>
                       <SelectContent>
                         {commonSkinConditions
-                          .filter((condition) =>
-                            !assessmentData.skinConditions?.includes(condition)
-                          )
-                          .map((condition) => (
+                          .filter(condition => !assessmentData.skinConditions?.includes(condition))
+                          .map(condition => (
                             <SelectItem key={condition} value={condition}>
                               {condition}
                             </SelectItem>
@@ -399,7 +397,7 @@ export function PatientAssessmentForm(
                   <Label htmlFor='pregnancyStatus'>Status de Gravidez</Label>
                   <Select
                     value={assessmentData.medicalHistory?.pregnancyStatus || 'none'}
-                    onValueChange={(value) => {
+                    onValueChange={value => {
                       setAssessmentData({
                         ...assessmentData,
                         medicalHistory: {
@@ -440,7 +438,7 @@ export function PatientAssessmentForm(
                     </div>
                     <Input
                       placeholder='Adicionar alergia e pressionar Enter'
-                      onKeyPress={(e) => {
+                      onKeyPress={e => {
                         if (e.key === 'Enter') {
                           const input = e.target as HTMLInputElement
                           if (input.value.trim()) {
@@ -472,7 +470,7 @@ export function PatientAssessmentForm(
                     </div>
                     <Input
                       placeholder='Adicionar medicamento e pressionar Enter'
-                      onKeyPress={(e) => {
+                      onKeyPress={e => {
                         if (e.key === 'Enter') {
                           const input = e.target as HTMLInputElement
                           if (input.value.trim()) {
@@ -506,7 +504,7 @@ export function PatientAssessmentForm(
                     </div>
                     <Input
                       placeholder='Adicionar tratamento anterior e pressionar Enter'
-                      onKeyPress={(e) => {
+                      onKeyPress={e => {
                         if (e.key === 'Enter') {
                           const input = e.target as HTMLInputElement
                           if (input.value.trim()) {
@@ -537,7 +535,7 @@ export function PatientAssessmentForm(
                     </div>
                     <Input
                       placeholder='Adicionar condição crônica e pressionar Enter'
-                      onKeyPress={(e) => {
+                      onKeyPress={e => {
                         if (e.key === 'Enter') {
                           const input = e.target as HTMLInputElement
                           if (input.value.trim()) {
@@ -580,7 +578,7 @@ export function PatientAssessmentForm(
                       ))}
                     </div>
                     <Select
-                      onValueChange={(value) => {
+                      onValueChange={value => {
                         if (value && !assessmentData.aestheticGoals?.includes(value)) {
                           handleAddTag('aestheticGoals', value, commonAestheticGoals)
                         }
@@ -591,8 +589,8 @@ export function PatientAssessmentForm(
                       </SelectTrigger>
                       <SelectContent>
                         {commonAestheticGoals
-                          .filter((goal) => !assessmentData.aestheticGoals?.includes(goal))
-                          .map((goal) => (
+                          .filter(goal => !assessmentData.aestheticGoals?.includes(goal))
+                          .map(goal => (
                             <SelectItem key={goal} value={goal}>
                               {goal}
                             </SelectItem>
@@ -621,7 +619,7 @@ export function PatientAssessmentForm(
                         id='budgetMin'
                         type='number'
                         value={assessmentData.budgetRange?.min || ''}
-                        onChange={(e) => handleBudgetChange('min', e.target.value)}
+                        onChange={e => handleBudgetChange('min', e.target.value)}
                         placeholder='0'
                         min='0'
                       />
@@ -632,7 +630,7 @@ export function PatientAssessmentForm(
                         id='budgetMax'
                         type='number'
                         value={assessmentData.budgetRange?.max || ''}
-                        onChange={(e) => handleBudgetChange('max', e.target.value)}
+                        onChange={e => handleBudgetChange('max', e.target.value)}
                         placeholder='10000'
                         min='0'
                       />
@@ -642,7 +640,7 @@ export function PatientAssessmentForm(
                     <Label htmlFor='currency'>Moeda</Label>
                     <Select
                       value={assessmentData.budgetRange?.currency || 'BRL'}
-                      onValueChange={(value) => {
+                      onValueChange={value => {
                         setAssessmentData({
                           ...assessmentData,
                           budgetRange: {
@@ -691,7 +689,7 @@ export function PatientAssessmentForm(
                     ))}
                   </div>
                   <Select
-                    onValueChange={(value) => {
+                    onValueChange={value => {
                       if (value && !assessmentData.riskFactors?.includes(value)) {
                         handleAddTag('riskFactors', value, commonRiskFactors)
                       }
@@ -702,8 +700,8 @@ export function PatientAssessmentForm(
                     </SelectTrigger>
                     <SelectContent>
                       {commonRiskFactors
-                        .filter((factor) => !assessmentData.riskFactors?.includes(factor))
-                        .map((factor) => (
+                        .filter(factor => !assessmentData.riskFactors?.includes(factor))
+                        .map(factor => (
                           <SelectItem key={factor} value={factor}>
                             {factor}
                           </SelectItem>
@@ -778,9 +776,9 @@ export function PatientAssessmentForm(
                           </span>
                         </div>
                       )}
-                      {assessmentData.medicalHistory.allergies
-                        && assessmentData.medicalHistory.allergies.length > 0
-                        && (
+                      {assessmentData.medicalHistory.allergies &&
+                        assessmentData.medicalHistory.allergies.length > 0 &&
+                        (
                           <div>
                             <span className='text-gray-600'>Alergias:</span>
                             <div className='flex flex-wrap gap-1 mt-1'>
@@ -792,9 +790,9 @@ export function PatientAssessmentForm(
                             </div>
                           </div>
                         )}
-                      {assessmentData.medicalHistory.medications
-                        && assessmentData.medicalHistory.medications.length > 0
-                        && (
+                      {assessmentData.medicalHistory.medications &&
+                        assessmentData.medicalHistory.medications.length > 0 &&
+                        (
                           <div>
                             <span className='text-gray-600'>Medicamentos:</span>
                             <div className='flex flex-wrap gap-1 mt-1'>

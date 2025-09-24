@@ -3,8 +3,8 @@
  * Testa interação entre componentes
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { createMockUser, createMockClinic } from '../fixtures/setup'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { createMockClinic, createMockUser } from '../fixtures/setup'
 
 describe('Integration - Healthcare API', () => {
   beforeEach(() => {
@@ -19,11 +19,11 @@ describe('Integration - Healthcare API', () => {
     it('should register patient and create profile', async () => {
       const mockUser = createMockUser({ role: 'patient' })
       const mockClinic = createMockClinic()
-      
+
       // Simulação de fluxo de integração
       expect(mockUser.role).toBe('patient')
       expect(mockClinic.cnpj).toBeDefined()
-      
+
       // Aqui seria testada a integração real entre:
       // - Serviço de usuário
       // - Serviço de clínica
@@ -33,10 +33,10 @@ describe('Integration - Healthcare API', () => {
 
     it('should handle LGPD consent workflow', async () => {
       const mockUser = createMockUser()
-      
+
       // Teste de integração com workflow LGPD
       expect(mockUser).toBeValidHealthcareData()
-      
+
       // Simulação de:
       // - Consentimento LGPD
       // - Audit trail
@@ -51,7 +51,7 @@ describe('Integration - Healthcare API', () => {
       // - Criação do agendamento
       // - Notificações
       // - Audit trail
-      
+
       expect(true).toBe(true) // Placeholder
     })
   })
@@ -63,7 +63,7 @@ describe('Integration - Healthcare API', () => {
       // - Configuração de sessão
       // - Gravação (se necessário)
       // - Relatórios
-      
+
       expect(true).toBe(true) // Placeholder
     })
   })

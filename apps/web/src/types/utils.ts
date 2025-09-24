@@ -207,7 +207,7 @@ export class EventEmitter<TEvents extends Record<string, unknown>> {
   }
 
   emit<K extends keyof TEvents>(event: K, payload: TEvents[K]): void {
-    this.listeners.get(event)?.forEach((listener) => listener(payload))
+    this.listeners.get(event)?.forEach(listener => listener(payload))
   }
 
   removeAllListeners<K extends keyof TEvents>(event?: K): void {

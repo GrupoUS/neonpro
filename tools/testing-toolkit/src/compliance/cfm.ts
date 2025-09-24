@@ -44,13 +44,13 @@ export class CFMValidator {
   static validateProfessionalLicensing(data: CFMTestData): boolean {
     const licensing = data.professionalLicensing
     return (
-      typeof licensing.crmNumber === 'string'
-      && licensing.crmNumber.length > 0
-      && licensing.licenseValid === true
-      && typeof licensing.specialty === 'string'
-      && licensing.specialty.length > 0
-      && typeof licensing.registrationState === 'string'
-      && licensing.registrationState.length === 2 // Brazilian state code
+      typeof licensing.crmNumber === 'string' &&
+      licensing.crmNumber.length > 0 &&
+      licensing.licenseValid === true &&
+      typeof licensing.specialty === 'string' &&
+      licensing.specialty.length > 0 &&
+      typeof licensing.registrationState === 'string' &&
+      licensing.registrationState.length === 2 // Brazilian state code
     )
   }
 
@@ -60,9 +60,9 @@ export class CFMValidator {
   static validateTelemedicineCompliance(data: CFMTestData): boolean {
     const telemedicine = data.telemedicineCompliance
     return (
-      telemedicine.patientConsentRequired === true
-      && telemedicine.recordKeepingCompliant === true
-      && telemedicine.emergencyProtocols === true
+      telemedicine.patientConsentRequired === true &&
+      telemedicine.recordKeepingCompliant === true &&
+      telemedicine.emergencyProtocols === true
     )
   }
 
@@ -72,9 +72,9 @@ export class CFMValidator {
   static validateDigitalPrescription(data: CFMTestData): boolean {
     const prescription = data.digitalPrescription
     return (
-      prescription.digitalSignature === true
-      && prescription.prescriptionValidation === true
-      && prescription.controlledSubstances === true
+      prescription.digitalSignature === true &&
+      prescription.prescriptionValidation === true &&
+      prescription.controlledSubstances === true
     )
   }
 
@@ -84,10 +84,10 @@ export class CFMValidator {
   static validatePatientConfidentiality(data: CFMTestData): boolean {
     const confidentiality = data.patientConfidentiality
     return (
-      confidentiality.hipaaCompliant === true
-      && confidentiality.accessControls === true
-      && confidentiality.auditLogging === true
-      && confidentiality.dataEncryption === true
+      confidentiality.hipaaCompliant === true &&
+      confidentiality.accessControls === true &&
+      confidentiality.auditLogging === true &&
+      confidentiality.dataEncryption === true
     )
   }
 
@@ -110,8 +110,8 @@ export class CFMValidator {
     }
 
     if (
-      data.telemedicineCompliance.enabled
-      && !this.validateTelemedicineCompliance(data)
+      data.telemedicineCompliance.enabled &&
+      !this.validateTelemedicineCompliance(data)
     ) {
       violations.push('Telemedicine compliance requirements not met')
       recommendations.push(
@@ -120,8 +120,8 @@ export class CFMValidator {
     }
 
     if (
-      data.digitalPrescription.enabled
-      && !this.validateDigitalPrescription(data)
+      data.digitalPrescription.enabled &&
+      !this.validateDigitalPrescription(data)
     ) {
       violations.push('Digital prescription requirements not met')
       recommendations.push(

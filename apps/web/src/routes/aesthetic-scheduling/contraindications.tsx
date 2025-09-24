@@ -38,7 +38,7 @@ function ContraindicationAnalysisPage() {
       patientId={loaderData.patientId}
       procedureId={loaderData.procedureId}
       treatmentPlanId={loaderData.treatmentPlanId}
-      onExportReport={async (analysis) => {
+      onExportReport={async analysis => {
         try {
           // Implementation for exporting report
           console.warn('Exporting contraindication analysis:', analysis)

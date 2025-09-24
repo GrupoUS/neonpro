@@ -327,7 +327,7 @@ export function TreatmentOutcomePredictor({
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {prediction.outcomeProbabilities.map((outcome) => (
+                  {prediction.outcomeProbabilities.map(outcome => (
                     <div key={outcome.outcome} className='space-y-2'>
                       <div className='flex items-center justify-between'>
                         <div className='flex items-center gap-2'>
@@ -364,7 +364,7 @@ export function TreatmentOutcomePredictor({
               </CardHeader>
               <CardContent>
                 <div className='space-y-4'>
-                  {prediction.metrics.map((metric) => (
+                  {prediction.metrics.map(metric => (
                     <div key={metric.name} className='space-y-2'>
                       <div className='flex items-center justify-between'>
                         <span className='text-sm font-medium'>{metric.name}</span>
@@ -422,7 +422,7 @@ export function TreatmentOutcomePredictor({
               <CardContent>
                 <div className='space-y-3'>
                   {prediction.influencingFactors
-                    .filter((f) => f.impact === 'positive')
+                    .filter(f => f.impact === 'positive')
                     .map((factor, index) => (
                       <div key={index} className='flex items-start gap-3'>
                         <ThumbsUp className='h-4 w-4 text-green-500 mt-0.5 flex-shrink-0' />
@@ -449,7 +449,7 @@ export function TreatmentOutcomePredictor({
               <CardContent>
                 <div className='space-y-3'>
                   {prediction.influencingFactors
-                    .filter((f) => f.impact === 'negative')
+                    .filter(f => f.impact === 'negative')
                     .map((factor, index) => (
                       <div key={index} className='flex items-start gap-3'>
                         <ThumbsDown className='h-4 w-4 text-red-500 mt-0.5 flex-shrink-0' />

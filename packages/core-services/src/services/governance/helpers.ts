@@ -62,7 +62,7 @@ export interface PolicyAggregationResult {
 export const aggregatePolicyRules = (
   rules: PolicyRule[],
 ): PolicyAggregationResult => {
-  const results = rules.map((r) => r.evaluate())
+  const results = rules.map(r => r.evaluate())
   const passed = results.filter(Boolean).length
   const total = results.length
   let status: PolicyAggregationResult['status'] = 'fail'

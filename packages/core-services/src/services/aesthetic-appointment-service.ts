@@ -5,9 +5,9 @@
  */
 
 import type {
+  AestheticAppointment,
   AestheticProcedureDetails,
   AestheticSchedulingRequest,
-  AestheticAppointment
 } from './enhanced-aesthetic-scheduling-service'
 
 export class AestheticAppointmentService {
@@ -27,7 +27,7 @@ export class AestheticAppointmentService {
       sessionNumber: number
       duration: number
       recommendedInterval: number
-    }>
+    }>,
   ): Promise<AestheticAppointment[]> {
     const appointments: AestheticAppointment[] = []
 
@@ -62,7 +62,7 @@ export class AestheticAppointmentService {
   async checkAvailability(
     _professionalId: string,
     _startTime: Date,
-    _duration: number
+    _duration: number,
   ): Promise<boolean> {
     // Mock implementation - would integrate with calendar system
     return true
@@ -74,12 +74,12 @@ export class AestheticAppointmentService {
   getProcedurePriority(procedure: AestheticProcedureDetails): number {
     // Priority based on procedure type and complexity
     const typePriority: Record<string, number> = {
-      'surgical': 10,
-      'combination': 8,
-      'laser': 6,
-      'injectable': 4,
-      'facial': 2,
-      'body': 3
+      surgical: 10,
+      combination: 8,
+      laser: 6,
+      injectable: 4,
+      facial: 2,
+      body: 3,
     }
     return typePriority[procedure.procedureType] || 5
   }
@@ -91,12 +91,12 @@ export class AestheticAppointmentService {
     _professionalId: string,
     startDate: Date,
     endDate: Date,
-    _duration: number
+    _duration: number,
   ): Promise<Date[]> {
     // Mock implementation - would query calendar system
     const slots: Date[] = []
     const current = new Date(startDate)
-    
+
     while (current <= endDate) {
       if (await this.checkAvailability(_professionalId, current, _duration)) {
         slots.push(new Date(current))
@@ -116,7 +116,7 @@ export class AestheticAppointmentService {
       factor: 'area_size' | 'complexity' | 'patient_condition' | 'combination_procedure'
       impact: 'add_minutes' | 'multiply_duration'
       value: number
-    }>
+    }>,
   ): number {
     let totalDuration = baseDuration
 
@@ -172,7 +172,7 @@ export class AestheticAppointmentService {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     }
   }
 

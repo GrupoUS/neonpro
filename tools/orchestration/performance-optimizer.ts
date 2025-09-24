@@ -259,7 +259,7 @@ export const codeSplittingConfig = {
       ]
 
       const foundHeavyDeps = Object.keys(packageJson.dependencies || {})
-        .filter((dep) => heavyDependencies.some((heavy) => dep.includes(heavy)))
+        .filter(dep => heavyDependencies.some(heavy => dep.includes(heavy)))
 
       if (foundHeavyDeps.length > 0) {
         recommendations.push(`Consider lighter alternatives for: ${foundHeavyDeps.join(', ')}`)
@@ -272,7 +272,7 @@ export const codeSplittingConfig = {
 # Dependency Optimization Suggestions
 
 ## Heavy Dependencies Found:
-${foundHeavyDeps.map((dep) => `- ${dep}`).join('\n')}
+${foundHeavyDeps.map(dep => `- ${dep}`).join('\n')}
 
 ## Recommended Optimizations:
 
@@ -582,10 +582,10 @@ ${
 - **External**: ${(result.metrics.memory.external / 1024 / 1024).toFixed(1)}MB
 
 ## Optimizations Applied
-${result.optimizations.map((opt) => `- ✅ ${opt}`).join('\n')}
+${result.optimizations.map(opt => `- ✅ ${opt}`).join('\n')}
 
 ## Recommendations
-${result.recommendations.map((rec) => `- 📋 ${rec}`).join('\n')}
+${result.recommendations.map(rec => `- 📋 ${rec}`).join('\n')}
 
 ## Healthcare Platform Specific Optimizations
 

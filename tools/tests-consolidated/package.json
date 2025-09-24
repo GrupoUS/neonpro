@@ -17,7 +17,7 @@
     "format:check": "bun run dprint check --config ./configs/dprint.json",
     "clean": "rm -rf coverage reports node_modules/.cache",
     "clean:reports": "rm -rf ../../coverage ../../reports",
-    "validate": "bun run format:check && bun run lint && bun run test:unit",
+    "validate": "bun run format:check && bun run lint && bun run test:unit --run",
     "ci": "bun run validate && bun run test:coverage && bun run test:e2e"
   },
   "dependencies": {
@@ -31,6 +31,5 @@
     "dprint": "^0.45.0",
     "oxlint": "^0.2.0"
   },
-  "workspaces": false,
   "private": true
 }

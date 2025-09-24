@@ -99,10 +99,10 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
       if (!items || items.length === 0) return
       if (e.key === 'ArrowDown') {
         e.preventDefault()
-        setFocusedIndex((idx) => Math.min(idx + 1, items.length - 1))
+        setFocusedIndex(idx => Math.min(idx + 1, items.length - 1))
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
-        setFocusedIndex((idx) => Math.max(idx - 1, 0))
+        setFocusedIndex(idx => Math.max(idx - 1, 0))
       } else if (e.key === 'Home') {
         e.preventDefault()
         setFocusedIndex(0)

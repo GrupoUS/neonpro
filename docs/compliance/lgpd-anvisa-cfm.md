@@ -116,22 +116,22 @@ const LGPDConsentForm: React.FC = () => {
       <ConsentCheckbox
         label='Autorizo o tratamento de meus dados para finalidades estéticas'
         checked={consents.dataProcessing}
-        onChange={(v) => setConsents((prev) => ({ ...prev, dataProcessing: v }))}
+        onChange={v => setConsents(prev => ({ ...prev, dataProcessing: v }))}
       />
       <ConsentCheckbox
         label='Autorizo o compartilhamento com profissionais estéticos'
         checked={consents.dataSharing}
-        onChange={(v) => setConsents((prev) => ({ ...prev, dataSharing: v }))}
+        onChange={v => setConsents(prev => ({ ...prev, dataSharing: v }))}
       />
       <ConsentCheckbox
         label='Autorizo o uso de fotos antes/depois para tratamento'
         checked={consents.photoUsage}
-        onChange={(v) => setConsents((prev) => ({ ...prev, photoUsage: v }))}
+        onChange={v => setConsents(prev => ({ ...prev, photoUsage: v }))}
       />
       <ConsentCheckbox
         label='Autorizo comunicação sobre serviços estéticos'
         checked={consents.marketing}
-        onChange={(v) => setConsents((prev) => ({ ...prev, marketing: v }))}
+        onChange={v => setConsents(prev => ({ ...prev, marketing: v }))}
       />
     </form>
   )

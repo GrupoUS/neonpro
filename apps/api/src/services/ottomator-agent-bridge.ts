@@ -79,8 +79,8 @@ export class OttomatorAgentBridge extends EventEmitter {
 
     this.config = {
       pythonPath: config?.pythonPath || 'python3',
-      agentPath: config?.agentPath
-        || path.join(process.cwd(), 'agents', 'ag-ui-rag-agent'),
+      agentPath: config?.agentPath ||
+        path.join(process.cwd(), 'agents', 'ag-ui-rag-agent'),
       maxConcurrentQueries: config?.maxConcurrentQueries || 5,
       queryTimeout: config?.queryTimeout || 30000,
       healthCheckInterval: config?.healthCheckInterval || 30000,
@@ -142,7 +142,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       this.activeQueries.set(queryId, { resolve, reject, timeout })
 
       // Send query to Python agent
-      this.sendQueryToAgent(queryId, _query).catch((error) => {
+      this.sendQueryToAgent(queryId, _query).catch(error => {
         clearTimeout(timeout)
         this.activeQueries.delete(queryId)
         reject(error)
@@ -171,7 +171,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       this.agentProcess.kill('SIGTERM')
 
       // Wait for graceful shutdown
-      await new Promise((resolve) => {
+      await new Promise(resolve => {
         const timeout = setTimeout(() => {
           if (this.agentProcess) {
             this.agentProcess.kill('SIGKILL')
@@ -228,7 +228,7 @@ export class OttomatorAgentBridge extends EventEmitter {
         },
       })
 
-      this.agentProcess.on('error', (error) => {
+      this.agentProcess.on('error', error => {
         logger.error('Agent process error', { error })
         this.isHealthy = false
         this.emit('error', error)
@@ -242,13 +242,13 @@ export class OttomatorAgentBridge extends EventEmitter {
       })
 
       if (this.agentProcess.stdout) {
-        this.agentProcess.stdout.on('data', (data) => {
+        this.agentProcess.stdout.on('data', data => {
           this.handleAgentOutput(data.toString())
         })
       }
 
       if (this.agentProcess.stderr) {
-        this.agentProcess.stderr.on('data', (data) => {
+        this.agentProcess.stderr.on('data', data => {
           logger.error('Agent stderr', { output: data.toString() })
         })
       }

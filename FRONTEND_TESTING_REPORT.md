@@ -100,9 +100,9 @@ Errors: 3 (module dependency issues)
 
 ```typescript
 // Example of required fix for React tests:
-const container = document.createElement('div');
-document.body.appendChild(container);
-render(<Component />, { container });
+const container = document.createElement('div')
+document.body.appendChild(container)
+render(<Component />, { container })
 // Use within(container) queries instead of screen queries
 ```
 

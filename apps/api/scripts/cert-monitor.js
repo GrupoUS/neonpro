@@ -27,7 +27,7 @@ async function runCertificateCheck() {
     console.warn(`  Overall Status: ${healthStatus.status}`)
     console.warn(`  Certificates Checked: ${healthStatus.certificates.length}`)
 
-    healthStatus.certificates.forEach((cert) => {
+    healthStatus.certificates.forEach(cert => {
       const daysText = cert.daysRemaining !== undefined
         ? ` (${cert.daysRemaining} days remaining)`
         : ''
@@ -95,7 +95,7 @@ async function startMonitoring() {
 }
 
 // Handle uncaught errors
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error(`[${new Date().toISOString()}] Uncaught exception:`, error)
   process.exit(4)
 })
@@ -111,7 +111,7 @@ process.on('unhandledRejection', (reason, promise) => {
 })
 
 // Start monitoring
-startMonitoring().catch((error) => {
+startMonitoring().catch(error => {
   console.error(
     `[${new Date().toISOString()}] Failed to start monitoring:`,
     error.message,

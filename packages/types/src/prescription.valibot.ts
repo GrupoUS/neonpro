@@ -103,7 +103,7 @@ const validateDosage = (dosage: string): boolean => {
     /^\d+(\s*a\s*\d+)?\s*(mg|g|ml|l|mcg|µg|ui|comprimido|cápsula|gota|aplicação|spray|inalação|sachê|envelope)s?$/i,
   ]
 
-  return dosagePatterns.some((pattern) => pattern.test(dosage.trim()))
+  return dosagePatterns.some(pattern => pattern.test(dosage.trim()))
 }
 
 /**
@@ -120,7 +120,7 @@ const validateFrequency = (frequency: string): boolean => {
     /^\d+\s+(gota|gotas).*\s+(olho|ouvido|nariz)/i,
   ]
 
-  return frequencyPatterns.some((pattern) => pattern.test(frequency.trim()))
+  return frequencyPatterns.some(pattern => pattern.test(frequency.trim()))
 }
 
 /**
@@ -135,7 +135,7 @@ const validateDuration = (duration: string): boolean => {
     /^por\s+tempo\s+indeterminado$/i,
   ]
 
-  return durationPatterns.some((pattern) => pattern.test(duration.trim()))
+  return durationPatterns.some(pattern => pattern.test(duration.trim()))
 }
 
 /**
@@ -170,8 +170,8 @@ const validateControlledSubstanceRules = (
 ): boolean => {
   // Special rules for controlled substances
   if (
-    medicationType === 'controlled_a1'
-    || medicationType === 'controlled_a2'
+    medicationType === 'controlled_a1' ||
+    medicationType === 'controlled_a2'
   ) {
     // Maximum 30 days for A1/A2 controlled substances
     const maxDays = 30
@@ -316,7 +316,7 @@ export const ANVISARegisterNumberSchema = v.pipe(
     'Registro ANVISA deve estar no formato X.XXXX.XXXX.XXX-X',
   ),
   v.check(validateANVISARegisterNumber, 'Número de registro ANVISA inválido'),
-  v.transform((value) => value as ANVISARegisterNumber),
+  v.transform(value => value as ANVISARegisterNumber),
 )
 
 /**
@@ -331,7 +331,7 @@ export const PharmaceuticalBarcodeSchema = v.pipe(
     validatePharmaceuticalBarcode,
     'Código de barras farmacêutico inválido',
   ),
-  v.transform((value) => value as PharmaceuticalBarcode),
+  v.transform(value => value as PharmaceuticalBarcode),
 )
 
 /**
@@ -347,7 +347,7 @@ export const DosageSchema = v.pipe(
     validateDosage,
     'Formato de dosagem inválido. Use formatos como "500mg", "5ml", "1 comprimido"',
   ),
-  v.transform((value) => value.toLowerCase() as Dosage),
+  v.transform(value => value.toLowerCase() as Dosage),
 )
 
 /**
@@ -363,7 +363,7 @@ export const FrequencySchema = v.pipe(
     validateFrequency,
     'Formato de frequência inválido. Use formatos como "1x ao dia", "de 8 em 8 horas"',
   ),
-  v.transform((value) => value.toLowerCase()),
+  v.transform(value => value.toLowerCase()),
 )
 
 /**
@@ -379,7 +379,7 @@ export const DurationSchema = v.pipe(
     validateDuration,
     'Formato de duração inválido. Use formatos como "7 dias", "uso contínuo"',
   ),
-  v.transform((value) => value.toLowerCase()),
+  v.transform(value => value.toLowerCase()),
 )
 
 /**
@@ -412,7 +412,7 @@ export const MedicationPriceSchema = v.pipe(
   v.number('Preço deve ser um número'),
   v.minValue(0, 'Preço deve ser maior ou igual a zero'),
   v.maxValue(999999.99, 'Preço máximo excedido'),
-  v.transform((value) => Math.round(value * 100) / 100), // Round to 2 decimal places
+  v.transform(value => Math.round(value * 100) / 100), // Round to 2 decimal places
 )
 
 // =====================================
@@ -478,7 +478,7 @@ export const PrescriptionInstructionsSchema = v.object({
       validateDosage,
       'Formato de dosagem inválido. Use formatos como "500mg", "5ml", "1 comprimido"',
     ),
-    v.transform((value) => value.toLowerCase()),
+    v.transform(value => value.toLowerCase()),
   ),
   frequency: FrequencySchema,
   duration: DurationSchema,

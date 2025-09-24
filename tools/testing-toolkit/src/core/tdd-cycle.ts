@@ -76,14 +76,14 @@ export class TDDCycle {
         testCoverageTarget: 95,
         errorDetectionThreshold: 100,
         qualityValidationEnabled: true,
-        enableHealthcareCompliance: (this.config.compliance?.includes('LGPD') ?? false)
-          || (this.config.compliance?.includes('ANVISA') ?? false)
-          || (this.config.compliance?.includes('CFM') ?? false),
+        enableHealthcareCompliance: (this.config.compliance?.includes('LGPD') ?? false) ||
+          (this.config.compliance?.includes('ANVISA') ?? false) ||
+          (this.config.compliance?.includes('CFM') ?? false),
       })
 
       if (!redPhaseResult.success) {
         console.warn('⚠️  RED phase validation issues detected:')
-        redPhaseResult.recommendations.forEach((rec) => console.warn(`   - ${rec}`))
+        redPhaseResult.recommendations.forEach(rec => console.warn(`   - ${rec}`))
       }
 
       // Execute test definition - should fail initially
@@ -182,7 +182,7 @@ export class TDDCycle {
       feature: this.config.feature,
       agents: this.config.agents,
       phases: Object.fromEntries(this.testResults),
-      success: Array.from(this.testResults.values()).every((result) => result),
+      success: Array.from(this.testResults.values()).every(result => result),
       currentPhase: this.currentPhase?.name || 'COMPLETE',
     }
   }

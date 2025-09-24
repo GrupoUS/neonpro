@@ -452,8 +452,8 @@ function CalendarWithRedux() {
       events={events}
       loading={loading}
       onEventAdd={handleEventAdd}
-      onEventUpdate={(event) => dispatch(updateEvent(event))}
-      onEventDelete={(id) => dispatch(deleteEvent(id))}
+      onEventUpdate={event => dispatch(updateEvent(event))}
+      onEventDelete={id => dispatch(deleteEvent(id))}
     />
   )
 }

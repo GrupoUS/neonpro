@@ -310,7 +310,7 @@ export class IntelligentClientRegistrationService {
     _file: File,
   ): Promise<OCRResult> {
     // Simulate processing time
-    await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 2000))
+    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000))
 
     const mockResults: Record<string, OCRResult> = {
       idCard: {
@@ -453,8 +453,8 @@ export class IntelligentClientRegistrationService {
     switch (documentType) {
       case 'idCard':
         if (
-          data.personalInfo?.cpf
-          && !this.validateCPF(data.personalInfo.cpf)
+          data.personalInfo?.cpf &&
+          !this.validateCPF(data.personalInfo.cpf)
         ) {
           results.push({
             field: 'cpf',
@@ -466,8 +466,8 @@ export class IntelligentClientRegistrationService {
         }
 
         if (
-          data.personalInfo?.dateOfBirth
-          && !this.validateDate(data.personalInfo.dateOfBirth)
+          data.personalInfo?.dateOfBirth &&
+          !this.validateDate(data.personalInfo.dateOfBirth)
         ) {
           results.push({
             field: 'dateOfBirth',
@@ -480,8 +480,8 @@ export class IntelligentClientRegistrationService {
 
       case 'medicalRecord':
         if (
-          data.medicalHistory?.allergies
-          && Array.isArray(data.medicalHistory.allergies)
+          data.medicalHistory?.allergies &&
+          Array.isArray(data.medicalHistory.allergies)
         ) {
           data.medicalHistory.allergies.forEach(
             (allergy: string, index: number) => {
@@ -535,8 +535,8 @@ export class IntelligentClientRegistrationService {
 
       case 'medicalRecord':
         if (
-          data.medicalHistory?.allergies
-          && data.medicalHistory.allergies.length > 0
+          data.medicalHistory?.allergies &&
+          data.medicalHistory.allergies.length > 0
         ) {
           suggestions.push({
             id: 'sug-2',
@@ -604,8 +604,8 @@ export class IntelligentClientRegistrationService {
     }
 
     if (
-      data.personalInfo?.email
-      && !this.validateEmail(data.personalInfo.email)
+      data.personalInfo?.email &&
+      !this.validateEmail(data.personalInfo.email)
     ) {
       warnings.push({
         field: 'personalInfo.email',
@@ -712,9 +712,9 @@ export class IntelligentClientRegistrationService {
       }
 
       if (
-        step === 'contact'
-        && data.personalInfo?.email
-        && data.personalInfo?.phone
+        step === 'contact' &&
+        data.personalInfo?.email &&
+        data.personalInfo?.phone
       ) {
         suggestions.push({
           id: 'sug-contact-1',
@@ -736,7 +736,7 @@ export class IntelligentClientRegistrationService {
   // Utility Methods
   private calculateStepProgress(step: string, data: any): number {
     const requiredFields = this.getRequiredFieldsForStep(step)
-    const completedFields = requiredFields.filter((field) => {
+    const completedFields = requiredFields.filter(field => {
       const value = this.getNestedValue(data, field)
       return value !== undefined && value !== null && value !== ''
     })
@@ -781,7 +781,7 @@ export class IntelligentClientRegistrationService {
     ]
 
     const calculatePercentage = (fields: string[]) => {
-      const completed = fields.filter((field) => {
+      const completed = fields.filter(field => {
         const value = this.getNestedValue(data, field)
         return value !== undefined && value !== null && value !== ''
       })
@@ -794,10 +794,10 @@ export class IntelligentClientRegistrationService {
       medical: calculatePercentage(medicalFields),
       documents: data.documents ? 100 : 0,
       overall: Math.round(
-        calculatePercentage(personalFields) * 0.3
-          + calculatePercentage(contactFields) * 0.3
-          + calculatePercentage(medicalFields) * 0.2
-          + (data.documents ? 100 : 0) * 0.2,
+        calculatePercentage(personalFields) * 0.3 +
+          calculatePercentage(contactFields) * 0.3 +
+          calculatePercentage(medicalFields) * 0.2 +
+          (data.documents ? 100 : 0) * 0.2,
       ),
     }
   }
@@ -893,8 +893,8 @@ export class IntelligentClientRegistrationService {
     const monthDiff = today.getMonth() - birth.getMonth()
 
     if (
-      monthDiff < 0
-      || (monthDiff === 0 && today.getDate() < birth.getDate())
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--
     }
@@ -909,7 +909,7 @@ export class IntelligentClientRegistrationService {
   private mergeData(target: any, source: any): any {
     const result = { ...target }
 
-    Object.keys(source).forEach((key) => {
+    Object.keys(source).forEach(key => {
       if (typeof source[key] === 'object' && source[key] !== null) {
         result[key] = this.mergeData(result[key] || {}, source[key])
       } else {
@@ -925,7 +925,7 @@ export class IntelligentClientRegistrationService {
       const reader = new FileReader()
       reader.readAsDataURL(file)
       reader.onload = () => resolve(reader.result as string)
-      reader.onerror = (error) => reject(error)
+      reader.onerror = error => reject(error)
     })
   }
 
@@ -975,7 +975,7 @@ export class IntelligentClientRegistrationService {
       // Process with LGPD handler
       const registrationMessage: AguiClientRegistrationMessage = {
         clientData: flow.data as any,
-        documents: Object.values(flow.documents).map((d) => ({
+        documents: Object.values(flow.documents).map(d => ({
           id: d.documentId,
           type: 'id_card' as any,
           fileName: d.documentId,
@@ -1028,7 +1028,7 @@ export class IntelligentClientRegistrationService {
       ])
 
       const passedChecks = checks.filter(
-        (check) => check.status === 'fulfilled' && check.value,
+        check => check.status === 'fulfilled' && check.value,
       ).length
       const totalChecks = checks.length
 

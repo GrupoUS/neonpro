@@ -61,7 +61,7 @@ class ConsentStore {
     purpose: ProcessingPurpose,
   ): Promise<LGPDConsent[]> {
     const userConsents = this.consents.get(_userId) || []
-    return userConsents.filter((consent) => consent.purpose === purpose)
+    return userConsents.filter(consent => consent.purpose === purpose)
   }
 
   async hasValidConsent(
@@ -72,9 +72,9 @@ class ConsentStore {
     const now = new Date()
 
     return consents.some(
-      (consent) =>
-        consent.status === 'granted'
-        && (!consent.expiresAt || consent.expiresAt > now),
+      consent =>
+        consent.status === 'granted' &&
+        (!consent.expiresAt || consent.expiresAt > now),
     )
   }
 
@@ -89,7 +89,7 @@ class ConsentStore {
     purpose: ProcessingPurpose,
   ): Promise<void> {
     const userConsents = this.consents.get(_userId) || []
-    userConsents.forEach((consent) => {
+    userConsents.forEach(consent => {
       if (consent.purpose === purpose && consent.status === 'granted') {
         consent.status = 'withdrawn'
         consent.withdrawnAt = new Date()
@@ -156,9 +156,9 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
       }
 
       const purpose = getProcessingPurpose(c)
-      const ip = c.req.header('x-forwarded-for')
-        || c.req.header('x-real-ip')
-        || 'unknown'
+      const ip = c.req.header('x-forwarded-for') ||
+        c.req.header('x-real-ip') ||
+        'unknown'
       const userAgent = c.req.header('user-agent') || 'unknown'
 
       // Check if explicit consent is required
@@ -257,9 +257,9 @@ export function consentMiddleware() {
           })
         }
 
-        const ip = c.req.header('x-forwarded-for')
-          || c.req.header('x-real-ip')
-          || 'unknown'
+        const ip = c.req.header('x-forwarded-for') ||
+          c.req.header('x-real-ip') ||
+          'unknown'
         const userAgent = c.req.header('user-agent') || 'unknown'
 
         if (action === 'grant') {
@@ -455,7 +455,7 @@ async function exportUserData(_supabase: any, _userId: string): Promise<any> {
       .eq('user_id', _userId)
 
     if (patientData && patientData.length > 0) {
-      exportedData.data.patientRecords = patientData.map((patient) => ({
+      exportedData.data.patientRecords = patientData.map(patient => ({
         id: patient.id,
         full_name: patient.full_name,
         date_of_birth: patient.date_of_birth,

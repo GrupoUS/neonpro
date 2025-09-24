@@ -68,7 +68,7 @@ export function ContraindicationAnalysis({
     enabled: !!patientId,
   })
 
-  const filteredRisks = analysis?.contraindicationRisks.filter((risk) => {
+  const filteredRisks = analysis?.contraindicationRisks.filter(risk => {
     if (showOnlyCritical && risk.severity !== 'critical') return false
     if (selectedCategory !== 'all' && risk.category !== selectedCategory) return false
     return true
@@ -225,7 +225,7 @@ export function ContraindicationAnalysis({
           <CardContent className='p-4'>
             <div className='text-sm text-gray-500'>Risco Crítico</div>
             <div className='text-lg font-bold text-red-600'>
-              {analysis.contraindicationRisks.filter((r) => r.severity === 'critical').length}
+              {analysis.contraindicationRisks.filter(r => r.severity === 'critical').length}
             </div>
           </CardContent>
         </Card>
@@ -272,7 +272,7 @@ export function ContraindicationAnalysis({
                 type='checkbox'
                 id='critical-only'
                 checked={showOnlyCritical}
-                onChange={(e) => setShowOnlyCritical(e.target.checked)}
+                onChange={e => setShowOnlyCritical(e.target.checked)}
                 className='h-4 w-4 text-red-600 rounded border-gray-300'
               />
               <label htmlFor='critical-only' className='text-sm font-medium'>
@@ -283,7 +283,7 @@ export function ContraindicationAnalysis({
             <div className='flex items-center gap-2'>
               <span className='text-sm font-medium'>Categoria:</span>
               <div className='flex flex-wrap gap-2'>
-                {categories.map((category) => (
+                {categories.map(category => (
                   <Button
                     key={category.id}
                     variant={selectedCategory === category.id ? 'default' : 'outline'}
@@ -320,7 +320,7 @@ export function ContraindicationAnalysis({
                 </Card>
               )
               : (
-                filteredRisks.map((risk) => (
+                filteredRisks.map(risk => (
                   <ContraindicationRiskCard
                     key={risk.id}
                     risk={risk}

@@ -36,7 +36,7 @@ export class QualityControlBridge {
     const orchestrationResult: OrchestrationResult = {
       success: true,
       phases: ['analysis', 'validation', 'reporting'],
-      agentResults: parsedContext.agents?.map((agent) => ({
+      agentResults: parsedContext.agents?.map(agent => ({
         agentName: agent as string,
         success: true,
         result: { command, context: parsedContext },

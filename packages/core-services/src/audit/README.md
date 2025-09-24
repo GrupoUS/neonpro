@@ -138,7 +138,7 @@ console.log(`Total Events: ${report.totalEvents}`)
 console.log(`Violations Found: ${report.violations.length}`)
 
 // Display violations
-report.violations.forEach((violation) => {
+report.violations.forEach(violation => {
   console.log(
     `${violation.framework} ${violation.severity}: ${violation.description}`,
   )

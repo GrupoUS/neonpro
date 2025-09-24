@@ -411,8 +411,8 @@ export function requiresAuditLogging(
 
   // Audit clinical operations
   if (
-    _context?.clinicalContext
-    && _context.clinicalContext !== 'administrative'
+    _context?.clinicalContext &&
+    _context.clinicalContext !== 'administrative'
   ) {
     return true
   }
@@ -603,15 +603,15 @@ export class InMemoryCacheBackend implements CacheBackend {
 
     // Simple pattern matching (in production, use proper regex)
     const regex = new RegExp(pattern.replace('*', '.*'))
-    return keys.filter((key) => regex.test(key))
+    return keys.filter(key => regex.test(key))
   }
 
   async getEntriesBySensitivity(
     sensitivity: CacheDataSensitivity,
   ): Promise<CacheEntry[]> {
     return Array.from(this.entries.values())
-      .filter((entry) => entry.sensitivity === sensitivity)
-      .map((entry) => ({ ...entry }))
+      .filter(entry => entry.sensitivity === sensitivity)
+      .map(entry => ({ ...entry }))
   }
 
   async cleanup(): Promise<number> {
@@ -634,8 +634,8 @@ export class InMemoryCacheBackend implements CacheBackend {
 
   private async enforceMemoryLimits(newEntrySize: number): Promise<void> {
     while (
-      this.getCurrentMemoryUsage() + newEntrySize
-        > this.config.maxMemoryUsage
+      this.getCurrentMemoryUsage() + newEntrySize >
+        this.config.maxMemoryUsage
     ) {
       if (this.config.evictionStrategy === CacheInvalidationStrategy.LRU) {
         await this.evictLRU()
@@ -708,13 +708,13 @@ export class InMemoryCacheBackend implements CacheBackend {
 
   private updateSensitivityStats(): void {
     this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter(
-      (entry) =>
-        entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL
-        || entry.sensitivity === CacheDataSensitivity.RESTRICTED,
+      entry =>
+        entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL ||
+        entry.sensitivity === CacheDataSensitivity.RESTRICTED,
     ).length
 
     this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter(
-      (entry) => entry.lgpdCompliant,
+      entry => entry.lgpdCompliant,
     ).length
   }
 }
@@ -1119,8 +1119,8 @@ export class CacheManagementService {
 
       for (const entry of sensitiveEntries) {
         if (
-          entry.healthcareContext?.patientId
-          && !entry.healthcareContext.lgpdConsentId
+          entry.healthcareContext?.patientId &&
+          !entry.healthcareContext.lgpdConsentId
         ) {
           // Anonymize entry without consent
           const anonymizedEntry = anonymizeCacheEntry(entry)
@@ -1183,7 +1183,7 @@ export class CacheManagementService {
     startDate?: Date
     endDate?: Date
   }): CacheAuditEvent[] {
-    return this.auditLog.filter((event) => {
+    return this.auditLog.filter(event => {
       if (filters?._userId && event._userId !== filters._userId) return false
       if (filters?.sessionId && event.sessionId !== filters.sessionId) {
         return false

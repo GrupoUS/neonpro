@@ -32,7 +32,7 @@ export class GoogleAIProvider implements AIProviderInterface {
   constructor(
     apiKey: string,
     config: GoogleConfig = {},
-    healthcareConfig: HealthcareComplianceConfig = {}
+    healthcareConfig: HealthcareComplianceConfig = {},
   ) {
     if (!apiKey) {
       throw new Error('Google AI API key is required')
@@ -90,7 +90,7 @@ export class GoogleAIProvider implements AIProviderInterface {
         this.logHealthcareAudit('generateAnswer_success', {
           input,
           result: responseResult,
-          processingTimeMs
+          processingTimeMs,
         })
       }
 
@@ -99,7 +99,7 @@ export class GoogleAIProvider implements AIProviderInterface {
       if (this.healthcareConfig.auditLogging) {
         this.logHealthcareAudit('generateAnswer_error', {
           input,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         })
       }
 
@@ -157,7 +157,7 @@ export class GoogleAIProvider implements AIProviderInterface {
       if (this.healthcareConfig.auditLogging) {
         this.logHealthcareAudit('generateStream_complete', {
           input,
-          processingTimeMs
+          processingTimeMs,
         })
       }
 
@@ -177,7 +177,7 @@ export class GoogleAIProvider implements AIProviderInterface {
       if (this.healthcareConfig.auditLogging) {
         this.logHealthcareAudit('generateStream_error', {
           input,
-          error: error instanceof Error ? error.message : 'Unknown error'
+          error: error instanceof Error ? error.message : 'Unknown error',
         })
       }
 
@@ -283,7 +283,7 @@ export class GoogleAIProvider implements AIProviderInterface {
   }
 
   private logHealthcareAudit(event: string, data: any): void {
-    if (!this.healthcareConfig.auditLogging) {return}
+    if (!this.healthcareConfig.auditLogging) return
 
     const auditLog = {
       timestamp: new Date().toISOString(),

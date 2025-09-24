@@ -234,8 +234,8 @@ export class IndexOptimizerService {
    */
   private getRecommendedIndexes(tableName: string): IndexRecommendation[] {
     return HEALTHCARE_RECOMMENDED_INDEXES.filter(
-      (index) => index.table === tableName,
-    ).map((index) => ({
+      index => index.table === tableName,
+    ).map(index => ({
       ...index,
       estimatedImprovement: this.calculateEstimatedImprovement(index),
       healthcareRelevant: true,
@@ -248,7 +248,7 @@ export class IndexOptimizerService {
   private identifyUnusedIndexes(
     existingIndexes: DatabaseIndex[],
   ): DatabaseIndex[] {
-    return existingIndexes.filter((index) => {
+    return existingIndexes.filter(index => {
       // Don't consider primary keys as unused
       if (index.isPrimary) return false
 
@@ -265,9 +265,9 @@ export class IndexOptimizerService {
     existingIndexes: DatabaseIndex[],
     recommendedIndexes: IndexRecommendation[],
   ): IndexRecommendation[] {
-    return recommendedIndexes.filter((recommended) => {
+    return recommendedIndexes.filter(recommended => {
       // Check if a similar index already exists
-      return !existingIndexes.some((existing) =>
+      return !existingIndexes.some(existing =>
         this.indexesAreSimilar(existing.columns, recommended.columns)
       )
     })
@@ -294,13 +294,13 @@ export class IndexOptimizerService {
 
     // Penalize for missing critical indexes
     const criticalMissing = missingIndexes.filter(
-      (idx) => idx.priority === 'critical',
+      idx => idx.priority === 'critical',
     ).length
     score -= criticalMissing * 30
 
     // Penalize for missing high priority indexes
     const highMissing = missingIndexes.filter(
-      (idx) => idx.priority === 'high',
+      idx => idx.priority === 'high',
     ).length
     score -= highMissing * 15
 
@@ -334,7 +334,7 @@ export class IndexOptimizerService {
   generateIndexCreationScripts(
     missingIndexes: IndexRecommendation[],
   ): IndexCreationScript[] {
-    return missingIndexes.map((index) => {
+    return missingIndexes.map(index => {
       const indexName = `idx_${index.table}_${index.columns.join('')}`
       const columnsStr = index.columns.join(', ')
 
@@ -432,13 +432,13 @@ export class IndexOptimizerService {
 
     // Calculate overall score
     const scores = Array.from(tableAnalyses.values()).map(
-      (analysis) => analysis.optimizationScore,
+      analysis => analysis.optimizationScore,
     )
     const overallScore = scores.reduce((sum, _score) => sum + score, 0) / scores.length
 
     // Get all missing indexes and prioritize them
     const allMissingIndexes: IndexRecommendation[] = []
-    tableAnalyses.forEach((analysis) => {
+    tableAnalyses.forEach(analysis => {
       allMissingIndexes.push(...analysis.missingIndexes)
     })
 

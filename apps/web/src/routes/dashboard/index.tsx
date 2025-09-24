@@ -126,7 +126,7 @@ function Dashboard() {
 
         <nav className='mt-8 px-2'>
           <div className='space-y-1'>
-            {menuItems.map((item) => (
+            {menuItems.map(item => (
               <Link
                 key={item.label}
                 to={item.href}
@@ -180,7 +180,7 @@ function Dashboard() {
 
           {/* Stats cards */}
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-            {stats.map((stat) => (
+            {stats.map(stat => (
               <div key={stat.title} className='bg-white rounded-lg shadow p-6'>
                 <div className='flex items-center'>
                   <div className='flex-shrink-0'>
@@ -215,7 +215,7 @@ function Dashboard() {
                 </h3>
               </div>
               <div className='divide-y divide-gray-200'>
-                {recentAppointments.map((appointment) => (
+                {recentAppointments.map(appointment => (
                   <div key={`${appointment.name}-${appointment.time}`} className='px-6 py-4'>
                     <div className='flex items-center justify-between'>
                       <div>

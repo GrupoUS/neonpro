@@ -228,8 +228,8 @@ export class RecommendationModel {
 
     // Check for cost optimization through plan changes
     if (
-      this._context.billingMetrics.cacheSavingsPercentage > 80
-      && userPlan.planCode === 'pro'
+      this._context.billingMetrics.cacheSavingsPercentage > 80 &&
+      userPlan.planCode === 'pro'
     ) {
       const costUpgrade = this.generateCostOptimizationUpgradeRecommendation()
       if (costUpgrade) {
@@ -291,8 +291,8 @@ export class RecommendationModel {
 
     // Advanced analytics for high-usage users
     if (
-      !userPlan.plan.hasFeature('ai_analytics')
-      && this._context.recentActivity.requests > 100
+      !userPlan.plan.hasFeature('ai_analytics') &&
+      this._context.recentActivity.requests > 100
     ) {
       const analyticsRecommendation: FeatureSuggestionRecommendation = {
         id: `feature-analytics-${Date.now()}`,
@@ -324,8 +324,8 @@ export class RecommendationModel {
 
     // API access for integration opportunities
     if (
-      !userPlan.plan.hasFeature('api_access')
-      && this.detectIntegrationOpportunity()
+      !userPlan.plan.hasFeature('api_access') &&
+      this.detectIntegrationOpportunity()
     ) {
       const apiRecommendation = this.generateApiAccessRecommendation()
       if (apiRecommendation) {
@@ -343,9 +343,9 @@ export class RecommendationModel {
 
     // Healthcare-optimized model recommendation
     if (
-      this._context.medicalSpecialties.length > 0
-      && !preferredModels.includes('healthcare-pt-br')
-      && this._context.userPlan.plan.hasModelAccess('healthcare-pt-br')
+      this._context.medicalSpecialties.length > 0 &&
+      !preferredModels.includes('healthcare-pt-br') &&
+      this._context.userPlan.plan.hasModelAccess('healthcare-pt-br')
     ) {
       const healthcareModelRec: ModelOptimizationRecommendation = {
         id: `model-healthcare-${Date.now()}`,
@@ -389,8 +389,8 @@ export class RecommendationModel {
 
     // CFM compliance recommendation
     if (
-      complianceReqs.cfmRequired
-      && userPlan.plan.cfmComplianceLevel === 'basic'
+      complianceReqs.cfmRequired &&
+      userPlan.plan.cfmComplianceLevel === 'basic'
     ) {
       const cfmRec: ComplianceImprovementRecommendation = {
         id: `compliance-cfm-${Date.now()}`,
@@ -472,10 +472,10 @@ export class RecommendationModel {
       currentPlan: userPlan.planCode,
       recommendedPlan: nextTier,
       unlockingFeatures: nextPlan.availableFeatures.filter(
-        (f) => !userPlan.plan.hasFeature(f),
+        f => !userPlan.plan.hasFeature(f),
       ),
       additionalModels: nextPlan.availableModels.filter(
-        (m) => !userPlan.plan.hasModelAccess(m),
+        m => !userPlan.plan.hasModelAccess(m),
       ),
       costDifferenceUsd: costDifference,
       reason: 'quota_exceeded',
@@ -514,7 +514,7 @@ export class RecommendationModel {
       recommendedPlan: nextTier,
       unlockingFeatures: missingFeatures,
       additionalModels: nextPlan.availableModels.filter(
-        (m) => !userPlan.plan.hasModelAccess(m),
+        m => !userPlan.plan.hasModelAccess(m),
       ),
       costDifferenceUsd: costDifference,
       reason: 'feature_access',
@@ -529,8 +529,8 @@ export class RecommendationModel {
 
     // If user has high cache savings, enterprise plan might be more cost-effective
     if (
-      userPlan.planCode === 'pro'
-      && billingMetrics.cacheSavingsPercentage > 80
+      userPlan.planCode === 'pro' &&
+      billingMetrics.cacheSavingsPercentage > 80
     ) {
       const enterprisePlan = new Plan('enterprise')
       const projectedSavings = billingMetrics.totalCostUsd * 0.2 // 20% additional savings on enterprise
@@ -548,10 +548,10 @@ export class RecommendationModel {
         currentPlan: userPlan.planCode,
         recommendedPlan: 'enterprise',
         unlockingFeatures: enterprisePlan.availableFeatures.filter(
-          (f) => !userPlan.plan.hasFeature(f),
+          f => !userPlan.plan.hasFeature(f),
         ),
         additionalModels: enterprisePlan.availableModels.filter(
-          (m) => !userPlan.plan.hasModelAccess(m),
+          m => !userPlan.plan.hasModelAccess(m),
         ),
         costDifferenceUsd: this.estimatePlanCostDifference('pro', 'enterprise'),
         projectedSavings,
@@ -641,9 +641,9 @@ export class RecommendationModel {
       ? 'gpt-4o'
       : 'gemini-pro'
 
-    const costSavings = this._context.billingMetrics.averageCostPerRequest
-      * 0.4
-      * this._context.recentActivity.requests
+    const costSavings = this._context.billingMetrics.averageCostPerRequest *
+      0.4 *
+      this._context.recentActivity.requests
 
     return {
       id: `model-cost-${Date.now()}`,
@@ -751,9 +751,9 @@ export class RecommendationModel {
 
   private shouldRecommendFeatureUpgrade(): boolean {
     return (
-      this._context.recentActivity.requests > 50
-      || this._context.medicalSpecialties.length > 2
-      || this._context.billingMetrics.totalRequests > 200
+      this._context.recentActivity.requests > 50 ||
+      this._context.medicalSpecialties.length > 2 ||
+      this._context.billingMetrics.totalRequests > 200
     )
   }
 
@@ -762,22 +762,22 @@ export class RecommendationModel {
     const beneficial: AIFeatureCode[] = []
 
     if (
-      !userPlan.plan.hasFeature('ai_analytics')
-      && this._context.recentActivity.requests > 100
+      !userPlan.plan.hasFeature('ai_analytics') &&
+      this._context.recentActivity.requests > 100
     ) {
       beneficial.push('ai_analytics')
     }
 
     if (
-      !userPlan.plan.hasFeature('api_access')
-      && this.detectIntegrationOpportunity()
+      !userPlan.plan.hasFeature('api_access') &&
+      this.detectIntegrationOpportunity()
     ) {
       beneficial.push('api_access')
     }
 
     if (
-      !userPlan.plan.hasFeature('lgpd_advanced')
-      && this._context.medicalSpecialties.length > 0
+      !userPlan.plan.hasFeature('lgpd_advanced') &&
+      this._context.medicalSpecialties.length > 0
     ) {
       beneficial.push('lgpd_advanced')
     }
@@ -787,9 +787,9 @@ export class RecommendationModel {
 
   private detectIntegrationOpportunity(): boolean {
     return (
-      this._context.recentActivity.requests > 200
-      || this._context.usageCounter.getUsageInsights().patterns.peakHours.length
-        > 8
+      this._context.recentActivity.requests > 200 ||
+      this._context.usageCounter.getUsageInsights().patterns.peakHours.length >
+        8
     )
   }
 
@@ -855,7 +855,7 @@ export class RecommendationModel {
     priority: BaseRecommendation['priority'],
   ): Recommendation[] {
     return Array.from(this._recommendations.values()).filter(
-      (rec) => rec.priority === priority,
+      rec => rec.priority === priority,
     )
   }
 
@@ -864,7 +864,7 @@ export class RecommendationModel {
    */
   getActiveRecommendations(): Recommendation[] {
     return Array.from(this._recommendations.values()).filter(
-      (rec) => !rec.dismissed && (!rec.validUntil || rec.validUntil > new Date()),
+      rec => !rec.dismissed && (!rec.validUntil || rec.validUntil > new Date()),
     )
   }
 

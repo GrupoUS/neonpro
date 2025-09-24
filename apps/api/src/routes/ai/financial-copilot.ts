@@ -60,7 +60,7 @@ financialCopilot.use('*', async (c: Context, next: Next) => {
  * Financial CopilotKit Chat Completions Endpoint
  * Handles streaming financial AI agent responses with specialized workflows
  */
-financialCopilot.post('/chat/completions', async (c) => {
+financialCopilot.post('/chat/completions', async c => {
   const requestId = crypto.randomUUID()
   const startTime = Date.now()
 
@@ -112,7 +112,7 @@ financialCopilot.post('/chat/completions', async (c) => {
 
     if (stream) {
       // Return streaming response for real-time financial UI updates
-      return streamText(c, async (stream) => {
+      return streamText(c, async stream => {
         // Send initial response
         const response = formatFinancialCopilotResponse(
           agentResponse,
@@ -216,7 +216,7 @@ financialCopilot.post('/chat/completions', async (c) => {
  * Financial Actions Endpoint
  * Handles specific financial workflow actions
  */
-financialCopilot.post('/actions', async (c) => {
+financialCopilot.post('/actions', async c => {
   const requestId = crypto.randomUUID()
 
   try {
@@ -301,7 +301,7 @@ financialCopilot.post('/actions', async (c) => {
  * Financial Analytics Endpoint
  * Provides comprehensive financial analytics and reporting
  */
-financialCopilot.post('/analytics', async (c) => {
+financialCopilot.post('/analytics', async c => {
   const requestId = crypto.randomUUID()
 
   try {
@@ -455,51 +455,51 @@ function analyzeFinancialIntent(query: string) {
 
   // Billing-related queries
   if (
-    normalizedQuery.includes('fatura')
-    || normalizedQuery.includes('cobrança')
-    || normalizedQuery.includes('pagamento')
-    || normalizedQuery.includes('faturamento')
+    normalizedQuery.includes('fatura') ||
+    normalizedQuery.includes('cobrança') ||
+    normalizedQuery.includes('pagamento') ||
+    normalizedQuery.includes('faturamento')
   ) {
     return { type: 'billing', confidence: 0.9 }
   }
 
   // Analytics-related queries
   if (
-    normalizedQuery.includes('análise')
-    || normalizedQuery.includes('relatório')
-    || normalizedQuery.includes('métricas')
-    || normalizedQuery.includes('previsão')
-    || normalizedQuery.includes('forecast')
+    normalizedQuery.includes('análise') ||
+    normalizedQuery.includes('relatório') ||
+    normalizedQuery.includes('métricas') ||
+    normalizedQuery.includes('previsão') ||
+    normalizedQuery.includes('forecast')
   ) {
     return { type: 'analytics', confidence: 0.9 }
   }
 
   // Payment-related queries
   if (
-    normalizedQuery.includes('pix')
-    || normalizedQuery.includes('cartão')
-    || normalizedQuery.includes('transação')
-    || normalizedQuery.includes('parcelamento')
+    normalizedQuery.includes('pix') ||
+    normalizedQuery.includes('cartão') ||
+    normalizedQuery.includes('transação') ||
+    normalizedQuery.includes('parcelamento')
   ) {
     return { type: 'payment', confidence: 0.9 }
   }
 
   // Fraud detection queries
   if (
-    normalizedQuery.includes('fraude')
-    || normalizedQuery.includes('suspeita')
-    || normalizedQuery.includes('anomalia')
-    || normalizedQuery.includes('segurança')
+    normalizedQuery.includes('fraude') ||
+    normalizedQuery.includes('suspeita') ||
+    normalizedQuery.includes('anomalia') ||
+    normalizedQuery.includes('segurança')
   ) {
     return { type: 'fraud_detection', confidence: 0.9 }
   }
 
   // Compliance queries
   if (
-    normalizedQuery.includes('lgpd')
-    || normalizedQuery.includes('compliance')
-    || normalizedQuery.includes('auditoria')
-    || normalizedQuery.includes('lei')
+    normalizedQuery.includes('lgpd') ||
+    normalizedQuery.includes('compliance') ||
+    normalizedQuery.includes('auditoria') ||
+    normalizedQuery.includes('lei')
   ) {
     return { type: 'compliance', confidence: 0.9 }
   }
@@ -666,7 +666,7 @@ function getFinancialFallbackResponse(intentType: string): string {
 /**
  * Health check endpoint for Financial CopilotKit
  */
-financialCopilot.get('/health', (c) => {
+financialCopilot.get('/health', c => {
   return c.json({
     status: 'healthy',
     service: 'financial-copilot-agent',

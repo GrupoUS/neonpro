@@ -24,7 +24,7 @@ function generateValidCNS() {
   const provisionalCNS = []
   const firstDigits = [7, 8, 9]
 
-  firstDigits.forEach((first) => {
+  firstDigits.forEach(first => {
     const cns = [first]
     let sum = first
 
@@ -46,7 +46,7 @@ function generateValidCNS() {
   console.log('Valid provisional CNS:', provisionalCNS)
 
   // Test the validation
-  const validateCNS = (cns) => {
+  const validateCNS = cns => {
     const digits = cns.split('').map(Number)
     const firstDigit = digits[0]
 
@@ -69,7 +69,7 @@ function generateValidCNS() {
 
   console.log('Validation results:')
   console.log(definitiveCNS[0], ':', validateCNS(definitiveCNS[0]))
-  provisionalCNS.forEach((cns) => {
+  provisionalCNS.forEach(cns => {
     console.log(cns, ':', validateCNS(cns))
   })
 }

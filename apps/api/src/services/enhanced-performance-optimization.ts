@@ -264,7 +264,7 @@ export class EnhancedPerformanceOptimizationService {
   ): Promise<PaginatedResult<any>> {
     return this.executePaginatedQuery(
       `patients_search:${clinicId}`,
-      async (params) => {
+      async params => {
         const { page, limit, sortBy, sortOrder } = params
         const { query, filters, includeInactive = false } = searchParams
 
@@ -609,7 +609,7 @@ export class EnhancedPerformanceOptimizationService {
         )
 
         // Process batch results
-        batchResults.forEach((batchResult) => {
+        batchResults.forEach(batchResult => {
           if (batchResult.status === 'fulfilled') {
             const result = batchResult.value
             if (result.success) {
@@ -777,11 +777,11 @@ export class EnhancedPerformanceOptimizationService {
       }, timeoutMs)
 
       fn()
-        .then((result) => {
+        .then(result => {
           clearTimeout(timer)
           resolve(result)
         })
-        .catch((error) => {
+        .catch(error => {
           clearTimeout(timer)
           reject(error)
         })
@@ -893,7 +893,7 @@ export class EnhancedPerformanceOptimizationService {
     > = {}
     let revenue = 0
 
-    appointments.forEach((apt) => {
+    appointments.forEach(apt => {
       // Count by status
       byStatus[apt.status] = (byStatus[apt.status] || 0) + 1
 

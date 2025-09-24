@@ -294,7 +294,7 @@ export const subscribeToAppointments = (clinicId: string) => {
         table: 'appointments',
         filter: `clinic_id=eq.${clinicId}`,
       },
-      (payload) => {
+      payload => {
         // Handle real-time appointment updates
         handleAppointmentUpdate(payload)
       },
@@ -313,7 +313,7 @@ export const subscribeToTelemedicine = (sessionId: string) => {
         table: 'telemedicine_sessions',
         filter: `id=eq.${sessionId}`,
       },
-      (payload) => {
+      payload => {
         // Handle telemedicine session updates
         handleTelemedicineUpdate(payload)
       },
@@ -425,7 +425,7 @@ export default async function handler(req: Request) {
     details: check.status === 'fulfilled' ? check.value : check.reason,
   }))
 
-  const overallHealth = results.every((r) => r.status === 'healthy')
+  const overallHealth = results.every(r => r.status === 'healthy')
 
   return new Response(
     JSON.stringify({
@@ -627,8 +627,8 @@ export function middleware(request: NextRequest) {
 
   // Enforce HTTPS for healthcare data
   if (
-    !request.url.startsWith('https://')
-    && process.env.NODE_ENV === 'production'
+    !request.url.startsWith('https://') &&
+    process.env.NODE_ENV === 'production'
   ) {
     return NextResponse.redirect(
       `https://${request.headers.get('host')}${request.nextUrl.pathname}`,

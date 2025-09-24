@@ -386,7 +386,7 @@ export const MultiSessionSchedulingSchema = z.object({
   ),
   preferredDates: z.array(z.date()).min(1, 'Selecione ao menos uma data preferida'),
   preferredProfessionals: z.array(z.string().uuid()).optional(),
-  urgencyLevel: z.enum(['routine', 'priority', 'urgent']).refine((val) => val, {
+  urgencyLevel: z.enum(['routine', 'priority', 'urgent']).refine(val => val, {
     message: 'Nível de urgência inválido',
   }),
   specialRequirements: z.array(z.string()).optional(),

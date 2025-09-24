@@ -36,7 +36,7 @@ export class AnthropicProvider implements AIProviderInterface {
   constructor(
     apiKey: string,
     config: AnthropicConfig = {},
-    healthcareConfig: HealthcareComplianceConfig = {}
+    healthcareConfig: HealthcareComplianceConfig = {},
   ) {
     if (!apiKey) {
       throw new Error('Anthropic API key is required')
@@ -73,7 +73,7 @@ export class AnthropicProvider implements AIProviderInterface {
       }
 
       const messages = this.formatMessages(input)
-      
+
       const response = await this.client.messages.create({
         model: this.model,
         max_tokens: this.maxTokens,
@@ -108,19 +108,19 @@ export class AnthropicProvider implements AIProviderInterface {
       }
 
       if (this.healthcareConfig.auditLogging) {
-        this.logHealthcareAudit('generateAnswer_success', { 
-          input, 
-          result, 
-          processingTimeMs 
+        this.logHealthcareAudit('generateAnswer_success', {
+          input,
+          result,
+          processingTimeMs,
         })
       }
 
       return result
     } catch (error) {
       if (this.healthcareConfig.auditLogging) {
-        this.logHealthcareAudit('generateAnswer_error', { 
-          input, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+        this.logHealthcareAudit('generateAnswer_error', {
+          input,
+          error: error instanceof Error ? error.message : 'Unknown error',
         })
       }
 
@@ -181,11 +181,11 @@ export class AnthropicProvider implements AIProviderInterface {
 
         if (chunk.type === 'message_stop') {
           const processingTimeMs = Date.now() - startTime
-          
+
           if (this.healthcareConfig.auditLogging) {
-            this.logHealthcareAudit('generateStream_complete', { 
-              input, 
-              processingTimeMs 
+            this.logHealthcareAudit('generateStream_complete', {
+              input,
+              processingTimeMs,
             })
           }
 
@@ -205,9 +205,9 @@ export class AnthropicProvider implements AIProviderInterface {
       }
     } catch (error) {
       if (this.healthcareConfig.auditLogging) {
-        this.logHealthcareAudit('generateStream_error', { 
-          input, 
-          error: error instanceof Error ? error.message : 'Unknown error' 
+        this.logHealthcareAudit('generateStream_error', {
+          input,
+          error: error instanceof Error ? error.message : 'Unknown error',
         })
       }
 
@@ -316,7 +316,7 @@ export class AnthropicProvider implements AIProviderInterface {
   }
 
   private logHealthcareAudit(event: string, data: any): void {
-    if (!this.healthcareConfig.auditLogging) {return}
+    if (!this.healthcareConfig.auditLogging) return
 
     const auditLog = {
       timestamp: new Date().toISOString(),

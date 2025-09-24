@@ -111,7 +111,7 @@ export class PWAOfflineManager {
         resolve()
       }
 
-      request.onupgradeneeded = (event) => {
+      request.onupgradeneeded = event => {
         const db = (event.target as IDBOpenDBRequest).result
 
         // Create object stores for different entity types
@@ -167,7 +167,7 @@ export class PWAOfflineManager {
     window.addEventListener('offline', () => this.handleOffline())
 
     // Listen for service worker messages
-    navigator.serviceWorker?.addEventListener('message', (event) => {
+    navigator.serviceWorker?.addEventListener('message', event => {
       if (event.data.type === 'SYNC_REQUEST') {
         this.processAllQueues()
       }
@@ -314,7 +314,7 @@ export class PWAOfflineManager {
     }
 
     const operationsToProcess = queue.operations
-      .filter((op) => op.status === 'pending')
+      .filter(op => op.status === 'pending')
       .sort((a, b) => {
         // Sort by priority, then by timestamp
         const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 }
@@ -345,7 +345,7 @@ export class PWAOfflineManager {
     }
 
     // Remove completed operations
-    queue.operations = queue.operations.filter((op) => op.status !== 'completed')
+    queue.operations = queue.operations.filter(op => op.status !== 'completed')
 
     // Update queue
     this.queues.set(queue.id, queue)
@@ -368,8 +368,8 @@ export class PWAOfflineManager {
 
     // Check dependencies
     if (operation.dependencies) {
-      const incompleteDeps = operation.dependencies.filter((depId) => {
-        return queue.operations.some((op) => op.id === depId && op.status !== 'completed')
+      const incompleteDeps = operation.dependencies.filter(depId => {
+        return queue.operations.some(op => op.id === depId && op.status !== 'completed')
       })
 
       if (incompleteDeps.length > 0) {
@@ -418,7 +418,7 @@ export class PWAOfflineManager {
     const dataSize = JSON.stringify(operation.data).length
 
     // Simulate network delay
-    await new Promise((resolve) => setTimeout(resolve, 100 + Math.random() * 200))
+    await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200))
 
     // Simulate occasional conflicts (5% chance)
     const hasConflict = Math.random() < 0.05
@@ -539,11 +539,11 @@ export class PWAOfflineManager {
   }> {
     const pendingOperations = Array.from(this.queues.values())
       .reduce(
-        (sum, queue) => sum + queue.operations.filter((op) => op.status === 'pending').length,
+        (sum, queue) => sum + queue.operations.filter(op => op.status === 'pending').length,
         0,
       )
 
-    const queues = Array.from(this.queues.values()).map((queue) => ({
+    const queues = Array.from(this.queues.values()).map(queue => ({
       id: queue.id,
       name: queue.name,
       operations: queue.operations.length,

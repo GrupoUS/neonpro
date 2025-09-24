@@ -272,7 +272,7 @@ export function sessionMiddleware(options?: {
 
     if (session && options?.permissions && options.permissions.length > 0) {
       const userPermissions = session.permissions || []
-      const hasAllPermissions = options.permissions.every((permission) =>
+      const hasAllPermissions = options.permissions.every(permission =>
         userPermissions.includes(permission)
       )
 
@@ -299,7 +299,7 @@ export function sessionMiddleware(options?: {
 }
 
 function getCookieValue(cookieHeader: string, name: string): string | null {
-  const cookies = cookieHeader.split(';').map((cookie) => cookie.trim())
+  const cookies = cookieHeader.split(';').map(cookie => cookie.trim())
   for (const cookie of cookies) {
     const [cookieName, cookieValue] = cookie.split('=')
     if (cookieName === name) {

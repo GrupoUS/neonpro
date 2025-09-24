@@ -678,9 +678,9 @@ export class HealthcareMiddlewareService {
 
     return {
       clientIpAddress: this.anonymizeIP(
-        req.header('x-forwarded-for')?.split(',')[0]?.trim()
-          || req.header('x-real-ip')
-          || 'unknown',
+        req.header('x-forwarded-for')?.split(',')[0]?.trim() ||
+          req.header('x-real-ip') ||
+          'unknown',
       ),
       userAgent: req.header('user-agent'),
       deviceType: this.detectDeviceType(req.header('user-agent')),
@@ -721,8 +721,8 @@ export class HealthcareMiddlewareService {
 
     // Healthcare operations are typically legitimate interest
     if (
-      _c.req.path.includes('/emergency')
-      || _c.req.path.includes('/patient-safety')
+      _c.req.path.includes('/emergency') ||
+      _c.req.path.includes('/patient-safety')
     ) {
       legalBasis = 'vital_interests'
     }
@@ -745,8 +745,8 @@ export class HealthcareMiddlewareService {
     return {
       legalBasis,
       dataClassification,
-      auditRequired: dataClassification === 'restricted'
-        || dataClassification === 'confidential',
+      auditRequired: dataClassification === 'restricted' ||
+        dataClassification === 'confidential',
       retentionPeriod: 365, // 1 year for healthcare data
       privacySettings: {
         piiRedaction: true,
@@ -768,20 +768,20 @@ export class HealthcareMiddlewareService {
     const method = _c.req.method
 
     // Emergency detection
-    const emergencyFlag = path.includes('/emergency')
-      || _c.req.header('x-emergency') === 'true'
-      || path.includes('/urgent')
+    const emergencyFlag = path.includes('/emergency') ||
+      _c.req.header('x-emergency') === 'true' ||
+      path.includes('/urgent')
 
     // Patient safety detection
-    const patientSafetyFlag = path.includes('/patient-safety')
-      || path.includes('/medication')
-      || path.includes('/allergy')
-      || _c.req.header('x-patient-safety') === 'true'
+    const patientSafetyFlag = path.includes('/patient-safety') ||
+      path.includes('/medication') ||
+      path.includes('/allergy') ||
+      _c.req.header('x-patient-safety') === 'true'
 
     // Critical system detection
-    const criticalSystemFlag = path.includes('/monitoring')
-      || path.includes('/alert')
-      || _userContext?.userRole === 'system_admin'
+    const criticalSystemFlag = path.includes('/monitoring') ||
+      path.includes('/alert') ||
+      _userContext?.userRole === 'system_admin'
 
     // Workflow type detection
     let workflowType: NonNullable<HealthcareRequestContext['workflowContext']>['workflowType'] =
@@ -848,8 +848,8 @@ export class HealthcareMiddlewareService {
 
     // CSRF protection for state-changing operations
     if (
-      this.config.security.enableCsrfProtection
-      && ['POST', 'PUT', 'DELETE', 'PATCH'].includes(c.req.method)
+      this.config.security.enableCsrfProtection &&
+      ['POST', 'PUT', 'DELETE', 'PATCH'].includes(c.req.method)
     ) {
       this.validateCSRFToken(c)
     }
@@ -895,8 +895,8 @@ export class HealthcareMiddlewareService {
 
     // For emergency requests, bypass rate limiting
     if (
-      this.config.rateLimiting.bypassEmergencyRequests
-      && _context.workflowContext?.emergencyFlag
+      this.config.rateLimiting.bypassEmergencyRequests &&
+      _context.workflowContext?.emergencyFlag
     ) {
       middlewareLogger.info('Emergency bypass activated', {
         requestId: _context.requestId,
@@ -1021,8 +1021,8 @@ export class HealthcareMiddlewareService {
 
     // Response logging if enabled
     if (
-      this.config.logging.enableResponseLogging
-      && this.config.logging.enableAuditLogging
+      this.config.logging.enableResponseLogging &&
+      this.config.logging.enableAuditLogging
     ) {
       await this.logResponse(_c, _context, duration)
     }
@@ -1120,9 +1120,9 @@ export class HealthcareMiddlewareService {
 
     // Medical device detection
     if (
-      ua.includes('medical')
-      || ua.includes('device')
-      || ua.includes('monitor')
+      ua.includes('medical') ||
+      ua.includes('device') ||
+      ua.includes('monitor')
     ) {
       return 'medical_device'
     }
@@ -1134,9 +1134,9 @@ export class HealthcareMiddlewareService {
 
     // Mobile detection
     if (
-      ua.includes('mobile')
-      || ua.includes('android')
-      || ua.includes('iphone')
+      ua.includes('mobile') ||
+      ua.includes('android') ||
+      ua.includes('iphone')
     ) {
       return 'mobile'
     }
@@ -1154,9 +1154,9 @@ export class HealthcareMiddlewareService {
    */
   private validateSecurityHeaders(c: Context): void {
     // Check for required security headers in sensitive requests
-    const requiresSecureHeaders = c.req.path.includes('/patient')
-      || c.req.path.includes('/medical')
-      || c.req.path.includes('/admin')
+    const requiresSecureHeaders = c.req.path.includes('/patient') ||
+      c.req.path.includes('/medical') ||
+      c.req.path.includes('/admin')
 
     if (requiresSecureHeaders) {
       const securityHeaders = ['x-requested-with', 'content-type']
@@ -1235,9 +1235,9 @@ export class HealthcareMiddlewareService {
       const requestedFields = Object.keys(body)
 
       const unnecessarySensitiveFields = sensitiveFields.filter(
-        (field) =>
-          requestedFields.includes(field)
-          && !this.isFieldNecessary(field, _context),
+        field =>
+          requestedFields.includes(field) &&
+          !this.isFieldNecessary(field, _context),
       )
 
       if (unnecessarySensitiveFields.length > 0) {
@@ -1270,8 +1270,8 @@ export class HealthcareMiddlewareService {
     }
 
     return (
-      necessaryFields[workflowType || 'administrative_task']?.includes(field)
-      || false
+      necessaryFields[workflowType || 'administrative_task']?.includes(field) ||
+      false
     )
   }
 
@@ -1441,9 +1441,9 @@ export class HealthcareMiddlewareService {
     if (metricsToReport.length > 0) {
       middlewareLogger.info('Metrics collected', {
         count: metricsToReport.length,
-        averageDuration: metricsToReport.reduce((sum, _m) => sum + (_m.duration || 0), 0)
-          / metricsToReport.length,
-        errorRate: metricsToReport.filter((m) => m.errorOccurred).length / metricsToReport.length,
+        averageDuration: metricsToReport.reduce((sum, _m) => sum + (_m.duration || 0), 0) /
+          metricsToReport.length,
+        errorRate: metricsToReport.filter(m => m.errorOccurred).length / metricsToReport.length,
         component: 'healthcare-middleware',
         timestamp: new Date().toISOString(),
       })

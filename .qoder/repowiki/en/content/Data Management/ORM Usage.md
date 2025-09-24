@@ -587,7 +587,7 @@ The application includes a query optimizer that detects potential N+1 patterns a
 ```typescript
 // Query optimization service analyzes query patterns
 const optimizations = await queryOptimizer.analyzeQueries()
-if (optimizations.some((opt) => opt.issues.includes('Potential N+1 query pattern'))) {
+if (optimizations.some(opt => opt.issues.includes('Potential N+1 query pattern'))) {
   // Alert developers to optimize queries
 }
 ```

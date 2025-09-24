@@ -115,7 +115,7 @@ ws.onopen = () => {
   )
 }
 
-ws.onmessage = (event) => {
+ws.onmessage = event => {
   const response = JSON.parse(event.data)
   console.log('Response:', response)
 }

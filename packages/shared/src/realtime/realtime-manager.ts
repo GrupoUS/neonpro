@@ -78,7 +78,7 @@ export class RealtimeManager {
           await this.handleRealtimeEvent(payload, tableName, options)
         },
       )
-      .subscribe((status) => {
+      .subscribe(status => {
         realtimeLogger.info(`Realtime subscription status updated`, {
           component: 'realtime-manager',
           action: 'subscription_status',
@@ -156,7 +156,7 @@ export class RealtimeManager {
       // Invalidate related queries for data consistency
       if (options.queryKeys) {
         await Promise.all(
-          options.queryKeys.map((queryKey) => this.queryClient.invalidateQueries({ queryKey })),
+          options.queryKeys.map(queryKey => this.queryClient.invalidateQueries({ queryKey })),
         )
       }
     } catch (error) {
@@ -197,7 +197,7 @@ export class RealtimeManager {
     // Update list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return (
-        old?.map((item) => item.id === updatedRecord.id ? updatedRecord : item) || []
+        old?.map(item => item.id === updatedRecord.id ? updatedRecord : item) || []
       )
     })
 
@@ -213,7 +213,7 @@ export class RealtimeManager {
 
     // Remove from list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old?.filter((item) => item.id !== deletedRecord.id) || []
+      return old?.filter(item => item.id !== deletedRecord.id) || []
     })
 
     // Remove specific record cache
@@ -257,7 +257,7 @@ export class RealtimeManager {
     }
 
     // Wait before retry with exponential backoff
-    await new Promise((resolve) => setTimeout(resolve, Math.pow(2, retryCount) * 1000))
+    await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000))
 
     // Retry subscription
     this.subscribeToTable(tableName, filter, options)
@@ -306,7 +306,7 @@ export class RealtimeManager {
           timestamp: new Date().toISOString(),
         })
       })
-      .subscribe(async (status) => {
+      .subscribe(async status => {
         if (status === 'SUBSCRIBED') {
           await channel.track(initialState)
         }

@@ -18,7 +18,7 @@ const ExplanationRequest = z
     audience: z.enum(['patient', 'admin', 'professional']).default('patient'),
     locale: z.string().default('pt-BR'),
   })
-  .refine((v) => Boolean(v.text) || (v.messages && v.messages.length > 0), {
+  .refine(v => Boolean(v.text) || (v.messages && v.messages.length > 0), {
     message: 'text or messages is required',
   })
 
@@ -29,11 +29,11 @@ type ExplanationResponse = {
   citations?: Array<{ title: string; url: string }>
 }
 
-app.post('/summary', zValidator('json', ExplanationRequest), async (c) => {
+app.post('/summary', zValidator('json', ExplanationRequest), async c => {
   const body: ExplanationRequest = c.req.valid('json')
 
   // Minimal GREEN: echo-style summary with safe trimming and trace id
-  const base = body.text ?? body.messages?.map((m) => m.content).join(' ') ?? ''
+  const base = body.text ?? body.messages?.map(m => m.content).join(' ') ?? ''
   const summary = base.length > 160 ? base.slice(0, 157) + '…' : base
   const wordCount = summary.split(/\s+/).filter(Boolean).length
   const traceId = crypto.randomUUID()
@@ -42,6 +42,6 @@ app.post('/summary', zValidator('json', ExplanationRequest), async (c) => {
   return c.json(resp)
 })
 
-app.get('/health', (c) => c.json({ status: 'ok' }))
+app.get('/health', c => c.json({ status: 'ok' }))
 
 export default app

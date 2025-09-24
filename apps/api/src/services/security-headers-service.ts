@@ -440,7 +440,7 @@ export class SecurityHeadersService {
 
     // Deduct for missing critical headers
     const criticalHeaders = ['CSP', 'HSTS']
-    criticalHeaders.forEach((header) => {
+    criticalHeaders.forEach(header => {
       if (!appliedHeaders.includes(header)) {
         score -= 20
       }
@@ -452,7 +452,7 @@ export class SecurityHeadersService {
       'X-Frame-Options',
       'X-XSS-Protection',
     ]
-    importantHeaders.forEach((header) => {
+    importantHeaders.forEach(header => {
       if (!appliedHeaders.includes(header)) {
         score -= 10
       }
@@ -460,8 +460,8 @@ export class SecurityHeadersService {
 
     // Bonus for healthcare-specific security
     if (
-      context.handlesMedicalData
-      && appliedHeaders.includes('Healthcare-Security')
+      context.handlesMedicalData &&
+      appliedHeaders.includes('Healthcare-Security')
     ) {
       score += 5
     }
@@ -571,8 +571,8 @@ export class SecurityHeadersService {
     const highRiskBlockedUris = ['data:', 'javascript:', 'http:']
 
     return (
-      highRiskDirectives.includes(violation.violatedDirective)
-      || highRiskBlockedUris.some((uri) => violation.blockedUri.startsWith(uri))
+      highRiskDirectives.includes(violation.violatedDirective) ||
+      highRiskBlockedUris.some(uri => violation.blockedUri.startsWith(uri))
     )
   }
 
@@ -606,12 +606,12 @@ export class SecurityHeadersService {
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 
     const violationsLast24h = this.cspReports.filter(
-      (v) => v.timestamp >= yesterday,
+      v => v.timestamp >= yesterday,
     ).length
 
     // Count violated directives
     const directiveCounts: Record<string, number> = {}
-    this.cspReports.forEach((v) => {
+    this.cspReports.forEach(v => {
       directiveCounts[v.violatedDirective] = (directiveCounts[v.violatedDirective] || 0) + 1
     })
 
@@ -622,7 +622,7 @@ export class SecurityHeadersService {
 
     // Count blocked URIs
     const uriCounts: Record<string, number> = {}
-    this.cspReports.forEach((v) => {
+    this.cspReports.forEach(v => {
       uriCounts[v.blockedUri] = (uriCounts[v.blockedUri] || 0) + 1
     })
 
@@ -670,8 +670,8 @@ export class SecurityHeadersService {
       }
 
       if (
-        config.csp.scriptSrc
-        && config.csp.scriptSrc.includes("'unsafe-inline'")
+        config.csp.scriptSrc &&
+        config.csp.scriptSrc.includes("'unsafe-inline'")
       ) {
         validationErrors.push({
           type: 'warning',
@@ -701,7 +701,7 @@ export class SecurityHeadersService {
    */
   addCustomConfig(name: string, config: SecurityHeaderConfig): void {
     const validationErrors = this.validateConfig(config)
-    if (validationErrors.some((e) => e.type === 'error')) {
+    if (validationErrors.some(e => e.type === 'error')) {
       throw new Error('Configuration validation failed')
     }
 
@@ -767,7 +767,7 @@ export class SecurityHeadersService {
       '/api/lgpd',
     ]
 
-    return healthcarePaths.some((path) => url.startsWith(path))
+    return healthcarePaths.some(path => url.startsWith(path))
   }
 
   /**
@@ -781,7 +781,7 @@ export class SecurityHeadersService {
       '/api/treatments',
     ]
 
-    return medicalDataPaths.some((path) => url.includes(path))
+    return medicalDataPaths.some(path => url.includes(path))
   }
 
   /**
@@ -795,7 +795,7 @@ export class SecurityHeadersService {
       '/api/privacy',
     ]
 
-    return protectedPaths.some((path) => url.includes(path))
+    return protectedPaths.some(path => url.includes(path))
   }
 
   /**

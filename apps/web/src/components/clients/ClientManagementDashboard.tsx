@@ -324,8 +324,8 @@ export const ClientManagementDashboard: React.FC = () => {
   }
 
   const handleActionComplete = async (actionId: string) => {
-    setPendingActions((prev) =>
-      prev.map((action) => action.id === actionId ? { ...action, completed: true } : action)
+    setPendingActions(prev =>
+      prev.map(action => action.id === actionId ? { ...action, completed: true } : action)
     )
   }
 
@@ -399,7 +399,7 @@ export const ClientManagementDashboard: React.FC = () => {
         <div className='flex items-center space-x-4'>
           <select
             value={selectedTimeRange}
-            onChange={(e) => setSelectedTimeRange(e.target.value as any)}
+            onChange={e => setSelectedTimeRange(e.target.value as any)}
             className='px-3 py-2 border rounded-md'
           >
             <option value='7d'>Últimos 7 dias</option>
@@ -544,10 +544,10 @@ export const ClientManagementDashboard: React.FC = () => {
                     </div>
                     <div className='text-center'>
                       <div className='text-2xl font-bold text-red-600'>
-                        {metrics.totalClients
-                          - Math.round(
-                            metrics.totalClients
-                              * (metrics.retentionRate / 100),
+                        {metrics.totalClients -
+                          Math.round(
+                            metrics.totalClients *
+                              (metrics.retentionRate / 100),
                           )}
                       </div>
                       <div className='text-sm text-gray-600'>
@@ -612,7 +612,7 @@ export const ClientManagementDashboard: React.FC = () => {
         </TabsContent>
 
         <TabsContent value='retention' className='space-y-4'>
-          {retentionAnalytics.map((analytics) => (
+          {retentionAnalytics.map(analytics => (
             <Card key={analytics.clientId}>
               <CardHeader>
                 <CardTitle className='flex items-center justify-between'>
@@ -676,7 +676,7 @@ export const ClientManagementDashboard: React.FC = () => {
                   <div>
                     <h4 className='font-medium mb-2'>Recomendações AI</h4>
                     <div className='space-y-3'>
-                      {analytics.recommendations.map((rec) => (
+                      {analytics.recommendations.map(rec => (
                         <Alert key={rec.id}>
                           <Brain className='h-4 w-4' />
                           <AlertDescription>
@@ -732,7 +732,7 @@ export const ClientManagementDashboard: React.FC = () => {
           </div>
 
           <div className='space-y-3'>
-            {pendingActions.map((action) => (
+            {pendingActions.map(action => (
               <Card
                 key={action.id}
                 className={action.completed ? 'opacity-50' : ''}

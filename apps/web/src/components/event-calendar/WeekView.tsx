@@ -63,13 +63,13 @@ export function WeekView({
               </div>
 
               {weekDays.map((day, dayIndex) => {
-                const dayEvents = events.filter((event) => {
+                const dayEvents = events.filter(event => {
                   const eventDate = new Date(event.start)
                   return (
-                    eventDate.getDate() === day.getDate()
-                    && eventDate.getMonth() === day.getMonth()
-                    && eventDate.getFullYear() === day.getFullYear()
-                    && eventDate.getHours() === currentHour
+                    eventDate.getDate() === day.getDate() &&
+                    eventDate.getMonth() === day.getMonth() &&
+                    eventDate.getFullYear() === day.getFullYear() &&
+                    eventDate.getHours() === currentHour
                   )
                 })
 
@@ -93,7 +93,7 @@ export function WeekView({
                           backgroundColor: getEventColor(event) + '20',
                           borderLeft: `3px solid ${getEventColor(event)}`,
                         }}
-                        onClick={(e) => {
+                        onClick={e => {
                           e.stopPropagation()
                           onEventClick(event)
                         }}

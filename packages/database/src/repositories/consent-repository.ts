@@ -33,7 +33,7 @@ export class ConsentRepository implements IConsentRepository {
       return await this.performanceService.optimizedQuery(
         'consent_records',
         'select',
-        async (client) => {
+        async client => {
           const { data, error } = await client
             .from('consent_records')
             .select(
@@ -278,7 +278,7 @@ export class ConsentRepository implements IConsentRepository {
       return await this.performanceService.optimizedQuery(
         'consent_records',
         'select',
-        async (client) => {
+        async client => {
           const { data, error } = await client
             .from('consent_records')
             .select(
@@ -309,7 +309,7 @@ export class ConsentRepository implements IConsentRepository {
       return await this.performanceService.optimizedQuery(
         'consent_records',
         'select',
-        async (client) => {
+        async client => {
           const now = new Date().toISOString()
           const { data, error } = await client
             .from('consent_records')
@@ -346,7 +346,7 @@ export class ConsentRepository implements IConsentRepository {
       return await this.performanceService.optimizedQuery(
         'consent_records',
         'select',
-        async (client) => {
+        async client => {
           const now = new Date().toISOString()
           const { data, error } = await client
             .from('consent_records')

@@ -154,7 +154,7 @@ export class QualityControlOrchestrator {
           },
         ],
       },
-      agentResults: (context.agents || ['test']).map((agent) => ({
+      agentResults: (context.agents || ['test']).map(agent => ({
         agentName: agent,
         success: agent !== 'non-existent-agent',
         duration: Math.floor(Math.random() * 2000) + 500, // Simulate agent execution duration
@@ -171,10 +171,10 @@ export class QualityControlOrchestrator {
       },
       recommendations: ['Maintain current quality standards'],
       nextActions: ['Continue monitoring'],
-      errors: context.action === 'debug'
-          || context.target === 'failing-component'
-          || context.action === 'invalid'
-          || context.target === ''
+      errors: context.action === 'debug' ||
+          context.target === 'failing-component' ||
+          context.action === 'invalid' ||
+          context.target === ''
         ? [{ message: 'Test error for validation' }]
         : [],
       performanceAnalytics: {
@@ -185,9 +185,9 @@ export class QualityControlOrchestrator {
 
     // Handle invalid contexts
     if (
-      context.action === 'invalid'
-      || context.target === ''
-      || !context.agents?.length
+      context.action === 'invalid' ||
+      context.target === '' ||
+      !context.agents?.length
     ) {
       session.status = 'failed'
       session.errors = [{ message: 'Invalid context provided' }]

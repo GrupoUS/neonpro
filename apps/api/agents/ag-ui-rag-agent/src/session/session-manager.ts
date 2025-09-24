@@ -287,8 +287,8 @@ export class SessionManager {
       session.expiresAt.getTime() + additionalMinutes * 60 * 1000,
     )
     const maxExpiration = new Date(
-      session.createdAt.getTime()
-        + this.config.maxExpirationMinutes * 60 * 1000,
+      session.createdAt.getTime() +
+        this.config.maxExpirationMinutes * 60 * 1000,
     )
 
     // Don't exceed maximum expiration time
@@ -398,7 +398,7 @@ export class SessionManager {
    */
   public getUserSessions(_userId: string): SessionData[] {
     return Array.from(this.sessions.values()).filter(
-      (session) => session.userId === userId && session.isActive,
+      session => session.userId === userId && session.isActive,
     )
   }
 
@@ -407,7 +407,7 @@ export class SessionManager {
    */
   public getClinicSessionCount(clinicId: string): number {
     return Array.from(this.sessions.values()).filter(
-      (session) => session.clinicId === clinicId && session.isActive,
+      session => session.clinicId === clinicId && session.isActive,
     ).length
   }
 
@@ -518,7 +518,7 @@ export class SessionManager {
    */
   public getStats(): any {
     const sessions = Array.from(this.sessions.values())
-    const activeSessions = sessions.filter((s) => s.isActive)
+    const activeSessions = sessions.filter(s => s.isActive)
 
     return {
       total_sessions: sessions.length,

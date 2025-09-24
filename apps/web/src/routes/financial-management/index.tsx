@@ -294,7 +294,7 @@ function FinancialManagementDashboard() {
       <main className='p-6'>
         {/* Stats Cards */}
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
-          {stats.map((stat) => (
+          {stats.map(stat => (
             <div key={stat.title} className='bg-white rounded-lg shadow p-6'>
               <div className='flex items-center'>
                 <div className='flex-shrink-0'>
@@ -331,7 +331,7 @@ function FinancialManagementDashboard() {
               </div>
               <div className='p-6'>
                 <div className='space-y-4'>
-                  {quickActions.map((action) => (
+                  {quickActions.map(action => (
                     <Link
                       key={action.title}
                       to={action.href}
@@ -366,7 +366,7 @@ function FinancialManagementDashboard() {
               </div>
               <div className='p-6'>
                 <div className='space-y-4'>
-                  {financialGoals.map((goal) => (
+                  {financialGoals.map(goal => (
                     <div key={goal.name}>
                       <div className='flex items-center justify-between mb-2'>
                         <h4 className='text-sm font-medium text-gray-900'>
@@ -437,7 +437,7 @@ function FinancialManagementDashboard() {
                     </tr>
                   </thead>
                   <tbody className='bg-white divide-y divide-gray-200'>
-                    {recentInvoices.map((invoice) => (
+                    {recentInvoices.map(invoice => (
                       <tr key={invoice.id} className='hover:bg-gray-50'>
                         <td className='px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900'>
                           {invoice.number}
@@ -470,7 +470,7 @@ function FinancialManagementDashboard() {
               </div>
               <div className='p-6'>
                 <div className='space-y-4'>
-                  {topServices.map((service) => (
+                  {topServices.map(service => (
                     <div key={service.name} className='flex items-center justify-between'>
                       <div className='flex items-center'>
                         <div className='flex-shrink-0'>

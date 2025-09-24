@@ -241,8 +241,8 @@ export class ConnectionPoolManager {
     }
 
     // Trigger alert callbacks
-    alerts.forEach((alert) => {
-      this.alertCallbacks.forEach((callback) => callback(alert))
+    alerts.forEach(alert => {
+      this.alertCallbacks.forEach(callback => callback(alert))
     })
   }
 
@@ -325,8 +325,8 @@ export class ConnectionPoolManager {
 
     // Healthcare-specific optimizations
     const currentHour = new Date().getHours()
-    const isPeakHours = currentHour >= HEALTHCARE_WORKLOAD_PATTERNS.peakHours.start
-      && currentHour <= HEALTHCARE_WORKLOAD_PATTERNS.peakHours.end
+    const isPeakHours = currentHour >= HEALTHCARE_WORKLOAD_PATTERNS.peakHours.start &&
+      currentHour <= HEALTHCARE_WORKLOAD_PATTERNS.peakHours.end
 
     if (isPeakHours && recommendedConfig.max < 25) {
       recommendedConfig.max = Math.max(recommendedConfig.max, 25)

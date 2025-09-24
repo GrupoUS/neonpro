@@ -50,7 +50,7 @@ function PatientAssessmentPage() {
       assessmentId={loaderData.assessmentId}
       patientData={patient}
       previousAssessments={previousAssessments?.treatments}
-      onSubmit={async (assessmentData) => {
+      onSubmit={async assessmentData => {
         try {
           const result = await api.aiClinicalSupport.createPatientAssessment(assessmentData)
           return result

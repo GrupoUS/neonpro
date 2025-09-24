@@ -52,11 +52,11 @@ export const createAuditContext = (
   userAgent: string
 } => {
   return {
-    ipAddress: request.headers?.['x-forwarded-for']
-      || request.headers?.['x-real-ip']
-      || request.connection?.remoteAddress
-      || request.socket?.remoteAddress
-      || 'unknown',
+    ipAddress: request.headers?.['x-forwarded-for'] ||
+      request.headers?.['x-real-ip'] ||
+      request.connection?.remoteAddress ||
+      request.socket?.remoteAddress ||
+      'unknown',
     userAgent: request.headers?.['user-agent'] || 'unknown',
   }
 }

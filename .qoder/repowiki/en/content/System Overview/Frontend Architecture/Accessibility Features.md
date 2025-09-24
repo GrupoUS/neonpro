@@ -360,8 +360,8 @@ export class ErrorBoundary extends React.Component<
               Oops! Something went wrong
             </h2>
             <p className='text-gray-600 mb-6'>
-              {this.state.error?.message
-                || 'An unexpected error occurred. Please try again.'}
+              {this.state.error?.message ||
+                'An unexpected error occurred. Please try again.'}
             </p>
             <button
               onClick={() => {

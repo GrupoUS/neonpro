@@ -114,10 +114,10 @@ function fixFile(filePath) {
         const importEndPosition = content.indexOf('\\n', importInsertPosition)
 
         if (importInsertPosition !== -1 && importEndPosition !== -1) {
-          content = content.slice(0, importEndPosition + 1)
-            + importStatement
-            + '\\n'
-            + content.slice(importEndPosition + 1)
+          content = content.slice(0, importEndPosition + 1) +
+            importStatement +
+            '\\n' +
+            content.slice(importEndPosition + 1)
           console.log(`  ✅ Added missing import: ${module}`)
           changesMade = true
         }
@@ -153,7 +153,7 @@ function validateCompilation() {
     )
 
     // For now, just check if the files exist and have content
-    const filesChecked = TARGET_FILES.map((file) => {
+    const filesChecked = TARGET_FILES.map(file => {
       const fullPath = path.join(UI_COMPONENTS_DIR, file)
       if (fs.existsSync(fullPath)) {
         const content = fs.readFileSync(fullPath, 'utf8')

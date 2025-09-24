@@ -128,8 +128,8 @@ export class LGPDAuditService {
       }
 
       // Assess risk level automatically if not provided
-      const riskLevel = entry.riskLevel
-        || this.assessRiskLevel(entry.action, entry.dataCategory)
+      const riskLevel = entry.riskLevel ||
+        this.assessRiskLevel(entry.action, entry.dataCategory)
 
       // Create audit trail entry
       const auditEntry = await this.prisma.auditTrail.create({
@@ -304,7 +304,7 @@ export class LGPDAuditService {
         take: limit,
       })
 
-      const formattedEntries = auditEntries.map((entry) => this.mapToAuditTrailEntry(entry))
+      const formattedEntries = auditEntries.map(entry => this.mapToAuditTrailEntry(entry))
 
       return {
         success: true,
@@ -529,9 +529,9 @@ export class LGPDAuditService {
     const sensitiveCategories = ['SENSITIVE', 'HEALTH', 'GENETIC']
 
     return (
-      highRiskActions.includes(entry.action)
-      && sensitiveCategories.includes(entry.dataCategory)
-      && (entry.riskLevel || 0) >= 7
+      highRiskActions.includes(entry.action) &&
+      sensitiveCategories.includes(entry.dataCategory) &&
+      (entry.riskLevel || 0) >= 7
     )
   }
 
@@ -575,10 +575,10 @@ export class LGPDAuditService {
   ): boolean {
     // LGPD requires ANPD notification for breaches that may cause significant risk
     return (
-      breach.severity === 'CRITICAL'
-      || breach.affectedRecords > 100
-      || breach.dataCategories.includes('SENSITIVE')
-      || breach.dataCategories.includes('HEALTH')
+      breach.severity === 'CRITICAL' ||
+      breach.affectedRecords > 100 ||
+      breach.dataCategories.includes('SENSITIVE') ||
+      breach.dataCategories.includes('HEALTH')
     )
   }
 
@@ -714,7 +714,7 @@ export class LGPDAuditService {
     if (breaches.length === 0) return 0
 
     const notified = breaches.filter(
-      (breach) => breach.metadata?.reportedToANPD,
+      breach => breach.metadata?.reportedToANPD,
     ).length
     return (notified / breaches.length) * 100
   }

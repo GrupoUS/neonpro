@@ -197,7 +197,7 @@ const ClientProfileSchema = z.object({
       phone: z.string().min(10, 'Telefone do contato é obrigatório'),
     }),
   }),
-}).refine((data) => {
+}).refine(data => {
   // Validate minimum age (18 years for aesthetic treatments)
   const age = new Date().getFullYear() - new Date(data.dateOfBirth).getFullYear()
   return age >= 18
@@ -402,7 +402,7 @@ export const ClientProfileManagement: React.FC = () => {
     try {
       // Simulated upload progress
       const progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
+        setUploadProgress(prev => {
           if (prev >= 100) {
             clearInterval(progressInterval)
             setIsUploading(false)
@@ -519,7 +519,7 @@ export const ClientProfileManagement: React.FC = () => {
         <div className='flex items-center space-x-4'>
           <div className='relative'>
             <div className='w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold'>
-              {client.name.split(' ').map((n) => n[0]).join('').substring(0, 2)}
+              {client.name.split(' ').map(n => n[0]).join('').substring(0, 2)}
             </div>
             <div
               className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white ${
@@ -850,7 +850,7 @@ export const ClientProfileManagement: React.FC = () => {
                     <Label htmlFor='gender'>Gênero</Label>
                     <Select
                       value={form.watch('gender')}
-                      onValueChange={(value) => form.setValue('gender', value as any)}
+                      onValueChange={value => form.setValue('gender', value as any)}
                       disabled={!isEditing}
                     >
                       <SelectTrigger className={cn(!isEditing && 'bg-gray-50')}>
@@ -1104,7 +1104,7 @@ export const ClientProfileManagement: React.FC = () => {
               {client.aestheticHistory.previousTreatments.length > 0
                 ? (
                   <div className='space-y-4'>
-                    {client.aestheticHistory.previousTreatments.map((treatment) => (
+                    {client.aestheticHistory.previousTreatments.map(treatment => (
                       <div key={treatment.id} className='border rounded-lg p-4'>
                         <div className='flex items-center justify-between mb-2'>
                           <h4 className='font-medium'>{treatment.procedureName}</h4>
@@ -1279,7 +1279,7 @@ export const ClientProfileManagement: React.FC = () => {
               {client.attachments.length > 0
                 ? (
                   <div className='space-y-2'>
-                    {client.attachments.map((attachment) => (
+                    {client.attachments.map(attachment => (
                       <div
                         key={attachment.id}
                         className='flex items-center justify-between p-3 border rounded-lg'

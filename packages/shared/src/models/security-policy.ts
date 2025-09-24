@@ -1064,8 +1064,8 @@ export class SecurityPolicyValidator {
       'strong',
       'very_strong',
     ]
-    const strength = strengthLevels[Math.min(strengthScore, strengthLevels.length - 1)]
-      || 'unknown'
+    const strength = strengthLevels[Math.min(strengthScore, strengthLevels.length - 1)] ||
+      'unknown'
 
     return {
       isValid: violations.length === 0,
@@ -1083,8 +1083,8 @@ export class SecurityPolicyValidator {
   ): boolean {
     if (!policy.required) return false
     return (
-      policy.requiredRoles.length === 0
-      || policy.requiredRoles.includes(userRole)
+      policy.requiredRoles.length === 0 ||
+      policy.requiredRoles.includes(userRole)
     )
   }
 

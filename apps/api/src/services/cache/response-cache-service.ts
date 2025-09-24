@@ -97,8 +97,8 @@ export class ResponseCacheService {
         _userId: _query.context?.userId
           ? this.sanitizeString(_query.context._userId)
           : undefined,
-        previousTopics: _query.context?.previousTopics?.map((t) => this.sanitizeString(t))
-          || [],
+        previousTopics: _query.context?.previousTopics?.map(t => this.sanitizeString(t)) ||
+          [],
       },
       options: {
         maxResults: Math.min(_query.options?.maxResults || 10, 100), // Limit max results
@@ -124,7 +124,7 @@ export class ResponseCacheService {
     const categories: string[] = []
 
     if (response.sources) {
-      response.sources.forEach((source) => {
+      response.sources.forEach(source => {
         switch (source.type) {
           case 'patient_data':
             categories.push('patient_records')
@@ -312,7 +312,7 @@ export class ResponseCacheService {
             0,
             Math.min(1, validatedResponse.confidence || 0),
           ),
-          sources: validatedResponse.sources?.map((s) => this.validateSource(s)) || [],
+          sources: validatedResponse.sources?.map(s => this.validateSource(s)) || [],
         },
       }
 

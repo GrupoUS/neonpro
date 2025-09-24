@@ -127,7 +127,7 @@ export class AIDataService {
     if (clientNames.length > 0) {
       // Use ILIKE for case-insensitive search
       const nameConditions = clientNames
-        .map((name) => `name.ilike.%${name}%`)
+        .map(name => `name.ilike.%${name}%`)
         .join(',')
       query = query.or(nameConditions)
     }
@@ -516,8 +516,8 @@ export class AIDataService {
           } catch {
             void _error
             result = {
-              message: 'Erro ao buscar clientes: '
-                + (error instanceof Error ? error.message : 'Erro desconhecido'),
+              message: 'Erro ao buscar clientes: ' +
+                (error instanceof Error ? error.message : 'Erro desconhecido'),
             }
           }
           break
@@ -532,8 +532,8 @@ export class AIDataService {
           } catch {
             void _error
             result = {
-              message: 'Erro ao buscar agendamentos: '
-                + (error instanceof Error ? error.message : 'Erro desconhecido'),
+              message: 'Erro ao buscar agendamentos: ' +
+                (error instanceof Error ? error.message : 'Erro desconhecido'),
             }
           }
           break
@@ -545,8 +545,8 @@ export class AIDataService {
           } catch {
             void _error
             result = {
-              message: 'Erro ao buscar dados financeiros: '
-                + (error instanceof Error ? error.message : 'Erro desconhecido'),
+              message: 'Erro ao buscar dados financeiros: ' +
+                (error instanceof Error ? error.message : 'Erro desconhecido'),
             }
           }
           break
@@ -600,16 +600,16 @@ export class AIDataService {
       return 'client_data'
     }
     if (
-      lowerQuery.includes('agendamento')
-      || lowerQuery.includes('consulta')
-      || lowerQuery.includes('horário')
+      lowerQuery.includes('agendamento') ||
+      lowerQuery.includes('consulta') ||
+      lowerQuery.includes('horário')
     ) {
       return 'appointments'
     }
     if (
-      lowerQuery.includes('financeiro')
-      || lowerQuery.includes('pagamento')
-      || lowerQuery.includes('valor')
+      lowerQuery.includes('financeiro') ||
+      lowerQuery.includes('pagamento') ||
+      lowerQuery.includes('valor')
     ) {
       return 'financial'
     }
@@ -630,7 +630,7 @@ export class AIDataService {
         if (Array.isArray(result)) {
           return `Encontrei ${result.length} cliente(s):\n${
             result
-              .map((c) => `• ${c.name} (${c.email})`)
+              .map(c => `• ${c.name} (${c.email})`)
               .join('\n')
           }`
         } else if (result?.message) {
@@ -642,7 +642,7 @@ export class AIDataService {
           return `Encontrei ${result.length} agendamento(s) para hoje:\n${
             result
               .map(
-                (a) => `• ${a.clients?.name} - ${new Date(a.datetime).toLocaleTimeString()}`,
+                a => `• ${a.clients?.name} - ${new Date(a.datetime).toLocaleTimeString()}`,
               )
               .join('\n')
           }`

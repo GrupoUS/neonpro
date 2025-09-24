@@ -417,15 +417,15 @@ export interface IngestionMonitoringMetrics {
  */
 export function isIngestionEvent(obj: any): obj is IngestionEvent {
   return (
-    obj
-    && typeof obj === 'object'
-    && typeof obj.eventType === 'string'
-    && obj.source
-    && typeof obj.source.sourceId === 'string'
-    && obj.processing
-    && typeof obj.processing.status === 'string'
-    && obj.quality
-    && typeof obj.quality.validRecords === 'number'
+    obj &&
+    typeof obj === 'object' &&
+    typeof obj.eventType === 'string' &&
+    obj.source &&
+    typeof obj.source.sourceId === 'string' &&
+    obj.processing &&
+    typeof obj.processing.status === 'string' &&
+    obj.quality &&
+    typeof obj.quality.validRecords === 'number'
   )
 }
 
@@ -434,14 +434,14 @@ export function isIngestionEvent(obj: any): obj is IngestionEvent {
  */
 export function isIngestionConfig(obj: any): obj is IngestionConfig {
   return (
-    obj
-    && typeof obj === 'object'
-    && typeof obj.sourceId === 'string'
-    && typeof obj.sourceType === 'string'
-    && obj.processing
-    && typeof obj.processing.batchSize === 'number'
-    && obj.security
-    && typeof obj.security.encryption === 'boolean'
+    obj &&
+    typeof obj === 'object' &&
+    typeof obj.sourceId === 'string' &&
+    typeof obj.sourceType === 'string' &&
+    obj.processing &&
+    typeof obj.processing.batchSize === 'number' &&
+    obj.security &&
+    typeof obj.security.encryption === 'boolean'
   )
 }
 
@@ -450,11 +450,11 @@ export function isIngestionConfig(obj: any): obj is IngestionConfig {
  */
 export function isValidationRule(obj: any): obj is ValidationRule {
   return (
-    obj
-    && typeof obj === 'object'
-    && typeof obj.ruleId === 'string'
-    && typeof obj.field === 'string'
-    && typeof obj.type === 'string'
-    && typeof obj.onError === 'string'
+    obj &&
+    typeof obj === 'object' &&
+    typeof obj.ruleId === 'string' &&
+    typeof obj.field === 'string' &&
+    typeof obj.type === 'string' &&
+    typeof obj.onError === 'string'
   )
 }

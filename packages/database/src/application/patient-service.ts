@@ -1,10 +1,10 @@
 import {
   Patient,
-  PatientValidationError,
-  PatientNotFoundError as PatientEntityValidationError,
-  PatientNotFoundError,
   PatientAlreadyExistsError,
   PatientFilters as PatientFilter,
+  PatientNotFoundError,
+  PatientNotFoundError as PatientEntityValidationError,
+  PatientValidationError,
 } from '@neonpro/domain'
 import type { PatientRepository as IPatientRepository } from '@neonpro/domain'
 
@@ -48,7 +48,7 @@ export class PatientService {
       }
       throw new PatientAlreadyExistsError(
         request.cpf || 'unknown',
-        'cpf'
+        'cpf',
       )
     }
   }
@@ -82,7 +82,7 @@ export class PatientService {
       }
       throw new PatientAlreadyExistsError(
         id || 'unknown',
-        'cpf'
+        'cpf',
       )
     }
   }
@@ -114,10 +114,10 @@ export class PatientService {
       if (options?.search) {
         const searchLower = options.search.toLowerCase()
         filteredPatients = filteredPatients.filter(
-          (p) =>
-            p.fullName.toLowerCase().includes(searchLower)
-            || p.email?.toLowerCase().includes(searchLower)
-            || p.cpf?.includes(searchLower),
+          p =>
+            p.fullName.toLowerCase().includes(searchLower) ||
+            p.email?.toLowerCase().includes(searchLower) ||
+            p.cpf?.includes(searchLower),
         )
       }
 
@@ -159,11 +159,11 @@ export class PatientService {
       // Apply search filtering
       const searchLower = query.toLowerCase()
       const filteredPatients = patients.filter(
-        (p) =>
-          p.fullName.toLowerCase().includes(searchLower)
-          || p.email?.toLowerCase().includes(searchLower)
-          || p.cpf?.includes(searchLower)
-          || p.medicalRecordNumber.toLowerCase().includes(searchLower),
+        p =>
+          p.fullName.toLowerCase().includes(searchLower) ||
+          p.email?.toLowerCase().includes(searchLower) ||
+          p.cpf?.includes(searchLower) ||
+          p.medicalRecordNumber.toLowerCase().includes(searchLower),
       )
 
       // Apply pagination
@@ -200,7 +200,7 @@ export class PatientService {
       }
       throw new PatientAlreadyExistsError(
         id || 'unknown',
-        'cpf'
+        'cpf',
       )
     }
   }
@@ -223,18 +223,18 @@ export class PatientService {
 
       if (filter.isActive !== undefined) {
         filteredPatients = filteredPatients.filter(
-          (p) => p.isActive === filter.isActive,
+          p => p.isActive === filter.isActive,
         )
       }
 
       if (filter.gender) {
         filteredPatients = filteredPatients.filter(
-          (p) => p.gender === filter.gender,
+          p => p.gender === filter.gender,
         )
       }
 
       if (filter.birthDateFrom && filter.birthDateTo) {
-        filteredPatients = filteredPatients.filter((p) => {
+        filteredPatients = filteredPatients.filter(p => {
           if (!p.birthDate) return false
           const birthDate = new Date(p.birthDate)
           const fromDate = new Date(filter.birthDateFrom!)

@@ -145,7 +145,7 @@ export class EnhancedSessionManager {
     const bytes = Math.ceil(this.config.sessionIdEntropyBits / 8)
     const randomBytes = new Uint8Array(bytes)
     crypto.getRandomValues(randomBytes)
-    return Array.from(randomBytes, (byte) => byte.toString(16).padStart(2, '0'))
+    return Array.from(randomBytes, byte => byte.toString(16).padStart(2, '0'))
       .join('')
       .substring(0, 32)
   }
@@ -157,7 +157,7 @@ export class EnhancedSessionManager {
     const chars = str.split('')
     const charCounts: { [key: string]: number } = {}
 
-    chars.forEach((char) => {
+    chars.forEach(char => {
       charCounts[char] = (charCounts[char] || 0) + 1
     })
 
@@ -376,9 +376,9 @@ export class EnhancedSessionManager {
     const idleTimeRemaining = this.config.idleTimeout - idleTime
     const timeRemaining = Math.min(absoluteTimeRemaining, idleTimeRemaining)
 
-    const shouldWarn = timeRemaining <= this.config.timeoutWarningThreshold
-      && (!session.lastWarningTime
-        || now - session.lastWarningTime.getTime() > 60 * 1000) // Don't warn more than once per minute
+    const shouldWarn = timeRemaining <= this.config.timeoutWarningThreshold &&
+      (!session.lastWarningTime ||
+        now - session.lastWarningTime.getTime() > 60 * 1000) // Don't warn more than once per minute
 
     return {
       isExpired: false,
@@ -399,7 +399,7 @@ export class EnhancedSessionManager {
   } {
     const userSessionIds = this.userSessions.get(userId) || new Set()
     const userSessions = Array.from(userSessionIds)
-      .map((id) => this.sessions.get(id))
+      .map(id => this.sessions.get(id))
       .filter(Boolean) as EnhancedSessionMetadata[]
 
     if (userSessions.length < this.config.maxConcurrentSessions) {
@@ -409,7 +409,7 @@ export class EnhancedSessionManager {
     if (userSessions.length === this.config.maxConcurrentSessions) {
       // Check if current session already exists
       const existingSession = userSessions.find(
-        (s) => s.sessionId === currentSessionId,
+        s => s.sessionId === currentSessionId,
       )
       if (existingSession) {
         return { action: 'allow' } // Session already exists, allow it
@@ -447,8 +447,8 @@ export class EnhancedSessionManager {
     // Manage concurrent sessions
     const concurrentResult = this.manageConcurrentSessions(userId, sessionId)
     if (
-      concurrentResult.action === 'remove_oldest'
-      && concurrentResult.removedSession
+      concurrentResult.action === 'remove_oldest' &&
+      concurrentResult.removedSession
     ) {
       console.warn(
         `Removed oldest session ${concurrentResult.removedSession} due to concurrent session limit`,
@@ -605,8 +605,8 @@ export class EnhancedSessionManager {
       } else if (anomalyResult.recommendedAction === 'require_mfa') {
         finalAction = 'require_mfa'
       } else if (
-        anomalyResult.recommendedAction === 'warn'
-        && finalAction === 'allow'
+        anomalyResult.recommendedAction === 'warn' &&
+        finalAction === 'allow'
       ) {
         finalAction = 'warn'
       }
@@ -690,7 +690,7 @@ export class EnhancedSessionManager {
   getUserSessions(_userId: string): EnhancedSessionMetadata[] {
     const sessionIds = this.userSessions.get(userId) || new Set()
     return Array.from(sessionIds)
-      .map((id) => this.sessions.get(id))
+      .map(id => this.sessions.get(id))
       .filter(Boolean) as EnhancedSessionMetadata[]
   }
 
@@ -701,7 +701,7 @@ export class EnhancedSessionManager {
     const userSessionIds = this.userSessions.get(userId) || new Set()
     const removedCount = userSessionIds.size
 
-    userSessionIds.forEach((sessionId) => {
+    userSessionIds.forEach(sessionId => {
       this.removeSession(sessionId)
     })
 

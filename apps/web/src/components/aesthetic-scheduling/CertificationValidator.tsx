@@ -74,14 +74,14 @@ export function CertificationValidator(
 
   const filteredProfessionals =
     professionalsData?.filter((professional: any) =>
-      professional.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-      || professional.specialization.toLowerCase().includes(searchTerm.toLowerCase())
+      professional.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      professional.specialization.toLowerCase().includes(searchTerm.toLowerCase())
     ) || []
 
   const filteredProcedures =
     proceduresData?.filter((procedure: any) =>
-      procedure.name.toLowerCase().includes(searchTerm.toLowerCase())
-      || procedure.category.toLowerCase().includes(searchTerm.toLowerCase())
+      procedure.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      procedure.category.toLowerCase().includes(searchTerm.toLowerCase())
     ) || []
 
   const handleProfessionalSelect = (professionalId: string) => {
@@ -94,7 +94,7 @@ export function CertificationValidator(
     if (checked) {
       setSelectedProcedures([...selectedProcedures, procedureId])
     } else {
-      setSelectedProcedures(selectedProcedures.filter((id) => id !== procedureId))
+      setSelectedProcedures(selectedProcedures.filter(id => id !== procedureId))
     }
     setValidationResults(null)
   }
@@ -191,7 +191,7 @@ export function CertificationValidator(
                   type='text'
                   placeholder='Buscar por nome ou especialização...'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className='pl-10'
                   aria-label='Buscar profissional'
                 />
@@ -281,7 +281,7 @@ export function CertificationValidator(
                         type='text'
                         placeholder='Buscar procedimentos...'
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={e => setSearchTerm(e.target.value)}
                         className='pl-10'
                         aria-label='Buscar procedimentos'
                       />
@@ -306,7 +306,7 @@ export function CertificationValidator(
                                         type='checkbox'
                                         id={procedure.id}
                                         checked={selectedProcedures.includes(procedure.id)}
-                                        onChange={(e) =>
+                                        onChange={e =>
                                           handleProcedureSelect(procedure.id, e.target.checked)}
                                         className='rounded border-gray-300 text-blue-600 focus:ring-blue-500'
                                         aria-label={`Selecionar procedimento ${procedure.name}`}
@@ -447,8 +447,8 @@ export function CertificationValidator(
                                 )}
                               >
                                 {validationResults.experienceLevel
-                                  ? validationResults.experienceLevel.charAt(0).toUpperCase()
-                                    + validationResults.experienceLevel.slice(1)
+                                  ? validationResults.experienceLevel.charAt(0).toUpperCase() +
+                                    validationResults.experienceLevel.slice(1)
                                   : ''}
                               </Badge>
                               <p className='text-sm text-gray-600 mt-1'>
@@ -459,10 +459,10 @@ export function CertificationValidator(
                         </div>
 
                         {/* Missing Certifications */}
-                        {!validationResults.isValid
-                          && validationResults.missingCertifications
-                          && validationResults.missingCertifications.length > 0
-                          && (
+                        {!validationResults.isValid &&
+                          validationResults.missingCertifications &&
+                          validationResults.missingCertifications.length > 0 &&
+                          (
                             <div className='bg-red-50 rounded-lg p-4'>
                               <h4 className='font-medium text-red-900 mb-3'>
                                 Certificações Faltantes
@@ -497,9 +497,9 @@ export function CertificationValidator(
                         )}
 
                         {/* Recommendations */}
-                        {validationResults.recommendations
-                          && validationResults.recommendations.length > 0
-                          && (
+                        {validationResults.recommendations &&
+                          validationResults.recommendations.length > 0 &&
+                          (
                             <div className='bg-blue-50 rounded-lg p-4'>
                               <h4 className='font-medium text-blue-900 mb-3'>Recomendações</h4>
                               <div className='space-y-2'>

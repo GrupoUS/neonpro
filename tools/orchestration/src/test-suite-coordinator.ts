@@ -84,7 +84,7 @@ export class TestSuiteCoordinator {
 
     return {
       results,
-      overallSuccess: results.every((r) => r.success),
+      overallSuccess: results.every(r => r.success),
       parallelExecution: request.parallel,
       totalDuration: Date.now() - startTime,
       complianceResults,

@@ -30,7 +30,7 @@ function MultiSessionSchedulerPage() {
     <MultiSessionScheduler
       procedures={procedures || []}
       professionals={professionals || []}
-      onSchedule={async (data) => {
+      onSchedule={async data => {
         try {
           const result = await api.aestheticScheduling.scheduleProcedures(data)
           return result

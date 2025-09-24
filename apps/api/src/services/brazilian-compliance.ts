@@ -270,9 +270,9 @@ export class BrazilianComplianceService {
       })
     }
 
-    const level = issues.some((i) => i.severity === 'critical')
+    const level = issues.some(i => i.severity === 'critical')
       ? HEALTHCARE_SECURITY_LEVELS.CRITICAL
-      : issues.some((i) => i.severity === 'high')
+      : issues.some(i => i.severity === 'high')
       ? HEALTHCARE_SECURITY_LEVELS.MEDIUM
       : issues.length > 0
       ? HEALTHCARE_SECURITY_LEVELS.LOW
@@ -311,7 +311,7 @@ export class BrazilianComplianceService {
       })
     }
 
-    const level = issues.some((i) => i.severity === 'critical')
+    const level = issues.some(i => i.severity === 'critical')
       ? BRAZILIAN_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? BRAZILIAN_COMPLIANCE_LEVELS.PARTIALLY_COMPLIANT
@@ -400,10 +400,10 @@ export class BrazilianComplianceService {
 
     // Priority recommendations (critical and high severity issues)
     const priorityRecommendations = allRecommendations.filter(
-      (rec) =>
-        rec.includes('urgentemente')
-        || rec.includes('crítico')
-        || rec.includes('alta prioridade'),
+      rec =>
+        rec.includes('urgentemente') ||
+        rec.includes('crítico') ||
+        rec.includes('alta prioridade'),
     )
 
     return { priorityRecommendations, allRecommendations }
@@ -429,16 +429,16 @@ export class BrazilianComplianceService {
 
     const totalIssues = allIssues.length
     const criticalIssues = allIssues.filter(
-      (i) => i.severity === 'critical',
+      i => i.severity === 'critical',
     ).length
     const highPriorityIssues = allIssues.filter(
-      (i) => i.severity === 'high',
+      i => i.severity === 'high',
     ).length
     const mediumPriorityIssues = allIssues.filter(
-      (i) => i.severity === 'medium',
+      i => i.severity === 'medium',
     ).length
     const lowPriorityIssues = allIssues.filter(
-      (i) => i.severity === 'low',
+      i => i.severity === 'low',
     ).length
 
     const compliancePercentage = Math.round(

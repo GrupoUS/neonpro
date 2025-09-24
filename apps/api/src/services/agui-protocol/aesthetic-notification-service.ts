@@ -988,11 +988,11 @@ Equipe {{clinicName}}`,
   }
 
   async getNotificationsByClient(clientId: string): Promise<NotificationResult[]> {
-    return Array.from(this.notifications.values()).filter((n) => n.metadata?.clientId === clientId)
+    return Array.from(this.notifications.values()).filter(n => n.metadata?.clientId === clientId)
   }
 
   async getNotificationsByCategory(category: string): Promise<NotificationResult[]> {
-    return Array.from(this.notifications.values()).filter((n) => n.metadata?.category === category)
+    return Array.from(this.notifications.values()).filter(n => n.metadata?.category === category)
   }
 
   async createCustomTemplate(
@@ -1026,7 +1026,7 @@ Equipe {{clinicName}}`,
   async getTemplates(category?: string, language?: string): Promise<NotificationTemplate[]> {
     const templates = Array.from(this.templates.values())
 
-    return templates.filter((template) => {
+    return templates.filter(template => {
       if (category && template.category !== category) return false
       if (language && template.language !== language) return false
       return template.isActive

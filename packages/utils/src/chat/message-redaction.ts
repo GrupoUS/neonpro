@@ -51,8 +51,8 @@ export function detectPII(text: string): {
 } {
   const result = detectPIIPatterns(text)
   const hasPII = result.patterns.length > 0
-  const patterns = result.patterns.map((p) => p.type)
-  const matches = result.patterns.map((p) => ({
+  const patterns = result.patterns.map(p => p.type)
+  const matches = result.patterns.map(p => ({
     type: p.type,
     value: p.match,
     start: p.start,
@@ -191,7 +191,7 @@ export function validateMessageSafety(message: string): SafetyValidationResult {
   }
 
   // For simplicity, treat high number of patterns as high risk
-  if (piiDetection.patterns.filter((p) => p !== 'name').length >= 2) {
+  if (piiDetection.patterns.filter(p => p !== 'name').length >= 2) {
     risks.push('high_risk_pii')
   }
 

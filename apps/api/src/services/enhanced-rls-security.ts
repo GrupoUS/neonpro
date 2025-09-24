@@ -404,8 +404,8 @@ export class EnhancedRLSSecurityService {
       const securityContext = {
         sensitivityLevel: this.determineSensitivityLevel(context.requestPath),
         isHealthcareEndpoint: context.requestPath.includes('/api/patients'),
-        hasPatientData: context.requestPath.includes('/medical-records')
-          || context.requestPath.includes('/diagnostics'),
+        hasPatientData: context.requestPath.includes('/medical-records') ||
+          context.requestPath.includes('/diagnostics'),
         requestMethod: context.requestMethod,
         endpoint: context.requestPath,
       }
@@ -677,7 +677,7 @@ export class EnhancedRLSSecurityService {
       'billing_records',
     ]
     const hasSensitiveAccess = sequence.some(
-      (log) => sensitiveTables.includes(log.table_name) && log.operation === 'SELECT',
+      log => sensitiveTables.includes(log.table_name) && log.operation === 'SELECT',
     )
 
     return hasSensitiveAccess && sensitiveTables.includes(currentTable)
@@ -746,8 +746,8 @@ export class EnhancedRLSSecurityService {
     requestPath: string,
   ): 'low' | 'medium' | 'high' | 'critical' {
     if (
-      requestPath.includes('/medical-records')
-      || requestPath.includes('/diagnostics')
+      requestPath.includes('/medical-records') ||
+      requestPath.includes('/diagnostics')
     ) {
       return 'critical'
     }
@@ -755,8 +755,8 @@ export class EnhancedRLSSecurityService {
       return 'high'
     }
     if (
-      requestPath.includes('/appointments')
-      || requestPath.includes('/professionals')
+      requestPath.includes('/appointments') ||
+      requestPath.includes('/professionals')
     ) {
       return 'medium'
     }
@@ -820,14 +820,14 @@ export class EnhancedRLSSecurityService {
         .gte('timestamp', thirtyDaysAgo.toISOString())
         .order('timestamp', { ascending: false })
 
-      const securityScore = auditData?.reduce((acc, _log) => acc + log.security_score, 0)
-        / (auditData?.length || 1)
+      const securityScore = auditData?.reduce((acc, _log) => acc + log.security_score, 0) /
+        (auditData?.length || 1)
 
       return {
         securityScore,
         recentAlerts: auditData
-          ?.filter((log) => log.threat_level > 50)
-          .map((log) => ({
+          ?.filter(log => log.threat_level > 50)
+          .map(log => ({
             type: 'THREAT_DETECTED' as const,
             severity: log.threat_level > 75 ? 'HIGH' : ('MEDIUM' as const),
             description: log.reason,
@@ -876,8 +876,8 @@ export class EnhancedRLSSecurityService {
       const { data: auditData } = await query
 
       const totalRequests = auditData?.length || 0
-      const deniedRequests = auditData?.filter((log) => !log.access_granted).length || 0
-      const highThreatEvents = auditData?.filter((log) => log.threat_level >= threatThreshold)
+      const deniedRequests = auditData?.filter(log => !log.access_granted).length || 0
+      const highThreatEvents = auditData?.filter(log => log.threat_level >= threatThreshold)
         .length || 0
 
       return {
@@ -890,12 +890,12 @@ export class EnhancedRLSSecurityService {
           deniedRequests,
           accessDeniedRate: totalRequests > 0 ? (deniedRequests / totalRequests) * 100 : 0,
           highThreatEvents,
-          averageSecurityScore: auditData?.reduce((acc, _log) => acc + log.security_score, 0)
-              / totalRequests || 0,
-          averageThreatLevel: auditData?.reduce((acc, _log) => acc + log.threat_level, 0)
-              / totalRequests || 0,
+          averageSecurityScore: auditData?.reduce((acc, _log) => acc + log.security_score, 0) /
+              totalRequests || 0,
+          averageThreatLevel: auditData?.reduce((acc, _log) => acc + log.threat_level, 0) /
+              totalRequests || 0,
         },
-        threats: auditData?.filter((log) => log.threat_level >= threatThreshold) || [],
+        threats: auditData?.filter(log => log.threat_level >= threatThreshold) || [],
         trends: this.analyzeSecurityTrends(auditData || []),
       }
     } catch {
@@ -911,7 +911,7 @@ export class EnhancedRLSSecurityService {
       { total: number; denied: number; avgScore: number }
     > = {}
 
-    auditData.forEach((log) => {
+    auditData.forEach(log => {
       const hour = new Date(log.timestamp).getHours()
       if (!hourlyData[hour]) {
         hourlyData[hour] = { total: 0, denied: 0, avgScore: 0 }
@@ -921,7 +921,7 @@ export class EnhancedRLSSecurityService {
       hourlyData[hour].avgScore += log.security_score
     })
 
-    Object.keys(hourlyData).forEach((hour) => {
+    Object.keys(hourlyData).forEach(hour => {
       const _data = hourlyData[parseInt(hour)]
       data.avgScore = data.avgScore / data.total
     })

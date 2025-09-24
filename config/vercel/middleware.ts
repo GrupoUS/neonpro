@@ -41,8 +41,8 @@ export function middleware(request: NextRequest) {
 
   // Cache control for static assets
   if (
-    request.nextUrl.pathname.startsWith('/assets/')
-    || request.nextUrl.pathname.startsWith('/_next/')
+    request.nextUrl.pathname.startsWith('/assets/') ||
+    request.nextUrl.pathname.startsWith('/_next/')
   ) {
     response.headers.set(
       'Cache-Control',
@@ -52,9 +52,9 @@ export function middleware(request: NextRequest) {
 
   // No cache for sensitive routes
   if (
-    request.nextUrl.pathname.startsWith('/patient/')
-    || request.nextUrl.pathname.startsWith('/medical/')
-    || request.nextUrl.pathname.startsWith('/admin/')
+    request.nextUrl.pathname.startsWith('/patient/') ||
+    request.nextUrl.pathname.startsWith('/medical/') ||
+    request.nextUrl.pathname.startsWith('/admin/')
   ) {
     response.headers.set(
       'Cache-Control',
@@ -72,7 +72,7 @@ export function middleware(request: NextRequest) {
     '/api/prescription',
   ]
   if (
-    sensitivePaths.some((path) => request.nextUrl.pathname.startsWith(path))
+    sensitivePaths.some(path => request.nextUrl.pathname.startsWith(path))
   ) {
     console.log(
       `[AUDIT] ${

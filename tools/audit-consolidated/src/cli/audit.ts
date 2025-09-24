@@ -26,7 +26,7 @@ export function createAuditCommand(): Command {
       'text',
     )
     .option('-v, --verbose', 'Enable verbose logging', false)
-    .action(async (rawOptions) => {
+    .action(async rawOptions => {
       const options = normaliseOptions(rawOptions)
 
       if (options.verbose) {

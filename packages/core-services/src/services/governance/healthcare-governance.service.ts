@@ -698,7 +698,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
         status: 'ACTIVE',
       })
       const criticalAlerts = alerts.filter(
-        (alert) => alert.severity === 'CRITICAL',
+        alert => alert.severity === 'CRITICAL',
       ).length
 
       // Calculate compliance scores
@@ -706,9 +706,9 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
       const patientSafetyScore = this.calculatePatientSafetyScore(metrics)
 
       // Get CFM and ANVISA specific compliance
-      const cfmMetrics = metrics.filter((m) => m.complianceFramework === 'CFM')
+      const cfmMetrics = metrics.filter(m => m.complianceFramework === 'CFM')
       const anvisaMetrics = metrics.filter(
-        (m) => m.complianceFramework === 'ANVISA',
+        m => m.complianceFramework === 'ANVISA',
       )
 
       const cfmComplianceScore = this.calculateComplianceScore(cfmMetrics)
@@ -718,7 +718,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
         overallComplianceScore,
         criticalAlerts,
         activeViolations: alerts.filter(
-          (alert) => alert.alertType === 'COMPLIANCE_VIOLATION',
+          alert => alert.alertType === 'COMPLIANCE_VIOLATION',
         ).length,
         patientSafetyScore,
         cfmComplianceStatus: {
@@ -758,7 +758,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   private mapHealthcareMetrics(
     data: HealthcareMetricRecord[],
   ): HealthcareMetric[] {
-    return data.map((item) => this.mapHealthcareMetric(item))
+    return data.map(item => this.mapHealthcareMetric(item))
   }
 
   private mapHealthcareMetric(data: HealthcareMetricRecord): HealthcareMetric {
@@ -786,7 +786,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   private mapPatientSafetyKPIs(
     data: PatientSafetyKPIRecord[],
   ): PatientSafetyKPI[] {
-    return data.map((item) => this.mapPatientSafetyKPI(item))
+    return data.map(item => this.mapPatientSafetyKPI(item))
   }
 
   private mapPatientSafetyKPI(data: PatientSafetyKPIRecord): PatientSafetyKPI {
@@ -822,7 +822,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   private mapHealthcarePolicies(
     data: HealthcarePolicyRecord[],
   ): HealthcarePolicy[] {
-    return data.map((item) => this.mapHealthcarePolicy(item))
+    return data.map(item => this.mapHealthcarePolicy(item))
   }
 
   private mapHealthcarePolicy(data: HealthcarePolicyRecord): HealthcarePolicy {
@@ -866,7 +866,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   private mapHealthcareAlerts(
     data: HealthcareAlertRecord[],
   ): HealthcareAlert[] {
-    return data.map((item) => this.mapHealthcareAlert(item))
+    return data.map(item => this.mapHealthcareAlert(item))
   }
 
   private mapHealthcareAlert(data: HealthcareAlertRecord): HealthcareAlert {
@@ -906,7 +906,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   private mapComplianceReports(
     data: ComplianceReportRecord[],
   ): HealthcareComplianceReport[] {
-    return data.map((item) => ({
+    return data.map(item => ({
       id: item.id,
       clinicId: item.clinic_id,
       reportType: item.report_type as HealthcareComplianceReport['reportType'],
@@ -938,7 +938,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
   private calculateComplianceScore(metrics: HealthcareMetric[]): number {
     if (metrics.length === 0) return 0
 
-    const scores = metrics.map((metric) => {
+    const scores = metrics.map(metric => {
       const performance = metric.currentValue / metric.targetValue
       return Math.min(performance * 100, 100)
     })
@@ -948,7 +948,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
 
   private calculatePatientSafetyScore(metrics: HealthcareMetric[]): number {
     const safetyMetrics = metrics.filter(
-      (m) => m.category === 'PATIENT_SAFETY',
+      m => m.category === 'PATIENT_SAFETY',
     )
     return this.calculateComplianceScore(safetyMetrics)
   }
@@ -974,9 +974,9 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
 
     return {
       count: alerts.length,
-      critical: alerts.filter((a) => a.severity === 'CRITICAL').length,
-      resolved: alerts.filter((a) => a.status === 'RESOLVED').length,
-      pending: alerts.filter((a) => a.status === 'ACTIVE').length,
+      critical: alerts.filter(a => a.severity === 'CRITICAL').length,
+      resolved: alerts.filter(a => a.status === 'RESOLVED').length,
+      pending: alerts.filter(a => a.status === 'ACTIVE').length,
     }
   }
 
@@ -993,7 +993,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
 
     // Check for low-performing metrics
     const lowPerformingMetrics = metrics.filter(
-      (m) => m.currentValue < m.threshold,
+      m => m.currentValue < m.threshold,
     )
     if (lowPerformingMetrics.length > 0) {
       recommendations.push(
@@ -1003,7 +1003,7 @@ export class HealthcareGovernanceService extends SupabaseGovernanceService
 
     // Check for high-risk metrics
     const highRiskMetrics = metrics.filter(
-      (m) => m.riskLevel === 'HIGH' || m.riskLevel === 'CRITICAL',
+      m => m.riskLevel === 'HIGH' || m.riskLevel === 'CRITICAL',
     )
     if (highRiskMetrics.length > 0) {
       recommendations.push(

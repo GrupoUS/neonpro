@@ -61,10 +61,10 @@ globalThis.testUtils = {
 // Custom matchers for healthcare compliance
 expect.extend({
   toBeCompliantWithLGPD(received: any) {
-    const pass = received
-      && typeof received.consentGiven === 'boolean'
-      && typeof received.dataProcessingPurpose === 'string'
-      && Array.isArray(received.auditTrail)
+    const pass = received &&
+      typeof received.consentGiven === 'boolean' &&
+      typeof received.dataProcessingPurpose === 'string' &&
+      Array.isArray(received.auditTrail)
 
     return {
       message: () =>
@@ -76,9 +76,9 @@ expect.extend({
   },
 
   toHaveAuditTrail(received: any) {
-    const pass = received
-      && Array.isArray(received.auditTrail)
-      && received.auditTrail.length > 0
+    const pass = received &&
+      Array.isArray(received.auditTrail) &&
+      received.auditTrail.length > 0
 
     return {
       message: () =>

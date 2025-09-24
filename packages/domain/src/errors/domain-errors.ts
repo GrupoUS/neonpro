@@ -279,9 +279,7 @@ export class ValidationError extends DomainError {
 export class AggregateValidationError extends DomainError {
   constructor(public readonly errors: ValidationError[]) {
     super(
-      `Validation failed with ${errors.length} error(s): ${
-        errors.map((e) => e.message).join(', ')
-      }`,
+      `Validation failed with ${errors.length} error(s): ${errors.map(e => e.message).join(', ')}`,
       'AGGREGATE_VALIDATION_ERROR',
       400,
     )

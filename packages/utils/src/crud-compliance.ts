@@ -245,8 +245,8 @@ export class LGPDComplianceService {
    * Validates data processing against current retention policy
    */
   validateDataRetention(dataAge: number, purpose: string): boolean {
-    const retentionDays = this.dataRetentionPolicy.purposeSpecificRetention[purpose]
-      || this.dataRetentionPolicy.defaultRetentionDays
+    const retentionDays = this.dataRetentionPolicy.purposeSpecificRetention[purpose] ||
+      this.dataRetentionPolicy.defaultRetentionDays
     return dataAge <= retentionDays * 24 * 60 * 60 * 1000 // Convert days to milliseconds
   }
 
@@ -257,12 +257,12 @@ export class LGPDComplianceService {
     const result = { ...data } as Record<string, unknown>
 
     // Remove redacted fields
-    this.anonymizationConfig.redactFields?.forEach((field) => {
+    this.anonymizationConfig.redactFields?.forEach(field => {
       delete result[field]
     })
 
     // Aggregate numeric fields
-    this.anonymizationConfig.aggregateFields?.forEach((field) => {
+    this.anonymizationConfig.aggregateFields?.forEach(field => {
       if (typeof result[field] === 'number') {
         result[field] = Math.round(result[field]) // Simple aggregation
       }

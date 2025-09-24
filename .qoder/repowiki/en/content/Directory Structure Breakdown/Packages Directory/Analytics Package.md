@@ -338,7 +338,7 @@ const analyticsConfig = createAnalyticsConfig({
 })
 
 // Use the default collector or create a custom one
-defaultEventCollector.config.onFlush = async (events) => {
+defaultEventCollector.config.onFlush = async events => {
   // Forward events to your aggregation service
   await sendToAggregationService(events)
 }
@@ -436,7 +436,7 @@ const insights = await aiOrchestrator.generateHealthcareInsights({
 })
 
 // Display insights to users
-insights.insights.forEach((insight) => {
+insights.insights.forEach(insight => {
   console.log(`${insight.title}: ${insight.prediction}`)
   console.log(`Confidence: ${insight.confidence}`)
   console.log(`Recommendation: ${insight.recommendation}`)
@@ -498,7 +498,7 @@ const kpis = computeKPIs(validEvents)
 Network connectivity problems can disrupt the ingestion pipeline, particularly when forwarding events to remote aggregation services. Implement robust retry logic with exponential backoff and circuit breaker patterns to handle transient failures:
 
 ```typescript
-collector.config.onFlush = async (events) => {
+collector.config.onFlush = async events => {
   let attempts = 0
   const maxAttempts = 3
 
@@ -512,7 +512,7 @@ collector.config.onFlush = async (events) => {
 
       // Exponential backoff
       const delay = Math.pow(2, attempts) * 1000
-      await new Promise((resolve) => setTimeout(resolve, delay))
+      await new Promise(resolve => setTimeout(resolve, delay))
     }
   }
 }

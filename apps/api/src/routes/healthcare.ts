@@ -173,7 +173,7 @@ if (process.env.NODE_ENV !== 'production') {
 healthcare.use(
   '*',
   cors({
-    origin: (origin) =>
+    origin: origin =>
       !origin
         ? undefined
         : allowedOrigins.includes(origin)
@@ -216,7 +216,7 @@ healthcare.get(
     cacheName: 'healthcare-patients',
     cacheControl: 'max-age=300', // 5 minutes
   }),
-  async (c) => {
+  async c => {
     const user = c.get('user')
     const metrics = c.get('performanceMetrics')
 
@@ -268,7 +268,7 @@ healthcare.get(
   },
 )
 
-healthcare.get('/patients/:id', async (c) => {
+healthcare.get('/patients/:id', async c => {
   const patientId = c.req.param('id')
   const user = c.get('user')
   const metrics = c.get('performanceMetrics')
@@ -322,7 +322,7 @@ healthcare.get('/patients/:id', async (c) => {
   }
 })
 
-healthcare.post('/patients', zValidator('json', patientSchema), async (c) => {
+healthcare.post('/patients', zValidator('json', patientSchema), async c => {
   const user = c.get('user')
   const metrics = c.get('performanceMetrics')
   const patientData = c.req.valid('json')
@@ -370,7 +370,7 @@ healthcare.post('/patients', zValidator('json', patientSchema), async (c) => {
 healthcare.put(
   '/patients/:id',
   zValidator('json', patientSchema.partial()),
-  async (c) => {
+  async c => {
     const patientId = c.req.param('id')
     const user = c.get('user')
     const metrics = c.get('performanceMetrics')
@@ -420,7 +420,7 @@ healthcare.put(
 )
 
 // Appointment routes
-healthcare.get('/patients/:id/appointments', async (c) => {
+healthcare.get('/patients/:id/appointments', async c => {
   const patientId = c.req.param('id')
   const user = c.get('user')
   const metrics = c.get('performanceMetrics')
@@ -471,7 +471,7 @@ healthcare.get('/patients/:id/appointments', async (c) => {
 healthcare.post(
   '/appointments',
   zValidator('json', appointmentSchema),
-  async (c) => {
+  async c => {
     const user = c.get('user')
     const metrics = c.get('performanceMetrics')
     const appointmentData = c.req.valid('json')
@@ -556,7 +556,7 @@ healthcare.get(
     cacheName: 'healthcare-analytics',
     cacheControl: 'max-age=600', // 10 minutes
   }),
-  async (c) => {
+  async c => {
     const user = c.get('user')
     const metrics = c.get('performanceMetrics')
 
@@ -609,7 +609,7 @@ healthcare.get(
 )
 
 // Health check endpoint
-healthcare.get('/health', async (c) => {
+healthcare.get('/health', async c => {
   return c.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),

@@ -90,15 +90,15 @@ export const PWAContactIntegration: React.FC<PWAContactIntegrationProps> = ({
     let filtered = contacts
 
     if (searchTerm) {
-      filtered = filtered.filter((contact) =>
-        contact.name.toLowerCase().includes(searchTerm.toLowerCase())
-        || contact.email?.toLowerCase().includes(searchTerm.toLowerCase())
-        || contact.phone?.includes(searchTerm)
+      filtered = filtered.filter(contact =>
+        contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        contact.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        contact.phone?.includes(searchTerm)
       )
     }
 
     if (showFavorites) {
-      filtered = filtered.filter((contact) => contact.isFavorite)
+      filtered = filtered.filter(contact => contact.isFavorite)
     }
 
     setFilteredContacts(filtered)
@@ -150,15 +150,15 @@ export const PWAContactIntegration: React.FC<PWAContactIntegrationProps> = ({
   }
 
   const toggleContactSelection = (contactId: string) => {
-    setSelectedContacts((prev) =>
+    setSelectedContacts(prev =>
       prev.includes(contactId)
-        ? prev.filter((id) => id !== contactId)
+        ? prev.filter(id => id !== contactId)
         : [...prev, contactId]
     )
   }
 
   const toggleFavorite = (contactId: string) => {
-    const updatedContacts = contacts.map((contact) =>
+    const updatedContacts = contacts.map(contact =>
       contact.id === contactId
         ? { ...contact, isFavorite: !contact.isFavorite }
         : contact
@@ -167,7 +167,7 @@ export const PWAContactIntegration: React.FC<PWAContactIntegrationProps> = ({
   }
 
   const markAsPatient = (contactId: string) => {
-    const updatedContacts = contacts.map((contact) =>
+    const updatedContacts = contacts.map(contact =>
       contact.id === contactId
         ? { ...contact, isPatient: true, lastVisit: new Date() }
         : contact
@@ -262,7 +262,7 @@ export const PWAContactIntegration: React.FC<PWAContactIntegrationProps> = ({
             type='text'
             placeholder='Buscar contatos...'
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={e => setSearchTerm(e.target.value)}
             className='w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent'
           />
         </div>
@@ -272,7 +272,7 @@ export const PWAContactIntegration: React.FC<PWAContactIntegrationProps> = ({
             <input
               type='checkbox'
               checked={showFavorites}
-              onChange={(e) => setShowFavorites(e.target.checked)}
+              onChange={e => setShowFavorites(e.target.checked)}
               className='mr-2'
             />
             <Star className='h-4 w-4 text-yellow-500 mr-1' />
@@ -317,7 +317,7 @@ export const PWAContactIntegration: React.FC<PWAContactIntegrationProps> = ({
             </div>
           )
           : (
-            filteredContacts.map((contact) => (
+            filteredContacts.map(contact => (
               <div
                 key={contact.id}
                 className={`border rounded-lg p-3 hover:bg-gray-50 transition-colors ${

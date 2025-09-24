@@ -378,9 +378,9 @@ export function validateConfig<T>(
   // Check required fields
   for (const field of requiredFields) {
     if (
-      !(field in config)
-      || config[field] === undefined
-      || config[field] === null
+      !(field in config) ||
+      config[field] === undefined ||
+      config[field] === null
     ) {
       errors.push(`Missing required field: ${String(field)}`)
     }
@@ -435,7 +435,7 @@ export function toKebabCase(str: string): string {
  */
 export function toPascalCase(str: string): string {
   return str
-    .replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase())
+    .replace(/(?:^\w|[A-Z]|\b\w)/g, word => word.toUpperCase())
     .replace(/\s+/g, '')
 }
 
@@ -622,7 +622,7 @@ export function omit<T extends Record<string, unknown>, K extends keyof T>(
  * Delay execution for specified milliseconds
  */
 export function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 /**
@@ -720,8 +720,8 @@ export function safeGet<T>(
 ): T | undefined {
   try {
     return (
-      path.split('.').reduce((current, key) => current?.[key], obj)
-        ?? defaultValue
+      path.split('.').reduce((current, key) => current?.[key], obj) ??
+        defaultValue
     )
   } catch {
     return defaultValue

@@ -156,7 +156,7 @@ export function createRateCounter(config?: RateCounterConfig): RateCounter {
   const defaultConfig: RateCounterConfig = {
     windowMs: 60000,
     maxRequests: 10,
-    keyGenerator: (req) => req.userId || 'anonymous',
+    keyGenerator: req => req.userId || 'anonymous',
   }
 
   return new RateCounter(config || defaultConfig)
@@ -166,6 +166,6 @@ export function getDefaultRateConfig(): RateCounterConfig {
   return {
     windowMs: 60000,
     maxRequests: 10,
-    keyGenerator: (req) => req.userId || 'anonymous',
+    keyGenerator: req => req.userId || 'anonymous',
   }
 }

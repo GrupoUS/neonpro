@@ -364,8 +364,8 @@ export const HealthcareTextField = forwardRef<
       // Visual state
       {
         'border-destructive focus-visible:ring-destructive': showError,
-        'border-warning': effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL
-          && !showError,
+        'border-warning': effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL &&
+          !showError,
         'border-destructive bg-destructive/5':
           effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError,
       },
@@ -467,8 +467,8 @@ export const HealthcareTextField = forwardRef<
         )}
 
         {/* Data sensitivity indicator */}
-        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED
-          || effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
+        {(effectiveDataSensitivity === DataSensitivity.RESTRICTED ||
+          effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL) && (
           <p className='text-xs text-muted-foreground flex items-center gap-1'>
             <span role='img' aria-label='Dados protegidos'>
               🔒

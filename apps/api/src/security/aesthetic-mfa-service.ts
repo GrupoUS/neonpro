@@ -644,7 +644,7 @@ export class AestheticMFAService {
     // In a real implementation, this would query the database
     // For now, return recent events from memory
     return this.auditEvents
-      .filter((event) => event.userId === userId)
+      .filter(event => event.userId === userId)
       .slice(-limit)
       .reverse()
   }

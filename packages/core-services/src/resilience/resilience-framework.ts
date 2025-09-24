@@ -173,9 +173,9 @@ export class EnhancedCircuitBreaker {
     this.lastFailureTime = Date.now()
 
     if (
-      this.state === CircuitState.HALF_OPEN
-      || (this.state === CircuitState.CLOSED
-        && this.failures >= this.config.failureThreshold)
+      this.state === CircuitState.HALF_OPEN ||
+      (this.state === CircuitState.CLOSED &&
+        this.failures >= this.config.failureThreshold)
     ) {
       this.state = CircuitState.OPEN
       this.trips++
@@ -289,7 +289,7 @@ export class RetryPolicy {
       'authentication failed',
     ]
 
-    return nonRetryableMessages.some((msg) => error.message.toLowerCase().includes(msg))
+    return nonRetryableMessages.some(msg => error.message.toLowerCase().includes(msg))
   }
 
   getAttempts(): number {
@@ -324,11 +324,11 @@ export class TimeoutManager {
       }, this.config.overallMs)
 
       operation()
-        .then((result) => {
+        .then(result => {
           clearTimeout(timeoutId)
           resolve(result)
         })
-        .catch((error) => {
+        .catch(error => {
           clearTimeout(timeoutId)
           _reject(error)
         })
@@ -410,8 +410,8 @@ export class HealthMonitor {
       }
 
       // Calculate success rate (simple moving average)
-      health.successRate = health.consecutiveSuccesses
-        / (health.consecutiveSuccesses + health.consecutiveFailures)
+      health.successRate = health.consecutiveSuccesses /
+        (health.consecutiveSuccesses + health.consecutiveFailures)
     } catch (error) {
       health.isHealthy = false
       health.errorMessage = (error as Error).message
@@ -426,7 +426,7 @@ export class HealthMonitor {
   }
 
   getAllHealthStatus(): ServiceHealth[] {
-    return Array.from(this.healthChecks.values()).map((h) => h.health)
+    return Array.from(this.healthChecks.values()).map(h => h.health)
   }
 
   unregisterService(serviceName: string): void {
@@ -509,7 +509,7 @@ export class ResilienceFramework {
             const delay = await retryPolicy.getDelay()
 
             if (delay > 0) {
-              await new Promise((resolve) => setTimeout(resolve, delay))
+              await new Promise(resolve => setTimeout(resolve, delay))
             }
           }
         }

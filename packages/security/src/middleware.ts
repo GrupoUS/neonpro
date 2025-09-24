@@ -153,9 +153,9 @@ export function csrfProtection() {
     }
 
     // Check CSRF token for state-changing methods
-    const csrfToken = c.req.header('x-csrf-token')
-      || c.req.header('x-xsrf-token')
-      || c.get('csrfToken')
+    const csrfToken = c.req.header('x-csrf-token') ||
+      c.req.header('x-xsrf-token') ||
+      c.get('csrfToken')
 
     const sessionToken = c.get('sessionCsrfToken')
 
@@ -299,10 +299,10 @@ export function securityLogging() {
 export function healthcareDataProtection() {
   return async (c: Context, next: Next) => {
     // Check if this is a healthcare-related endpoint
-    const isHealthcareEndpoint = c.req.path.includes('/patients')
-      || c.req.path.includes('/appointments')
-      || c.req.path.includes('/medical-records')
-      || c.req.path.includes('/healthcare')
+    const isHealthcareEndpoint = c.req.path.includes('/patients') ||
+      c.req.path.includes('/appointments') ||
+      c.req.path.includes('/medical-records') ||
+      c.req.path.includes('/healthcare')
 
     if (isHealthcareEndpoint) {
       // Add healthcare-specific security headers
@@ -344,7 +344,7 @@ function sanitizeObject<T extends Record<string, unknown>>(
 
   if (Array.isArray(obj)) {
     // For arrays, we need to return a wrapper object or handle arrays differently
-    return { items: obj.map((item) => sanitizeObject(item)) }
+    return { items: obj.map(item => sanitizeObject(item)) }
   }
 
   const sanitized: Record<string, unknown> = {}

@@ -14,15 +14,15 @@ export class AuditTrailValidator {
    */
   static validateEntry(entry: AuditTrailEntry): boolean {
     return (
-      entry.timestamp instanceof Date
-      && typeof entry.action === 'string'
-      && entry.action.length > 0
-      && typeof entry.userId === 'string'
-      && entry.userId.length > 0
-      && typeof entry.resourceType === 'string'
-      && entry.resourceType.length > 0
-      && typeof entry.resourceId === 'string'
-      && entry.resourceId.length > 0
+      entry.timestamp instanceof Date &&
+      typeof entry.action === 'string' &&
+      entry.action.length > 0 &&
+      typeof entry.userId === 'string' &&
+      entry.userId.length > 0 &&
+      typeof entry.resourceType === 'string' &&
+      entry.resourceType.length > 0 &&
+      typeof entry.resourceId === 'string' &&
+      entry.resourceId.length > 0
     )
   }
 
@@ -48,7 +48,7 @@ export class AuditTrailValidator {
 
     // Validate each entry
     const invalidEntries = entries.filter(
-      (entry) => !this.validateEntry(entry),
+      entry => !this.validateEntry(entry),
     )
     if (invalidEntries.length > 0) {
       issues.push(`${invalidEntries.length} invalid audit trail entries found`)
@@ -57,10 +57,10 @@ export class AuditTrailValidator {
     // Check for required actions
     const requiredActions = ['create', 'read', 'update', 'delete']
     const presentActions = new Set(
-      entries.map((entry) => entry.action.toLowerCase()),
+      entries.map(entry => entry.action.toLowerCase()),
     )
     const missingActions = requiredActions.filter(
-      (action) => !presentActions.has(action),
+      action => !presentActions.has(action),
     )
 
     if (missingActions.length > 0) {
@@ -79,9 +79,9 @@ export class AuditTrailValidator {
       issues.push('Audit trail entries are not in chronological order')
     }
 
-    const coverage = ((requiredActions.length - missingActions.length)
-      / requiredActions.length)
-      * 100
+    const coverage = ((requiredActions.length - missingActions.length) /
+      requiredActions.length) *
+      100
 
     return {
       valid: issues.length === 0,
@@ -104,7 +104,7 @@ export class AuditTrailValidator {
     timeline: { start: Date; end: Date }
   } {
     const resourceEntries = entries.filter(
-      (entry) => entry.resourceType === resourceType && entry.resourceId === resourceId,
+      entry => entry.resourceType === resourceType && entry.resourceId === resourceId,
     )
 
     if (resourceEntries.length === 0) {
@@ -116,11 +116,11 @@ export class AuditTrailValidator {
       }
     }
 
-    const actions = resourceEntries.map((entry) => entry.action)
-    const timestamps = resourceEntries.map((entry) => entry.timestamp)
+    const actions = resourceEntries.map(entry => entry.action)
+    const timestamps = resourceEntries.map(entry => entry.timestamp)
     const timeline = {
-      start: new Date(Math.min(...timestamps.map((t) => t.getTime()))),
-      end: new Date(Math.max(...timestamps.map((t) => t.getTime()))),
+      start: new Date(Math.min(...timestamps.map(t => t.getTime()))),
+      end: new Date(Math.max(...timestamps.map(t => t.getTime()))),
     }
 
     return {
@@ -152,7 +152,7 @@ export function createAuditTrailTestSuite(
     })
 
     it('should have chronological entries', () => {
-      const timestamps = auditTrail.map((entry) => entry.timestamp.getTime())
+      const timestamps = auditTrail.map(entry => entry.timestamp.getTime())
       const sortedTimestamps = [...timestamps].sort((a, b) => a - b)
       expect(timestamps).toEqual(sortedTimestamps)
     })

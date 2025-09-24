@@ -193,8 +193,8 @@ export function validateNotification(
   }
 
   if (
-    !notification.type
-    || !Object.values(NotificationType).includes(
+    !notification.type ||
+    !Object.values(NotificationType).includes(
       notification.type as NotificationType,
     )
   ) {
@@ -202,8 +202,8 @@ export function validateNotification(
   }
 
   if (
-    !notification.channel
-    || !Object.values(NotificationChannel).includes(
+    !notification.channel ||
+    !Object.values(NotificationChannel).includes(
       notification.channel as NotificationChannel,
     )
   ) {
@@ -239,7 +239,7 @@ export function createMultiChannelNotification(
   baseNotification: Partial<Notification>,
   channels: string[],
 ): Partial<Notification>[] {
-  return channels.map((channel) => ({
+  return channels.map(channel => ({
     ...baseNotification,
     id: `notification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     channel,
@@ -264,7 +264,7 @@ export function anonymizeNotification(
 
   if (anonymized.data) {
     const anonymizedData: Record<string, any> = {}
-    Object.keys(anonymized.data).forEach((key) => {
+    Object.keys(anonymized.data).forEach(key => {
       if (key.includes('name') || key.includes('Name')) {
         anonymizedData[key] = `PACIENTE_ANON_${Date.now()}`
       } else if (key.includes('phone') || key.includes('Phone')) {
@@ -326,7 +326,7 @@ export function calculateNotificationMetrics(
   let read = 0
   let failed = 0
 
-  notifications.forEach((notification) => {
+  notifications.forEach(notification => {
     // Count by channel
     if (notification.channel) {
       metrics.byChannel[notification.channel] = (metrics.byChannel[notification.channel] || 0) + 1
@@ -337,8 +337,8 @@ export function calculateNotificationMetrics(
       metrics.byStatus[notification.status] = (metrics.byStatus[notification.status] || 0) + 1
 
       if (
-        notification.status === NotificationStatus.DELIVERED
-        || notification.status === NotificationStatus.READ
+        notification.status === NotificationStatus.DELIVERED ||
+        notification.status === NotificationStatus.READ
       ) {
         delivered++
       }
@@ -354,7 +354,7 @@ export function calculateNotificationMetrics(
 
     // Sum costs from delivery status
     if (notification.deliveryStatus) {
-      notification.deliveryStatus.forEach((delivery) => {
+      notification.deliveryStatus.forEach(delivery => {
         if (delivery.cost) {
           metrics.totalCost += delivery.cost
         }
@@ -382,8 +382,8 @@ export function validateHealthcareCompliance(
 
   // Marketing notifications require explicit consent
   if (
-    notification.type === NotificationType.MARKETING
-    && !notification.lgpdConsent
+    notification.type === NotificationType.MARKETING &&
+    !notification.lgpdConsent
   ) {
     return false
   }
@@ -422,7 +422,7 @@ export function getNotificationsByRecipient(
   recipientId: string,
 ): Notification[] {
   return notifications
-    .filter((notification) => notification.recipientId === recipientId)
+    .filter(notification => notification.recipientId === recipientId)
     .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
 }
 
@@ -431,7 +431,7 @@ export function getNotificationsByType(
   notifications: Notification[],
   type: NotificationType,
 ): Notification[] {
-  return notifications.filter((notification) => notification.type === type)
+  return notifications.filter(notification => notification.type === type)
 }
 
 // Get pending notifications
@@ -439,9 +439,9 @@ export function getPendingNotifications(
   notifications: Notification[],
 ): Notification[] {
   return notifications.filter(
-    (notification) =>
-      notification.status === NotificationStatus.PENDING
-      || notification.status === NotificationStatus.SCHEDULED,
+    notification =>
+      notification.status === NotificationStatus.PENDING ||
+      notification.status === NotificationStatus.SCHEDULED,
   )
 }
 
@@ -450,9 +450,9 @@ export function getFailedNotifications(
   notifications: Notification[],
 ): Notification[] {
   return notifications.filter(
-    (notification) =>
-      notification.status === NotificationStatus.FAILED
-      && (notification.attempts || 0) < 3, // Max 3 retry attempts
+    notification =>
+      notification.status === NotificationStatus.FAILED &&
+      (notification.attempts || 0) < 3, // Max 3 retry attempts
   )
 }
 

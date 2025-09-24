@@ -100,7 +100,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', analyzeRequestSchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now()
     const user = c.get('user')
     const requestData = c.req.valid('json')
@@ -124,8 +124,8 @@ app.post(
         return c.json(
           {
             success: false,
-            error: 'Tipo de análise não suportado. Tipos válidos: '
-              + supportedTypes.join(', '),
+            error: 'Tipo de análise não suportado. Tipos válidos: ' +
+              supportedTypes.join(', '),
           },
           400,
         )
@@ -193,8 +193,8 @@ app.post(
         return c.json(
           {
             success: false,
-            error: analysisResponse.error
-              || 'Erro interno do serviço de análise de IA',
+            error: analysisResponse.error ||
+              'Erro interno do serviço de análise de IA',
           },
           500,
         )
@@ -243,8 +243,8 @@ app.post(
           analysisResponse.data.metadata.processingTime || 0
         }ms`
         responseHeaders['X-Analysis-Type'] = requestData.analysisType
-        responseHeaders['X-Analysis-Version'] = analysisResponse.data.metadata.analysisVersion
-          || 'unknown'
+        responseHeaders['X-Analysis-Version'] = analysisResponse.data.metadata.analysisVersion ||
+          'unknown'
         responseHeaders['X-AI-Data-Points'] = (
           analysisResponse.data.metadata.dataPoints || 0
         ).toString()

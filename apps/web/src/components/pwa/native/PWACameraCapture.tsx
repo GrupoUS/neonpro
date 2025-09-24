@@ -85,7 +85,7 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
 
   const stopCamera = () => {
     if (stream) {
-      stream.getTracks().forEach((track) => track.stop())
+      stream.getTracks().forEach(track => track.stop())
       setStream(null)
     }
     setIsActive(false)
@@ -299,7 +299,7 @@ export const PWACameraCapture: React.FC<PWACameraCaptureProps> = ({
             </label>
             <textarea
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              onChange={e => setNotes(e.target.value)}
               placeholder='Adicione observações sobre o procedimento, condições da pele, etc.'
               className='w-full p-2 border border-gray-300 rounded-md text-sm'
               rows={3}

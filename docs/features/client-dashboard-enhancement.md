@@ -547,7 +547,7 @@ const AccessibilityChecklist = {
     </TableRow>
   </TableHeader>
   <TableBody>
-    {clients.map((client) => (
+    {clients.map(client => (
       <TableRow key={client.id} role='row' aria-rowindex={index + 1}>
         <TableCell role='gridcell'>{client.full_name}</TableCell>
         <TableCell role='gridcell'>{formatCPF(client.cpf)}</TableCell>
@@ -610,7 +610,7 @@ const useClientSubscription = (clientId: string) => {
       table: 'clients',
       filter: `id=eq.${clientId}`,
     },
-    (payload) => {
+    payload => {
       // Invalidate queries and update UI
       queryClient.invalidateQueries(['clients', clientId])
     },

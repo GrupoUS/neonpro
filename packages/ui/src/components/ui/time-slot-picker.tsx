@@ -41,13 +41,13 @@ export function TimeSlotPicker({
   return (
     <Select
       value={String(value)}
-      onValueChange={(v) => onChange(parseInt(v, 10))}
+      onValueChange={v => onChange(parseInt(v, 10))}
     >
       <SelectTrigger id={id} aria-describedby={rest['aria-describedby']}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options.map((v) => (
+        {options.map(v => (
           <SelectItem key={v} value={String(v)}>
             {labelFor(v)}
           </SelectItem>

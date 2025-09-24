@@ -157,7 +157,7 @@ export class TelemedicineServer {
               timestamp: new Date().toISOString(),
             },
           })
-          .catch((error) => {
+          .catch(error => {
             logHealthcareError('database', error, { method: 'apiRequestLogging', sessionId })
           })
       }
@@ -295,8 +295,8 @@ export class TelemedicineServer {
         patient_id: sessionRequest.patientId,
         cfm_professional_crm: sessionRequest.physicianId,
         cfm_professional_state: 'SP',
-        patient_consent_obtained: sessionRequest.consentStatus.patient
-          && sessionRequest.consentStatus.physician,
+        patient_consent_obtained: sessionRequest.consentStatus.patient &&
+          sessionRequest.consentStatus.physician,
         recording_consent_required: sessionRequest.requiresRecording,
         data_retention_period: '20 years',
       })
@@ -304,14 +304,14 @@ export class TelemedicineServer {
 
       // Check LGPD consent
       if (
-        !sessionRequest.consentStatus.patient
-        || !sessionRequest.consentStatus.physician
+        !sessionRequest.consentStatus.patient ||
+        !sessionRequest.consentStatus.physician
       ) {
         result.errors.push('Required consents not obtained')
         result.isValid = false
       }
-      result.complianceStatus.lgpd = sessionRequest.consentStatus.patient
-        && sessionRequest.consentStatus.physician
+      result.complianceStatus.lgpd = sessionRequest.consentStatus.patient &&
+        sessionRequest.consentStatus.physician
 
       // ANVISA compliance (simplified for demo)
       result.complianceStatus.anvisa = true

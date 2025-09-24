@@ -26,9 +26,9 @@ export class AIService {
     const processed: Record<string, any> = { ...raw }
     if (typeof processed['patientAge'] === 'number') {
       const age = processed['patientAge']
-      if (age <= 30) {processed['patientAge'] = '0-30'}
-      else if (age <= 50) {processed['patientAge'] = '31-50'}
-      else {processed['patientAge'] = '51+'}
+      if (age <= 30) processed['patientAge'] = '0-30'
+      else if (age <= 50) processed['patientAge'] = '31-50'
+      else processed['patientAge'] = '51+'
     }
     return processed
   }
@@ -44,10 +44,10 @@ export class AIService {
     // Inference heuristic: only treat as enhanced when BOTH low daysSinceScheduled (<=2) AND previousNoShows > 0
     const daysSince = req.data['daysSinceScheduled']
     const prevNoShows = req.data['previousNoShows']
-    const inferredEnhanced = typeof daysSince === 'number'
-      && typeof prevNoShows === 'number'
-      && daysSince <= 2
-      && prevNoShows > 0
+    const inferredEnhanced = typeof daysSince === 'number' &&
+      typeof prevNoShows === 'number' &&
+      daysSince <= 2 &&
+      prevNoShows > 0
     const enhanced = req.enhanced === true || inferredEnhanced
 
     if (enhanced) {
@@ -55,14 +55,14 @@ export class AIService {
       const ds = processed['daysSinceScheduled'] ?? 0
       const pns = processed['previousNoShows'] ?? 0
       let confidence = 0.6
-      if (ds <= 2) {confidence += 0.15}
-      if (pns > 0) {confidence += 0.15}
-      if (processed['appointmentType'] === 'consultation') {confidence += 0.05}
-      if (confidence > 0.95) {confidence = 0.95}
+      if (ds <= 2) confidence += 0.15
+      if (pns > 0) confidence += 0.15
+      if (processed['appointmentType'] === 'consultation') confidence += 0.05
+      if (confidence > 0.95) confidence = 0.95
 
       const { patientId: _patientId, ...rest } = processed
       void _patientId
-      if (typeof rest['patientAge'] === 'number') {delete rest['patientAge']}
+      if (typeof rest['patientAge'] === 'number') delete rest['patientAge']
 
       return {
         type: req.type,

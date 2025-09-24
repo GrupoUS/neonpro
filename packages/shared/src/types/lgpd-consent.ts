@@ -299,8 +299,8 @@ export function auditLGPDCompliance(consent: Partial<LGPDConsent>): {
 
   // Check legal basis
   if (
-    consent.legalBasis
-    && Object.values(LegalBasis).includes(consent.legalBasis as LegalBasis)
+    consent.legalBasis &&
+    Object.values(LegalBasis).includes(consent.legalBasis as LegalBasis)
   ) {
     score += 20
   } else {
@@ -323,9 +323,9 @@ export function auditLGPDCompliance(consent: Partial<LGPDConsent>): {
 
   // Check granular consent
   if (
-    typeof consent.dataProcessing === 'boolean'
-    && typeof consent.marketing === 'boolean'
-    && typeof consent.analytics === 'boolean'
+    typeof consent.dataProcessing === 'boolean' &&
+    typeof consent.marketing === 'boolean' &&
+    typeof consent.analytics === 'boolean'
   ) {
     score += 15
   } else {
@@ -361,14 +361,14 @@ export function getConsentByPatientId(
 ): LGPDConsent | undefined {
   return consents
     .filter(
-      (consent) => consent.patientId === patientId && !consent.withdrawalDate,
+      consent => consent.patientId === patientId && !consent.withdrawalDate,
     )
     .sort((a, b) => b.consentDate.getTime() - a.consentDate.getTime())[0]
 }
 
 // Get expired consents
 export function getExpiredConsents(consents: LGPDConsent[]): LGPDConsent[] {
-  return consents.filter((consent) => isConsentExpired(consent))
+  return consents.filter(consent => isConsentExpired(consent))
 }
 
 // Get consents requiring renewal
@@ -379,7 +379,7 @@ export function getConsentsRequiringRenewal(
   const cutoffDate = new Date()
   cutoffDate.setDate(cutoffDate.getDate() + daysBeforeExpiration)
 
-  return consents.filter((consent) => {
+  return consents.filter(consent => {
     if (consent.expiresAt && consent.expiresAt <= cutoffDate) {
       return true
     }
@@ -411,13 +411,13 @@ export function generateComplianceReport(consents: LGPDConsent[]): {
 } {
   const total = consents.length
   const expired = getExpiredConsents(consents).length
-  const withdrawn = consents.filter((c) => c.withdrawalDate).length
+  const withdrawn = consents.filter(c => c.withdrawalDate).length
   const active = total - expired - withdrawn
 
   let totalScore = 0
   const allIssues: string[] = []
 
-  consents.forEach((consent) => {
+  consents.forEach(consent => {
     const audit = auditLGPDCompliance(consent)
     totalScore += audit.score
     allIssues.push(...audit.issues)

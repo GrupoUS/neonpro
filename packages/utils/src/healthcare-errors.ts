@@ -87,7 +87,7 @@ export class HealthcareError extends Error {
    * Check if error message is LGPD compliant
    */
   private checkLGPDCompliance(message: string): boolean {
-    return !PERSONAL_DATA_PATTERNS.some((pattern) => pattern.test(message))
+    return !PERSONAL_DATA_PATTERNS.some(pattern => pattern.test(message))
   }
 
   /**
@@ -320,19 +320,19 @@ export function validateErrorCompliance(
     case 'anvisa':
       // ANVISA compliance: check if error relates to medication/procedure standards
       return (
-        error.category === ErrorCategory.HEALTHCARE_COMPLIANCE
-        || error.message.toLowerCase().includes('medication')
-        || error.message.toLowerCase().includes('procedure')
-        || error.message.toLowerCase().includes('protocol')
+        error.category === ErrorCategory.HEALTHCARE_COMPLIANCE ||
+        error.message.toLowerCase().includes('medication') ||
+        error.message.toLowerCase().includes('procedure') ||
+        error.message.toLowerCase().includes('protocol')
       )
 
     case 'cfm':
       // CFM compliance: check if error relates to professional ethics
       return (
-        error.category === ErrorCategory.HEALTHCARE_COMPLIANCE
-        || error.message.toLowerCase().includes('professional')
-        || error.message.toLowerCase().includes('ethics')
-        || error.message.toLowerCase().includes('conduct')
+        error.category === ErrorCategory.HEALTHCARE_COMPLIANCE ||
+        error.message.toLowerCase().includes('professional') ||
+        error.message.toLowerCase().includes('ethics') ||
+        error.message.toLowerCase().includes('conduct')
       )
 
     default:
@@ -440,7 +440,7 @@ export class HealthcareTRPCError extends TRPCError {
    * Check if error message is LGPD compliant
    */
   private checkLGPDCompliance(message: string): boolean {
-    return !PERSONAL_DATA_PATTERNS.some((pattern) => pattern.test(message))
+    return !PERSONAL_DATA_PATTERNS.some(pattern => pattern.test(message))
   }
 
   /**

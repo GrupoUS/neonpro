@@ -1,22 +1,20 @@
 {
-  "projectType": "openSource",
+  "$schema": "https://dprint.dev/schemas/v0.json",
+  "projectType": {
+    "type": "openSource"
+  },
   "incremental": true,
-  "includes": ["**/*.{ts,tsx,js,jsx,json,md}"],
+  "includes": ["**/*.{ts,tsx,js,jsx,cjs,cts,mjs,mts,json,md,toml}"],
   "excludes": [
-    "**/node_modules",
-    "**/dist",
-    "**/build",
-    "**/.next",
-    "**/.turbo",
-    "**/coverage",
-    "**/__tests__",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**",
+    "**/.turbo/**",
+    "**/coverage/**",
     "**/__tests__/**",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
-    "apps/api/tests/**",
-    "apps/api/src/__tests__/**",
+    "**/*.test.{ts,tsx,js,jsx}",
+    "**/*.spec.{ts,tsx,js,jsx}",
     "lint-report.json",
     "oxlint-report.json",
     "oxlint-issues.json"
@@ -24,16 +22,20 @@
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.91.1.wasm",
     "https://plugins.dprint.dev/json-0.19.3.wasm",
-    "https://plugins.dprint.dev/markdown-0.17.2.wasm"
+    "https://plugins.dprint.dev/markdown-0.17.2.wasm",
+    "https://plugins.dprint.dev/toml-0.5.4.wasm"
   ],
   "typescript": {
     "lineWidth": 100,
     "indentWidth": 2,
     "useTabs": false,
-    "semiColons": "prefer",
-    "quoteStyle": "alwaysSingle",
+    "semiColons": "asi",
+    "quoteStyle": "preferSingle",
     "quoteProps": "asNeeded",
-    "trailingCommas": "onlyMultiLine",\n    "associations": ["!**/*.test.ts", "!**/*.spec.ts"],\n    "operatorPosition": "nextLine",\n    "arrowFunction.useParentheses": "preferNone"
+    "trailingCommas": "onlyMultiLine",
+    "binaryExpression.operatorPosition": "sameLine",
+    "conditionalExpression.operatorPosition": "nextLine",
+    "arrowFunction.useParentheses": "preferNone"
   },
   "json": {
     "indentWidth": 2

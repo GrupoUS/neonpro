@@ -10,7 +10,7 @@ export function redactPII(input: string): string {
   out = out.replace(/\b\(?(\d{2})\)?\s?9?\d{4}-?\d{4}\b/g, '[REDACTED_PHONE]')
   // CPF: 123.456.789-09 or 12345678909
   out = out.replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[REDACTED_CPF]')
-  out = out.replace(/\b\d{11}\b/g, (m) => /^\d{11}$/.test(m) ? '[REDACTED_CPF]' : m)
+  out = out.replace(/\b\d{11}\b/g, m => /^\d{11}$/.test(m) ? '[REDACTED_CPF]' : m)
   return out
 }
 

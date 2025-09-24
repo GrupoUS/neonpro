@@ -425,8 +425,8 @@ export class HealthcareAIOptimizationUtils {
 
     // Check semantic caching for sensitive data
     if (
-      config.semantic_caching.enabled
-      && config.semantic_caching.ttl_hours > 24
+      config.semantic_caching.enabled &&
+      config.semantic_caching.ttl_hours > 24
     ) {
       recommendations.push('Limit cache TTL to ≤24 hours for patient data')
     }
@@ -460,8 +460,8 @@ export class HealthcareAIOptimizationUtils {
   ): { estimated_cost: number; breakdown: Record<string, number> } {
     const config = model_config as any
     const input_cost = (input_tokens / 1000) * config.cost_config.input_cost_per_1k_tokens
-    const output_cost = (estimated_output_tokens / 1000)
-      * config.cost_config.output_cost_per_1k_tokens
+    const output_cost = (estimated_output_tokens / 1000) *
+      config.cost_config.output_cost_per_1k_tokens
     const total_cost = input_cost + output_cost
 
     return {

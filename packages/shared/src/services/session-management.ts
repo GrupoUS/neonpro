@@ -371,7 +371,7 @@ export function generateCSRFToken(): string {
       array[i] = Math.floor(Math.random() * 256)
     }
   }
-  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join(
     '',
   )
 }
@@ -492,8 +492,8 @@ export function assessSessionSecurityRisk(
 
   // High security level without MFA
   if (
-    session.securityLevel === SessionSecurityLevel.CRITICAL
-    && !session.mfaVerified
+    session.securityLevel === SessionSecurityLevel.CRITICAL &&
+    !session.mfaVerified
   ) {
     risks.push('high_security_without_mfa')
   }
@@ -655,7 +655,7 @@ export class SessionManagementService {
         validatedRequest._userId,
       )
       const activeSessions = existingSessions.filter(
-        (s) => s.status === SessionStatus.ACTIVE,
+        s => s.status === SessionStatus.ACTIVE,
       )
 
       if (activeSessions.length >= config.maxConcurrentSessions) {
@@ -695,8 +695,8 @@ export class SessionManagementService {
       // Security information
       ipAddress: validatedRequest.ipAddress,
       userAgent: validatedRequest.userAgent,
-      deviceFingerprint: validatedRequest.deviceFingerprint
-        || generateDeviceFingerprint(validatedRequest.userAgent),
+      deviceFingerprint: validatedRequest.deviceFingerprint ||
+        generateDeviceFingerprint(validatedRequest.userAgent),
       mfaVerified: false,
 
       // Healthcare context
@@ -823,8 +823,8 @@ export class SessionManagementService {
 
     // Session binding validation
     if (
-      config.enableSessionBinding
-      && !validateSessionBinding(session, currentUserAgent, currentIpAddress)
+      config.enableSessionBinding &&
+      !validateSessionBinding(session, currentUserAgent, currentIpAddress)
     ) {
       await this.logActivity({
         sessionId,
@@ -1038,7 +1038,7 @@ export class SessionManagementService {
   ): Promise<void> {
     const sessions = await this.store.getUserSessions(_userId)
     const activeSessions = sessions.filter(
-      (s) => s.status === SessionStatus.ACTIVE,
+      s => s.status === SessionStatus.ACTIVE,
     )
 
     for (const session of activeSessions) {
@@ -1086,7 +1086,7 @@ export class SessionManagementService {
    * Get session activity log
    */
   getActivityLog(sessionId?: string, _userId?: string): SessionActivityEvent[] {
-    return this.activityLog.filter((event) => {
+    return this.activityLog.filter(event => {
       if (sessionId && event.sessionId !== sessionId) return false
       if (_userId && event._userId !== _userId) return false
       return true
@@ -1177,14 +1177,14 @@ export class InMemorySessionStore implements SessionStore {
 
   async getUserSessions(_userId: string): Promise<SessionData[]> {
     return Array.from(this.sessions.values())
-      .filter((session) => session._userId === _userId)
-      .map((session) => ({ ...session }))
+      .filter(session => session._userId === _userId)
+      .map(session => ({ ...session }))
   }
 
   async getExpiredSessions(before: Date = new Date()): Promise<SessionData[]> {
     return Array.from(this.sessions.values())
-      .filter((session) => session.expiresAt < before)
-      .map((session) => ({ ...session }))
+      .filter(session => session.expiresAt < before)
+      .map(session => ({ ...session }))
   }
 
   async cleanup(retentionDays: number = 30): Promise<number> {

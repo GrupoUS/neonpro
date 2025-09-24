@@ -239,7 +239,7 @@ export const aiRouter = router({
                 input.patientId || 'none'
               }.`,
           },
-          ...conversationHistory.map((msg) => ({
+          ...conversationHistory.map(msg => ({
             _role: msg.role,
             content: msg.content,
           })),
@@ -562,7 +562,7 @@ export const aiRouter = router({
 
       // Get last message for each conversation if not including full content
       const conversationsWithLastMessage = await Promise.all(
-        conversations.map(async (conversation) => {
+        conversations.map(async conversation => {
           let lastMessage
           if (!input.includeContent) {
             lastMessage = await ctx.prisma.auditTrail.findFirst({
@@ -601,8 +601,8 @@ export const aiRouter = router({
             lastMessage: lastMessageInfo
               ? {
                 _role: lastMessageInfo.role,
-                content: lastMessageInfo.content.substring(0, 100)
-                  + (lastMessageInfo.content.length > 100 ? '...' : ''),
+                content: lastMessageInfo.content.substring(0, 100) +
+                  (lastMessageInfo.content.length > 100 ? '...' : ''),
                 createdAt: lastMessage.createdAt.toISOString(),
               }
               : undefined,
@@ -622,8 +622,8 @@ export const aiRouter = router({
                     createdAt: true,
                   },
                 })
-                .then((msgs) =>
-                  msgs.map((msg) => {
+                .then(msgs =>
+                  msgs.map(msg => {
                     const msgInfo = parseMessageInfo(msg.additionalInfo)
                     return {
                       id: msg.id,

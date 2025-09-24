@@ -180,7 +180,7 @@ const bulkActionSchema = z.object({
 
 const app = new Hono()
 
-app.post('/', requireAuth, dataProtection.clientView, async (c) => {
+app.post('/', requireAuth, dataProtection.clientView, async c => {
   const startTime = Date.now()
 
   try {
@@ -205,8 +205,8 @@ app.post('/', requireAuth, dataProtection.clientView, async (c) => {
         return c.json(
           {
             success: false,
-            error: consentValidation.error
-              || 'Consentimento insuficiente para operação em lote',
+            error: consentValidation.error ||
+              'Consentimento insuficiente para operação em lote',
             details: consentValidation.data,
           },
           403,
@@ -365,7 +365,7 @@ app.post('/', requireAuth, dataProtection.clientView, async (c) => {
         {
           success: false,
           error: 'Dados de operação em lote inválidos',
-          errors: error.errors.map((err) => ({
+          errors: error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),

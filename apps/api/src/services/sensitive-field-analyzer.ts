@@ -228,13 +228,13 @@ export class HealthcareSensitiveFieldAnalyzer {
     this.sensitiveFields = new Map()
 
     // Initialize with default healthcare sensitive fields
-    HEALTHCARE_SENSITIVE_FIELDS.forEach((field) => {
+    HEALTHCARE_SENSITIVE_FIELDS.forEach(field => {
       this.sensitiveFields.set(field.name, field)
     })
 
     // Add custom fields
     if (customFields) {
-      customFields.forEach((field) => {
+      customFields.forEach(field => {
         this.sensitiveFields.set(field.name, field)
       })
     }
@@ -267,7 +267,7 @@ export class HealthcareSensitiveFieldAnalyzer {
       analysis.sensitiveFields,
     )
     analysis.violationCount = analysis.sensitiveFields.filter(
-      (f) => f.isExposed,
+      f => f.isExposed,
     ).length
 
     // Generate recommendations
@@ -418,11 +418,11 @@ export class HealthcareSensitiveFieldAnalyzer {
     fields: ExposureAnalysisResult[],
   ): 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' {
     const criticalRisks = fields.filter(
-      (f) => f.complianceRisk === 'CRITICAL',
+      f => f.complianceRisk === 'CRITICAL',
     ).length
-    const highRisks = fields.filter((f) => f.complianceRisk === 'HIGH').length
+    const highRisks = fields.filter(f => f.complianceRisk === 'HIGH').length
     const mediumRisks = fields.filter(
-      (f) => f.complianceRisk === 'MEDIUM',
+      f => f.complianceRisk === 'MEDIUM',
     ).length
 
     if (criticalRisks > 0) return 'CRITICAL'
@@ -464,9 +464,9 @@ export class HealthcareSensitiveFieldAnalyzer {
   private generateRecommendations(fields: ExposureAnalysisResult[]): string[] {
     const recommendations: string[] = []
 
-    const exposedFields = fields.filter((f) => f.isExposed)
-    const unmaskedFields = exposedFields.filter((f) => !f.maskingApplied)
-    const unencryptedFields = exposedFields.filter((f) => !f.encryptionApplied)
+    const exposedFields = fields.filter(f => f.isExposed)
+    const unmaskedFields = exposedFields.filter(f => !f.maskingApplied)
+    const unencryptedFields = exposedFields.filter(f => !f.encryptionApplied)
 
     if (unmaskedFields.length > 0) {
       recommendations.push(
@@ -487,7 +487,7 @@ export class HealthcareSensitiveFieldAnalyzer {
     }
 
     const criticalExposures = fields.filter(
-      (f) => f.complianceRisk === 'CRITICAL',
+      f => f.complianceRisk === 'CRITICAL',
     )
     if (criticalExposures.length > 0) {
       recommendations.push(
@@ -514,8 +514,8 @@ export class HealthcareSensitiveFieldAnalyzer {
 
     // Log individual violations
     analysis.sensitiveFields
-      .filter((f) => f.isExposed)
-      .forEach((field) => {
+      .filter(f => f.isExposed)
+      .forEach(field => {
         logger.security('sensitive_data_exposure', 'Field exposure detected', {
           fieldName: field.fieldName,
           fieldType: field.fieldType,

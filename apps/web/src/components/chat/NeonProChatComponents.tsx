@@ -132,8 +132,8 @@ export const NeonProMessage: React.FC<MessageComponentProps> = ({
     }
   }
 
-  const hasSensitiveData = message.metadata?.sensitiveData
-    || message.metadata?.complianceLevel === 'restricted'
+  const hasSensitiveData = message.metadata?.sensitiveData ||
+    message.metadata?.complianceLevel === 'restricted'
 
   const getComplianceIcon = () => {
     if (hasSensitiveData && !showSensitiveData) {
@@ -335,7 +335,7 @@ export const NeonProAgentStatus: React.FC<AgentStatusProps> = ({
       tabIndex={0}
       aria-label={`Selecionar assistente ${agent.name}`}
       aria-pressed={isActive}
-      onKeyDown={(e) => {
+      onKeyDown={e => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
           onClick?.()

@@ -291,9 +291,9 @@ export const ClientList: React.FC<ClientListProps> = ({
   // Memoize expensive operations
   const filteredClients = useMemo(() => {
     return clients
-      .filter((client) =>
-        client.fullName.toLowerCase().includes(searchTerm.toLowerCase())
-        || client.email.toLowerCase().includes(searchTerm.toLowerCase())
+      .filter(client =>
+        client.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        client.email.toLowerCase().includes(searchTerm.toLowerCase())
       )
       .sort((a, b) => {
         if (sortBy === 'name') {
@@ -334,7 +334,7 @@ export const ClientList: React.FC<ClientListProps> = ({
         <div className='flex-1'>
           <SearchInput
             value={searchTerm}
-            onChange={(value) => setSearchTerm(value)}
+            onChange={value => setSearchTerm(value)}
             placeholder='Buscar clientes...'
             className='w-full'
           />
@@ -352,7 +352,7 @@ export const ClientList: React.FC<ClientListProps> = ({
 
       {/* Client list */}
       <div className='space-y-2'>
-        {filteredClients.map((client) => (
+        {filteredClients.map(client => (
           <ClientListItem
             key={client.id}
             client={client}
@@ -768,7 +768,7 @@ const MyComponent = () => {
   return (
     <ClientList
       clients={clients}
-      onClientSelect={(clientId) => console.log('Selected:', clientId)}
+      onClientSelect={clientId => console.log('Selected:', clientId)}
       loading={loading}
       error={error}
     />

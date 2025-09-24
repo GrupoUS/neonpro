@@ -67,9 +67,9 @@ export class CFMComplianceService {
 
       if (localLicense) {
         // Check if license is still valid
-        const isValid = localLicense.license_status === 'active'
-          && (!localLicense.license_expiry_date
-            || new Date(localLicense.license_expiry_date) > new Date())
+        const isValid = localLicense.license_status === 'active' &&
+          (!localLicense.license_expiry_date ||
+            new Date(localLicense.license_expiry_date) > new Date())
 
         return {
           crmNumber,
@@ -457,12 +457,12 @@ export class CFMComplianceService {
 
       // Calculate detailed metrics
       const totalSessions = sessions?.length || 0
-      const validatedSessions = sessions?.filter((s) => s.cfm_validation_status === 'validated')
+      const validatedSessions = sessions?.filter(s => s.cfm_validation_status === 'validated')
         .length || 0
       const complianceRate = totalSessions > 0 ? (validatedSessions / totalSessions) * 100 : 100
 
-      const sessionsWithConsent = sessions?.filter((s) => s.lgpd_compliant).length || 0
-      const sessionsWithRecording = sessions?.filter((s) =>
+      const sessionsWithConsent = sessions?.filter(s => s.lgpd_compliant).length || 0
+      const sessionsWithRecording = sessions?.filter(s =>
         s.recording_enabled && s.recording_consent
       )
         .length || 0
@@ -529,7 +529,7 @@ export class CFMComplianceService {
     // In production, this would use proper key management (HSM)
     const array = new Uint8Array(32)
     crypto.getRandomValues(array)
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('')
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
   }
 
   private generateRoomId(): string {

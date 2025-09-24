@@ -252,7 +252,7 @@ export class ANVISAComplianceService {
     this.issues.push(...issues)
 
     const level = issues.some(
-        (i) => i.severity === 'critical' || i.severity === 'high',
+        i => i.severity === 'critical' || i.severity === 'high',
       )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
@@ -308,7 +308,7 @@ export class ANVISAComplianceService {
     this.issues.push(...issues)
 
     const level = issues.some(
-        (i) => i.severity === 'critical' || i.severity === 'high',
+        i => i.severity === 'critical' || i.severity === 'high',
       )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
@@ -368,7 +368,7 @@ export class ANVISAComplianceService {
     this.issues.push(...issues)
 
     const level = issues.some(
-        (i) => i.severity === 'critical' || i.severity === 'high',
+        i => i.severity === 'critical' || i.severity === 'high',
       )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
@@ -428,7 +428,7 @@ export class ANVISAComplianceService {
     this.issues.push(...issues)
 
     const level = issues.some(
-        (i) => i.severity === 'critical' || i.severity === 'high',
+        i => i.severity === 'critical' || i.severity === 'high',
       )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
@@ -488,7 +488,7 @@ export class ANVISAComplianceService {
     this.issues.push(...issues)
 
     const level = issues.some(
-        (i) => i.severity === 'critical' || i.severity === 'high',
+        i => i.severity === 'critical' || i.severity === 'high',
       )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
@@ -524,13 +524,13 @@ export class ANVISAComplianceService {
    */
   private calculateComplianceScore(): number {
     const criticalIssues = this.issues.filter(
-      (i) => i.severity === 'critical',
+      i => i.severity === 'critical',
     ).length
-    const highIssues = this.issues.filter((i) => i.severity === 'high').length
+    const highIssues = this.issues.filter(i => i.severity === 'high').length
     const mediumIssues = this.issues.filter(
-      (i) => i.severity === 'medium',
+      i => i.severity === 'medium',
     ).length
-    const lowIssues = this.issues.filter((i) => i.severity === 'low').length
+    const lowIssues = this.issues.filter(i => i.severity === 'low').length
 
     // Calculate penalty based on issue severity
     const penalty = criticalIssues * 30 + highIssues * 20 + mediumIssues * 10 + lowIssues * 5
@@ -556,10 +556,10 @@ export class ANVISAComplianceService {
 
     Object.entries(issuesByRequirement).forEach(([requirement, _issues]) => {
       const criticalCount = issues.filter(
-        (i) => i.severity === 'critical',
+        i => i.severity === 'critical',
       ).length
-      const highCount = issues.filter((i) => i.severity === 'high').length
-      const mediumCount = issues.filter((i) => i.severity === 'medium').length
+      const highCount = issues.filter(i => i.severity === 'high').length
+      const mediumCount = issues.filter(i => i.severity === 'medium').length
 
       if (criticalCount > 0) {
         recommendations.push(

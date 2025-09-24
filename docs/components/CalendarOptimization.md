@@ -59,7 +59,7 @@ function VirtualizedCalendar({ events, height, itemSize }: VirtualizedCalendarPr
           position: 'relative',
         }}
       >
-        {virtualEvents.map((virtualEvent) => (
+        {virtualEvents.map(virtualEvent => (
           <div
             key={virtualEvent.index}
             style={{
@@ -134,16 +134,16 @@ class OptimizedEventStore {
     while (currentDate <= end) {
       const dateKey = format(currentDate, 'yyyy-MM-dd')
       const ids = this.store.byDate.get(dateKey) || []
-      ids.forEach((id) => eventIds.add(id))
+      ids.forEach(id => eventIds.add(id))
       currentDate = addDays(currentDate, 1)
     }
 
-    return Array.from(eventIds).map((id) => this.store.events.get(id)!)
+    return Array.from(eventIds).map(id => this.store.events.get(id)!)
   }
 
   getEventsByResource(resourceId: string): CalendarEvent[] {
     const eventIds = this.store.byResource.get(resourceId) || []
-    return eventIds.map((id) => this.store.events.get(id)!)
+    return eventIds.map(id => this.store.events.get(id)!)
   }
 }
 ```
@@ -161,7 +161,7 @@ const OptimizedEventList = React.memo(({
 }) => {
   return (
     <div className='event-list'>
-      {events.map((event) => (
+      {events.map(event => (
         <MemoizedEventItem
           key={event.id}
           event={event}
@@ -249,7 +249,7 @@ const dateUtils = {
     const startTime = start.getTime()
     const endTime = end.getTime()
 
-    return events.filter((event) => {
+    return events.filter(event => {
       const eventStart = event.start.getTime()
       const eventEnd = event.end.getTime()
 
@@ -357,7 +357,7 @@ class EventLoader {
 ```typescript
 // Worker for heavy computations
 // calendar.worker.ts
-self.onmessage = (e) => {
+self.onmessage = e => {
   const { type, data } = e.data
 
   switch (type) {
@@ -424,7 +424,7 @@ function OptimizedCalendar({ events }: { events: CalendarEvent[] }) {
 
   return (
     <div className='optimized-calendar'>
-      {positions.map((pos) => (
+      {positions.map(pos => (
         <EventComponent
           key={pos.event.id}
           event={pos.event}
@@ -560,7 +560,7 @@ const usePerformanceMonitor = () => {
       if (currentTime - lastTime >= 1000) {
         const fps = Math.round((frameCount * 1000) / (currentTime - lastTime))
 
-        setMetrics((prev) => ({
+        setMetrics(prev => ({
           ...prev,
           fps,
           memory: (performance as any).memory?.usedJSHeapSize || 0,
@@ -668,8 +668,8 @@ test.describe('Calendar Performance', () => {
       const paint = performance.getEntriesByType('paint')
 
       return {
-        fcp: paint.find((p) => p.name === 'first-contentful-paint')?.startTime,
-        lcp: paint.find((p) => p.name === 'largest-contentful-paint')
+        fcp: paint.find(p => p.name === 'first-contentful-paint')?.startTime,
+        lcp: paint.find(p => p.name === 'largest-contentful-paint')
           ?.startTime,
         loadTime: navigation.loadEventEnd - navigation.loadEventStart,
         domInteractive: navigation.domInteractive - navigation.fetchStart,
@@ -707,7 +707,7 @@ test.describe('Calendar Performance', () => {
       const start = performance.now()
 
       // Trigger render
-      return new Promise((resolve) => {
+      return new Promise(resolve => {
         requestAnimationFrame(() => {
           resolve(performance.now() - start)
         })
@@ -743,8 +743,8 @@ export default function() {
   const res = http.get('http://localhost:3000/calendar')
 
   check(res, {
-    'status is 200': (r) => r.status === 200,
-    'response time < 500ms': (r) => r.timings.duration < 500,
+    'status is 200': r => r.status === 200,
+    'response time < 500ms': r => r.timings.duration < 500,
   })
 
   // Test event loading
@@ -753,8 +753,8 @@ export default function() {
   )
 
   check(eventRes, {
-    'events loaded successfully': (r) => r.status === 200,
-    'response has events': (r) => JSON.parse(r.body).length > 0,
+    'events loaded successfully': r => r.status === 200,
+    'response has events': r => JSON.parse(r.body).length > 0,
   })
 
   sleep(1)
@@ -826,15 +826,15 @@ const urlsToCache = [
   '/build/assets/styles.css',
 ]
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache)),
+    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)),
   )
 })
 
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request).then((response) => {
+    caches.match(event.request).then(response => {
       return response || fetch(event.request)
     }),
   )

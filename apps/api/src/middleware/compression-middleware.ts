@@ -232,12 +232,12 @@ export class CompressionMiddleware {
       'X-Frame-Options',
       'X-XSS-Protection',
     ]
-    headersToRemove.forEach((header) => {
+    headersToRemove.forEach(header => {
       // Keep security headers even when compressing
       if (
-        header.startsWith('X-')
-        && !header.includes('Content-Type')
-        && !header.includes('Frame')
+        header.startsWith('X-') &&
+        !header.includes('Content-Type') &&
+        !header.includes('Frame')
       ) {
         // Don't remove security headers
       }
@@ -288,9 +288,9 @@ export class CompressionMiddleware {
         mustRevalidate: true,
       }
     } else if (
-      path.startsWith('/static/')
-      || path.includes('.css')
-      || path.includes('.js')
+      path.startsWith('/static/') ||
+      path.includes('.css') ||
+      path.includes('.js')
     ) {
       // Static assets - cache for 1 year
       cacheOptions = {
@@ -349,7 +349,7 @@ export class CompressionMiddleware {
   private selectCompressionMethod(acceptEncoding: string): string {
     if (!acceptEncoding) return 'none'
 
-    const encodings = acceptEncoding.split(',').map((e) => e.trim())
+    const encodings = acceptEncoding.split(',').map(e => e.trim())
 
     // Check for Brotli (highest priority)
     if (this.config.enableBrotli && encodings.includes('br')) {
@@ -389,8 +389,8 @@ export class CompressionMiddleware {
     this.compressionStats.totalBytesSaved += metrics.originalSize - metrics.compressedSize
 
     // Update compression method stats
-    const methodStats = this.compressionStats.compressionMethods.get(metrics.compressionMethod)
-      || 0
+    const methodStats = this.compressionStats.compressionMethods.get(metrics.compressionMethod) ||
+      0
     this.compressionStats.compressionMethods.set(
       metrics.compressionMethod,
       methodStats + 1,
@@ -413,17 +413,17 @@ export class CompressionMiddleware {
     const stats = {
       ...this.compressionStats,
       compressionRate: this.compressionStats.totalRequests > 0
-        ? (this.compressionStats.compressedResponses
-          / this.compressionStats.totalRequests)
-          * 100
+        ? (this.compressionStats.compressedResponses /
+          this.compressionStats.totalRequests) *
+          100
         : 0,
       averageResponseSize: this.metrics.length > 0
-        ? this.metrics.reduce((sum, m) => sum + m.originalSize, 0)
-          / this.metrics.length
+        ? this.metrics.reduce((sum, m) => sum + m.originalSize, 0) /
+          this.metrics.length
         : 0,
       averageCompressedSize: this.metrics.length > 0
-        ? this.metrics.reduce((sum, m) => sum + m.compressedSize, 0)
-          / this.metrics.length
+        ? this.metrics.reduce((sum, m) => sum + m.compressedSize, 0) /
+          this.metrics.length
         : 0,
       topCompressedRoutes: this.getTopCompressedRoutes(5),
       compressionMethodDistribution: Object.fromEntries(
@@ -440,7 +440,7 @@ export class CompressionMiddleware {
   private getTopCompressedRoutes(limit: number) {
     const routeStats: Record<string, { count: number; bytesSaved: number }> = {}
 
-    this.metrics.forEach((m) => {
+    this.metrics.forEach(m => {
       if (!routeStats[m.path]) {
         routeStats[m.path] = { count: 0, bytesSaved: 0 }
       }
@@ -531,9 +531,9 @@ function shouldCompress(
   // Don't compress already compressed content
   const contentType = '' // Would need to be passed in
   if (
-    contentType.includes('image/')
-    || contentType.includes('video/')
-    || contentType.includes('application/zip')
+    contentType.includes('image/') ||
+    contentType.includes('video/') ||
+    contentType.includes('application/zip')
   ) {
     return false
   }

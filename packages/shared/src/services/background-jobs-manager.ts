@@ -162,7 +162,7 @@ export class JobManager {
       clearInterval(this.processingLoop)
     }
     // Stop all workers
-    const stopPromises = Array.from(this.workers.values()).map((worker) => worker.stop())
+    const stopPromises = Array.from(this.workers.values()).map(worker => worker.stop())
     await Promise.all(stopPromises)
     this.workers.clear()
     this.handlers.clear()
@@ -318,8 +318,8 @@ export class JobManager {
       createdAt: new Date(),
       attemptCount: 0,
       maxRetries: 3,
-      config: jobRequest.config
-        || getDefaultJobConfig(jobRequest.type, jobRequest.healthcareContext),
+      config: jobRequest.config ||
+        getDefaultJobConfig(jobRequest.type, jobRequest.healthcareContext),
       auditEvents: [],
       lgpdCompliant: true,
       dependencies: [],
@@ -389,7 +389,7 @@ export class JobManager {
     return {
       isRunning: this.isRunning,
       totalJobs: this.auditLog.length,
-      workers: Array.from(this.workers.values()).map((worker) => ({
+      workers: Array.from(this.workers.values()).map(worker => ({
         workerId: worker.getStatus().workerId,
         status: worker.getStatus(),
       })),
@@ -408,7 +408,7 @@ export class JobManager {
     let filteredLog = [...this.auditLog]
 
     if (filter) {
-      filteredLog = filteredLog.filter((event) => {
+      filteredLog = filteredLog.filter(event => {
         if (filter.jobId && event.jobId !== filter.jobId) return false
         if (filter.action && event.action !== filter.action) return false
         if (filter.startDate && new Date(event.timestamp) < filter.startDate) return false
@@ -542,13 +542,13 @@ export class Worker {
         }
 
         // Wait before next iteration
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, 1000))
       } catch (error) {
         logHealthcareError('job-worker', error as Error, {
           workerId: this.config.workerId,
           method: 'processJobs',
         })
-        await new Promise((resolve) => setTimeout(resolve, 5000))
+        await new Promise(resolve => setTimeout(resolve, 5000))
       }
     }
   }
@@ -726,11 +726,11 @@ export class PatientDataSyncHandler extends BaseHealthcareJobHandler {
 
   override async validatePayload(payload: Record<string, any>): Promise<boolean> {
     return (
-      typeof payload === 'object'
-      && payload !== null
-      && typeof payload.patientId === 'string'
-      && typeof payload.sourceSystem === 'string'
-      && typeof payload.targetSystem === 'string'
+      typeof payload === 'object' &&
+      payload !== null &&
+      typeof payload.patientId === 'string' &&
+      typeof payload.sourceSystem === 'string' &&
+      typeof payload.targetSystem === 'string'
       // syncFields is optional - if not provided, will sync all fields
     )
   }
@@ -802,12 +802,12 @@ export class EmergencyNotificationHandler extends BaseHealthcareJobHandler {
 
   override async validatePayload(payload: Record<string, any>): Promise<boolean> {
     return (
-      typeof payload === 'object'
-      && payload !== null
-      && (typeof payload.emergencyType === 'string' || typeof payload.alertType === 'string')
-      && typeof payload.severity === 'string'
-      && typeof payload.message === 'string'
-      && Array.isArray(payload.recipients)
+      typeof payload === 'object' &&
+      payload !== null &&
+      (typeof payload.emergencyType === 'string' || typeof payload.alertType === 'string') &&
+      typeof payload.severity === 'string' &&
+      typeof payload.message === 'string' &&
+      Array.isArray(payload.recipients)
       // patientId is optional for emergency alerts
     )
   }
@@ -882,10 +882,10 @@ export class ComplianceAuditHandler extends BaseHealthcareJobHandler {
 
   override async validatePayload(payload: Record<string, any>): Promise<boolean> {
     return (
-      typeof payload === 'object'
-      && payload !== null
-      && typeof payload.auditType === 'string'
-      && typeof payload.scope === 'string'
+      typeof payload === 'object' &&
+      payload !== null &&
+      typeof payload.auditType === 'string' &&
+      typeof payload.scope === 'string'
     )
   }
 
@@ -964,12 +964,12 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
 
   override async validatePayload(payload: Record<string, any>): Promise<boolean> {
     return (
-      typeof payload === 'object'
-      && payload !== null
-      && Array.isArray(payload.dataTypes)
-      && typeof payload.retentionPolicy === 'object'
-      && payload.retentionPolicy !== null
-      && typeof payload.dryRun === 'boolean'
+      typeof payload === 'object' &&
+      payload !== null &&
+      Array.isArray(payload.dataTypes) &&
+      typeof payload.retentionPolicy === 'object' &&
+      payload.retentionPolicy !== null &&
+      typeof payload.dryRun === 'boolean'
     )
   }
 

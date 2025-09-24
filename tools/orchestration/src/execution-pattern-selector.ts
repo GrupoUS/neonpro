@@ -76,8 +76,8 @@ export class ExecutionPatternSelector {
         supportAgents: context.complexity !== 'low'
           ? ['documentation', 'quality-control']
           : undefined,
-        parallelAgents: workflowType === 'parallel'
-            || (context.agentCount > 3 && context.complexity !== 'low')
+        parallelAgents: workflowType === 'parallel' ||
+            (context.agentCount > 3 && context.complexity !== 'low')
           ? ['test-auditor', 'code-reviewer']
           : undefined,
       },

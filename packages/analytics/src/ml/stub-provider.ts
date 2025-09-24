@@ -155,7 +155,7 @@ export class StubModelProvider implements ModelProvider {
     for (let i = 0; i < input.inputs.length; i += maxConcurrency) {
       const batch = input.inputs.slice(i, i + maxConcurrency)
 
-      const batchPromises = batch.map(async (predInput) => {
+      const batchPromises = batch.map(async predInput => {
         try {
           const result = await this.predict(predInput)
           successful++
@@ -208,7 +208,7 @@ export class StubModelProvider implements ModelProvider {
     // Check required features
     const requiredFeatures = this._metadata.requiredFeatures
     const missingFeatures = requiredFeatures.filter(
-      (feature) => !(feature in input.features),
+      feature => !(feature in input.features),
     )
 
     if (missingFeatures.length > 0) {
@@ -256,7 +256,7 @@ export class StubModelProvider implements ModelProvider {
   // ============================================================================
 
   private async _delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms))
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   private _generateMockPrediction(input: PredictionInput): {

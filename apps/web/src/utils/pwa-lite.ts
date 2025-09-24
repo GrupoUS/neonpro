@@ -24,7 +24,7 @@ async function getDB(): Promise<IDBDatabase> {
     request.onerror = () => reject(request.error)
     request.onsuccess = () => resolve(request.result)
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = event => {
       const db = (event.target as IDBOpenDBRequest).result
 
       if (!db.objectStoreNames.contains(OFFLINE_STORE)) {
@@ -180,8 +180,8 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 
 export const pwaStatus = {
   isPWAInstalled(): boolean {
-    return window.matchMedia('(display-mode: standalone)').matches
-      || (window.navigator as any).standalone === true
+    return window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true
   },
 
   subscribe(event: string, cb: (value: any) => void) {

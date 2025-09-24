@@ -86,15 +86,15 @@ export function isTimeSlotAvailable(
   events: CalendarEvent[],
   professionalId?: string,
 ): boolean {
-  return !events.some((event) => {
+  return !events.some(event => {
     if (professionalId && event.professionalId !== professionalId) {
       return false
     }
 
     return (
-      isWithinInterval(slot.start, { start: event.start, end: event.end })
-      || isWithinInterval(slot.end, { start: event.start, end: event.end })
-      || isWithinInterval(event.start, { start: slot.start, end: slot.end })
+      isWithinInterval(slot.start, { start: event.start, end: event.end }) ||
+      isWithinInterval(slot.end, { start: event.start, end: event.end }) ||
+      isWithinInterval(event.start, { start: slot.start, end: slot.end })
     )
   })
 }
@@ -107,7 +107,7 @@ export function filterCalendarEvents(
   view: CalendarView,
   filters: CalendarFilters = {},
 ): CalendarEvent[] {
-  return events.filter((event) => {
+  return events.filter(event => {
     // Date range filter based on view
     let inDateRange = false
 
@@ -121,8 +121,8 @@ export function filterCalendarEvents(
         inDateRange = isWithinInterval(event.start, { start: weekStart, end: weekEnd })
         break
       case 'month':
-        inDateRange = event.start.getMonth() === view.date.getMonth()
-          && event.start.getFullYear() === view.date.getFullYear()
+        inDateRange = event.start.getMonth() === view.date.getMonth() &&
+          event.start.getFullYear() === view.date.getFullYear()
         break
     }
 
@@ -216,10 +216,10 @@ export function findOverlappingEvents(events: CalendarEvent[]): CalendarEvent[][
     // Check if this event overlaps with any existing group
     for (const group of overlappingGroups) {
       if (
-        group.some((groupEvent) =>
-          isWithinInterval(event.start, { start: groupEvent.start, end: groupEvent.end })
-          || isWithinInterval(event.end, { start: groupEvent.start, end: groupEvent.end })
-          || isWithinInterval(groupEvent.start, { start: event.start, end: event.end })
+        group.some(groupEvent =>
+          isWithinInterval(event.start, { start: groupEvent.start, end: groupEvent.end }) ||
+          isWithinInterval(event.end, { start: groupEvent.start, end: groupEvent.end }) ||
+          isWithinInterval(groupEvent.start, { start: event.start, end: event.end })
         )
       ) {
         group.push(event)
@@ -247,7 +247,7 @@ export function getAvailableTimeSlots(
 ): TimeSlot[] {
   const allSlots = generateTimeSlots(date, intervalMinutes)
 
-  return allSlots.map((slot) => ({
+  return allSlots.map(slot => ({
     ...slot,
     professionalId,
     available: isTimeSlotAvailable(slot, events, professionalId),
@@ -273,8 +273,8 @@ export function validateEventTime(
   }
 
   if (
-    end.getHours() > workingHours.end
-    || (end.getHours() === workingHours.end && end.getMinutes() > 0)
+    end.getHours() > workingHours.end ||
+    (end.getHours() === workingHours.end && end.getMinutes() > 0)
   ) {
     errors.push('O horário de término está fora do horário de funcionamento')
   }
@@ -328,7 +328,7 @@ function eventsToCSV(events: CalendarEvent[]): string {
     'Profissional',
   ]
 
-  const rows = events.map((event) => [
+  const rows = events.map(event => [
     event.id,
     event.title,
     event.start.toISOString(),
@@ -340,7 +340,7 @@ function eventsToCSV(events: CalendarEvent[]): string {
   ])
 
   return [headers, ...rows]
-    .map((row) => row.map((cell) => `"${cell}"`).join(','))
+    .map(row => row.map(cell => `"${cell}"`).join(','))
     .join('\n')
 }
 
@@ -355,7 +355,7 @@ CALSCALE:GREGORIAN`
 
   const footer = `END:VCALENDAR`
 
-  const eventStrings = events.map((event) => {
+  const eventStrings = events.map(event => {
     const startDate = format(event.start, "yyyyMMdd'T'HHmmss")
     const endDate = format(event.end, "yyyyMMdd'T'HHmmss")
 

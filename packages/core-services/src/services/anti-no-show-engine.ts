@@ -281,7 +281,7 @@ export class AntiNoShowEngine {
     }
 
     // Track analytics for each successful intervention
-    results.forEach((result) => {
+    results.forEach(result => {
       if (result.status === 'success') {
         this.analyticsService?.trackEvent?.({
           eventType: 'intervention_executed',
@@ -309,7 +309,7 @@ export class AntiNoShowEngine {
     recommendations: string[]
   }> {
     const totalCost = interventions.reduce((sum, i) => sum + i.cost, 0)
-    const successfulInterventions = interventions.filter((i) => i.status === 'success').length
+    const successfulInterventions = interventions.filter(i => i.status === 'success').length
     const successRate = interventions.length > 0
       ? successfulInterventions / interventions.length
       : 0
@@ -386,10 +386,10 @@ export class AntiNoShowEngine {
 
   private prepareFeatures(input: NoShowPredictionInput): Record<string, unknown> {
     const now = new Date()
-    const hoursUntilAppointment = (input.scheduledDateTime.getTime() - now.getTime())
-      / (1000 * 60 * 60)
-    const daysSinceLastVisit = (now.getTime() - input.patientHistory.lastVisit.getTime())
-      / (1000 * 60 * 60 * 24)
+    const hoursUntilAppointment = (input.scheduledDateTime.getTime() - now.getTime()) /
+      (1000 * 60 * 60)
+    const daysSinceLastVisit = (now.getTime() - input.patientHistory.lastVisit.getTime()) /
+      (1000 * 60 * 60 * 24)
 
     // Calculate historical no-show rate
     const historicalNoShowRate = input.patientHistory.totalAppointments > 0
@@ -476,8 +476,8 @@ export class AntiNoShowEngine {
     }
 
     const now = new Date()
-    const hoursUntilAppointment = (input.scheduledDateTime.getTime() - now.getTime())
-      / (1000 * 60 * 60)
+    const hoursUntilAppointment = (input.scheduledDateTime.getTime() - now.getTime()) /
+      (1000 * 60 * 60)
     if (hoursUntilAppointment < 48) { // Lower threshold for more factors
       factors.push({
         factor: 'time_until_appointment',

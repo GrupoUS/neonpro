@@ -112,7 +112,7 @@ export class AIServiceManagement {
       })
 
       // Update cache
-      healthStatuses.forEach((health) => {
+      healthStatuses.forEach(health => {
         this.healthCache.set(health.provider, health)
       })
 
@@ -176,7 +176,7 @@ export class AIServiceManagement {
       })
 
       // Update cache
-      availabilities.forEach((availability) => {
+      availabilities.forEach(availability => {
         const key = `${availability.provider}:${availability.model}`
         this.availabilityCache.set(key, availability)
       })
@@ -216,7 +216,7 @@ export class AIServiceManagement {
       }
 
       // Update cache
-      stats.forEach((stat) => {
+      stats.forEach(stat => {
         const key = `${stat.provider}:${stat.period.start.toISOString()}`
         this.usageCache.set(key, stat)
       })
@@ -364,9 +364,9 @@ export class AIServiceManagement {
 
     if (provider || model) {
       return availableModels.filter(
-        (m) =>
-          (!provider || m.provider === provider)
-          && (!model || m.model === model),
+        m =>
+          (!provider || m.provider === provider) &&
+          (!model || m.model === model),
       )
     }
 

@@ -92,8 +92,8 @@ export const hasPermission = (
   requiredPermission: string,
 ): boolean => {
   return (
-    userPermissions.includes('*:*')
-    || userPermissions.includes(requiredPermission)
+    userPermissions.includes('*:*') ||
+    userPermissions.includes(requiredPermission)
   )
 }
 
@@ -101,12 +101,12 @@ export const hasAnyPermission = (
   userPermissions: string[],
   requiredPermissions: string[],
 ): boolean => {
-  return requiredPermissions.some((perm) => hasPermission(userPermissions, perm))
+  return requiredPermissions.some(perm => hasPermission(userPermissions, perm))
 }
 
 export const hasAllPermissions = (
   userPermissions: string[],
   requiredPermissions: string[],
 ): boolean => {
-  return requiredPermissions.every((perm) => hasPermission(userPermissions, perm))
+  return requiredPermissions.every(perm => hasPermission(userPermissions, perm))
 }

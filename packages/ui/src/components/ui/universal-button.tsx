@@ -149,8 +149,8 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
 
     // Advanced hover border gradient animation
     const hoverBorderGradientConfig = animations?.hoverBorderGradient
-    const hoverBorderGradientEnabled = shouldEnableAnimations
-      && (hoverBorderGradientConfig?.enabled || legacyBorderGradientEnabled)
+    const hoverBorderGradientEnabled = shouldEnableAnimations &&
+      (hoverBorderGradientConfig?.enabled || legacyBorderGradientEnabled)
 
     const {
       elementRef: hoverBorderRef,
@@ -279,9 +279,9 @@ const UniversalButton = forwardRef<HTMLButtonElement, UniversalButtonProps>(
     const buttonStyle: React.CSSProperties = {
       ...props.style,
       ...hoverBorderStyle,
-      ...(hoverBorderGradientEnabled
-        && mousePosition
-        && {
+      ...(hoverBorderGradientEnabled &&
+        mousePosition &&
+        {
           '--mouse-x': `${mousePosition.x}px`,
           '--mouse-y': `${mousePosition.y}px`,
         }),

@@ -148,9 +148,9 @@ export class AppointmentValidator {
 
       // Check for overlap
       if (
-        appointmentStart < existingEnd
-        && appointmentEnd > existingStart
-        && existing.professionalId === appointment.professionalId
+        appointmentStart < existingEnd &&
+        appointmentEnd > existingStart &&
+        existing.professionalId === appointment.professionalId
       ) {
         errors.push(`Time conflict with appointment ${existing.id}`)
       }

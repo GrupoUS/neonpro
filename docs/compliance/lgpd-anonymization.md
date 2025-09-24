@@ -193,7 +193,7 @@ app.use('/api/patients', (req, res, next) => {
 import { anonymizePersonalData } from '@neonpro/security/anonymization'
 
 const patients = await db.patients.findMany()
-const anonymizedPatients = patients.map((patient) =>
+const anonymizedPatients = patients.map(patient =>
   anonymizePersonalData(patient, ['name', 'cpf', 'email'])
 )
 ```

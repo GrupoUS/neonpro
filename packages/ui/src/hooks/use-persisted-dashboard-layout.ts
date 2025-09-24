@@ -101,7 +101,7 @@ export function usePersistedDashboardLayout() {
       }
 
       // Only auto-distribute if we have no saved positions for any card
-      const hasExistingPositions = cardIds.some((id) => positions[id])
+      const hasExistingPositions = cardIds.some(id => positions[id])
       if (hasExistingPositions) return
 
       const cardSize = { width: 280, height: 200 } // Default card size
@@ -118,7 +118,7 @@ export function usePersistedDashboardLayout() {
         newPositions,
         containerSize,
       })
-      setPositions((prev) => ({ ...prev, ...newPositions }))
+      setPositions(prev => ({ ...prev, ...newPositions }))
     },
     [containerSize, gridConfig, positions],
   )
@@ -183,7 +183,7 @@ export function usePersistedDashboardLayout() {
         y: constrainedY,
       }
 
-      setPositions((prev) => {
+      setPositions(prev => {
         const newPositions = {
           ...prev,
           [cardId]: finalPosition,

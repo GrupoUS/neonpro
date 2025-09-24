@@ -118,8 +118,8 @@ function findTsxFiles(dir) {
       if (entry.isDirectory()) {
         scanDirectory(fullPath)
       } else if (
-        entry.isFile()
-        && (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts'))
+        entry.isFile() &&
+        (entry.name.endsWith('.tsx') || entry.name.endsWith('.ts'))
       ) {
         files.push(path.relative(UI_COMPONENTS_DIR, fullPath))
       }
@@ -157,10 +157,10 @@ function fixFile(filePath) {
         const importEndPosition = content.indexOf('\\n', importInsertPosition)
 
         if (importInsertPosition !== -1 && importEndPosition !== -1) {
-          content = content.slice(0, importEndPosition + 1)
-            + importStatement
-            + '\\n'
-            + content.slice(importEndPosition + 1)
+          content = content.slice(0, importEndPosition + 1) +
+            importStatement +
+            '\\n' +
+            content.slice(importEndPosition + 1)
           console.log(`  ✅ Added missing import: ${module}`)
           changesMade = true
         }

@@ -336,7 +336,7 @@ export class MonitoringService {
 
       // Check for recent security events
       const recentEvents = this.securityEvents.filter(
-        (event) => Date.now() - event.timestamp.getTime() < 300000, // 5 minutes
+        event => Date.now() - event.timestamp.getTime() < 300000, // 5 minutes
       )
 
       if (recentEvents.length > 10) {
@@ -487,23 +487,23 @@ export class MonitoringService {
     const cpuPercent = this.calculateCPUUsage(this.metrics.system.cpuUsage)
     const errorRate = this.metrics.performance.errorRate
     const recentSecurityEvents = this.securityEvents.filter(
-      (event) => Date.now() - event.timestamp.getTime() < 300000, // 5 minutes
+      event => Date.now() - event.timestamp.getTime() < 300000, // 5 minutes
     ).length
 
     if (
-      memUsage > 800 * 1024 * 1024
-      || cpuPercent > 90
-      || errorRate > 0.1
-      || recentSecurityEvents > 20
+      memUsage > 800 * 1024 * 1024 ||
+      cpuPercent > 90 ||
+      errorRate > 0.1 ||
+      recentSecurityEvents > 20
     ) {
       return 'critical'
     }
 
     if (
-      memUsage > 500 * 1024 * 1024
-      || cpuPercent > 80
-      || errorRate > 0.05
-      || recentSecurityEvents > 10
+      memUsage > 500 * 1024 * 1024 ||
+      cpuPercent > 80 ||
+      errorRate > 0.05 ||
+      recentSecurityEvents > 10
     ) {
       return 'degraded'
     }
@@ -542,7 +542,7 @@ export class MonitoringService {
 
     // Security alerts
     const recentSecurityEvents = this.securityEvents.filter(
-      (event) => Date.now() - event.timestamp.getTime() < 300000,
+      event => Date.now() - event.timestamp.getTime() < 300000,
     )
     if (recentSecurityEvents.length > 10) {
       alerts.push({
@@ -598,17 +598,17 @@ export class MonitoringService {
 
     // Cleanup old security events
     this.securityEvents = this.securityEvents.filter(
-      (event) => event.timestamp.getTime() > oneDayAgo,
+      event => event.timestamp.getTime() > oneDayAgo,
     )
 
     // Cleanup old data access records
     this.dataAccessRecords = this.dataAccessRecords.filter(
-      (record) => record.timestamp.getTime() > oneDayAgo,
+      record => record.timestamp.getTime() > oneDayAgo,
     )
 
     // Cleanup old healthcare audit records
     this.metrics.healthcare.dataAccessAudit = this.metrics.healthcare.dataAccessAudit.filter(
-      (record) => new Date(record.timestamp).getTime() > oneDayAgo,
+      record => new Date(record.timestamp).getTime() > oneDayAgo,
     )
   }
 
@@ -617,8 +617,8 @@ export class MonitoringService {
    */
   private generateId(): string {
     return (
+      Math.random().toString(36).substring(2, 15) +
       Math.random().toString(36).substring(2, 15)
-      + Math.random().toString(36).substring(2, 15)
     )
   }
 

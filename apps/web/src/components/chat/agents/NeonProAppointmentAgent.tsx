@@ -235,33 +235,33 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       urgency: string = 'medium',
     ) => {
       try {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'searching_slots',
           searchCriteria: {
             ...prev.searchCriteria,
             service,
             duration,
-            preferredDates: preferredDates.map((d) => new Date(d)),
+            preferredDates: preferredDates.map(d => new Date(d)),
             preferredProfessionals,
             urgency: urgency as 'low' | 'medium' | 'high' | 'urgent',
           },
         }))
 
         // Simulate search delay
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        await new Promise(resolve => setTimeout(resolve, 2000))
 
         // Generate available slots with AI optimization
         const slots = generateOptimalSlots(
           service,
           duration,
-          preferredDates.map((d) => new Date(d)),
+          preferredDates.map(d => new Date(d)),
           preferredProfessionals,
         )
 
         const optimization = generateOptimizationInsights(slots, service, urgency)
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           availableSlots: slots,
@@ -275,7 +275,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           ? error.message
           : 'Failed to find available slots'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -293,15 +293,15 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     ],
     handler: async (patientId: string, patientName: string, slotId: string, notes?: string) => {
       try {
-        setState((prev) => ({ ...prev, currentOperation: 'scheduling' }))
+        setState(prev => ({ ...prev, currentOperation: 'scheduling' }))
 
-        const selectedSlot = state.availableSlots.find((slot) => slot.id === slotId)
+        const selectedSlot = state.availableSlots.find(slot => slot.id === slotId)
         if (!selectedSlot) {
           throw new Error('Selected slot not found')
         }
 
         // Simulate scheduling delay
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        await new Promise(resolve => setTimeout(resolve, 1500))
 
         // Create appointment
         const newAppointment: Appointment = {
@@ -319,7 +319,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           revenue: calculateRevenue(state.searchCriteria.service),
         }
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           scheduledAppointments: [...prev.scheduledAppointments, newAppointment],
@@ -335,7 +335,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           ? error.message
           : 'Failed to schedule appointment'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -361,14 +361,14 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     ],
     handler: async (dateRange: string, objective: string = 'efficiency') => {
       try {
-        setState((prev) => ({ ...prev, currentOperation: 'optimizing' }))
+        setState(prev => ({ ...prev, currentOperation: 'optimizing' }))
 
         // Simulate optimization delay
-        await new Promise((resolve) => setTimeout(resolve, 3000))
+        await new Promise(resolve => setTimeout(resolve, 3000))
 
         const optimization = generateAdvancedOptimization(objective)
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           optimization: {
@@ -381,7 +381,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to optimize schedule'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -389,7 +389,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
 
   // Handle slot selection
   const handleSlotSelect = useCallback((slot: TimeSlot) => {
-    setState((prev) => ({
+    setState(prev => ({
       ...prev,
       selectedSlot: slot,
       currentOperation: 'confirming',
@@ -404,20 +404,18 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     preferredProfessionals: string[],
   ): TimeSlot[] => {
     const slots: TimeSlot[] = []
-    const serviceInfo = mockServices.find((s) =>
-      s.name.toLowerCase().includes(service.toLowerCase())
-    )
+    const serviceInfo = mockServices.find(s => s.name.toLowerCase().includes(service.toLowerCase()))
     const actualDuration = serviceInfo?.duration || duration
 
     // Generate slots for the next 7 days
     const startDate = preferredDates.length > 0
-      ? new Date(Math.min(...preferredDates.map((d) => d.getTime())))
+      ? new Date(Math.min(...preferredDates.map(d => d.getTime())))
       : new Date()
 
     for (let day = 0; day < 7; day++) {
       const currentDate = addDays(startDate, day)
 
-      mockProfessionals.forEach((professional) => {
+      mockProfessionals.forEach(professional => {
         if (
           preferredProfessionals.length > 0 && !preferredProfessionals.includes(professional.name)
         ) {
@@ -477,8 +475,8 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
     ].filter(Boolean) as string[]
 
     const riskFactors = slots
-      .filter((slot) => slot.noShowRisk > 0.15)
-      .map((slot) =>
+      .filter(slot => slot.noShowRisk > 0.15)
+      .map(slot =>
         `${format(slot.start, 'HH:mm')} - ${
           slot.noShowRisk > 0.2 ? 'Alto risco' : 'Médio risco'
         } de não comparecimento`
@@ -501,7 +499,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
 
   // Calculate metrics
   const calculateMetrics = (slots: TimeSlot[]) => {
-    const optimalSlots = slots.filter((slot) => slot.optimizationScore > 0.8)
+    const optimalSlots = slots.filter(slot => slot.optimizationScore > 0.8)
     const conflicts = Math.floor(slots.length * 0.1) // Mock conflicts
     const utilization = (optimalSlots.length / slots.length) * 100
 
@@ -515,9 +513,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
 
   // Calculate revenue
   const calculateRevenue = (service: string) => {
-    const serviceInfo = mockServices.find((s) =>
-      s.name.toLowerCase().includes(service.toLowerCase())
-    )
+    const serviceInfo = mockServices.find(s => s.name.toLowerCase().includes(service.toLowerCase()))
     return serviceInfo?.baseRevenue || 500
   }
 
@@ -554,8 +550,8 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
         'Distribuição desigual de procedimentos entre profissionais',
         'Picos de demanda em horários específicos do dia',
       ],
-      recommendations: specificRecommendations[objective as keyof typeof specificRecommendations]
-        || specificRecommendations.efficiency,
+      recommendations: specificRecommendations[objective as keyof typeof specificRecommendations] ||
+        specificRecommendations.efficiency,
       efficiency: Math.random() * 0.3 + 0.7,
     }
   }
@@ -692,7 +688,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           </CardHeader>
           <CardContent>
             <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-              {state.availableSlots.slice(0, 12).map((slot) => (
+              {state.availableSlots.slice(0, 12).map(slot => (
                 <div
                   key={slot.id}
                   className={`p-4 border rounded-lg cursor-pointer transition-colors ${
@@ -751,11 +747,11 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
           </CardHeader>
           <CardContent>
             <div className='space-y-3'>
-              {state.scheduledAppointments.slice(-5).map((appointment) => (
+              {state.scheduledAppointments.slice(-5).map(appointment => (
                 <NeonProAppointmentCard
                   key={appointment.id}
                   appointment={appointment}
-                  onAction={(action) => onAppointmentAction?.(action, appointment.id)}
+                  onAction={action => onAppointmentAction?.(action, appointment.id)}
                 />
               ))}
             </div>
@@ -795,7 +791,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
               <div className='flex gap-2'>
                 <Button
                   variant='outline'
-                  onClick={() => setState((prev) => ({ ...prev, selectedSlot: undefined }))}
+                  onClick={() => setState(prev => ({ ...prev, selectedSlot: undefined }))}
                 >
                   Cancelar
                 </Button>
@@ -803,7 +799,7 @@ export const NeonProAppointmentAgent: React.FC<AppointmentAgentProps> = ({
                   className='flex-1'
                   onClick={() => {
                     // This would trigger the schedule_appointment action
-                    setState((prev) => ({ ...prev, currentOperation: 'scheduling' }))
+                    setState(prev => ({ ...prev, currentOperation: 'scheduling' }))
                   }}
                 >
                   Confirmar Agendamento

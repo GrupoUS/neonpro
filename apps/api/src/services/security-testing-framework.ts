@@ -287,7 +287,7 @@ export class HealthcareSecurityTestFramework {
   ): Promise<SecurityTestResult[]> {
     this.results = []
 
-    const enabledTests = Array.from(this.tests.values()).filter((test) => {
+    const enabledTests = Array.from(this.tests.values()).filter(test => {
       if (!test.enabled) return false
       if (this.config.disabledTests.includes(test.id)) return false
       if (this.config.enabledTests.includes('*')) return true
@@ -300,7 +300,7 @@ export class HealthcareSecurityTestFramework {
     const batchSize = this.config.parallelTests
     for (let i = 0; i < enabledTests.length; i += batchSize) {
       const batch = enabledTests.slice(i, i + batchSize)
-      const batchPromises = batch.map((test) => this.runSingleTest(test, context))
+      const batchPromises = batch.map(test => this.runSingleTest(test, context))
       const batchResults = await Promise.allSettled(batchPromises)
 
       batchResults.forEach((result, index) => {
@@ -790,13 +790,13 @@ export class HealthcareSecurityTestFramework {
       results: this.results,
       summary: {
         totalTests: this.results.length,
-        passedTests: this.results.filter((r) => r.passed).length,
-        failedTests: this.results.filter((r) => !r.passed).length,
-        averageScore: this.results.reduce((sum, _r) => sum + r.score, 0)
-          / this.results.length,
+        passedTests: this.results.filter(r => r.passed).length,
+        failedTests: this.results.filter(r => !r.passed).length,
+        averageScore: this.results.reduce((sum, _r) => sum + r.score, 0) /
+          this.results.length,
         criticalIssues: this.results
-          .flatMap((r) => r.issues)
-          .filter((i) => i.severity === 'CRITICAL').length,
+          .flatMap(r => r.issues)
+          .filter(i => i.severity === 'CRITICAL').length,
       },
     }
 

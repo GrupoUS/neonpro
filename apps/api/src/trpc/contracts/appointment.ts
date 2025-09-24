@@ -379,8 +379,8 @@ export const appointmentRouter = router({
 
       // Check if status change is valid
       if (
-        input.status
-        && !isValidStatusTransition(currentAppointment.status, input.status)
+        input.status &&
+        !isValidStatusTransition(currentAppointment.status, input.status)
       ) {
         throw new HealthcareTRPCError(
           'BAD_REQUEST',
@@ -395,8 +395,8 @@ export const appointmentRouter = router({
 
       // Handle rescheduling conflicts
       if (
-        input.scheduledDate
-        && input.scheduledDate !== currentAppointment.scheduledDate.toISOString()
+        input.scheduledDate &&
+        input.scheduledDate !== currentAppointment.scheduledDate.toISOString()
       ) {
         await checkRescheduleConflicts(
           input.id,
@@ -413,8 +413,8 @@ export const appointmentRouter = router({
           ...input,
           ...(input.scheduledDate && {
             endDate: new Date(
-              new Date(input.scheduledDate).getTime()
-                + (input.duration || currentAppointment.duration) * 60000,
+              new Date(input.scheduledDate).getTime() +
+                (input.duration || currentAppointment.duration) * 60000,
             ),
           }),
           updatedAt: new Date(),
@@ -628,11 +628,11 @@ async function handleStatusChange(
 
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {}
-  Object.keys(input).forEach((key) => {
+  Object.keys(input).forEach(key => {
     if (
-      key !== 'id'
-      && input[key] !== undefined
-      && input[key] !== current[key]
+      key !== 'id' &&
+      input[key] !== undefined &&
+      input[key] !== current[key]
     ) {
       changes[key] = {
         from: current[key],

@@ -2,7 +2,7 @@ import { validateCPF } from './src/schemas/healthcare-validation-schemas'
 
 const testInputs = [undefined, null, '', '123', '1234567890', '12345678901', '11111111111']
 
-testInputs.forEach((input) => {
+testInputs.forEach(input => {
   try {
     console.warn(`\nInput: ${input} (${typeof input})`)
     const result = validateCPF(input as string)

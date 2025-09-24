@@ -205,7 +205,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
       expect(response.body.summary.failed).toBe(0)
 
       // Verify individual results
-      response.body.results.forEach((result) => {
+      response.body.results.forEach(result => {
         expect(result.status).toBe('success')
         expect(result.data.status).toBe('inactive')
       })
@@ -241,7 +241,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
 
       // Check that the failed result contains error details
       const failedResult = response.body.results.find(
-        (r) => r.status === 'error',
+        r => r.status === 'error',
       )
       expect(failedResult).toBeDefined()
       expect(failedResult.error).toContain('not found')
@@ -272,7 +272,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
 
       expect(response.body.summary.successful).toBe(2)
 
-      response.body.results.forEach((result) => {
+      response.body.results.forEach(result => {
         expect(result.status).toBe('success')
         expect(result.data.emergencyContact.name).toBe(
           'Updated Emergency Contact',
@@ -303,7 +303,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
 
       expect(response.body.summary.successful).toBe(3)
 
-      response.body.results.forEach((result) => {
+      response.body.results.forEach(result => {
         expect(result.status).toBe('success')
         expect(result.data.lgpdConsent.marketingCommunications).toBe(true)
         expect(result.data.lgpdConsent.thirdPartySharing).toBe(false)
@@ -378,7 +378,7 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
 
       expect(response.body.summary.totalRequested).toBe(2)
       // In validation mode, no actual changes are made
-      response.body.results.forEach((result) => {
+      response.body.results.forEach(result => {
         expect(result.status).toBe('success')
         expect(result.data).toBeUndefined() // No actual data changes
       })

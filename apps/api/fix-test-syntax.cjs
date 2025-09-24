@@ -24,7 +24,7 @@ class TestFileSyntaxFixer {
   // Find all test files recursively
   findTestFiles(dir) {
     const testFiles = []
-    const scanDirectory = (currentDir) => {
+    const scanDirectory = currentDir => {
       if (!fs.existsSync(currentDir)) return
 
       const entries = fs.readdirSync(currentDir, { withFileTypes: true })
@@ -33,10 +33,10 @@ class TestFileSyntaxFixer {
         const fullPath = path.join(currentDir, entry.name)
 
         if (
-          entry.isDirectory()
-          && !entry.name.startsWith('.')
-          && entry.name !== 'node_modules'
-          && entry.name !== 'dist'
+          entry.isDirectory() &&
+          !entry.name.startsWith('.') &&
+          entry.name !== 'node_modules' &&
+          entry.name !== 'dist'
         ) {
           scanDirectory(fullPath)
         } else if (entry.isFile() && this.isTestFile(entry.name)) {
@@ -168,31 +168,31 @@ class TestFileSyntaxFixer {
 
       // Add semicolon to lines that need them but don't have them
       if (
-        line
-        && !line.endsWith(';')
-        && !line.endsWith('{')
-        && !line.endsWith('}')
-        && !line.includes('return ')
-        && !line.includes('if ')
-        && !line.includes('for ')
-        && !line.includes('while ')
-        && !line.includes('switch ')
-        && !line.includes('function ')
-        && !line.includes('class ')
-        && !line.includes('import ')
-        && !line.includes('export ')
-        && !line.includes('const ')
-        && !line.includes('let ')
-        && !line.includes('var ')
+        line &&
+        !line.endsWith(';') &&
+        !line.endsWith('{') &&
+        !line.endsWith('}') &&
+        !line.includes('return ') &&
+        !line.includes('if ') &&
+        !line.includes('for ') &&
+        !line.includes('while ') &&
+        !line.includes('switch ') &&
+        !line.includes('function ') &&
+        !line.includes('class ') &&
+        !line.includes('import ') &&
+        !line.includes('export ') &&
+        !line.includes('const ') &&
+        !line.includes('let ') &&
+        !line.includes('var ')
       ) {
         // Check if it's an expression that needs a semicolon
         if (
-          line.includes('expect(')
-          || line.includes('mock(')
-          || line.includes('vi.fn')
-          || line.includes('.toBe')
-          || line.includes('.toEqual')
-          || line.includes('.toHaveBeenCalled')
+          line.includes('expect(') ||
+          line.includes('mock(') ||
+          line.includes('vi.fn') ||
+          line.includes('.toBe') ||
+          line.includes('.toEqual') ||
+          line.includes('.toHaveBeenCalled')
         ) {
           lines[i] = line + ';'
         }
@@ -242,7 +242,7 @@ class TestFileSyntaxFixer {
 
     if (this.errors.length > 0) {
       console.log('\nErrors:')
-      this.errors.forEach((err) => {
+      this.errors.forEach(err => {
         console.log(`  ${err.file}: ${err.error}`)
       })
     }

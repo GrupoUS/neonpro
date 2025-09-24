@@ -93,9 +93,9 @@ export class AuditLogger {
 
     // Initialize Supabase client if database logging is enabled
     if (
-      this.options.enableDatabaseLogging
-      && this.options.supabaseUrl
-      && this.options.supabaseKey
+      this.options.enableDatabaseLogging &&
+      this.options.supabaseUrl &&
+      this.options.supabaseKey
     ) {
       this.supabase = createClient<LocalDatabase>(
         this.options.supabaseUrl,

@@ -91,7 +91,7 @@ export async function migrateData(): Promise<void> {
   } catch (error) {
     const { getLogger } = await import('@neonpro/core-services')
     const logger = getLogger()
-    logger.error('Data migration error', { component: 'migration' }, error)
+    logger.error('Data migration error', { component: 'migration' }, error as Error)
     throw error
   }
 }
@@ -165,7 +165,7 @@ export async function backupData(): Promise<string> {
   } catch (error) {
     const { getLogger } = await import('@neonpro/core-services')
     const logger = getLogger()
-    logger.error('Backup error', { component: 'migration', action: 'backup' }, error)
+    logger.error('Backup error', { component: 'migration', action: 'backup' }, error as Error)
     throw error
   }
 }
@@ -203,7 +203,7 @@ async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
     logger.error('Error ensuring migrations table', {
       component: 'migration',
       action: 'ensure_table',
-    }, error)
+    }, error as Error)
     throw error
   }
 }
@@ -223,7 +223,7 @@ async function getCurrentSchemaVersion(prisma: PrismaClient): Promise<string> {
     logger.error('Error getting current schema version', {
       component: 'migration',
       action: 'get_version',
-    }, error)
+    }, error as Error)
     return '0.0.0'
   }
 }
@@ -252,7 +252,7 @@ async function recordMigration(
     logger.error('Error recording migration', {
       component: 'migration',
       action: 'record_migration',
-    }, error)
+    }, error as Error)
     throw error
   }
 }

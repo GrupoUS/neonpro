@@ -401,7 +401,7 @@ export class HealthcareDataClassificationUtils {
 
     // Check compliance standards
     const missingStandards = mapping.requiredStandards.filter(
-      (std) => !requiredStandards.includes(std),
+      std => !requiredStandards.includes(std),
     )
     if (missingStandards.length > 0) {
       violations.push(
@@ -411,8 +411,8 @@ export class HealthcareDataClassificationUtils {
 
     // Recommendations based on classification
     if (
-      classification === HealthcareDataClassification.PATIENT_SENSITIVE
-      || classification === HealthcareDataClassification.MEDICAL_RECORDS
+      classification === HealthcareDataClassification.PATIENT_SENSITIVE ||
+      classification === HealthcareDataClassification.MEDICAL_RECORDS
     ) {
       recommendations.push(
         'Consider implementing additional encryption for sensitive data',

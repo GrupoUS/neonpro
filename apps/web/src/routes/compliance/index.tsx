@@ -244,7 +244,7 @@ function ComplianceDashboard() {
 
         <nav className='mt-8 px-2'>
           <div className='space-y-1'>
-            {menuItems.map((item) => (
+            {menuItems.map(item => (
               <Link
                 key={item.label}
                 to={item.href}

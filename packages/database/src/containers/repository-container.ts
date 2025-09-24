@@ -1,10 +1,7 @@
 import {
-  AppointmentRepository,
   AuditDomainService,
   ConsentDomainService,
-  ConsentRepository,
   MedicalLicenseDomainService,
-  PatientRepository,
 } from '@neonpro/domain'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { AppointmentRepository } from '../repositories/appointment-repository.js'

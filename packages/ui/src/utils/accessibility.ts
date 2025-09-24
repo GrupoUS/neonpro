@@ -45,8 +45,8 @@ export function announceToScreenReader(
   delay: number = 100,
 ): void {
   // Use assertive for emergency/high priority, polite for others
-  const liveType: AriaLiveType = priority === HealthcarePriority.EMERGENCY
-      || priority === HealthcarePriority.HIGH
+  const liveType: AriaLiveType = priority === HealthcarePriority.EMERGENCY ||
+      priority === HealthcarePriority.HIGH
     ? 'assertive'
     : 'polite'
 
@@ -296,7 +296,7 @@ export function validateColorContrast(
   }
 
   function getLuminance(r: number, g: number, b: number) {
-    const [rs, gs, bs] = [r, g, b].map((c) => {
+    const [rs, gs, bs] = [r, g, b].map(c => {
       c = c / 255
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
     })
@@ -309,8 +309,8 @@ export function validateColorContrast(
   const fgLuminance = getLuminance(fg.r, fg.g, fg.b)
   const bgLuminance = getLuminance(bg.r, bg.g, bg.b)
 
-  const ratio = (Math.max(fgLuminance, bgLuminance) + 0.05)
-    / (Math.min(fgLuminance, bgLuminance) + 0.05)
+  const ratio = (Math.max(fgLuminance, bgLuminance) + 0.05) /
+    (Math.min(fgLuminance, bgLuminance) + 0.05)
 
   const minimumRatios = {
     [WCAGLevel.A]: 3,
@@ -340,8 +340,8 @@ export function createAccessibleErrorMessage(
   errorContainer.className = 'healthcare-error-message text-sm text-destructive mt-1'
   errorContainer.setAttribute(
     'aria-live',
-    priority === HealthcarePriority.HIGH
-      || priority === HealthcarePriority.EMERGENCY
+    priority === HealthcarePriority.HIGH ||
+      priority === HealthcarePriority.EMERGENCY
       ? 'assertive'
       : 'polite',
   )
@@ -426,24 +426,26 @@ export function createScreenReaderDescription(
 ): string {
   const descriptions = {
     patient: (data: Record<string, unknown>) =>
-      `Paciente: ${data.name || 'Nome não informado'}. `
-      + `Idade: ${data.age || 'Não informada'}. `
-      + `Prontuário: ${data.medicalRecord || 'Não informado'}.`,
+      `Paciente: ${data.name || 'Nome não informado'}. ` +
+      `Idade: ${data.age || 'Não informada'}. ` +
+      `Prontuário: ${data.medicalRecord || 'Não informado'}.`,
 
     appointment: (data: Record<string, unknown>) =>
-      `Consulta: ${data.date || 'Data não informada'} às ${data.time || 'Horário não informado'}. `
-      + `Especialidade: ${data.specialty || 'Não informada'}. `
-      + `Status: ${data.status || 'Não informado'}.`,
+      `Consulta: ${data.date || 'Data não informada'} às ${
+        data.time || 'Horário não informado'
+      }. ` +
+      `Especialidade: ${data.specialty || 'Não informada'}. ` +
+      `Status: ${data.status || 'Não informado'}.`,
 
     medication: (data: Record<string, unknown>) =>
-      `Medicamento: ${data.name || 'Nome não informado'}. `
-      + `Dosagem: ${data.dosage || 'Não informada'}. `
-      + `Frequência: ${data.frequency || 'Não informada'}.`,
+      `Medicamento: ${data.name || 'Nome não informado'}. ` +
+      `Dosagem: ${data.dosage || 'Não informada'}. ` +
+      `Frequência: ${data.frequency || 'Não informada'}.`,
 
     result: (data: Record<string, unknown>) =>
-      `Exame: ${data.type || 'Tipo não informado'}. `
-      + `Data: ${data.date || 'Data não informada'}. `
-      + `Status: ${data.status || 'Status não informado'}.`,
+      `Exame: ${data.type || 'Tipo não informado'}. ` +
+      `Data: ${data.date || 'Data não informada'}. ` +
+      `Status: ${data.status || 'Status não informado'}.`,
   }
 
   return descriptions[type](data)
@@ -456,8 +458,8 @@ export function useHighContrastMode() {
   const getHighContrastPreference = () => {
     if (typeof window === 'undefined') return false
     return (
-      window.matchMedia('(prefers-contrast: high)').matches
-      || localStorage.getItem('healthcare-high-contrast') === 'true'
+      window.matchMedia('(prefers-contrast: high)').matches ||
+      localStorage.getItem('healthcare-high-contrast') === 'true'
     )
   }
 

@@ -788,15 +788,15 @@ export class APIRateLimitingService {
   private determineRateLimitTier(_context: RateLimitContext): RateLimitTier {
     // Emergency and patient safety requests get highest priority
     if (_context.healthcareContext?.emergencyFlag) {
-      return this.config.tiers.find((t) => t.name === 'emergency')!
+      return this.config.tiers.find(t => t.name === 'emergency')!
     }
 
     if (_context.healthcareContext?.patientSafetyFlag) {
-      return this.config.tiers.find((t) => t.name === 'critical')!
+      return this.config.tiers.find(t => t.name === 'critical')!
     }
 
     if (_context.healthcareContext?.criticalSystemFlag) {
-      return this.config.tiers.find((t) => t.name === 'critical')!
+      return this.config.tiers.find(t => t.name === 'critical')!
     }
 
     // Map request category to priority
@@ -834,8 +834,8 @@ export class APIRateLimitingService {
     const priority = _context.priority || categoryPriorityMap[_context.category] || 'normal'
 
     // Find tier matching priority
-    const tier = this.config.tiers.find((t) => t.priority === priority)
-    return tier || this.config.tiers.find((t) => t.name === 'normal')!
+    const tier = this.config.tiers.find(t => t.priority === priority)
+    return tier || this.config.tiers.find(t => t.name === 'normal')!
   }
 
   /**
@@ -854,8 +854,8 @@ export class APIRateLimitingService {
 
     // Add facility ID for facility-based limits
     if (
-      this.config.healthcareConfig.facilityBasedLimits
-      && _context.healthcareContext?.facilityId
+      this.config.healthcareConfig.facilityBasedLimits &&
+      _context.healthcareContext?.facilityId
     ) {
       parts.push(_context.healthcareContext?.facilityId)
     }
@@ -882,15 +882,15 @@ export class APIRateLimitingService {
       bypassReason = 'Emergency request bypass'
     } // Patient safety bypass
     else if (
-      tier.patientSafetyBypass
-      && _context.healthcareContext?.patientSafetyFlag
+      tier.patientSafetyBypass &&
+      _context.healthcareContext?.patientSafetyFlag
     ) {
       bypassApplied = true
       bypassReason = 'Patient safety bypass'
     } // Critical system bypass
     else if (
-      this.config.healthcareConfig.criticalSystemBypass
-      && _context.healthcareContext?.criticalSystemFlag
+      this.config.healthcareConfig.criticalSystemBypass &&
+      _context.healthcareContext?.criticalSystemFlag
     ) {
       bypassApplied = true
       bypassReason = 'Critical system bypass'
@@ -925,9 +925,9 @@ export class APIRateLimitingService {
     result: RateLimitResult,
   ): Promise<void> {
     // Only log violations and bypasses unless configured otherwise
-    const shouldLog = !result.allowed
-      || result.bypassApplied
-      || this.config.audit.logAllRequests
+    const shouldLog = !result.allowed ||
+      result.bypassApplied ||
+      this.config.audit.logAllRequests
 
     if (!shouldLog) return
 
@@ -1063,7 +1063,7 @@ export class APIRateLimitingService {
    * Reset rate limit for specific key
    */
   async resetRateLimit(clientId: string, tier?: string): Promise<void> {
-    const tiersToReset = tier ? [tier] : this.config.tiers.map((t) => t.name)
+    const tiersToReset = tier ? [tier] : this.config.tiers.map(t => t.name)
 
     for (const tierName of tiersToReset) {
       const algorithm = this.algorithms.get(tierName)

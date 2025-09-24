@@ -79,10 +79,10 @@ export const ScreenReaderAnnouncer: React.FC<AnnouncerProps> = ({
     const id = Math.random().toString(36).substr(2, 9)
     const announcement = { id, message, priority }
 
-    setAnnouncements((prev) => [...prev, announcement])
+    setAnnouncements(prev => [...prev, announcement])
 
     const timer = setTimeout(() => {
-      setAnnouncements((prev) => prev.filter((a) => a.id !== id))
+      setAnnouncements(prev => prev.filter(a => a.id !== id))
     }, timeout)
 
     return () => clearTimeout(timer)
@@ -90,7 +90,7 @@ export const ScreenReaderAnnouncer: React.FC<AnnouncerProps> = ({
 
   return (
     <div className='sr-only' aria-live={priority} aria-atomic='true'>
-      {announcements.map((a) => a.message).join('. ')}
+      {announcements.map(a => a.message).join('. ')}
     </div>
   )
 }
@@ -215,7 +215,7 @@ export const AccessibilitySettingsPanel: React.FC = () => {
     key: K,
     value: AccessibilitySettings[K],
   ) => {
-    setSettings((prev) => ({ ...prev, [key]: value }))
+    setSettings(prev => ({ ...prev, [key]: value }))
 
     // Apply settings to document using utility functions
     if (key === 'highContrast') {
@@ -334,7 +334,7 @@ export const AccessibilitySettingsPanel: React.FC = () => {
           <div className='space-y-2'>
             <label className='text-sm font-medium'>Tamanho do Texto</label>
             <div className='flex gap-2'>
-              {(Object.keys(FONT_SIZE_MAP) as FontSize[]).map((size) => (
+              {(Object.keys(FONT_SIZE_MAP) as FontSize[]).map(size => (
                 <Button
                   key={size}
                   variant={settings.fontSize === size ? 'default' : 'outline'}
@@ -677,7 +677,7 @@ export const SkipLinks: React.FC = () => {
         <a
           href='#main-content'
           className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
-          onClick={(e) => {
+          onClick={e => {
             e.preventDefault()
             document.getElementById('main-content')?.focus()
           }}
@@ -687,7 +687,7 @@ export const SkipLinks: React.FC = () => {
         <a
           href='#navigation'
           className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
-          onClick={(e) => {
+          onClick={e => {
             e.preventDefault()
             document.getElementById('navigation')?.focus()
           }}
@@ -697,7 +697,7 @@ export const SkipLinks: React.FC = () => {
         <a
           href='#search'
           className='px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700'
-          onClick={(e) => {
+          onClick={e => {
             e.preventDefault()
             document.getElementById('search')?.focus()
           }}

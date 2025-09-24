@@ -147,8 +147,8 @@ export class PredictiveClientAnalyticsService {
       }
 
       // Extract features
-      const features = message.features
-        || (await this.extractFeatures(message.clientId, clientData))
+      const features = message.features ||
+        (await this.extractFeatures(message.clientId, clientData))
 
       // Generate prediction
       const prediction = await this.generateRetentionPrediction(
@@ -257,7 +257,7 @@ export class PredictiveClientAnalyticsService {
       for (let i = 0; i < clients.length; i += batchSize) {
         const batch = clients.slice(i, i + batchSize)
 
-        const batchPromises = batch.map(async (client) => {
+        const batchPromises = batch.map(async client => {
           try {
             const result = await this.predictClientRetention({
               clientId: client.id,
@@ -361,22 +361,22 @@ export class PredictiveClientAnalyticsService {
   ): RetentionFeatures['AppointmentHistory'] {
     const totalAppointments = appointments.length
     const noShowCount = appointments.filter(
-      (apt) => apt.status === 'NO_SHOW',
+      apt => apt.status === 'NO_SHOW',
     ).length
     const cancellationCount = appointments.filter(
-      (apt) => apt.status === 'CANCELLED',
+      apt => apt.status === 'CANCELLED',
     ).length
     const rescheduleCount = appointments.filter(
-      (apt) => apt.status === 'RESCHEDULED',
+      apt => apt.status === 'RESCHEDULED',
     ).length
 
     // Calculate time between appointments
     const sortedAppointments = appointments
-      .filter((apt) => apt.status === 'COMPLETED')
+      .filter(apt => apt.status === 'COMPLETED')
       .sort(
         (a, b) =>
-          new Date(a.scheduled_date).getTime()
-          - new Date(b.scheduled_date).getTime(),
+          new Date(a.scheduled_date).getTime() -
+          new Date(b.scheduled_date).getTime(),
       )
 
     let timeBetweenAppointments = 0
@@ -384,21 +384,21 @@ export class PredictiveClientAnalyticsService {
       const intervals = []
       for (let i = 1; i < sortedAppointments.length; i++) {
         const days = Math.abs(
-          (new Date(sortedAppointments[i].scheduled_date).getTime()
-            - new Date(sortedAppointments[i - 1].scheduled_date).getTime())
-            / (1000 * 60 * 60 * 24),
+          (new Date(sortedAppointments[i].scheduled_date).getTime() -
+            new Date(sortedAppointments[i - 1].scheduled_date).getTime()) /
+            (1000 * 60 * 60 * 24),
         )
         intervals.push(days)
       }
-      timeBetweenAppointments = intervals.reduce((sum, interval) => sum + interval, 0)
-        / intervals.length
+      timeBetweenAppointments = intervals.reduce((sum, interval) => sum + interval, 0) /
+        intervals.length
     }
 
     const lastAppointment = sortedAppointments[sortedAppointments.length - 1]
     const nextAppointment = appointments.find(
-      (apt) =>
-        new Date(apt.scheduled_date) > new Date()
-        && ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
+      apt =>
+        new Date(apt.scheduled_date) > new Date() &&
+        ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
     )
 
     return {
@@ -466,19 +466,19 @@ export class PredictiveClientAnalyticsService {
     appointments: any[],
   ): RetentionFeatures['TreatmentProgress'] {
     const completedTreatments = appointments.filter(
-      (apt) => apt.status === 'COMPLETED',
+      apt => apt.status === 'COMPLETED',
     ).length
     const scheduledTreatments =
-      appointments.filter((apt) => ['SCHEDULED', 'CONFIRMED'].includes(apt.status)).length
+      appointments.filter(apt => ['SCHEDULED', 'CONFIRMED'].includes(apt.status)).length
 
-    const treatmentPlanAdherence = completedTreatments
-      / Math.max(1, completedTreatments + scheduledTreatments)
+    const treatmentPlanAdherence = completedTreatments /
+      Math.max(1, completedTreatments + scheduledTreatments)
 
     return {
       completedTreatments,
       scheduledTreatments,
       treatmentPlanAdherence,
-      lastTreatmentDate: appointments.find((apt) => apt.status === 'COMPLETED')
+      lastTreatmentDate: appointments.find(apt => apt.status === 'COMPLETED')
         ?.scheduled_date,
     }
   }
@@ -524,11 +524,11 @@ export class PredictiveClientAnalyticsService {
       demographic: 0.1,
     }
 
-    const riskScore = appointmentRisk.score * weights.appointment
-      + communicationRisk.score * weights.communication
-      + paymentRisk.score * weights.payment
-      + treatmentRisk.score * weights.treatment
-      + demographicRisk.score * weights.demographic
+    const riskScore = appointmentRisk.score * weights.appointment +
+      communicationRisk.score * weights.communication +
+      paymentRisk.score * weights.payment +
+      treatmentRisk.score * weights.treatment +
+      demographicRisk.score * weights.demographic
 
     // Determine risk level
     let riskLevel: 'low' | 'medium' | 'high'
@@ -704,9 +704,9 @@ export class PredictiveClientAnalyticsService {
     // Recent activity = higher confidence
     if (features.appointmentHistory.lastAppointmentDate) {
       const daysSinceLastAppointment = Math.abs(
-        (new Date().getTime()
-          - new Date(features.appointmentHistory.lastAppointmentDate).getTime())
-          / (1000 * 60 * 60 * 24),
+        (new Date().getTime() -
+          new Date(features.appointmentHistory.lastAppointmentDate).getTime()) /
+          (1000 * 60 * 60 * 24),
       )
       if (daysSinceLastAppointment < 30) confidence += 0.2
       else if (daysSinceLastAppointment < 90) confidence += 0.1
@@ -720,11 +720,11 @@ export class PredictiveClientAnalyticsService {
   ): 'improving' | 'stable' | 'declining' {
     // This would analyze historical patterns
     // For now, we'll use simple heuristics
-    const hasRecentAppointment = features.appointmentHistory.lastAppointmentDate
-      && Math.abs(
-          (new Date().getTime()
-            - new Date(features.appointmentHistory.lastAppointmentDate).getTime())
-            / (1000 * 60 * 60 * 24),
+    const hasRecentAppointment = features.appointmentHistory.lastAppointmentDate &&
+      Math.abs(
+          (new Date().getTime() -
+            new Date(features.appointmentHistory.lastAppointmentDate).getTime()) /
+            (1000 * 60 * 60 * 24),
         ) < 30
 
     const hasUpcomingAppointment = !!features.appointmentHistory.nextAppointmentDate
@@ -775,7 +775,7 @@ export class PredictiveClientAnalyticsService {
       })
 
       const appointmentFactor = factors.find(
-        (f) => f.factor === 'appointment_history',
+        f => f.factor === 'appointment_history',
       )
       if (appointmentFactor && appointmentFactor.impact === 'negative') {
         recommendations.push({
@@ -864,13 +864,13 @@ export class PredictiveClientAnalyticsService {
 
     const totalAppointments = appointments.length
     const noShowCount = appointments.filter(
-      (apt) => apt.status === 'NO_SHOW',
+      apt => apt.status === 'NO_SHOW',
     ).length
     const cancellationCount = appointments.filter(
-      (apt) => apt.status === 'CANCELLED',
+      apt => apt.status === 'CANCELLED',
     ).length
     const rescheduleCount = appointments.filter(
-      (apt) => apt.status === 'RESCHEDULED',
+      apt => apt.status === 'RESCHEDULED',
     ).length
 
     // Calculate frequency (appointments per month)
@@ -880,8 +880,8 @@ export class PredictiveClientAnalyticsService {
     const lastAppointment = new Date(appointments[0].scheduled_date)
     const monthsDiff = Math.max(
       1,
-      (lastAppointment.getTime() - firstAppointment.getTime())
-        / (1000 * 60 * 60 * 24 * 30),
+      (lastAppointment.getTime() - firstAppointment.getTime()) /
+        (1000 * 60 * 60 * 24 * 30),
     )
     const appointmentFrequency = totalAppointments / monthsDiff
 
@@ -895,12 +895,12 @@ export class PredictiveClientAnalyticsService {
       averageResponseTime: 2.4, // Simulated
       communicationPreference: 'whatsapp',
       lastAppointmentDate: appointments.find(
-        (apt) => apt.status === 'COMPLETED',
+        apt => apt.status === 'COMPLETED',
       )?.scheduled_date,
       nextAppointmentDate: appointments.find(
-        (apt) =>
-          new Date(apt.scheduled_date) > new Date()
-          && ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
+        apt =>
+          new Date(apt.scheduled_date) > new Date() &&
+          ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
       )?.scheduled_date,
       engagementScore: Math.max(
         0,
@@ -954,10 +954,10 @@ export class PredictiveClientAnalyticsService {
     }
 
     const completedSessions = appointments.filter(
-      (apt) => apt.status === 'COMPLETED',
+      apt => apt.status === 'COMPLETED',
     ).length
     const scheduledSessions =
-      appointments.filter((apt) => ['SCHEDULED', 'CONFIRMED'].includes(apt.status)).length
+      appointments.filter(apt => ['SCHEDULED', 'CONFIRMED'].includes(apt.status)).length
     const totalSessions = appointments.length
 
     return {
@@ -970,12 +970,12 @@ export class PredictiveClientAnalyticsService {
       progressScore: (completedSessions / Math.max(1, totalSessions)) * 100,
       treatmentEfficacy: 0.85, // Simulated
       riskFactors: [],
-      lastTreatmentDate: appointments.find((apt) => apt.status === 'COMPLETED')
+      lastTreatmentDate: appointments.find(apt => apt.status === 'COMPLETED')
         ?.scheduled_date,
       nextTreatmentDate: appointments.find(
-        (apt) =>
-          new Date(apt.scheduled_date) > new Date()
-          && ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
+        apt =>
+          new Date(apt.scheduled_date) > new Date() &&
+          ['SCHEDULED', 'CONFIRMED'].includes(apt.status),
       )?.scheduled_date,
       dropoutRisk: 0.15, // Simulated
     }
@@ -1018,13 +1018,13 @@ export class PredictiveClientAnalyticsService {
   ): AnalyticsSummary {
     const totalClients = predictions.length
     const highRiskClients = predictions.filter(
-      (p) => p.riskLevel === 'high',
+      p => p.riskLevel === 'high',
     ).length
     const mediumRiskClients = predictions.filter(
-      (p) => p.riskLevel === 'medium',
+      p => p.riskLevel === 'medium',
     ).length
     const lowRiskClients = predictions.filter(
-      (p) => p.riskLevel === 'low',
+      p => p.riskLevel === 'low',
     ).length
 
     const averageRiskScore = predictions.reduce((sum, p) => sum + p.riskScore, 0) / totalClients
@@ -1036,8 +1036,8 @@ export class PredictiveClientAnalyticsService {
       string,
       { count: number; totalImpact: number }
     >()
-    predictions.forEach((prediction) => {
-      prediction.factors.forEach((factor) => {
+    predictions.forEach(prediction => {
+      prediction.factors.forEach(factor => {
         if (factor.impact === 'negative') {
           const current = factorFrequency.get(factor.factor) || {
             count: 0,
@@ -1156,8 +1156,8 @@ export class PredictiveClientAnalyticsService {
     const monthDiff = today.getMonth() - birth.getMonth()
 
     if (
-      monthDiff < 0
-      || (monthDiff === 0 && today.getDate() < birth.getDate())
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--
     }
@@ -1184,7 +1184,7 @@ export class PredictiveClientAnalyticsService {
       ])
 
       const passedChecks = checks.filter(
-        (check) => check.status === 'fulfilled' && check.value,
+        check => check.status === 'fulfilled' && check.value,
       ).length
       const totalChecks = checks.length
 

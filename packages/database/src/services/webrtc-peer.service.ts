@@ -301,7 +301,7 @@ export class WebRTCPeerManager {
 
       // Add tracks to peer connection
       if (this.peerConnection) {
-        this.localStream.getTracks().forEach((track) => {
+        this.localStream.getTracks().forEach(track => {
           this.peerConnection!.addTrack(track, this.localStream!)
         })
       }
@@ -506,20 +506,20 @@ export class WebRTCPeerManager {
       let rtt = 0
       let bandwidth = 0
 
-      stats.forEach((report) => {
+      stats.forEach(report => {
         if (report.type === 'inbound-rtp') {
           packetsLost += report.packetsLost || 0
           jitter += report.jitter || 0
         } else if (
-          report.type === 'candidate-pair'
-          && report.state === 'succeeded'
+          report.type === 'candidate-pair' &&
+          report.state === 'succeeded'
         ) {
           rtt = report.currentRoundTripTime || 0
         } else if (report.type === 'outbound-rtp') {
           // Calculate bandwidth from bytes sent
           const bytesSent = report.bytesSent || 0
-          const duration = (Date.now() - (this.connectionStartTime?.getTime() || Date.now()))
-            / 1000
+          const duration = (Date.now() - (this.connectionStartTime?.getTime() || Date.now())) /
+            1000
           bandwidth = duration > 0 ? (bytesSent * 8) / duration : 0 // bits per second
         }
       })
@@ -545,8 +545,8 @@ export class WebRTCPeerManager {
    */
   private startRecording(): void {
     if (
-      !this.localStream
-      || !MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
+      !this.localStream ||
+      !MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
     ) {
       databaseLogger.warn('Recording not supported', {
         sessionId: this.config.sessionId,
@@ -665,7 +665,7 @@ export class WebRTCPeerManager {
    */
   public setAudioMuted(muted: boolean): void {
     if (this.localStream) {
-      this.localStream.getAudioTracks().forEach((track) => {
+      this.localStream.getAudioTracks().forEach(track => {
         track.enabled = !muted
       })
 
@@ -689,7 +689,7 @@ export class WebRTCPeerManager {
    */
   public setVideoEnabled(enabled: boolean): void {
     if (this.localStream) {
-      this.localStream.getVideoTracks().forEach((track) => {
+      this.localStream.getVideoTracks().forEach(track => {
         track.enabled = enabled
       })
 
@@ -737,7 +737,7 @@ export class WebRTCPeerManager {
   private emit(event: string, data: any): void {
     const callbacks = this.eventCallbacks.get(event)
     if (callbacks) {
-      callbacks.forEach((callback) => {
+      callbacks.forEach(callback => {
         try {
           callback(data)
         } catch (error) {
@@ -797,7 +797,7 @@ export class WebRTCPeerManager {
 
     // Stop local stream
     if (this.localStream) {
-      this.localStream.getTracks().forEach((track) => {
+      this.localStream.getTracks().forEach(track => {
         track.stop()
       })
     }

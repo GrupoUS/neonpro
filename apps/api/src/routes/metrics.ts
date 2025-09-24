@@ -34,7 +34,7 @@ const serverMetricSchema = z.object({
 metricsApi.post(
   '/web-vitals',
   zValidator('json', webVitalSchema),
-  async (c) => {
+  async c => {
     const metric = c.req.valid('json')
 
     // Store metric
@@ -56,7 +56,7 @@ metricsApi.post(
 metricsApi.post(
   '/server',
   zValidator('json', serverMetricSchema),
-  async (c) => {
+  async c => {
     const metric = c.req.valid('json')
 
     metrics.serverMetrics.push({
@@ -73,17 +73,17 @@ metricsApi.post(
 )
 
 // Get performance dashboard data
-metricsApi.get('/dashboard', async (c) => {
+metricsApi.get('/dashboard', async c => {
   const now = Date.now()
   const last24Hours = now - 24 * 60 * 60 * 1000
   // const last1Hour = now - (60 * 60 * 1000); // unused
 
   // Filter recent metrics
   const recentWebVitals = metrics.webVitals.filter(
-    (m) => m.timestamp > last24Hours,
+    m => m.timestamp > last24Hours,
   )
   const recentServerMetrics = metrics.serverMetrics.filter(
-    (m) => m.timestamp > last24Hours,
+    m => m.timestamp > last24Hours,
   )
 
   // Calculate Core Web Vitals averages
@@ -111,12 +111,12 @@ metricsApi.get('/dashboard', async (c) => {
 
   // Calculate server metrics
   const coldStarts = recentServerMetrics
-    .filter((m) => m.type === 'cold-start')
-    .map((m) => m.value)
+    .filter(m => m.type === 'cold-start')
+    .map(m => m.value)
 
   const executionTimes = recentServerMetrics
-    .filter((m) => m.type === 'execution-time')
-    .map((m) => m.value)
+    .filter(m => m.type === 'execution-time')
+    .map(m => m.value)
 
   const dashboard = {
     timestamp: now,
@@ -140,8 +140,8 @@ metricsApi.get('/dashboard', async (c) => {
     alerts: generateAlerts(webVitalsAverages, recentServerMetrics),
 
     summary: {
-      totalSessions: new Set(recentWebVitals.map((m) => m.sessionId)).size,
-      totalPageViews: recentWebVitals.filter((m) => m.name === 'FCP').length,
+      totalSessions: new Set(recentWebVitals.map(m => m.sessionId)).size,
+      totalPageViews: recentWebVitals.filter(m => m.name === 'FCP').length,
       averageRating: calculateAverageRating(recentWebVitals),
     },
   }
@@ -150,13 +150,13 @@ metricsApi.get('/dashboard', async (c) => {
 })
 
 // Get real-time metrics (last 5 minutes)
-metricsApi.get('/realtime', async (c) => {
+metricsApi.get('/realtime', async c => {
   const now = Date.now()
   const last5Minutes = now - 5 * 60 * 1000
 
   const recentMetrics = {
-    webVitals: metrics.webVitals.filter((m) => m.timestamp > last5Minutes),
-    server: metrics.serverMetrics.filter((m) => m.timestamp > last5Minutes),
+    webVitals: metrics.webVitals.filter(m => m.timestamp > last5Minutes),
+    server: metrics.serverMetrics.filter(m => m.timestamp > last5Minutes),
   }
 
   return c.json({
@@ -208,8 +208,8 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
   })
 
   // Server alerts
-  const coldStarts = serverMetrics.filter((m) => m.type === 'cold-start')
-  const avgColdStart = average(coldStarts.map((m) => m.value))
+  const coldStarts = serverMetrics.filter(m => m.type === 'cold-start')
+  const avgColdStart = average(coldStarts.map(m => m.value))
 
   if (avgColdStart > 1000) {
     alerts.push({

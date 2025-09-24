@@ -192,9 +192,9 @@ export class TokenManagementService {
         aud: 'refresh',
       }
 
-      const secret = process.env.JWT_REFRESH_SECRET
-        || process.env.JWT_SECRET
-        || 'refresh-secret'
+      const secret = process.env.JWT_REFRESH_SECRET ||
+        process.env.JWT_SECRET ||
+        'refresh-secret'
       const token = jwt.sign(payload, secret, { algorithm: 'HS256' })
 
       // Store refresh token hash
@@ -235,9 +235,9 @@ export class TokenManagementService {
       }
 
       // Validate refresh token
-      const secret = process.env.JWT_REFRESH_SECRET
-        || process.env.JWT_SECRET
-        || 'refresh-secret'
+      const secret = process.env.JWT_REFRESH_SECRET ||
+        process.env.JWT_SECRET ||
+        'refresh-secret'
       const payload = jwt.verify(refreshToken, secret) as any
 
       // Verify token binding to prevent theft

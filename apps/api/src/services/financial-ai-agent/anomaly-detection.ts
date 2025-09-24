@@ -324,7 +324,7 @@ export class AnomalyDetectionService {
       },
     ]
 
-    defaultRules.forEach((rule) => {
+    defaultRules.forEach(rule => {
       this.rules.set(rule.id, rule)
     })
   }
@@ -450,12 +450,12 @@ export class AnomalyDetectionService {
     }
 
     const amounts = historicalData
-      .filter((b) => b.paymentStatus === 'paid')
-      .map((b) => b.total)
+      .filter(b => b.paymentStatus === 'paid')
+      .map(b => b.total)
 
     const mean = amounts.reduce((sum, amount) => sum + amount, 0) / amounts.length
-    const variance = amounts.reduce((sum, amount) => sum + Math.pow(amount - mean, 2), 0)
-      / amounts.length
+    const variance = amounts.reduce((sum, amount) => sum + Math.pow(amount - mean, 2), 0) /
+      amounts.length
     const stdDev = Math.sqrt(variance)
 
     const zScore = Math.abs((billing.total - mean) / stdDev)
@@ -508,8 +508,8 @@ export class AnomalyDetectionService {
     }
 
     const amounts = historicalData
-      .filter((b) => b.paymentStatus === 'paid')
-      .map((b) => b.total)
+      .filter(b => b.paymentStatus === 'paid')
+      .map(b => b.total)
       .sort((a, b) => a - b)
 
     const q1Index = Math.floor(amounts.length * 0.25)
@@ -580,12 +580,12 @@ export class AnomalyDetectionService {
 
     if (isOutsideHours || isWeekend) {
       // Check if this is unusual for this entity
-      const similarBillings = historicalData.filter((b) =>
-        b.patientId === billing.patientId
-        || b.professionalId === billing.professionalId
+      const similarBillings = historicalData.filter(b =>
+        b.patientId === billing.patientId ||
+        b.professionalId === billing.professionalId
       )
 
-      const outsideHoursCount = similarBillings.filter((b) => {
+      const outsideHoursCount = similarBillings.filter(b => {
         const time = new Date(b.createdAt)
         const h = time.getHours()
         const dow = time.getDay()
@@ -687,8 +687,8 @@ export class AnomalyDetectionService {
     const dayOfWeek = billingTime.getDay()
 
     // Calculate historical statistics
-    const patientHistory = historicalData.filter((b) => b.patientId === billing.patientId)
-    const professionalHistory = historicalData.filter((b) =>
+    const patientHistory = historicalData.filter(b => b.patientId === billing.patientId)
+    const professionalHistory = historicalData.filter(b =>
       b.professionalId === billing.professionalId
     )
 
@@ -765,11 +765,11 @@ export class AnomalyDetectionService {
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
 
     const billingsLastHour = historicalData.filter(
-      (b) => new Date(b.createdAt) >= oneHourAgo,
+      b => new Date(b.createdAt) >= oneHourAgo,
     ).length
 
     const billingsLastDay = historicalData.filter(
-      (b) => new Date(b.createdAt) >= oneDayAgo,
+      b => new Date(b.createdAt) >= oneDayAgo,
     ).length
 
     if (billingsLastHour > this.ruleConfig.velocityThresholds.billingPerHour) {
@@ -842,7 +842,7 @@ export class AnomalyDetectionService {
     const timeWindow = this.ruleConfig.duplicateBillingDetection?.timeWindow || 24
     const cutoffDate = new Date(Date.now() - timeWindow * 60 * 60 * 1000)
 
-    const similarBillings = historicalData.filter((b) => {
+    const similarBillings = historicalData.filter(b => {
       if (new Date(b.createdAt) < cutoffDate) return false
       if (b.patientId !== billing.patientId) return false
       if (b.professionalId !== billing.professionalId) return false
@@ -874,7 +874,7 @@ export class AnomalyDetectionService {
           },
         ],
         metadata: {
-          similarBillings: similarBillings.map((b) => b.id),
+          similarBillings: similarBillings.map(b => b.id),
           timeWindow,
           similarityThreshold: 0.05,
         },
@@ -949,7 +949,7 @@ export class AnomalyDetectionService {
     )
 
     // Calculate weighted risk score
-    const validIndicators = indicators.filter((ind) => ind.triggered)
+    const validIndicators = indicators.filter(ind => ind.triggered)
     totalRiskScore = validIndicators.reduce(
       (sum, ind) => sum + (ind.weight * (ind.triggered ? 1 : 0)),
       0,
@@ -991,7 +991,7 @@ export class AnomalyDetectionService {
   ): FraudDetectionResult['indicators'][0] {
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
     const recentBillings = historicalData.filter(
-      (b) => b.patientId === billing.patientId && new Date(b.createdAt) >= oneDayAgo,
+      b => b.patientId === billing.patientId && new Date(b.createdAt) >= oneDayAgo,
     ).length
 
     return {
@@ -1010,7 +1010,7 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): FraudDetectionResult['indicators'][0] {
-    const patientHistory = historicalData.filter((b) => b.patientId === billing.patientId)
+    const patientHistory = historicalData.filter(b => b.patientId === billing.patientId)
     const avgAmount = patientHistory.length > 0
       ? patientHistory.reduce((sum, b) => sum + b.total, 0) / patientHistory.length
       : billing.total
@@ -1064,8 +1064,8 @@ export class AnomalyDetectionService {
     billing: Billing,
     historicalData: Billing[],
   ): FraudDetectionResult['indicators'][0] {
-    const patientHistory = historicalData.filter((b) => b.patientId === billing.patientId)
-    const overduePayments = patientHistory.filter((b) => b.paymentStatus === 'overdue').length
+    const patientHistory = historicalData.filter(b => b.patientId === billing.patientId)
+    const overduePayments = patientHistory.filter(b => b.paymentStatus === 'overdue').length
 
     return {
       indicator: 'Histórico de Pagamentos',
@@ -1083,11 +1083,11 @@ export class AnomalyDetectionService {
     indicators: FraudDetectionResult['indicators'],
     riskLevel: string,
   ): string {
-    const triggeredIndicators = indicators.filter((ind) => ind.triggered)
+    const triggeredIndicators = indicators.filter(ind => ind.triggered)
 
     if (triggeredIndicators.length === 0) return ''
 
-    const indicatorNames = triggeredIndicators.map((ind) => ind.indicator)
+    const indicatorNames = triggeredIndicators.map(ind => ind.indicator)
 
     return `Risco ${riskLevel} de fraude detectado. Indicadores acionados: ${
       indicatorNames.join(', ')
@@ -1151,7 +1151,7 @@ export class AnomalyDetectionService {
     patternType: 'billing_frequency',
     historicalData: Billing[],
   ): Promise<BehaviorPattern | null> {
-    const entityData = historicalData.filter((b) => {
+    const entityData = historicalData.filter(b => {
       if (entityType === 'patient') return b.patientId === entityId
       if (entityType === 'professional') return b.professionalId === entityId
       return false
@@ -1161,15 +1161,15 @@ export class AnomalyDetectionService {
 
     // Calculate billing frequency pattern
     const dailyBillings = this.calculateDailyFrequency(entityData)
-    const avgFrequency = dailyBillings.reduce((sum, count) => sum + count, 0)
-      / dailyBillings.length
+    const avgFrequency = dailyBillings.reduce((sum, count) => sum + count, 0) /
+      dailyBillings.length
     const variance =
-      dailyBillings.reduce((sum, count) => sum + Math.pow(count - avgFrequency, 2), 0)
-      / dailyBillings.length
+      dailyBillings.reduce((sum, count) => sum + Math.pow(count - avgFrequency, 2), 0) /
+      dailyBillings.length
     const stdDev = Math.sqrt(variance)
 
     // Calculate current deviation
-    const recentBillings = entityData.filter((b) => {
+    const recentBillings = entityData.filter(b => {
       const daysSince = (Date.now() - new Date(b.createdAt).getTime()) / (1000 * 60 * 60 * 24)
       return daysSince <= 7
     }).length
@@ -1202,7 +1202,7 @@ export class AnomalyDetectionService {
   private calculateDailyFrequency(billings: Billing[]): number[] {
     const dailyCount = new Map<string, number>()
 
-    billings.forEach((billing) => {
+    billings.forEach(billing => {
       const date = new Date(billing.createdAt).toISOString().split('T')[0]
       dailyCount.set(date, (dailyCount.get(date) || 0) + 1)
     })
@@ -1251,13 +1251,13 @@ export class AnomalyDetectionService {
     })
 
     // Analyze historical data for network patterns
-    historicalData.forEach((hBilling) => {
+    historicalData.forEach(hBilling => {
       // Add nodes if not present
       ;[
         `patient_${hBilling.patientId}`,
         `professional_${hBilling.professionalId}`,
         `clinic_${hBilling.clinicId}`,
-      ].forEach((nodeId) => {
+      ].forEach(nodeId => {
         if (!nodes.has(nodeId)) {
           const [type, _id] = nodeId.split('_')
           nodes.set(nodeId, {
@@ -1307,13 +1307,13 @@ export class AnomalyDetectionService {
 
     // Find nodes with unusually high connectivity
     const nodeDegrees = new Map<string, number>()
-    edges.forEach((edge) => {
+    edges.forEach(edge => {
       nodeDegrees.set(edge.source, (nodeDegrees.get(edge.source) || 0) + 1)
       nodeDegrees.set(edge.target, (nodeDegrees.get(edge.target) || 0) + 1)
     })
 
-    const avgDegree = Array.from(nodeDegrees.values()).reduce((sum, deg) => sum + deg, 0)
-      / nodeDegrees.size
+    const avgDegree = Array.from(nodeDegrees.values()).reduce((sum, deg) => sum + deg, 0) /
+      nodeDegrees.size
     const stdDev = this.calculateStandardDeviation(Array.from(nodeDegrees.values()))
 
     const highDegreeNodes = Array.from(nodeDegrees.entries())
@@ -1340,7 +1340,7 @@ export class AnomalyDetectionService {
     console.warn(`Anomaly Alert: ${alert.description} (${alert.severity})`)
 
     // Check escalation rules
-    const escalationRule = this.config.escalationRules.find((rule) =>
+    const escalationRule = this.config.escalationRules.find(rule =>
       this.evaluateCondition(rule.condition, alert)
     )
 
@@ -1371,7 +1371,7 @@ export class AnomalyDetectionService {
    * Get active alerts
    */
   getActiveAlerts(): AnomalyAlert[] {
-    return Array.from(this.alerts.values()).filter((alert) => alert.status === 'open')
+    return Array.from(this.alerts.values()).filter(alert => alert.status === 'open')
   }
 
   /**

@@ -39,11 +39,11 @@ function TreatmentRecommendationsPage() {
     <TreatmentRecommendationsDashboard
       patientId={loaderData.patientId}
       assessmentId={loaderData.assessmentId}
-      onTreatmentPlanCreate={async (recommendations) => {
+      onTreatmentPlanCreate={async recommendations => {
         try {
           const result = await api.aiClinicalSupport.createTreatmentPlan({
             patientId: loaderData.patientId,
-            recommendations: recommendations.map((r) => r.id),
+            recommendations: recommendations.map(r => r.id),
             sourceAssessmentId: loaderData.assessmentId,
           })
           return result

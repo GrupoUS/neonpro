@@ -57,7 +57,7 @@ export const securityMiddleware = async (c: Context, next: Next) => {
   // Check for blocked user agents
   const userAgent = c.req.header('user-agent')?.toLowerCase() || ''
   if (
-    SECURITY_CONFIG.blockedUserAgents.some((agent) => userAgent.includes(agent))
+    SECURITY_CONFIG.blockedUserAgents.some(agent => userAgent.includes(agent))
   ) {
     return c.json(
       {
@@ -72,10 +72,10 @@ export const securityMiddleware = async (c: Context, next: Next) => {
   }
 
   // Rate limiting
-  const clientIP = c.req.header('cf-connecting-ip')
-    || c.req.header('x-forwarded-for')
-    || c.req.header('x-real-ip')
-    || 'unknown'
+  const clientIP = c.req.header('cf-connecting-ip') ||
+    c.req.header('x-forwarded-for') ||
+    c.req.header('x-real-ip') ||
+    'unknown'
 
   if (!rateLimiter.isAllowed(clientIP)) {
     return c.json(
@@ -103,10 +103,10 @@ export const securityMiddleware = async (c: Context, next: Next) => {
 
 // Authentication middleware with enhanced security
 export const authMiddleware = async (c: Context, next: Next) => {
-  const clientIP = c.req.header('cf-connecting-ip')
-    || c.req.header('x-forwarded-for')
-    || c.req.header('x-real-ip')
-    || 'unknown'
+  const clientIP = c.req.header('cf-connecting-ip') ||
+    c.req.header('x-forwarded-for') ||
+    c.req.header('x-real-ip') ||
+    'unknown'
 
   // Apply stricter rate limiting for auth endpoints
   if (!authRateLimiter.isAllowed(clientIP)) {
@@ -193,7 +193,7 @@ export const inputValidationMiddleware = async (c: Context, next: Next) => {
   }
 
   // Sanitize headers
-  Object.keys(c.req.header()).forEach((key) => {
+  Object.keys(c.req.header()).forEach(key => {
     const value = c.req.header(key)
     if (value && SECURITY_CONFIG.sensitiveHeaders.includes(key.toLowerCase())) {
       // Don't log sensitive headers
@@ -252,10 +252,10 @@ export const corsMiddleware = async (c: Context, next: Next) => {
 // Request logging middleware (security-focused)
 export const securityLoggingMiddleware = async (c: Context, next: Next) => {
   const startTime = Date.now()
-  const clientIP = c.req.header('cf-connecting-ip')
-    || c.req.header('x-forwarded-for')
-    || c.req.header('x-real-ip')
-    || 'unknown'
+  const clientIP = c.req.header('cf-connecting-ip') ||
+    c.req.header('x-forwarded-for') ||
+    c.req.header('x-real-ip') ||
+    'unknown'
 
   try {
     await next()
@@ -302,15 +302,15 @@ export const healthcareDataProtectionMiddleware = async (
   next: Next,
 ) => {
   // Check if this is a healthcare data endpoint
-  const isHealthcareEndpoint = SECURITY_CONFIG.sensitivePaths.some((path) =>
+  const isHealthcareEndpoint = SECURITY_CONFIG.sensitivePaths.some(path =>
     c.req.path.startsWith(path)
   )
 
   if (isHealthcareEndpoint) {
     // Ensure HTTPS in production
     if (
-      process.env.NODE_ENV === 'production'
-      && c.req.header('x-forwarded-proto') !== 'https'
+      process.env.NODE_ENV === 'production' &&
+      c.req.header('x-forwarded-proto') !== 'https'
     ) {
       return c.json(
         {

@@ -387,7 +387,7 @@ export class ConversationContextManager {
         throw new Error(`Failed to fetch conversations: ${error.message}`)
       }
 
-      const conversations: ConversationContext[] = data.map((conv) => ({
+      const conversations: ConversationContext[] = data.map(conv => ({
         id: conv.id,
         sessionId: conv.session_id,
         _userId: conv.user_id,
@@ -403,7 +403,7 @@ export class ConversationContextManager {
       }))
 
       // Update cache
-      conversations.forEach((conv) => {
+      conversations.forEach(conv => {
         if (conv.status === 'active') {
           this.activeContexts.set(conv.id, conv)
         }
@@ -474,7 +474,7 @@ export class ConversationContextManager {
       }
 
       // Remove from cache
-      data?.forEach((conv) => {
+      data?.forEach(conv => {
         this.activeContexts.delete(conv.id)
       })
 

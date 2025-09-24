@@ -70,18 +70,18 @@ export function TreatmentGuidelinesViewer({
   })
 
   const toggleBookmark = (guidelineId: string) => {
-    setBookmarks((prev) =>
+    setBookmarks(prev =>
       prev.includes(guidelineId)
-        ? prev.filter((id) => id !== guidelineId)
+        ? prev.filter(id => id !== guidelineId)
         : [...prev, guidelineId]
     )
   }
 
-  const filteredGuidelines = guidelines?.guidelines.filter((guideline) => {
-    const matchesSearch = !searchTerm
-      || guideline.title.toLowerCase().includes(searchTerm.toLowerCase())
-      || guideline.description.toLowerCase().includes(searchTerm.toLowerCase())
-      || guideline.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredGuidelines = guidelines?.guidelines.filter(guideline => {
+    const matchesSearch = !searchTerm ||
+      guideline.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      guideline.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      guideline.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
 
     const matchesCategory = selectedCategory === 'all' || guideline.category === selectedCategory
 
@@ -93,32 +93,32 @@ export function TreatmentGuidelinesViewer({
     {
       id: 'botulinum_toxin',
       label: 'Toxina Botulínica',
-      count: guidelines?.guidelines.filter((g) => g.category === 'botulinum_toxin').length || 0,
+      count: guidelines?.guidelines.filter(g => g.category === 'botulinum_toxin').length || 0,
     },
     {
       id: 'fillers',
       label: 'Preenchimentos',
-      count: guidelines?.guidelines.filter((g) => g.category === 'fillers').length || 0,
+      count: guidelines?.guidelines.filter(g => g.category === 'fillers').length || 0,
     },
     {
       id: 'laser',
       label: 'Laser',
-      count: guidelines?.guidelines.filter((g) => g.category === 'laser').length || 0,
+      count: guidelines?.guidelines.filter(g => g.category === 'laser').length || 0,
     },
     {
       id: 'chemical_peels',
       label: 'Peelings Químicos',
-      count: guidelines?.guidelines.filter((g) => g.category === 'chemical_peels').length || 0,
+      count: guidelines?.guidelines.filter(g => g.category === 'chemical_peels').length || 0,
     },
     {
       id: 'thread_lift',
       label: 'Fios de Sustentação',
-      count: guidelines?.guidelines.filter((g) => g.category === 'thread_lift').length || 0,
+      count: guidelines?.guidelines.filter(g => g.category === 'thread_lift').length || 0,
     },
     {
       id: 'skin_care',
       label: 'Cuidados com a Pele',
-      count: guidelines?.guidelines.filter((g) => g.category === 'skin_care').length || 0,
+      count: guidelines?.guidelines.filter(g => g.category === 'skin_care').length || 0,
     },
   ]
 
@@ -221,7 +221,7 @@ export function TreatmentGuidelinesViewer({
                 <Input
                   placeholder='Buscar diretrizes...'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className='pl-10'
                 />
               </div>
@@ -232,7 +232,7 @@ export function TreatmentGuidelinesViewer({
                   <SelectValue placeholder='Categoria' />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((cat) => (
+                  {categories.map(cat => (
                     <SelectItem key={cat.id} value={cat.id}>
                       {cat.label} ({cat.count})
                     </SelectItem>
@@ -265,7 +265,7 @@ export function TreatmentGuidelinesViewer({
               <div>
                 <div className='text-sm text-gray-500'>Evidência Alta</div>
                 <div className='text-lg font-bold'>
-                  {guidelines.guidelines.filter((g) => g.evidenceLevel === 'high').length}
+                  {guidelines.guidelines.filter(g => g.evidenceLevel === 'high').length}
                 </div>
               </div>
             </div>
@@ -279,7 +279,7 @@ export function TreatmentGuidelinesViewer({
               <div>
                 <div className='text-sm text-gray-500'>Atualizadas</div>
                 <div className='text-lg font-bold'>
-                  {guidelines.guidelines.filter((g) => {
+                  {guidelines.guidelines.filter(g => {
                     const lastUpdate = new Date(g.lastUpdated)
                     const thirtyDaysAgo = new Date()
                     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
@@ -319,7 +319,7 @@ export function TreatmentGuidelinesViewer({
             <div className='lg:col-span-1 space-y-4'>
               <h3 className='text-lg font-medium'>Diretrizes ({filteredGuidelines.length})</h3>
               <div className='space-y-3'>
-                {filteredGuidelines.map((guideline) => (
+                {filteredGuidelines.map(guideline => (
                   <GuidelineCard
                     key={guideline.id}
                     guideline={guideline}
@@ -376,8 +376,8 @@ export function TreatmentGuidelinesViewer({
             : (
               <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
                 {guidelines.guidelines
-                  .filter((g) => bookmarks.includes(g.id))
-                  .map((guideline) => (
+                  .filter(g => bookmarks.includes(g.id))
+                  .map(guideline => (
                     <GuidelineCard
                       key={guideline.id}
                       guideline={guideline}
@@ -473,7 +473,7 @@ function GuidelineCard({
           <Button
             variant='ghost'
             size='sm'
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation()
               onBookmark()
             }}
@@ -512,7 +512,7 @@ function GuidelineCard({
           </span>
         </div>
         <div className='flex flex-wrap gap-1 mt-2'>
-          {guideline.tags.slice(0, 3).map((tag) => (
+          {guideline.tags.slice(0, 3).map(tag => (
             <span key={tag} className='text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded'>
               {tag}
             </span>

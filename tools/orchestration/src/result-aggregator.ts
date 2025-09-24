@@ -66,8 +66,8 @@ export class ResultAggregator {
       }
     }
 
-    const successCount = resultArray.filter((r) => r.success).length
-    const errorCount = resultArray.filter((r) => !r.success).length
+    const successCount = resultArray.filter(r => r.success).length
+    const errorCount = resultArray.filter(r => !r.success).length
     const warningCount = resultArray.reduce(
       (sum, r) => sum + ((r.warnings as any[])?.length || 0),
       0,
@@ -133,7 +133,7 @@ export class ResultAggregator {
       }
     }
 
-    const scores = historicalResults.map((r) => r.qualityScore)
+    const scores = historicalResults.map(r => r.qualityScore)
     const slope = this.calculateSlope(scores)
     const variance = this.calculateVariance(scores)
 
@@ -155,8 +155,8 @@ export class ResultAggregator {
 
   async detectAnomaly(result: any, baseline: any[]): Promise<boolean> {
     if (!baseline || baseline.length === 0) return false
-    const avgQuality = baseline.reduce((sum, r) => sum + (r.qualityScore || 0), 0)
-      / baseline.length
+    const avgQuality = baseline.reduce((sum, r) => sum + (r.qualityScore || 0), 0) /
+      baseline.length
 
     // Check for quality anomalies (much lower quality)
     const qualityThreshold = avgQuality * 0.5 // 50% of average
@@ -189,35 +189,35 @@ export class ResultAggregator {
       }
     }
 
-    const success = results.filter((r) => r.success)
-    const failed = results.filter((r) => !r.success)
+    const success = results.filter(r => r.success)
+    const failed = results.filter(r => !r.success)
     const warnings = results.filter(
-      (r) => r.warnings && (r.warnings as any[]).length > 0,
+      r => r.warnings && (r.warnings as any[]).length > 0,
     )
 
     // Group by agent type - map agentName to expected test names
     const byType = {
-      test: results.filter((r) => r.agentName === 'test'),
-      security: results.filter((r) => r.agentName === 'security-auditor'),
-      codeReview: results.filter((r) => r.agentName === 'code-reviewer'),
+      test: results.filter(r => r.agentName === 'test'),
+      security: results.filter(r => r.agentName === 'security-auditor'),
+      codeReview: results.filter(r => r.agentName === 'code-reviewer'),
       success,
       failed,
       warnings,
     }
 
     const byQuality = {
-      excellent: results.filter((r) => (r.metrics as any)?.quality > 0.9),
+      excellent: results.filter(r => (r.metrics as any)?.quality > 0.9),
       good: results.filter(
-        (r) =>
-          (r.metrics as any)?.quality > 0.7
-          && (r.metrics as any)?.quality <= 0.9,
+        r =>
+          (r.metrics as any)?.quality > 0.7 &&
+          (r.metrics as any)?.quality <= 0.9,
       ),
       fair: results.filter(
-        (r) =>
-          (r.metrics as any)?.quality > 0.5
-          && (r.metrics as any)?.quality <= 0.7,
+        r =>
+          (r.metrics as any)?.quality > 0.5 &&
+          (r.metrics as any)?.quality <= 0.7,
       ),
-      poor: results.filter((r) => (r.metrics as any)?.quality <= 0.5),
+      poor: results.filter(r => (r.metrics as any)?.quality <= 0.5),
     }
 
     return {
@@ -231,9 +231,9 @@ export class ResultAggregator {
 
   async analyzeCompliance(aggregated: AggregatedResult): Promise<any> {
     const violations = aggregated.results.filter(
-      (r) =>
-        (r.metrics as any)?.compliance === false
-        || aggregated.complianceScore < 0.8,
+      r =>
+        (r.metrics as any)?.compliance === false ||
+        aggregated.complianceScore < 0.8,
     )
 
     return {
@@ -242,7 +242,7 @@ export class ResultAggregator {
       cfmCompliant: aggregated.complianceScore > 0.8,
       overallComplianceScore: aggregated.complianceScore,
       score: aggregated.complianceScore,
-      violations: violations.map((r) => ({
+      violations: violations.map(r => ({
         agent: r.agentName || 'unknown',
         type: 'compliance',
         message: 'Compliance score below threshold',
@@ -267,11 +267,11 @@ export class ResultAggregator {
       averageCpuUsage: avgCpu,
       peakMemoryUsage: Math.max(
         ...aggregated.results.map(
-          (r) => (r.metrics as any)?.memoryUsage || 256,
+          r => (r.metrics as any)?.memoryUsage || 256,
         ),
       ),
       peakCpuUsage: Math.max(
-        ...aggregated.results.map((r) => (r.metrics as any)?.cpuUsage || 50),
+        ...aggregated.results.map(r => (r.metrics as any)?.cpuUsage || 50),
       ),
     }
   }
@@ -369,7 +369,7 @@ export class ResultAggregator {
       0,
     )
     const avgDuration = totalDuration / results.length
-    const successRate = results.filter((r) => r.success).length / results.length
+    const successRate = results.filter(r => r.success).length / results.length
     const throughput = results.length / (totalDuration / 1000) // requests per second
     const efficiency = successRate * (1 / avgDuration) // success per ms
 
@@ -398,8 +398,8 @@ export class ResultAggregator {
   private calculatePerformanceScore(results: AgentResult[]): number {
     if (results.length === 0) return 0
     const performanceSum = results.reduce((sum, result) => {
-      const performance = (result.metrics as any)?.performance
-        || (result.duration ? Math.max(0, 1 - result.duration / 10000) : 0.5)
+      const performance = (result.metrics as any)?.performance ||
+        (result.duration ? Math.max(0, 1 - result.duration / 10000) : 0.5)
       return sum + performance
     }, 0)
     return performanceSum / results.length
@@ -433,8 +433,8 @@ export class ResultAggregator {
   private calculateVariance(scores: number[]): number {
     if (scores.length === 0) return 0
     const mean = scores.reduce((a, b) => a + b, 0) / scores.length
-    const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0)
-      / scores.length
+    const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) /
+      scores.length
     return variance
   }
 

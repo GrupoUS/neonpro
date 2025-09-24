@@ -408,7 +408,7 @@ export class EnhancedStructuredLogger {
       formats.push(winston.format.simple())
     } else {
       formats.push(
-        winston.format.printf((info) => {
+        winston.format.printf(info => {
           const timestamp = info.timestamp
             ? new Date(info.timestamp as string).toLocaleTimeString()
             : ''
@@ -553,20 +553,20 @@ export class EnhancedStructuredLogger {
       dataClassification,
       containsPII,
       containsPHI,
-      legalBasis: healthcareContext?.brazilianCompliance?.lgpdLegalBasis
-        || 'legitimate_interests',
+      legalBasis: healthcareContext?.brazilianCompliance?.lgpdLegalBasis ||
+        'legitimate_interests',
       retentionPeriod: this.config.lgpdCompliance.dataRetentionDays,
-      requiresConsent: this.config.lgpdCompliance.requireExplicitConsent
-        && (containsPII || containsPHI),
+      requiresConsent: this.config.lgpdCompliance.requireExplicitConsent &&
+        (containsPII || containsPHI),
       anonymized: this.config.lgpdCompliance.anonymizeByDefault,
-      auditRequired: ['emergency', 'alert', 'critical'].includes(severity)
-        || healthcareContext?.patientContext !== undefined
-        || healthcareContext?.clinicalContext?.requiresAudit
-        || false,
+      auditRequired: ['emergency', 'alert', 'critical'].includes(severity) ||
+        healthcareContext?.patientContext !== undefined ||
+        healthcareContext?.clinicalContext?.requiresAudit ||
+        false,
       brazilianIdentifiers,
       dataMinimizationApplied: this.config.lgpdCompliance.enableDataMinimization,
-      purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis
-        || 'healthcare_provision',
+      purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis ||
+        'healthcare_provision',
     }
   }
 
@@ -608,7 +608,7 @@ export class EnhancedStructuredLogger {
     ]
 
     const dataString = JSON.stringify(data).toLowerCase()
-    return healthKeywords.some((keyword) => dataString.includes(keyword))
+    return healthKeywords.some(keyword => dataString.includes(keyword))
   }
 
   /**
@@ -887,7 +887,7 @@ export class EnhancedStructuredLogger {
    */
   async shutdown(): Promise<void> {
     this.winston.info('Shutting down enhanced structured logger...')
-    await new Promise<void>((resolve) => {
+    await new Promise<void>(resolve => {
       this.winston.on('finish', resolve)
       this.winston.end()
     })

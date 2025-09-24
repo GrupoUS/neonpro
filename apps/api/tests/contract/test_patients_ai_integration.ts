@@ -237,7 +237,7 @@ describe('Patients AI Integration API', () => {
       )
 
       const responses = await Promise.all(requests)
-      const rateLimitedResponse = responses.find((r) => r.status === 429)
+      const rateLimitedResponse = responses.find(r => r.status === 429)
 
       expect(rateLimitedResponse).toBeDefined()
     })
@@ -433,7 +433,7 @@ describe('Patients AI Integration API', () => {
       )
 
       const responses = await Promise.all(requests)
-      const limitedResponse = responses.find((r) => r.status === 429)
+      const limitedResponse = responses.find(r => r.status === 429)
 
       expect(limitedResponse).toBeDefined()
     })

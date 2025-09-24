@@ -250,9 +250,9 @@ export class BulkOperationsService {
   ): Promise<void> {
     // Validate required fields
     if (
-      !_request.operationType
-      || !_request.entityType
-      || !_request.entityIds?.length
+      !_request.operationType ||
+      !_request.entityType ||
+      !_request.entityIds?.length
     ) {
       throw new Error(
         'Invalid bulk operation _request: missing required fields',
@@ -266,7 +266,7 @@ export class BulkOperationsService {
 
     // Validate entity IDs format (basic UUID check)
     const invalidIds = _request.entityIds.filter(
-      (id) => !id || typeof id !== 'string' || id.length < 10,
+      id => !id || typeof id !== 'string' || id.length < 10,
     )
     if (invalidIds.length > 0) {
       throw new Error(`Invalid entity IDs: ${invalidIds.join(', ')}`)
@@ -293,7 +293,7 @@ export class BulkOperationsService {
 
     // Remove timestamps older than 1 minute
     const recentTimestamps = timestamps.filter(
-      (timestamp) => now - timestamp < oneMinute,
+      timestamp => now - timestamp < oneMinute,
     )
 
     // Check if rate limit exceeded
@@ -324,8 +324,8 @@ export class BulkOperationsService {
 
         // Don't retry validation errors or auth errors
         if (
-          error.message.includes('validation')
-          || error.message.includes('unauthorized')
+          error.message.includes('validation') ||
+          error.message.includes('unauthorized')
         ) {
           throw error
         }
@@ -333,7 +333,7 @@ export class BulkOperationsService {
         // Wait before retry with exponential backoff
         if (attempt < maxRetries) {
           const delay = Math.pow(2, attempt) * 1000 // 2s, 4s, 8s
-          await new Promise((resolve) => setTimeout(resolve, delay))
+          await new Promise(resolve => setTimeout(resolve, delay))
           logger.warn('Bulk operation attempt failed, retrying', {
             attempt,
             delay,
@@ -462,7 +462,7 @@ export class BulkOperationsService {
     }
 
     // Simulate processing time and potential failures
-    await new Promise((resolve) => setTimeout(resolve, Math.random() * 100))
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 100))
 
     // Simulate random failures for testing
     if (Math.random() < 0.05) {
@@ -593,8 +593,8 @@ export class BulkOperationsService {
       // Check if user role is allowed for this operation
       if (!config.allowedRoles.includes(user._role)) {
         throw new Error(
-          `User role '${user.role}' is not authorized for ${_request.operationType} operations. `
-            + `Allowed roles: ${config.allowedRoles.join(', ')}`,
+          `User role '${user.role}' is not authorized for ${_request.operationType} operations. ` +
+            `Allowed roles: ${config.allowedRoles.join(', ')}`,
         )
       }
 
@@ -639,8 +639,8 @@ export class BulkOperationsService {
       // Validate clinic access
       if (userClinic.clinic_id !== _request.clinicId) {
         throw new Error(
-          `User does not have access to clinic ${_request.clinicId}. `
-            + `User's clinic: ${userClinic.clinic_id}`,
+          `User does not have access to clinic ${_request.clinicId}. ` +
+            `User's clinic: ${userClinic.clinic_id}`,
         )
       }
 
@@ -658,9 +658,9 @@ export class BulkOperationsService {
           )
         }
 
-        const accessiblePatients = patients?.map((p) => p.id) || []
+        const accessiblePatients = patients?.map(p => p.id) || []
         const inaccessiblePatients = _request.entityIds.filter(
-          (id) => !accessiblePatients.includes(id),
+          id => !accessiblePatients.includes(id),
         )
 
         if (inaccessiblePatients.length > 0) {
@@ -715,10 +715,10 @@ export class BulkOperationsService {
         }
 
         const patientsWithConsent = new Set(
-          consents?.map((c) => c.patient_id) || [],
+          consents?.map(c => c.patient_id) || [],
         )
         const patientsWithoutConsent = _request.entityIds.filter(
-          (id) => !patientsWithConsent.has(id),
+          id => !patientsWithConsent.has(id),
         )
 
         if (patientsWithoutConsent.length > 0) {
@@ -739,8 +739,8 @@ export class BulkOperationsService {
 
       // For appointment operations, validate through patient consent
       if (
-        _request.entityType === 'appointment'
-        && _request.entityIds.length > 0
+        _request.entityType === 'appointment' &&
+        _request.entityIds.length > 0
       ) {
         const { data: appointments, error } = await supabase
           .from('appointments')
@@ -754,7 +754,7 @@ export class BulkOperationsService {
         }
 
         const patientIds = [
-          ...new Set(appointments?.map((a) => a.patient_id) || []),
+          ...new Set(appointments?.map(a => a.patient_id) || []),
         ]
 
         if (patientIds.length > 0) {
@@ -772,10 +772,10 @@ export class BulkOperationsService {
           }
 
           const patientsWithConsent = new Set(
-            patientConsents?.map((c) => c.patient_id) || [],
+            patientConsents?.map(c => c.patient_id) || [],
           )
           const patientsWithoutConsent = patientIds.filter(
-            (id) => !patientsWithConsent.has(id),
+            id => !patientsWithConsent.has(id),
           )
 
           if (patientsWithoutConsent.length > 0) {
@@ -806,7 +806,7 @@ export class BulkOperationsService {
     // Clean up rate limits older than 1 hour
     this.rateLimitMap.forEach((timestamps, _key) => {
       const recentTimestamps = timestamps.filter(
-        (timestamp) => now - timestamp < oneHour,
+        timestamp => now - timestamp < oneHour,
       )
       if (recentTimestamps.length === 0) {
         this.rateLimitMap.delete(key)

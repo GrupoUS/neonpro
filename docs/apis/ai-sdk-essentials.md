@@ -33,7 +33,7 @@ import { Hono } from 'hono'
 
 const app = new Hono()
 
-app.post('/api/chat', async (c) => {
+app.post('/api/chat', async c => {
   const { messages } = await c.req.json()
 
   const result = await streamText({
@@ -59,7 +59,7 @@ export function ChatInterface() {
   return (
     <div>
       <div>
-        {messages.map((m) => (
+        {messages.map(m => (
           <div key={m.id}>
             <strong>{m.role}:</strong> {m.content}
           </div>
@@ -69,7 +69,7 @@ export function ChatInterface() {
       <form onSubmit={handleSubmit}>
         <input
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={e => setInput(e.target.value)}
           placeholder='Digite sua mensagem...'
         />
         <button disabled={isLoading}>Enviar</button>
@@ -132,7 +132,7 @@ const result = await streamText({
 ```typescript
 const { messages, error, retry } = useChat({
   api: '/api/chat',
-  onError: (error) => {
+  onError: error => {
     console.error('Chat error:', error)
     toast.error('Erro na conversa. Tente novamente.')
   },

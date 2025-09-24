@@ -1,38 +1,36 @@
 /**
  * AI Providers Package Entry Point
- * 
+ *
  * Comprehensive AI provider management for healthcare applications
  * with LGPD compliance and specialized healthcare features
  */
 
 // Types
 export type {
+  AIProvider,
+  AIProviderInterface,
   GenerateAnswerInput,
   GenerateAnswerResult,
-  StreamChunk,
-  AIProviderInterface,
-  AIProvider,
-  HealthcareJobType,
-  JobHandlerFunction,
-  JobHandler,
-  JobQueue,
-  JobData,
-  WorkerConfig,
-  HealthcareJobContext,
   HealthcareAuditEvent,
+  HealthcareJobContext,
+  HealthcareJobType,
+  JobData,
+  JobHandler,
+  JobHandlerFunction,
+  JobQueue,
+  StreamChunk,
+  WorkerConfig,
 } from './types'
 
 // Providers
-export { OpenAIProvider } from './providers/openai-provider'
 export { AnthropicProvider } from './providers/anthropic-provider'
 export { GoogleAIProvider } from './providers/google-provider'
+export { OpenAIProvider } from './providers/openai-provider'
 
 // Services
+export { AIServiceManagement, aiServiceManagement } from './services/ai-service-management'
 export { AIService } from './services/AIService'
 export { PIIRedactionService } from './services/pii-redaction'
-export { aiServiceManagement, AIServiceManagement } from './services/ai-service-management'
-
-
 
 // Utility functions
 export async function checkAIServiceHealth() {

@@ -182,7 +182,7 @@ export const CPFSchema = v.pipe(
     'CPF deve estar no formato XXX.XXX.XXX-XX',
   ),
   v.check(validateCPF, 'CPF inválido. Verifique os dígitos verificadores'),
-  v.transform((value) => value.replace(/[^\d]/g, '') as CPF),
+  v.transform(value => value.replace(/[^\d]/g, '') as CPF),
 )
 
 /**
@@ -195,7 +195,7 @@ export const CNSSchema = v.pipe(
   v.nonEmpty('CNS é obrigatório para acesso ao SUS'),
   v.regex(/^\d{15}$/, 'CNS deve conter exatamente 15 dígitos'),
   v.check(validateCNS, 'CNS inválido. Verifique o número do cartão'),
-  v.transform((value) => value as CNS),
+  v.transform(value => value as CNS),
 )
 
 /**
@@ -208,7 +208,7 @@ export const BrazilianEmailSchema = v.pipe(
   v.nonEmpty('Email é obrigatório para comunicação'),
   v.email('Formato de email inválido'),
   v.maxLength(254, 'Email não pode exceder 254 caracteres'),
-  v.transform((value) => value.toLowerCase()),
+  v.transform(value => value.toLowerCase()),
 )
 
 /**
@@ -224,7 +224,7 @@ export const BrazilianPhoneSchema = v.pipe(
     'Telefone deve estar no formato brasileiro (+55 XX 9XXXX-XXXX)',
   ),
   v.check(validateBrazilianPhone, 'Número de telefone brasileiro inválido'),
-  v.transform((value) => value.replace(/[^\d]/g, '')),
+  v.transform(value => value.replace(/[^\d]/g, '')),
 )
 
 /**
@@ -254,7 +254,7 @@ export const MedicalRecordNumberSchema = v.pipe(
     /^[A-Za-z0-9-]+$/,
     'Número do prontuário deve conter apenas letras, números e hífens',
   ),
-  v.transform((value) => value.toUpperCase() as MedicalRecordNumber),
+  v.transform(value => value.toUpperCase() as MedicalRecordNumber),
 )
 
 // =====================================

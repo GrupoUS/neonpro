@@ -70,10 +70,10 @@ interface RateLimitConfig {
  * Default key generator using IP address
  */
 function defaultKeyGenerator(c: Context): string {
-  const ip = c.req.header('x-forwarded-for')
-    || c.req.header('x-real-ip')
-    || c.req.header('cf-connecting-ip')
-    || 'unknown'
+  const ip = c.req.header('x-forwarded-for') ||
+    c.req.header('x-real-ip') ||
+    c.req.header('cf-connecting-ip') ||
+    'unknown'
 
   return `rate_limit:${ip}`
 }

@@ -39,12 +39,12 @@ export function MonthView({
   const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
   const getEventsForDay = (day: Date) => {
-    return events.filter((event) => {
+    return events.filter(event => {
       const eventDate = new Date(event.start)
       return (
-        eventDate.getDate() === day.getDate()
-        && eventDate.getMonth() === day.getMonth()
-        && eventDate.getFullYear() === day.getFullYear()
+        eventDate.getDate() === day.getDate() &&
+        eventDate.getMonth() === day.getMonth() &&
+        eventDate.getFullYear() === day.getFullYear()
       )
     })
   }
@@ -56,9 +56,9 @@ export function MonthView({
   const isToday = (day: Date) => {
     const today = new Date()
     return (
-      day.getDate() === today.getDate()
-      && day.getMonth() === today.getMonth()
-      && day.getFullYear() === today.getFullYear()
+      day.getDate() === today.getDate() &&
+      day.getMonth() === today.getMonth() &&
+      day.getFullYear() === today.getFullYear()
     )
   }
 
@@ -111,7 +111,7 @@ export function MonthView({
                         backgroundColor: getEventColor(event) + '20',
                         borderLeft: `2px solid ${getEventColor(event)}`,
                       }}
-                      onClick={(e) => {
+                      onClick={e => {
                         e.stopPropagation()
                         onEventClick(event)
                       }}

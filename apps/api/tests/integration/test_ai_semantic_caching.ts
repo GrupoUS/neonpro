@@ -375,7 +375,7 @@ describe('AI Semantic Caching Integration Tests', () => {
       await semanticCacheService.store(queryData, cacheEntry)
 
       // Wait for expiration
-      await new Promise((resolve) => setTimeout(resolve, 1100))
+      await new Promise(resolve => setTimeout(resolve, 1100))
 
       // Attempt retrieval after expiration
       const result = await semanticCacheService.retrieve(queryData._query)
@@ -425,7 +425,7 @@ describe('AI Semantic Caching Integration Tests', () => {
       expect(result.success).toBe(true)
       if (result.matches.length > 0) {
         expect(result.matches).toHaveLength.lessThanOrEqual(options.maxResults)
-        result.matches.forEach((match) => {
+        result.matches.forEach(match => {
           expect(match.similarityScore).toBe.greaterThanOrEqual(
             options.threshold,
           )
@@ -732,11 +732,11 @@ describe('AI Semantic Caching Integration Tests', () => {
       const results = await Promise.allSettled(concurrentOperations)
 
       // Should handle concurrent access without corruption
-      const successfulOps = results.filter((r) => r.status === 'fulfilled')
-      const failedOps = results.filter((r) => r.status === 'rejected')
+      const successfulOps = results.filter(r => r.status === 'fulfilled')
+      const failedOps = results.filter(r => r.status === 'rejected')
 
       expect(successfulOps.length).toBe.greaterThan(0)
-      failedOps.forEach((op) => {
+      failedOps.forEach(op => {
         expect(op.reason).not.toContain('DATA_CORRUPTION')
       })
     })
@@ -844,7 +844,7 @@ describe('AI Semantic Caching Integration Tests', () => {
 
       // Verify healthcare-specific insights
       const healthcareInsights = insights.insights.filter(
-        (insight) => insight.category === 'healthcare',
+        insight => insight.category === 'healthcare',
       )
       expect(healthcareInsights.length).toBe.greaterThan(0)
     })

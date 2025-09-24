@@ -83,8 +83,8 @@ export class AdvancedRLSPolicies {
         'EXISTS (SELECT 1 FROM user_clinic_access WHERE user_id = auth.uid() AND clinic_id = patients.clinic_id AND is_active = true)',
         "CASE WHEN current_setting('app.user_role') = 'patient' THEN id = auth.uid() ELSE true END",
         'patients.is_active = true', // Only active patients
-        "(current_setting('app.user_role') = 'admin' OR current_setting('app.user_role') = 'clinic_admin' OR "
-        + "(SELECT COUNT(*) FROM patient_consent_records WHERE patient_id = patients.id AND status = 'active' AND expires_at > NOW()) > 0)",
+        "(current_setting('app.user_role') = 'admin' OR current_setting('app.user_role') = 'clinic_admin' OR " +
+        "(SELECT COUNT(*) FROM patient_consent_records WHERE patient_id = patients.id AND status = 'active' AND expires_at > NOW()) > 0)",
       ],
       roles: ['doctor', 'nurse', 'assistant', 'receptionist', 'patient'],
       consentRequired: true,
@@ -186,7 +186,7 @@ export class AdvancedRLSPolicies {
     try {
       // Find applicable policies
       const policies = AdvancedRLSPolicies.HEALTHCARE_POLICIES.filter(
-        (p) => p.tableName === tableName && p.operation === operation,
+        p => p.tableName === tableName && p.operation === operation,
       )
 
       if (policies.length === 0) {
@@ -383,8 +383,8 @@ export class AdvancedRLSPolicies {
               recordId,
             )
             if (
-              patientId
-              && !(await this.validateProfessionalPatientRelationship(
+              patientId &&
+              !(await this.validateProfessionalPatientRelationship(
                 context.professionalId,
                 patientId,
               ))

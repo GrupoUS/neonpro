@@ -211,9 +211,9 @@ export class HealthcareErrorHandler extends EventEmitter {
    * Attempt automated error recovery
    */
   private async attemptRecovery(error: StandardError): Promise<void> {
-    const recoveryStrategy = this.recoveryStrategies.get(error.code)
-      || this.recoveryStrategies.get(error.category)
-      || this.recoveryStrategies.get('default')
+    const recoveryStrategy = this.recoveryStrategies.get(error.code) ||
+      this.recoveryStrategies.get(error.category) ||
+      this.recoveryStrategies.get('default')
 
     if (recoveryStrategy) {
       const attemptKey = `${error.code}_${error.context.sessionId}`
@@ -404,37 +404,37 @@ export class HealthcareErrorHandler extends EventEmitter {
 
   private isRecoverable(error: Error, _context: Partial<ErrorContext>): boolean {
     const message = error.message.toLowerCase()
-    return message.includes('network')
-      || message.includes('timeout')
-      || message.includes('connection')
-      || message.includes('retry')
+    return message.includes('network') ||
+      message.includes('timeout') ||
+      message.includes('connection') ||
+      message.includes('retry')
   }
 
   private isRetryable(error: Error, _context: Partial<ErrorContext>): boolean {
     const message = error.message.toLowerCase()
-    return message.includes('network')
-      || message.includes('timeout')
-      || message.includes('temporary')
-      || message.includes('busy')
+    return message.includes('network') ||
+      message.includes('timeout') ||
+      message.includes('temporary') ||
+      message.includes('busy')
   }
 
   private isHealthcareRelated(error: Error, context: Partial<ErrorContext>): boolean {
     const message = error.message.toLowerCase()
-    return message.includes('patient')
-      || message.includes('medical')
-      || message.includes('clinical')
-      || message.includes('healthcare')
-      || !!context.patientId
-      || !!context.facilityId
+    return message.includes('patient') ||
+      message.includes('medical') ||
+      message.includes('clinical') ||
+      message.includes('healthcare') ||
+      !!context.patientId ||
+      !!context.facilityId
   }
 
   private isLGPDRelevant(error: Error, _context: Partial<ErrorContext>): boolean {
     const message = error.message.toLowerCase()
-    return message.includes('lgpd')
-      || message.includes('consent')
-      || message.includes('privacy')
-      || message.includes('personal')
-      || message.includes('data protection')
+    return message.includes('lgpd') ||
+      message.includes('consent') ||
+      message.includes('privacy') ||
+      message.includes('personal') ||
+      message.includes('data protection')
   }
 
   private sanitizeMetadata(metadata?: Record<string, unknown>): Record<string, unknown> {
@@ -444,7 +444,7 @@ export class HealthcareErrorHandler extends EventEmitter {
 
     // Remove sensitive fields
     const sensitiveFields = ['password', 'token', 'secret', 'key', 'cpf', 'cnpj', 'email']
-    sensitiveFields.forEach((field) => {
+    sensitiveFields.forEach(field => {
       if (field in sanitized) {
         sanitized[field] = '[REDACTED]'
       }
@@ -499,7 +499,7 @@ export class HealthcareErrorHandler extends EventEmitter {
   }
 
   private async delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms))
+    return new Promise(resolve => setTimeout(resolve, ms))
   }
 
   /**

@@ -5,9 +5,9 @@ import type {
   GenerateAnswerResult,
   StreamChunk,
 } from '../types'
-import { OpenAIProvider } from './openai-provider'
 import { AnthropicProvider } from './anthropic-provider'
 import { GoogleAIProvider } from './google-provider'
+import { OpenAIProvider } from './openai-provider'
 
 class MockProvider implements AIProviderInterface {
   async generateAnswer(
@@ -40,7 +40,7 @@ class MockProvider implements AIProviderInterface {
         finishReason: i === words.length - 1 ? 'stop' : undefined,
         provider: 'mock' as AIProvider,
       }
-      await new Promise((resolve) => setTimeout(resolve, 25))
+      await new Promise(resolve => setTimeout(resolve, 25))
     }
   }
 }

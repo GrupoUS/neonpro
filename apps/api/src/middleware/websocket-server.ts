@@ -90,8 +90,8 @@ export class WebSocketServerMiddleware {
     if (pathname === this.config.path) {
       // Check connection limit
       if (
-        this.config.maxConnections
-        && this.wss.clients.size >= this.config.maxConnections
+        this.config.maxConnections &&
+        this.wss.clients.size >= this.config.maxConnections
       ) {
         socket.write('HTTP/1.1 503 Service Unavailable\r\n\r\n')
         socket.destroy()
@@ -99,7 +99,7 @@ export class WebSocketServerMiddleware {
       }
 
       // Handle the upgrade
-      this.wss.handleUpgrade(request, socket, head, (ws) => {
+      this.wss.handleUpgrade(request, socket, head, ws => {
         this.wss.emit('connection', ws, _request)
       })
     } else {
@@ -119,7 +119,7 @@ export class WebSocketServerMiddleware {
     })
 
     // Handle server errors
-    this.wss.on('error', (error) => {
+    this.wss.on('error', error => {
       logger.error('WebSocket server error', { error })
     })
 
@@ -141,7 +141,7 @@ export class WebSocketServerMiddleware {
       logger.info('AGUI service initialized')
     })
 
-    this.aguiService.on('initializationError', (error) => {
+    this.aguiService.on('initializationError', error => {
       logger.error('AGUI service initialization error', { error })
     })
 
@@ -154,46 +154,46 @@ export class WebSocketServerMiddleware {
     })
 
     // Query events
-    this.aguiService.on('queryCompleted', (data) => {
+    this.aguiService.on('queryCompleted', data => {
       logger.debug('Query completed', data)
     })
 
-    this.aguiService.on('queryError', (data) => {
+    this.aguiService.on('queryError', data => {
       logger.warn('Query error', data)
     })
 
-    this.aguiService.on('queryAborted', (data) => {
+    this.aguiService.on('queryAborted', data => {
       logger.info('Query aborted', data)
     })
 
     // Session events
-    this.aguiService.on('sessionCreated', (session) => {
+    this.aguiService.on('sessionCreated', session => {
       logger.debug('Session created', {
         sessionId: session.id,
         _userId: session.userId,
       })
     })
 
-    this.aguiService.on('sessionUpdated', (data) => {
+    this.aguiService.on('sessionUpdated', data => {
       logger.debug('Session updated', data)
     })
 
-    this.aguiService.on('sessionError', (data) => {
+    this.aguiService.on('sessionError', data => {
       logger.warn('Session error', data)
     })
 
     // Feedback events
-    this.aguiService.on('feedbackSubmitted', (feedback) => {
+    this.aguiService.on('feedbackSubmitted', feedback => {
       logger.debug('Feedback submitted', feedback)
     })
 
-    this.aguiService.on('feedbackError', (data) => {
+    this.aguiService.on('feedbackError', data => {
       logger.warn('Feedback error', data)
     })
 
     // Metrics events
     if (this.config.enableMetrics) {
-      this.aguiService.on('metrics', (metrics) => {
+      this.aguiService.on('metrics', metrics => {
         logger.debug('Service metrics', metrics)
       })
     }
@@ -256,7 +256,7 @@ export class WebSocketServerMiddleware {
    * Broadcast message to all connected clients
    */
   broadcast(message: any): void {
-    this.wss.clients.forEach((client) => {
+    this.wss.clients.forEach(client => {
       if (client.readyState === client.OPEN) {
         client.send(JSON.stringify(message))
       }
@@ -278,7 +278,7 @@ export class WebSocketServerMiddleware {
 
     try {
       // Close all client connections
-      this.wss.clients.forEach((client) => {
+      this.wss.clients.forEach(client => {
         if (client.readyState === client.OPEN) {
           client.close(1001, 'Server shutting down')
         }

@@ -258,7 +258,7 @@ const BoletoResponseSchema = z.object({
 
 // Input schemas with Brazilian Portuguese validation messages
 const CreateFinancialAccountInputSchema = FinancialAccountInputSchema.refine(
-  (data) => {
+  data => {
     if (data.isDefault && data.accountType === 'credit') {
       return false
     }
@@ -271,7 +271,7 @@ const CreateFinancialAccountInputSchema = FinancialAccountInputSchema.refine(
 )
 
 const CreateInvoiceInputSchema = InvoiceInputSchema.refine(
-  (data) => {
+  data => {
     if (new Date(data.dueDate) < new Date(data.issueDate)) {
       return false
     }
@@ -284,7 +284,7 @@ const CreateInvoiceInputSchema = InvoiceInputSchema.refine(
 )
 
 const CreatePaymentInputSchema = PaymentTransactionInputSchema.refine(
-  (data) => {
+  data => {
     if (data.installmentNumber > data.totalInstallments) {
       return false
     }
@@ -393,7 +393,7 @@ export const financialManagementRouter = createTRPCRouter({
   // Service Pricing Management
   createServicePrice: {
     input: ServicePriceInputSchema.refine(
-      (data) => {
+      data => {
         if (data.professionalCommissionRate + data.clinicRevenueRate > 100) {
           return false
         }
@@ -467,7 +467,7 @@ export const financialManagementRouter = createTRPCRouter({
   // Treatment Package Management
   createTreatmentPackage: {
     input: TreatmentPackageInputSchema.refine(
-      (data) => {
+      data => {
         if (data.packagePrice > data.originalPrice) {
           return false
         }
@@ -782,7 +782,7 @@ export const financialManagementRouter = createTRPCRouter({
   // Financial Goals Management
   createFinancialGoal: {
     input: FinancialGoalInputSchema.refine(
-      (data) => {
+      data => {
         if (new Date(data.endDate) < new Date(data.startDate)) {
           return false
         }

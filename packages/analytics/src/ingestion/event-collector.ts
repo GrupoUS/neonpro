@@ -203,7 +203,7 @@ export class EventCollector {
 
       if (eventsToProcess.length === 0) {
         // Add small delay to ensure measurable duration
-        await new Promise((resolve) => setTimeout(resolve, 1))
+        await new Promise(resolve => setTimeout(resolve, 1))
         return {
           success: true,
           processedCount: 0,
@@ -216,7 +216,7 @@ export class EventCollector {
       let totalProcessedInFlush = 0
 
       // Add small delay to ensure measurable duration
-      await new Promise((resolve) => setTimeout(resolve, 1))
+      await new Promise(resolve => setTimeout(resolve, 1))
 
       // Process events in batches
       const batches = this.createBatches(
@@ -236,7 +236,7 @@ export class EventCollector {
           const batchError = error instanceof Error
             ? error
             : new Error('Batch processing failed')
-          batch.forEach((event) => {
+          batch.forEach(event => {
             errors.push({ event, error: batchError })
           })
           // Subtract failed batch from processed count
@@ -331,8 +331,8 @@ export class EventCollector {
 
     // Additional healthcare-specific validation
     if (
-      event.metadata?.patientId
-      && typeof event.metadata.patientId !== 'string'
+      event.metadata?.patientId &&
+      typeof event.metadata.patientId !== 'string'
     ) {
       return { valid: false, error: 'Patient ID must be a string' }
     }

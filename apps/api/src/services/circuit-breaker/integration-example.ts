@@ -267,8 +267,8 @@ export class AguiServiceWithCircuitBreaker {
     if (lowerQuery.includes('agendamento') || lowerQuery.includes('consulta')) {
       return 'scheduling'
     } else if (
-      lowerQuery.includes('paciente')
-      || lowerQuery.includes('patient')
+      lowerQuery.includes('paciente') ||
+      lowerQuery.includes('patient')
     ) {
       return 'patient_inquiry'
     }
@@ -528,13 +528,13 @@ export class AIAgentServiceWithCircuitBreaker {
   private classifyRequestData(_request: any): string {
     // Classify the data sensitivity level of the AI request
     if (
-      request.type === 'medical_diagnosis'
-      || request.type === 'patient_analysis'
+      request.type === 'medical_diagnosis' ||
+      request.type === 'patient_analysis'
     ) {
       return 'restricted'
     } else if (
-      request.type === 'appointment_scheduling'
-      || request.type === 'patient_lookup'
+      request.type === 'appointment_scheduling' ||
+      request.type === 'patient_lookup'
     ) {
       return 'confidential'
     }
@@ -577,12 +577,12 @@ export function setupHealthMonitoring(services: ServiceDependency[]) {
     HEALTHCARE_HEALTH_CONFIG,
   )
 
-  services.forEach((service) => {
+  services.forEach(service => {
     healthChecker.registerService(service)
   })
 
   // Set up event listeners for alerts
-  healthChecker.onEvent((event) => {
+  healthChecker.onEvent(event => {
     console.warn('Health Check Event:', {
       type: event.type,
       _service: event.serviceName,
@@ -592,8 +592,8 @@ export function setupHealthMonitoring(services: ServiceDependency[]) {
 
     // Send alerts for critical health issues
     if (
-      event.type === 'SERVICE_UNHEALTHY'
-      || event.type === 'COMPLIANCE_VIOLATION'
+      event.type === 'SERVICE_UNHEALTHY' ||
+      event.type === 'COMPLIANCE_VIOLATION'
     ) {
       sendHealthAlert(event)
     }

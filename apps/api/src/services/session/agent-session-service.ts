@@ -178,7 +178,7 @@ export class AgentSessionService {
       const sessions = (data || []).map(this.mapSessionRecord)
 
       // Update cache
-      sessions.forEach((session) => this.cacheSession(session))
+      sessions.forEach(session => this.cacheSession(session))
 
       return sessions
     } catch {
@@ -211,8 +211,8 @@ export class AgentSessionService {
         : new Date(session.expiresAt)
 
       if (
-        newExpiresAt.getTime()
-          > Date.now() + this.config.maxSessionLengthMs
+        newExpiresAt.getTime() >
+          Date.now() + this.config.maxSessionLengthMs
       ) {
         throw new Error('Session length exceeds maximum allowed duration')
       }
@@ -351,11 +351,11 @@ export class AgentSessionService {
         .update({ is_active: false })
         .in(
           'session_id',
-          expiredSessions.map((s) => s.session_id),
+          expiredSessions.map(s => s.session_id),
         )
 
       // Remove from cache
-      expiredSessions.forEach((session) => {
+      expiredSessions.forEach(session => {
         this.sessionCache.delete(session.session_id)
       })
 
@@ -424,22 +424,22 @@ export class AgentSessionService {
 
       const allSessions = sessions || []
       const activeSessions = allSessions.filter(
-        (s) => s.is_active && new Date(s.expires_at) > new Date(),
+        s => s.is_active && new Date(s.expires_at) > new Date(),
       )
       const expiredSessions = allSessions.filter(
-        (s) => !s.is_active || new Date(s.expires_at) <= new Date(),
+        s => !s.is_active || new Date(s.expires_at) <= new Date(),
       )
 
       // Calculate average session length
       const sessionLengths = allSessions
         .map(
-          (s) => new Date(s.expires_at).getTime() - new Date(s.created_at).getTime(),
+          s => new Date(s.expires_at).getTime() - new Date(s.created_at).getTime(),
         )
-        .filter((length) => length > 0)
+        .filter(length => length > 0)
 
       const averageSessionLength = sessionLengths.length > 0
-        ? sessionLengths.reduce((sum, _length) => sum + length, 0)
-          / sessionLengths.length
+        ? sessionLengths.reduce((sum, _length) => sum + length, 0) /
+          sessionLengths.length
         : 0
 
       // Get total messages

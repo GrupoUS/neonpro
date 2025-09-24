@@ -66,7 +66,7 @@ const PERFORMANCE_THRESHOLDS = {
   },
 }
 
-serve(async (req) => {
+serve(async req => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -112,7 +112,7 @@ async function handleMetricsCollection(req: Request, supabase: any) {
     const { metrics }: { metrics: PerformanceMetric[] } = await req.json()
 
     // Validate metrics
-    const validatedMetrics = metrics.map((metric) => ({
+    const validatedMetrics = metrics.map(metric => ({
       ...metric,
       timestamp: metric.timestamp || new Date().toISOString(),
       service_name: metric.service_name || 'unknown',
@@ -246,7 +246,7 @@ async function handleHealthCheck(req: Request, supabase: any) {
     ]
 
     const functionResults = await Promise.allSettled(
-      functionChecks.map(async (funcName) => {
+      functionChecks.map(async funcName => {
         const response = await fetch(
           `${supabaseUrl}/functions/v1/${funcName}`,
           {
@@ -262,7 +262,7 @@ async function handleHealthCheck(req: Request, supabase: any) {
 
     const edgeFunctionsTime = performance.now() - edgeFunctionsStart
     const healthyFunctions = functionResults.filter(
-      (result) => result.status === 'fulfilled' && result.value.ok,
+      result => result.status === 'fulfilled' && result.value.ok,
     ).length
 
     healthResults.push({
@@ -291,9 +291,9 @@ async function handleHealthCheck(req: Request, supabase: any) {
   }
 
   // Overall system health
-  const overallStatus = healthResults.every((r) => r.status === 'healthy')
+  const overallStatus = healthResults.every(r => r.status === 'healthy')
     ? 'healthy'
-    : healthResults.some((r) => r.status === 'unhealthy')
+    : healthResults.some(r => r.status === 'unhealthy')
     ? 'unhealthy'
     : 'degraded'
 
@@ -467,8 +467,8 @@ async function generatePerformanceAlerts(
     const [serviceName, metricType] = serviceKey.split('_')
 
     if (metricType === 'response_time') {
-      const avgResponseTime = serviceMetrics.reduce((sum, m) => sum + m.metric_value, 0)
-        / serviceMetrics.length
+      const avgResponseTime = serviceMetrics.reduce((sum, m) => sum + m.metric_value, 0) /
+        serviceMetrics.length
 
       if (avgResponseTime > PERFORMANCE_THRESHOLDS.response_time.poor) {
         alerts.push({
@@ -504,8 +504,8 @@ async function generatePerformanceAlerts(
     }
 
     if (metricType === 'error_rate') {
-      const avgErrorRate = serviceMetrics.reduce((sum, m) => sum + m.metric_value, 0)
-        / serviceMetrics.length
+      const avgErrorRate = serviceMetrics.reduce((sum, m) => sum + m.metric_value, 0) /
+        serviceMetrics.length
 
       if (avgErrorRate > PERFORMANCE_THRESHOLDS.error_rate.poor) {
         alerts.push({
@@ -579,12 +579,12 @@ function calculatePerformanceSummary(metrics: PerformanceMetric[]) {
 
   for (const [serviceName, data] of Object.entries(serviceMetrics)) {
     const avgResponseTime = data.response_times.length > 0
-      ? data.response_times.reduce((a: number, b: number) => a + b, 0)
-        / data.response_times.length
+      ? data.response_times.reduce((a: number, b: number) => a + b, 0) /
+        data.response_times.length
       : 0
     const avgErrorRate = data.error_rates.length > 0
-      ? data.error_rates.reduce((a: number, b: number) => a + b, 0)
-        / data.error_rates.length
+      ? data.error_rates.reduce((a: number, b: number) => a + b, 0) /
+        data.error_rates.length
       : 0
 
     summary.services[serviceName] = {
@@ -622,8 +622,8 @@ function calculatePerformanceSummary(metrics: PerformanceMetric[]) {
   summary.availability = summary.error_rate < 1 ? 99.9 : 99.0
   summary.sla_compliance = summary.avg_response_time < PERFORMANCE_THRESHOLDS.response_time.good
     ? 100
-    : summary.avg_response_time
-        < PERFORMANCE_THRESHOLDS.response_time.acceptable
+    : summary.avg_response_time <
+        PERFORMANCE_THRESHOLDS.response_time.acceptable
     ? 75
     : 50
 

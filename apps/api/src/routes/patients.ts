@@ -48,11 +48,11 @@ const PatientQuerySchema = z.object({
   page: z
     .string()
     .optional()
-    .transform((val) => (val ? parseInt(val) : 1)),
+    .transform(val => (val ? parseInt(val) : 1)),
   limit: z
     .string()
     .optional()
-    .transform((val) => (val ? Math.min(parseInt(val) || 20, 100) : 20)),
+    .transform(val => (val ? Math.min(parseInt(val) || 20, 100) : 20)),
   search: z.string().optional(),
   status: z.enum(['active', 'inactive', 'all']).optional().default('active'),
 })
@@ -337,7 +337,7 @@ app.get(
   etag(),
   zValidator('query', PatientQuerySchema),
   validateClinicAccess,
-  async (c) => {
+  async c => {
     const query = c.req.valid('query')
     const _userId = c.get('userId') // Now properly typed
 
@@ -376,7 +376,7 @@ app.get(
   }),
   etag(),
   validateClinicAccess,
-  async (c) => {
+  async c => {
     const patientId = c.req.param('id')
     const _userId = c.get('userId') // Now properly typed
 
@@ -409,7 +409,7 @@ app.post(
   requireAuth,
   zValidator('json', PatientCreateSchema),
   validateClinicAccess,
-  async (c) => {
+  async c => {
     const _data = c.req.valid('json')
     const _userId = c.get('userId') // Now properly typed
 

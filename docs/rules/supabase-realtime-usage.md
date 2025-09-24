@@ -60,17 +60,17 @@ export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
       const newRecord = payload.new as MyDataItem
       const oldRecordId = (payload.old as { id: string })?.id
 
-      setItems((currentItems) => {
+      setItems(currentItems => {
         switch (payload.eventType) {
           case 'INSERT':
             return newRecord ? [...currentItems, newRecord] : currentItems
           case 'UPDATE':
             return newRecord
-              ? currentItems.map((item) => item.id === newRecord.id ? newRecord : item)
+              ? currentItems.map(item => item.id === newRecord.id ? newRecord : item)
               : currentItems
           case 'DELETE':
             return oldRecordId
-              ? currentItems.filter((item) => item.id !== oldRecordId)
+              ? currentItems.filter(item => item.id !== oldRecordId)
               : currentItems
           default:
             return currentItems
@@ -96,7 +96,7 @@ export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
       filter: `user_id=eq.${userId}`, // Example filter
       event: '*', // Or 'INSERT', 'UPDATE', 'DELETE'
       callback: handleRealtimeUpdate,
-      onSubscriptionError: (error) => {
+      onSubscriptionError: error => {
         console.error(`Subscription error for ${channelName}:`, error)
         // Optionally, show a toast or update UI
       },
@@ -112,7 +112,7 @@ export function MyRealtimeComponent({ userId }: MyRealtimeComponentProps) {
     <div>
       <h2>Realtime Items for User: {userId}</h2>
       <ul>
-        {items.map((item) => <li key={item.id}>{item.content}</li>)}
+        {items.map(item => <li key={item.id}>{item.content}</li>)}
       </ul>
       {items.length === 0 && <p>No items yet, or waiting for realtime updates...</p>}
     </div>

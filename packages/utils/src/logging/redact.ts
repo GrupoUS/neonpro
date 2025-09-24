@@ -44,8 +44,8 @@ export function redact(input: string, opts: RedactOptions = {}) {
   if (!input) return input
 
   // Email replacer function
-  const emailRepl = opts.emailReplacement
-    || ((match: string) => {
+  const emailRepl = opts.emailReplacement ||
+    ((match: string) => {
       const parts = match.split('@')
       const local = parts[0] || ''
       const domain = parts[1] || ''

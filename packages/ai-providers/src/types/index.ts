@@ -1,6 +1,6 @@
 /**
  * AI Provider Types for NeonPro
- * 
+ *
  * Core interfaces and types for AI provider implementations
  * designed for healthcare applications with LGPD compliance
  */
@@ -39,7 +39,7 @@ export interface AIProviderInterface {
 
 export type AIProvider = 'openai' | 'anthropic' | 'google' | 'mock'
 
-export type HealthcareJobType = 
+export type HealthcareJobType =
   | 'patient_data_sync'
   | 'emergency_notification'
   | 'compliance_audit'

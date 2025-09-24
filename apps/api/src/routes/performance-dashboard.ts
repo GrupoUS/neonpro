@@ -399,8 +399,8 @@ function calculateApplicationStatistics(metrics: any[]) {
     }
   }
 
-  const responseTimes = metrics.map((m) => m.duration || 0)
-  const errors = metrics.filter((m) => !m.success).length
+  const responseTimes = metrics.map(m => m.duration || 0)
+  const errors = metrics.filter(m => !m.success).length
 
   responseTimes.sort((a, b) => a - b)
 
@@ -431,8 +431,8 @@ function calculateDatabaseStatistics(metrics: any[]) {
     }
   }
 
-  const queryTimes = metrics.map((m) => m.duration || 0)
-  const slowQueries = queryTimes.filter((time) => time > 1000).length
+  const queryTimes = metrics.map(m => m.duration || 0)
+  const slowQueries = queryTimes.filter(time => time > 1000).length
 
   return {
     totalQueries: metrics.length,
@@ -457,8 +457,8 @@ function calculateQueryStatistics(metrics: any[]) {
     }
   }
 
-  const queryTimes = metrics.map((m) => m.duration || 0)
-  const slowQueries = queryTimes.filter((time) => time > 1000).length
+  const queryTimes = metrics.map(m => m.duration || 0)
+  const slowQueries = queryTimes.filter(time => time > 1000).length
 
   const queriesByTable = metrics.reduce((acc, metric) => {
     const table = metric.table || 'unknown'
@@ -587,8 +587,8 @@ async function generatePerformanceInsights(
   return {
     summary: {
       totalIssues: insights.length,
-      criticalIssues: insights.filter((i) => i.severity === 'high').length,
-      warningIssues: insights.filter((i) => i.severity === 'medium').length,
+      criticalIssues: insights.filter(i => i.severity === 'high').length,
+      warningIssues: insights.filter(i => i.severity === 'medium').length,
     },
     insights,
     trends: {
@@ -707,7 +707,7 @@ function exportToCsv(metrics: any[], apiMetrics: any[]) {
   const rows = [headers.join(',')]
 
   // Add application metrics
-  metrics.forEach((metric) => {
+  metrics.forEach(metric => {
     rows.push([
       metric.timestamp,
       'database',
@@ -721,7 +721,7 @@ function exportToCsv(metrics: any[], apiMetrics: any[]) {
   })
 
   // Add API metrics
-  apiMetrics.forEach((metric) => {
+  apiMetrics.forEach(metric => {
     rows.push([
       new Date(metric.startTime).toISOString(),
       'api',

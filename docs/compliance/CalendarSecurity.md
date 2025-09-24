@@ -273,8 +273,8 @@ function useCalendarAuth() {
 
     // Users can edit their own appointments or have general edit permission
     return (
-      CalendarAuthService.hasPermission(token, Permission.EDIT_APPOINTMENTS)
-      || appointment.createdBy === user.userId
+      CalendarAuthService.hasPermission(token, Permission.EDIT_APPOINTMENTS) ||
+      appointment.createdBy === user.userId
     )
   }
 
@@ -372,7 +372,7 @@ function containsXSS(input: string): boolean {
     /<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi,
   ]
 
-  return xssPatterns.some((pattern) => pattern.test(input))
+  return xssPatterns.some(pattern => pattern.test(input))
 }
 
 // Sanitization utility
@@ -979,7 +979,7 @@ class SecureWebSocket {
         this.reconnectAttempts = 0
       }
 
-      this.ws.onmessage = (event) => {
+      this.ws.onmessage = event => {
         try {
           const message = JSON.parse(event.data)
 
@@ -1001,7 +1001,7 @@ class SecureWebSocket {
         this.reconnect()
       }
 
-      this.ws.onerror = (error) => {
+      this.ws.onerror = error => {
         console.error('WebSocket error:', error)
       }
     } catch (error) {
@@ -1040,10 +1040,10 @@ class SecureWebSocket {
 
   private validateAppointmentPayload(payload: any): boolean {
     return (
-      typeof payload.id === 'string'
-      && typeof payload.title === 'string'
-      && payload.start instanceof Date
-      && payload.end instanceof Date
+      typeof payload.id === 'string' &&
+      typeof payload.title === 'string' &&
+      payload.start instanceof Date &&
+      payload.end instanceof Date
     )
   }
 

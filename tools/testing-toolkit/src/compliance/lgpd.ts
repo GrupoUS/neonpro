@@ -49,9 +49,9 @@ export class LGPDValidator {
    */
   static validateConsent(data: LGPDTestData): boolean {
     return (
-      data.consentGiven === true
-      && typeof data.dataProcessingPurpose === 'string'
-      && data.dataProcessingPurpose.length > 0
+      data.consentGiven === true &&
+      typeof data.dataProcessingPurpose === 'string' &&
+      data.dataProcessingPurpose.length > 0
     )
   }
 
@@ -64,8 +64,8 @@ export class LGPDValidator {
   ): boolean {
     const dataKeys = Object.keys(data.personalData)
     return (
-      requiredFields.every((field) => dataKeys.includes(field))
-      && dataKeys.every((key) => requiredFields.includes(key))
+      requiredFields.every(field => dataKeys.includes(field)) &&
+      dataKeys.every(key => requiredFields.includes(key))
     )
   }
 
@@ -74,19 +74,19 @@ export class LGPDValidator {
    */
   static validateAuditTrail(data: LGPDTestData): boolean {
     return (
-      Array.isArray(data.auditTrail)
-      && data.auditTrail.length > 0
-      && data.auditTrail.every(
-        (entry) =>
-          entry.timestamp instanceof Date
-          && typeof entry.action === 'string'
-          && entry.action.trim().length > 0
-          && typeof entry.userId === 'string'
-          && entry.userId.trim().length > 0
-          && typeof entry.dataType === 'string'
-          && entry.dataType.trim().length > 0
-          && typeof entry.purpose === 'string'
-          && entry.purpose.trim().length > 0,
+      Array.isArray(data.auditTrail) &&
+      data.auditTrail.length > 0 &&
+      data.auditTrail.every(
+        entry =>
+          entry.timestamp instanceof Date &&
+          typeof entry.action === 'string' &&
+          entry.action.trim().length > 0 &&
+          typeof entry.userId === 'string' &&
+          entry.userId.trim().length > 0 &&
+          typeof entry.dataType === 'string' &&
+          entry.dataType.trim().length > 0 &&
+          typeof entry.purpose === 'string' &&
+          entry.purpose.trim().length > 0,
       )
     )
   }
@@ -97,11 +97,11 @@ export class LGPDValidator {
   static validateDataSubjectRights(data: LGPDTestData): boolean {
     const rights = data.dataSubjectRights
     return (
-      typeof rights.accessRight === 'boolean'
-      && typeof rights.rectificationRight === 'boolean'
-      && typeof rights.erasureRight === 'boolean'
-      && typeof rights.portabilityRight === 'boolean'
-      && typeof rights.objectionRight === 'boolean'
+      typeof rights.accessRight === 'boolean' &&
+      typeof rights.rectificationRight === 'boolean' &&
+      typeof rights.erasureRight === 'boolean' &&
+      typeof rights.portabilityRight === 'boolean' &&
+      typeof rights.objectionRight === 'boolean'
     )
   }
 

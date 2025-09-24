@@ -130,10 +130,10 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
     setEvents(updatedEvents)
     localStorage.setItem('neonpro-calendar-events', JSON.stringify(updatedEvents))
 
-    const neonProCount = updatedEvents.filter((e) => e.isNeonProEvent).length
-    const deviceCount = updatedEvents.filter((e) => !e.isNeonProEvent).length
+    const neonProCount = updatedEvents.filter(e => e.isNeonProEvent).length
+    const deviceCount = updatedEvents.filter(e => !e.isNeonProEvent).length
 
-    setSyncStatus((prev) => ({
+    setSyncStatus(prev => ({
       ...prev,
       totalEvents: updatedEvents.length,
       neonProEvents: neonProCount,
@@ -172,7 +172,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
         break
     }
 
-    const filtered = events.filter((event) =>
+    const filtered = events.filter(event =>
       event.startTime >= startDate && event.startTime <= endDate
     )
 
@@ -215,20 +215,20 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
 
         // Merge with existing events, avoiding duplicates
         const existingDeviceIds = events
-          .filter((e) => !e.isNeonProEvent)
-          .map((e) => e.id)
+          .filter(e => !e.isNeonProEvent)
+          .map(e => e.id)
 
         const newDeviceEvents = deviceEvents.filter(
-          (e) => !existingDeviceIds.includes(e.id),
+          e => !existingDeviceIds.includes(e.id),
         )
 
         const updatedEvents = [...events, ...newDeviceEvents]
         saveEvents(updatedEvents)
 
-        setSyncStatus((prev) => ({
+        setSyncStatus(prev => ({
           ...prev,
           lastSync: new Date(),
-          deviceEvents: updatedEvents.filter((e) => !e.isNeonProEvent).length,
+          deviceEvents: updatedEvents.filter(e => !e.isNeonProEvent).length,
         }))
 
         onSyncComplete?.(updatedEvents)
@@ -467,7 +467,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
             </div>
           )
           : (
-            filteredEvents.map((event) => (
+            filteredEvents.map(event => (
               <div
                 key={event.id}
                 className={`border rounded-lg p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
@@ -574,7 +574,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                   type='text'
                   value={newEvent.title || ''}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setNewEvent((prev) => ({ ...prev, title: e.target.value }))}
+                    setNewEvent(prev => ({ ...prev, title: e.target.value }))}
                   className='w-full p-2 border border-gray-300 rounded-md'
                   placeholder='Consulta, procedimento, etc.'
                 />
@@ -589,7 +589,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                     type='datetime-local'
                     value={newEvent.startTime ? newEvent.startTime.toISOString().slice(0, 16) : ''}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setNewEvent((prev) => ({ ...prev, startTime: new Date(e.target.value) }))}
+                      setNewEvent(prev => ({ ...prev, startTime: new Date(e.target.value) }))}
                     className='w-full p-2 border border-gray-300 rounded-md'
                   />
                 </div>
@@ -601,7 +601,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                     type='datetime-local'
                     value={newEvent.endTime ? newEvent.endTime.toISOString().slice(0, 16) : ''}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setNewEvent((prev) => ({ ...prev, endTime: new Date(e.target.value) }))}
+                      setNewEvent(prev => ({ ...prev, endTime: new Date(e.target.value) }))}
                     className='w-full p-2 border border-gray-300 rounded-md'
                   />
                 </div>
@@ -614,7 +614,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                 <select
                   value={newEvent.eventType || 'appointment'}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                    setNewEvent((prev) => ({ ...prev, eventType: e.target.value as any }))}
+                    setNewEvent(prev => ({ ...prev, eventType: e.target.value as any }))}
                   className='w-full p-2 border border-gray-300 rounded-md'
                 >
                   <option value='appointment'>Agendamento</option>
@@ -633,7 +633,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                   type='text'
                   value={newEvent.location || ''}
                   onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setNewEvent((prev) => ({ ...prev, location: e.target.value }))}
+                    setNewEvent(prev => ({ ...prev, location: e.target.value }))}
                   className='w-full p-2 border border-gray-300 rounded-md'
                   placeholder='Clínica, sala, endereço'
                 />
@@ -646,7 +646,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                 <textarea
                   value={newEvent.description || ''}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setNewEvent((prev) => ({ ...prev, description: e.target.value }))}
+                    setNewEvent(prev => ({ ...prev, description: e.target.value }))}
                   className='w-full p-2 border border-gray-300 rounded-md'
                   rows={3}
                   placeholder='Observações sobre o evento'

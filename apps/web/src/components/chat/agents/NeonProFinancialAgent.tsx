@@ -220,7 +220,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       currentOperation: state.currentOperation,
       metrics: state.metrics,
       forecast: state.forecast,
-      pendingTransactions: state.transactions.filter((t) => t.status === 'pending').length,
+      pendingTransactions: state.transactions.filter(t => t.status === 'pending').length,
       compliance: state.compliance,
     },
   }, [state])
@@ -266,15 +266,15 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       discount?: number,
     ) => {
       try {
-        setState((prev) => ({ ...prev, currentOperation: 'processing_payment' }))
+        setState(prev => ({ ...prev, currentOperation: 'processing_payment' }))
 
         // Simulate processing delay
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        await new Promise(resolve => setTimeout(resolve, 2000))
 
         // Calculate total amount
         let subtotal = 0
-        const items = services.map((serviceName) => {
-          const service = mockServices.find((s) => s.name === serviceName)
+        const items = services.map(serviceName => {
+          const service = mockServices.find(s => s.name === serviceName)
           if (!service) throw new Error(`Service not found: ${serviceName}`)
           subtotal += service.price
           return {
@@ -323,7 +323,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           notes: installments ? `Pago em ${installments}x` : undefined,
         }
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           transactions: [...prev.transactions, transaction],
@@ -354,7 +354,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to process payment'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -384,15 +384,15 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       notes?: string,
     ) => {
       try {
-        setState((prev) => ({ ...prev, currentOperation: 'generating_invoice' }))
+        setState(prev => ({ ...prev, currentOperation: 'generating_invoice' }))
 
         // Simulate generation delay
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        await new Promise(resolve => setTimeout(resolve, 1500))
 
         // Calculate invoice details
         let subtotal = 0
-        const items = services.map((serviceName) => {
-          const service = mockServices.find((s) => s.name === serviceName)
+        const items = services.map(serviceName => {
+          const service = mockServices.find(s => s.name === serviceName)
           if (!service) throw new Error(`Service not found: ${serviceName}`)
           subtotal += service.price
           return {
@@ -421,7 +421,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           notes,
         }
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           invoices: [...prev.invoices, invoice],
@@ -448,7 +448,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Failed to generate invoice'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -474,15 +474,15 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
     ],
     handler: async (period: string = 'month', focus: string = 'revenue') => {
       try {
-        setState((prev) => ({ ...prev, currentOperation: 'analyzing' }))
+        setState(prev => ({ ...prev, currentOperation: 'analyzing' }))
 
         // Simulate analysis delay
-        await new Promise((resolve) => setTimeout(resolve, 2500))
+        await new Promise(resolve => setTimeout(resolve, 2500))
 
         const analysis = generateFinancialAnalysis(state.transactions, period, focus)
         const forecast = generateFinancialForecast(state.transactions)
 
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           currentOperation: 'idle',
           analysis,
@@ -495,7 +495,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
           ? error.message
           : 'Failed to analyze performance'
         onError?.(errorMessage)
-        setState((prev) => ({ ...prev, currentOperation: 'idle' }))
+        setState(prev => ({ ...prev, currentOperation: 'idle' }))
         throw error
       }
     },
@@ -504,22 +504,22 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
   // Calculate financial metrics
   const calculateFinancialMetrics = (transactions: FinancialTransaction[]): FinancialMetrics => {
     const revenue = transactions
-      .filter((t) => t.type === 'revenue' && t.status === 'completed')
+      .filter(t => t.type === 'revenue' && t.status === 'completed')
       .reduce((sum, t) => sum + t.amount, 0)
 
     const expenses = transactions
-      .filter((t) => t.type === 'expense' && t.status === 'completed')
+      .filter(t => t.type === 'expense' && t.status === 'completed')
       .reduce((sum, t) => sum + t.amount, 0)
 
     const netProfit = revenue - expenses
     const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0
 
     const pendingPayments = transactions
-      .filter((t) => t.status === 'pending')
+      .filter(t => t.status === 'pending')
       .reduce((sum, t) => sum + t.amount, 0)
 
     const serviceRevenue = new Map<string, { revenue: number; count: number }>()
-    transactions.forEach((t) => {
+    transactions.forEach(t => {
       if (t.type === 'revenue' && t.status === 'completed') {
         const current = serviceRevenue.get(t.category) || { revenue: 0, count: 0 }
         serviceRevenue.set(t.category, {
@@ -542,7 +542,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
       pendingPayments,
       overdueInvoices: 0, // Mock data
       averageTicket: revenue > 0
-        ? revenue / transactions.filter((t) => t.type === 'revenue').length
+        ? revenue / transactions.filter(t => t.type === 'revenue').length
         : 0,
       monthlyGrowth: 12.5, // Mock data
       collectionRate: 95.2, // Mock data
@@ -590,7 +590,7 @@ export const NeonProFinancialAgent: React.FC<FinancialAgentProps> = ({
   // Generate financial forecast
   const generateFinancialForecast = (transactions: FinancialTransaction[]) => {
     const currentRevenue = transactions
-      .filter((t) => t.type === 'revenue' && t.status === 'completed')
+      .filter(t => t.type === 'revenue' && t.status === 'completed')
       .reduce((sum, t) => sum + t.amount, 0)
 
     const growthRate = 0.12 // 12% growth

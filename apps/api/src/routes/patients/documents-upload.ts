@@ -44,7 +44,7 @@ app.use(
   '/:id/documents',
   bodyLimit({
     maxSize: 10 * 1024 * 1024,
-    onError: (c) =>
+    onError: c =>
       c.json(
         { success: false, error: 'Arquivo excede tamanho máximo (10MB)' },
         413,
@@ -52,7 +52,7 @@ app.use(
   }),
 )
 
-app.post('/:id/documents', requireAuth, async (c) => {
+app.post('/:id/documents', requireAuth, async c => {
   // Validate patient id param
   const params = ParamsSchema.safeParse(c.req.param())
   if (!params.success) {

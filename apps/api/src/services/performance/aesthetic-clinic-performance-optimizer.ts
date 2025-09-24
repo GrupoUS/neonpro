@@ -594,7 +594,7 @@ export class AestheticClinicPerformanceOptimizer {
     }
 
     const optimizedPhotos = await Promise.all(
-      photos.map(async (photo) => {
+      photos.map(async photo => {
         const optimized: any = { ...photo }
 
         // Generate optimized image URLs
@@ -751,7 +751,7 @@ export class AestheticClinicPerformanceOptimizer {
 
     // Keep only last 24 hours of metrics
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-    this.metrics = this.metrics.filter((m) => m.timestamp > oneDayAgo)
+    this.metrics = this.metrics.filter(m => m.timestamp > oneDayAgo)
   }
 
   /**
@@ -765,7 +765,7 @@ export class AestheticClinicPerformanceOptimizer {
     const start = new Date(timeRange.start).getTime()
     const end = new Date(timeRange.end).getTime()
 
-    return this.metrics.filter((metric) => {
+    return this.metrics.filter(metric => {
       const metricTime = new Date(metric.timestamp).getTime()
       return metricTime >= start && metricTime <= end
     })

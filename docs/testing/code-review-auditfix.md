@@ -202,7 +202,7 @@ export class CoverageEnforcer {
       )
 
       if (violations.length > 0) {
-        violations.forEach((violation) => {
+        violations.forEach(violation => {
           violations.push({
             category,
             severity: category === 'critical' ? 'blocker' : 'major',
@@ -227,7 +227,7 @@ export class CoverageEnforcer {
 
     if (!report.passed) {
       const criticalViolations = report.violations.filter(
-        (v) => v.severity === 'blocker',
+        v => v.severity === 'blocker',
       )
 
       if (criticalViolations.length > 0) {
@@ -235,7 +235,7 @@ export class CoverageEnforcer {
           `Critical coverage violations found:\n${
             criticalViolations
               .map(
-                (v) => `- ${v.file}: ${v.metric} coverage ${v.actual}% < ${v.expected}%`,
+                v => `- ${v.file}: ${v.metric} coverage ${v.actual}% < ${v.expected}%`,
               )
               .join('\n')
           }`,

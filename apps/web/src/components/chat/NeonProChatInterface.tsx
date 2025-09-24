@@ -76,7 +76,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
       <input
         type='text'
         value={message}
-        onChange={(e) => setMessage(e.target.value)}
+        onChange={e => setMessage(e.target.value)}
         placeholder={placeholder}
         disabled={disabled}
         className='flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 touch-target'
@@ -123,7 +123,7 @@ const MessageBubble: React.FC<{ message: Message; isUser?: boolean }> = ({ messa
         },
       }}
       isUser={isUser}
-      onAction={(action) => {
+      onAction={action => {
         // Handle message actions (copy, speak, report)
         if (action === 'copy') {
           navigator.clipboard.writeText(message.content)
@@ -184,7 +184,7 @@ const AgentSidebar: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent className='space-y-3'>
-        {agents.map((agent) => (
+        {agents.map(agent => (
           <button
             key={agent.id}
             onClick={() => setActiveAgent(agent.type)}
@@ -329,7 +329,7 @@ export const NeonProChatInterface: React.FC = () => {
     <AccessibleErrorBoundary>
       <SkipLinks />
       <ScreenReaderAnnouncer
-        message={announcements.map((a) => a.message).join('. ')}
+        message={announcements.map(a => a.message).join('. ')}
         priority='polite'
       />
       <AccessibilitySettingsPanel />
@@ -437,7 +437,7 @@ export const NeonProChatInterface: React.FC = () => {
               )
               : (
                 <>
-                  {activeAgent.messages.map((message) => (
+                  {activeAgent.messages.map(message => (
                     <MessageBubble
                       key={message.id}
                       message={message}
@@ -467,7 +467,7 @@ export const NeonProChatInterface: React.FC = () => {
               placeholder: 'Digite sua mensagem...',
             }}
             className='hidden'
-            onSubmitMessage={(message) => {
+            onSubmitMessage={message => {
               // Handle message submission through our custom interface
               handleSendMessage(message)
             }}

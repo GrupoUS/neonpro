@@ -652,9 +652,9 @@ pnpm install -g @biomejs/biome # Alternative to ESLint
 // Performance monitoring for healthcare components
 export function useComponentPerformance(componentName: string) {
   useEffect(() => {
-    const observer = new PerformanceObserver((list) => {
+    const observer = new PerformanceObserver(list => {
       const entries = list.getEntries()
-      entries.forEach((entry) => {
+      entries.forEach(entry => {
         if (entry.name.includes(componentName)) {
           // Log performance metrics for healthcare-critical components
           console.log(`${componentName} render time:`, entry.duration)
@@ -1110,7 +1110,7 @@ export function PatientRegistrationForm({ onSubmit, userRole }: PatientRegistrat
                   id='name'
                   required
                   value={formData.name || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   placeholder='Digite o nome completo'
                 />
               </div>
@@ -1121,7 +1121,7 @@ export function PatientRegistrationForm({ onSubmit, userRole }: PatientRegistrat
                   id='cpf'
                   required
                   value={formData.cpf || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, cpf: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, cpf: e.target.value }))}
                   placeholder='000.000.000-00'
                   maxLength={14}
                 />
@@ -1141,7 +1141,7 @@ export function PatientRegistrationForm({ onSubmit, userRole }: PatientRegistrat
                   type='tel'
                   required
                   value={formData.phone || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder='(11) 99999-9999'
                 />
               </div>
@@ -1152,7 +1152,7 @@ export function PatientRegistrationForm({ onSubmit, userRole }: PatientRegistrat
                   id='email'
                   type='email'
                   value={formData.email || ''}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+                  onChange={e => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   placeholder='email@exemplo.com'
                 />
               </div>
@@ -1247,14 +1247,14 @@ export function HealthcareDashboard() {
           </CardHeader>
           <CardContent>
             <div className='text-2xl font-bold text-red-600'>
-              {patients?.filter((p) => p.riskScore > 0.7).length || 0}
+              {patients?.filter(p => p.riskScore > 0.7).length || 0}
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* High Risk Patients Alert */}
-      {patients?.some((p) => p.riskScore > 0.7) && (
+      {patients?.some(p => p.riskScore > 0.7) && (
         <Alert variant='destructive'>
           <AlertDescription>
             Existem pacientes com alto risco de não comparecimento. Considere entrar em contato para
@@ -1280,7 +1280,7 @@ export function HealthcareDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {appointments?.map((appointment) => (
+              {appointments?.map(appointment => (
                 <TableRow key={appointment.id}>
                   <TableCell className='font-medium'>
                     {appointment.patient.name}

@@ -110,12 +110,12 @@ class HealthcareErrorTracker {
 
   private constructor() {
     // Initialize error type counters
-    Object.values(HealthcareErrorTypeSchema.enum).forEach((type) => {
+    Object.values(HealthcareErrorTypeSchema.enum).forEach(type => {
       this.errorMetrics.errorsByType[type] = 0
     })
 
     // Initialize severity counters
-    Object.values(ErrorSeveritySchema.enum).forEach((severity) => {
+    Object.values(ErrorSeveritySchema.enum).forEach(severity => {
       this.errorMetrics.errorsBySeverity[severity] = 0
     })
   }
@@ -162,88 +162,88 @@ class HealthcareErrorTracker {
 
     // Patient data exposure detection
     if (
-      message.includes('patient')
-      && (message.includes('unauthorized') || message.includes('forbidden'))
+      message.includes('patient') &&
+      (message.includes('unauthorized') || message.includes('forbidden'))
     ) {
       return 'patient_data_exposure'
     }
 
     // LGPD compliance issues
     if (
-      message.includes('lgpd')
-      || message.includes('consent')
-      || message.includes('privacy')
+      message.includes('lgpd') ||
+      message.includes('consent') ||
+      message.includes('privacy')
     ) {
       return 'lgpd_compliance_issue'
     }
 
     // Authentication errors
     if (
-      message.includes('authentication')
-      || message.includes('login')
-      || message.includes('token')
+      message.includes('authentication') ||
+      message.includes('login') ||
+      message.includes('token')
     ) {
       return 'authentication_error'
     }
 
     // Authorization errors
     if (
-      message.includes('authorization')
-      || message.includes('permission')
-      || message.includes('access denied')
+      message.includes('authorization') ||
+      message.includes('permission') ||
+      message.includes('access denied')
     ) {
       return 'authorization_error'
     }
 
     // Database errors
     if (
-      stack.includes('prisma')
-      || stack.includes('supabase')
-      || message.includes('database')
+      stack.includes('prisma') ||
+      stack.includes('supabase') ||
+      message.includes('database')
     ) {
       return 'database_error'
     }
 
     // Validation errors
     if (
-      message.includes('validation')
-      || message.includes('invalid')
-      || stack.includes('zod')
+      message.includes('validation') ||
+      message.includes('invalid') ||
+      stack.includes('zod')
     ) {
       return 'validation_error'
     }
 
     // Rate limiting
     if (
-      message.includes('rate limit')
-      || message.includes('too many requests')
+      message.includes('rate limit') ||
+      message.includes('too many requests')
     ) {
       return 'rate_limit_exceeded'
     }
 
     // Performance issues
     if (
-      message.includes('timeout')
-      || message.includes('slow')
-      || message.includes('performance')
+      message.includes('timeout') ||
+      message.includes('slow') ||
+      message.includes('performance')
     ) {
       return 'performance_degradation'
     }
 
     // Service availability
     if (
-      message.includes('unavailable')
-      || message.includes('service down')
-      || message.includes('connection')
+      message.includes('unavailable') ||
+      message.includes('service down') ||
+      message.includes('connection')
     ) {
       return 'service_unavailable'
     }
 
     // External service errors
     if (
-      context.endpoint?.includes('external')
-      || message.includes('third party')
-      || message.includes('api error')
+      context.endpoint?.includes('external') ||
+      message.includes('third party') ||
+      message.includes('api error')
     ) {
       return 'external_service_error'
     }
@@ -261,27 +261,27 @@ class HealthcareErrorTracker {
   ): ErrorSeverity {
     // Critical errors - immediate attention required
     if (
-      errorType === 'patient_data_exposure'
-      || errorType === 'data_access_violation'
-      || errorType === 'lgpd_compliance_issue'
+      errorType === 'patient_data_exposure' ||
+      errorType === 'data_access_violation' ||
+      errorType === 'lgpd_compliance_issue'
     ) {
       return 'critical'
     }
 
     // High severity - significant impact
     if (
-      errorType === 'unauthorized_access'
-      || errorType === 'data_integrity_violation'
-      || errorType === 'service_unavailable'
+      errorType === 'unauthorized_access' ||
+      errorType === 'data_integrity_violation' ||
+      errorType === 'service_unavailable'
     ) {
       return 'high'
     }
 
     // Medium severity - moderate impact
     if (
-      errorType === 'performance_degradation'
-      || errorType === 'database_error'
-      || errorType === 'external_service_error'
+      errorType === 'performance_degradation' ||
+      errorType === 'database_error' ||
+      errorType === 'external_service_error'
     ) {
       return 'medium'
     }
@@ -396,7 +396,7 @@ class HealthcareErrorTracker {
   ): Promise<void> {
     return this.tracer.startActiveSpan(
       'track-healthcare-error',
-      async (span) => {
+      async span => {
         try {
           // Create redacted error
           const redactedError = this.createRedactedError(error, _context)
@@ -415,7 +415,7 @@ class HealthcareErrorTracker {
           })
 
           // Send to Sentry with redacted data
-          Sentry.withScope((scope) => {
+          Sentry.withScope(scope => {
             scope.setLevel(
               this.mapSeverityToSentryLevel(redactedError.severity),
             )
@@ -543,11 +543,11 @@ class HealthcareErrorTracker {
     }
 
     // Reinitialize counters
-    Object.values(HealthcareErrorTypeSchema.enum).forEach((type) => {
+    Object.values(HealthcareErrorTypeSchema.enum).forEach(type => {
       this.errorMetrics.errorsByType[type] = 0
     })
 
-    Object.values(ErrorSeveritySchema.enum).forEach((severity) => {
+    Object.values(ErrorSeveritySchema.enum).forEach(severity => {
       this.errorMetrics.errorsBySeverity[severity] = 0
     })
   }

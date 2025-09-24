@@ -170,20 +170,20 @@ const historyQuerySchema = z.object({
   eventTypes: z
     .string()
     .optional()
-    .transform((val) => (val ? val.split(',') : undefined)),
+    .transform(val => (val ? val.split(',') : undefined)),
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
   severity: z
     .string()
     .optional()
-    .transform((val) => (val ? val.split(',') : undefined)),
+    .transform(val => (val ? val.split(',') : undefined)),
   category: z.string().optional(),
   actorId: z.string().optional(),
 })
 
 const app = new Hono()
 
-app.get('/:id/history', requireAuth, dataProtection.clientView, async (c) => {
+app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
   const startTime = Date.now()
 
   try {
@@ -234,8 +234,8 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async (c) => {
       return c.json(
         {
           success: false,
-          error: lgpdValidation.error
-            || 'Acesso ao histórico negado por política LGPD',
+          error: lgpdValidation.error ||
+            'Acesso ao histórico negado por política LGPD',
           code: lgpdValidation.code || 'LGPD_HISTORY_ACCESS_DENIED',
         },
         403,
@@ -354,7 +354,7 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async (c) => {
         {
           success: false,
           error: 'Parâmetros de consulta inválidos',
-          errors: error.errors.map((err) => ({
+          errors: error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message,
           })),

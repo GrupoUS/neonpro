@@ -66,8 +66,8 @@ class SecureLogger {
 
   constructor(config: LoggerConfig = {}) {
     this.config = {
-      level: config.level
-        || (process.env.NODE_ENV === 'production' ? 'warn' : 'debug'),
+      level: config.level ||
+        (process.env.NODE_ENV === 'production' ? 'warn' : 'debug'),
       maskSensitiveData: config.maskSensitiveData ?? true,
       lgpdCompliant: config.lgpdCompliant ?? true,
       auditTrail: config.auditTrail ?? true,
@@ -121,11 +121,11 @@ class SecureLogger {
 
     // Apply pattern-based masking
     Object.entries(SENSITIVE_PATTERNS).forEach(([, pattern]) => {
-      maskedText = maskedText.replace(pattern, (match) => {
+      maskedText = maskedText.replace(pattern, match => {
         const visibleChars = Math.min(3, Math.floor(match.length * 0.3))
         return (
-          match.substring(0, visibleChars)
-          + '*'.repeat(match.length - visibleChars)
+          match.substring(0, visibleChars) +
+          '*'.repeat(match.length - visibleChars)
         )
       })
     })
@@ -139,7 +139,7 @@ class SecureLogger {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.maskObjectData(item))
+      return obj.map(item => this.maskObjectData(item))
     }
 
     const masked: any = {}
@@ -148,7 +148,7 @@ class SecureLogger {
       const lowerKey = key.toLowerCase()
 
       if (
-        SENSITIVE_KEYS.some((sensitiveKey) => lowerKey.includes(sensitiveKey))
+        SENSITIVE_KEYS.some(sensitiveKey => lowerKey.includes(sensitiveKey))
       ) {
         masked[key] = this.maskValue(value)
       } else if (typeof value === 'object' && value !== null) {

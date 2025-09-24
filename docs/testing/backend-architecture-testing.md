@@ -846,7 +846,7 @@ describe('API Performance', () => {
     const duration = Date.now() - start
 
     // All requests should succeed
-    expect(responses.every((r) => r.status === 200)).toBe(true)
+    expect(responses.every(r => r.status === 200)).toBe(true)
 
     // Should handle concurrent load efficiently
     expect(duration).toBeLessThan(2000) // 2s for 50 concurrent requests

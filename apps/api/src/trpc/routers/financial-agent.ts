@@ -242,7 +242,7 @@ export const financialAgentRouter = router({
         return {
           success: true,
           data: {
-            messages: messages.map((msg) => ({
+            messages: messages.map(msg => ({
               id: msg.id,
               session_id: msg.sessionId,
               message_type: msg.messageType || 'billing_request',
@@ -417,13 +417,13 @@ export const financialAgentRouter = router({
               confidence_level: analytics.confidenceLevel,
               generated_at: analytics.generatedAt,
             },
-            predictions: predictions.map((pred) => ({
+            predictions: predictions.map(pred => ({
               metric: pred.metric,
               predicted_value: pred.predictedValue,
               confidence_interval: pred.confidenceInterval,
               time_period: pred.timePeriod,
             })),
-            insights: analytics.insights.map((insight) => ({
+            insights: analytics.insights.map(insight => ({
               type: insight.type,
               description: insight.description,
               impact: insight.impact,
@@ -466,7 +466,7 @@ export const financialAgentRouter = router({
           timeRange: input.time_range,
         })
 
-        return alerts.map((alert) => ({
+        return alerts.map(alert => ({
           alert_id: alert.id,
           alert_type: alert.alertType as any,
           severity: alert.severity as any,
@@ -566,7 +566,7 @@ export const financialAgentRouter = router({
         })
 
         return {
-          audit_events: auditEvents.map((event) => ({
+          audit_events: auditEvents.map(event => ({
             event_id: event.id,
             event_type: event.eventType as any,
             user_id: event.userId,

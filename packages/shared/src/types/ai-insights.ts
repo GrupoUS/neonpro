@@ -216,8 +216,8 @@ export function validateAIInsight(insight: Partial<AIInsight>): boolean {
   }
 
   if (
-    insight.confidence !== undefined
-    && !validateConfidenceScore(insight.confidence)
+    insight.confidence !== undefined &&
+    !validateConfidenceScore(insight.confidence)
   ) {
     return false
   }
@@ -362,7 +362,7 @@ export function getInsightsByPatientId(
   patientId: string,
 ): AIInsight[] {
   return insights
-    .filter((insight) => insight.patientId === patientId)
+    .filter(insight => insight.patientId === patientId)
     .sort((a, b) => b.generatedAt.getTime() - a.generatedAt.getTime())
 }
 
@@ -371,13 +371,13 @@ export function getInsightsByType(
   insights: AIInsight[],
   type: AIInsightType,
 ): AIInsight[] {
-  return insights.filter((insight) => insight.type === type)
+  return insights.filter(insight => insight.type === type)
 }
 
 // Get validated insights
 export function getValidatedInsights(insights: AIInsight[]): AIInsight[] {
   return insights.filter(
-    (insight) => insight.status === InsightStatus.VALIDATED,
+    insight => insight.status === InsightStatus.VALIDATED,
   )
 }
 
@@ -386,9 +386,9 @@ export function getInsightsRequiringValidation(
   insights: AIInsight[],
 ): AIInsight[] {
   return insights.filter(
-    (insight) =>
-      insight.status === InsightStatus.GENERATED
-      || insight.status === InsightStatus.PENDING_REVIEW,
+    insight =>
+      insight.status === InsightStatus.GENERATED ||
+      insight.status === InsightStatus.PENDING_REVIEW,
   )
 }
 
@@ -411,7 +411,7 @@ export function calculateInsightsStatistics(insights: AIInsight[]): {
   let totalConfidence = 0
   let totalReliability = 0
 
-  insights.forEach((insight) => {
+  insights.forEach(insight => {
     // Count by status
     stats.byStatus[insight.status] = (stats.byStatus[insight.status] || 0) + 1
 

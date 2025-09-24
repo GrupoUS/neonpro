@@ -111,20 +111,20 @@ export class RealtimeSubscriptionService extends EventEmitter {
 
         // Set up channel event handlers
         channel
-          .on('broadcast', { event: eventType }, (payload) => {
+          .on('broadcast', { event: eventType }, payload => {
             this.handleRealtimeEvent(payload.payload, eventType)
           })
           .on('presence', { event: 'sync' }, () => {
             this.handlePresenceSync(channelName)
           })
-          .on('system', (event) => {
+          .on('system', event => {
             this.handleSystemEvent(event, channelName)
           })
 
         channels.set(channelName, channel)
 
         // Subscribe to the channel
-        await channel.subscribe((status) => {
+        await channel.subscribe(status => {
           if (status === 'SUBSCRIBED') {
             this.emit('subscribed', { subscriptionId, channelName, eventType })
             this.logEvent('subscription_created', {
@@ -240,7 +240,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       for (const channelName of channels) {
         const channel = this.supabase
           .getChannels()
-          .find((c) => c.topic === channelName)
+          .find(c => c.topic === channelName)
         if (channel) {
           await channel.send({
             type: 'broadcast',
@@ -266,9 +266,9 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   getAnalytics(): RealtimeAnalytics {
     const activeSubscriptions = Array.from(this.subscriptions.values()).filter(
-      (s) => s.isActive,
+      s => s.isActive,
     )
-    const usersOnline = new Set(activeSubscriptions.map((s) => s._userId)).size
+    const usersOnline = new Set(activeSubscriptions.map(s => s._userId)).size
 
     return {
       activeSubscriptions: activeSubscriptions.length,
@@ -285,7 +285,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   getUserSubscriptions(_userId: string): SubscriptionHandle[] {
     return Array.from(this.subscriptions.values()).filter(
-      (sub) => sub.userId === userId && sub.isActive,
+      sub => sub.userId === userId && sub.isActive,
     )
   }
 
@@ -294,7 +294,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   getSessionSubscriptions(sessionId: string): SubscriptionHandle[] {
     return Array.from(this.subscriptions.values()).filter(
-      (sub) => sub.sessionId === sessionId && sub.isActive,
+      sub => sub.sessionId === sessionId && sub.isActive,
     )
   }
 
@@ -357,11 +357,11 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   private getRelevantSubscriptions(event: RealtimeEvent): SubscriptionHandle[] {
     return Array.from(this.subscriptions.values()).filter(
-      (sub) =>
-        sub.isActive
-        && sub.eventTypes.has(event.type)
-        && (!event.userId || sub.userId === event._userId)
-        && (!event.sessionId || sub.sessionId === event.sessionId),
+      sub =>
+        sub.isActive &&
+        sub.eventTypes.has(event.type) &&
+        (!event.userId || sub.userId === event._userId) &&
+        (!event.sessionId || sub.sessionId === event.sessionId),
     )
   }
 
@@ -374,8 +374,8 @@ export class RealtimeSubscriptionService extends EventEmitter {
   ): boolean {
     // Check data classification filter
     if (
-      options.dataClassification?.length
-      && !options.dataClassification.includes(event.metadata?.dataClassification)
+      options.dataClassification?.length &&
+      !options.dataClassification.includes(event.metadata?.dataClassification)
     ) {
       return false
     }
@@ -461,12 +461,12 @@ export class RealtimeSubscriptionService extends EventEmitter {
    */
   private validateEvent(event: RealtimeEvent): boolean {
     return (
-      event.id
-      && event.type
-      && event.timestamp
-      && event.eventType
-      && event.payload
-      && (event.metadata ? event.metadata.dataClassification : true)
+      event.id &&
+      event.type &&
+      event.timestamp &&
+      event.eventType &&
+      event.payload &&
+      (event.metadata ? event.metadata.dataClassification : true)
     )
   }
 
@@ -502,8 +502,8 @@ export class RealtimeSubscriptionService extends EventEmitter {
       this.isProcessing = true
       const batch = this.eventQueue.splice(0, 100) // Process up to 100 events at once
 
-      Promise.all(batch.map((event) => this.processEvent(event)))
-        .catch((error) => {
+      Promise.all(batch.map(event => this.processEvent(event)))
+        .catch(error => {
           this.logError('event_batch_failed', {
             error,
             batchSize: batch.length,
@@ -545,12 +545,12 @@ export class RealtimeSubscriptionService extends EventEmitter {
     setInterval(
       () => {
         this.cleanupInactiveSubscriptions()
-          .then((count) => {
+          .then(count => {
             if (count > 0) {
               this.logEvent('cleanup_completed', { removedCount: count })
             }
           })
-          .catch((error) => {
+          .catch(error => {
             this.logError('cleanup_failed', { error })
           })
       },
@@ -593,7 +593,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       this.logError('connection_lost', {})
     })
 
-    this.supabase.onError((error) => {
+    this.supabase.onError(error => {
       this.emit('connection_error', error)
       this.logError('connection_error', { error })
     })
@@ -664,7 +664,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       // Remove all subscriptions
       const subscriptionIds = Array.from(this.subscriptions.keys())
       await Promise.all(
-        subscriptionIds.map((id) => this.removeSubscription(id)),
+        subscriptionIds.map(id => this.removeSubscription(id)),
       )
 
       // Close Supabase connection

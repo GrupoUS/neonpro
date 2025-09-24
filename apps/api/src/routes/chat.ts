@@ -25,8 +25,8 @@ const rateState = new Map<string, { w5m: number[]; w1h: number[] }>()
 
 function isRateLimited(userKey: string, now = Date.now()) {
   const entry = rateState.get(userKey) || { w5m: [], w1h: [] }
-  entry.w5m = entry.w5m.filter((ts) => now - ts <= WINDOW_5M_MS)
-  entry.w1h = entry.w1h.filter((ts) => now - ts <= WINDOW_1H_MS)
+  entry.w5m = entry.w5m.filter(ts => now - ts <= WINDOW_5M_MS)
+  entry.w1h = entry.w1h.filter(ts => now - ts <= WINDOW_1H_MS)
   const limited = entry.w5m.length >= RATE_LIMIT_5M || entry.w1h.length >= RATE_LIMIT_1H
   if (!limited) {
     entry.w5m.push(now)
@@ -139,7 +139,7 @@ app.post(
   chatRateLimit(),
   auditLogMiddleware(),
   zValidator('json', ChatQuerySchema),
-  async (c) => {
+  async c => {
     const t0 = Date.now()
     const { question, sessionId } = c.req.valid('json')
     const userId = c.req.header('x-user-id') || 'anonymous'
@@ -235,9 +235,9 @@ app.post(
     }
 
     const url = new URL(c.req.url)
-    const mock = url.searchParams.get('mock') === 'true'
-      || process.env.MOCK_MODE === 'true'
-      || process.env.AI_MOCK === 'true'
+    const mock = url.searchParams.get('mock') === 'true' ||
+      process.env.MOCK_MODE === 'true' ||
+      process.env.AI_MOCK === 'true'
 
     try {
       if (mock) {
@@ -406,14 +406,14 @@ app.post(
 )
 
 // GET /session/:id — returns session info (mock fallback)
-app.get('/session/:id', async (c) => {
+app.get('/session/:id', async c => {
   const id = c.req.param('id')
   const userId = c.req.header('x-user-id') || 'anonymous'
   const clinicId = c.req.header('x-clinic-id') || 'unknown'
   const url = new URL(c.req.url)
-  const mock = url.searchParams.get('mock') === 'true'
-    || process.env.MOCK_MODE === 'true'
-    || process.env.AI_MOCK === 'true'
+  const mock = url.searchParams.get('mock') === 'true' ||
+    process.env.MOCK_MODE === 'true' ||
+    process.env.AI_MOCK === 'true'
 
   // In real mode, attempt to fetch from DB; fallback to mock if table not available
   if (!mock && process.env.AI_AUDIT_DB === 'true') {
@@ -430,9 +430,9 @@ app.get('/session/:id', async (c) => {
             id: data.id,
             _userId: data.user_id,
             clinicId: data.clinic_id,
-            locale: data.locale
-              || (c.req.header('x-locale') as 'pt-BR' | 'en-US')
-              || 'pt-BR',
+            locale: data.locale ||
+              (c.req.header('x-locale') as 'pt-BR' | 'en-US') ||
+              'pt-BR',
             startedAt: data.started_at,
             lastActivityAt: data.last_activity_at,
           },
@@ -481,12 +481,12 @@ app.get('/session/:id', async (c) => {
 })
 
 // POST /explanation — returns concise explanation with LGPD safeguards
-app.post('/explanation', async (c) => {
+app.post('/explanation', async c => {
   const t0 = Date.now()
   const url = new URL(c.req.url)
-  const mock = url.searchParams.get('mock') === 'true'
-    || process.env.MOCK_MODE === 'true'
-    || process.env.AI_MOCK === 'true'
+  const mock = url.searchParams.get('mock') === 'true' ||
+    process.env.MOCK_MODE === 'true' ||
+    process.env.AI_MOCK === 'true'
 
   // Parse and validate payload
   let _payload: any = {}
@@ -579,7 +579,7 @@ app.post('/explanation', async (c) => {
 })
 
 // GET /suggestions — returns curated suggestions based on locale and optional session
-app.get('/suggestions', async (c) => {
+app.get('/suggestions', async c => {
   const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR'
   const sessionId = c.req.query('sessionId') || null
 
@@ -598,6 +598,6 @@ app.get('/suggestions', async (c) => {
   return c.json({ suggestions: items, sessionId }, 200)
 })
 
-app.get('/health', (c) => c.json({ status: 'ok', route: 'chat.query' }))
+app.get('/health', c => c.json({ status: 'ok', route: 'chat.query' }))
 
 export default app

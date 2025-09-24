@@ -396,7 +396,7 @@ export class AguiService extends EventEmitter {
         }
 
         onChunk(chunk)
-        await new Promise((resolve) => setTimeout(resolve, 50)) // Simulate streaming delay
+        await new Promise(resolve => setTimeout(resolve, 50)) // Simulate streaming delay
       }
 
       this.emit('streamingQueryCompleted', {
@@ -433,8 +433,8 @@ export class AguiService extends EventEmitter {
       _context: options?.context || {},
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      expiresAt: options?.expiresAt?.toISOString()
-        || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+      expiresAt: options?.expiresAt?.toISOString() ||
+        new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
       isActive: true,
       messageCount: 0,
       lastActivity: new Date().toISOString(),
@@ -696,7 +696,7 @@ export class AguiService extends EventEmitter {
    * Setup event handlers
    */
   private setupEventHandlers(): void {
-    this.protocol.on('query', async (data) => {
+    this.protocol.on('query', async data => {
       try {
         const result = await this.processQuery(
           data.query,
@@ -725,15 +725,15 @@ export class AguiService extends EventEmitter {
       }
     })
 
-    this.protocol.on('sessionCreated', (session) => {
+    this.protocol.on('sessionCreated', session => {
       this.emit('sessionCreated', session)
     })
 
-    this.protocol.on('sessionUpdated', (data) => {
+    this.protocol.on('sessionUpdated', data => {
       this.emit('sessionUpdated', data)
     })
 
-    this.protocol.on('feedback', async (data) => {
+    this.protocol.on('feedback', async data => {
       await this.submitFeedback(
         data.sessionId,
         data.messageId,
@@ -767,9 +767,9 @@ export class AguiService extends EventEmitter {
     // Calculate average processing time
     if (updates.processingTimeMs && this.metrics.queryCount > 0) {
       this.metrics.averageProcessingTimeMs =
-        (this.metrics.averageProcessingTimeMs * (this.metrics.queryCount - 1)
-          + updates.processingTimeMs)
-        / this.metrics.queryCount
+        (this.metrics.averageProcessingTimeMs * (this.metrics.queryCount - 1) +
+          updates.processingTimeMs) /
+        this.metrics.queryCount
     }
   }
 
@@ -864,33 +864,33 @@ export class AguiService extends EventEmitter {
     const lowerQuery = query.toLowerCase()
 
     if (
-      lowerQuery.includes('agendamento')
-      || lowerQuery.includes('consulta')
-      || lowerQuery.includes('appointment')
+      lowerQuery.includes('agendamento') ||
+      lowerQuery.includes('consulta') ||
+      lowerQuery.includes('appointment')
     ) {
       return 'scheduling'
     } else if (
-      lowerQuery.includes('paciente')
-      || lowerQuery.includes('patient')
-      || lowerQuery.includes('cliente')
+      lowerQuery.includes('paciente') ||
+      lowerQuery.includes('patient') ||
+      lowerQuery.includes('cliente')
     ) {
       return 'patient_inquiry'
     } else if (
-      lowerQuery.includes('financeiro')
-      || lowerQuery.includes('pagamento')
-      || lowerQuery.includes('financial')
+      lowerQuery.includes('financeiro') ||
+      lowerQuery.includes('pagamento') ||
+      lowerQuery.includes('financial')
     ) {
       return 'financial_inquiry'
     } else if (
-      lowerQuery.includes('exame')
-      || lowerQuery.includes('resultado')
-      || lowerQuery.includes('exam')
+      lowerQuery.includes('exame') ||
+      lowerQuery.includes('resultado') ||
+      lowerQuery.includes('exam')
     ) {
       return 'results_inquiry'
     } else if (
-      lowerQuery.includes('tratamento')
-      || lowerQuery.includes('medicamento')
-      || lowerQuery.includes('treatment')
+      lowerQuery.includes('tratamento') ||
+      lowerQuery.includes('medicamento') ||
+      lowerQuery.includes('treatment')
     ) {
       return 'treatment_inquiry'
     } else {
@@ -938,43 +938,43 @@ export class AguiService extends EventEmitter {
 
     // Check for highly sensitive healthcare information
     if (
-      lowerText.includes('diagnóstico')
-      || lowerText.includes('diagnosis')
-      || lowerText.includes('hiv')
-      || lowerText.includes('câncer')
-      || lowerText.includes('cancer')
-      || lowerText.includes('saúde mental')
-      || lowerText.includes('mental health')
-      || lowerText.includes('doença sexualmente transmissível')
-      || lowerText.includes('std')
+      lowerText.includes('diagnóstico') ||
+      lowerText.includes('diagnosis') ||
+      lowerText.includes('hiv') ||
+      lowerText.includes('câncer') ||
+      lowerText.includes('cancer') ||
+      lowerText.includes('saúde mental') ||
+      lowerText.includes('mental health') ||
+      lowerText.includes('doença sexualmente transmissível') ||
+      lowerText.includes('std')
     ) {
       return 'restricted'
     }
 
     // Check for confidential healthcare information
     if (
-      lowerText.includes('paciente')
-      || lowerText.includes('patient')
-      || lowerText.includes('médico')
-      || lowerText.includes('doctor')
-      || lowerText.includes('tratamento')
-      || lowerText.includes('treatment')
-      || lowerText.includes('medicação')
-      || lowerText.includes('medication')
-      || lowerText.includes('cpf')
-      || lowerText.includes('rg')
+      lowerText.includes('paciente') ||
+      lowerText.includes('patient') ||
+      lowerText.includes('médico') ||
+      lowerText.includes('doctor') ||
+      lowerText.includes('tratamento') ||
+      lowerText.includes('treatment') ||
+      lowerText.includes('medicação') ||
+      lowerText.includes('medication') ||
+      lowerText.includes('cpf') ||
+      lowerText.includes('rg')
     ) {
       return 'confidential'
     }
 
     // Check for internal operational data
     if (
-      lowerText.includes('agendamento')
-      || lowerText.includes('appointment')
-      || lowerText.includes('consulta')
-      || lowerText.includes('consulta')
-      || lowerText.includes('clinica')
-      || lowerText.includes('clinic')
+      lowerText.includes('agendamento') ||
+      lowerText.includes('appointment') ||
+      lowerText.includes('consulta') ||
+      lowerText.includes('consulta') ||
+      lowerText.includes('clinica') ||
+      lowerText.includes('clinic')
     ) {
       return 'internal'
     }

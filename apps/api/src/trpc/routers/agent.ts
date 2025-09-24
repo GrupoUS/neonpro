@@ -159,7 +159,7 @@ async function performRAGSearch(
   limit: number = 10,
 ): Promise<RAGResult[]> {
   // Simulate RAG search delay
-  await new Promise((resolve) => setTimeout(resolve, 100))
+  await new Promise(resolve => setTimeout(resolve, 100))
 
   // Mock results based on agent type
   const mockResults = {
@@ -244,8 +244,8 @@ export const agentRouter = router({
       try {
         // Validate user has permission for this agent type
         if (
-          input.agent_type === 'client'
-          && !ctx.user.permissions?.includes('patient:read')
+          input.agent_type === 'client' &&
+          !ctx.user.permissions?.includes('patient:read')
         ) {
           throw new HealthcareTRPCError(
             'FORBIDDEN',
@@ -353,7 +353,7 @@ export const agentRouter = router({
         return {
           success: true,
           data: {
-            sessions: sessions.map((session) => ({
+            sessions: sessions.map(session => ({
               id: session.id,
               user_id: session.userId,
               agent_type: session.agentType as any,
@@ -441,7 +441,7 @@ export const agentRouter = router({
               created_at: session.createdAt,
               updated_at: session.updatedAt,
             },
-            messages: messages.map((msg) => ({
+            messages: messages.map(msg => ({
               id: msg.id,
               session_id: msg.sessionId,
               _role: msg.role as any,
@@ -531,7 +531,7 @@ export const agentRouter = router({
         // Build context for AI
         const _context = HEALTHCARE_CONTEXTS[session.agentType]
         const _ragContext = ragResults
-          .map((r) => `${r.content} (Fonte: ${r.source})`)
+          .map(r => `${r.content} (Fonte: ${r.source})`)
           .join('\n\n')
 
         // Select AI provider
@@ -718,7 +718,7 @@ export const agentRouter = router({
         return {
           success: true,
           data: {
-            results: results.map((entry) => ({
+            results: results.map(entry => ({
               id: entry.id,
               agent_type: entry.agentType as any,
               title: entry.title,
@@ -781,7 +781,7 @@ export const agentRouter = router({
         )
 
         // Build context
-        const context = ragResults.map((r) => r.content).join('\n\n')
+        const context = ragResults.map(r => r.content).join('\n\n')
 
         // Generate response (mock implementation)
         const response = `Com base nas informações disponíveis: ${context.substring(0, 200)}...`

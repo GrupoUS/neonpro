@@ -117,7 +117,7 @@ Transaction management in NeonPro follows a structured approach using Prisma's `
 The `deletePatientData` method demonstrates a comprehensive transaction pattern that handles cascading deletions while respecting audit requirements:
 
 ```typescript
-await this.$transaction(async (tx) => {
+await this.$transaction(async tx => {
   await this.createAuditLog('DELETE', 'PATIENT_RECORD', patientId, {
     cascadeDelete,
     retainAuditTrail,

@@ -77,7 +77,7 @@ export const applyHighContrastTheme = (enabled: boolean): void => {
     })
   } else {
     const root = document.documentElement
-    Object.keys(HIGH_CONTRAST_THEME).forEach((key) => {
+    Object.keys(HIGH_CONTRAST_THEME).forEach(key => {
       root.style.removeProperty(`--color-${key}`)
     })
   }

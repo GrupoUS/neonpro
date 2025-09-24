@@ -62,8 +62,8 @@ export function createAIConfig(): AIConfig {
       google: {
         enabled: Boolean(process.env.GOOGLE_AI_API_KEY),
         apiKey: process.env.GOOGLE_AI_API_KEY || '',
-        baseUrl: process.env.GOOGLE_AI_BASE_URL
-          || 'https://generativelanguage.googleapis.com/v1',
+        baseUrl: process.env.GOOGLE_AI_BASE_URL ||
+          'https://generativelanguage.googleapis.com/v1',
         models: {
           default: process.env.GOOGLE_AI_DEFAULT_MODEL || 'gemini-pro',
           streaming: process.env.GOOGLE_AI_STREAMING_MODEL || 'gemini-pro',
@@ -211,8 +211,8 @@ export function getBestProvider(
   }
 
   if (
-    requirements.speed === 'quality'
-    && enabledProviders.includes('anthropic')
+    requirements.speed === 'quality' &&
+    enabledProviders.includes('anthropic')
   ) {
     return 'anthropic'
   }

@@ -44,7 +44,7 @@ function RecoveryPlanningPage() {
       treatmentPlanId={loaderData.treatmentPlanId}
       procedureIds={loaderData.procedures}
       patientId={loaderData.patientId}
-      onRecoveryPlanCreate={async (plan) => {
+      onRecoveryPlanCreate={async plan => {
         try {
           const result = await api.aestheticScheduling.createRecoveryPlan(plan)
           return result

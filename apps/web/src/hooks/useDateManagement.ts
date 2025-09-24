@@ -14,13 +14,13 @@ export function useDateManagement(): UseDateManagementReturn {
 
   const handleAddDate = (dateString: string) => {
     const date = new Date(dateString)
-    if (!preferredDates.some((d) => d.toDateString() === date.toDateString())) {
+    if (!preferredDates.some(d => d.toDateString() === date.toDateString())) {
       setPreferredDates([...preferredDates, date])
     }
   }
 
   const handleRemoveDate = (date: Date) => {
-    setPreferredDates(preferredDates.filter((d) => d !== date))
+    setPreferredDates(preferredDates.filter(d => d !== date))
   }
 
   return {

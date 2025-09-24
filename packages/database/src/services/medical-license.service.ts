@@ -321,7 +321,7 @@ export class MedicalLicenseService {
     try {
       // Check state-specific telemedicine regulations
       const stateCouncil = this.stateCouncils.find(
-        (council) => council.state === state,
+        council => council.state === state,
       )
 
       if (!stateCouncil) {
@@ -364,9 +364,9 @@ export class MedicalLicenseService {
           expiryDate: authData.expiry_date
             ? new Date(authData.expiry_date)
             : undefined,
-          isValid: authData.is_valid
-            && new Date()
-              < (authData.expiry_date
+          isValid: authData.is_valid &&
+            new Date() <
+              (authData.expiry_date
                 ? new Date(authData.expiry_date)
                 : new Date('2099-12-31')),
         }
@@ -398,21 +398,21 @@ export class MedicalLicenseService {
     telemedicineCompliant: boolean
   } {
     // CFM compliance: Active registration
-    const cfmCompliant = cfmRegistration.registrationStatus === 'active'
-      && (!cfmRegistration.expiryDate || cfmRegistration.expiryDate > new Date())
+    const cfmCompliant = cfmRegistration.registrationStatus === 'active' &&
+      (!cfmRegistration.expiryDate || cfmRegistration.expiryDate > new Date())
 
     // State compliance: Authorized in the requested state
     const stateCompliant = telemedicineAuth.authorizedStates.includes(state)
 
     // Specialty compliance: Authorized for the requested specialty (if specified)
-    const specialtyCompliant = !requestedSpecialty
-      || telemedicineAuth.authorizedSpecialties.includes(requestedSpecialty)
-      || telemedicineAuth.authorizedSpecialties.includes('Clínica Médica') // General practice
+    const specialtyCompliant = !requestedSpecialty ||
+      telemedicineAuth.authorizedSpecialties.includes(requestedSpecialty) ||
+      telemedicineAuth.authorizedSpecialties.includes('Clínica Médica') // General practice
 
     // Telemedicine compliance: Valid authorization and no blocking restrictions
-    const telemedicineCompliant = telemedicineAuth.isValid
-      && cfmRegistration.telemedicineAuthorized
-      && !telemedicineAuth.emergencyOnly
+    const telemedicineCompliant = telemedicineAuth.isValid &&
+      cfmRegistration.telemedicineAuthorized &&
+      !telemedicineAuth.emergencyOnly
 
     return {
       cfmCompliant,
@@ -440,8 +440,8 @@ export class MedicalLicenseService {
 
     // Expiry risks
     if (
-      cfmRegistration.expiryDate
-      && cfmRegistration.expiryDate <= new Date()
+      cfmRegistration.expiryDate &&
+      cfmRegistration.expiryDate <= new Date()
     ) {
       indicators.push('CFM registration has expired')
     }
@@ -463,8 +463,8 @@ export class MedicalLicenseService {
 
     // Verification freshness risks
     const daysSinceVerification = Math.floor(
-      (new Date().getTime() - cfmRegistration.lastVerification.getTime())
-        / (1000 * 60 * 60 * 24),
+      (new Date().getTime() - cfmRegistration.lastVerification.getTime()) /
+        (1000 * 60 * 60 * 24),
     )
 
     if (daysSinceVerification > 30) {
@@ -475,8 +475,8 @@ export class MedicalLicenseService {
 
     // Restrictions
     if (
-      cfmRegistration.restrictions
-      && cfmRegistration.restrictions.length > 0
+      cfmRegistration.restrictions &&
+      cfmRegistration.restrictions.length > 0
     ) {
       indicators.push(
         `CFM restrictions: ${cfmRegistration.restrictions.join(', ')}`,
@@ -666,10 +666,10 @@ export class MedicalLicenseService {
         specialty,
       )
 
-      const authorized = verification.complianceStatus.cfmCompliant
-        && verification.complianceStatus.stateCompliant
-        && verification.complianceStatus.specialtyCompliant
-        && verification.complianceStatus.telemedicineCompliant
+      const authorized = verification.complianceStatus.cfmCompliant &&
+        verification.complianceStatus.stateCompliant &&
+        verification.complianceStatus.specialtyCompliant &&
+        verification.complianceStatus.telemedicineCompliant
 
       return {
         authorized,
@@ -707,7 +707,7 @@ export class MedicalLicenseService {
 
     // Check if state exists in our councils
     const stateCouncil = this.stateCouncils.find(
-      (council) => council.state === state.toUpperCase(),
+      council => council.state === state.toUpperCase(),
     )
     if (!stateCouncil) return false
 
@@ -739,7 +739,7 @@ export class MedicalLicenseService {
         return []
       }
 
-      return data?.map((item) => item.specialty_name) || []
+      return data?.map(item => item.specialty_name) || []
     } catch (error) {
       logHealthcareError('database', error, {
         method: 'getPhysicianSpecialties',

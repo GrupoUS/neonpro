@@ -190,9 +190,9 @@ class BaseSchedulingService {
 }
 
 import { AestheticAppointmentService } from './aesthetic-appointment-service'
+import { NoShowPredictionService } from './no-show-prediction-service'
 import { ProfessionalValidationService } from './professional-validation-service'
 import { RecoveryPlanningService } from './recovery-planning-service'
-import { NoShowPredictionService } from './no-show-prediction-service'
 import { TreatmentPackageService } from './treatment-package-service'
 
 export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
@@ -204,7 +204,7 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
 
   constructor() {
     super()
-    
+
     // Initialize composed services
     this.appointmentService = new AestheticAppointmentService()
     this.professionalValidationService = new ProfessionalValidationService()
@@ -221,14 +221,15 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
     request: AestheticSchedulingRequest,
   ): Promise<AestheticSchedulingResult> {
     // Use specialized services for each aspect
-    
+
     // 1. Validate professional certifications
-    const professionalValidation = await this.professionalValidationService.validateProfessionalCertifications(
-      request.preferredProfessionals?.[0] || '',
-      request.procedures,
-      new Map() // Would be populated with procedure details
-    )
-    
+    const professionalValidation = await this.professionalValidationService
+      .validateProfessionalCertifications(
+        request.preferredProfessionals?.[0] || '',
+        request.procedures,
+        new Map(), // Would be populated with procedure details
+      )
+
     if (!professionalValidation.isValid) {
       return {
         success: false,
@@ -238,7 +239,11 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
         recoveryPlan: this.recoveryPlanningService.createEmptyRecoveryPlan(),
         professionalAssignments: [],
         warnings: professionalValidation.warnings,
-        contraindications: [`Professional validation failed: ${professionalValidation.missingCertifications.join(', ')}`],
+        contraindications: [
+          `Professional validation failed: ${
+            professionalValidation.missingCertifications.join(', ')
+          }`,
+        ],
       }
     }
 
@@ -258,7 +263,7 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
       contraindications: [],
       minExperienceLevel: 1,
       anestheticType: 'topical' as const,
-      intervalBetweenSessionsDays: 14
+      intervalBetweenSessionsDays: 14,
     }))
 
     const sessions = procedureDetails.map(procedure => ({
@@ -270,27 +275,34 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
 
     const appointments = await this.appointmentService.createAppointments(
       request,
-      sessions
+      sessions,
     )
 
     // 3. Create recovery plan
     const recoveryPlan = this.recoveryPlanningService.createRecoveryPlan(
       procedureDetails,
-      appointments
+      appointments,
     )
 
     // 4. Calculate totals
-    const totalCost = appointments.reduce((sum, apt) => sum + (apt.procedureDetails as any).price || 0, 0)
-    const totalDuration = appointments.reduce((sum, apt) => sum + apt.procedureDetails.baseDurationMinutes, 0)
+    const totalCost = appointments.reduce(
+      (sum, apt) => sum + (apt.procedureDetails as any).price || 0,
+      0,
+    )
+    const totalDuration = appointments.reduce(
+      (sum, apt) => sum + apt.procedureDetails.baseDurationMinutes,
+      0,
+    )
 
     // 5. Create professional assignments
-    const professionalAssignments: ProfessionalAssignment[] = request.preferredProfessionals?.map(profId => ({
-      professionalId: profId,
-      procedureId: request.procedures[0] || '',
-      role: 'primary' as const,
-      certificationVerified: true,
-      experienceLevel: professionalValidation.experienceLevel,
-    })) || []
+    const professionalAssignments: ProfessionalAssignment[] =
+      request.preferredProfessionals?.map(profId => ({
+        professionalId: profId,
+        procedureId: request.procedures[0] || '',
+        role: 'primary' as const,
+        certificationVerified: true,
+        experienceLevel: professionalValidation.experienceLevel,
+      })) || []
 
     return {
       success: true,
@@ -329,7 +341,9 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
         customizations: [],
       }
 
-      const packageResult = await this.treatmentPackageService.scheduleTreatmentPackage(packageRequest)
+      const packageResult = await this.treatmentPackageService.scheduleTreatmentPackage(
+        packageRequest,
+      )
 
       // Convert package result to scheduling result format
       const appointments = packageResult.schedule.map((date, index) => ({
@@ -368,22 +382,26 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
 
       const recoveryPlan = this.recoveryPlanningService.createRecoveryPlan(
         packageResult.package.procedures,
-        appointments
+        appointments,
       )
 
-      const professionalAssignments: ProfessionalAssignment[] = preferences.preferredProfessionals?.map(profId => ({
-        professionalId: profId,
-        procedureId: packageId,
-        role: 'primary' as const,
-        certificationVerified: true,
-        experienceLevel: 5,
-      })) || []
+      const professionalAssignments: ProfessionalAssignment[] =
+        preferences.preferredProfessionals?.map(profId => ({
+          professionalId: profId,
+          procedureId: packageId,
+          role: 'primary' as const,
+          certificationVerified: true,
+          experienceLevel: 5,
+        })) || []
 
       return {
         success: true,
         appointments,
         totalCost: packageResult.totalPrice,
-        totalDuration: appointments.reduce((sum, apt) => sum + apt.procedureDetails.baseDurationMinutes, 0),
+        totalDuration: appointments.reduce(
+          (sum, apt) => sum + apt.procedureDetails.baseDurationMinutes,
+          0,
+        ),
         recoveryPlan,
         professionalAssignments,
         warnings: [],
@@ -428,7 +446,7 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
     experienceLevel: number
   }> {
     const procedureMap = new Map<string, AestheticProcedureDetails>()
-    
+
     // Mock procedure details - in real implementation would load from database
     for (const procId of procedureIds) {
       procedureMap.set(procId, {
@@ -453,7 +471,7 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
     return this.professionalValidationService.validateProfessionalCertifications(
       professionalId,
       procedureIds,
-      procedureMap
+      procedureMap,
     )
   }
 
@@ -521,11 +539,16 @@ export class EnhancedAestheticSchedulingService extends BaseSchedulingService {
     factors: string[]
     recommendations: string[]
   }> {
-    const result = await this.noShowPredictionService.predictNoShow(patientId, appointmentTime, procedureType, cost)
+    const result = await this.noShowPredictionService.predictNoShow(
+      patientId,
+      appointmentTime,
+      procedureType,
+      cost,
+    )
     return {
       risk: result.riskScore,
       factors: result.riskFactors,
-      recommendations: result.preventionRecommendations
+      recommendations: result.preventionRecommendations,
     }
   }
 

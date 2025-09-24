@@ -77,10 +77,10 @@ export class ExportLGPDCompliance {
     fields: PatientExportField[],
     options: LGPDComplianceOptions,
   ): any[] {
-    return data.map((record) => {
+    return data.map(record => {
       const anonymizedRecord = { ...record }
 
-      fields.forEach((field) => {
+      fields.forEach(field => {
         if (field.sensitive && options.anonymizeSensitiveFields) {
           anonymizedRecord[field.field] = this.anonymizeField(
             anonymizedRecord[field.field],
@@ -89,8 +89,8 @@ export class ExportLGPDCompliance {
         }
 
         if (
-          options.excludeRestrictedFields
-          && this.isRestrictedField(field.field)
+          options.excludeRestrictedFields &&
+          this.isRestrictedField(field.field)
         ) {
           delete anonymizedRecord[field.field]
         }
@@ -194,7 +194,7 @@ export class ExportLGPDCompliance {
         action: 'EXPORT',
         resourceId: exportId,
         resourceType: 'PATIENT_DATA_EXPORT',
-        fieldsAccessed: fields.map((f) => f.field),
+        fieldsAccessed: fields.map(f => f.field),
         recordCount,
         purpose: 'DATA_EXPORT',
         legalBasis: 'CONSENT',

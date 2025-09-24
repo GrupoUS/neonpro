@@ -295,7 +295,7 @@ export function useShineBorderAnimation(
 
       if (!isHoverGradientActive) {
         hoverIntervalRef.current = setInterval(() => {
-          setHoverDirection((prevState) => rotateDirection(prevState))
+          setHoverDirection(prevState => rotateDirection(prevState))
         }, hoverDuration * 1000)
       }
     }
@@ -326,7 +326,7 @@ export function useShineBorderAnimation(
       }
 
       hoverIntervalRef.current = setInterval(() => {
-        setHoverDirection((prevState) => rotateDirection(prevState))
+        setHoverDirection(prevState => rotateDirection(prevState))
       }, hoverDuration * 1000)
 
       return () => {

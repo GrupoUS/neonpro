@@ -71,13 +71,13 @@ export class TestCategoryManager {
 
   static getCategoriesByAgent(agent: string): TestCategoryConfig[] {
     return Object.values(TEST_CATEGORIES).filter(
-      (config) => config.primaryAgent === agent || config.supportAgents.includes(agent),
+      config => config.primaryAgent === agent || config.supportAgents.includes(agent),
     )
   }
 
   static getHealthcareComplianceCategories(): TestCategoryConfig[] {
     return Object.values(TEST_CATEGORIES).filter(
-      (config) => config.healthcareCompliance,
+      config => config.healthcareCompliance,
     )
   }
 

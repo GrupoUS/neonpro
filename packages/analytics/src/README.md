@@ -287,11 +287,11 @@ import { DatabaseIngestionAdapter } from '@neonpro/core-services'
 const dbAdapter = new DatabaseIngestionAdapter('patient_db', config)
 
 // Event handling
-dbAdapter.addEventListener('data_received', (event) => {
+dbAdapter.addEventListener('data_received', event => {
   console.log(`Received ${event.source.recordCount} records`)
 })
 
-dbAdapter.addEventListener('validation_failed', (event) => {
+dbAdapter.addEventListener('validation_failed', event => {
   console.log('Validation errors:', event.processing.errors)
 })
 
@@ -488,7 +488,7 @@ const adapter = new DatabaseIngestionAdapter('debug_adapter', {
 })
 
 // Listen to all events
-adapter.addEventListener('error_occurred', (event) => {
+adapter.addEventListener('error_occurred', event => {
   console.error('Ingestion error:', event)
 })
 ```

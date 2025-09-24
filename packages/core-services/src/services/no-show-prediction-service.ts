@@ -86,27 +86,30 @@ export class NoShowPredictionService {
     patientId: string,
     appointmentTime: Date,
     procedureType: string,
-    cost: number
+    cost: number,
   ): Promise<NoShowPredictionResult> {
     // Get patient behavior data
     const patientData = await this.getPatientBehaviorData(patientId)
-    
+
     // Extract features
     const features = this.extractFeatures(patientData, appointmentTime, procedureType, cost)
-    
+
     // Make prediction
     const prediction = await this.makePrediction(features)
-    
+
     // Generate recommendations
     const recommendations = this.generateRecommendations(features, prediction.riskScore)
 
     // Calculate mitigation effectiveness
-    const mitigationEffectiveness = this.calculateMitigationEffectiveness(features, prediction.riskScore)
-    
+    const mitigationEffectiveness = this.calculateMitigationEffectiveness(
+      features,
+      prediction.riskScore,
+    )
+
     return {
       ...prediction,
       preventionRecommendations: recommendations,
-      mitigationEffectiveness
+      mitigationEffectiveness,
     }
   }
 
@@ -119,7 +122,7 @@ export class NoShowPredictionService {
       appointmentTime: Date
       procedureType: string
       cost: number
-    }>
+    }>,
   ): Promise<Map<string, NoShowPredictionResult>> {
     const results = new Map<string, NoShowPredictionResult>()
 
@@ -128,7 +131,7 @@ export class NoShowPredictionService {
         appointment.patientId,
         appointment.appointmentTime,
         appointment.procedureType,
-        appointment.cost
+        appointment.cost,
       )
       results.set(appointment.patientId, prediction)
     }
@@ -157,22 +160,22 @@ export class NoShowPredictionService {
           status: 'completed',
           procedureType: 'botox',
           leadTimeDays: 14,
-          cost: 1500
+          cost: 1500,
         },
         {
           date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000),
           status: 'no_show',
           procedureType: 'filler',
           leadTimeDays: 3,
-          cost: 2000
-        }
+          cost: 2000,
+        },
       ],
       communicationPreferences: {
         email: true,
         sms: true,
         whatsapp: true,
-        phone: false
-      }
+        phone: false,
+      },
     }
 
     // Cache the data
@@ -188,20 +191,29 @@ export class NoShowPredictionService {
     patientData: PatientBehaviorData,
     appointmentTime: Date,
     procedureType: string,
-    cost: number
+    cost: number,
   ): NoShowPredictionFeatures {
     const now = new Date()
-    const leadTimeDays = Math.ceil((appointmentTime.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
-    
+    const leadTimeDays = Math.ceil(
+      (appointmentTime.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+    )
+
     // Calculate previous no-show rate
-    const completedAppointments = patientData.appointmentHistory.filter(apt => apt.status === 'completed').length
-    const noShowAppointments = patientData.appointmentHistory.filter(apt => apt.status === 'no_show').length
-    const previousNoShowRate = completedAppointments > 0 ? noShowAppointments / completedAppointments : 0
+    const completedAppointments =
+      patientData.appointmentHistory.filter(apt => apt.status === 'completed').length
+    const noShowAppointments =
+      patientData.appointmentHistory.filter(apt => apt.status === 'no_show').length
+    const previousNoShowRate = completedAppointments > 0
+      ? noShowAppointments / completedAppointments
+      : 0
 
     // Determine time of day
     const hour = appointmentTime.getHours()
-    const timeOfDay: 'morning' | 'afternoon' | 'evening' = 
-      hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening'
+    const timeOfDay: 'morning' | 'afternoon' | 'evening' = hour < 12
+      ? 'morning'
+      : hour < 18
+      ? 'afternoon'
+      : 'evening'
 
     // Check if appointment is on a holiday
     const isHoliday = this.isBrazilianHoliday(appointmentTime)
@@ -219,22 +231,28 @@ export class NoShowPredictionService {
       timeOfDay,
       isHoliday,
       previousNoShowRate,
-      cancellationHistory: patientData.appointmentHistory.filter(apt => apt.status === 'cancelled').length,
-      rescheduleHistory: patientData.appointmentHistory.filter(apt => apt.status === 'rescheduled').length,
+      cancellationHistory:
+        patientData.appointmentHistory.filter(apt => apt.status === 'cancelled').length,
+      rescheduleHistory:
+        patientData.appointmentHistory.filter(apt => apt.status === 'rescheduled').length,
       communicationEffectiveness: this.calculateCommunicationEffectiveness(patientData),
       socioeconomicFactors: {
         incomeLevel: patientData.socioeconomicLevel || 'B',
         education: 'bachelor', // Would come from patient data
-        occupation: 'professional' // Would come from patient data
+        occupation: 'professional', // Would come from patient data
       },
-      seasonalFactors
+      seasonalFactors,
     }
   }
 
   /**
    * Make prediction using ML model (simplified)
    */
-  private async makePrediction(features: NoShowPredictionFeatures): Promise<Omit<NoShowPredictionResult, 'preventionRecommendations' | 'mitigationEffectiveness'>> {
+  private async makePrediction(
+    features: NoShowPredictionFeatures,
+  ): Promise<
+    Omit<NoShowPredictionResult, 'preventionRecommendations' | 'mitigationEffectiveness'>
+  > {
     // Simplified prediction logic - in production, this would use a trained ML model
     let riskScore = 0.1 // Base risk
 
@@ -280,7 +298,7 @@ export class NoShowPredictionService {
       confidence,
       riskFactors,
       modelVersion: this.modelVersion,
-      predictionDate: new Date()
+      predictionDate: new Date(),
     }
   }
 
@@ -289,7 +307,7 @@ export class NoShowPredictionService {
    */
   private generateRecommendations(
     features: NoShowPredictionFeatures,
-    riskScore: number
+    riskScore: number,
   ): string[] {
     const recommendations: string[] = []
 
@@ -313,7 +331,10 @@ export class NoShowPredictionService {
       recommendations.push('Consider holiday scheduling conflicts')
     }
 
-    if (features.socioeconomicFactors.incomeLevel === 'C' || features.socioeconomicFactors.incomeLevel === 'D') {
+    if (
+      features.socioeconomicFactors.incomeLevel === 'C' ||
+      features.socioeconomicFactors.incomeLevel === 'D'
+    ) {
       recommendations.push('Offer flexible payment options')
       recommendations.push('Consider appointment time flexibility for work schedules')
     }
@@ -326,13 +347,13 @@ export class NoShowPredictionService {
    */
   private calculateMitigationEffectiveness(
     features: NoShowPredictionFeatures,
-    _riskScore: number
+    _riskScore: number,
   ): NoShowPredictionResult['mitigationEffectiveness'] {
     const baseEffectiveness = {
       reminder: 0.3,
       deposit: 0.6,
       flexibleScheduling: 0.4,
-      personalContact: 0.7
+      personalContact: 0.7,
     }
 
     // Adjust based on patient characteristics
@@ -352,7 +373,10 @@ export class NoShowPredictionService {
     }
 
     // Socioeconomic factors affect scheduling flexibility
-    if (features.socioeconomicFactors.incomeLevel === 'C' || features.socioeconomicFactors.incomeLevel === 'D') {
+    if (
+      features.socioeconomicFactors.incomeLevel === 'C' ||
+      features.socioeconomicFactors.incomeLevel === 'D'
+    ) {
       schedulingEffect += 0.3
     }
 
@@ -365,7 +389,7 @@ export class NoShowPredictionService {
       reminder: Math.min(1, reminderEffect),
       deposit: Math.min(1, depositEffect),
       flexibleScheduling: Math.min(1, schedulingEffect),
-      personalContact: Math.min(1, contactEffect)
+      personalContact: Math.min(1, contactEffect),
     }
   }
 
@@ -384,7 +408,9 @@ export class NoShowPredictionService {
       '12-25', // Christmas
     ]
 
-    const dateStr = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+    const dateStr = `${String(date.getMonth() + 1).padStart(2, '0')}-${
+      String(date.getDate()).padStart(2, '0')
+    }`
     return brazilianHolidays.includes(dateStr) || date.getDay() === 0 // Sunday
   }
 
@@ -417,7 +443,7 @@ export class NoShowPredictionService {
     return {
       holidaySeason,
       vacationPeriod,
-      weatherImpact
+      weatherImpact,
     }
   }
 
@@ -448,11 +474,11 @@ export class NoShowPredictionService {
       procedureType: string
       leadTimeDays: number
       cost: number
-    }
+    },
   ): Promise<void> {
     const patientData = await this.getPatientBehaviorData(patientId)
     patientData.appointmentHistory.push(appointmentData)
-    
+
     // Update cache
     this.patientDataCache.set(patientId, patientData)
   }
@@ -470,22 +496,22 @@ export class NoShowPredictionService {
     return {
       overallRate: 0.15, // 15% average no-show rate
       byProcedureType: {
-        'botox': 0.12,
-        'filler': 0.18,
-        'laser': 0.10,
-        'facial': 0.08,
-        'surgical': 0.05
+        botox: 0.12,
+        filler: 0.18,
+        laser: 0.10,
+        facial: 0.08,
+        surgical: 0.05,
       },
       byTimeOfDay: {
-        'morning': 0.18,
-        'afternoon': 0.12,
-        'evening': 0.15
+        morning: 0.18,
+        afternoon: 0.12,
+        evening: 0.15,
       },
       seasonalTrends: [
         { month: 0, rate: 0.20 }, // January (vacation)
         { month: 6, rate: 0.18 }, // July (vacation)
-        { month: 11, rate: 0.25 } // December (holidays)
-      ]
+        { month: 11, rate: 0.25 }, // December (holidays)
+      ],
     }
   }
 

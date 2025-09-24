@@ -224,7 +224,7 @@ export class EnhancedTelemedicineService {
         throw new Error(`Failed to get sessions: ${error.message}`)
       }
 
-      return sessions.map((session) => TelemedicineSessionSchema.parse(session))
+      return sessions.map(session => TelemedicineSessionSchema.parse(session))
     } catch (error) {
       logger.error('Error getting professional sessions', { error, professionalId })
       throw error
@@ -254,7 +254,7 @@ export class EnhancedTelemedicineService {
         throw new Error(`Failed to get sessions: ${error.message}`)
       }
 
-      return sessions.map((session) => TelemedicineSessionSchema.parse(session))
+      return sessions.map(session => TelemedicineSessionSchema.parse(session))
     } catch (error) {
       logger.error('Error getting patient sessions', { error, patientId })
       throw error
@@ -414,7 +414,7 @@ export class EnhancedTelemedicineService {
         throw new Error(`Failed to get messages: ${error.message}`)
       }
 
-      return messages.map((message) => TelemedicineMessageSchema.parse(message))
+      return messages.map(message => TelemedicineMessageSchema.parse(message))
     } catch (error) {
       logger.error('Error getting session messages', { error, sessionId })
       throw error
@@ -532,7 +532,7 @@ export class EnhancedTelemedicineService {
         throw new Error(`Failed to get upcoming sessions: ${error.message}`)
       }
 
-      return sessions.map((session) => TelemedicineSessionSchema.parse(session))
+      return sessions.map(session => TelemedicineSessionSchema.parse(session))
     } catch (error) {
       logger.error('Error getting upcoming sessions', { error, clinicId })
       throw error

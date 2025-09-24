@@ -329,7 +329,7 @@ export function ExportButton({
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {EXPORTFORMATS.map((format) => (
+                        {EXPORTFORMATS.map(format => (
                           <SelectItem key={format.value} value={format.value}>
                             <div className='flex items-center gap-2'>
                               <format.icon className='h-4 w-4' />
@@ -351,7 +351,7 @@ export function ExportButton({
                   <div>
                     <Label>Opções LGPD</Label>
                     <div className='space-y-2 mt-2'>
-                      {LGPDOPTIONS.map((option) => (
+                      {LGPDOPTIONS.map(option => (
                         <div
                           key={option.id}
                           className='flex items-center space-x-2'
@@ -360,7 +360,7 @@ export function ExportButton({
                             id={option.id}
                             checked={lgpdOptions[option.id as keyof typeof lgpdOptions]}
                             onCheckedChange={(checked: boolean) =>
-                              setLgpdOptions((prev) => ({
+                              setLgpdOptions(prev => ({
                                 ...prev,
                                 [option.id]: !!checked,
                               }))}

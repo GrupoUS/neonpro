@@ -128,7 +128,7 @@ export async function anonymize_patient_data(
 
       // Preserve statistical data if requested
       if (preserveStatistics && patient.medical_records) {
-        anonymized.medical_records = patient.medical_records.map((record) => ({
+        anonymized.medical_records = patient.medical_records.map(record => ({
           ...record,
           patient_id: anonymized.id,
           // Remove patient-specific details but keep medical data
@@ -388,7 +388,7 @@ function convertToCSV(data: unknown[]): string {
   const csvRows = [headers.join(',')]
 
   for (const row of data) {
-    const values = headers.map((header) => {
+    const values = headers.map(header => {
       const value = row[header]
       return typeof value === 'string'
         ? `"${value.replace(/"/g, '""')}"`

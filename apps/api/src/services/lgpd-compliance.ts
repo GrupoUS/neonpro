@@ -75,8 +75,8 @@ export class LGPDComplianceService {
 
         // Check data retention policy
         if (
-          patient.data_retention_until
-          && new Date() > new Date(patient.data_retention_until)
+          patient.data_retention_until &&
+          new Date() > new Date(patient.data_retention_until)
         ) {
           await this.logViolation(context, 'Access beyond retention period')
           return false
@@ -110,8 +110,8 @@ export class LGPDComplianceService {
         justification: context.justification,
         success,
       },
-      phiAccessed: context.resourceType === 'patient'
-        || context.resourceType === 'medical_record',
+      phiAccessed: context.resourceType === 'patient' ||
+        context.resourceType === 'medical_record',
     }
 
     try {
@@ -169,7 +169,7 @@ export class LGPDComplianceService {
 
     let sanitized = text
 
-    phiPatterns.forEach((pattern) => {
+    phiPatterns.forEach(pattern => {
       sanitized = sanitized.replace(pattern, '[REDACTED]')
     })
 

@@ -62,9 +62,9 @@ export class PerformanceMeasurer {
     }
 
     if (
-      this.startMemory
-      && typeof process !== 'undefined'
-      && process.memoryUsage
+      this.startMemory &&
+      typeof process !== 'undefined' &&
+      process.memoryUsage
     ) {
       const endMemory = process.memoryUsage()
       metrics.memoryUsage = {
@@ -175,9 +175,9 @@ export class PerformanceBudgetValidator {
 
     // Check iterations per second
     if (
-      budget.minIterationsPerSecond
-      && metrics.iterations
-      && metrics.averageTime
+      budget.minIterationsPerSecond &&
+      metrics.iterations &&
+      metrics.averageTime
     ) {
       const iterationsPerSecond = 1000 / metrics.averageTime
       if (iterationsPerSecond < budget.minIterationsPerSecond) {
@@ -254,7 +254,7 @@ export function createPerformanceTestSuite(
   }>,
 ) {
   describe(`Performance: ${name}`, () => {
-    tests.forEach((test) => {
+    tests.forEach(test => {
       it(`should meet performance budget for ${test.name}`, async () => {
         await expectPerformance(test.fn, test.budget)
       })
@@ -333,7 +333,7 @@ export function createHealthcarePerformanceTestSuite(
   }>,
 ) {
   describe(`Healthcare Performance: ${name}`, () => {
-    tests.forEach((test) => {
+    tests.forEach(test => {
       const metric = test.metric || 'LCP'
       const budget = HEALTHCARE_PERFORMANCE_BUDGETS[metric]
 

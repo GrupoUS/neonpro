@@ -506,15 +506,16 @@ export class EnhancedAgentSessionService {
       // Update analytics
       if (session.analytics && activity.processingTime) {
         session.analytics.totalProcessingTime += activity.processingTime
-        session.analytics.averageResponseTime = session.analytics.totalProcessingTime
-          / session.messageCount
+        session.analytics.averageResponseTime = session.analytics.totalProcessingTime /
+          session.messageCount
       }
 
       // Track feature usage
       if (activity.features && session.analytics) {
-        activity.features.forEach((feature) => {
-          session.analytics!.featureUsage[feature] = (session.analytics!.featureUsage[feature] || 0)
-            + 1
+        activity.features.forEach(feature => {
+          session.analytics!.featureUsage[feature] =
+            (session.analytics!.featureUsage[feature] || 0) +
+            1
         })
       }
 
@@ -680,8 +681,8 @@ export class EnhancedAgentSessionService {
 
       // Assess data access patterns
       if (
-        session.enhancedContext.aestheticData
-        && Object.keys(session.enhancedContext.aestheticData).length > 10
+        session.enhancedContext.aestheticData &&
+        Object.keys(session.enhancedContext.aestheticData).length > 10
       ) {
         riskFactors.push('extensive_data_access')
         riskScore += 25

@@ -80,7 +80,7 @@ export const createMockSupabaseClient = () => ({
 })
 
 // Wait for async operations to complete
-export const waitForAsync = () => new Promise((resolve) => setTimeout(resolve, 0))
+export const waitForAsync = () => new Promise(resolve => setTimeout(resolve, 0))
 
 // Mock localStorage
 export const createMockLocalStorage = () => {
@@ -95,7 +95,7 @@ export const createMockLocalStorage = () => {
       delete store[key]
     }),
     clear: vi.fn(() => {
-      Object.keys(store).forEach((key) => delete store[key])
+      Object.keys(store).forEach(key => delete store[key])
     }),
     length: Object.keys(store).length,
   }

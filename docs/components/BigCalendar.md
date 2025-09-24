@@ -146,7 +146,7 @@ const handleEventCreate = (event: CalendarEvent) => {
   // Save event to database
   await saveEvent(event)
   // Update local state
-  setEvents((prev) => [...prev, event])
+  setEvents(prev => [...prev, event])
 }
 ```
 
@@ -159,7 +159,7 @@ const handleEventUpdate = (updatedEvent: CalendarEvent) => {
   // Update event in database
   await updateEvent(updatedEvent.id, updatedEvent)
   // Update local state
-  setEvents((prev) => prev.map((event) => (event.id === updatedEvent.id ? updatedEvent : event)))
+  setEvents(prev => prev.map(event => (event.id === updatedEvent.id ? updatedEvent : event)))
 }
 ```
 
@@ -172,7 +172,7 @@ const handleEventDelete = (eventId: string) => {
   // Remove event from database
   await deleteEvent(eventId)
   // Update local state
-  setEvents((prev) => prev.filter((event) => event.id !== eventId))
+  setEvents(prev => prev.filter(event => event.id !== eventId))
 }
 ```
 
@@ -200,7 +200,7 @@ const memoizedEvents = useMemo(() => events, [events])
 const visibleEvents = useMemo(() => {
   const start = getCurrentViewStart()
   const end = getCurrentViewEnd()
-  return events.filter((event) => event.start >= start && event.end <= end)
+  return events.filter(event => event.start >= start && event.end <= end)
 }, [events, currentView])
 ```
 

@@ -159,36 +159,36 @@ const insightsQuerySchema = z.object({
   timeRange: z.string().optional(),
   includeHistory: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   includeDetails: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   includeHealth: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   includeMetrics: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   include_recommendations: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   useCase: z.string().optional(),
   includeFallbacks: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   healthcareContext: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   monitorHealth: z
     .string()
-    .transform((val) => val === 'true')
+    .transform(val => val === 'true')
     .optional(),
   _context: z.string().optional(), // Add support for context parameter
 })
@@ -231,7 +231,7 @@ app.get(
     }
   }),
   zValidator('query', insightsQuerySchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now()
     const user = c.get('user')
     const patientId = c.req.param('patientId')
@@ -334,8 +334,8 @@ app.get(
         return c.json(
           {
             success: false,
-            error: insightsResponse.error
-              || 'Erro interno do serviço de insights de IA',
+            error: insightsResponse.error ||
+              'Erro interno do serviço de insights de IA',
           },
           500,
         )
@@ -389,9 +389,9 @@ app.get(
 
       // Add Brazilian healthcare context if specified
       if (
-        queryParams.analysisType === 'brazilian_healthcare'
-        || healthcareContext === 'brazilian'
-        || queryParams.context === 'brazilian_healthcare'
+        queryParams.analysisType === 'brazilian_healthcare' ||
+        healthcareContext === 'brazilian' ||
+        queryParams.context === 'brazilian_healthcare'
       ) {
         responseData.context = {
           language: 'pt-BR',
@@ -480,9 +480,9 @@ app.get(
 
       // Add Brazilian context headers
       if (
-        queryParams.analysisType === 'brazilian_healthcare'
-        || healthcareContext === 'brazilian'
-        || queryParams.context === 'brazilian_healthcare'
+        queryParams.analysisType === 'brazilian_healthcare' ||
+        healthcareContext === 'brazilian' ||
+        queryParams.context === 'brazilian_healthcare'
       ) {
         responseHeaders['X-Brazilian-Context'] = 'true'
         responseHeaders['X-ANVISA-Compliant'] = 'true'
@@ -579,7 +579,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', noShowRequestSchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now()
     const user = c.get('user')
     const requestData = c.req.valid('json')
@@ -604,9 +604,9 @@ app.post(
       // Validate appointment data
       for (const appointment of requestData.appointments) {
         if (
-          !appointment.id
-          || !appointment.patientId
-          || !appointment.datetime
+          !appointment.id ||
+          !appointment.patientId ||
+          !appointment.datetime
         ) {
           return c.json(
             {
@@ -620,7 +620,7 @@ app.post(
       }
 
       // Mock response for no-show prediction
-      const predictions = requestData.appointments.map((appointment) => ({
+      const predictions = requestData.appointments.map(appointment => ({
         appointmentId: appointment.id,
         patientId: appointment.patientId,
         riskScore: Math.random() * 100, // Mock risk score 0-100

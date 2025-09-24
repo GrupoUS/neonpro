@@ -62,7 +62,7 @@ Promise.all([
       },
     )
   })
-  .catch((error) => {
+  .catch(error => {
     logger.error('Failed to initialize monitoring', error, {
       component: 'initialization',
     })
@@ -266,7 +266,7 @@ app.route('/api/v1', v1Router)
 // Mount tRPC router under /trpc for type-safe API access
 const tRPCHandle = trpcServer({
   router: appRouter,
-  createContext: async (opts) => {
+  createContext: async opts => {
     // Create tRPC context from Hono request
     const headers = opts.req.headers
     const userId = headers.get('x-user-id') || headers.get('user-id')
@@ -276,9 +276,9 @@ const tRPCHandle = trpcServer({
       userId,
       clinicId,
       auditMeta: {
-        ipAddress: headers.get('x-forwarded-for')
-          || headers.get('x-real-ip')
-          || 'unknown',
+        ipAddress: headers.get('x-forwarded-for') ||
+          headers.get('x-real-ip') ||
+          'unknown',
         userAgent: headers.get('user-agent') || 'unknown',
         sessionId: headers.get('x-session-id') || headers.get('session-id') || 'unknown',
       },
@@ -290,7 +290,7 @@ const tRPCHandle = trpcServer({
 app.mount('/trpc', tRPCHandle)
 
 // Basic health endpoints with enhanced monitoring
-app.get('/health', (c) => {
+app.get('/health', c => {
   const requestId = c.get('requestId')
 
   logger.debug('Health check requested', { requestId })
@@ -302,7 +302,7 @@ app.get('/health', (c) => {
   })
 })
 
-app.get('/v1/health', (c) => {
+app.get('/v1/health', c => {
   const requestId = c.get('requestId')
 
   logger.info('Detailed health check requested', { requestId })
@@ -336,7 +336,7 @@ app.get('/v1/health', (c) => {
   return c.json(healthData)
 })
 
-app.get('/v1/info', (c) => {
+app.get('/v1/info', c => {
   const requestId = c.get('requestId')
 
   logger.debug('System info requested', { requestId })
@@ -373,7 +373,7 @@ app.get('/v1/info', (c) => {
 })
 
 // HTTPS monitoring endpoint (T066)
-app.get('/v1/monitoring/https', (c) => {
+app.get('/v1/monitoring/https', c => {
   const requestId = c.get('requestId')
 
   logger.info(
@@ -417,7 +417,7 @@ app.get('/v1/monitoring/https', (c) => {
 // Security endpoints (protected)
 app.get(
   '/v1/security/status',
-  /* ...getProtectedRoutesMiddleware(['admin']), */ (c) => {
+  /* ...getProtectedRoutesMiddleware(['admin']), */ c => {
     const requestId = c.get('requestId')
     const user = c.get('user')
 
@@ -469,7 +469,7 @@ app.get(
 // LGPD compliance endpoint
 app.get(
   '/v1/compliance/lgpd',
-  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ (c) => {
+  /* ...getProtectedRoutesMiddleware(['admin', 'compliance']), */ c => {
     const requestId = c.get('requestId')
     const user = c.get('user')
 
@@ -523,7 +523,7 @@ app.get(
 
 // Error tracking test endpoint (for development)
 if (process.env.NODE_ENV !== 'production') {
-  app.get('/v1/test/error', (c) => {
+  app.get('/v1/test/error', c => {
     const requestId = c.get('requestId')
 
     logger.warn('Error test endpoint called', { requestId })
@@ -545,7 +545,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.post('/api/security/csp-violations', cspViolationHandler())
 
 // 404 handler with logging
-app.notFound((c) => {
+app.notFound(c => {
   const requestId = c.get('requestId')
 
   logger.warn('Route not found', {

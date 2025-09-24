@@ -368,7 +368,7 @@ export class AgentAuditService {
       let totalProcessingTime = 0
       let processingTimeCount = 0
 
-      events.forEach((event) => {
+      events.forEach(event => {
         // Count actions
         actionCounts.set(
           event.action,
@@ -464,7 +464,7 @@ export class AgentAuditService {
         'Sensitivity Level',
       ]
 
-      const rows = events.map((event) => [
+      const rows = events.map(event => [
         event.id,
         event.userId,
         event.sessionId || '',
@@ -479,9 +479,9 @@ export class AgentAuditService {
       ])
 
       return [headers, ...rows]
-        .map((row) =>
+        .map(row =>
           row
-            .map((cell) => `"${cell.toString().replace(/"/g, '""')}"`)
+            .map(cell => `"${cell.toString().replace(/"/g, '""')}"`)
             .join(',')
         )
         .join('\n')
@@ -526,7 +526,7 @@ export class AgentAuditService {
     this.pendingEvents = []
 
     try {
-      const records = eventsToFlush.map((event) => ({
+      const records = eventsToFlush.map(event => ({
         user_id: event.userId,
         session_id: event.sessionId,
         action: event.action,
@@ -684,7 +684,7 @@ export class AgentAuditService {
       /\b(patient|paciente|médico|doctor|hospital|clínica)\b/i, // Healthcare terms
     ]
 
-    return phiPatterns.some((pattern) => pattern.test(text))
+    return phiPatterns.some(pattern => pattern.test(text))
   }
 
   /**
@@ -694,8 +694,8 @@ export class AgentAuditService {
     const lowerQuery = query.toLowerCase()
 
     if (
-      lowerQuery.includes('agendamento')
-      || lowerQuery.includes('appointment')
+      lowerQuery.includes('agendamento') ||
+      lowerQuery.includes('appointment')
     ) {
       return 'scheduling'
     }

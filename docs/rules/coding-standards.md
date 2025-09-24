@@ -102,7 +102,7 @@ const PatientSchema = z.object({
       .string()
       .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)
       .transform((val): CPF => val as CPF),
-    dateOfBirth: z.date().refine((date) => date < new Date(), {
+    dateOfBirth: z.date().refine(date => date < new Date(), {
       message: 'Data de nascimento deve ser no passado',
     }),
   }),
@@ -291,7 +291,7 @@ export default defineConfig({
 ```typescript
 // ✅ CORRECT - Healthcare-critical performance monitoring
 function initHealthcareMetrics() {
-  onLCP((metric) => {
+  onLCP(metric => {
     // LCP < 2.5s critical for emergency forms
     if (metric.value > 2500) {
       reportHealthcareMetric('lcp_slow', {
@@ -336,7 +336,7 @@ function usePatientUpdates(patientId: PatientId) {
           changes: updates,
           timestamp: new Date(),
         })
-        setPatient((prev) => ({ ...prev, ...updates }))
+        setPatient(prev => ({ ...prev, ...updates }))
       } catch (error) {
         setPatient(patient) // Revert optimistic update
         throw new HealthcareError('Falha ao atualizar prontuário', {
@@ -536,7 +536,7 @@ function useAppointmentUpdates(clinicId: string) {
           table: 'appointments',
           filter: `clinic_id=eq.${clinicId}`,
         },
-        (payload) => {
+        payload => {
           if (payload.eventType === 'INSERT') {
             showHealthcareNotification({
               type: 'new_appointment',
@@ -546,8 +546,8 @@ function useAppointmentUpdates(clinicId: string) {
           }
 
           if (
-            payload.eventType === 'UPDATE'
-            && payload.new.status === 'emergency'
+            payload.eventType === 'UPDATE' &&
+            payload.new.status === 'emergency'
           ) {
             showHealthcareNotification({
               type: 'emergency',
@@ -556,18 +556,18 @@ function useAppointmentUpdates(clinicId: string) {
             })
           }
 
-          setAppointments((prev) => {
+          setAppointments(prev => {
             switch (payload.eventType) {
               case 'INSERT':
                 return [...prev, payload.new as Appointment]
               case 'UPDATE':
-                return prev.map((apt) =>
+                return prev.map(apt =>
                   apt.id === payload.new.id
                     ? (payload.new as Appointment)
                     : apt
                 )
               case 'DELETE':
-                return prev.filter((apt) => apt.id !== payload.old.id)
+                return prev.filter(apt => apt.id !== payload.old.id)
               default:
                 return prev
             }

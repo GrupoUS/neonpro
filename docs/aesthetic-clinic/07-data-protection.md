@@ -783,8 +783,8 @@ export class AccessControlService {
       this.checkDataRetention(resource),
     ])
 
-    const allValid = checks.every((check) => check.valid)
-    const issues = checks.filter((check) => !check.valid).map((check) => check.reason)
+    const allValid = checks.every(check => check.valid)
+    const issues = checks.filter(check => !check.valid).map(check => check.reason)
 
     return {
       valid: allValid,

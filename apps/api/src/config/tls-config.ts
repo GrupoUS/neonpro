@@ -119,13 +119,13 @@ export class TLSConfigManager {
     const cipherList = formatCipherList(allCiphers)
 
     // Secure Options for HTTPS - centralized security configuration
-    const secureOptions = https.constants.SSL_OP_NO_SSLv2
-      | https.constants.SSL_OP_NO_SSLv3
-      | https.constants.SSL_OP_NO_TLSv1
-      | https.constants.SSL_OP_NO_TLSv1_1
-      | https.constants.SSL_OP_CIPHER_SERVER_PREFERENCE
-      | https.constants.SSL_OP_SINGLE_ECDH_USE
-      | https.constants.SSL_OP_SINGLE_DH_USE
+    const secureOptions = https.constants.SSL_OP_NO_SSLv2 |
+      https.constants.SSL_OP_NO_SSLv3 |
+      https.constants.SSL_OP_NO_TLSv1 |
+      https.constants.SSL_OP_NO_TLSv1_1 |
+      https.constants.SSL_OP_CIPHER_SERVER_PREFERENCE |
+      https.constants.SSL_OP_SINGLE_ECDH_USE |
+      https.constants.SSL_OP_SINGLE_DH_USE
 
     try {
       // Load certificates
@@ -195,12 +195,12 @@ export class TLSConfigManager {
         subject: TLS_CONSTANTS.CERTIFICATE.SUBJECT_PLACEHOLDER,
         validFrom: new Date(),
         validTo: new Date(
-          Date.now()
-            + TLS_CONSTANTS.CERTIFICATE.DEFAULT_VALIDITY_DAYS
-              * 24
-              * 60
-              * 60
-              * 1000,
+          Date.now() +
+            TLS_CONSTANTS.CERTIFICATE.DEFAULT_VALIDITY_DAYS *
+              24 *
+              60 *
+              60 *
+              1000,
         ),
         fingerprint: this.generateCertificateFingerprint(cert),
       }
@@ -234,15 +234,15 @@ export class TLSConfigManager {
         this.certificateConfig.certPath,
       ]
 
-      requiredPaths.forEach((filePath) => {
+      requiredPaths.forEach(filePath => {
         if (!fs.existsSync(filePath)) {
           errors.push(`Certificate file not found: ${filePath}`)
         }
       })
 
       if (
-        this.certificateConfig.caPath
-        && !fs.existsSync(this.certificateConfig.caPath)
+        this.certificateConfig.caPath &&
+        !fs.existsSync(this.certificateConfig.caPath)
       ) {
         warnings.push(
           `Optional CA file not found: ${this.certificateConfig.caPath}`,
@@ -251,7 +251,7 @@ export class TLSConfigManager {
     }
 
     // Check cipher strength
-    this.config.ciphers.split(':').forEach((cipher) => {
+    this.config.ciphers.split(':').forEach(cipher => {
       if (isWeakCipher(cipher)) {
         errors.push(`Weak cipher detected: ${cipher}`)
       }

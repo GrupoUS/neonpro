@@ -194,8 +194,8 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
 
       // Additional CFM validation for healthcare professionals
       if (
-        this.currentContext._role === 'professional'
-        && !this.currentContext.cfmValidated
+        this.currentContext._role === 'professional' &&
+        !this.currentContext.cfmValidated
       ) {
         const professional = await this.professional.findFirst({
           where: {
@@ -296,7 +296,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
             allergies: patient.allergies,
             chronicConditions: patient.chronicConditions,
             currentMedications: patient.currentMedications,
-            appointments: patient.appointments.map((apt) => ({
+            appointments: patient.appointments.map(apt => ({
               id: apt.id,
               startTime: apt.startTime,
               endTime: apt.endTime,
@@ -327,7 +327,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
           }
           return acc
         }, {} as any),
-        auditTrail: patient.auditTrails.map((audit) => ({
+        auditTrail: patient.auditTrails.map(audit => ({
           action: audit.action,
           resourceType: audit.resourceType,
           timestamp: audit.createdAt,
@@ -391,7 +391,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         )
       }
 
-      await this.$transaction(async (tx) => {
+      await this.$transaction(async tx => {
         // Create audit log before deletion
         await this.createAuditLog('DELETE', 'PATIENT_RECORD', patientId, {
           cascadeDelete,

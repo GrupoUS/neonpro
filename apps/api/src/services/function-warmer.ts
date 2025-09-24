@@ -82,8 +82,8 @@ class FunctionWarmer {
 
       console.warn('Function warmup completed:', {
         timestamp: new Date().toISOString(),
-        results: results.filter((r) => r.success).length,
-        failures: results.filter((r) => !r.success).length,
+        results: results.filter(r => r.success).length,
+        failures: results.filter(r => !r.success).length,
         totalTargets: this.targets.length,
       })
     } catch {
@@ -149,7 +149,7 @@ class FunctionWarmer {
   }
 
   public removeTarget(url: string) {
-    this.targets = this.targets.filter((t) => t.url !== url)
+    this.targets = this.targets.filter(t => t.url !== url)
   }
 
   public getTargets(): WarmupTarget[] {
@@ -161,8 +161,8 @@ export const functionWarmer = new FunctionWarmer()
 
 // Auto-start in production
 if (
-  process.env.NODE_ENV === 'production'
-  && process.env.VERCEL_ENV === 'production'
+  process.env.NODE_ENV === 'production' &&
+  process.env.VERCEL_ENV === 'production'
 ) {
   functionWarmer.startWarmup(5) // Warm every 5 minutes
 }

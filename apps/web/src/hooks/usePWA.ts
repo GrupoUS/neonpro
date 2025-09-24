@@ -41,14 +41,14 @@ export function usePWA() {
         await pwaOfflineSync.init()
 
         // Check PWA status
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           isInstalled: pwaStatus.isPWAInstalled(),
         }))
 
         // Get initial offline data count
         const offlineData = await pwaIndexedDB.getOfflineData()
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           offlineDataCount: offlineData.length,
         }))
@@ -61,28 +61,28 @@ export function usePWA() {
 
     // Set up event listeners
     const unsubscribeOnline = pwaStatus.subscribe('online', (isOnline: boolean) => {
-      setState((prev) => ({ ...prev, isOnline }))
+      setState(prev => ({ ...prev, isOnline }))
     })
 
     const unsubscribeInstallPrompt = pwaStatus.subscribe(
       'installPromptAvailable',
       (available: boolean) => {
-        setState((prev) => ({ ...prev, isInstallable: available }))
+        setState(prev => ({ ...prev, isInstallable: available }))
       },
     )
 
     const unsubscribeInstalled = pwaStatus.subscribe('isInstalled', (installed: boolean) => {
-      setState((prev) => ({ ...prev, isInstalled: installed }))
+      setState(prev => ({ ...prev, isInstalled: installed }))
     })
 
     // PWA install event listeners
     const handleInstallPrompt = (event: CustomEvent) => {
       setDeferredPrompt(event.detail)
-      setState((prev) => ({ ...prev, isInstallable: true }))
+      setState(prev => ({ ...prev, isInstallable: true }))
     }
 
     const handleInstalled = () => {
-      setState((prev) => ({ ...prev, isInstalled: true, isInstallable: false }))
+      setState(prev => ({ ...prev, isInstalled: true, isInstallable: false }))
     }
 
     window.addEventListener('pwa-install-available', handleInstallPrompt as EventListener)
@@ -90,13 +90,13 @@ export function usePWA() {
 
     // Online/offline event listeners
     const handleOnline = () => {
-      setState((prev) => ({ ...prev, isOnline: true }))
+      setState(prev => ({ ...prev, isOnline: true }))
       // Trigger sync when coming back online
       syncOfflineData()
     }
 
     const handleOffline = () => {
-      setState((prev) => ({ ...prev, isOnline: false }))
+      setState(prev => ({ ...prev, isOnline: false }))
     }
 
     window.addEventListener('online', handleOnline)
@@ -122,10 +122,10 @@ export function usePWA() {
       const { outcome } = await deferredPrompt.userChoice
 
       setDeferredPrompt(null)
-      setState((prev) => ({ ...prev, isInstallable: false }))
+      setState(prev => ({ ...prev, isInstallable: false }))
 
       if (outcome === 'accepted') {
-        setState((prev) => ({ ...prev, isInstalled: true }))
+        setState(prev => ({ ...prev, isInstalled: true }))
       }
 
       return outcome
@@ -139,7 +139,7 @@ export function usePWA() {
   const requestNotificationPermission = useCallback(async () => {
     try {
       const permission = await pwaPushManager.requestPermission()
-      setState((prev) => ({ ...prev, notificationPermission: permission }))
+      setState(prev => ({ ...prev, notificationPermission: permission }))
       return permission
     } catch (error) {
       console.error('Failed to request notification permission:', error)
@@ -181,7 +181,7 @@ export function usePWA() {
 
       // Update offline data count
       const offlineData = await pwaIndexedDB.getOfflineData()
-      setState((prev) => ({ ...prev, offlineDataCount: offlineData.length }))
+      setState(prev => ({ ...prev, offlineDataCount: offlineData.length }))
 
       return id
     } catch (error) {
@@ -193,18 +193,18 @@ export function usePWA() {
   // Sync offline data
   const syncOfflineData = useCallback(async () => {
     if (!state.isOnline) {
-      setState((prev) => ({ ...prev, syncStatus: 'error' }))
+      setState(prev => ({ ...prev, syncStatus: 'error' }))
       return
     }
 
-    setState((prev) => ({ ...prev, syncStatus: 'syncing' }))
+    setState(prev => ({ ...prev, syncStatus: 'syncing' }))
 
     try {
       await pwaOfflineSync.sync()
 
       // Update offline data count and sync time
       const offlineData = await pwaIndexedDB.getOfflineData()
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         offlineDataCount: offlineData.length,
         syncStatus: 'idle',
@@ -212,7 +212,7 @@ export function usePWA() {
       }))
     } catch (error) {
       console.error('Sync failed:', error)
-      setState((prev) => ({ ...prev, syncStatus: 'error' }))
+      setState(prev => ({ ...prev, syncStatus: 'error' }))
     }
   }, [state.isOnline])
 
@@ -242,7 +242,7 @@ export function usePWA() {
       const request = indexedDB.deleteDatabase('NeonProOfflineDB')
       request.onsuccess = () => {
         console.warn('IndexedDB cleared successfully')
-        setState((prev) => ({ ...prev, offlineDataCount: 0 }))
+        setState(prev => ({ ...prev, offlineDataCount: 0 }))
       }
       request.onerror = () => {
         console.error('Failed to clear IndexedDB')

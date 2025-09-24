@@ -155,8 +155,8 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
 
     const activeConsents = mockDataSubjects.reduce(
       (sum, subject) =>
-        sum
-        + subject.consentRecords.filter((c) =>
+        sum +
+        subject.consentRecords.filter(c =>
           !c.revokedAt && (!c.expiresAt || c.expiresAt > new Date())
         ).length,
       0,
@@ -164,7 +164,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
 
     const expiredConsents = mockDataSubjects.reduce(
       (sum, subject) =>
-        sum + subject.consentRecords.filter((c) => c.expiresAt && c.expiresAt <= new Date()).length,
+        sum + subject.consentRecords.filter(c => c.expiresAt && c.expiresAt <= new Date()).length,
       0,
     )
 
@@ -234,7 +234,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
       riskLevel,
     }
 
-    setAuditLogs((prev) => [...prev, auditEvent])
+    setAuditLogs(prev => [...prev, auditEvent])
     setMetrics(calculateComplianceMetrics())
 
     onComplianceAction?.('audit_log', auditEvent)
@@ -295,7 +295,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         purpose,
       })
 
-      const subject = mockDataSubjects.find((s) => s.id === subjectId)
+      const subject = mockDataSubjects.find(s => s.id === subjectId)
       if (subject) {
         const accessRequest = {
           id: `access-${Date.now()}`,
@@ -330,7 +330,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         compressed: true,
       })
 
-      const subject = mockDataSubjects.find((s) => s.id === subjectId)
+      const subject = mockDataSubjects.find(s => s.id === subjectId)
       if (subject) {
         const exportData = {
           patient: {
@@ -339,7 +339,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
             contact: maskSensitiveData(subject.contact, subject.contactType),
             dataCategories: subject.dataCategories,
           },
-          consents: subject.consentRecords.map((consent) => ({
+          consents: subject.consentRecords.map(consent => ({
             id: consent.id,
             type: consent.consentType,
             purpose: consent.purpose,
@@ -390,7 +390,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
       )
 
       // In real implementation, this would trigger anonymization process
-      const subject = mockDataSubjects.find((s) => s.id === subjectId)
+      const subject = mockDataSubjects.find(s => s.id === subjectId)
       if (subject) {
         subject.name = 'REDACTED'
         subject.contact = 'REDACTED'
@@ -497,7 +497,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
         </CardHeader>
         <CardContent>
           <div className='space-y-4'>
-            {mockDataSubjects.map((subject) => (
+            {mockDataSubjects.map(subject => (
               <div key={subject.id} className='border rounded-lg p-4'>
                 <div className='flex items-center justify-between mb-3'>
                   <div>
@@ -508,7 +508,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                       {maskSensitiveData(subject.contact, subject.contactType)}
                     </p>
                     <div className='flex gap-2 mt-1'>
-                      {subject.dataCategories.map((category) => (
+                      {subject.dataCategories.map(category => (
                         <Badge key={category} variant='outline' className='text-xs'>
                           {category}
                         </Badge>
@@ -532,19 +532,19 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                   <h4 className='text-sm font-medium mb-2'>
                     Consentimentos ({subject.consentRecords.length})
                   </h4>
-                  {subject.consentRecords.map((consent) => (
+                  {subject.consentRecords.map(consent => (
                     <div key={consent.id} className='bg-gray-50 p-2 rounded text-xs'>
                       <div className='flex justify-between'>
                         <span className='font-medium'>{consent.consentType}</span>
                         <Badge
-                          variant={!consent.revokedAt
-                              && (!consent.expiresAt || consent.expiresAt > new Date())
+                          variant={!consent.revokedAt &&
+                              (!consent.expiresAt || consent.expiresAt > new Date())
                             ? 'default'
                             : 'secondary'}
                           className='text-xs'
                         >
-                          {!consent.revokedAt
-                              && (!consent.expiresAt || consent.expiresAt > new Date())
+                          {!consent.revokedAt &&
+                              (!consent.expiresAt || consent.expiresAt > new Date())
                             ? 'Ativo'
                             : 'Expirado'}
                         </Badge>
@@ -577,7 +577,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
               <Textarea
                 id='purpose'
                 value={consentForm.purpose}
-                onChange={(e) => setConsentForm((prev) => ({ ...prev, purpose: e.target.value }))}
+                onChange={e => setConsentForm(prev => ({ ...prev, purpose: e.target.value }))}
                 placeholder='Descreva a finalidade do tratamento de dados...'
                 rows={3}
               />
@@ -592,21 +592,21 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                   'financial_data',
                   'contact_data',
                   'treatment_data',
-                ].map((scope) => (
+                ].map(scope => (
                   <label key={scope} className='flex items-center gap-2'>
                     <input
                       type='checkbox'
                       checked={consentForm.scope.includes(scope)}
-                      onChange={(e) => {
+                      onChange={e => {
                         if (e.target.checked) {
-                          setConsentForm((prev) => ({
+                          setConsentForm(prev => ({
                             ...prev,
                             scope: [...prev.scope, scope],
                           }))
                         } else {
-                          setConsentForm((prev) => ({
+                          setConsentForm(prev => ({
                             ...prev,
-                            scope: prev.scope.filter((s) => s !== scope),
+                            scope: prev.scope.filter(s => s !== scope),
                           }))
                         }
                       }}
@@ -635,8 +635,8 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                 id='duration'
                 type='number'
                 value={consentForm.duration}
-                onChange={(e) =>
-                  setConsentForm((prev) => ({ ...prev, duration: parseInt(e.target.value) }))}
+                onChange={e =>
+                  setConsentForm(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
                 min='1'
                 max='3650'
               />
@@ -684,7 +684,7 @@ export const NeonProLGPDCompliance: React.FC<LGPDComplianceProps> = ({
                 </p>
               )
               : (
-                auditLogs.slice(-20).reverse().map((log) => (
+                auditLogs.slice(-20).reverse().map(log => (
                   <div key={log.id} className='flex items-center gap-3 p-3 border rounded'>
                     <div
                       className={`w-2 h-2 rounded-full ${

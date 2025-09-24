@@ -92,7 +92,7 @@ export class AgentCoordinator {
   private async executeParallel(): Promise<AgentResult[]> {
     console.error('🚀 Executing agents in parallel')
 
-    const promises = this.config.agents.map((agent) => this.executeAgent(agent))
+    const promises = this.config.agents.map(agent => this.executeAgent(agent))
     const results = await Promise.all(promises)
 
     results.forEach((result, index) => {
@@ -123,7 +123,7 @@ export class AgentCoordinator {
     this.results.set(primaryAgent, primaryResult)
 
     // Execute support agents based on primary result
-    const supportPromises = supportAgents.map((agent) => this.executeAgent(agent))
+    const supportPromises = supportAgents.map(agent => this.executeAgent(agent))
     const supportResults = await Promise.all(supportPromises)
 
     supportResults.forEach((result, index) => {
@@ -214,8 +214,8 @@ export class AgentCoordinator {
     agent: AgentType,
     metrics: Record<string, number>,
   ): boolean {
-    const mappedKey = QUALITY_GATE_KEY_MAP[agent]
-      ?? (agent.toUpperCase().replace('-', '_') as keyof typeof QUALITY_GATES)
+    const mappedKey = QUALITY_GATE_KEY_MAP[agent] ??
+      (agent.toUpperCase().replace('-', '_') as keyof typeof QUALITY_GATES)
     const gates = QUALITY_GATES[mappedKey]
     if (!gates) return true
 
@@ -256,7 +256,7 @@ export class AgentCoordinator {
    */
   getSummary() {
     const results = Array.from(this.results.values())
-    const successCount = results.filter((r) => r.success).length
+    const successCount = results.filter(r => r.success).length
     const totalCount = results.length
 
     return {

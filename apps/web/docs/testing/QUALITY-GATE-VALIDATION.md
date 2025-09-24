@@ -226,10 +226,10 @@ export class QualityScoreCalculator {
       maintainability: this.calculateMaintainabilityScore(metrics.maintainability),
     }
 
-    const weightedScore = scores.coverage * weights.coverage
-      + scores.performance * weights.performance
-      + scores.security * weights.security
-      + scores.maintainability * weights.maintainability
+    const weightedScore = scores.coverage * weights.coverage +
+      scores.performance * weights.performance +
+      scores.security * weights.security +
+      scores.maintainability * weights.maintainability
 
     return {
       score: Math.round(weightedScore),

@@ -73,9 +73,9 @@ class QualityControlAutomator {
       result.metrics.securityIssues = securityResult.errors
 
       // Determine overall success
-      const totalErrors = result.metrics.typeCheckErrors
-        + result.metrics.lintErrors
-        + result.metrics.securityIssues
+      const totalErrors = result.metrics.typeCheckErrors +
+        result.metrics.lintErrors +
+        result.metrics.securityIssues
 
       result.success = totalErrors === 0
 
@@ -253,19 +253,19 @@ class QualityControlAutomator {
 ## Error Summary
 ${
       result.errors.length > 0
-        ? result.errors.map((e) => `- ❌ ${e}`).join('\n')
+        ? result.errors.map(e => `- ❌ ${e}`).join('\n')
         : '✅ No critical errors detected'
     }
 
 ## Warnings
 ${
       result.warnings.length > 0
-        ? result.warnings.map((w) => `- ⚠️ ${w}`).join('\n')
+        ? result.warnings.map(w => `- ⚠️ ${w}`).join('\n')
         : '✅ No warnings detected'
     }
 
 ## Recommendations
-${result.recommendations.map((r) => `- 📋 ${r}`).join('\n')}
+${result.recommendations.map(r => `- 📋 ${r}`).join('\n')}
 
 ## Next Steps
 ${

@@ -269,7 +269,7 @@ export class BrazilianPIIRedactionService {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => this.redactObject(item))
+      return obj.map(item => this.redactObject(item))
     }
 
     if (typeof obj === 'object') {
@@ -301,7 +301,7 @@ export class BrazilianPIIRedactionService {
       const matches = text.match(config.pattern)
 
       if (matches) {
-        matches.forEach((match) => {
+        matches.forEach(match => {
           const isValid = this.enableValidation ? config.validate(match) : true
 
           identifiers.push(
@@ -381,7 +381,7 @@ export class BrazilianPIIRedactionService {
       'format',
     ]
 
-    return skipFields.some((field) => fieldName.toLowerCase().includes(field.toLowerCase()))
+    return skipFields.some(field => fieldName.toLowerCase().includes(field.toLowerCase()))
   }
 
   /**
@@ -410,7 +410,7 @@ export class BrazilianPIIRedactionService {
       }
     })
 
-    Object.keys(HEALTHCARE_PATTERNS).forEach((type) => {
+    Object.keys(HEALTHCARE_PATTERNS).forEach(type => {
       const config = HEALTHCARE_PATTERNS[type as keyof typeof HEALTHCARE_PATTERNS]
       if (config.pattern.test(text)) {
         types.push(type)

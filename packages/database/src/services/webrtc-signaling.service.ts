@@ -254,13 +254,13 @@ export class WebRTCSignalingServer {
       authToken?: string
     },
   ): Promise<void> {
-    const { sessionId, userId, participantType, deviceInfo } = data
+    const { sessionId, _userId: userId, participantType, deviceInfo } = data
 
     // Validate session exists and user is authorized
     const sessionStatus = await this.webrtcService.getSessionStatus(sessionId)
     if (
-      sessionStatus.connectionState !== 'active'
-      && sessionStatus.connectionState !== 'waiting'
+      sessionStatus.connectionState !== 'active' &&
+      sessionStatus.connectionState !== 'waiting'
     ) {
       throw new Error('Session is not available for joining')
     }
@@ -324,9 +324,9 @@ export class WebRTCSignalingServer {
 
     // Send join confirmation with existing participants list
     const existingParticipants = Array.from(room.participants.values())
-      .filter((p) => p.socketId !== socket.id)
-      .map((p) => ({
-        _userId: p.userId,
+      .filter(p => p.socketId !== socket.id)
+      .map(p => ({
+        _userId: p._userId,
         participantType: p.participantType,
         socketId: p.socketId,
         deviceInfo: p.deviceInfo,
@@ -387,7 +387,7 @@ export class WebRTCSignalingServer {
     const signalRecord: WebRTCSignal = {
       type,
       data,
-      from: sender.userId,
+      from: sender._userId,
       to,
       sessionId,
       timestamp: new Date(),
@@ -403,7 +403,7 @@ export class WebRTCSignalingServer {
 
     // Find target participant's socket
     const targetParticipant = Array.from(room.participants.values()).find(
-      (p) => p.userId === to,
+      p => p._userId === to,
     )
 
     if (!targetParticipant) {
@@ -413,7 +413,7 @@ export class WebRTCSignalingServer {
     ;(socket as any).to(targetParticipant.socketId).emit('webrtc-signal', {
       type,
       data,
-      from: sender.userId,
+      from: sender._userId,
       sessionId,
       timestamp: signalRecord.timestamp.toISOString(),
     })
@@ -434,7 +434,7 @@ export class WebRTCSignalingServer {
     }
 
     winstonLogger.info(
-      `Relayed ${type} signal from ${sender.userId} to ${to} in session ${sessionId}`,
+      `Relayed ${type} signal from ${sender._userId} to ${to} in session ${sessionId}`,
       undefined,
       {
         healthcare: {
@@ -442,7 +442,7 @@ export class WebRTCSignalingServer {
           clinicalContext: {
             sessionId,
             signalType: type,
-            fromUser: sender.userId,
+            fromUser: sender._userId,
             toUser: to,
             facilityId: 'signaling-server',
             requiresAudit: true,
@@ -489,7 +489,7 @@ export class WebRTCSignalingServer {
       connectionStability: connectionState === 'connected' ? 5 : 2,
     }) // Broadcast connection state to other participants (for UI updates)
     ;(socket as any).to(sessionId).emit('participant-connection-state', {
-      _userId: participant.userId,
+      _userId: participant._userId,
       connectionState,
       iceConnectionState,
       quality,
@@ -533,9 +533,9 @@ export class WebRTCSignalingServer {
     await this.cfmService.logComplianceEvent({
       sessionId,
       eventType: 'participant_left',
-      description: `Participant ${participant.userId} left session`,
+      description: `Participant ${participant._userId} left session`,
       metadata: {
-        _userId: participant.userId,
+        _userId: participant._userId,
         participantType: participant.participantType,
         socketId: socket.id,
         duration: Date.now() - participant.joinedAt.getTime(),
@@ -543,7 +543,7 @@ export class WebRTCSignalingServer {
       },
     }) // Notify other participants
     ;(this.io as any).to(sessionId).emit('participant-left', {
-      _userId: participant.userId,
+      _userId: participant._userId,
       participantType: participant.participantType,
       timestamp: new Date().toISOString(),
     })
@@ -558,14 +558,14 @@ export class WebRTCSignalingServer {
     }
 
     winstonLogger.info(
-      `User ${participant.userId} left session ${sessionId}`,
+      `User ${participant._userId} left session ${sessionId}`,
       undefined,
       {
         healthcare: {
           workflowType: 'session_management',
           clinicalContext: {
             sessionId,
-            userId: participant.userId,
+            userId: participant._userId,
             participantType: participant.participantType,
             facilityId: 'signaling-server',
             requiresAudit: true,
@@ -584,7 +584,7 @@ export class WebRTCSignalingServer {
       const participant = room.participants.get(socket.id)
       if (participant) {
         // Handle graceful leave
-        this.handleLeaveSession(socket, sessionId).catch((error) => {
+        this.handleLeaveSession(socket, sessionId).catch(error => {
           logHealthcareError('database', error, {
             method: 'handleDisconnect',
             sessionId,
@@ -619,7 +619,7 @@ export class WebRTCSignalingServer {
       eventType: event.eventType as any,
       description: `Client compliance event: ${event.eventType}`,
       metadata: {
-        _userId: participant.userId,
+        _userId: participant._userId,
         participantType: participant.participantType,
         ...event.metadata,
         source: 'client',
@@ -645,15 +645,15 @@ export class WebRTCSignalingServer {
 
       // Check if user is authorized for this session
       if (
-        participantType === 'patient'
-        && sessionDetails.session.patient_id === userId
+        participantType === 'patient' &&
+        sessionDetails.session.patient_id === userId
       ) {
         return true
       }
 
       if (
-        participantType === 'physician'
-        && sessionDetails.session.physician_id === userId
+        participantType === 'physician' &&
+        sessionDetails.session.physician_id === userId
       ) {
         return true
       }
@@ -711,14 +711,14 @@ export class WebRTCSignalingServer {
         const inactiveTime = now.getTime() - participant.joinedAt.getTime()
         if (inactiveTime > inactivityTimeout && !participant.isActive) {
           winstonLogger.info(
-            `Removing inactive participant ${participant.userId} from session ${sessionId}`,
+            `Removing inactive participant ${participant._userId} from session ${sessionId}`,
             undefined,
             {
               healthcare: {
                 workflowType: 'session_cleanup',
                 clinicalContext: {
                   sessionId,
-                  userId: participant.userId,
+                  userId: participant._userId,
                   participantType: participant.participantType,
                   inactiveTime,
                   facilityId: 'signaling-server',
@@ -734,17 +734,17 @@ export class WebRTCSignalingServer {
             .logComplianceEvent({
               sessionId,
               eventType: 'participant_timeout',
-              description: `Participant ${participant.userId} timed out due to inactivity`,
+              description: `Participant ${participant._userId} timed out due to inactivity`,
               metadata: {
                 inactiveTime,
                 signaling: true,
               },
             })
-            .catch((error) => {
+            .catch(error => {
               logHealthcareError('database', error, {
                 method: 'cleanupInactiveSessions',
                 sessionId,
-                userId: participant.userId,
+                userId: participant._userId,
               })
             })
         } else {
@@ -802,7 +802,7 @@ export class WebRTCSignalingServer {
    */
   public getActiveSessionsCount(): number {
     return Array.from(this.sessionRooms.values()).filter(
-      (room) => room.isActive && room.participants.size > 0,
+      room => room.isActive && room.participants.size > 0,
     ).length
   }
 
@@ -811,7 +811,7 @@ export class WebRTCSignalingServer {
    */
   public getTotalParticipantsCount(): number {
     return Array.from(this.sessionRooms.values()).reduce(
-      (total, _room) => total + room.participants.size,
+      (total, room) => total + room.participants.size,
       0,
     )
   }
@@ -841,11 +841,11 @@ export class WebRTCSignalingServer {
     })
 
     // Wait a moment for clients to receive the message
-    await new Promise((resolve) => setTimeout(resolve, 1000)) // Close all socket connections
+    await new Promise(resolve => setTimeout(resolve, 1000)) // Close all socket connections
     ;(this.io as any).close()
 
     // Close HTTP server
-    await new Promise<void>((resolve) => {
+    await new Promise<void>(resolve => {
       this.server.close(() => {
         resolve()
       })

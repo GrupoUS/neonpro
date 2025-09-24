@@ -84,8 +84,8 @@ export class UserPlan {
 
   get isTrial(): boolean {
     return (
-      this._subscription.status === 'trial'
-      || this._subscription.planCode === 'trial'
+      this._subscription.status === 'trial' ||
+      this._subscription.planCode === 'trial'
     )
   }
 
@@ -370,8 +370,8 @@ export class UserPlan {
     }
 
     if (
-      this._currentUsage.monthlyQueries
-        > this._plan.monthlyQueryLimit * 0.8
+      this._currentUsage.monthlyQueries >
+        this._plan.monthlyQueryLimit * 0.8
     ) {
       warnings.push('Uso elevado detectado - upgrade recomendado')
     }
@@ -408,8 +408,8 @@ export class UserPlan {
 
     // Check if current usage exceeds new plan limits
     if (
-      newPlan.monthlyQueryLimit !== -1
-      && this._currentUsage.monthlyQueries > newPlan.monthlyQueryLimit
+      newPlan.monthlyQueryLimit !== -1 &&
+      this._currentUsage.monthlyQueries > newPlan.monthlyQueryLimit
     ) {
       issues.push(
         `Uso mensal atual (${this._currentUsage.monthlyQueries}) excede novo limite (${newPlan.monthlyQueryLimit})`,
@@ -492,8 +492,8 @@ export class UserPlan {
     }
 
     // Cost warnings
-    const costPercentage = (this._currentUsage.currentCostUsd / this._plan.costBudgetUsdMonthly)
-      * 100
+    const costPercentage = (this._currentUsage.currentCostUsd / this._plan.costBudgetUsdMonthly) *
+      100
     if (costPercentage > 80) {
       notifications.push({
         type: costPercentage > 95 ? 'critical' : 'warning',

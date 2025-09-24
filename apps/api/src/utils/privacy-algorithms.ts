@@ -382,10 +382,10 @@ export class PrivacyAlgorithms {
           precision = 2
       }
 
-      const anonymizedLat = Math.round(latitude * Math.pow(10, precision))
-        / Math.pow(10, precision)
-      const anonymizedLng = Math.round(longitude * Math.pow(10, precision))
-        / Math.pow(10, precision)
+      const anonymizedLat = Math.round(latitude * Math.pow(10, precision)) /
+        Math.pow(10, precision)
+      const anonymizedLng = Math.round(longitude * Math.pow(10, precision)) /
+        Math.pow(10, precision)
 
       return {
         latitude: anonymizedLat,
@@ -477,7 +477,7 @@ export class PrivacyAlgorithms {
     const groups: Map<string, DataRecord[]> = new Map()
 
     for (const record of records) {
-      const key = quasiIdentifiers.map((qi) => record[qi]).join('|')
+      const key = quasiIdentifiers.map(qi => record[qi]).join('|')
       if (!groups.has(key)) {
         groups.set(key, [])
       }
@@ -492,10 +492,10 @@ export class PrivacyAlgorithms {
     quasiIdentifiers: string[],
   ): { records: DataRecord[]; generalizedFields: string[] } {
     const generalizedFields: string[] = []
-    const generalizedRecords = group.map((record) => ({ ...record }))
+    const generalizedRecords = group.map(record => ({ ...record }))
 
     for (const qi of quasiIdentifiers) {
-      const values = group.map((r) => r[qi])
+      const values = group.map(r => r[qi])
       const generalizedValue = this.generalizeValues(values, qi)
 
       if (generalizedValue !== values[0]) {
@@ -539,9 +539,9 @@ export class PrivacyAlgorithms {
     for (const record of records) {
       // Group by all attributes except sensitive ones
       const nonSensitiveKeys = Object.keys(record).filter(
-        (k) => !sensitiveAttributes.includes(k),
+        k => !sensitiveAttributes.includes(k),
       )
-      const key = nonSensitiveKeys.map((k) => record[k]).join('|')
+      const key = nonSensitiveKeys.map(k => record[k]).join('|')
 
       if (!groups.has(key)) {
         groups.set(key, [])
@@ -558,7 +558,7 @@ export class PrivacyAlgorithms {
     l: number,
   ): boolean {
     for (const attr of sensitiveAttributes) {
-      const values = group.map((r) => r[attr])
+      const values = group.map(r => r[attr])
       const uniqueValues = new Set(values)
       if (uniqueValues.size < l) {
         return false
@@ -572,7 +572,7 @@ export class PrivacyAlgorithms {
     sensitiveAttributes: string[],
   ): DataRecord[] {
     // Simple further generalization - in practice, this would be more sophisticated
-    return group.map((record) => {
+    return group.map(record => {
       const generalized = { ...record }
       for (const attr of sensitiveAttributes) {
         if (typeof generalized[attr] === 'string') {
@@ -649,8 +649,8 @@ export class PrivacyAlgorithms {
   ): boolean {
     // In production, implement proper authorization validation
     return (
-      authorization === 'authorized_researcher'
-      && purpose === 'medical_research'
+      authorization === 'authorized_researcher' &&
+      purpose === 'medical_research'
     )
   }
 }

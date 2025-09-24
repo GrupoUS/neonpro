@@ -73,7 +73,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(
   '*',
   cors({
-    origin: (origin) =>
+    origin: origin =>
       !origin
         ? undefined
         : allowedOrigins.includes(origin)
@@ -121,7 +121,7 @@ Responda sempre de forma útil, segura e focada em estética.`
 // Cache key generator for healthcare AI conversations
 class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
   generateKey(messages: AIMessage[], _context: any): string {
-    const normalizedMessages = messages.map((msg) => ({
+    const normalizedMessages = messages.map(msg => ({
       _role: msg.role,
       content: piiSanitizer.sanitize(msg.content),
     }))
@@ -146,7 +146,7 @@ class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
 
   private hashMessages(messages: AIMessage[]): string {
     const messageString = messages
-      .map((m) => `${m.role}:${m.content}`)
+      .map(m => `${m.role}:${m.content}`)
       .join('|')
     return Buffer.from(messageString).toString('base64').slice(0, 16)
   }
@@ -158,7 +158,7 @@ const cacheKeyGenerator = new HealthcareCacheKeyGenerator()
 app.post(
   '/stream',
   zValidator('json', EnhancedChatRequestSchema),
-  async (c) => {
+  async c => {
     const tracer = trace.getTracer('neonpro-ai-chat')
     const span = tracer.startSpan('/ai-chat/stream')
 
@@ -188,11 +188,11 @@ app.post(
       )
 
       const url = new URL(c.req.url)
-      const mockMode = url.searchParams.get('mock') === 'true'
-        || process.env.AI_CHAT_MOCK_MODE === 'true'
-        || (!process.env.OPENAI_API_KEY
-          && !process.env.ANTHROPIC_API_KEY
-          && !process.env.GOOGLE_AI_API_KEY)
+      const mockMode = url.searchParams.get('mock') === 'true' ||
+        process.env.AI_CHAT_MOCK_MODE === 'true' ||
+        (!process.env.OPENAI_API_KEY &&
+          !process.env.ANTHROPIC_API_KEY &&
+          !process.env.GOOGLE_AI_API_KEY)
 
       // Build AI messages with compliance validation
       const aiMessages: AIMessage[] = [
@@ -388,11 +388,11 @@ app.post(
       }
 
       // Enhanced audit logging with healthcare context
-      const lastText = text
-        || (Array.isArray(messages)
+      const lastText = text ||
+        (Array.isArray(messages)
           ? messages[messages.length - 1]?.content
-          : '')
-        || ''
+          : '') ||
+        ''
       console.warn('Enhanced AI Chat Interaction:', {
         timestamp: new Date().toISOString(),
         sessionId,
@@ -450,7 +450,7 @@ app.post(
 )
 
 // Cache management endpoints
-app.post('/cache/clear', async (c) => {
+app.post('/cache/clear', async c => {
   const { pattern } = (await c.req.json()) as { pattern?: string }
 
   if (pattern) {
@@ -462,13 +462,13 @@ app.post('/cache/clear', async (c) => {
   return c.json({ success: true, cleared: pattern ? 'pattern' : 'all' })
 })
 
-app.get('/cache/stats', async (c) => {
+app.get('/cache/stats', async c => {
   const stats = await semanticCache.getStatistics()
   return c.json(stats)
 })
 
 // Enhanced health check with cache and provider status
-app.get('/health', (c) => {
+app.get('/health', c => {
   const availableProviders = AIProviderFactory.getAvailableProviders()
   const cacheHealth = semanticCache.getHealthStatus()
 

@@ -347,7 +347,7 @@ export class AestheticComplianceService {
       isCompliant: violations.length === 0,
       violations,
       recommendations: this.generateComplianceRecommendations(violations),
-      requiresReporting: violations.some((v) => v.severity === 'high' || v.severity === 'critical'),
+      requiresReporting: violations.some(v => v.severity === 'high' || v.severity === 'critical'),
       reportData: violations.length > 0 ? await this.generateAnvisaReport(violations) : undefined,
       lastChecked: new Date().toISOString(),
       nextReview: this.calculateNextReviewDate(),
@@ -371,7 +371,7 @@ export class AestheticComplianceService {
       rightsGuarantees: this.verifyRightsGuarantees(),
     }
 
-    const isValid = Object.values(verificationResult).every((result) => result === true)
+    const isValid = Object.values(verificationResult).every(result => result === true)
     const issues = this.identifyConsentIssues(consentData, verificationResult)
 
     return {
@@ -541,7 +541,7 @@ export class AestheticComplianceService {
   async checkDocumentationCompliance(
     check: DocumentationComplianceCheck,
   ): Promise<DocumentationResult> {
-    const validationResults = check.requiredFields.map((field) => ({
+    const validationResults = check.requiredFields.map(field => ({
       field,
       isValid: check.currentData[field] !== undefined && check.currentData[field] !== null,
       message: check.currentData[field] ? 'Field present' : `Missing required field: ${field}`,
@@ -549,7 +549,7 @@ export class AestheticComplianceService {
     }))
 
     const completeness =
-      (validationResults.filter((r) => r.isValid).length / validationResults.length) * 100
+      (validationResults.filter(r => r.isValid).length / validationResults.length) * 100
 
     const retentionCompliance = {
       meetsPolicy: true, // Mock validation
@@ -565,9 +565,9 @@ export class AestheticComplianceService {
     }
 
     return {
-      isCompliant: completeness === 100
-        && retentionCompliance.meetsPolicy
-        && accessControlValidation.isProperlyControlled,
+      isCompliant: completeness === 100 &&
+        retentionCompliance.meetsPolicy &&
+        accessControlValidation.isProperlyControlled,
       completeness,
       validationResults,
       retentionCompliance,
@@ -587,15 +587,15 @@ export class AestheticComplianceService {
       reportId: this.generateReportId(),
       clinicId: 'clinic_001', // Would come from config
       generationDate: new Date().toISOString(),
-      violations: violations.filter((v) => v.severity === 'high' || v.severity === 'critical'),
+      violations: violations.filter(v => v.severity === 'high' || v.severity === 'critical'),
       summary: {
         totalViolations: violations.length,
-        criticalViolations: violations.filter((v) => v.severity === 'critical').length,
-        highViolations: violations.filter((v) => v.severity === 'high').length,
-        mediumViolations: violations.filter((v) => v.severity === 'medium').length,
-        lowViolations: violations.filter((v) => v.severity === 'low').length,
+        criticalViolations: violations.filter(v => v.severity === 'critical').length,
+        highViolations: violations.filter(v => v.severity === 'high').length,
+        mediumViolations: violations.filter(v => v.severity === 'medium').length,
+        lowViolations: violations.filter(v => v.severity === 'low').length,
       },
-      correctiveActions: violations.map((v) => v.correctiveAction),
+      correctiveActions: violations.map(v => v.correctiveAction),
       timeline: this.generateCorrectiveTimeline(violations),
     }
 
@@ -644,15 +644,15 @@ export class AestheticComplianceService {
   private generateComplianceRecommendations(violations: any[]): string[] {
     const recommendations: string[] = []
 
-    if (violations.some((v) => v.severity === 'critical')) {
+    if (violations.some(v => v.severity === 'critical')) {
       recommendations.push('Immediate action required for critical violations')
     }
 
-    if (violations.some((v) => v.regulation.includes('safety'))) {
+    if (violations.some(v => v.regulation.includes('safety'))) {
       recommendations.push('Review and enhance safety protocols')
     }
 
-    if (violations.some((v) => v.regulation.includes('documentation'))) {
+    if (violations.some(v => v.regulation.includes('documentation'))) {
       recommendations.push('Improve documentation practices')
     }
 
@@ -736,7 +736,7 @@ export class AestheticComplianceService {
     contraindications: any[],
     warnings: any[],
   ): 'low' | 'medium' | 'high' | 'contraindicated' {
-    if (contraindications.some((c) => c.type === 'absolute')) {
+    if (contraindications.some(c => c.type === 'absolute')) {
       return 'contraindicated'
     }
     if (contraindications.length > 0 || warnings.length > 2) {
@@ -908,8 +908,8 @@ export class AestheticComplianceService {
 
   private generateDocumentationRecommendations(validationResults: any[]): string[] {
     return validationResults
-      .filter((r) => !r.isValid)
-      .map((r) => `Complete missing field: ${r.field}`)
+      .filter(r => !r.isValid)
+      .map(r => `Complete missing field: ${r.field}`)
   }
 
   private generateReportId(): string {

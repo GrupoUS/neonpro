@@ -440,12 +440,12 @@ export class LGPDService {
   > {
     try {
       const patientConsents = Array.from(this.consents.values())
-        .filter((consent) => consent.patientId === patientId)
+        .filter(consent => consent.patientId === patientId)
         .sort((a, _b) => b.consentDate.getTime() - a.consentDate.getTime())
 
-      const currentConsent = patientConsents.find((consent) => !consent.withdrawalDate) || null
+      const currentConsent = patientConsents.find(consent => !consent.withdrawalDate) || null
       const history = patientConsents.flatMap(
-        (consent) => consent.history || [],
+        consent => consent.history || [],
       )
 
       return {
@@ -666,7 +666,7 @@ export class LGPDService {
       }
 
       // Filter by date range
-      activities = activities.filter((activity) => {
+      activities = activities.filter(activity => {
         const activityDate = activity.timestamp || new Date()
         return (
           activityDate >= params.startDate && activityDate <= params.endDate
@@ -948,12 +948,12 @@ export class LGPDService {
       let assessments = Array.from(this.privacyImpactAssessments.values())
 
       if (filters.status) {
-        assessments = assessments.filter((a) => a.status === filters.status)
+        assessments = assessments.filter(a => a.status === filters.status)
       }
 
       if (filters.riskLevel) {
         assessments = assessments.filter(
-          (a) => a.riskLevel === filters.riskLevel,
+          a => a.riskLevel === filters.riskLevel,
         )
       }
 
@@ -993,10 +993,10 @@ export class LGPDService {
       const metrics = {
         totalConsents: this.consents.size,
         activeConsents: Array.from(this.consents.values()).filter(
-          (c) => c.status === ConsentStatus.ACTIVE,
+          c => c.status === ConsentStatus.ACTIVE,
         ).length,
         revokedConsents: Array.from(this.consents.values()).filter(
-          (c) => c.status === ConsentStatus.REVOKED,
+          c => c.status === ConsentStatus.REVOKED,
         ).length,
         dataSubjectRequests: this.dataSubjectRequests.size,
         processingActivities: Array.from(

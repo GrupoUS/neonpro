@@ -1,5 +1,5 @@
-import { Patient, PatientFilters, PatientRepository as IPatientRepository } from '@neonpro/domain'
-import { CreatePatientRequest, UpdatePatientRequest } from '@neonpro/types'
+import { Patient, PatientFilters, PatientRepository } from '@neonpro/domain'
+import { UpdatePatientRequest } from '@neonpro/types'
 import { SupabaseClient } from '@supabase/supabase-js'
 import { databaseLogger, logHealthcareError } from '../../../shared/src/logging/healthcare-logger'
 import { PatientQueryOptions, PatientSearchResult } from '../types/index.js'
@@ -9,7 +9,7 @@ import { DatabasePatient } from '../types/supabase.js'
  * Supabase implementation of PatientRepository
  * Handles all patient data access operations with proper error handling and validation
  */
-export class PatientRepository implements IPatientRepository {
+export class PatientRepository implements PatientRepository {
   constructor(private supabase: SupabaseClient) {}
 
   async findById(id: string): Promise<Patient | null> {
@@ -71,7 +71,7 @@ export class PatientRepository implements IPatientRepository {
 
       if (error || !data) return []
 
-      return data.map((patient) => this.mapDatabasePatientToDomain(patient))
+      return data.map(patient => this.mapDatabasePatientToDomain(patient))
     } catch (error) {
       logHealthcareError('database', error, { method: 'findByCPF' })
       return []
@@ -260,11 +260,15 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string, deletedBy: string): Promise<boolean> {
     try {
       const { error } = await this.supabase
         .from('patients')
-        .delete()
+        .update({
+          is_active: false,
+          updated_by: deletedBy,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', id)
 
       if (error) {
@@ -526,55 +530,55 @@ export class PatientRepository implements IPatientRepository {
   }
 
   /**
-   * Maps create request to database format
+   * Maps create patient data to database format
    */
   private mapCreateRequestToDatabase(
-    request: CreatePatientRequest,
+    patient: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
   ): Partial<DatabasePatient> {
     return {
-      clinic_id: request.clinicId,
-      medical_record_number: request.medicalRecordNumber,
-      external_ids: request.externalIds,
-      given_names: request.givenNames,
-      family_name: request.familyName,
-      full_name: request.fullName,
-      preferred_name: request.preferredName,
-      phone_primary: request.phonePrimary,
-      phone_secondary: request.phoneSecondary,
-      email: request.email,
-      address_line1: request.addressLine1,
-      address_line2: request.addressLine2,
-      city: request.city,
-      state: request.state,
-      postal_code: request.postalCode,
-      country: request.country,
-      birth_date: request.birthDate,
-      gender: request.gender,
-      marital_status: request.maritalStatus,
-      is_active: request.isActive !== false,
-      deceased_indicator: request.deceasedIndicator,
-      deceased_date: request.deceasedDate,
-      data_consent_status: request.dataConsentStatus,
-      data_consent_date: request.dataConsentDate,
-      data_retention_until: request.dataRetentionUntil,
-      data_source: request.dataSource,
-      created_by: request.createdBy,
-      photo_url: request.photoUrl,
-      cpf: request.cpf,
-      rg: request.rg,
-      passport_number: request.passportNumber,
-      preferred_contact_method: request.preferredContactMethod,
-      blood_type: request.bloodType,
-      allergies: request.allergies,
-      chronic_conditions: request.chronicConditions,
-      current_medications: request.currentMedications,
-      insurance_provider: request.insuranceProvider,
-      insurance_number: request.insuranceNumber,
-      insurance_plan: request.insurancePlan,
-      emergency_contact_name: request.emergencyContactName,
-      emergency_contact_phone: request.emergencyContactPhone,
-      emergency_contact_relationship: request.emergencyContactRelationship,
-      lgpd_consent_given: request.lgpdConsentGiven || false,
+      clinic_id: patient.clinicId,
+      medical_record_number: patient.medicalRecordNumber,
+      external_ids: patient.externalIds,
+      given_names: patient.givenNames,
+      family_name: patient.familyName,
+      full_name: patient.fullName,
+      preferred_name: patient.preferredName,
+      phone_primary: patient.phonePrimary,
+      phone_secondary: patient.phoneSecondary,
+      email: patient.email,
+      address_line1: patient.addressLine1,
+      address_line2: patient.addressLine2,
+      city: patient.city,
+      state: patient.state,
+      postal_code: patient.postalCode,
+      country: patient.country,
+      birth_date: patient.birthDate,
+      gender: patient.gender,
+      marital_status: patient.maritalStatus,
+      is_active: patient.isActive !== false,
+      deceased_indicator: patient.deceasedIndicator,
+      deceased_date: patient.deceasedDate,
+      data_consent_status: patient.dataConsentStatus,
+      data_consent_date: patient.dataConsentDate,
+      data_retention_until: patient.dataRetentionUntil,
+      data_source: patient.dataSource,
+      created_by: patient.createdBy,
+      photo_url: patient.photoUrl,
+      cpf: patient.cpf,
+      rg: patient.rg,
+      passport_number: patient.passportNumber,
+      preferred_contact_method: patient.preferredContactMethod,
+      blood_type: patient.bloodType,
+      allergies: patient.allergies,
+      chronic_conditions: patient.chronicConditions,
+      current_medications: patient.currentMedications,
+      insurance_provider: patient.insuranceProvider,
+      insurance_number: patient.insuranceNumber,
+      insurance_plan: patient.insurancePlan,
+      emergency_contact_name: patient.emergencyContactName,
+      emergency_contact_phone: patient.emergencyContactPhone,
+      emergency_contact_relationship: patient.emergencyContactRelationship,
+      lgpd_consent_given: patient.lgpdConsentGiven || false,
     }
   }
 

@@ -144,8 +144,8 @@ class HealthcareBundleAnalyzer {
 
     const chunks = fs
       .readdirSync(staticDir)
-      .filter((file) => file.endsWith('.js'))
-      .map((file) => {
+      .filter(file => file.endsWith('.js'))
+      .map(file => {
         const filePath = path.join(staticDir, file)
         const stats = fs.statSync(filePath)
         return {
@@ -156,7 +156,7 @@ class HealthcareBundleAnalyzer {
       })
 
     // Categorize chunks by healthcare modules
-    chunks.forEach((chunk) => {
+    chunks.forEach(chunk => {
       this.results.totalSize += chunk.size
 
       // Check if chunk contains healthcare modules
@@ -171,12 +171,12 @@ class HealthcareBundleAnalyzer {
 
     // Sort chunks by size
     const largeChunks = chunks
-      .filter((chunk) => chunk.size > 20000)
+      .filter(chunk => chunk.size > 20000)
       .sort((a, b) => b.size - a.size)
 
     if (largeChunks.length > 0) {
       console.log('📊 Large chunks detected:')
-      largeChunks.slice(0, 5).forEach((chunk) => {
+      largeChunks.slice(0, 5).forEach(chunk => {
         console.log(`  ${chunk.name}: ${this.formatBytes(chunk.size)}`)
       })
     }
@@ -196,7 +196,7 @@ class HealthcareBundleAnalyzer {
     const analyzeDirectory = (dir, basePath = '') => {
       const items = fs.readdirSync(dir)
 
-      items.forEach((item) => {
+      items.forEach(item => {
         const itemPath = path.join(dir, item)
         const stats = fs.statSync(itemPath)
 
@@ -231,7 +231,7 @@ class HealthcareBundleAnalyzer {
    */
   async analyzeHealthcareModules(_buildDir) {
     Object.entries(HEALTHCARE_MODULES).forEach(([category, modules]) => {
-      modules.forEach((moduleName) => {
+      modules.forEach(moduleName => {
         // Estimate module size based on healthcare complexity
         const estimatedSize = this.estimateHealthcareModuleSize(
           moduleName,
@@ -370,7 +370,7 @@ class HealthcareBundleAnalyzer {
 
     if (recommendations.length > 0) {
       console.log('Recommendations:')
-      recommendations.forEach((rec) => console.log(`  ${rec}`))
+      recommendations.forEach(rec => console.log(`  ${rec}`))
     } else {
       console.log(
         '✅ No optimization recommendations - bundle is well optimized for healthcare edge runtime',
@@ -499,8 +499,8 @@ class HealthcareBundleAnalyzer {
   }
 
   isFullyCompliant() {
-    return Object.values(this.results.complianceStatus).every((status) =>
-      Object.values(status).every((check) => check === true)
+    return Object.values(this.results.complianceStatus).every(status =>
+      Object.values(status).every(check => check === true)
     )
   }
 
@@ -516,7 +516,7 @@ class HealthcareBundleAnalyzer {
 // Run analysis if called directly
 if (require.main === module) {
   const analyzer = new HealthcareBundleAnalyzer()
-  analyzer.analyze().catch((error) => {
+  analyzer.analyze().catch(error => {
     console.error('Healthcare bundle analysis failed:', error)
     process.exit(1)
   })

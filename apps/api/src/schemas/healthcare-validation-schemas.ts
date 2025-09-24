@@ -55,12 +55,12 @@ export const PatientSchema = z
     cpf: z
       .string()
       .regex(/^\d{11}$/, 'CPF deve ter 11 dígitos')
-      .refine((cpf) => validateCPF(cpf), 'CPF inválido'),
+      .refine(cpf => validateCPF(cpf), 'CPF inválido'),
     rg: z.string().optional().nullable(),
     dateOfBirth: z
       .string()
-      .refine((date) => !isNaN(Date.parse(date)), 'Data de nascimento inválida')
-      .refine((date) => {
+      .refine(date => !isNaN(Date.parse(date)), 'Data de nascimento inválida')
+      .refine(date => {
         const birthDate = new Date(date)
         const age = calculateAge(birthDate)
         return age >= 0 && age <= 150
@@ -92,7 +92,7 @@ export const PatientSchema = z
     consentimentoLGPDPaciente: z.boolean().default(false),
     dataUltimoConsentimento: z.date().optional(),
   })
-  .refine((data) => {
+  .refine(data => {
     // Validate that either email or phone is provided
     return data.contact?.email || data.contact?.phone
   }, 'É necessário fornecer email ou telefone')
@@ -110,13 +110,13 @@ export const AppointmentSchema = z
     professionalId: z.string().min(1, 'ID do profissional é obrigatório'),
     startTime: z
       .string()
-      .refine((date) => !isNaN(Date.parse(date)), 'Horário de início inválido')
-      .refine((date) => {
+      .refine(date => !isNaN(Date.parse(date)), 'Horário de início inválido')
+      .refine(date => {
         const startTime = new Date(date)
         const now = new Date()
         return startTime > now
       }, 'Horário da consulta não pode estar no passado')
-      .refine((date) => {
+      .refine(date => {
         const startTime = new Date(date)
         const now = new Date()
         const maxFuture = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000) // 90 days
@@ -170,7 +170,7 @@ export const AppointmentSchema = z
     priority: z.enum(['BAIXA', 'NORMAL', 'ALTA', 'URGENCIA']).default('NORMAL'),
     reminderSent: z.boolean().default(false),
   })
-  .refine((data) => {
+  .refine(data => {
     // Validate endTime if provided
     if (data.endTime) {
       const startTime = new Date(data.startTime)
@@ -179,7 +179,7 @@ export const AppointmentSchema = z
     }
     return true
   }, 'Horário de término deve ser após o início')
-  .refine((data) => {
+  .refine(data => {
     // Validate virtual link for virtual appointments
     if (data.isVirtual && !data.virtualLink) {
       return false
@@ -258,7 +258,7 @@ export const MedicalRecordSchema = z
       .optional(),
     isConfidential: z.boolean().default(false),
   })
-  .refine((data) => {
+  .refine(data => {
     // Validate sensitive content marking
     const sensitiveKeywords = [
       'hiv',
@@ -267,7 +267,7 @@ export const MedicalRecordSchema = z
       'doença terminal',
       'psiquiátrico',
     ]
-    const hasSensitiveContent = sensitiveKeywords.some((keyword) =>
+    const hasSensitiveContent = sensitiveKeywords.some(keyword =>
       data.content.toLowerCase().includes(keyword)
     )
 
@@ -336,12 +336,12 @@ export const PrescriptionSchema = z
       .max(500, 'Observações não podem exceder 500 caracteres')
       .optional(),
   })
-  .refine((data) => {
+  .refine(data => {
     // Validate controlled medications
-    const hasControlled = data.medications.some((med) => med.isControlled)
+    const hasControlled = data.medications.some(med => med.isControlled)
     if (
-      hasControlled
-      && !data.medications.every((med) => med.registrationNumber)
+      hasControlled &&
+      !data.medications.every(med => med.registrationNumber)
     ) {
       return false
     }
@@ -453,7 +453,7 @@ export function validateEntityData<T>(
       }
     } else {
       const errors = result.error.errors.map(
-        (err) => `${err.path.join('.')}: ${err.message}`,
+        err => `${err.path.join('.')}: ${err.message}`,
       )
 
       return {
@@ -519,8 +519,8 @@ function calculateAge(birthDate: Date): number {
   const monthDiff = today.getMonth() - birthDate.getMonth()
 
   if (
-    monthDiff < 0
-    || (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
   ) {
     age--
   }

@@ -85,8 +85,8 @@ export class SupabaseConnector {
 
     // Check cache (5 minute expiry)
     if (
-      this.permissionsCache.has(cacheKey)
-      && this.cacheExpiry.get(cacheKey)! > now
+      this.permissionsCache.has(cacheKey) &&
+      this.cacheExpiry.get(cacheKey)! > now
     ) {
       return this.permissionsCache.get(cacheKey)!
     }

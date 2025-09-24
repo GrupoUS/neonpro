@@ -237,7 +237,7 @@ export class ConversationContextService {
 
       // Convert database messages to ConversationMessage format
       const conversationMessages: ConversationMessage[] = (messages || []).map(
-        (msg) => ({
+        msg => ({
           id: msg.id,
           sessionId: msg.session_id,
           _role: msg.role,
@@ -343,7 +343,7 @@ export class ConversationContextService {
         throw new Error(`Failed to search conversations: ${error.message}`)
       }
 
-      const messages: ConversationMessage[] = (data || []).map((msg) => ({
+      const messages: ConversationMessage[] = (data || []).map(msg => ({
         id: msg.id,
         sessionId: msg.session_id,
         _role: msg.role,
@@ -561,7 +561,7 @@ export class ConversationContextService {
       /\d{2}\/\d{2}\/\d{4}/g, // Dates
     ]
 
-    piiPatterns.forEach((pattern) => {
+    piiPatterns.forEach(pattern => {
       sanitized = sanitized.replace(pattern, '[REDACTED]')
     })
 
@@ -582,7 +582,7 @@ export class ConversationContextService {
       }
     }
 
-    const userMessages = messages.filter((m) => m.role === 'user')
+    const userMessages = messages.filter(m => m.role === 'user')
     const lastUserMessage = userMessages[userMessages.length - 1]
 
     // Simple topic extraction (in production, use NLP)
@@ -603,7 +603,7 @@ export class ConversationContextService {
    */
   private extractTopics(messages: ConversationMessage[]): string[] {
     const allContent = messages
-      .map((m) => m.content)
+      .map(m => m.content)
       .join(' ')
       .toLowerCase()
     const healthcareTopics = [
@@ -629,7 +629,7 @@ export class ConversationContextService {
       'health',
     ]
 
-    return healthcareTopics.filter((topic) => allContent.includes(topic))
+    return healthcareTopics.filter(topic => allContent.includes(topic))
   }
 
   /**
@@ -638,9 +638,9 @@ export class ConversationContextService {
   private extractEntities(messages: ConversationMessage[]): string[] {
     const entities = new Set<string>()
 
-    messages.forEach((message) => {
+    messages.forEach(message => {
       if (message.metadata?.entitiesExtracted) {
-        message.metadata.entitiesExtracted.forEach((entity) => {
+        message.metadata.entitiesExtracted.forEach(entity => {
           entities.add(entity)
         })
       }
@@ -655,7 +655,7 @@ export class ConversationContextService {
   private extractPatientFocus(
     messages: ConversationMessage[],
   ): string | undefined {
-    const patientMessages = messages.filter((m) => m.patientId)
+    const patientMessages = messages.filter(m => m.patientId)
     if (patientMessages.length > 0) {
       return patientMessages[0].patientId
     }
@@ -668,16 +668,16 @@ export class ConversationContextService {
   private determineConversationFlow(
     messages: ConversationMessage[],
   ): ConversationContext['contextSummary']['conversationFlow'] {
-    const userMessages = messages.filter((m) => m.role === 'user')
-    const assistantMessages = messages.filter((m) => m.role === 'assistant')
+    const userMessages = messages.filter(m => m.role === 'user')
+    const assistantMessages = messages.filter(m => m.role === 'assistant')
 
     if (userMessages.length === 1 && assistantMessages.length === 0) {
       return 'initial'
     } else if (
       userMessages.some(
-        (m) =>
-          m.content.toLowerCase().includes('esclarecer')
-          || m.content.toLowerCase().includes('clarify'),
+        m =>
+          m.content.toLowerCase().includes('esclarecer') ||
+          m.content.toLowerCase().includes('clarify'),
       )
     ) {
       return 'clarification'
@@ -701,8 +701,8 @@ export class ConversationContextService {
       const previous = messages[i - 1]
 
       if (current.role === 'assistant' && previous.role === 'user') {
-        const responseTime = new Date(current.timestamp).getTime()
-          - new Date(previous.timestamp).getTime()
+        const responseTime = new Date(current.timestamp).getTime() -
+          new Date(previous.timestamp).getTime()
         responseTimes.push(responseTime)
       }
     }
@@ -726,15 +726,15 @@ export class ConversationContextService {
     // Calculate response time analytics
     const responseTimes = this.extractResponseTimes(messages)
     const avgResponseTime = responseTimes.length > 0
-      ? responseTimes.reduce((sum, _time) => sum + time, 0)
-        / responseTimes.length
+      ? responseTimes.reduce((sum, _time) => sum + time, 0) /
+        responseTimes.length
       : 0
 
     // Calculate topics frequency
     const topicCounts = new Map<string, number>()
-    messages.forEach((message) => {
+    messages.forEach(message => {
       const topics = this.extractTopics([message])
-      topics.forEach((topic) => {
+      topics.forEach(topic => {
         topicCounts.set(topic, (topicCounts.get(topic) || 0) + 1)
       })
     })
@@ -758,7 +758,7 @@ export class ConversationContextService {
       satisfactionTrends: [], // Would need satisfaction ratings in metadata
       complianceMetrics: {
         flaggedContent: messages.filter(
-          (m) => m.dataClassification === 'restricted',
+          m => m.dataClassification === 'restricted',
         ).length,
         dataBreaches: 0, // Would need breach tracking
         accessViolations: 0, // Would need access violation tracking
@@ -777,8 +777,8 @@ export class ConversationContextService {
       const previous = messages[i - 1]
 
       if (current.role === 'assistant' && previous.role === 'user') {
-        const responseTime = new Date(current.timestamp).getTime()
-          - new Date(previous.timestamp).getTime()
+        const responseTime = new Date(current.timestamp).getTime() -
+          new Date(previous.timestamp).getTime()
         times.push(responseTime)
       }
     }

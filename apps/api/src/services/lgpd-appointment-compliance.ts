@@ -824,16 +824,16 @@ export class LGPDAppointmentComplianceService {
 
   private checkPrivacyPolicy(content: string): boolean {
     // Check for privacy policy reference
-    return content.toLowerCase().includes('privacy')
-      || content.toLowerCase().includes('lgpd')
-      || content.toLowerCase().includes('privacidade')
+    return content.toLowerCase().includes('privacy') ||
+      content.toLowerCase().includes('lgpd') ||
+      content.toLowerCase().includes('privacidade')
   }
 
   private checkUnsubscribeOption(content: string, channel: string): boolean {
     // Check for unsubscribe/opt-out option
     if (channel === 'email') {
-      return content.toLowerCase().includes('unsubscribe')
-        || content.toLowerCase().includes('cancelar')
+      return content.toLowerCase().includes('unsubscribe') ||
+        content.toLowerCase().includes('cancelar')
     }
     return true // SMS/WhatsApp may have different requirements
   }
@@ -841,7 +841,7 @@ export class LGPDAppointmentComplianceService {
   private checkDataMinimization(content: string, appointment: any): boolean {
     // Check that only necessary data is included
     const sensitiveFields = ['cpf', 'rg', 'cns']
-    return !sensitiveFields.some((field) =>
+    return !sensitiveFields.some(field =>
       content.toLowerCase().includes(appointment.patient[field]?.toLowerCase())
     )
   }

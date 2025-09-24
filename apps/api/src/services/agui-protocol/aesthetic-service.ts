@@ -544,7 +544,7 @@ export class AestheticAguiService {
       notifications: await this.notificationService.healthCheck(),
     }
 
-    const allHealthy = Object.values(services).every((status) => status)
+    const allHealthy = Object.values(services).every(status => status)
 
     return {
       status: allHealthy ? 'healthy' : 'degraded',

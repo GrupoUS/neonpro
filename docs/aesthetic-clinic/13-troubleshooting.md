@@ -321,15 +321,15 @@ useEffect(() => {
 
 // 2. State mutation
 // ❌ Problem: Direct state mutation
-const updateClient = (client) => {
+const updateClient = client => {
   client.name = 'New Name' // Direct mutation
   setClients(clients)
 }
 
 // ✅ Solution: Create new reference
 const updateClient = (clientId, newName) => {
-  setClients((prev) =>
-    prev.map((client) =>
+  setClients(prev =>
+    prev.map(client =>
       client.id === clientId
         ? { ...client, name: newName }
         : client
@@ -575,7 +575,7 @@ const Parent = () => {
 
   return (
     <div>
-      <button onClick={() => setCount((c) => c + 1)}>
+      <button onClick={() => setCount(c => c + 1)}>
         Count: {count}
       </button>
       <ExpensiveComponent />
@@ -597,8 +597,8 @@ const ExpensiveComponent = memo(({ data }) => {
 import { Calendar, Chart, DatePicker } from 'heavy-library'
 
 // ✅ Solution: Code splitting and lazy loading
-const Chart = lazy(() => import('heavy-library').then((mod) => ({ default: mod.Chart })))
-const Calendar = lazy(() => import('heavy-library').then((mod) => ({ default: mod.Calendar })))
+const Chart = lazy(() => import('heavy-library').then(mod => ({ default: mod.Chart })))
+const Calendar = lazy(() => import('heavy-library').then(mod => ({ default: mod.Calendar })))
 
 // 3. Inefficient data fetching
 // ❌ Problem: Multiple API calls for related data

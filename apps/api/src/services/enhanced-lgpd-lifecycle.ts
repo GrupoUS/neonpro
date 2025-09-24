@@ -287,7 +287,7 @@ export class EnhancedLGPDLifecycleService {
       },
     ]
 
-    defaultPolicies.forEach((policy) => {
+    defaultPolicies.forEach(policy => {
       this.retentionPolicies.set(policy.id, policy)
     })
   }
@@ -306,8 +306,8 @@ export class EnhancedLGPDLifecycleService {
     const id = crypto.randomUUID()
     const processingDate = new Date()
     const expirationDate = new Date(
-      processingDate.getTime()
-        + policy.retentionPeriodDays * 24 * 60 * 60 * 1000,
+      processingDate.getTime() +
+        policy.retentionPeriodDays * 24 * 60 * 60 * 1000,
     )
 
     // Generate cryptographic proof
@@ -384,11 +384,11 @@ export class EnhancedLGPDLifecycleService {
 
     // Identify retention exceptions based on legal obligations
     const retentionExceptions = categories
-      .map((category) => {
+      .map(category => {
         const policy = this.getRetentionPolicy(category)
         if (
-          policy.legalBasis === LEGAL_BASIS.LEGAL_OBLIGATION
-          || policy.legalBasis === LEGAL_BASIS.MEDICAL_CARE
+          policy.legalBasis === LEGAL_BASIS.LEGAL_OBLIGATION ||
+          policy.legalBasis === LEGAL_BASIS.MEDICAL_CARE
         ) {
           return {
             dataCategory: category,
@@ -406,9 +406,9 @@ export class EnhancedLGPDLifecycleService {
     // Create anonymization schedule
     const anonymizationSchedule = categories
       .filter(
-        (category) => !retentionExceptions.some((exc) => exc.dataCategory === category),
+        category => !retentionExceptions.some(exc => exc.dataCategory === category),
       )
-      .map((category) => ({
+      .map(category => ({
         dataCategory: category,
         anonymizationMethod: ANONYMIZATION_METHODS.PSEUDONYMIZATION,
         scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
@@ -487,10 +487,10 @@ export class EnhancedLGPDLifecycleService {
     try {
       // Get all processing records for this patient and data category
       const records = Array.from(this.processingRecords.values()).filter(
-        (record) =>
-          record.patientId === patientId
-          && record.dataCategory === dataCategory
-          && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED,
+        record =>
+          record.patientId === patientId &&
+          record.dataCategory === dataCategory &&
+          record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED,
       )
 
       for (const record of records) {
@@ -570,15 +570,15 @@ export class EnhancedLGPDLifecycleService {
           // Check if record has expired
           if (record.expirationDate <= now) {
             if (
-              policy.anonymizationRequired
-              && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED
+              policy.anonymizationRequired &&
+              record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED
             ) {
               // Anonymize expired data
               const anonymizationResult = await this.executeAnonymization(
                 record.patientId,
                 record.dataCategory,
-                policy.anonymizationMethod
-                  || ANONYMIZATION_METHODS.PSEUDONYMIZATION,
+                policy.anonymizationMethod ||
+                  ANONYMIZATION_METHODS.PSEUDONYMIZATION,
               )
 
               if (anonymizationResult.success) {
@@ -594,8 +594,8 @@ export class EnhancedLGPDLifecycleService {
           } else if (policy.notificationBeforeDeletion) {
             // Check if notification should be sent
             const notificationDate = new Date(
-              record.expirationDate.getTime()
-                - policy.notificationDaysBefore! * 24 * 60 * 60 * 1000,
+              record.expirationDate.getTime() -
+                policy.notificationDaysBefore! * 24 * 60 * 60 * 1000,
             )
 
             if (now >= notificationDate && !record.metadata?.notificationSent) {
@@ -638,7 +638,7 @@ export class EnhancedLGPDLifecycleService {
     }>
   }> {
     const records = Array.from(this.processingRecords.values()).filter(
-      (record) => !patientId || record.patientId === patientId,
+      record => !patientId || record.patientId === patientId,
     )
 
     const recordsByStage = records.reduce(
@@ -663,15 +663,15 @@ export class EnhancedLGPDLifecycleService {
     )
 
     const expiringRecords = records.filter(
-      (record) =>
-        record.expirationDate <= thirtyDaysFromNow
-        && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.DELETION
-        && record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED,
+      record =>
+        record.expirationDate <= thirtyDaysFromNow &&
+        record.lifecycleStage !== DATA_LIFECYCLE_STAGES.DELETION &&
+        record.lifecycleStage !== DATA_LIFECYCLE_STAGES.ANONYMIZED,
     )
 
     // Calculate compliance score
     const expiredRecords = records.filter(
-      (record) => record.expirationDate <= now,
+      record => record.expirationDate <= now,
     ).length
     const complianceScore = Math.max(
       0,
@@ -712,9 +712,9 @@ export class EnhancedLGPDLifecycleService {
     }
 
     const pendingAnonymization = records.filter(
-      (record) =>
-        record.lifecycleStage === DATA_LIFECYCLE_STAGES.STORAGE
-        && this.getRetentionPolicy(record.dataCategory).anonymizationRequired,
+      record =>
+        record.lifecycleStage === DATA_LIFECYCLE_STAGES.STORAGE &&
+        this.getRetentionPolicy(record.dataCategory).anonymizationRequired,
     ).length
 
     if (pendingAnonymization > 0) {
@@ -745,7 +745,7 @@ export class EnhancedLGPDLifecycleService {
   private getRetentionPolicy(dataCategory: DataCategory): RetentionPolicy {
     // Find specific policy for data category
     const policy = Array.from(this.retentionPolicies.values()).find(
-      (p) => p.dataCategory === dataCategory && p.active,
+      p => p.dataCategory === dataCategory && p.active,
     )
 
     // Return default policy if none found

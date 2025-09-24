@@ -18,8 +18,8 @@ const PATTERNS = [
     pattern:
       /(\w+): [^}]+is declared but never used\. Unused parameters should start with a '_'\./g,
     fix: (content, matches) => {
-      matches.forEach((match) => {
-        const paramName = match[1]
+      matches.forEach((match: RegExpMatchArray) => {
+        const paramName = match[1] as string
         // Only fix if it's clearly a parameter context
         const paramRegex = new RegExp(
           `\\b${paramName}\\b(?=\\s*[,)]|\\s*:)`,
@@ -35,7 +35,7 @@ const PATTERNS = [
   {
     pattern: /(\w+)' is declared but never used\. Unused variables should start with a '_'\./g,
     fix: (content, matches) => {
-      matches.forEach((match) => {
+      matches.forEach(match => {
         const varName = match[1]
         // Only fix if it's clearly a variable declaration
         const varRegex = new RegExp(`(const|let|var)\\s+${varName}\\b`, 'g')
@@ -49,7 +49,7 @@ const PATTERNS = [
   {
     pattern: /Catch parameter '(\w+)' is caught but never used\./g,
     fix: (content, matches) => {
-      matches.forEach((match) => {
+      matches.forEach(match => {
         const paramName = match[1]
         const catchRegex = new RegExp(
           `catch\\s*\\(\\s*${paramName}\\s*\\)`,
@@ -65,7 +65,7 @@ const PATTERNS = [
   {
     pattern: /Identifier '(\w+)' is imported but never used\./g,
     fix: (content, matches) => {
-      matches.forEach((match) => {
+      matches.forEach(match => {
         const importName = match[1]
 
         // Remove from named imports
@@ -73,7 +73,7 @@ const PATTERNS = [
           `\\s*,?\\s*${importName}\\s*,?`,
           'g',
         )
-        content = content.replace(namedImportRegex, (match) => {
+        content = content.replace(namedImportRegex, match => {
           // Keep comma if it's between other imports
           if (match.includes(',')) {
             return match.replace(importName, '').replace(/,\s*,/, ',')
@@ -108,7 +108,7 @@ function fixFile(filePath, patterns) {
   let content = fs.readFileSync(filePath, 'utf8')
   let modified = false
 
-  patterns.forEach((pattern) => {
+  patterns.forEach(pattern => {
     const matches = [...content.matchAll(pattern.pattern)]
     if (matches.length > 0) {
       const newContent = pattern.fix(content, matches)
@@ -139,14 +139,14 @@ function findTsxFiles(dir) {
       const stat = fs.statSync(fullPath)
 
       if (
-        stat.isDirectory()
-        && !item.startsWith('.')
-        && item !== 'node_modules'
+        stat.isDirectory() &&
+        !item.startsWith('.') &&
+        item !== 'node_modules'
       ) {
         walkDir(fullPath)
       } else if (
-        stat.isFile()
-        && (item.endsWith('.tsx') || item.endsWith('.ts'))
+        stat.isFile() &&
+        (item.endsWith('.tsx') || item.endsWith('.ts'))
       ) {
         files.push(fullPath)
       }
@@ -164,7 +164,7 @@ const files = findTsxFiles(webDir)
 console.log(`Found ${files.length} TypeScript files to process...`)
 
 let fixedCount = 0
-files.forEach((file) => {
+files.forEach(file => {
   if (fixFile(file, PATTERNS)) {
     fixedCount++
   }

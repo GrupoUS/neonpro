@@ -54,7 +54,7 @@ const SENSITIVE_PATTERNS = [
 function sanitizeString(str: string): string {
   let sanitized = str
 
-  SENSITIVE_PATTERNS.forEach((pattern) => {
+  SENSITIVE_PATTERNS.forEach(pattern => {
     sanitized = sanitized.replace(
       new RegExp(`(${pattern.source})\\s*[:=]\\s*[^\\s,}]+`, 'gi'),
       '$1: [REDACTED]',
@@ -94,7 +94,7 @@ function sanitizeObject(obj: any): any {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => sanitizeObject(item))
+    return obj.map(item => sanitizeObject(item))
   }
 
   if (typeof obj === 'object') {
@@ -102,7 +102,7 @@ function sanitizeObject(obj: any): any {
 
     for (const [key, value] of Object.entries(obj)) {
       // Check if the key itself is sensitive
-      const isSensitiveKey = SENSITIVE_PATTERNS.some((pattern) => pattern.test(key))
+      const isSensitiveKey = SENSITIVE_PATTERNS.some(pattern => pattern.test(key))
 
       if (isSensitiveKey) {
         sanitized[key] = '[REDACTED]'
