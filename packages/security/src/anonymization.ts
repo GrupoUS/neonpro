@@ -270,7 +270,7 @@ export function maskName(name: string, options: MaskingOptions = DEFAULT_MASKING
   const { maskChar = '*', visibleStart = 1 } = options;
   const names = name.split(' ');
 
-  return names.map((namepart, index) => {
+  return names.map((namepart) => {
     // For visibleStart 0, mask everything
     if (visibleStart === 0) {
       return maskChar.repeat(namepart.length);
@@ -443,7 +443,15 @@ export function maskPatientData(patient: PatientData, complianceLevel: LGPDCompl
           zipCode: 'ANONIMIZADO',
         };
       } else {
-        masked.address = 'ANONIMIZADO';
+        masked.address = {
+          street: 'ANONIMIZADO',
+          number: 'ANONIMIZADO',
+          complement: 'ANONIMIZADO',
+          neighborhood: 'ANONIMIZADO',
+          city: 'ANONIMIZADO',
+          state: 'ANONIMIZADO',
+          zipCode: 'ANONIMIZADO',
+        };
       }
       fieldsAnonymized.push('address');
     }

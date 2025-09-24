@@ -27,6 +27,7 @@ Provide comprehensive operational procedures for NeonPro Aesthetic Clinic Platfo
 ### Pre-Deployment Checklist
 
 #### System Requirements
+
 - [ ] All production servers provisioned and accessible
 - [ ] Database servers operational and configured
 - [ ] Load balancers configured and tested
@@ -35,6 +36,7 @@ Provide comprehensive operational procedures for NeonPro Aesthetic Clinic Platfo
 - [ ] Monitoring infrastructure operational
 
 #### Compliance Requirements
+
 - [ ] LGPD compliance validation completed
 - [ ] ANVISA cosmetic product registration verified
 - [ ] Professional council compliance certification current
@@ -94,17 +96,20 @@ LOG_LEVEL=info
 ## Monitoring and Observability
 
 ### Dashboard Access
+
 - **Grafana**: `https://monitoring.neonpro.aesthetic`
 - **Kibana**: `https://logs.neonpro.aesthetic`
 - **Sentry**: `https://sentry.neonpro.aesthetic`
 
 ### Key Metrics
+
 - API Response Time < 2s
 - Error Rate < 1%
 - Availability > 99.9%
 - Database Response Time < 500ms
 
 ### Aesthetic Clinic-Specific Metrics
+
 - Active Client Count
 - Treatment Appointment Success Rate
 - Client Record Access Frequency
@@ -118,7 +123,7 @@ LOG_LEVEL=info
    ```bash
    # Check security incidents
    curl -s https://api.neonpro.aesthetic/api/security/incidents/recent | jq '.incidents'
-   
+
    # Review audit logs
    curl -s https://api.neonpro.aesthetic/api/audit/recent | jq '.events'
    ```
@@ -144,7 +149,7 @@ LOG_LEVEL=info
 ### Alert Escalation Matrix
 
 | Severity | Response Time | Escalation Path              |
-|----------|---------------|------------------------------|
+| -------- | ------------- | ---------------------------- |
 | Critical | 15 minutes    | CEO → CTO → Security Lead    |
 | High     | 30 minutes    | CTO → Security Lead → DevOps |
 | Medium   | 1 hour        | Security Lead → DevOps       |
@@ -153,18 +158,21 @@ LOG_LEVEL=info
 ## Compliance Operations
 
 ### LGPD Compliance
+
 - **Access Requests**: Process within 15 days
 - **Deletion Requests**: Process within 30 days
 - **Portability Requests**: Process within 30 days
 - **Consent Withdrawal**: Process immediately
 
 ### ANVISA Compliance
+
 - **Registration**: Valid ANVISA cosmetic registration required
 - **Quality Management**: ISO 22716 compliance
 - **Product Safety**: Adverse reaction reporting
 - **Risk Management**: Cosmetic product safety compliance
 
 ### Data Breach Notification
+
 - **Timeline**: Within 48 hours of discovery
 - **ANVISA Notification**: For cosmetic product data breaches
 - **Affected Individuals**: Direct notification required
@@ -173,6 +181,7 @@ LOG_LEVEL=info
 ## Rollback Procedures
 
 ### Immediate Rollback Triggers
+
 - Client Safety Risk
 - Data Integrity Issues
 - Security Breach
@@ -201,12 +210,14 @@ vercel rollback --target=previous
 ## Emergency Procedures
 
 ### Contact Information
+
 - **Security Team**: `security@neonpro.aesthetic`
 - **On-call Security**: `+5511999999999`
 - **DPO**: `dpo@neonpro.aesthetic`
 - **Legal Counsel**: `legal@neonpro.aesthetic`
 
 ### Emergency Response
+
 1. Assess situation severity
 2. Activate incident response team
 3. Implement immediate containment
@@ -234,6 +245,7 @@ vercel rollback --target=previous
   - Review access controls
 
 ### Performance Optimization
+
 - Monitor cache hit rates
 - Optimize database queries
 - Review API endpoints

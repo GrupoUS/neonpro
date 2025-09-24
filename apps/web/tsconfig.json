@@ -1,47 +1,31 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
-    "noEmit": false,
-    "outDir": "./dist",
-    "rootDir": ".",
-    "types": [
-      "node",
-      "vitest",
-      "vitest/globals",
-      "vite/client"
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [
-        "./src/*"
-      ]
-    },
     "composite": true,
-    "declaration": true,
+    "rootDir": "./src",
     "tsBuildInfoFile": "./.tsbuildinfo",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "jsx": "react-jsx"
+    "paths": {
+      "@/*": ["./src/*"],
+      "@neonpro/*": ["../../packages/*/src"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/database/*": ["../../packages/database/src/*"],
+      "@neonpro/core-services": ["../../packages/core-services/src"],
+      "@neonpro/core-services/*": ["../../packages/core-services/src/*"],
+      "@neonpro/domain": ["../../packages/domain/src"],
+      "@neonpro/domain/*": ["../../packages/domain/src/*"],
+      "@neonpro/types": ["../../packages/types/src"],
+      "@neonpro/types/*": ["../../packages/types/src/*"],
+      "@neonpro/shared": ["../../packages/shared/src"],
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/ui": ["../../packages/ui/src"],
+      "@neonpro/ui/*": ["../../packages/ui/src/*"],
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/utils/*": ["../../packages/utils/src/*"],
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"]
+    }
   },
-  "include": [
-    "src/**/*",
-    "*.ts",
-    "*.tsx"
-  ],
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",
@@ -50,5 +34,16 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/__tests__/**"
+  ],
+  "references": [
+    { "path": "../../packages/database" },
+    { "path": "../../packages/core-services" },
+    { "path": "../../packages/domain" },
+    { "path": "../../packages/types" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/ui" },
+    { "path": "../../packages/utils" },
+    { "path": "../../packages/security" },
+    { "path": "../api" }
   ]
 }

@@ -4,7 +4,6 @@
  */
 
 import React, { useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { trpc } from '@/lib/trpc';
 import { Calendar, User, AlertTriangle, XCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,13 +14,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  MultiSessionSchedulingSchema,
-  type MultiSessionSchedulingRequest,
-  type AestheticProcedure,
-  type AestheticSchedulingResponse,
-  type PregnancyStatus,
-} from '@/types/aesthetic-scheduling';
+import { type AestheticProcedure, type AestheticSchedulingResponse, type PregnancyStatus } from '@/types/aesthetic-scheduling';
+
+// Custom hooks
+import { useProcedureSelection } from '@/hooks/useProcedureSelection';
+import { useDateManagement } from '@/hooks/useDateManagement';
+import { useProfessionalSelection } from '@/hooks/useProfessionalSelection';
+import { useSpecialRequirements } from '@/hooks/useSpecialRequirements';
+import { useMedicalHistory } from '@/hooks/useMedicalHistory';
+import { useSchedulingSubmission } from '@/hooks/useSchedulingSubmission';
+import { type MultiSessionSchedulingRequest } from '@/types/aesthetic-scheduling';
 
 interface MultiSessionSchedulerProps {
   patientId: string;
@@ -30,27 +32,55 @@ interface MultiSessionSchedulerProps {
 }
 
 export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSessionSchedulerProps) {
-  const queryClient = useQueryClient();
-  const [selectedProcedures, setSelectedProcedures] = useState<string[]>([]);
-  const [preferredDates, setPreferredDates] = useState<Date[]>([]);
-  const [preferredProfessionals, setPreferredProfessionals] = useState<string[]>([]);
+  // Custom hooks for state management
+  const {
+    selectedProcedures,
+    handleProcedureSelect,
+    getSelectedProceduresData,
+    getTotalEstimatedDuration,
+    getTotalEstimatedCost,
+  } = useProcedureSelection();
+
+  const {
+    preferredDates,
+    handleAddDate,
+    handleRemoveDate,
+  } = useDateManagement();
+
+  const {
+    preferredProfessionals,
+    handleProfessionalSelect,
+  } = useProfessionalSelection();
+
+  const {
+    specialRequirements,
+    newRequirement,
+    setNewRequirement,
+    handleAddRequirement,
+    handleRemoveRequirement,
+  } = useSpecialRequirements();
+
+  const {
+    medicalHistory,
+    newContraindication,
+    newMedication,
+    newAllergy,
+    setNewContraindication,
+    setNewMedication,
+    setNewAllergy,
+    updatePregnancyStatus,
+    handleAddContraindication,
+    handleRemoveContraindication,
+    handleAddMedication,
+    handleRemoveMedication,
+    handleAddAllergy,
+    handleRemoveAllergy,
+  } = useMedicalHistory();
+
+  const { scheduleMutation, isSubmitting, handleSubmit } = useSchedulingSubmission(patientId, onSuccess, onError);
+
+  // Local state for urgency level
   const [urgencyLevel, setUrgencyLevel] = useState<'routine' | 'priority' | 'urgent'>('routine');
-  const [specialRequirements, setSpecialRequirements] = useState<string[]>([]);
-  const [medicalHistory, setMedicalHistory] = useState<{
-    pregnancyStatus: PregnancyStatus;
-    contraindications: string[];
-    medications: string[];
-    allergies: string[];
-  }>({
-    pregnancyStatus: 'none' as const,
-    contraindications: [] as string[],
-    medications: [] as string[],
-    allergies: [] as string[],
-  });
-  const [newRequirement, setNewRequirement] = useState('');
-  const [newContraindication, setNewContraindication] = useState('');
-  const [newMedication, setNewMedication] = useState('');
-  const [newAllergy, setNewAllergy] = useState('');
 
   // Fetch available procedures
   const { data: proceduresData, isLoading: proceduresLoading } = trpc.aestheticScheduling.getAestheticProcedures.useQuery(
@@ -63,111 +93,11 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
   // Fetch available professionals
   const { data: professionalsData, isLoading: professionalsLoading } = trpc.enhancedAestheticProfessionals.getProfessionals.useQuery();
 
-  // Schedule procedures mutation
-  const scheduleMutation = trpc.aestheticScheduling.scheduleProcedures.useMutation({
-    onSuccess: (data: AestheticSchedulingResponse) => {
-      queryClient.invalidateQueries({ queryKey: ['appointments'] });
-      queryClient.invalidateQueries({ queryKey: ['patients', patientId] });
-      onSuccess?.(data);
-    },
-    onError: (error: Error) => {
-      onError?.(error as Error);
-    },
-  });
-
   // Check contraindications
   const _checkContraindicationsMutation = trpc.aestheticScheduling.checkContraindications.useMutation();
 
-  const handleAddRequirement = () => {
-    if (newRequirement.trim() && !specialRequirements.includes(newRequirement.trim())) {
-      setSpecialRequirements([...specialRequirements, newRequirement.trim()]);
-      setNewRequirement('');
-    }
-  };
-
-  const handleRemoveRequirement = (requirement: string) => {
-    setSpecialRequirements(specialRequirements.filter(req => req !== requirement));
-  };
-
-  const handleAddContraindication = () => {
-    if (newContraindication.trim() && !medicalHistory.contraindications.includes(newContraindication.trim())) {
-      setMedicalHistory({
-        ...medicalHistory,
-        contraindications: [...medicalHistory.contraindications, newContraindication.trim()],
-      });
-      setNewContraindication('');
-    }
-  };
-
-  const handleRemoveContraindication = (contraindication: string) => {
-    setMedicalHistory({
-      ...medicalHistory,
-      contraindications: medicalHistory.contraindications.filter(cont => cont !== contraindication),
-    });
-  };
-
-  const handleAddMedication = () => {
-    if (newMedication.trim() && !medicalHistory.medications.includes(newMedication.trim())) {
-      setMedicalHistory({
-        ...medicalHistory,
-        medications: [...medicalHistory.medications, newMedication.trim()],
-      });
-      setNewMedication('');
-    }
-  };
-
-  const handleRemoveMedication = (medication: string) => {
-    setMedicalHistory({
-      ...medicalHistory,
-      medications: medicalHistory.medications.filter(med => med !== medication),
-    });
-  };
-
-  const handleAddAllergy = () => {
-    if (newAllergy.trim() && !medicalHistory.allergies.includes(newAllergy.trim())) {
-      setMedicalHistory({
-        ...medicalHistory,
-        allergies: [...medicalHistory.allergies, newAllergy.trim()],
-      });
-      setNewAllergy('');
-    }
-  };
-
-  const handleRemoveAllergy = (allergy: string) => {
-    setMedicalHistory({
-      ...medicalHistory,
-      allergies: medicalHistory.allergies.filter(all => all !== allergy),
-    });
-  };
-
-  const handleAddDate = (dateString: string) => {
-    const date = new Date(dateString);
-    if (!preferredDates.some(d => d.toDateString() === date.toDateString())) {
-      setPreferredDates([...preferredDates, date]);
-    }
-  };
-
-  const handleRemoveDate = (date: Date) => {
-    setPreferredDates(preferredDates.filter(d => d !== date));
-  };
-
-  const handleProcedureSelect = (procedureId: string, checked: boolean) => {
-    if (checked) {
-      setSelectedProcedures([...selectedProcedures, procedureId]);
-    } else {
-      setSelectedProcedures(selectedProcedures.filter(id => id !== procedureId));
-    }
-  };
-
-  const handleProfessionalSelect = (professionalId: string, checked: boolean) => {
-    if (checked) {
-      setPreferredProfessionals([...preferredProfessionals, professionalId]);
-    } else {
-      setPreferredProfessionals(preferredProfessionals.filter(id => id !== professionalId));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Form submission handler
+  const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
@@ -187,19 +117,16 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
         },
       };
 
-      await MultiSessionSchedulingSchema.parseAsync(formData);
-      
-      // Schedule procedures
-      scheduleMutation.mutate(formData);
+      await handleSubmit(formData);
     } catch (error) {
       onError?.(error as Error);
     }
   };
 
-  const isSubmitting = scheduleMutation.isLoading;
-  const selectedProceduresData = proceduresData?.filter((p: AestheticProcedure) => selectedProcedures.includes(p.id)) || [];
-  const totalEstimatedDuration = selectedProceduresData.reduce((total: number, proc: AestheticProcedure) => total + proc.baseDuration, 0);
-  const totalEstimatedCost = selectedProceduresData.reduce((total: number, proc: AestheticProcedure) => total + proc.basePrice, 0);
+  // Computed values
+  const selectedProceduresData = getSelectedProceduresData(proceduresData || []);
+  const totalEstimatedDuration = getTotalEstimatedDuration(proceduresData || []);
+  const totalEstimatedCost = getTotalEstimatedCost(proceduresData || []);
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -222,7 +149,7 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
         </Alert>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmitForm} className="space-y-6">
         <Tabs defaultValue="procedures" className="w-full">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="procedures">Procedimentos</TabsTrigger>
@@ -450,9 +377,7 @@ export function MultiSessionScheduler({ patientId, onSuccess, onError }: MultiSe
                   <Label htmlFor="pregnancyStatus">Status de Gravidez</Label>
                   <Select 
                     value={medicalHistory.pregnancyStatus} 
-                    onValueChange={(value: PregnancyStatus) =>
-                      setMedicalHistory({...medicalHistory, pregnancyStatus: value})
-                    }
+                    onValueChange={(value: PregnancyStatus) => updatePregnancyStatus(value)}
                   >
                     <SelectTrigger>
                       <SelectValue />

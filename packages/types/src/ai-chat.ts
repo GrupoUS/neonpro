@@ -14,6 +14,31 @@ export type ChatRole = "user" | "assistant" | "system";
 
 export type ChatSessionStatus = "active" | "closed" | "error";
 
+/** @see也是如此 диспелефбуками. В толкак тут sessionId string,  */
+export interface FeedbackRequest {
+  messageId: string;
+  feedback: {
+    rating: number; // 1-5
+    comment?: string;
+    helpful?: boolean;
+  };
+}
+
+export interface FeedbackResponse {
+  success: boolean;
+  message: string;
+  feedbackId: string;
+}
+
+export interface SessionResponse {
+  sessionId: string;
+  status: 'active' | 'closed' | 'error';
+  createdAt: string;
+  lastActivityAt: string;
+  messageCount: number;
+  metadata?: ChatSessionMetadata;
+}
+
 export interface ChatSession {
   id: string;
   clinicId: string;

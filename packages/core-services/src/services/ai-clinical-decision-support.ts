@@ -4,12 +4,9 @@
  * and clinical guidance for aesthetic procedures
  */
 
-import { prisma } from '../../../apps/api/src/lib/prisma';
+import { prisma } from '@neonpro/database';
 import { EnhancedAestheticSchedulingService } from './enhanced-aesthetic-scheduling-service';
-import type {
-  AestheticProcedureDetails,
-  TreatmentPackage
-} from './enhanced-aesthetic-scheduling-service';
+
 
 export interface PatientAssessment {
   id: string;
@@ -148,10 +145,8 @@ export interface AestheticTreatmentGuidelines {
 export class AIClinicalDecisionSupport {
   private static instance: AIClinicalDecisionSupport;
   private guidelines: Map<string, AestheticTreatmentGuidelines> = new Map();
-  private schedulingService: EnhancedAestheticSchedulingService;
 
   constructor() {
-    this.schedulingService = new EnhancedAestheticSchedulingService();
     this.initializeGuidelines();
   }
 
@@ -649,22 +644,22 @@ export class AIClinicalDecisionSupport {
     return [];
   }
 
-  private evaluateSkinCompatibility(procedure: any, assessment: PatientAssessment): number {
+  private evaluateSkinCompatibility(_procedure: any, _assessment: PatientAssessment): number {
     // Evaluate how suitable the procedure is for the patient's skin type
     return 0.8; // Placeholder
   }
 
-  private evaluateMedicalSafety(procedure: any, assessment: PatientAssessment): number {
+  private evaluateMedicalSafety(_procedure: any, _assessment: PatientAssessment): number {
     // Evaluate medical safety based on patient's medical history
     return 0.9; // Placeholder
   }
 
-  private evaluateGoalAlignment(procedure: any, assessment: PatientAssessment): number {
+  private evaluateGoalAlignment(_procedure: any, _assessment: PatientAssessment): number {
     // Evaluate how well the procedure aligns with patient's aesthetic goals
     return 0.7; // Placeholder
   }
 
-  private evaluateBudgetFit(procedure: any, assessment: PatientAssessment): number {
+  private evaluateBudgetFit(_procedure: any, _assessment: PatientAssessment): number {
     // Evaluate if the procedure fits within patient's budget
     return 0.6; // Placeholder
   }
@@ -674,12 +669,12 @@ export class AIClinicalDecisionSupport {
     return 0.8; // Placeholder
   }
 
-  private calculateExpectedEfficacy(procedure: any, assessment: PatientAssessment): number {
+  private calculateExpectedEfficacy(_procedure: any, _assessment: PatientAssessment): number {
     // Calculate expected efficacy for this specific patient
     return 0.75; // Placeholder
   }
 
-  private getExpectedResults(procedure: any) {
+  private getExpectedResults(_procedure: any) {
     return {
       timeline: '4-6 weeks',
       improvement: 'Moderate to significant',
@@ -687,7 +682,7 @@ export class AIClinicalDecisionSupport {
     };
   }
 
-  private getProcedureRisks(procedure: any, assessment: PatientAssessment) {
+  private getProcedureRisks(_procedure: any, _assessment: PatientAssessment) {
     return [
       {
         type: 'common' as const,
@@ -697,119 +692,119 @@ export class AIClinicalDecisionSupport {
     ];
   }
 
-  private getRelevantContraindications(procedure: any, assessment: PatientAssessment): string[] {
+  private getRelevantContraindications(_procedure: any, _assessment: PatientAssessment): string[] {
     return []; // Would be populated based on assessment
   }
 
-  private getAlternatives(procedure: any): string[] {
+  private getAlternatives(_procedure: any): string[] {
     return []; // Would return alternative procedures
   }
 
-  private getRecoveryInfo(procedure: any) {
+  private getRecoveryInfo(_procedure: any) {
     return {
       downtime: 'minimal',
       activityRestrictions: ['Avoid intense exercise for 24h']
     };
   }
 
-  private calculateGoalScore(recommendation: TreatmentRecommendation, goals: string[]): number {
+  private calculateGoalScore(_recommendation: TreatmentRecommendation, _goals: string[]): number {
     // Calculate how well the recommendation matches patient goals
     return 0.7; // Placeholder
   }
 
   private personalizeGuidelines(
-    guidelines: AestheticTreatmentGuidelines,
-    patientFactors: any
+    _guidelines: AestheticTreatmentGuidelines,
+    _patientFactors: any
   ): string[] {
     return []; // Would return personalized recommendations
   }
 
   private generatePrecautions(
-    guidelines: AestheticTreatmentGuidelines,
-    patientFactors: any
+    _guidelines: AestheticTreatmentGuidelines,
+    _patientFactors: any
   ): string[] {
     return []; // Would return specific precautions
   }
 
-  private async getPatientTreatmentHistory(patientId: string): Promise<any[]> {
+  private async getPatientTreatmentHistory(_patientId: string): Promise<any[]> {
     return []; // Would return patient's treatment history
   }
 
-  private async findSimilarCases(patientId: string, procedureId: string): Promise<any[]> {
+  private async findSimilarCases(_patientId: string, _procedureId: string): Promise<any[]> {
     return []; // Would find similar cases from database
   }
 
-  private analyzeSimilarCasesOutcomes(similarCases: any[]): any {
+  private analyzeSimilarCasesOutcomes(_similarCases: any[]): any {
     return {}; // Would analyze outcomes from similar cases
   }
 
   private applyMLPrediction(
-    patientHistory: any[],
-    procedureId: string,
-    treatmentPlan: any,
-    outcomeAnalysis: any
+    _patientHistory: any[],
+    _procedureId: string,
+    _treatmentPlan: any,
+    _outcomeAnalysis: any
   ): any {
     return {}; // Would apply ML model for prediction
   }
 
   private assessProgress(
-    treatmentPlanId: string,
-    currentSession: number,
-    improvement: number
+    _treatmentPlanId: string,
+    _currentSession: number,
+    _improvement: number
   ): 'ahead' | 'on_track' | 'behind' | 'concerns' {
     return 'on_track'; // Placeholder
   }
 
   private generateProgressRecommendations(
-    patientFeedback: any,
-    clinicalAssessment: any
+    _patientFeedback: any,
+    _clinicalAssessment: any
   ): string[] {
     return []; // Would generate progress recommendations
   }
 
   private recommendAdjustments(
-    progress: string,
-    patientFeedback: any,
-    clinicalAssessment: any
+    _progress: string,
+    _patientFeedback: any,
+    _clinicalAssessment: any
   ): any[] {
     return []; // Would recommend adjustments
   }
 
-  private planNextSession(adjustments: any[], clinicalAssessment: any): string {
+  private planNextSession(_adjustments: any[], _clinicalAssessment: any): string {
     return 'Continue with planned treatment protocol'; // Placeholder
   }
 
-  private isMedicationContraindicated(medication: string, procedureId: string): boolean {
+  private isMedicationContraindicated(_medication: string, _procedureId: string): boolean {
     return false; // Placeholder
   }
 
-  private isAllergyRelevant(allergy: string, procedureId: string): boolean {
+  private isAllergyRelevant(_allergy: string, _procedureId: string): boolean {
     return false; // Placeholder
   }
 
   private generateContraindicationRecommendations(
-    absoluteContraindications: string[],
-    relativeContraindications: string[],
-    riskFactors: string[]
+    _absoluteContraindications: string[],
+    _relativeContraindications: string[],
+    _riskFactors: string[]
   ): string[] {
     const recommendations: string[] = [];
 
-    if (absoluteContraindications.length > 0) {
+    if (_absoluteContraindications.length > 0) {
       recommendations.push('Procedure is contraindicated - consider alternatives');
     }
 
-    if (relativeContraindications.length > 0) {
+    if (_relativeContraindications.length > 0) {
       recommendations.push('Proceed with caution and additional monitoring');
     }
 
-    if (riskFactors.length > 0) {
+    if (_riskFactors.length > 0) {
       recommendations.push('Address risk factors before proceeding');
     }
 
     return recommendations;
   }
 
-  private generateModifiedApproach(procedureId: string, contraindications: string[]): string {
+  private generateModifiedApproach(_procedureId: string, _contraindications: string[]): string {
     return 'Consider alternative treatment approach'; // Placeholder
   }
 }

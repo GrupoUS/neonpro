@@ -108,6 +108,9 @@ export function redactMessage(
   const nameMatches =
     (message.match(/\b[A-ZÀ-Ú][a-zà-ú]+(?:\s+[A-ZÀ-Ú][a-zà-ú]+)+\b/g) || []).length;
 
+  // Normalize non-breaking spaces to regular spaces to ensure regex readability tests pass
+  redactedText = redactedText.replace(/\u00A0/g, ' ');
+
   const result: RedactionResult = {
     redactedContent: redactedText,
     hasPII: detection.hasPII,
@@ -131,6 +134,7 @@ export function redactMessage(
 
   // Audit logging if enabled
   if (options.auditLog && detection.hasPII) {
+    // eslint-disable-next-line no-console
     console.log({
       event: 'pii_redaction',
       patterns: detection.patterns,

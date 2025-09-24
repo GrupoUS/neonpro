@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": ["ES2022"],
     "allowJs": true,
     "checkJs": false,
@@ -62,7 +62,20 @@
       "@neonpro/database": ["./packages/database/src"],
       "@neonpro/database/*": ["./packages/database/src/*"],
       "@apps/*": ["./apps/*/src"]
-    }
+    },
+    "composite": true
   },
-  "exclude": ["node_modules", "dist", "build", "**/*.d.ts"]
+  "exclude": ["node_modules", "dist", "build", "**/*.d.ts"],
+  "references": [
+    { "path": "./packages/database" },
+    { "path": "./packages/core-services" },
+    { "path": "./packages/domain" },
+    { "path": "./packages/types" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/security" },
+    { "path": "./apps/api" },
+    { "path": "./apps/web" }
+  ]
 }

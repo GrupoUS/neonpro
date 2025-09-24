@@ -277,7 +277,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
       latency: this.simulatedLatency,
       activeChannels: this.channelStates.size,
       totalParticipants: Array.from(this.channelStates.values()).reduce(
-        (total, _state) => total + state.participants.size,
+        (total, _state) => total + _state.participants.size,
         0,
       ),
       lastHeartbeat: new Date().toISOString(),
@@ -381,17 +381,17 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     data,
   ) => {
     return {
-      type,
+      type: _type,
       timestamp: new Date().toISOString(),
       channelId,
-      participant,
+      participant: _participant,
       data,
       metadata: {
         source: "local",
         eventId: `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         compliance: {
           lgpdLogged: this.config.healthcare.lgpdCompliance,
-          auditRequired: type === "join" || type === "leave",
+          auditRequired: _type === "join" || _type === "leave",
           sensitiveData: false,
         },
       },
@@ -415,7 +415,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
           break;
       }
     } catch (error) {
-      logHealthcareError('mock-adapter', error, { method: 'emitEvent', eventType: event.type });
+      logHealthcareError('mock-adapter', error as Error, { method: 'emitEvent', eventType: event.type });
     }
   }
 
@@ -448,7 +448,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     const syncEvent = this.createRealtimeEvent(
       "presence_sync",
       channelId,
-      participants[0],
+      participants[0]!,
       {
         participants,
       },

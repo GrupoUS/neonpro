@@ -1,185 +1,219 @@
 ---
-
-title: "📚 Documentation Orchestrator (docs/) — v2"
-applyTo:
-
-- "docs/**"
-
-- llm:
-- mandatory_sequence:
-- sequential-thinking
-- task-management
-- codebase-analysis
-  pre_read:
-- path: "docs/AGENTS.md"
-  reason: "Root orchestrator for the docs folder"
-- path: "docs/memory.md"
-  reason: "Mandatory memory protocol"
-- path: "docs/agents/AGENTS.md"
-  reason: "Agent system and coordination"
-- path: "docs/rules/coding-standards.md"
-  reason: "Project coding standards"
-  retrieval_hints:
-  prefer:
-  - "docs/**/AGENTS.md"
-  - "docs/**/README.md"
-    avoid:
-  - "images/**"
-  - "*.pdf"
-  - guardrails:
-    tone: "concise, professional, English"
-    formatting: "Markdown with clear headings and short lists"
-    stop_criteria: "finish only when the task is 100% resolved"
-    output_preferences:
-- "Use short bullets"
-- "Include relative paths in backticks"
-- "Provide shell commands in fenced code blocks when applicable"
-
-# Machine-readable index to guide retrieval priority per domain
-
-llm_index:
-
-- name: "architecture"
-  path: "docs/architecture/**"
-  priority: high
-- name: "agents"
-  path: "docs/agents/**"
-  priority: high
-- name: "apis"
-  path: "docs/apis/**"
-  priority: medium
-- name: "database-schema"
-  path: "docs/database-schema/**"
-  priority: medium
-- name: "rules"
-  path: "docs/rules/**"
-  priority: medium
-- name: "testing"
-  path: "docs/testing/**"
-  priority: medium
-- name: "prd"
-  path: "docs/prd/**"
-  priority: omitted
-- name: "mistakes"
-  path: "docs/mistakes/**"
-  priority: medium
-- name: "shards"
-  path: "docs/shards/**"
-  priority: low
-
+title: "🤖 LLM Documentation Control Hub"
+version: 4.0.0
+last_updated: 2025-09-24
+form: reference
+tags: [llm-control, orchestration, navigation, agents]
+priority: CRITICAL
+llm_instructions:
+  mandatory_read: true
+  entry_point: true
+  execution_rules: |
+    1. ALWAYS read this file first when working with documentation
+    2. Follow KISS and YAGNI principles strictly
+    3. Focus on making system WORK, not perfect documentation
+    4. Execute tasks in parallel when possible
+    5. Use AGENTS.md files as control points, NOT README.md
 ---
 
-# 📚 Documentation Orchestrator (docs/) — v2
+# 🤖 LLM Documentation Control Hub — v4.0
 
-Central guide for humans and LLMs to navigate the entire `docs/` folder with maximum efficiency and precision.
+## 🎯 FOR LLMs: MANDATORY EXECUTION RULES
 
-## ⚡ Quick Start for LLMs
+### CRITICAL PRINCIPLES
+- **KISS**: Keep It Simple, Stupid - eliminate complexity
+- **YAGNI**: You Aren't Gonna Need It - build only what's needed NOW
+- **WORKING > PERFECT**: Focus on functionality over documentation perfection
+- **PARALLEL EXECUTION**: Execute tasks simultaneously when possible
 
-1. Read the prerequisites (see front matter: `llm.pre_read`)
-2. Follow the mandatory sequence: thinking → tasks → codebase analysis (`llm.mandatory_sequence`)
-3. Use the `llm_index` to prioritize folders by domain
-4. Apply the Diátaxis framework when consuming content: Tutorial → How-to → Reference → Explanation
-5. When finished, execute the Memory Protocol (see `docs/memory.md`)
-
-## 🔎 How to Use (Humans)
-
-- Start with the per-area orchestrators (links below)
-- Read the folder guide before editing any internal file
-- Return here when you need to discover where content lives
-
-## 🧭 Orchestrated Navigation (by Folder)
-
-- Architecture: `docs/architecture/AGENTS.md` → System and frontend architecture, source tree, stack
-  - Link: [./architecture/AGENTS.md](./architecture/AGENTS.md)
-- Database Schema: `docs/database-schema/AGENTS.md` → Schema rules and inventory, tables and RLS
-  - Link: [./database-schema/AGENTS.md](./database-schema/AGENTS.md)
-- APIs: `docs/apis/AGENTS.md` → Documentation standards for endpoints + AI SDK
-  - Link: [./apis/AGENTS.md](./apis/AGENTS.md)
-- Agents: `docs/agents/AGENTS.md` → Agent system (apex-dev, researcher, ui-ux, test, etc.)
-  - Link: [./agents/AGENTS.md](./agents/AGENTS.md)
-
-Fundamental documents:
-
-- Coding Standards: [./rules/coding-standards.md](./rules/coding-standards.md)
-
-## 🧭 Navigation Matrix for LLMs (Machine-readable)
-
+### NAVIGATION PROTOCOL
 ```yaml
-navigation_matrix:
-  tasks:
-    - goal: "Implement a feature or fix a bug"
-      consult:
-        - docs/agents/AGENTS.md
-        - docs/rules/coding-standards.md
-        - docs/architecture/source-tree.md
-    - goal: "Create/update an API"
-      consult:
-        - docs/apis/AGENTS.md
-        - docs/apis/apis.md
-    - goal: "Modify schema/tables (Supabase)"
-      consult:
-        - docs/database-schema/AGENTS.md
-        - docs/database-schema/database-schema-consolidated.md
-        - docs/database-schema/tables/tables-consolidated.md
-        - docs/rules/supabase-best-practices.md
-    - goal: "Add tests (unit/integration/e2e)"
-      consult:
-        - docs/testing/coverage-policy.md
-        - docs/testing/react-test-patterns.md
-        - docs/testing/integration-testing.md
-        - docs/testing/e2e-testing.md
+LLM_NAVIGATION:
+  entry_point: docs/AGENTS.md (this file)
+  control_files: 
+    - docs/architecture/AGENTS.md
+    - docs/apis/AGENTS.md  
+    - docs/testing/AGENTS.md
+    - docs/database-schema/AGENTS.md
+    - docs/agents/AGENTS.md
+  avoid: README.md files (eliminated for simplicity)
+  max_file_size: 800_lines
 ```
 
-## Pre-Development Guidelines
+## 🚀 QUICK START FOR LLMs
 
-**📚 Documentation Consultation:**
-⚠️ **IMPORTANT**: Only consult documentation when you have specific questions or uncertainties. Avoid loading unnecessary context.
+### IMMEDIATE ACTIONS
+1. **Read control files**: Start with relevant AGENTS.md
+2. **Apply KISS/YAGNI**: Eliminate unnecessary complexity
+3. **Execute in parallel**: Use concurrent operations when possible
+4. **Focus on working**: Make system functional, not perfect
 
-**🎯 Intelligent Context Loading Strategy:**
-Follow the layered approach from `docs/architecture/context-engineering.md`:
+### CONTROL HIERARCHY
+```
+docs/AGENTS.md (YOU ARE HERE)
+├── architecture/AGENTS.md  ← System design & tech stack
+├── apis/AGENTS.md          ← API endpoints & contracts
+├── testing/AGENTS.md       ← Testing strategies
+├── database-schema/AGENTS.md ← Data structure
+└── agents/AGENTS.md        ← Development workflows
+```
 
-1. **Task Meta** (Layer 0): Classify task type → reference matrix below
-2. **Topology** (Layer 1): Use `source-tree.md` to identify target location
-3. **Contracts** (Layer 2): Load only relevant types/interfaces from `packages/types/*`
-4. **Implementation** (Layer 3): Sample 1-2 existing patterns, avoid broad scanning
-5. **Cross-Cutting** (Layer 4): Check security/compliance ONLY if handling PII/patient data
-6. **Tests** (Layer 5): Find existing test pattern before writing new code
-7. **Edge/Perf** (Layer 6): Only if introducing latency/concurrency concerns
+## 🛠️ ESSENTIAL TOOLS & COMMANDS
 
-**📋 Documentation Loading Matrix (Task Type → Priority Files):**
-| Task Type | Load First | Then Maybe | Avoid Initially |
-|-----------|------------|------------|----------------|
-| **Add API endpoint** | `apis/AGENTS.md`, similar route file | Core services used, type definitions | Full packages/ scan |
-| **UI feature/screen** | `architecture/source-tree.md` (web), analogous route | Related features/ patterns | Backend packages |
-| **Domain type change** | Specific file in `packages/types`, usage grep | Affected services | Unrelated UI features |
-| **Backend bug fix** | Failing test + implicated service | Type definitions, RLS helpers | Frontend routes |
-| **Database/schema** | `database-schema/AGENTS.md`, RLS notes | Migration patterns | UI styling |
-| **Compliance/security** | `security/` docs, RLS helpers | Service call sites | UI styling files |
+### Development
+```bash
+# Start development
+pnpm dev
 
-### Code Quality Audit Prompt (v3.2.0)
+# Run tests
+pnpm test
 
-- Treat `.github/prompts/code-quality-audit.prompt.md` as the execution blueprint for audits—read the **Process & Tooling Integration** block before running checks.
-- Prefer workspace scripts (`pnpm test:backend`, `pnpm test:frontend`, `pnpm test:healthcare`, `pnpm lint`, `pnpm type-check`, `pnpm constitutional:*`) over ad-hoc commands and capture CLI logs in Archon task notes.
-- Register regression suites (`pnpm test:healthcare -- --regression`, `pnpm test:healthcare -- --audit-only`) in Archon with run IDs and attach artifacts before closing the task.
-- When the prompt version changes, schedule a 48h documentation follow-up and cross-link updates in `docs/features/code-quality-audit.md`.
+# Build production
+pnpm build
 
-**📂 Folder-Specific Consultation:**
+# Type checking
+pnpm type-check
+```
 
-- agents/ — Orchestrator: [./agents/AGENTS.md](./agents/AGENTS.md)
-  - Key documents: apex-dev, apex-researcher, apex-ui-ux-designer, test, prd, briefing, documentation, rules
+### Database
+```bash
+# Database migrations
+bunx prisma migrate dev
 
-- Check architecture/ — Orchestrator for architectural decisions: [./architecture/AGENTS.md](./architecture/AGENTS.md)
-  - Review `docs/tech-stack.md` for technology guidelines
-  - Key documents: architecture, source-tree, frontend-architecture, front-end-spec, tech-stack, aesthetic-platform-flows
+# Reset database
+bunx prisma migrate reset
 
-- Check database-schema/ — Orchestrator for data structure: [./database-schema/AGENTS.md](./database-schema/AGENTS.md)
-  - Key documents: database-schema-consolidated, tables/README, tables/tables-consolidated
-- Look at apis/ — Orchestrator for API patterns: [./apis/AGENTS.md](./apis/AGENTS.md)
-  - Key documents: apis, ai-sdk-v5.0, ai-sdk-v4.0
-- **Code Style:** Follow established patterns and conventions from development rules and guidelines found in the `/rules` directory — Standards: coding-standards, supabase-\*, variables-configuration
-- Check testing/ — Tests: react-test-patterns, e2e-testing, integration-testing, coverage-policy, ci-pipelines
-- Check prd/ — Product: prd and support files
-- Check mistakes/ — Errors and fixes
-- Check features/ — Feature documentation
+# Generate types
+bunx prisma generate
+```
+
+## 🎯 TASK EXECUTION MATRIX
+
+| Task Type | Primary Control | Secondary | Tertiary |
+|-----------|----------------|-----------|----------|
+| **Add API endpoint** | `apis/AGENTS.md` | `architecture/AGENTS.md` | `testing/AGENTS.md` |
+| **UI/Component** | `architecture/AGENTS.md` | `testing/AGENTS.md` | - |
+| **Database change** | `database-schema/AGENTS.md` | `apis/AGENTS.md` | - |
+| **Bug fix** | `testing/AGENTS.md` | Relevant domain AGENTS.md | - |
+| **Feature** | `agents/AGENTS.md` | Domain-specific AGENTS.md | - |
+
+## 📊 SIMPLIFIED FOLDER STRUCTURE
+
+### PROTECTED (Keep Intact)
+- `architecture/` - System design
+- `agents/` - Development workflows  
+- `prd/` - Product requirements
+- `rules/` - Coding standards
+
+### WORKING AREAS
+- `apis/` - API documentation
+- `testing/` - Test strategies
+- `database-schema/` - Data models
+- `components/` - UI component docs
+- `deployment/` - Operations
+- `security/` - Security guidelines
+
+### ELIMINATED
+- ❌ `README.md` files (use AGENTS.md instead)
+- ❌ `mistakes/` folder (consolidated to troubleshooting.md)
+- ❌ Files >800 lines (broken into essentials)
+- ❌ Overengineered documentation
+
+## 🔗 CONTROL FILE LINKS
+
+### Primary Controllers
+- **[Architecture Control](./architecture/AGENTS.md)** - System design, tech stack, source tree
+- **[API Control](./apis/AGENTS.md)** - Endpoints, contracts, specifications
+- **[Testing Control](./testing/AGENTS.md)** - Test strategies, TDD orchestration
+- **[Database Control](./database-schema/AGENTS.md)** - Schema, migrations, policies
+- **[Agents Control](./agents/AGENTS.md)** - Development workflows, coordination
+
+### Quick Access
+- **[Troubleshooting](./troubleshooting.md)** - Common issues and solutions
+- **[Coding Standards](./rules/coding-standards.md)** - Development guidelines
+- **[Operations Guide](./deployment/operations-guide.md)** - Production procedures
+
+## 📝 DOCUMENTATION PRINCIPLES
+
+### KISS Applied
+- **One purpose per file**: Each document serves a single, clear purpose
+- **Essential information only**: Remove theoretical/future considerations
+- **Working examples**: Code that actually runs, not pseudocode
+- **Direct instructions**: "Do X" instead of "You might consider doing X"
+
+### YAGNI Applied  
+- **No speculative features**: Document only what exists and is used
+- **No "might need later"**: Remove "for future use" sections
+- **Current requirements only**: Focus on immediate needs
+- **Remove unused**: Delete documentation for unused features
+
+### File Size Management
+- **800 line limit**: Break larger files into focused pieces
+- **Essential content**: Remove verbose explanations
+- **Reference vs Tutorial**: Separate reference data from learning material
+- **Modular approach**: Link related content instead of duplicating
+
+## ⚡ PARALLEL EXECUTION GUIDE
+
+### Operations You Can Run in Parallel
+```bash
+# Multiple test suites
+pnpm test:unit & pnpm test:integration & pnpm test:e2e
+
+# Build and type check
+pnpm build & pnpm type-check
+
+# Multiple file operations (when independent)
+# Reading multiple files
+# Analyzing different code sections
+# Running independent validations
+```
+
+### Operations That Must Be Sequential
+```bash
+# Database operations
+pnpm db:migrate && pnpm db:seed
+
+# File modifications (avoid conflicts)
+# Dependent build steps
+# Operations that modify same resources
+```
+
+## 🤖 LLM EXECUTION CHECKLIST
+
+### Before Starting Any Task
+- [ ] Read relevant AGENTS.md control file
+- [ ] Apply KISS principle (simplest solution that works)
+- [ ] Check if you can execute operations in parallel
+- [ ] Focus on making system work, not perfect docs
+
+### During Task Execution
+- [ ] Keep files under 800 lines
+- [ ] Eliminate redundant information
+- [ ] Use AGENTS.md for navigation, not README.md
+- [ ] Execute parallel operations when possible
+
+### Task Completion
+- [ ] System functionality verified
+- [ ] Documentation updated if necessary
+- [ ] No overengineering introduced
+- [ ] KISS/YAGNI principles maintained
+
+## 🎯 SUCCESS METRICS
+
+### System Functionality
+- [ ] Application builds successfully
+- [ ] Tests pass consistently  
+- [ ] Core features work in production
+- [ ] Performance meets requirements
+
+### Documentation Quality
+- [ ] LLMs can navigate easily using AGENTS.md files
+- [ ] Developers find information quickly
+- [ ] No files exceed 800 lines
+- [ ] No redundant information
+- [ ] KISS/YAGNI principles maintained
 
 ---
+
+**Remember**: The goal is a WORKING system, not perfect documentation. Focus on functionality first, documentation second.

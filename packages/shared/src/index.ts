@@ -144,3 +144,4 @@ export * from "./webrtc";
 
 // Telemetry and observability
 export * from "./telemetry";
+export * from "./services/cache-management";

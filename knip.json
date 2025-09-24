@@ -1,1 +1,21 @@
-{}
+{
+  "$schema": "https://unpkg.com/knip/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "packages/*/src/**/*.{ts,tsx}"
+      ],
+      "project": [
+        "packages/*/src/**/*.{ts,tsx}"
+      ],
+      "ignore": [
+        "vitest.config.*",
+        "vite.config.*",
+        "**/__tests__/**",
+        "**/*.test.*"
+      ],
+      "ignoreBinaries": ["vite", "vitest"],
+      "ignoreDependencies": ["vite", "vitest"]
+    }
+  }
+}

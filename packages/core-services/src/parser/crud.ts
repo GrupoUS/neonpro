@@ -416,8 +416,10 @@ export class CrudIntentParser {
     for (const match of tableMatches) {
       if (match.index !== undefined) {
         const tableName = match[1];
+        if (!tableName) continue;
         // Skip common words that aren't table names
         if (
+          tableName &&
           ![
             "with",
             "where",
@@ -432,8 +434,8 @@ export class CrudIntentParser {
         ) {
           entities.push({
             type: "FIELD",
-            value: match[1],
-            position: [match.index, match.index + match[1].length],
+            value: tableName,
+            position: [match.index!, match.index! + tableName.length],
             confidence: 0.85,
           });
         }
@@ -448,6 +450,7 @@ export class CrudIntentParser {
     for (const match of fieldMatches) {
       if (match.index !== undefined) {
         const fieldName = match[1];
+        if (!fieldName) continue;
         // Check if this field is already captured to avoid duplicates
         const existingField = entities.find(
           (e) =>
@@ -465,7 +468,7 @@ export class CrudIntentParser {
       }
     }
 
-    return entities.sort((a, _b) => a.position[0] - b.position[0]);
+    return entities.sort((a, b) => a.position[0] - b.position[0]);
   }
 
   private extractArguments(normalizedText: string): ParsedArguments {
@@ -496,6 +499,8 @@ export class CrudIntentParser {
       // Skip if this position was already used
       if (usedPositions.has(match.index)) continue;
 
+      if (!match[1] || !match[2] || !match[3]) continue;
+
       const field = match[1];
       const operatorText = match[2].toLowerCase().trim();
       const value = match[3].replace(/['"]/g, "");
@@ -521,6 +526,7 @@ export class CrudIntentParser {
       // Skip if this position was already used
       if (usedPositions.has(statusMatch.index)) continue;
 
+      if (!statusMatch[1]) continue;
       const status = statusMatch[1];
 
       filters.push({
@@ -535,7 +541,7 @@ export class CrudIntentParser {
     }
 
     return filters.filter(
-      (filter, index, _self) =>
+      (filter, index, self) =>
         // Remove duplicates based on field and value
         index ===
         self.findIndex(
@@ -550,7 +556,7 @@ export class CrudIntentParser {
       /(?:ordered?\s+by|sort\s+by)\s+(\w+)(?:\s+(asc|desc|ascending|descending))?/gi;
     const match = sortPattern.exec(text);
 
-    if (match) {
+    if (match && match[1]) {
       const field = match[1];
       const directionText = match[2] || "asc";
       const direction = directionText.toLowerCase().startsWith("desc")
@@ -577,13 +583,13 @@ export class CrudIntentParser {
 
     for (const pattern of limitPatterns) {
       const match = pattern.exec(text);
-      if (match) {
+      if (match && match[1]) {
         const count = parseInt(match[1], 10);
 
         // Check for pagination (page N)
         const pagePattern = /page\s+(\d+)/gi;
         const pageMatch = pagePattern.exec(text);
-        const page = pageMatch ? parseInt(pageMatch[1], 10) : 1;
+        const page = pageMatch && pageMatch[1] ? parseInt(pageMatch[1], 10) : 1;
         const offset = page > 1 ? (page - 1) * count : 0;
 
         return {

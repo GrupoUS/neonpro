@@ -1,18 +1,17 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import path from "path";
 
 export default defineConfig({
   plugins: [
-    tanstackRouter({
-      target: "react",
-      routesDirectory: "./apps/web/src/routes",
-      generatedRouteTree: "./apps/web/src/routeTree.gen.ts",
-      routeFileIgnorePrefix: "-",
-      quoteStyle: "single",
-      autoCodeSplitting: true,
-    }),
+    // tanstackRouter({
+    //   target: "react",
+    //   routesDirectory: "./apps/web/src/routes",
+    //   generatedRouteTree: "./apps/web/src/routeTree.gen.ts",
+    //   routeFileIgnorePrefix: "-",
+    //   quoteStyle: "single",
+    //   autoCodeSplitting: true,
+    // }),
     react(),
   ],
   root: "./apps/web",

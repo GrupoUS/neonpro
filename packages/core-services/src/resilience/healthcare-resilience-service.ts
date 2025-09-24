@@ -23,7 +23,7 @@ import {
   DataCategory as LGPDDataCategory,
   HealthcareAIUseCase,
 } from "@neonpro/shared";
-import { logHealthcareError, resilienceLogger } from "@neonpro/shared";
+import { resilienceLogger } from "@neonpro/shared";
 
 // ============================================================================
 // Healthcare-Specific Types
@@ -99,7 +99,7 @@ export class HealthcareResilienceService {
 
     try {
       // Apply emergency configuration if needed
-      this.getEffectiveConfig(context);
+      this.getEffectiveConfig(_context);
 
       // Execute with resilience framework
       const result = await this.resilienceFramework.execute(
@@ -108,7 +108,7 @@ export class HealthcareResilienceService {
           retries++;
           return await operation();
         },
-        this.adaptContext(context),
+        this.adaptContext(_context),
       );
 
       success = true;
@@ -118,16 +118,16 @@ export class HealthcareResilienceService {
       success = false;
 
       // Apply healthcare-specific error handling
-      await this.handleHealthcareError(err as Error, context);
+      await this.handleHealthcareError(err as Error, _context);
 
       throw err;
     } finally {
       // Audit log for compliance
       await this.auditHealthcareOperation({
         timestamp: new Date(),
-        operation: context.operation,
+        operation: _context.operation,
         _service: serviceName,
-        context,
+        _context,
         success,
         error,
         latency: Date.now() - startTime,
@@ -139,12 +139,12 @@ export class HealthcareResilienceService {
   private getEffectiveConfig(
     _context: HealthcareExecutionContext,
   ): ResilienceConfig {
-    if (context.isEmergency || context.isLifeCritical) {
+    if (_context.isEmergency || _context.isLifeCritical) {
       return EMERGENCY_RESILIENCE_CONFIG;
     }
 
     if (
-      context.dataClassification ===
+      _context.dataClassification ===
       HealthcareDataClassification.PATIENT_SENSITIVE
     ) {
       // Stricter configuration for sensitive data
@@ -163,18 +163,18 @@ export class HealthcareResilienceService {
 
   private adaptContext(_context: HealthcareExecutionContext): ExecutionContext {
     return {
-      operation: context.operation,
-      serviceName: context.serviceName,
-      _userId: context.userId,
-      patientId: context.patientId,
-      isEmergency: context.isEmergency || context.isLifeCritical,
+      operation: _context.operation,
+      serviceName: _context.serviceName,
+      _userId: _context._userId,
+      patientId: _context.patientId,
+      isEmergency: _context.isEmergency || _context.isLifeCritical,
       requiresAudit: true, // Always audit healthcare operations
       metadata: {
-        dataClassification: context.dataClassification,
-        lgpdCategories: context.lgpdCategories,
-        healthcareUseCase: context.healthcareUseCase,
-        requiresPIIProtection: context.requiresPIIProtection,
-        isLifeCritical: context.isLifeCritical,
+        dataClassification: _context.dataClassification,
+        lgpdCategories: _context.lgpdCategories,
+        healthcareUseCase: _context.healthcareUseCase,
+        requiresPIIProtection: _context.requiresPIIProtection,
+        isLifeCritical: _context.isLifeCritical,
       },
     };
   }
@@ -185,13 +185,13 @@ export class HealthcareResilienceService {
   ): Promise<void> {
     // Specialized error handling for healthcare scenarios
 
-    if (context.isLifeCritical) {
+    if (_context.isLifeCritical) {
       // For life-critical operations, trigger emergency protocols
       await this.triggerEmergencyProtocol(error, _context);
     }
 
     if (
-      context.dataClassification ===
+      _context.dataClassification ===
       HealthcareDataClassification.PATIENT_SENSITIVE
     ) {
       // For sensitive data errors, initiate security review
@@ -199,7 +199,7 @@ export class HealthcareResilienceService {
     }
 
     // LGPD compliance - notify data protection officer for certain errors
-    if (context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA)) {
+    if (_context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA)) {
       await this.notifyDataProtectionError(error, _context);
     }
   }
@@ -217,8 +217,8 @@ export class HealthcareResilienceService {
     // Log emergency protocol for compliance
     resilienceLogger.error("EMERGENCY PROTOCOL TRIGGERED", {
       error: error.message,
-      operation: context.operation,
-      patientId: context.patientId,
+      operation: _context.operation,
+      patientId: _context.patientId,
       timestamp: new Date().toISOString(),
       severity: "critical",
       category: "emergency",
@@ -233,8 +233,8 @@ export class HealthcareResilienceService {
     // Log security review for compliance
     resilienceLogger.warn("SECURITY REVIEW INITIATED", {
       error: error.message,
-      dataClassification: context.dataClassification,
-      lgpdCategories: context.lgpdCategories,
+      dataClassification: _context.dataClassification,
+      lgpdCategories: _context.lgpdCategories,
       timestamp: new Date().toISOString(),
       severity: "high",
       category: "security",
@@ -249,8 +249,8 @@ export class HealthcareResilienceService {
     // Log data protection error for LGPD compliance
     resilienceLogger.warn("DATA PROTECTION ERROR", {
       error: error.message,
-      lgpdCategories: context.lgpdCategories,
-      patientId: context.patientId,
+      lgpdCategories: _context.lgpdCategories,
+      patientId: _context.patientId,
       timestamp: new Date().toISOString(),
       severity: "high",
       category: "data_protection",
@@ -362,15 +362,15 @@ export class HealthcareResilienceService {
         successRate: this.calculateSuccessRate(),
         averageLatency: this.calculateAverageLatency(),
         emergencyOperations: this.auditLog.filter(
-          (entry) => entry.context.isEmergency || entry.context.isLifeCritical,
+          (entry) => entry._context.isEmergency || entry._context.isLifeCritical,
         ).length,
         lifeCriticalOperations: this.auditLog.filter(
-          (entry) => entry.context.isLifeCritical,
+          (entry) => entry._context.isLifeCritical,
         ).length,
         complianceViolations: this.auditLog.filter(
           (entry) =>
             !entry.success &&
-            entry.context.lgpdCategories.includes(
+            entry._context.lgpdCategories.includes(
               LGPDDataCategory.SENSITIVE_DATA,
             ),
         ).length,
@@ -378,7 +378,7 @@ export class HealthcareResilienceService {
       services: services.map((serviceName) => {
         const health = this.resilienceFramework.getServiceHealth(serviceName);
         const recentFailures = this.auditLog.filter(
-          (entry) => entry.service === serviceName && !entry.success,
+          (entry) => entry._service === serviceName && !entry.success,
         ).length;
 
         let complianceStatus: "compliant" | "warning" | "non_compliant" =
@@ -414,7 +414,7 @@ export class HealthcareResilienceService {
     if (this.auditLog.length === 0) return 0;
 
     const totalLatency = this.auditLog.reduce(
-      (sum, _entry) => sum + entry.latency,
+      (sum, entry) => sum + entry.latency,
       0,
     );
     return totalLatency / this.auditLog.length;
@@ -452,7 +452,7 @@ export class HealthcareResilienceService {
     );
 
     const sensitiveDataOperations = periodAuditLog.filter((entry) =>
-      entry.context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA),
+      entry._context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA),
     );
 
     const lgpdCompliance = {

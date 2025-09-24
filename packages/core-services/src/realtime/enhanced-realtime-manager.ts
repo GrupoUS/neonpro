@@ -95,12 +95,12 @@ export class CacheInvalidationStrategy {
         await this.conservativeInvalidation(
           eventType,
           tableName,
-          payload,
+          _payload,
           queryKeys,
         );
         break;
       case "smart":
-        await this.smartInvalidation(eventType, tableName, payload, queryKeys);
+        await this.smartInvalidation(eventType, tableName, _payload, queryKeys);
         break;
     }
   }
@@ -131,11 +131,11 @@ export class CacheInvalidationStrategy {
     queryKeys: string[][],
   ): Promise<void> {
     // Only invalidate specific affected queries
-    if (eventType === "UPDATE" && payload.id) {
+    if (eventType === "UPDATE" && _payload.id) {
       // Only invalidate the specific record and list views
       await Promise.all([
         this.queryClient.invalidateQueries({
-          queryKey: [tableName, payload.id],
+          queryKey: [tableName, _payload.id],
         }),
         this.queryClient.invalidateQueries({ queryKey: [tableName] }),
       ]);
@@ -159,7 +159,7 @@ export class CacheInvalidationStrategy {
     // Use heuristics to determine optimal invalidation strategy
     const shouldAggressivelyInvalidate = this.shouldAggressivelyInvalidate(
       tableName,
-      payload,
+      _payload,
     );
 
     if (shouldAggressivelyInvalidate) {
@@ -168,7 +168,7 @@ export class CacheInvalidationStrategy {
       await this.conservativeInvalidation(
         eventType,
         tableName,
-        payload,
+        _payload,
         queryKeys,
       );
     }
@@ -195,8 +195,8 @@ export class CacheInvalidationStrategy {
 
     return criticalFields.some(
       (field) =>
-        payload[field] !== undefined &&
-        (payload[field] === "emergency" || payload[field] === "high_priority"),
+        _payload[field] !== undefined &&
+        (_payload[field] === "emergency" || _payload[field] === "high_priority"),
     );
   }
 }
@@ -350,7 +350,7 @@ export class EnhancedRealtimeManager {
       }
 
       // Handle the event
-      await this.processRealtimeEvent(payload, tableName, options);
+      await this.processRealtimeEvent(_payload, tableName, options);
 
       // Update metrics
       this.metrics.successfulEvents++;
@@ -378,23 +378,23 @@ export class EnhancedRealtimeManager {
     options: EnhancedRealtimeOptions<T>,
   ): Promise<void> {
     // Execute event handlers
-    switch (payload.eventType) {
+    switch (_payload.eventType) {
       case "INSERT":
-        await options.onInsert?.(payload.new as T);
+        await options.onInsert?.(_payload.new as T);
         if (options.optimisticUpdates !== false) {
-          await this.optimisticInsert(tableName, payload.new as T);
+          await this.optimisticInsert(tableName, _payload.new as T);
         }
         break;
       case "UPDATE":
-        await options.onUpdate?.(payload.new as T);
+        await options.onUpdate?.(_payload.new as T);
         if (options.optimisticUpdates !== false) {
-          await this.optimisticUpdate(tableName, payload.new as T);
+          await this.optimisticUpdate(tableName, _payload.new as T);
         }
         break;
       case "DELETE":
-        await options.onDelete?.({ old: payload.old as T });
+        await options.onDelete?.({ old: _payload.old as T });
         if (options.optimisticUpdates !== false) {
-          await this.optimisticDelete(tableName, payload.old as T);
+          await this.optimisticDelete(tableName, _payload.old as T);
         }
         break;
     }
@@ -402,9 +402,9 @@ export class EnhancedRealtimeManager {
     // Smart cache invalidation
     if (options.queryKeys) {
       await this.cacheInvalidationStrategy.invalidateForEvent(
-        payload.eventType,
+        _payload.eventType,
         tableName,
-        payload.new || payload.old,
+        _payload.new || _payload.old,
         options.queryKeys,
       );
       this.metrics.cacheInvalidations++;

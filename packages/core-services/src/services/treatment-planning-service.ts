@@ -1,4 +1,4 @@
-import { Database } from '@neonpro/supabase';
+import { SupabaseClient } from '@neonpro/database';
 import { 
   TreatmentPlan, 
   TreatmentSession, 
@@ -26,10 +26,207 @@ import {
   // TreatmentProgressSummary
 } from '@neonpro/types';
 
-export class TreatmentPlanningService {
-  private supabase: Database['supabase'];
+// Input interfaces for treatment planning operations
+export interface CreateTreatmentPlanInput {
+  clinic_id: string;
+  patient_id: string;
+  professional_id: string;
+  plan_name: string;
+  description?: string;
+  treatment_goals?: string[];
+  priority_level?: 'low' | 'medium' | 'high' | 'urgent';
+  estimated_duration_interval?: string;
+  estimated_sessions?: number;
+  total_estimated_cost?: number;
+  start_date?: string;
+  target_completion_date?: string;
+  contraindications?: string[];
+  precautions?: string[];
+  patient_preferences?: Record<string, any>;
+  professional_notes?: string;
+  metadata?: Record<string, any>;
+}
 
-  constructor(supabase: Database['supabase']) {
+export interface UpdateTreatmentPlanInput {
+  plan_name?: string;
+  description?: string;
+  treatment_goals?: string[];
+  priority_level?: 'low' | 'medium' | 'high' | 'urgent';
+  estimated_duration_interval?: string;
+  estimated_sessions?: number;
+  total_estimated_cost?: number;
+  start_date?: string;
+  target_completion_date?: string;
+  contraindications?: string[];
+  precautions?: string[];
+  patient_preferences?: Record<string, any>;
+  professional_notes?: string;
+  status?: 'draft' | 'active' | 'completed' | 'paused' | 'cancelled';
+  progress_percentage?: number;
+  actual_completion_date?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface CreateTreatmentSessionInput {
+  treatment_plan_id: string;
+  session_number: number;
+  session_name: string;
+  description?: string;
+  scheduled_date: string;
+  duration_minutes: number;
+  professional_id: string;
+  room_id?: string;
+  products_used?: string[];
+  procedures_performed?: string[];
+  before_photos?: string[];
+  after_photos?: string[];
+  measurements_before?: Record<string, any>;
+  measurements_after?: Record<string, any>;
+  follow_up_required?: boolean;
+  follow_up_date?: string;
+}
+
+export interface UpdateTreatmentSessionInput {
+  session_name?: string;
+  description?: string;
+  scheduled_date?: string;
+  duration_minutes?: number;
+  professional_id?: string;
+  room_id?: string;
+  status?: 'scheduled' | 'in_progress' | 'completed' | 'cancelled' | 'no_show' | 'rescheduled';
+  products_used?: string[];
+  procedures_performed?: string[];
+  before_photos?: string[];
+  after_photos?: string[];
+  measurements_before?: Record<string, any>;
+  measurements_after?: Record<string, any>;
+  follow_up_required?: boolean;
+  follow_up_date?: string;
+  notes?: string;
+}
+
+export interface CreateTreatmentProcedureInput {
+  treatment_plan_id: string;
+  procedure_name: string;
+  procedure_type: string;
+  description?: string;
+  target_areas?: string[];
+  products_required?: string[];
+  estimated_duration_minutes?: number;
+  sessions_needed?: number;
+  interval_between_sessions?: string;
+  cost_per_session?: number;
+  total_cost?: number;
+  order_in_plan?: number;
+}
+
+export interface CreateTreatmentAssessmentInput {
+  treatment_plan_id: string;
+  session_id?: string;
+  template_id?: string;
+  assessor_id: string;
+  assessment_data: Record<string, any>;
+  notes?: string;
+  recommendations?: string[];
+}
+
+export interface CreateTreatmentProgressInput {
+  treatment_plan_id: string;
+  session_id?: string;
+  tracked_by: string;
+  progress_type: string;
+  progress_data: Record<string, any>;
+  photos?: string[];
+  measurements?: Record<string, any>;
+  patient_reported_outcomes?: Record<string, any>;
+  professional_observations?: string;
+  satisfaction_rating?: number;
+}
+
+export interface CreateTreatmentRecommendationInput {
+  treatment_plan_id: string;
+  patient_id: string;
+  recommendation_type: string;
+  title: string;
+  description: string;
+  recommendation_data?: Record<string, any>;
+  confidence_score?: number;
+  source_type?: 'ai' | 'professional' | 'system';
+}
+
+export interface CreateTreatmentDocumentInput {
+  treatment_plan_id: string;
+  session_id?: string;
+  template_id?: string;
+  document_type: string;
+  document_data: Record<string, any>;
+  patient_signature_required?: boolean;
+  version?: string;
+  created_by: string;
+}
+
+export interface CreateTreatmentOutcomeInput {
+  treatment_plan_id: string;
+  session_id?: string;
+  outcome_type: string;
+  outcome_data: Record<string, any>;
+  satisfaction_metrics?: Record<string, any>;
+  before_after_comparison?: Record<string, any>;
+  duration_of_effect?: string;
+  complications_reported?: string[];
+  patient_testimonials?: string;
+  professional_evaluation?: string;
+  follow_up_recommendations?: string[];
+  created_by: string;
+}
+
+// Additional types for statistics and summaries
+export interface TreatmentPlanStats {
+  total: number;
+  draft: number;
+  active: number;
+  completed: number;
+  paused: number;
+  cancelled: number;
+}
+
+export interface TreatmentSessionStats {
+  total: number;
+  scheduled: number;
+  in_progress: number;
+  completed: number;
+  cancelled: number;
+  no_show: number;
+  rescheduled: number;
+}
+
+export interface TreatmentProgressSummary {
+  total_sessions: number;
+  completed_sessions: number;
+  upcoming_sessions: number;
+  progress_records: number;
+  assessments_completed: number;
+  average_satisfaction_rating: number;
+  next_session_date: string | null;
+  last_progress_date: string | null;
+}
+
+export interface TreatmentDocumentationTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  procedure_type: string;
+  template_type: string;
+  is_required: boolean;
+  version: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export class TreatmentPlanningService {
+  private supabase: SupabaseClient;
+
+  constructor(supabase: SupabaseClient) {
     this.supabase = supabase;
   }
 

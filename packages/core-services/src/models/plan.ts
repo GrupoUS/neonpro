@@ -360,6 +360,7 @@ export class Plan {
     if (currentIndex !== -1) {
       for (let i = currentIndex + 1; i < tiers.length; i++) {
         const tier = tiers[i];
+        if (!tier) continue;
         const plan = new Plan(tier);
 
         if (desiredFeatures.every((feature) => plan.hasFeature(feature))) {

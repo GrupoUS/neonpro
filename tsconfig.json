@@ -14,7 +14,6 @@
     "incremental": true,
     "downlevelIteration": true,
     "outDir": "./dist",
-    "rootDir": ".",
     "types": [
       "node",
       "vitest",
@@ -44,14 +43,12 @@
     }
   },
   "include": [
-    "packages/**/*",
     "src/**/*",
     "tools/tests/**/*",
     "*.ts",
     "*.tsx",
     "types/**/*"
-  ]
-  ,
+  ],
   "exclude": [
     "node_modules",
     "dist",

@@ -1,4 +1,4 @@
-import { brazilianComplianceService } from '../brazilian-compliance';
+import { BrazilianComplianceService } from '../brazilian-compliance';
 import { LGPDComplianceOptions, PatientExportField } from './types';
 
 export class ExportLGPDCompliance {
@@ -26,11 +26,11 @@ export class ExportLGPDCompliance {
   ];
 
   static async validateExportRequest(
-    _userId: string,
+    userId: string,
     options: LGPDComplianceOptions,
     patientCount: number,
   ): Promise<{ valid: boolean; error?: string }> {
-    if (!_userId) {
+    if (!userId) {
       return { valid: false, error: 'ID do usuário é obrigatório' };
     }
 
@@ -42,7 +42,10 @@ export class ExportLGPDCompliance {
     }
 
     if (options.consentRequired) {
-      const hasConsent = await this.checkUserConsent(userId, options.purpose);
+      const hasConsent = await BrazilianComplianceService.hasDataProcessingConsent(
+        userId,
+        options.purpose,
+      );
       if (!hasConsent) {
         return {
           valid: false,
@@ -55,15 +58,15 @@ export class ExportLGPDCompliance {
   }
 
   static async checkUserConsent(
-    _userId: string,
+    userId: string,
     purpose: string,
   ): Promise<boolean> {
     try {
-      return await brazilianComplianceService.hasDataProcessingConsent(
+      return await BrazilianComplianceService.hasDataProcessingConsent(
         userId,
         purpose,
       );
-    } catch {
+    } catch (error) {
       console.error('Erro ao verificar consentimento LGPD:', error);
       return false;
     }
@@ -142,7 +145,7 @@ export class ExportLGPDCompliance {
   }
 
   static generateAuditTrail(
-    _userId: string,
+    userId: string,
     exportId: string,
     recordCount: number,
     purpose: string,
@@ -173,12 +176,12 @@ export class ExportLGPDCompliance {
   }
 
   static async logDataAccess(
-    _userId: string,
+    userId: string,
     exportId: string,
     fields: PatientExportField[],
     recordCount: number,
   ): Promise<void> {
-    const _auditLog = this.generateAuditTrail(
+    const auditLog = this.generateAuditTrail(
       userId,
       exportId,
       recordCount,
@@ -186,7 +189,7 @@ export class ExportLGPDCompliance {
     );
 
     try {
-      await brazilianComplianceService.logDataAccess({
+      await BrazilianComplianceService.logDataAccess({
         userId,
         action: 'EXPORT',
         resourceId: exportId,
@@ -197,7 +200,7 @@ export class ExportLGPDCompliance {
         legalBasis: 'CONSENT',
         timestamp: new Date(),
       });
-    } catch {
+    } catch (error) {
       console.error('Erro ao registrar acesso de dados LGPD:', error);
     }
   }

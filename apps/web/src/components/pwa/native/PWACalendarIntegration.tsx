@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Calendar, Clock, Plus, Sync, AlertCircle, Check, X, User, MapPin, Video, Phone } from "lucide-react";
+import { Calendar, Clock, Plus, RefreshCw, AlertCircle, Check, X, User, MapPin, Video, Phone } from "lucide-react";
 
 interface CalendarEvent {
   id: string;
@@ -337,7 +337,7 @@ export const PWACalendarIntegration: React.FC<PWACalendarIntegrationProps> = ({
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
               ) : (
                 <>
-                  <Sync className="h-4 w-4 mr-1" />
+                  <RefreshCw className="h-4 w-4 mr-1" />
                   {hasCalendarAccess ? 'Sincronizar' : 'Conectar'}
                 </>
               )}

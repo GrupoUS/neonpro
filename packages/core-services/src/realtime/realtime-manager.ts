@@ -123,23 +123,23 @@ export class RealtimeManager {
     options: RealtimeSubscriptionOptions<T>,
   ) {
     try {
-      switch (payload.eventType) {
+      switch (_payload.eventType) {
         case "INSERT":
-          options.onInsert?.(payload.new as T);
+          options.onInsert?.(_payload.new as T);
           if (options.optimisticUpdates !== false) {
-            await this.optimisticInsert(tableName, payload.new as T);
+            await this.optimisticInsert(tableName, _payload.new as T);
           }
           break;
         case "UPDATE":
-          options.onUpdate?.(payload.new as T);
+          options.onUpdate?.(_payload.new as T);
           if (options.optimisticUpdates !== false) {
-            await this.optimisticUpdate(tableName, payload.new as T);
+            await this.optimisticUpdate(tableName, _payload.new as T);
           }
           break;
         case "DELETE":
-          options.onDelete?.({ old: payload.old as T });
+          options.onDelete?.({ old: _payload.old as T });
           if (options.optimisticUpdates !== false) {
-            await this.optimisticDelete(tableName, payload.old as T);
+            await this.optimisticDelete(tableName, _payload.old as T);
           }
           break;
       }
@@ -153,7 +153,7 @@ export class RealtimeManager {
         );
       }
     } catch (error) {
-      logHealthcareError('realtime', error, { method: 'handleRealtimeEvent', tableName });
+      logHealthcareError('realtime', error as Error, { method: 'handleRealtimeEvent', tableName });
     }
   }
   private async optimisticInsert<T extends { id: string }>(

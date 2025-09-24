@@ -59,7 +59,8 @@ YAGNI_PRINCIPLE:
 CHAIN_OF_THOUGHT:
   definition: "Explicit step-by-step reasoning for accuracy"
   core_rules:
-    - Break problems into sequential steps
+    - Break problems into sequential steps with atomic tasks
+    - Reflect on 5-7 different possible sources of the problem, distill those down to 1-2 most likely source
     - Verbalize reasoning process
     - Show intermediate decisions
     - Question assumptions

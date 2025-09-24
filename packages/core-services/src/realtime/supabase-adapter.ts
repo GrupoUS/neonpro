@@ -106,8 +106,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
       this.isInitialized = true;
       realtimeLogger.info('SupabaseRealtimeAdapter initialized successfully', { config: this.config });
-    } catch (_error) {
-      void _error;
+    } catch (error) {
       throw new Error(`Failed to initialize SupabaseRealtimeAdapter: ${error}`);
     }
   }
@@ -191,10 +190,9 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       realtimeLogger.info(`Participant ${fullParticipant.id} joined channel ${channelId}`, {
         channelId,
         participantId: fullParticipant.id,
-        participantRole: fullParticipant.role
+        participantRole: fullParticipant._role
       });
-    } catch (_error) {
-      void _error;
+    } catch (error) {
       await this.handleError({
         code: "JOIN_CHANNEL_FAILED",
         message: `Failed to join channel ${channelId}: ${error}`,
@@ -268,8 +266,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
         reason,
         duration
       });
-    } catch (_error) {
-      void _error;
+    } catch (error) {
       await this.handleError({
         code: "LEAVE_CHANNEL_FAILED",
         message: `Failed to leave channel ${channelId}: ${error}`,
@@ -351,7 +348,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
         this.handlePresenceSync(channelId, channel as any);
       });
     } catch (e) {
-      logHealthcareError('realtime', e, { method: 'setupPresenceTracking', channelId });
+      logHealthcareError('realtime', e as Error, { method: 'setupPresenceTracking', channelId });
     }
 
     await channel.subscribe();
@@ -473,9 +470,8 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
           await this.eventHandlers.onPresenceSync?.(event);
           break;
       }
-    } catch (_error) {
-      void _error;
-      logHealthcareError('realtime', error, { method: 'emitEvent', eventType: event.type, channelId: event.channelId });
+    } catch (error) {
+      logHealthcareError('realtime', error as Error, { method: 'emitEvent', eventType: event.type, channelId: event.channelId });
     }
   }
 
@@ -496,14 +492,15 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
       // Mark as logged for compliance
       event.metadata.compliance.lgpdLogged = true;
-    } catch (_error) {
-      void _error;
-      logHealthcareError('realtime', error, { method: 'logAuditEvent', eventType: event.type });
+    } catch (error) {
+      logHealthcareError('realtime', error as Error, { method: 'logAuditEvent', eventType: event.type });
     }
   }
 
   private async handleError(error: RealtimeAdapterError): Promise<void> {
-    logHealthcareError('realtime', error, { method: 'handleError', errorCode: error.code, severity: error.severity });
+    const jsError = new Error(error.message);
+    jsError.name = error.code;
+    logHealthcareError('realtime', jsError, { method: 'handleError', errorCode: error.code, severity: error.severity });
 
     // Update health status for critical errors
     if (error.severity === "critical") {
@@ -533,7 +530,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     const syncEvent = this.createRealtimeEvent(
       "presence_sync",
       channelId,
-      participants[0],
+      participants[0]!,
       {
         participants,
       },

@@ -20,8 +20,8 @@ describe('TDD Suite Test', () => {
         // Refactor code
         expect(true).toBe(true);
       },
-    }
+    });
 
-    expect(result).toBeDefined(
-  }
-}
+    expect(result).toBeDefined();
+  });
+});

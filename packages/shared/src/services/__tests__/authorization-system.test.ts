@@ -408,7 +408,7 @@ describe("HealthcareAuthorizationRules - LGPD Compliance", () => {
       },
     },
     action: {
-      operation: "read",
+      operation: "update",
       scope: "basic",
       urgency: "routine",
       purpose: "patient_care",

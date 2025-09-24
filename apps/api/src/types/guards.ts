@@ -1,4 +1,4 @@
-import { valibot } from 'valibot';
+import * as valibot from 'valibot';
 import { z } from 'zod';
 
 // Enhanced type guards for API layer
@@ -51,20 +51,20 @@ export const isValidCPF = (value: unknown): value is string => {
   // CPF validation algorithm
   let sum = 0;
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cpf[i]) * (10 - i);
+    sum += parseInt(cpf.charAt(i), 10) * (10 - i);
   }
   let remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf[9])) return false;
+  if (remainder !== parseInt(cpf.charAt(9), 10)) return false;
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cpf[i]) * (11 - i);
+    sum += parseInt(cpf.charAt(i), 10) * (11 - i);
   }
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
 
-  return remainder === parseInt(cpf[10]);
+  return remainder === parseInt(cpf.charAt(10), 10);
 };
 
 export const isValidCNPJ = (value: unknown): value is string => {
@@ -78,20 +78,20 @@ export const isValidCNPJ = (value: unknown): value is string => {
 
   let sum = 0;
   for (let i = 0; i < 12; i++) {
-    sum += parseInt(cnpj[i]) * weights1[i];
+    sum += parseInt(cnpj.charAt(i), 10) * weights1[i];
   }
   let remainder = sum % 11;
   const digit1 = remainder < 2 ? 0 : 11 - remainder;
-  if (digit1 !== parseInt(cnpj[12])) return false;
+  if (digit1 !== parseInt(cnpj.charAt(12), 10)) return false;
 
   sum = 0;
   for (let i = 0; i < 13; i++) {
-    sum += parseInt(cnpj[i]) * weights2[i];
+    sum += parseInt(cnpj.charAt(i), 10) * weights2[i];
   }
   remainder = sum % 11;
   const digit2 = remainder < 2 ? 0 : 11 - remainder;
 
-  return digit2 === parseInt(cnpj[13]);
+  return digit2 === parseInt(cnpj.charAt(13), 10);
 };
 
 // API-specific type guards
@@ -103,7 +103,7 @@ export const isValidPaginationParams = (
 } => {
   return isObject(
     value,
-    obj =>
+    (obj): obj is { page: number; pageSize: number } =>
       isNumber(obj.page)
       && obj.page > 0
       && isNumber(obj.pageSize)
@@ -120,7 +120,7 @@ export const isValidSortParams = (
 } => {
   return isObject(
     value,
-    obj =>
+    (obj): obj is { sortBy: string; sortOrder: 'asc' | 'desc' } =>
       isNonEmptyString(obj.sortBy)
       && (obj.sortOrder === 'asc' || obj.sortOrder === 'desc'),
   );
@@ -133,42 +133,23 @@ export const isValidFilterParams = (
 };
 
 // Safe parsing with error handling
-export const safeParse = <T>(
-  schema: z.ZodSchema<T>,
-  value: unknown,
-):
-  | {
-    success: true;
-    data: T;
-  }
-  | {
-    success: false;
-    error: z.ZodError;
-  } =>
-{
-  const result = schema.safeParse(value);
-  return result.success
-    ? { success: true, data: result.data }
-    : { success: false, error: result.error };
-};
-
 export const safeParseValibot = <T>(
-  schema: valibot.GenericSchema,
+  schema: valibot.Schema<T>,
   value: unknown,
 ):
   | {
-    success: true;
-    data: T;
-  }
+      success: true;
+      data: T;
+    }
   | {
-    success: false;
-    error: valibot.ValiError;
-  } =>
+      success: false;
+      error: valibot.ParseError<T>;
+    } =>
 {
   const result = valibot.safeParse(schema, value);
   return result.success
-    ? { success: true, data: result.data }
-    : { success: false, error: result };
+    ? { success: true, data: result.output }
+    : { success: false, error: result.issues };
 };
 
 // Assertion functions with detailed errors
@@ -206,7 +187,7 @@ export const assertCPF = (value: unknown, message?: string): string => {
 // Runtime validation utilities
 export const createValidator = <T>(schema: z.ZodSchema<T>) => {
   return (value: unknown): T => {
-    const result = safeParse(schema, value);
+    const result = schema.safeParse(value);
     if (!result.success) {
       throw new Error(`Validation failed: ${result.error.message}`);
     }
@@ -219,7 +200,7 @@ export const createOptionalValidator = <T>(schema: z.ZodSchema<T>) => {
     if (value === undefined || value === null) {
       return undefined;
     }
-    const result = safeParse(schema, value);
+    const result = schema.safeParse(value);
     if (!result.success) {
       throw new Error(`Validation failed: ${result.error.message}`);
     }

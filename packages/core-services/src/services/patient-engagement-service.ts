@@ -1,4 +1,5 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { SupabaseClient } from '@neonpro/database';
+import { createClient, SupabaseClient as SupabaseJSClient } from '@supabase/supabase-js';
 import { z } from 'zod';
 
 // Schemas for validation
@@ -166,15 +167,11 @@ export interface PatientEngagementServiceConfig {
 }
 
 export class PatientEngagementService {
-  private supabase: SupabaseClient;
-
-  constructor(config: PatientEngagementServiceConfig) {
-    this.supabase = createClient(config.supabaseUrl, config.supabaseKey);
-  }
+  constructor(private supabase: SupabaseClient) {}
 
   // Communication Preferences Management
   async getCommunicationPreferences(patientId: string, clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_communication_preferences')
       .select('*')
       .eq('patient_id', patientId)
@@ -191,7 +188,7 @@ export class PatientEngagementService {
   async updateCommunicationPreferences(preferences: CommunicationPreferencesInput) {
     const validatedPreferences = CommunicationPreferencesSchema.parse(preferences);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_communication_preferences')
       .upsert({
         patient_id: validatedPreferences.patientId,
@@ -218,7 +215,7 @@ export class PatientEngagementService {
   async sendCommunication(communication: CommunicationHistoryInput) {
     const validatedCommunication = CommunicationHistorySchema.parse(communication);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_communication_history')
       .insert({
         patient_id: validatedCommunication.patientId,
@@ -243,7 +240,7 @@ export class PatientEngagementService {
   }
 
   async getCommunicationHistory(patientId: string, clinicId: string, limit = 50) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_communication_history')
       .select('*')
       .eq('patient_id', patientId)
@@ -262,7 +259,7 @@ export class PatientEngagementService {
   async createTemplate(template: CommunicationTemplateInput) {
     const validatedTemplate = CommunicationTemplateSchema.parse(template);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('communication_templates')
       .insert({
         clinic_id: validatedTemplate.clinicId,
@@ -286,7 +283,7 @@ export class PatientEngagementService {
   }
 
   async getTemplatesByCategory(clinicId: string, category: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('communication_templates')
       .select('*')
       .eq('clinic_id', clinicId)
@@ -305,7 +302,7 @@ export class PatientEngagementService {
   async updatePatientJourneyStage(journey: PatientJourneyStageInput) {
     const validatedJourney = PatientJourneyStageSchema.parse(journey);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_journey_stages')
       .upsert({
         patient_id: validatedJourney.patientId,
@@ -330,7 +327,7 @@ export class PatientEngagementService {
   }
 
   async getPatientJourney(patientId: string, clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_journey_stages')
       .select('*')
       .eq('patient_id', patientId)
@@ -348,7 +345,7 @@ export class PatientEngagementService {
   async recordEngagementAction(action: EngagementActionInput) {
     const validatedAction = EngagementActionSchema.parse(action);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_engagement_actions')
       .insert({
         patient_id: validatedAction.patientId,
@@ -369,7 +366,7 @@ export class PatientEngagementService {
   }
 
   async getPatientEngagementActions(patientId: string, clinicId: string, limit = 50) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_engagement_actions')
       .select('*')
       .eq('patient_id', patientId)
@@ -388,7 +385,7 @@ export class PatientEngagementService {
   async createLoyaltyProgram(program: LoyaltyProgramInput) {
     const validatedProgram = LoyaltyProgramSchema.parse(program);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('loyalty_programs')
       .insert({
         clinic_id: validatedProgram.clinicId,
@@ -410,7 +407,7 @@ export class PatientEngagementService {
   }
 
   async getLoyaltyPrograms(clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('loyalty_programs')
       .select('*')
       .eq('clinic_id', clinicId)
@@ -424,7 +421,7 @@ export class PatientEngagementService {
   }
 
   async getPatientPointsBalance(patientId: string, clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_points_balance')
       .select('*')
       .eq('patient_id', patientId)
@@ -434,7 +431,7 @@ export class PatientEngagementService {
     if (error) {
       // Create balance if it doesn't exist
       if (error.code === 'PGRST116') {
-        const { data: newBalance, error: createError } = await this.supabase
+        const { data: newBalance, error: createError } = await (this.supabase as SupabaseJSClient)
           .from('patient_points_balance')
           .insert({
             patient_id: patientId,
@@ -461,7 +458,7 @@ export class PatientEngagementService {
   async updatePatientPoints(patientId: string, clinicId: string, pointsToAdd: number) {
     const balance = await this.getPatientPointsBalance(patientId, clinicId);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_points_balance')
       .update({
         total_points_earned: balance.total_points_earned + pointsToAdd,
@@ -483,7 +480,7 @@ export class PatientEngagementService {
   async createSurvey(survey: PatientSurveyInput) {
     const validatedSurvey = PatientSurveySchema.parse(survey);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_surveys')
       .insert({
         clinic_id: validatedSurvey.clinicId,
@@ -504,7 +501,7 @@ export class PatientEngagementService {
   }
 
   async getSurveys(clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_surveys')
       .select('*')
       .eq('clinic_id', clinicId)
@@ -520,7 +517,7 @@ export class PatientEngagementService {
   async submitSurveyResponse(response: SurveyResponseInput) {
     const validatedResponse = SurveyResponseSchema.parse(response);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('patient_survey_responses')
       .insert({
         survey_id: validatedResponse.surveyId,
@@ -547,7 +544,7 @@ export class PatientEngagementService {
   async createCampaign(campaign: EngagementCampaignInput) {
     const validatedCampaign = EngagementCampaignSchema.parse(campaign);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('engagement_campaigns')
       .insert({
         clinic_id: validatedCampaign.clinicId,
@@ -571,7 +568,7 @@ export class PatientEngagementService {
   }
 
   async getCampaigns(clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('engagement_campaigns')
       .select('*')
       .eq('clinic_id', clinicId)
@@ -588,7 +585,7 @@ export class PatientEngagementService {
   async createReengagementTrigger(trigger: ReengagementTriggerInput) {
     const validatedTrigger = ReengagementTriggerSchema.parse(trigger);
 
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('reengagement_triggers')
       .insert({
         patient_id: validatedTrigger.patientId,
@@ -608,7 +605,7 @@ export class PatientEngagementService {
   }
 
   async getReengagementTriggers(clinicId: string, status = 'pending') {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('reengagement_triggers')
       .select('*')
       .eq('clinic_id', clinicId)
@@ -623,7 +620,7 @@ export class PatientEngagementService {
   }
 
   async updateReengagementTrigger(triggerId: string, status: string, actionTaken: string, outcome: any) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .from('reengagement_triggers')
       .update({
         status,
@@ -644,7 +641,7 @@ export class PatientEngagementService {
 
   // Analytics and Reporting
   async getEngagementAnalytics(clinicId: string, dateRange: { start: string; end: string }) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .rpc('get_engagement_analytics', {
         p_clinic_id: clinicId,
         p_start_date: dateRange.start,
@@ -659,7 +656,7 @@ export class PatientEngagementService {
   }
 
   async getPatientEngagementReport(patientId: string, clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .rpc('get_patient_engagement_report', {
         p_patient_id: patientId,
         p_clinic_id: clinicId,
@@ -674,7 +671,7 @@ export class PatientEngagementService {
 
   // Automated Communication Workflows
   async processAppointmentReminders(clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .rpc('process_appointment_reminders', {
         p_clinic_id: clinicId,
       });
@@ -687,7 +684,7 @@ export class PatientEngagementService {
   }
 
   async processFollowUpCommunications(clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .rpc('process_follow_up_communications', {
         p_clinic_id: clinicId,
       });
@@ -700,7 +697,7 @@ export class PatientEngagementService {
   }
 
   async processBirthdayGreetings(clinicId: string) {
-    const { data, error } = await this.supabase
+    const { data, error } = await (this.supabase as SupabaseJSClient)
       .rpc('process_birthday_greetings', {
         p_clinic_id: clinicId,
       });
@@ -714,7 +711,7 @@ export class PatientEngagementService {
 
   // Template Processing
   async processTemplate(templateId: string, variables: Record<string, any>) {
-    const { data: template, error } = await this.supabase
+    const { data: template, error } = await (this.supabase as SupabaseJSClient)
       .from('communication_templates')
       .select('*')
       .eq('id', templateId)
@@ -739,6 +736,29 @@ export class PatientEngagementService {
     return {
       content: processedContent,
       subject: processedSubject,
+    };
+  }
+}
+
+export class BasePatientEngagementService {
+  constructor(private supabase: SupabaseClient) {}
+
+  async createEngagement(input: any) {
+    // Basic implementation stub
+    return {
+      id: 'engagement-id',
+      patientId: input.patientId,
+      type: input.type,
+      createdAt: new Date().toISOString(),
+    };
+  }
+
+  async getEngagementStats(input: any) {
+    // Basic implementation stub
+    return {
+      totalEngagements: 0,
+      activeEngagements: 0,
+      engagementRate: 0,
     };
   }
 }

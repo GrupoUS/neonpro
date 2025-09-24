@@ -12,16 +12,17 @@ describe("T009 performance budget", () => {
       "..",
       "tools",
       "testing",
-      "performance-budget.json",
+      "performance-budget.json"
+    );
     
     let data: any;
     try {
-      data = JSON.parse(readFileSync(p, "utf-8")
+      data = JSON.parse(readFileSync(p, "utf-8"));
     } catch {
       data = {};
     }
-    expect(data).toHaveProperty("LCP"
-    expect(data).toHaveProperty("CLS"
-    expect(data).toHaveProperty("TTFB"
-  }
-}
+    expect(data).toHaveProperty("LCP");
+    expect(data).toHaveProperty("CLS");
+    expect(data).toHaveProperty("TTFB");
+  });
+});

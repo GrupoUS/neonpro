@@ -259,7 +259,7 @@ export function createRealtimeEvent<T = any>(
 export function validateParticipant(participant: RealtimeParticipant): boolean {
   return !!(
     participant.id &&
-    participant.role &&
+    participant._role &&
     participant.name &&
     participant.status &&
     participant.metadata?.clinicId &&

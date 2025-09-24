@@ -177,7 +177,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       const result = redactMessage(message);
 
       expect(result.redactedContent).toMatch(
-        /Dr\. Silva atendeu paciente \[NAME_REDACTED\] \([CPF_REDACTED]\) com sintomas de gripe/,
+        /Dr\. Silva atendeu paciente \[NAME_REDACTED\] \(\[CPF_REDACTED\]\) com sintomas de gripe/,
       );
     });
   });

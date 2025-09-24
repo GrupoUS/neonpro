@@ -21,6 +21,7 @@
     { "path": "../types" },
     { "path": "../utils" },
     { "path": "../config" },
-    { "path": "../shared" }
+    { "path": "../shared" },
+    { "path": "../domain" }
   ]
 }

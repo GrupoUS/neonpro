@@ -19,21 +19,64 @@ import {
   validateSessionAccess,
   archiveInactiveSessions,
   getSessionMetrics,
+  __resetSessionsForTests,
 } from "../session-management";
 
 describe("T010: Session Management for AI Chat", () => {
   let _mockSessionStore: Map<string, ChatSession>;
   let mockTimestamp: number;
 
+  const advanceTime = (ms: number) => {
+    // @ts-ignore
+    if (typeof vi.advanceTimersByTime === 'function') {
+      // @ts-ignore
+      vi.advanceTimersByTime(ms);
+    } else {
+      mockTimestamp += ms;
+      vi.setSystemTime?.(mockTimestamp);
+    }
+    // Always advance utils module clock offset so internal getNow() reflects time
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).__CHAT_TIME_OFFSET_MS = ((globalThis as any).__CHAT_TIME_OFFSET_MS ?? 0) + ms;
+  };
+
+
+
   beforeEach(() => {
-    mockSessionStore = new Map();
+    _mockSessionStore = new Map();
     mockTimestamp = Date.now();
-    vi.useFakeTimers();
-    vi.setSystemTime(mockTimestamp);
+    // Bun's test env may not implement vi.useFakeTimers; fall back safely
+    // @ts-ignore
+    if (typeof vi.useFakeTimers === 'function') {
+      // @ts-ignore
+      vi.useFakeTimers();
+    }
+    // Provide minimal vi.advanceTimersByTime fallback for Bun if missing
+    // @ts-ignore
+    if (typeof vi.advanceTimersByTime !== 'function') {
+      let __offset = 0;
+      // @ts-ignore
+      vi.advanceTimersByTime = (ms: number) => {
+        __offset += ms;
+        vi.setSystemTime?.(mockTimestamp + __offset);
+      };
+    }
+    vi.setSystemTime?.(mockTimestamp);
+    // Reset module-level clock offset used by utils
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(globalThis as any).__CHAT_TIME_OFFSET_MS = 0;
+
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    // Bun's test env may not implement vi.useRealTimers; fall back safely
+    // @ts-ignore
+    if (typeof vi.useRealTimers === 'function') {
+      // @ts-ignore
+      vi.useRealTimers();
+    } else {
+      try { vi.setSystemTime?.(Date.now()); } catch {}
+    }
     vi.clearAllMocks();
   });
 
@@ -155,7 +198,7 @@ describe("T010: Session Management for AI Chat", () => {
     it("should update last accessed timestamp on retrieval", async () => {
       const originalAccessed = testSession.lastAccessedAt;
 
-      vi.advanceTimersByTime(5000); // 5 seconds later
+      advanceTime(5000); // 5 seconds later
 
       const retrieved = await getChatSession(
         testSession.id,
@@ -238,7 +281,7 @@ describe("T010: Session Management for AI Chat", () => {
 
     it("should detect expired sessions", async () => {
       // Advance time beyond max duration
-      vi.advanceTimersByTime(31 * 60 * 1000); // 31 minutes
+      advanceTime(31 * 60 * 1000); // 31 minutes
 
       const isExpired = await validateSessionAccess(testSession.id);
 
@@ -248,7 +291,7 @@ describe("T010: Session Management for AI Chat", () => {
 
     it("should detect inactive sessions", async () => {
       // Advance time beyond inactivity threshold (default 15 minutes)
-      vi.advanceTimersByTime(16 * 60 * 1000); // 16 minutes
+      advanceTime(16 * 60 * 1000); // 16 minutes
 
       const isValid = await validateSessionAccess(testSession.id);
 
@@ -258,7 +301,7 @@ describe("T010: Session Management for AI Chat", () => {
 
     it("should allow extending session if not expired", async () => {
       // Update activity before expiration
-      vi.advanceTimersByTime(10 * 60 * 1000); // 10 minutes
+      advanceTime(10 * 60 * 1000); // 10 minutes
       await updateSessionActivity(testSession.id, { messageCount: 1 });
 
       const isValid = await validateSessionAccess(testSession.id);
@@ -268,7 +311,7 @@ describe("T010: Session Management for AI Chat", () => {
 
     it("should prevent extension of expired sessions", async () => {
       // Let session expire
-      vi.advanceTimersByTime(31 * 60 * 1000); // 31 minutes
+      advanceTime(31 * 60 * 1000); // 31 minutes
 
       await expect(
         updateSessionActivity(testSession.id, { messageCount: 1 }),
@@ -281,8 +324,9 @@ describe("T010: Session Management for AI Chat", () => {
     let expiredSessions: ChatSession[];
 
     beforeEach(async () => {
+      __resetSessionsForTests();
       // Create active sessions
-      activeSessions = await Promise.all([
+      _activeSessions = await Promise.all([
         createChatSession({ _userId: "user-1", clinicId: "clinic-456" }),
         createChatSession({ _userId: "user-2", clinicId: "clinic-456" }),
       ]);
@@ -302,7 +346,7 @@ describe("T010: Session Management for AI Chat", () => {
       ]);
 
       // Advance time to expire some sessions
-      vi.advanceTimersByTime(11 * 60 * 1000); // 11 minutes
+      advanceTime(11 * 60 * 1000); // 11 minutes
     });
 
     it("should clean up expired sessions", async () => {
@@ -476,6 +520,7 @@ describe("T010: Session Management for AI Chat", () => {
 
   describe("Session Metrics and Analytics", () => {
     beforeEach(async () => {
+      __resetSessionsForTests();
       // Create multiple sessions for metrics testing
       await Promise.all([
         createChatSession({ _userId: "user-1", clinicId: "clinic-456" }),

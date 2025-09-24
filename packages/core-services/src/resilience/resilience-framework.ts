@@ -13,6 +13,8 @@
  * - LGPD-compliant error handling
  */
 
+import { z } from "zod";
+
 // ============================================================================
 // Types and Interfaces
 // ============================================================================
@@ -134,7 +136,7 @@ export class EnhancedCircuitBreaker {
         throw new ResilienceError(
           `Circuit breaker OPEN for _service: ${this.serviceName}`,
           "CIRCUIT_BREAKER_OPEN",
-          context,
+          _context,
         );
       }
     }
@@ -231,7 +233,7 @@ export class RetryPolicy {
     }
 
     // For emergencies, retry more aggressively
-    if (context.isEmergency && this.attempts <= this.config.maxRetries + 2) {
+    if (_context.isEmergency && this.attempts <= this.config.maxRetries + 2) {
       return true;
     }
 
@@ -315,11 +317,11 @@ export class TimeoutManager {
   ): Promise<T> {
     return new Promise((resolve, _reject) => {
       const timeoutId = setTimeout(() => {
-        reject(
+        _reject(
           new ResilienceError(
-            `Operation timeout for ${context.operation}`,
+            `Operation timeout for ${_context.operation}`,
             "TIMEOUT",
-            context,
+            _context,
           ),
         );
       }, this.config.overallMs);
@@ -331,7 +333,7 @@ export class TimeoutManager {
         })
         .catch((error) => {
           clearTimeout(timeoutId);
-          reject(error);
+          _reject(error);
         });
     });
   }
@@ -492,7 +494,7 @@ export class ResilienceFramework {
             // Execute with timeout protection
             const timeoutResult = await this.timeoutManager.executeWithTimeout(
               operation,
-              context,
+              _context,
             );
 
             this.metrics.successfulRequests++;
@@ -500,7 +502,7 @@ export class ResilienceFramework {
           } catch (error) {
             const shouldRetry = await retryPolicy.shouldRetry(
               error as Error,
-              context,
+              _context,
             );
 
             if (!shouldRetry) {
@@ -515,7 +517,7 @@ export class ResilienceFramework {
             }
           }
         }
-      }, context);
+      }, _context);
 
       // Update metrics
       const latency = Date.now() - startTime;

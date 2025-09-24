@@ -73,8 +73,6 @@ CREATE TABLE AestheticClientAddress (
     state VARCHAR(2) NOT NULL CHECK (LENGTH(state) = 2),
     postal_code VARCHAR(9) NOT NULL CHECK (postal_code ~ '^[0-9]{8}$'),
     country VARCHAR(50) DEFAULT 'Brasil',
-    latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8),
     is_primary BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
