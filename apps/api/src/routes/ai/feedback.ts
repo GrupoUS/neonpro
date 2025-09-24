@@ -100,7 +100,7 @@ async function logFeedbackForAnalytics(
 
     feedbackStore.set(feedbackData.id, feedbackData)
 
-    console.log('Feedback logged:', {
+    console.warn('Feedback logged:', {
       sessionId,
       messageId,
       userId,
@@ -137,7 +137,7 @@ async function triggerFeedbackImprovements(
 
   // Unhelpful responses with comments trigger specific analysis
   if (feedback.helpful === false && feedback.comment) {
-    console.log(
+    console.warn(
       'Unhelpful response with comment - analyzing for improvements:',
       {
         comment: feedback.comment,

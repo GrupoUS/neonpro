@@ -181,7 +181,7 @@ export class ExternalServiceHealthChecker {
     // Start monitoring
     this.startMonitoring(service.name)
 
-    console.log(`Registered service for health monitoring: ${service.name}`)
+    console.warn(`Registered service for health monitoring: ${service.name}`)
   }
 
   /**
@@ -773,7 +773,7 @@ export class ExternalServiceHealthChecker {
     this.services.delete(serviceName)
     this.serviceHealth.delete(serviceName)
 
-    console.log(`Unregistered service from health monitoring: ${serviceName}`)
+    console.warn(`Unregistered service from health monitoring: ${serviceName}`)
   }
 
   /**

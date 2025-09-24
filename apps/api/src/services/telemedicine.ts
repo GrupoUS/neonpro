@@ -1233,7 +1233,7 @@ export class TelemedicineService {
     void _encryptedData
 
     // In real implementation, store in secure archive
-    console.log(`Archiving session ${session.id} with ID ${archiveId}`)
+    console.warn(`Archiving session ${session.id} with ID ${archiveId}`)
 
     return {
       archiveId,
@@ -1280,7 +1280,7 @@ export class TelemedicineService {
     details: Record<string, any>,
   ): Promise<void> {
     // In real implementation, this would log to secure audit database
-    console.log(
+    console.warn(
       `Telemedicine Audit: ${action} for session ${sessionId}`,
       details,
     )

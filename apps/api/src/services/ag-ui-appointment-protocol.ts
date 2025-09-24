@@ -528,7 +528,7 @@ export class AGUIAppointmentProtocol {
 
   private async logMessage(message: AGUIAppointmentMessage): Promise<void> {
     // Log message for compliance and debugging
-    console.log(`[AG-UI Protocol] ${message.type}:`, {
+    console.warn(`[AG-UI Protocol] ${message.type}:`, {
       id: message.id,
       clinicId: message.clinicId,
       timestamp: message.timestamp,
@@ -551,7 +551,7 @@ export class AGUIAppointmentProtocol {
 
     // Handler for compliance checks
     this.on('compliance.checked', async (message: AGUIAppointmentMessage) => {
-      console.log('Compliance check completed:', message.data)
+      console.warn('Compliance check completed:', message.data)
 
       // Log compliance status for audit purposes
       // This is critical for LGPD compliance
@@ -559,7 +559,7 @@ export class AGUIAppointmentProtocol {
 
     // Handler for real-time updates
     this.on('status.changed', async (message: AGUIAppointmentMessage) => {
-      console.log('Status changed:', message.data)
+      console.warn('Status changed:', message.data)
 
       // Update real-time displays and notifications
       // This would integrate with your WebSocket system

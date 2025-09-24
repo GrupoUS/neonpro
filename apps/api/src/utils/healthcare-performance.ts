@@ -688,7 +688,7 @@ export class ConnectionPoolMonitor {
         const metrics = await this.getConnectionMetrics()
 
         // Log connection pool status
-        console.info('Connection Pool Status:', metrics)
+        console.warn('Connection Pool Status:', metrics)
 
         // Alert if connection pool is under stress
         if (metrics.utilization > 80) {

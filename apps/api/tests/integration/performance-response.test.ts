@@ -15,7 +15,7 @@ describe('Response Time Performance - Integration Test', () => {
     try {
       ap: p = [ (await import('../../src/app')).default;
     } catch (error) {
-      console.log('Expected failure: App not available during TDD phase')
+      console.warn('Expected failure: App not available during TDD phase')
     }
   }
 
@@ -53,7 +53,7 @@ describe('Response Time Performance - Integration Test', () => {
         expect(responseTime).toBeLessThan(2000); // <2s requirement
         expect(response.status).toBe(200
 
-        console.log(`Query "${query}" took ${responseTime}ms`
+        console.warn(`Query "${query}" took ${responseTime}ms`
       }
     }
 
@@ -245,7 +245,7 @@ describe('Response Time Performance - Integration Test', () => {
       results.forEach(resul: t = [> {
         expect(result.responseTime).toBeLessThan(2000
         expect(result.status).toBe(200
-        console.log(`Concurrent query "${result.query}" took ${result.responseTime}ms`
+        console.warn(`Concurrent query "${result.query}" took ${result.responseTime}ms`
       }
     }
 
@@ -294,7 +294,7 @@ describe('Response Time Performance - Integration Test', () => {
       // Calculate average response time
       const: avgResponseTime = [ loadResults.reduce((sum, result) => sum + result.responseTime, 0)
         / loadResults.length;
-      console.log(`Average response time under load: ${avgResponseTime}ms`
+      console.warn(`Average response time under load: ${avgResponseTime}ms`
 
       // Average should still be well under 2 seconds
       expect(avgResponseTime).toBeLessThan(1500); // 1.5s average

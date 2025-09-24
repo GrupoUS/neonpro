@@ -922,7 +922,7 @@ export class EnhancedLGPDLifecycleService {
     record: DataProcessingRecord,
   ): Promise<void> {
     // In real implementation, this would send notification to patient/staff
-    console.log(
+    console.warn(
       `Retention notification: Record ${record.id} will expire on ${record.expirationDate}`,
     )
 
@@ -939,7 +939,7 @@ export class EnhancedLGPDLifecycleService {
     // Schedule anonymization tasks
     for (const schedule of withdrawalRecord.anonymizationSchedule) {
       // In real implementation, this would schedule background jobs
-      console.log(
+      console.warn(
         `Scheduled anonymization: ${schedule.dataCategory} on ${schedule.scheduledDate}`,
       )
     }
@@ -962,7 +962,7 @@ export class EnhancedLGPDLifecycleService {
     details: Record<string, any>,
   ): Promise<void> {
     // In real implementation, this would log to audit database
-    console.log(`Audit: ${action} for patient ${patientId}`, details)
+    console.warn(`Audit: ${action} for patient ${patientId}`, details)
   }
 }
 

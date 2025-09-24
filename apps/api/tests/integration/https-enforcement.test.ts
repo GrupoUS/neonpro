@@ -14,7 +14,7 @@ describe('HTTPS Enforcement - Security Test', () => {
     try {
       ap: p = [ (await import('../../src/app')).default;
     } catch (error) {
-      console.log('Expected failure: App not available during TDD phase')
+      console.warn('Expected failure: App not available during TDD phase')
     }
   }
 

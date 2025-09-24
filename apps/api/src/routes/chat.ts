@@ -179,7 +179,7 @@ app.post(
           console.warn('Audit DB insert failed', e)
         }
       } else {
-        console.log('AuditEvent', auditEvent)
+        console.warn('AuditEvent', auditEvent)
       }
       return c.json({ message: 'Please retry shortly' }, 429)
     }
@@ -187,7 +187,7 @@ app.post(
     // Consent + role gate
     const { ok, consentStatus } = checkConsentAndRole(c.req.raw)
     if (!ok && !question.toLowerCase().includes('mock')) {
-      console.log('AuditEvent', {
+      console.warn('AuditEvent', {
         eventId: crypto.randomUUID(),
         userId,
         clinicId,
@@ -217,7 +217,7 @@ app.post(
           console.warn('Audit DB insert failed', e)
         }
       } else {
-        console.log('AuditEvent', {
+        console.warn('AuditEvent', {
           eventId: crypto.randomUUID(),
           userId,
           clinicId,
@@ -267,7 +267,7 @@ app.post(
             console.warn('Audit DB insert failed', e)
           }
         } else {
-          console.log('AuditEvent', {
+          console.warn('AuditEvent', {
             eventId: crypto.randomUUID(),
             userId,
             clinicId,
@@ -351,7 +351,7 @@ app.post(
           console.warn('Audit DB insert failed', e)
         }
       } else {
-        console.log('AuditEvent', {
+        console.warn('AuditEvent', {
           eventId: crypto.randomUUID(),
           userId,
           clinicId,
@@ -386,7 +386,7 @@ app.post(
           console.warn('Audit DB insert failed', e)
         }
       } else {
-        console.log('AuditEvent', {
+        console.warn('AuditEvent', {
           eventId: crypto.randomUUID(),
           userId,
           clinicId,

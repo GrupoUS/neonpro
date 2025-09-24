@@ -414,7 +414,7 @@ export class HealthcareLogger {
     },
   ): Promise<void> {
     try {
-      console.info('Healthcare Operation Success:', {
+      console.warn('Healthcare Operation Success:', {
         timestamp: new Date().toISOString(),
         operation,
         resourceType,

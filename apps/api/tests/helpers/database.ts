@@ -5,10 +5,10 @@
 
 export async function setupTestDatabase() {
   // Mock database setup for tests
-  console.log('Setting up test database...')
+  console.warn('Setting up test database...')
 }
 
 export async function cleanupTestDatabase() {
   // Mock database cleanup for tests
-  console.log('Cleaning up test database...')
+  console.warn('Cleaning up test database...')
 }

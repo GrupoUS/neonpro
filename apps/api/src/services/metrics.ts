@@ -522,7 +522,7 @@ export class HealthcareMetricsService {
 
   private logMetricToConsole(metric: HealthcareMetric) {
     try {
-      console.log(
+      console.warn(
         JSON.stringify({
           type: 'healthcare_metrics',
           metric_type: metric.type,
@@ -548,7 +548,7 @@ export class HealthcareMetricsService {
 
   logMetric(event: Record<string, unknown>) {
     try {
-      console.log(JSON.stringify({ type: 'metrics', ...event }))
+      console.warn(JSON.stringify({ type: 'metrics', ...event }))
     } catch {
       // noop
     }
@@ -570,7 +570,7 @@ export function endTimerMs(t: Timer): number {
 
 export function logMetric(event: Record<string, unknown>) {
   try {
-    console.log(JSON.stringify({ type: 'metrics', ...event }))
+    console.warn(JSON.stringify({ type: 'metrics', ...event }))
   } catch {
     // noop
   }

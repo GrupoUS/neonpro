@@ -3,7 +3,7 @@
 // Minimal test runner to bypass vitest CLI issues
 import { JSDOM } from 'jsdom'
 
-console.log('🧪 Starting minimal test runner...')
+console.warn('🧪 Starting minimal test runner...')
 
 // Setup JSDOM environment
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
@@ -51,7 +51,7 @@ Object.defineProperty(global, 'URL', {
   configurable: true,
 })
 
-console.log('✅ DOM environment setup complete')
+console.warn('✅ DOM environment setup complete')
 
 // Mock React and testing library for basic component testing
 const React = {
@@ -139,15 +139,15 @@ const vi = {
   beforeEach: (callback) => callback(),
   afterEach: (callback) => callback(),
   describe: (name, callback) => {
-    console.log(`\n📋 ${name}`)
+    console.warn(`\n📋 ${name}`)
     callback()
   },
   it: (name, callback) => {
     try {
-      console.log(`  ✅ ${name}`)
+      console.warn(`  ✅ ${name}`)
       callback()
     } catch (error) {
-      console.log(`  ❌ ${name}: ${error.message}`)
+      console.warn(`  ❌ ${name}: ${error.message}`)
       throw error
     }
   },
@@ -173,7 +173,7 @@ const vi = {
 global.vi = vi
 
 // Import and run our test
-console.log('🔄 Loading test file...')
+console.warn('🔄 Loading test file...')
 
 try {
   // Simple test to verify our setup works
@@ -213,7 +213,7 @@ try {
     })
   })
 
-  console.log('\n🎉 All tests passed! DOM setup is working correctly.')
+  console.warn('\n🎉 All tests passed! DOM setup is working correctly.')
 } catch (error) {
   console.error('❌ Test failed:', error.message)
   process.exit(1)

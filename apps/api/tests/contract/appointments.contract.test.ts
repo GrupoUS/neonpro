@@ -301,7 +301,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         ip_address: '127.0.0.1',
       },
     }
-    console.log('👤 Patient result:', patientResult: patientId = [ patientResult.data?.id || patientResult.id;
+    console.warn('👤 Patient result:', patientResult: patientId = [ patientResult.data?.id || patientResult.id;
 
     const: doctorResult = [ await trpcClient.doctors.create.mutate({
       name: 'Dr. Carlos Alberto Medicina',
@@ -311,7 +311,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       telemedicine_license: true,
       cfm_verified: true,
     }
-    console.log('👨‍⚕️ Doctor result:', doctorResult: doctorId = [ doctorResult.data?.id || doctorResult.id;
+    console.warn('👨‍⚕️ Doctor result:', doctorResult: doctorId = [ doctorResult.data?.id || doctorResult.id;
   }
 
   afterEach(async () => {

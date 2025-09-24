@@ -19,7 +19,7 @@ export class AuthUtils {
     // Wait for successful login (redirect to dashboard)
     await this.page.waitForURL('/dashboard', { timeout: 10000 })
 
-    console.log(`✅ Successfully logged in as ${email}`)
+    console.warn(`✅ Successfully logged in as ${email}`)
   }
 
   async logout() {
@@ -29,7 +29,7 @@ export class AuthUtils {
     // Wait for logout to complete (redirect to login page)
     await this.page.waitForURL('/login', { timeout: 5000 })
 
-    console.log('✅ Successfully logged out')
+    console.warn('✅ Successfully logged out')
   }
 
   async register(userData: {
@@ -61,7 +61,7 @@ export class AuthUtils {
     // Wait for successful registration
     await this.page.waitForURL('/dashboard', { timeout: 10000 })
 
-    console.log(`✅ Successfully registered ${userData.name}`)
+    console.warn(`✅ Successfully registered ${userData.name}`)
   }
 
   async resetPassword(email: string) {
@@ -79,7 +79,7 @@ export class AuthUtils {
     // Wait for success message
     await this.page.waitForSelector('[data-testid="success-message"]', { timeout: 5000 })
 
-    console.log(`✅ Password reset email sent to ${email}`)
+    console.warn(`✅ Password reset email sent to ${email}`)
   }
 
   async isLoggedIn() {

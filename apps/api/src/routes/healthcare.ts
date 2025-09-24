@@ -49,7 +49,7 @@ const performanceMiddleware = createMiddleware<HealthcareEnv>(
     const metrics = c.get('performanceMetrics')
 
     // Log performance metrics for healthcare compliance
-    console.log(
+    console.warn(
       `Healthcare API Performance: ${c.req.method} ${c.req.path} - ${duration}ms, ${metrics.dbQueries} DB queries`,
     )
 

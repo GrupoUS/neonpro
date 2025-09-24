@@ -241,7 +241,7 @@ export function usePWA() {
       // Clear IndexedDB
       const request = indexedDB.deleteDatabase('NeonProOfflineDB')
       request.onsuccess = () => {
-        console.log('IndexedDB cleared successfully')
+        console.warn('IndexedDB cleared successfully')
         setState((prev) => ({ ...prev, offlineDataCount: 0 }))
       }
       request.onerror = () => {

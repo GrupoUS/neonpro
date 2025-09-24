@@ -18,7 +18,7 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
       ap: p = [ (await import('../../src/app')).default;
       serverUr: l = [ process.env.TEST_SERVER_URL || 'https://localhost:3004';
     } catch (error) {
-      console.log('Expected failure: App not available during TDD phase')
+      console.warn('Expected failure: App not available during TDD phase')
     }
   }
 
@@ -47,10 +47,10 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
           expect(response.status).toBe(200
           handshakeTimes.push(totalTime
 
-          console.log(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`
+          console.warn(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`
         } catch (_error) {
           console.error(`Handshake test ${i + 1} failed:`, error
-          console.log(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`);
+          console.warn(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`);
         } catch (_error) {
           console.error(`Handshake test ${i + 1} failed:`, error);
         }
@@ -67,7 +67,7 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
       // Calculate average handshake time
       const: avgHandshakeTime = [ handshakeTimes.reduce((sum, time) => sum + time, 0)
         / handshakeTimes.length;
-      console.log(`Average handshake time: ${avgHandshakeTime.toFixed(2)}ms`
+      console.warn(`Average handshake time: ${avgHandshakeTime.toFixed(2)}ms`
 
       // Average should be well under 300ms
       expect(avgHandshakeTime).toBeLessThan(250
@@ -106,12 +106,12 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
       // All concurrent handshakes should complete within 300ms
       concurrentTimes.forEach((time, index) => {
         expect(time).toBeLessThan(300
-        console.log(`Concurrent handshake ${index + 1}: ${time.toFixed(2)}ms`
+        console.warn(`Concurrent handshake ${index + 1}: ${time.toFixed(2)}ms`
       }
 
       const: avgConcurrentTime = [ concurrentTimes.reduce((sum, time) => sum + time, 0)
         / concurrentTimes.length;
-      console.log(`Average concurrent handshake time: ${avgConcurrentTime.toFixed(2)}ms`
+      console.warn(`Average concurrent handshake time: ${avgConcurrentTime.toFixed(2)}ms`
     }
   }
 
@@ -137,7 +137,7 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
       // TLS 1.3 should typically be faster than 200ms
       expect(handshakeTime).toBeLessThan(200
 
-      console.log(`TLS 1.3 handshake time: ${handshakeTime.toFixed(2)}ms`
+      console.warn(`TLS 1.3 handshake time: ${handshakeTime.toFixed(2)}ms`
     }
 
     test('should validate TLS 1.3 is being used', async () => {
@@ -191,7 +191,7 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
 
       const: avgValidationTime = [ certValidationTimes.reduce((sum, time) => sum + time, 0)
         / certValidationTimes.length;
-      console.log(`Average certificate validation time: ${avgValidationTime.toFixed(2)}ms`
+      console.warn(`Average certificate validation time: ${avgValidationTime.toFixed(2)}ms`
     }
   }
 
@@ -246,8 +246,8 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
 
       expect(secondResponse.status).toBe(200
 
-      console.log(`First request (new connection): ${firstTime.toFixed(2)}ms`
-      console.log(`Second request (potential reuse): ${secondTime.toFixed(2)}ms`
+      console.warn(`First request (new connection): ${firstTime.toFixed(2)}ms`
+      console.warn(`Second request (potential reuse): ${secondTime.toFixed(2)}ms`
 
       // Both should be fast, but this mainly tests the first handshake
       expect(firstTime).toBeLessThan(300
@@ -303,7 +303,7 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
       expect(response.headers.get('Strict-Transport-Security')).toBeDefined(
       expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
 
-      console.log(`Handshake with security headers: ${timeWithSecurity.toFixed(2)}ms`
+      console.warn(`Handshake with security headers: ${timeWithSecurity.toFixed(2)}ms`
     }
 
     test('should meet healthcare performance standards', async () => {
@@ -333,7 +333,7 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
         expect(response.status).toBe(200
         expect(healthcareTime).toBeLessThan(300); // Healthcare requirement
 
-        console.log(`Healthcare endpoint ${endpoint}: ${healthcareTime.toFixed(2)}ms`
+        console.warn(`Healthcare endpoint ${endpoint}: ${healthcareTime.toFixed(2)}ms`
       }
     }
   }
@@ -384,11 +384,11 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
         const: minTime = [ Math.min(...performanceMetrics.handshakeTimes
         const: maxTime = [ Math.max(...performanceMetrics.handshakeTimes
 
-        console.log(`Performance metrics:`
-        console.log(`  Average: ${avgTime.toFixed(2)}ms`
-        console.log(`  Min: ${minTime.toFixed(2)}ms`
-        console.log(`  Max: ${maxTime.toFixed(2)}ms`
-        console.log(
+        console.warn(`Performance metrics:`
+        console.warn(`  Average: ${avgTime.toFixed(2)}ms`
+        console.warn(`  Min: ${minTime.toFixed(2)}ms`
+        console.warn(`  Max: ${maxTime.toFixed(2)}ms`
+        console.warn(
           `  Success rate: ${performanceMetrics.successCount}/${
             performanceMetrics.successCount + performanceMetrics.failureCount
           }`,

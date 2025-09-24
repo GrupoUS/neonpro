@@ -224,7 +224,7 @@ describe('Build Compilation - TDD RED Phase', () => {
         .reduce((sum, _category) => sum + category.count, 0);
 
       expect(totalErrors).toBeGreaterThan(0);
-      console.log(`🔴 TDD RED PHASE: ${totalErrors} errors identified for fixing`);
+      console.warn(`🔴 TDD RED PHASE: ${totalErrors} errors identified for fixing`);
     });
   });
 });

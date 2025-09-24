@@ -164,7 +164,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async (c) => {
         )
         if (cacheEntry && cacheEntry.response) {
           cachedResponse = cacheEntry.response
-          console.log('Cache hit for AI _query:', {
+          console.warn('Cache hit for AI _query:', {
             sessionId,
             similarity: cacheEntry.similarity,
             originalCost: cacheEntry.originalCost,
@@ -296,7 +296,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async (c) => {
                 integrityHash: '',
               })
 
-              console.log('Cached AI response for future queries:', {
+              console.warn('Cached AI response for future queries:', {
                 sessionId,
                 promptLength: userPrompt.length,
                 responseLength: fullResponse.length,
@@ -318,7 +318,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async (c) => {
     const lastText = text
       || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '')
       || ''
-    console.log('AI Chat Interaction:', {
+    console.warn('AI Chat Interaction:', {
       timestamp: new Date().toISOString(),
       sessionId,
       clientId: clientId || 'anonymous',
@@ -441,7 +441,7 @@ app.post(
         ]
       }
 
-      console.log('Search Suggestions:', {
+      console.warn('Search Suggestions:', {
         timestamp: new Date().toISOString(),
         sessionId,
         _query: redactPII(query),

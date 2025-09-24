@@ -966,7 +966,7 @@ export class WhatsAppReminderService {
       }
 
       // Log bulk operation start
-      console.log(
+      console.warn(
         `Starting bulk reminder processing for ${reminders.length} reminders`,
       )
 
@@ -977,7 +977,7 @@ export class WhatsAppReminderService {
       const averageProcessingTimePerReminder = processingTime / reminders.length
 
       // Enhanced logging for monitoring
-      console.log(`Bulk reminder processing completed:`, {
+      console.warn(`Bulk reminder processing completed:`, {
         totalProcessed: reminders.length,
         successful: batchResult.success,
         failed: batchResult.failed,

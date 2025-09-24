@@ -60,7 +60,7 @@ function TreatmentPredictionPage() {
       onPredictionUpdate={async (prediction) => {
         try {
           // Store prediction in local state or send to backend
-          console.log('Treatment prediction updated:', prediction)
+          console.warn('Treatment prediction updated:', prediction)
           return prediction
         } catch (error) {
           console.error('Error updating prediction:', error)

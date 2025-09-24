@@ -183,7 +183,7 @@ export function validateTestEnvironment() {
  */
 export function skipIfNoTestEnv(description: string) {
   if (!validateTestEnvironment()) {
-    console.log(
+    console.warn(
       `⏭️  Skipping ${description} - test environment not configured`,
     )
     return true

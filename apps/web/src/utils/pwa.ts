@@ -181,7 +181,7 @@ export class PWAPushManager {
 
   async init(): Promise<void> {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      console.log('Push notifications not supported')
+      console.warn('Push notifications not supported')
       return
     }
 
@@ -198,7 +198,7 @@ export class PWAPushManager {
         ),
       })
 
-      console.log('Push notification subscription successful')
+      console.warn('Push notification subscription successful')
       return this.subscription
     } catch (error) {
       console.error('Failed to subscribe to push notifications:', error)
@@ -308,7 +308,7 @@ export class PWAOfflineSync {
     try {
       // Here you would make API calls to sync the data
       // This is a placeholder - implement actual API calls based on your backend
-      console.log(`Syncing ${item.type} item:`, item)
+      console.warn(`Syncing ${item.type} item:`, item)
 
       // Mark as synced
       await this.indexedDB.markAsSynced(item.id)

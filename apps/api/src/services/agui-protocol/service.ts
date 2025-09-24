@@ -668,7 +668,7 @@ export class AguiService extends EventEmitter {
   private async storeSession(session: AguiSession): Promise<void> {
     // This would store the session in your database
     // For now, it's a placeholder implementation
-    console.log('Storing session:', session.id)
+    console.warn('Storing session:', session.id)
   }
 
   /**
@@ -679,7 +679,7 @@ export class AguiService extends EventEmitter {
   ): Promise<AguiSession | null> {
     // This would retrieve the session from your database
     // For now, it's a placeholder implementation
-    console.log('Retrieving session:', sessionId)
+    console.warn('Retrieving session:', sessionId)
     return null
   }
 
@@ -689,7 +689,7 @@ export class AguiService extends EventEmitter {
   private async storeFeedback(feedback: any): Promise<void> {
     // This would store the feedback in your database
     // For now, it's a placeholder implementation
-    console.log('Storing feedback:', feedback)
+    console.warn('Storing feedback:', feedback)
   }
 
   /**

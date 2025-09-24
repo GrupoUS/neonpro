@@ -21,12 +21,12 @@ export class TempPatientDocumentService {
     documentId: string,
     _userId: string,
   ): Promise<PatientDocument | null> {
-    console.log('getDocument called with:', documentId, _userId)
+    console.warn('getDocument called with:', documentId, _userId)
     return null
   }
 
   async getFileContent(storagePath: string): Promise<ArrayBuffer> {
-    console.log('getFileContent called with:', storagePath)
+    console.warn('getFileContent called with:', storagePath)
     const encoder = new TextEncoder()
     return encoder.encode('Mock content').buffer
   }

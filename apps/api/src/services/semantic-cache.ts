@@ -272,7 +272,7 @@ export class SemanticCacheService {
         this.stats.cacheHits++
         this.stats.totalSavedCost += bestMatch.metadata.cost
 
-        console.log(
+        console.warn(
           `Cache hit! Similaridade: ${
             (bestSimilarity * 100).toFixed(
               2,
@@ -382,7 +382,7 @@ export class SemanticCacheService {
 
       this.stats.cacheSize = this.cache.size
 
-      console.log(
+      console.warn(
         `Entrada adicionada ao cache. ID: ${id}, Patient: ${metadata.patientId}, Tamanho: ${this.cache.size}`,
       )
       return id
@@ -436,7 +436,7 @@ export class SemanticCacheService {
     if (cleanedCount > 0) {
       this.stats.cacheSize = this.cache.size
       this.stats.lastCleanup = now
-      console.log(`Cache cleanup: ${cleanedCount} entradas removidas`)
+      console.warn(`Cache cleanup: ${cleanedCount} entradas removidas`)
     }
   }
 
@@ -454,7 +454,7 @@ export class SemanticCacheService {
 
     if (oldestEntry) {
       this.cache.delete(oldestEntry.id)
-      console.log(`Cache LRU eviction: entrada ${oldestEntry.id} removida`)
+      console.warn(`Cache LRU eviction: entrada ${oldestEntry.id} removida`)
     }
   }
 
@@ -734,7 +734,7 @@ export class SemanticCacheService {
     this.cache.clear()
     this.embeddingCache.clear()
     this.stats.cacheSize = 0
-    console.log('Cache semanticamente limpo')
+    console.warn('Cache semanticamente limpo')
   }
 
   /**

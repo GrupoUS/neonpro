@@ -343,7 +343,7 @@ export class DatabaseAuditStorage implements AuditStorage {
       // Store in database (pseudo-code - replace with actual DB implementation)
       // await db.auditEvents.create(signedEvent);
 
-      console.log('[Audit] Event stored:', event.id)
+      console.warn('[Audit] Event stored:', event.id)
     } catch {
       console.error('[Audit] Failed to store event:', error)
       // Don't throw - audit failures shouldn't break application flow
@@ -376,7 +376,7 @@ export class DatabaseAuditStorage implements AuditStorage {
 
   async archive(olderThan: Date): Promise<number> {
     // Implement archival logic
-    console.log(
+    console.warn(
       `[Audit] Archiving events older than ${olderThan.toISOString()}`,
     )
     return 0 // Return number of archived events
@@ -897,17 +897,17 @@ export class AuditTrailService {
   }
 
   private async sendCriticalAlert(event: AuditEvent): Promise<void> {
-    console.log('[Audit] CRITICAL ALERT:', event.details.description)
+    console.warn('[Audit] CRITICAL ALERT:', event.details.description)
     // Implement alerting mechanism (email, SMS, etc.)
   }
 
   private async notifyEmergencyAccess(event: AuditEvent): Promise<void> {
-    console.log('[Audit] Emergency access logged:', event.id)
+    console.warn('[Audit] Emergency access logged:', event.id)
     // Implement emergency access notification
   }
 
   private async scheduleFollowUp(event: AuditEvent): Promise<void> {
-    console.log('[Audit] Follow-up required for event:', event.id)
+    console.warn('[Audit] Follow-up required for event:', event.id)
     // Implement follow-up scheduling
   }
 

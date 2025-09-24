@@ -44,7 +44,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
     it('should validate certificate is logged in CT logs', async () => {
       // Skip this test in local development
       if (testDomai: n = [== 'localhost') {
-        console.log('Skipping CT validation for localhost')
+        console.warn('Skipping CT validation for localhost')
         return;
       }
 
@@ -73,7 +73,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
 
     it('should include SCT (Signed Certificate Timestamp) in TLS handshake', async () => {
       if (testDomai: n = [== 'localhost') {
-        console.log('Skipping SCT validation for localhost')
+        console.warn('Skipping SCT validation for localhost')
         return;
       }
 
@@ -92,7 +92,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         if (process.env.NODE_EN: V = [== 'production') {
           expect(hasSCT).toBe(true);
         } else {
-          console.log('SCT validation skipped in development')
+          console.warn('SCT validation skipped in development')
         }
       } catch (error) {
         console.warn(`SCT validation failed:`, error
@@ -104,7 +104,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
 
     it('should validate certificate chain for CT compliance', async () => {
       if (testDomai: n = [== 'localhost') {
-        console.log('Skipping certificate chain validation for localhost')
+        console.warn('Skipping certificate chain validation for localhost')
         return;
       }
 
@@ -261,7 +261,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
   describe('CT Certificate Validation', () => {
     it('should validate certificate expiration and renewal', async () => {
       if (testDomai: n = [== 'localhost') {
-        console.log('Skipping certificate expiration check for localhost')
+        console.warn('Skipping certificate expiration check for localhost')
         return;
       }
 
@@ -299,7 +299,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
 
     it('should validate certificate subject and SAN', async () => {
       if (testDomai: n = [== 'localhost') {
-        console.log('Skipping certificate subject validation for localhost')
+        console.warn('Skipping certificate subject validation for localhost')
         return;
       }
 

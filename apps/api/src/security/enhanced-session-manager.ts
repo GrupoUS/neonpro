@@ -770,7 +770,7 @@ export class EnhancedSessionManager {
     this.cleanupInterval = setInterval(() => {
       const cleanedCount = this.cleanExpiredSessions()
       if (cleanedCount > 0) {
-        console.log(
+        console.warn(
           `[EnhancedSessionManager] Cleaned ${cleanedCount} expired sessions`,
         )
       }

@@ -107,7 +107,7 @@ export async function initializePerformanceOptimization(config: {
   // Warm up cache on startup
   await optimizer.warmUpCache()
 
-  console.log('[Performance] Optimization stack initialized successfully')
+  console.warn('[Performance] Optimization stack initialized successfully')
 
   return {
     optimizer,

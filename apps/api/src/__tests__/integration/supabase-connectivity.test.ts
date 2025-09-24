@@ -43,7 +43,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
 
     it(('should initialize admin client successfully',() => {
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        console.log(
+        console.warn(
           '⏭️  Skipping admin client test - SUPABASE_SERVICE_ROLE_KEY not set',
         
         return;
@@ -56,7 +56,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
     it('should have different keys for anonymous and admin clients',() => {
     it(('should have different keys for anonymous and admin clients',() => {
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        console.log(
+        console.warn(
           '⏭️  Skipping key comparison test - SUPABASE_SERVICE_ROLE_KEY not set',
         
         return;
@@ -69,7 +69,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
   describe(('Database Connectivity',() => {
     it(('should connect to database and retrieve basic info',async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-        console.log(
+        console.warn(
           '⏭️  Skipping connectivity test - Supabase credentials not set',
         
         return;
@@ -111,7 +111,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
   describe(('RLS Policy Enforcement',() => {
     it('should enforce RLS on protected tables (anonymous client)', async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-        console.log('⏭️  Skipping RLS test - Supabase credentials not set')
+        console.warn('⏭️  Skipping RLS test - Supabase credentials not set')
         return;
       }
 
@@ -131,7 +131,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
         // If no error, data should be empty or limited due to RLS
         expect(Array.isArray(data)).toBe(true);
         // We can't assert data is empty because there might be public data
-        console.log(
+        console.warn(
           `📊 Anonymous query returned ${
             data?.length || 0
           } records (RLS may be allowing some access)`,
@@ -141,7 +141,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
     it('should allow service role to bypass RLS when appropriate',async () => {
     it(('should allow service role to bypass RLS when appropriate',async () => {
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-        console.log(
+        console.warn(
           '⏭️  Skipping service role test - SUPABASE_SERVICE_ROLE_KEY not set',
         
         return;
@@ -160,7 +160,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
       } else {
         expect(data).toBeDefined(
         expect(Array.isArray(data)).toBe(true);
-        console.log(
+        console.warn(
           `📊 Service role query returned ${data?.length || 0} table names`,
         
       }
@@ -188,7 +188,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
 
     it(('should handle patient queries with RLS context',async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-        console.log(
+        console.warn(
           '⏭️  Skipping RLS query builder test - Supabase credentials not set',
         
         return;
@@ -206,14 +206,14 @@ describe(('Supabase Connectivity & RLS Tests',() => {
         } else {
           // If successful, data should be an array
           expect(Array.isArray(data)).toBe(true);
-          console.log(
+          console.warn(
             `📊 RLS query builder returned ${data?.length || 0} patient records`,
           
         }
       } catch (error) {
         // Query builder might throw errors for invalid user context
         expect(error).toBeDefined(
-        console.log(
+        console.warn(
           `📊 RLS query builder threw expected error: ${(error as Error).message}`,
         
       }
@@ -232,7 +232,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
     it('should handle patient access checks',async () => {
     it(('should handle patient access checks',async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-        console.log(
+        console.warn(
           '⏭️  Skipping healthcare RLS test - Supabase credentials not set',
         
         return;
@@ -246,10 +246,10 @@ describe(('Supabase Connectivity & RLS Tests',() => {
           'test-patient-id',
         
         expect(typeof canAccess).toBe('boolean')
-        console.log(`📊 Patient access check result: ${canAccess}`
+        console.warn(`📊 Patient access check result: ${canAccess}`
       } catch (error) {
         // Expected if RLS is properly configured
-        console.log(
+        console.warn(
           `📊 Patient access check failed as expected: ${(error as Error).message}`,
         
       }
@@ -277,7 +277,7 @@ describe(('Supabase Connectivity & RLS Tests',() => {
     it('should handle malformed queries gracefully',async () => {
     it(('should handle malformed queries gracefully',async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
-        console.log(
+        console.warn(
           '⏭️  Skipping malformed query test - Supabase credentials not set',
         
         return;

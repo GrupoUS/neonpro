@@ -63,7 +63,7 @@ export class EncryptionManager {
       // Combine IV + encrypted data and encode as base64
       const combined = Buffer.concat([iv, Buffer.from(encrypted, 'binary')])
       return combined.toString('base64')
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
         `Encryption failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
       )
@@ -98,7 +98,7 @@ export class EncryptionManager {
       decrypted += decipher.final('utf8')
 
       return decrypted
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Invalid encrypted data')
     }
   }
@@ -131,7 +131,7 @@ export class EncryptionManager {
       decrypted += decipher.final('utf8')
 
       return decrypted
-    } catch (error) {
+    } catch (_error) {
       throw new Error('Invalid encrypted data')
     }
   }
@@ -183,7 +183,7 @@ export class EncryptionManager {
             result[field] as string,
             key,
           )
-        } catch (error) {
+        } catch (_error) {
           // Field might not be encrypted, leave as is
           void error
           // Note: Decryption failures are expected for non-encrypted fields

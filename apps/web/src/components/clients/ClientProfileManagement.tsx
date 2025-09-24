@@ -371,7 +371,7 @@ export const ClientProfileManagement: React.FC = () => {
   const onSubmit = async (data: ClientProfileFormData) => {
     try {
       // Simulated API call - replace with actual tRPC mutation
-      console.log('Updating client profile:', data)
+      console.warn('Updating client profile:', data)
 
       // Update local state
       if (client) {
@@ -413,7 +413,7 @@ export const ClientProfileManagement: React.FC = () => {
       }, 200)
 
       // Actual upload logic would go here
-      console.log('Uploading file:', file.name)
+      console.warn('Uploading file:', file.name)
     } catch (error) {
       console.error('Error uploading file:', error)
       setIsUploading(false)

@@ -4,11 +4,11 @@ const testInputs = [undefined, null, '', '123', '1234567890', '12345678901', '11
 
 testInputs.forEach((input) => {
   try {
-    console.log(`\nInput: ${input} (${typeof input})`)
+    console.warn(`\nInput: ${input} (${typeof input})`)
     const result = validateCPF(input as string)
-    console.log(`Result: ${result}`)
+    console.warn(`Result: ${result}`)
   } catch (e) {
-    console.log(`Error for input "${input}": ${e.message}`)
-    console.log(`Stack: ${e.stack}`)
+    console.warn(`Error for input "${input}": ${e.message}`)
+    console.warn(`Stack: ${e.stack}`)
   }
 })

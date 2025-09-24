@@ -104,7 +104,7 @@ beforeAll(() => {
     }
   }
 
-  console.log('🚀 Performance test setup complete')
+  console.warn('🚀 Performance test setup complete')
 })
 
 afterAll(() => {
@@ -119,7 +119,7 @@ afterAll(() => {
     websocketLatencies: [],
   }
 
-  console.log('✅ Performance test cleanup complete')
+  console.warn('✅ Performance test cleanup complete')
 })
 
 beforeEach(() => {
@@ -157,7 +157,7 @@ function collectPerformanceMetrics() {
       / performanceMetrics.memoryUsage.length
     const peakMemory = Math.max(...performanceMetrics.memoryUsage)
 
-    console.log(
+    console.warn(
       `📊 Memory Usage - Avg: ${avgMemory.toFixed(2)}MB, Peak: ${peakMemory.toFixed(2)}MB`,
     )
   }
@@ -177,7 +177,7 @@ function generatePerformanceReport() {
     regressions: detectRegressions(),
   }
 
-  console.log('📈 Performance Report:', JSON.stringify(report, null, 2))
+  console.warn('📈 Performance Report:', JSON.stringify(report, null, 2))
 
   // Store report for CI/CD
   if (typeof process !== 'undefined' && process.env) {
@@ -193,7 +193,7 @@ function generatePerformanceReport() {
     const reportFile = path.join(reportDir, `performance-report-${Date.now()}.json`)
     fs.writeFileSync(reportFile, JSON.stringify(report, null, 2))
 
-    console.log(`📄 Performance report saved to: ${reportFile}`)
+    console.warn(`📄 Performance report saved to: ${reportFile}`)
   }
 }
 
@@ -320,4 +320,4 @@ expect.extend({
   },
 })
 
-console.log('🔧 Performance test helpers initialized')
+console.warn('🔧 Performance test helpers initialized')

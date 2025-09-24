@@ -102,7 +102,7 @@ export const pwaOfflineSync = {
     const offlineData = await pwaIndexedDB.getOfflineData()
     for (const item of offlineData) {
       try {
-        console.log('Syncing offline action:', item)
+        console.warn('Syncing offline action:', item)
         const db = await getDB()
         const tx = db.transaction(OFFLINE_STORE, 'readwrite')
         const store = tx.objectStore(OFFLINE_STORE)

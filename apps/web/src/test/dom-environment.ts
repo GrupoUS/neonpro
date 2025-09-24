@@ -1,7 +1,7 @@
 // DOM environment setup for tests
 import { JSDOM } from 'jsdom'
 
-console.log('🔧 DOM environment setup starting...')
+console.warn('🔧 DOM environment setup starting...')
 
 // Initialize DOM environment
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
@@ -11,11 +11,11 @@ const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
   runScripts: 'dangerously',
 })
 
-console.log('🔧 JSDOM created successfully')
+console.warn('🔧 JSDOM created successfully')
 
 // Assign to global scope
 if (typeof global !== 'undefined') {
-  console.log('🔧 Setting up global scope...')
+  console.warn('🔧 Setting up global scope...')
   global.document = dom.window.document
   global.window = dom.window
   global.navigator = dom.window.navigator
@@ -25,12 +25,12 @@ if (typeof global !== 'undefined') {
   global.URLSearchParams = dom.window.URLSearchParams
   global.localStorage = dom.window.localStorage
   global.sessionStorage = dom.window.sessionStorage
-  console.log('🔧 Global scope setup complete')
+  console.warn('🔧 Global scope setup complete')
 }
 
 // Also assign to globalThis
 if (typeof globalThis !== 'undefined') {
-  console.log('🔧 Setting up globalThis scope...')
+  console.warn('🔧 Setting up globalThis scope...')
   globalThis.document = dom.window.document
   globalThis.window = dom.window
   globalThis.navigator = dom.window.navigator
@@ -39,9 +39,9 @@ if (typeof globalThis !== 'undefined') {
   globalThis.URL = dom.window.URL
   globalThis.localStorage = dom.window.localStorage
   globalThis.sessionStorage = dom.window.sessionStorage
-  console.log('🔧 globalThis scope setup complete')
+  console.warn('🔧 globalThis scope setup complete')
 }
 
-console.log('🔧 DOM environment setup complete')
+console.warn('🔧 DOM environment setup complete')
 
 export { dom }

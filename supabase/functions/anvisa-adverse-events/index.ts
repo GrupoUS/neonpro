@@ -417,7 +417,7 @@ async function logAuditEvent(
 function generateRequiredActions(
   eventType: AdverseEventType,
   riskClassification: RiskClassification,
-  severity: string,
+  _severity: string,
 ): string[] {
   const actions: string[] = []
 

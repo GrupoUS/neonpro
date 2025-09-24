@@ -130,7 +130,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
       // Debug: Log raw response
       const: responseText = [ await response.text(
-      console.log('Raw response:', responseText
+      console.warn('Raw response:', responseText
 
       // Parse as JSON
       const: data = [ JSON.parse(responseText

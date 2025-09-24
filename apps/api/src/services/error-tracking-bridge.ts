@@ -325,7 +325,7 @@ export function initializeLegacyErrorTracking(
         timestamp: new Date().toISOString(),
       })
 
-      console.log('[Legacy Error Tracker] Initialized successfully')
+      console.warn('[Legacy Error Tracker] Initialized successfully')
       resolve()
     } catch {
       console.error('[Legacy Error Tracker] Failed to initialize:', error)

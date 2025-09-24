@@ -12,7 +12,7 @@ const CHECK_INTERVAL = process.env.CERT_CHECK_INTERVAL || 6 * 60 * 60 * 1000 // 
 const RUN_ONCE = process.argv.includes('--once')
 
 async function runCertificateCheck() {
-  console.log(
+  console.warn(
     `[${new Date().toISOString()}] Starting certificate monitoring check`,
   )
 
@@ -23,15 +23,15 @@ async function runCertificateCheck() {
     // Get health status
     const healthStatus = await certificateMonitor.getHealthStatus()
 
-    console.log(`[${new Date().toISOString()}] Certificate check completed:`)
-    console.log(`  Overall Status: ${healthStatus.status}`)
-    console.log(`  Certificates Checked: ${healthStatus.certificates.length}`)
+    console.warn(`[${new Date().toISOString()}] Certificate check completed:`)
+    console.warn(`  Overall Status: ${healthStatus.status}`)
+    console.warn(`  Certificates Checked: ${healthStatus.certificates.length}`)
 
     healthStatus.certificates.forEach((cert) => {
       const daysText = cert.daysRemaining !== undefined
         ? ` (${cert.daysRemaining} days remaining)`
         : ''
-      console.log(`    ${cert.domain}: ${cert.status}${daysText}`)
+      console.warn(`    ${cert.domain}: ${cert.status}${daysText}`)
     })
 
     // Exit with appropriate code for cron monitoring
@@ -57,10 +57,10 @@ async function startMonitoring() {
     await runCertificateCheck()
   } else {
     // Run continuously (for daemon mode)
-    console.log(
+    console.warn(
       `[${new Date().toISOString()}] Starting certificate monitoring daemon`,
     )
-    console.log(`Check interval: ${CHECK_INTERVAL / 1000 / 60} minutes`)
+    console.warn(`Check interval: ${CHECK_INTERVAL / 1000 / 60} minutes`)
 
     // Run initial check
     await runCertificateCheck()
@@ -79,14 +79,14 @@ async function startMonitoring() {
 
     // Keep the process running
     process.on('SIGTERM', () => {
-      console.log(
+      console.warn(
         `[${new Date().toISOString()}] Received SIGTERM, shutting down gracefully`,
       )
       process.exit(0)
     })
 
     process.on('SIGINT', () => {
-      console.log(
+      console.warn(
         `[${new Date().toISOString()}] Received SIGINT, shutting down gracefully`,
       )
       process.exit(0)

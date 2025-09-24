@@ -1,7 +1,7 @@
 import { chromium, FullConfig } from '@playwright/test'
 
 async function globalSetup(_config: FullConfig) {
-  console.log('🚀 Starting global E2E test setup')
+  console.warn('🚀 Starting global E2E test setup')
 
   // Create a browser instance for setup
   const browser = await chromium.launch()
@@ -18,7 +18,7 @@ async function globalSetup(_config: FullConfig) {
     // Clear any existing test data
     await clearTestData()
 
-    console.log('✅ Global E2E test setup completed')
+    console.warn('✅ Global E2E test setup completed')
   } catch (error) {
     console.error('❌ Global E2E test setup failed:', error)
     throw error
@@ -54,14 +54,14 @@ async function setupTestData() {
   // Store test users in environment for use in tests
   process.env['TEST_USERS'] = JSON.stringify(testUsers)
 
-  console.log('📊 Test data setup completed')
+  console.warn('📊 Test data setup completed')
 }
 
 async function clearTestData() {
   // Clear any existing test data from the database
   // This would typically make API calls to clean up test data
 
-  console.log('🧹 Test data cleanup completed')
+  console.warn('🧹 Test data cleanup completed')
 }
 
 export default globalSetup

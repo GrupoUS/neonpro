@@ -375,7 +375,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
 
       // Should fail initially - multiple security logic issues
       expect(totalIssues).toBeGreaterThan(0);
-      console.log(`🔴 Security Logic Issues: ${totalIssues} identified`);
+      console.warn(`🔴 Security Logic Issues: ${totalIssues} identified`);
     });
 
     it("should document security logic error patterns for fixing", () => {
@@ -438,7 +438,7 @@ describe("Security Logic Validation - TDD RED Phase", () => {
       expect(criticalFailingTest.error).toBe("expected true to be false");
       expect(criticalFailingTest.priority).toBe("high");
 
-      console.log(
+      console.warn(
         `🚨 Critical Failing Test: ${criticalFailingTest.file} - ${criticalFailingTest.test}`,
       );
     });

@@ -50,11 +50,11 @@ export class ReminderScheduler {
    */
   async startScheduler(intervalMinutes = 5): Promise<void> {
     if (this.isRunning) {
-      console.log('Reminder scheduler already running')
+      console.warn('Reminder scheduler already running')
       return
     }
 
-    console.log(
+    console.warn(
       `Starting automated reminder scheduler (${intervalMinutes}min intervals)`,
     )
     this.isRunning = true
@@ -77,7 +77,7 @@ export class ReminderScheduler {
    * Stop the automated reminder scheduler
    */
   stopScheduler(): void {
-    console.log('Stopping automated reminder scheduler')
+    console.warn('Stopping automated reminder scheduler')
     this.isRunning = false
 
     if (this.schedulerInterval) {
@@ -102,7 +102,7 @@ export class ReminderScheduler {
     let skipped = 0
 
     try {
-      console.log('Processing scheduled reminders...')
+      console.warn('Processing scheduled reminders...')
 
       // Get pending reminders that are due
       const { data: scheduledReminders, error } = await this.supabase
@@ -270,7 +270,7 @@ export class ReminderScheduler {
       }
 
       const processingTime = Date.now() - startTime
-      console.log(
+      console.warn(
         `Reminder processing completed: ${processed} processed, ${sent} sent, ${failed} failed, ${skipped} skipped (${processingTime}ms)`,
       )
 
@@ -324,7 +324,7 @@ export class ReminderScheduler {
         .eq('is_active', true)
 
       if (schedulesError || !schedules || schedules.length === 0) {
-        console.log(
+        console.warn(
           `No active reminder schedules found for clinic ${appointment.clinic_id}`,
         )
         return { scheduled: 0, reminders: [] }
@@ -368,7 +368,7 @@ export class ReminderScheduler {
         }
       }
 
-      console.log(
+      console.warn(
         `Scheduled ${scheduledReminders.length} reminders for appointment ${appointmentId}`,
       )
 
@@ -402,7 +402,7 @@ export class ReminderScheduler {
       }
 
       const cancelledCount = data?.length || 0
-      console.log(
+      console.warn(
         `Cancelled ${cancelledCount} scheduled reminders for appointment ${appointmentId}`,
       )
 

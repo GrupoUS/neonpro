@@ -393,7 +393,7 @@ app.post(
           ? messages[messages.length - 1]?.content
           : '')
         || ''
-      console.log('Enhanced AI Chat Interaction:', {
+      console.warn('Enhanced AI Chat Interaction:', {
         timestamp: new Date().toISOString(),
         sessionId,
         clientId: clientId || 'anonymous',

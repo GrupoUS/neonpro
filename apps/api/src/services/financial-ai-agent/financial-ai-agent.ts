@@ -186,7 +186,7 @@ export class FinancialAIAgent {
   private initializePredictiveModels(): void {
     // Initialize ML models for predictions
     // In a real implementation, this would load trained models
-    console.log('Initializing predictive models for financial analytics...')
+    console.warn('Initializing predictive models for financial analytics...')
   }
 
   /**
@@ -337,7 +337,7 @@ export class FinancialAIAgent {
     suggestion: AIBillingOptimization['suggestions'][0],
   ): Promise<void> {
     // In a real implementation, this would apply the optimization
-    console.log(`Applying optimization: ${suggestion.description}`)
+    console.warn(`Applying optimization: ${suggestion.description}`)
   }
 
   /**
@@ -435,7 +435,7 @@ export class FinancialAIAgent {
    * Send anomaly alert notification
    */
   private async sendAnomalyAlert(anomaly: AnomalyDetection): Promise<void> {
-    console.log('Anomaly Alert:', anomaly)
+    console.warn('Anomaly Alert:', anomaly)
     // In real implementation, would send email, SMS, or in-app notification
   }
 
@@ -443,7 +443,7 @@ export class FinancialAIAgent {
    * Send fraud alert notification
    */
   private async sendFraudAlert(fraud: FraudDetectionAlert): Promise<void> {
-    console.log('Fraud Alert:', fraud)
+    console.warn('Fraud Alert:', fraud)
     // In real implementation, would send email, SMS, or in-app notification
   }
 

@@ -405,7 +405,7 @@ export class EnhancedQueryCacheService {
 
       // Log invalidation event
       if (options.reason) {
-        console.log('[Query Cache] Cache invalidation:', {
+        console.warn('[Query Cache] Cache invalidation:', {
           pattern,
           reason: options.reason,
           _userId: options._userId,

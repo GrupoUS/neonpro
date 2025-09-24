@@ -54,7 +54,7 @@ export * from '@testing-library/react'
 // Global test setup
 beforeAll(() => {
   // Setup global test configurations
-  console.log('🧪 Test environment setup complete')
+  console.warn('🧪 Test environment setup complete')
 
   // Mock window.matchMedia
   Object.defineProperty(window, 'matchMedia', {
@@ -98,7 +98,7 @@ beforeAll(() => {
 
 afterAll(() => {
   // Cleanup global configurations
-  console.log('🧹 Test environment cleanup complete')
+  console.warn('🧹 Test environment cleanup complete')
 })
 
 beforeEach(() => {
@@ -198,4 +198,4 @@ expect.extend({
   },
 })
 
-console.log('🔧 Test utilities initialized')
+console.warn('🔧 Test utilities initialized')

@@ -698,7 +698,7 @@ export class EnhancedPerformanceOptimizationService {
         includePatientDetails: false,
       })
 
-      console.log(`Cache warming completed for clinic ${clinicId}`)
+      console.warn(`Cache warming completed for clinic ${clinicId}`)
     } catch {
       console.error('Cache warming failed:', error)
     }

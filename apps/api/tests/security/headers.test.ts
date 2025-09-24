@@ -208,7 +208,7 @@ describe('Healthcare Security Headers', () => {
         }
       } catch (error) {
         // Endpoint might not exist or be protected, which is acceptable
-        console.log(
+        console.warn(
           'Patient endpoint test skipped - endpoint may not be accessible',
         
       }
@@ -312,7 +312,7 @@ describe('Healthcare Security Headers', () => {
         }
       } catch (error) {
         // Endpoint might require authentication, which is acceptable
-        console.log(
+        console.warn(
           'Security status endpoint test skipped - requires authentication',
         
       }
@@ -355,7 +355,7 @@ describe('Healthcare Security Headers', () => {
         expect(hsts).toBeDefined(
       } else {
         // Development may have more relaxed policies for debugging
-        console.log(
+        console.warn(
           'Development environment - some security headers may be relaxed',
         
       }
@@ -455,7 +455,7 @@ describe('Security Headers Integration', () => {
         }
       } catch (error) {
         // Some endpoints might not exist or require auth
-        console.log(`Endpoint test skipped: ${error}`
+        console.warn(`Endpoint test skipped: ${error}`
       }
     }
   }

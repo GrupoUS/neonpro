@@ -378,7 +378,7 @@ export class DynamicConnectionPoolService {
       )
       this.hourlyScalingEvents++
 
-      console.log(
+      console.warn(
         `[Dynamic Pool] Scaled up: ${oldSize} -> ${newSize} (${reason})`,
       )
 
@@ -451,7 +451,7 @@ export class DynamicConnectionPoolService {
         new Date(Date.now() + this.config.scalingCooldownPeriod),
       )
 
-      console.log(
+      console.warn(
         `[Dynamic Pool] Scaled down: ${oldSize} -> ${newSize} (${reason})`,
       )
     } catch {
@@ -542,7 +542,7 @@ export class DynamicConnectionPoolService {
    */
   async enableEmergencyMode(reason: string): Promise<void> {
     this.emergencyMode = true
-    console.log(`[Dynamic Pool] Emergency mode activated: ${reason}`)
+    console.warn(`[Dynamic Pool] Emergency mode activated: ${reason}`)
 
     // Scale to maximum capacity
     await this.scaleUp('Emergency mode activation', true)
@@ -560,7 +560,7 @@ export class DynamicConnectionPoolService {
 
   async disableEmergencyMode(): Promise<void> {
     this.emergencyMode = false
-    console.log('[Dynamic Pool] Emergency mode deactivated')
+    console.warn('[Dynamic Pool] Emergency mode deactivated')
 
     // Gradually scale back to normal
     setTimeout(async () => {
@@ -876,7 +876,7 @@ export class DynamicConnectionPoolService {
     this.alertCallbacks.forEach((callback) => callback(alert))
 
     // Log alert
-    console.log(`[Dynamic Pool] Alert: ${alert.type} - ${alert.message}`)
+    console.warn(`[Dynamic Pool] Alert: ${alert.type} - ${alert.message}`)
   }
 
   // Public API methods

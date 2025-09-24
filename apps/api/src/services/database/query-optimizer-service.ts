@@ -420,7 +420,7 @@ export class QueryOptimizerService {
     try {
       const plan = await this.getQueryPlan(query)
 
-      console.log('[QueryOptimizer] Optimization recommendations:', {
+      console.warn('[QueryOptimizer] Optimization recommendations:', {
         query: this.sanitizeQuery(query),
         executionTimeMs: executionTime,
         estimatedCost: plan.estimatedCost,

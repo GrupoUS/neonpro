@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest'
 
 test('debug environment', () => {
-  console.log('Global objects:', {
+  console.warn('Global objects:', {
     document: typeof document !== 'undefined' ? 'document exists' : 'document undefined',
     window: typeof window !== 'undefined' ? 'window exists' : 'window undefined',
     global: typeof global !== 'undefined' ? 'global exists' : 'global undefined',

@@ -410,7 +410,7 @@ function createRLSEnforcedPrisma(
 
                 // Log RLS enforcement for audit
                 if (process.env.NODE_ENV === 'development') {
-                  console.log(`RLS: ${model}.${operation}`, {
+                  console.warn(`RLS: ${model}.${operation}`, {
                     originalWhere: queryArgs?.where,
                     rlsWhere: rlsResult.where,
                     user: rlsContext.userId,

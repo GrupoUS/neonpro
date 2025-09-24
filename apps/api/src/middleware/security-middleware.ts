@@ -265,7 +265,7 @@ export const securityLoggingMiddleware = async (c: Context, next: Next) => {
 
     // Log security-relevant information
     if (status >= 400 || c.req.path.startsWith('/api/auth')) {
-      console.log({
+      console.warn({
         timestamp: new Date().toISOString(),
         method: c.req.method,
         path: c.req.path,
@@ -329,7 +329,7 @@ export const healthcareDataProtectionMiddleware = async (
     c.header('X-LGPD-Compliant', 'true')
 
     // Log healthcare data access (compliance)
-    console.log({
+    console.warn({
       timestamp: new Date().toISOString(),
       eventType: 'HEALTHCARE_DATA_ACCESS',
       path: c.req.path,

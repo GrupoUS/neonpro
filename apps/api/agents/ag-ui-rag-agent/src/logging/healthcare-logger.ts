@@ -138,7 +138,7 @@ export class HealthcareLogger {
 
     const sanitizedMetadata = this.sanitizeData(metadata)
 
-    console.log(`[INFO] ${message}`, {
+    console.warn(`[INFO] ${message}`, {
       ...sanitizedMetadata,
       timestamp: new Date().toISOString(),
       component: 'healthcare-logger',
@@ -205,7 +205,7 @@ export class HealthcareLogger {
 
       const sanitizedMetadata = this.sanitizeData(metadata)
 
-      console.debug(`[DEBUG] ${message}`, {
+      console.warn(`[DEBUG] ${message}`, {
         ...sanitizedMetadata,
         timestamp: new Date().toISOString(),
         component: 'healthcare-logger',
@@ -223,7 +223,7 @@ export class HealthcareLogger {
 
     const sanitizedEvent = this.sanitizeData(event)
 
-    console.log(`[AUDIT] ${event.action}`, {
+    console.warn(`[AUDIT] ${event.action}`, {
       ...sanitizedEvent,
       component: 'healthcare-logger',
       level: 'audit',

@@ -911,7 +911,7 @@ export class AgentPermissionService {
           },
         )
         .subscribe((status) => {
-          console.log('Real-time permission invalidation status:', status)
+          console.warn('Real-time permission invalidation status:', status)
         }) // Store channel for cleanup
       ;(this as any).realtimeChannel = channel
     } catch {
@@ -1001,7 +1001,7 @@ export class AgentPermissionService {
    * Log cache invalidation events for audit
    */
   private logCacheInvalidation(reason: string, target: string): void {
-    console.log(
+    console.warn(
       `Cache invalidated - Reason: ${reason}, Target: ${target}, Version: ${this.cacheVersion}`,
     )
   }
@@ -1028,6 +1028,6 @@ export class AgentPermissionService {
    */
   setFailSecureMode(enabled: boolean): void {
     this.failSecureMode = enabled
-    console.log(`Fail-secure mode ${enabled ? 'enabled' : 'disabled'}`)
+    console.warn(`Fail-secure mode ${enabled ? 'enabled' : 'disabled'}`)
   }
 }

@@ -569,11 +569,11 @@ export function expectPerformanceThreshold(
   const thresholds = PERFORMANCE_THRESHOLDS.RENDER_TIME
 
   if (actual <= thresholds.FAST) {
-    console.log(`✅ ${context}: ${actual}ms (Fast)`)
+    console.warn(`✅ ${context}: ${actual}ms (Fast)`)
   } else if (actual <= thresholds.ACCEPTABLE) {
-    console.log(`⚠️ ${context}: ${actual}ms (Acceptable)`)
+    console.warn(`⚠️ ${context}: ${actual}ms (Acceptable)`)
   } else if (actual <= thresholds.SLOW) {
-    console.log(`🐌 ${context}: ${actual}ms (Slow)`)
+    console.warn(`🐌 ${context}: ${actual}ms (Slow)`)
   } else {
     console.error(`❌ ${context}: ${actual}ms (Too slow)`)
   }

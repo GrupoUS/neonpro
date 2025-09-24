@@ -232,10 +232,10 @@ class StructuredLogger {
     // Output to appropriate console method based on level
     switch (level) {
       case LogLevel.DEBUG:
-        console.debug(logJson)
+        console.warn(logJson)
         break
       case LogLevel.INFO:
-        console.info(logJson)
+        console.warn(logJson)
         break
       case LogLevel.WARN:
         console.warn(logJson)

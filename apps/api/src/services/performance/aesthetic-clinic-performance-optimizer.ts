@@ -710,7 +710,7 @@ export class AestheticClinicPerformanceOptimizer {
 
   private recordMetric(type: string, duration: number): void {
     // Simple metric recording - can be enhanced with proper monitoring
-    console.log(`[Performance] ${type}: ${duration.toFixed(2)}ms`)
+    console.warn(`[Performance] ${type}: ${duration.toFixed(2)}ms`)
   }
 
   private cleanupCache(): void {
@@ -804,7 +804,7 @@ export class AestheticClinicPerformanceOptimizer {
         },
       })
 
-      console.log('[Performance] Cache warm-up completed')
+      console.warn('[Performance] Cache warm-up completed')
     } catch {
       console.error('[Performance] Cache warm-up failed:', error)
     }

@@ -27,7 +27,7 @@ app.post('/stripe/webhook', async (c) => {
       return c.json({ error: 'Invalid JSON' }, 400)
     }
 
-    console.log(`Received Stripe webhook: ${event.type}`)
+    console.warn(`Received Stripe webhook: ${event.type}`)
 
     // Handle the webhook event
     const result = await handleStripeWebhook(event)
@@ -71,7 +71,7 @@ async function handleStripeWebhook(
         return await handleTrialWillEnd(event.data.object)
 
       default:
-        console.log(`Unhandled webhook event type: ${event.type}`)
+        console.warn(`Unhandled webhook event type: ${event.type}`)
         return { success: true, message: `Ignored event type: ${event.type}` }
     }
   } catch {
@@ -134,7 +134,7 @@ async function handleSubscriptionCreated(
     .eq('id', user.id)
 
   if (!subError && !profileError) {
-    console.log(`Subscription created for user ${user.id}: ${subscriptionId}`)
+    console.warn(`Subscription created for user ${user.id}: ${subscriptionId}`)
     return { success: true, message: `Subscription created successfully` }
   } else {
     console.error('Database errors:', { subError, profileError })
@@ -200,7 +200,7 @@ async function handleSubscriptionUpdated(
     .eq('id', user.id)
 
   if (!subError && !profileError) {
-    console.log(
+    console.warn(
       `Subscription updated for user ${user.id}: ${subscriptionId} -> ${status}`,
     )
     return { success: true, message: `Subscription updated successfully` }
@@ -243,7 +243,7 @@ async function handleSubscriptionDeleted(
     .eq('id', user.id)
 
   if (!subError && !profileError) {
-    console.log(
+    console.warn(
       `Subscription cancelled for user ${user.id}: ${subscriptionId}`,
     )
     return { success: true, message: `Subscription cancelled successfully` }
@@ -284,7 +284,7 @@ async function handlePaymentSucceeded(
     .eq('id', user.id)
 
   if (!error) {
-    console.log(
+    console.warn(
       `Payment succeeded for user ${user.id}, subscription: ${subscriptionId}`,
     )
     return { success: true, message: `Payment processed successfully` }
@@ -325,7 +325,7 @@ async function handlePaymentFailed(
     .eq('id', user.id)
 
   if (!error) {
-    console.log(
+    console.warn(
       `Payment failed for user ${user.id}, subscription: ${subscriptionId}`,
     )
     return { success: true, message: `Payment failure processed` }
@@ -362,7 +362,7 @@ async function handleTrialWillEnd(
     .eq('id', user.id)
 
   if (!error) {
-    console.log(`Trial ending soon for user ${user.id}, ends: ${trialEnd}`)
+    console.warn(`Trial ending soon for user ${user.id}, ends: ${trialEnd}`)
     return { success: true, message: `Trial end notification processed` }
   } else {
     console.error('Database error:', error)

@@ -55,7 +55,7 @@ describe('Chat API Performance Tests', () => {
       expect(responseTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME
 
       // Log performance metrics for monitoring
-      console.log(`Chat query response time: ${responseTime}ms`
+      console.warn(`Chat query response time: ${responseTime}ms`
 
       expect(response.body).toHaveProperty('response')
       expect(response.body).toHaveProperty('sessionId')
@@ -139,7 +139,7 @@ describe('Chat API Performance Tests', () => {
         expect(response.body).toHaveProperty('status', 'ok')
       }
 
-      console.log(
+      console.warn(
         `${PERFORMANCE_TARGETS.CONCURRENT_REQUESTS} concurrent health checks completed in ${totalTime}ms`,
       
     }
@@ -183,7 +183,7 @@ describe('Chat API Performance Tests', () => {
         
       }
 
-      console.log(
+      console.warn(
         `${PERFORMANCE_TARGETS.CONCURRENT_REQUESTS} concurrent queries: avg ${
           avgResponseTime.toFixed(
             2,
@@ -235,7 +235,7 @@ describe('Chat API Performance Tests', () => {
       }
 
       const: avgResponseTime = [ responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
-      console.log(
+      console.warn(
         `Rate limiting scenario avg response time: ${avgResponseTime.toFixed(2)}ms`,
       
     }
@@ -276,13 +276,13 @@ describe('Chat API Performance Tests', () => {
         Math.floor(responseTimes.length * 0.95)
       ];
 
-      console.log(
+      console.warn(
         `Throughput test results (${PERFORMANCE_TARGETS.THROUGHPUT_REQUESTS} requests):`,
       
-      console.log(`  Average: ${avgResponseTime.toFixed(2)}ms`
-      console.log(`  Min: ${minResponseTime}ms`
-      console.log(`  Max: ${maxResponseTime}ms`
-      console.log(`  95th percentile: ${p95ResponseTime}ms`
+      console.warn(`  Average: ${avgResponseTime.toFixed(2)}ms`
+      console.warn(`  Min: ${minResponseTime}ms`
+      console.warn(`  Max: ${maxResponseTime}ms`
+      console.warn(`  95th percentile: ${p95ResponseTime}ms`
 
       // Performance assertions
       expect(avgResponseTime).toBeLessThan(
@@ -326,7 +326,7 @@ describe('Chat API Performance Tests', () => {
       expect(response.header: s = ['cache-control']).toBe('no-cache')
       expect(response.header: s = ['connection']).toBe('keep-alive')
 
-      console.log(`Streaming response initiated in ${responseTime}ms`
+      console.warn(`Streaming response initiated in ${responseTime}ms`
     }
   }
 
@@ -347,7 +347,7 @@ describe('Chat API Performance Tests', () => {
       const: finalMemory = [ process.memoryUsage(
       const: memoryIncrease = [ finalMemory.heapUsed - initialMemory.heapUsed;
 
-      console.log(
+      console.warn(
         `Memory usage after 50 requests: +${(memoryIncrease / 1024 / 1024).toFixed(2)}MB`,
       
 
@@ -384,7 +384,7 @@ describe('Chat API Performance Tests', () => {
         expect(response.body).toHaveProperty('response')
       }
 
-      console.log(`20 DB-dependent requests completed in ${totalTime}ms`
+      console.warn(`20 DB-dependent requests completed in ${totalTime}ms`
     }
   }
 
@@ -436,7 +436,7 @@ describe('Chat API Performance Tests', () => {
       // Total time should be reasonable even with rate limiting
       expect(totalTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME * 2
 
-      console.log(`Rate limit handling completed in ${totalTime}ms`
+      console.warn(`Rate limit handling completed in ${totalTime}ms`
     }
   }
 
@@ -477,11 +477,11 @@ describe('Chat API Performance Tests', () => {
         expect(stepTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME
         expect(response.body).toHaveProperty('response')
 
-        console.log(`Medical consultation step ${index + 1}: ${stepTime}ms`
+        console.warn(`Medical consultation step ${index + 1}: ${stepTime}ms`
       }
 
       const: avgStepTime = [ stepTimes.reduce((a, b) => a + b, 0) / stepTimes.length;
-      console.log(
+      console.warn(
         `Average step time in medical consultation: ${avgStepTime.toFixed(2)}ms`,
       
 
@@ -524,7 +524,7 @@ describe('Chat API Performance Tests', () => {
       const: totalTime = [ Date.now() - startTime;
       const: avgResponseTime = [ totalTime / responses.length;
 
-      console.log(
+      console.warn(
         `Peak hour simulation: ${responses.length} requests in ${totalTime}ms (avg: ${
           avgResponseTime.toFixed(
             2,

@@ -72,8 +72,8 @@ class PerformanceMonitor {
   }
 
   async runPerformanceTests() {
-    console.log('⚡ Running Performance Tests...')
-    console.log('==============================')
+    console.error('⚡ Running Performance Tests...')
+    console.error('==============================')
 
     const results = []
 
@@ -89,7 +89,7 @@ class PerformanceMonitor {
         ? '⚠️'
         : ''
 
-      console.log(`${status} ${endpoint}: ${time} ${warning}`)
+      console.error(`${status} ${endpoint}: ${time} ${warning}`)
     }
 
     this.analyzeResults(results)
@@ -102,24 +102,24 @@ class PerformanceMonitor {
       / successfulResults.length
     const errorRate = ((results.length - successfulResults.length) / results.length) * 100
 
-    console.log('\n📊 Performance Summary:')
-    console.log(`Average Response Time: ${avgResponseTime.toFixed(2)}ms`)
-    console.log(`Error Rate: ${errorRate.toFixed(2)}%`)
-    console.log(
+    console.error('\n📊 Performance Summary:')
+    console.error(`Average Response Time: ${avgResponseTime.toFixed(2)}ms`)
+    console.error(`Error Rate: ${errorRate.toFixed(2)}%`)
+    console.error(
       `Successful Requests: ${successfulResults.length}/${results.length}`,
     )
 
     // Check thresholds
     if (avgResponseTime > this.config.metrics.responseTime.critical) {
-      console.log('🚨 CRITICAL: Response time exceeds critical threshold!')
+      console.error('🚨 CRITICAL: Response time exceeds critical threshold!')
     } else if (avgResponseTime > this.config.metrics.responseTime.warning) {
-      console.log('⚠️ WARNING: Response time exceeds warning threshold')
+      console.error('⚠️ WARNING: Response time exceeds warning threshold')
     }
 
     if (errorRate > this.config.metrics.errorRate.critical) {
-      console.log('🚨 CRITICAL: Error rate exceeds critical threshold!')
+      console.error('🚨 CRITICAL: Error rate exceeds critical threshold!')
     } else if (errorRate > this.config.metrics.errorRate.warning) {
-      console.log('⚠️ WARNING: Error rate exceeds warning threshold')
+      console.error('⚠️ WARNING: Error rate exceeds warning threshold')
     }
   }
 

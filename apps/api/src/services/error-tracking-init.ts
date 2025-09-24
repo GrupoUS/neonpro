@@ -26,34 +26,34 @@ export async function initializeErrorTracking(): Promise<void> {
   }
 
   try {
-    console.log('Initializing error tracking systems...')
+    console.warn('Initializing error tracking systems...')
 
     // Initialize Sentry first
     if (errorTrackingConfig.sentry.enabled) {
-      console.log('Initializing Sentry error tracking...')
+      console.warn('Initializing Sentry error tracking...')
       initializeSentry()
-      console.log('✅ Sentry initialized successfully')
+      console.warn('✅ Sentry initialized successfully')
     } else {
       console.warn('⚠️ Sentry not configured - using fallback error handling')
     }
 
     // Initialize OpenTelemetry
     if (errorTrackingConfig.openTelemetry.enabled) {
-      console.log('Initializing OpenTelemetry...')
+      console.warn('Initializing OpenTelemetry...')
       telemetrySDK = initializeOpenTelemetry()
       telemetrySDK.start()
-      console.log('✅ OpenTelemetry initialized successfully')
+      console.warn('✅ OpenTelemetry initialized successfully')
     }
 
     // Setup global error handlers
     setupGlobalErrorHandlers()
-    console.log('✅ Global error handlers configured')
+    console.warn('✅ Global error handlers configured')
 
     // Mark as initialized
     isInitialized = true
 
-    console.log('🚀 Error tracking initialization complete')
-    console.log('📊 Configuration:', {
+    console.warn('🚀 Error tracking initialization complete')
+    console.warn('📊 Configuration:', {
       sentry: errorTrackingConfig.sentry.enabled,
       openTelemetry: errorTrackingConfig.openTelemetry.enabled,
       environment: errorTrackingConfig.sentry.environment,
@@ -86,22 +86,22 @@ export async function shutdownErrorTracking(): Promise<void> {
   }
 
   try {
-    console.log('Shutting down error tracking systems...')
+    console.warn('Shutting down error tracking systems...')
 
     // Shutdown OpenTelemetry
     if (telemetrySDK) {
       await telemetrySDK.shutdown()
       telemetrySDK = null
-      console.log('✅ OpenTelemetry shutdown complete')
+      console.warn('✅ OpenTelemetry shutdown complete')
     }
 
     // Sentry doesn't require explicit shutdown, but we can flush remaining events
     const { close: sentryClose } = await import('@sentry/node')
     await sentryClose(2000) // Wait up to 2 seconds for events to be sent
-    console.log('✅ Sentry shutdown complete')
+    console.warn('✅ Sentry shutdown complete')
 
     isInitialized = false
-    console.log('🏁 Error tracking shutdown complete')
+    console.warn('🏁 Error tracking shutdown complete')
   } catch {
     console.error('❌ Error during error tracking shutdown:', error)
   }
@@ -234,7 +234,7 @@ export async function forceErrorTracking(
     span.end()
   }
 
-  console.log(
+  console.warn(
     `🧪 Forced error tracking test: ${message} (severity: ${severity})`,
   )
 }

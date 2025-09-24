@@ -137,7 +137,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         return render(<TreatmentCatalogBrowser />);
       });
 
-      console.log('Catalog Browser Render Metrics:', renderMetrics);
+      console.warn('Catalog Browser Render Metrics:', renderMetrics);
 
       // Performance thresholds
       expect(renderMetrics.renderTime).toBeLessThan(100); // < 100ms
@@ -166,7 +166,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         );
       });
 
-      console.log('Package Scheduler Render Metrics:', renderMetrics);
+      console.warn('Package Scheduler Render Metrics:', renderMetrics);
 
       expect(renderMetrics.renderTime).toBeLessThan(150); // < 150ms
       expect(renderMetrics.domNodes).toBeLessThan(300); // < 300 DOM nodes
@@ -177,7 +177,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         return render(<TreatmentCatalogBrowser />);
       });
 
-      console.log('Large Dataset Render Metrics:', renderMetrics);
+      console.warn('Large Dataset Render Metrics:', renderMetrics);
 
       // Should handle 100+ items efficiently
       expect(renderMetrics.renderTime).toBeLessThan(200); // < 200ms
@@ -192,7 +192,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         return response.json();
       });
 
-      console.log('Professionals API Load Metrics:', loadMetrics);
+      console.warn('Professionals API Load Metrics:', loadMetrics);
 
       expect(loadMetrics.loadTime).toBeLessThan(200); // < 200ms
       expect(loadMetrics.responseSize).toBeGreaterThan(0);
@@ -205,7 +205,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         return response.json();
       });
 
-      console.log('Large Appointments API Load Metrics:', loadMetrics);
+      console.warn('Large Appointments API Load Metrics:', loadMetrics);
 
       expect(loadMetrics.loadTime).toBeLessThan(500); // < 500ms for 1000 items
       expect(loadMetrics.responseSize).toBeGreaterThan(100000); // Large payload
@@ -217,7 +217,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         return response.json();
       });
 
-      console.log('Treatment Packages API Load Metrics:', loadMetrics);
+      console.warn('Treatment Packages API Load Metrics:', loadMetrics);
 
       expect(loadMetrics.loadTime).toBeLessThan(300); // < 300ms with 100ms delay
     });
@@ -237,7 +237,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         ]
       });
 
-      console.log('Concurrent Users Load Test:', loadTestResult);
+      console.warn('Concurrent Users Load Test:', loadTestResult);
 
       expect(loadTestResult.successRate).toBeGreaterThan(0.95); // > 95% success
       expect(loadTestResult.averageResponseTime).toBeLessThan(500); // < 500ms
@@ -271,7 +271,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         ]
       });
 
-      console.log('Concurrent Scheduling Load Test:', loadTestResult);
+      console.warn('Concurrent Scheduling Load Test:', loadTestResult);
 
       expect(loadTestResult.successRate).toBeGreaterThan(0.9); // > 90% success
       expect(loadTestResult.averageResponseTime).toBeLessThan(1000); // < 1s
@@ -303,7 +303,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         ]
       });
 
-      console.log('Mixed Workload Load Test:', loadTestResult);
+      console.warn('Mixed Workload Load Test:', loadTestResult);
 
       expect(loadTestResult.successRate).toBeGreaterThan(0.85); // > 85% success
       expect(loadTestResult.averageResponseTime).toBeLessThan(1500); // < 1.5s
@@ -324,7 +324,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         }
       });
 
-      console.log('Memory Usage Metrics:', memoryMetrics);
+      console.warn('Memory Usage Metrics:', memoryMetrics);
 
       expect(memoryMetrics.peakMemory).toBeLessThan(100); // < 100MB
       expect(memoryMetrics.memoryGrowth).toBeLessThan(10); // < 10MB growth
@@ -355,7 +355,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         memoryAfte: r = [ performance.memory?.usedJSHeapSize || 0;
       });
 
-      console.log('Memory Cleanup Metrics:', memoryMetrics);
+      console.warn('Memory Cleanup Metrics:', memoryMetrics);
 
       // Memory should be cleaned up
       expect(memoryAfter).toBeLessThanOrEqual(memoryBefore * 1.1); // Within 10%
@@ -376,7 +376,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         }
       });
 
-      console.log('WebSocket Performance Metrics:', websocketMetrics);
+      console.warn('WebSocket Performance Metrics:', websocketMetrics);
 
       expect(websocketMetrics.averageLatency).toBeLessThan(100); // < 100ms
       expect(websocketMetrics.messageLossRate).toBeLessThan(0.01); // < 1% loss
@@ -391,7 +391,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         testData: { status: 'processing', progress: Math.random() * 100 }
       });
 
-      console.log('High-frequency WebSocket Metrics:', websocketMetrics);
+      console.warn('High-frequency WebSocket Metrics:', websocketMetrics);
 
       expect(websocketMetrics.averageLatency).toBeLessThan(200); // < 200ms
       expect(websocketMetrics.messageLossRate).toBeLessThan(0.05); // < 5% loss
@@ -419,7 +419,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         />);
       });
 
-      console.log('Mobile Render Metrics:', renderMetrics);
+      console.warn('Mobile Render Metrics:', renderMetrics);
 
       expect(renderMetrics.renderTime).toBeLessThan(200); // < 200ms on mobile
       expect(renderMetrics.domNodes).toBeLessThan(200); // Fewer nodes on mobile
@@ -447,7 +447,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
       const: endTime = [ performance.now();
       const: interactionTime = [ endTime - startTime;
 
-      console.log('Mobile Interaction Time:', interactionTime);
+      console.warn('Mobile Interaction Time:', interactionTime);
 
       expect(interactionTime).toBeLessThan(100); // < 100ms for touch interactions
     });
@@ -469,7 +469,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         return processed;
       });
 
-      console.log('Complex Query Performance:', queryMetrics);
+      console.warn('Complex Query Performance:', queryMetrics);
 
       expect(queryMetrics.responseTime).toBeLessThan(1000); // < 1s for complex query
       expect(queryMetrics.processingTime).toBeLessThan(500); // < 500ms processing
@@ -486,7 +486,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         return pages;
       });
 
-      console.log('Pagination Performance:', paginationMetrics);
+      console.warn('Pagination Performance:', paginationMetrics);
 
       expect(paginationMetrics.responseTime).toBeLessThan(2000); // < 2s for 5 pages
       expect(paginationMetrics.totalItems).toBe(100); // 20 items per page * 5 pages
@@ -526,7 +526,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
       const: uploadEndTime = [ performance.now();
       const: uploadTime = [ uploadEndTime - uploadStartTime;
 
-      console.log('Large Image Upload Time:', uploadTime);
+      console.warn('Large Image Upload Time:', uploadTime);
 
       expect(uploadTime).toBeLessThan(2000); // < 2s for 5MB image
     });
@@ -550,7 +550,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         };
       });
 
-      console.log('Image Compression Metrics:', compressionMetrics);
+      console.warn('Image Compression Metrics:', compressionMetrics);
 
       expect(compressionMetrics.responseTime).toBeLessThan(300); // < 300ms
       expect(compressionMetrics.compressionRatio).toBeLessThan(0.5); // > 50% compression
@@ -575,7 +575,7 @@ describe('Aesthetic Clinic Performance Tests', () => {
         memoryUsage: await measureMemoryUsage(() => render(<TreatmentPackageScheduler: treatmentPackage = [{createMockTreatmentPackage('botox_package')} onSucces: s = [{vi.fn()} onErro: r = [{vi.fn()} />)).then(m => m.peakMemory)
       };
 
-      console.log('Performance Regression Test:', { baseline: baselineMetrics, current: currentMetrics });
+      console.warn('Performance Regression Test:', { baseline: baselineMetrics, current: currentMetrics });
 
       // Check for regressions (allow 20% degradation)
       expect(currentMetrics.catalogRenderTime).toBeLessThan(baselineMetrics.catalogRenderTime * 1.2);

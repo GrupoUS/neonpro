@@ -197,7 +197,7 @@ describe("Type Safety - TDD RED Phase", () => {
       // This might fail at runtime if extra property doesn't exist
       expect(() => {
         // @ts-expect-error - extra property might not exist
-        console.log(assertedData.extra);
+        console.warn(assertedData.extra);
       }).not.toThrow();
 
       // Unsafe type assertion exists
@@ -281,7 +281,7 @@ describe("Type Safety - TDD RED Phase", () => {
 
       // Should fail initially - multiple type safety issues
       expect(totalIssues).toBeGreaterThan(0);
-      console.log(`🔴 Type Safety Issues: ${totalIssues} identified`);
+      console.warn(`🔴 Type Safety Issues: ${totalIssues} identified`);
     });
 
     it("should document type error patterns for fixing", () => {

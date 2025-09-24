@@ -163,7 +163,7 @@ export class WebSocketOptimizer extends EventEmitter {
 
     this.emit('connection', connection)
 
-    console.log(`[WebSocket] Connection established: ${connectionId} for user ${userId}`)
+    console.warn(`[WebSocket] Connection established: ${connectionId} for user ${userId}`)
   }
 
   /**
@@ -441,7 +441,7 @@ export class WebSocketOptimizer extends EventEmitter {
 
     this.emit('disconnection', connection)
 
-    console.log(`[WebSocket] Connection closed: ${connection.id}`)
+    console.warn(`[WebSocket] Connection closed: ${connection.id}`)
   }
 
   /**

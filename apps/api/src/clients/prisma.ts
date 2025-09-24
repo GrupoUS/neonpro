@@ -669,7 +669,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
 
       if (await this.validateConnection()) {
         this.connectionPool.healthStatus = 'healthy'
-        console.log('Database connection restored')
+        console.warn('Database connection restored')
       }
     } catch (reconnectError) {
       console.error('Database reconnection failed:', reconnectError)
@@ -728,12 +728,12 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
   // Handle process termination for graceful shutdown
   if (typeof process !== 'undefined') {
     process.on('SIGINT', async () => {
-      console.log('Gracefully shutting down Prisma client...')
+      console.warn('Gracefully shutting down Prisma client...')
       await healthcarePrisma.$disconnect()
     })
 
     process.on('SIGTERM', async () => {
-      console.log('Gracefully shutting down Prisma client...')
+      console.warn('Gracefully shutting down Prisma client...')
       await healthcarePrisma.$disconnect()
     })
   }

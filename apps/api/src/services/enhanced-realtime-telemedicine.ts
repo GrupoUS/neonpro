@@ -197,7 +197,7 @@ export class EnhancedTelemedicineRealtime {
     // Subscribe to channel
     channel.subscribe(async (status) => {
       if (status === 'SUBSCRIBED') {
-        console.log(`✅ Telemedicine session ${sessionId} channel active`)
+        console.warn(`✅ Telemedicine session ${sessionId} channel active`)
 
         // Initialize presence for all participants
         await this.initializePresence(channel, sessionId, participants)
@@ -256,7 +256,7 @@ export class EnhancedTelemedicineRealtime {
     })
 
     // Log for LGPD audit compliance
-    console.log(`📨 Encrypted message sent in session ${sessionId}:`, {
+    console.warn(`📨 Encrypted message sent in session ${sessionId}:`, {
       messageId: validatedMessage.id,
       senderRole: validatedMessage.senderRole,
       messageType: validatedMessage.messageType,
@@ -330,7 +330,7 @@ export class EnhancedTelemedicineRealtime {
         }
       }
 
-      console.log(`📩 Message received in session ${sessionId}:`, {
+      console.warn(`📩 Message received in session ${sessionId}:`, {
         messageId: message.id,
         senderRole: message.senderRole,
         messageType: message.messageType,
@@ -358,7 +358,7 @@ export class EnhancedTelemedicineRealtime {
     // Handle session updates
     channel.on('broadcast', { event: 'session_update' }, (payload) => {
       const update = payload.payload as SessionUpdate
-      console.log(
+      console.warn(
         `🔄 Session update in ${sessionId}:`,
         update.type,
         update.data,
@@ -380,7 +380,7 @@ export class EnhancedTelemedicineRealtime {
   ): void {
     channel.on('presence', { event: 'sync' }, () => {
       const state = channel.presenceState()
-      console.log(
+      console.warn(
         `👥 Presence sync for session ${sessionId}:`,
         Object.keys(state).length,
         'participants',
@@ -388,11 +388,11 @@ export class EnhancedTelemedicineRealtime {
     })
 
     channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
-      console.log(`👋 User joined session ${sessionId}:`, key, newPresences)
+      console.warn(`👋 User joined session ${sessionId}:`, key, newPresences)
     })
 
     channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-      console.log(`👋 User left session ${sessionId}:`, key, leftPresences)
+      console.warn(`👋 User left session ${sessionId}:`, key, leftPresences)
 
       // Clean up local presence state
       leftPresences.forEach((presence: any) => {
@@ -410,7 +410,7 @@ export class EnhancedTelemedicineRealtime {
   ): void {
     channel.on('broadcast', { event: 'emergency_alert' }, async (payload) => {
       const alert = payload.payload
-      console.log(`🚨 EMERGENCY ALERT in session ${sessionId}:`, alert)
+      console.warn(`🚨 EMERGENCY ALERT in session ${sessionId}:`, alert)
 
       // Trigger emergency escalation protocol
       await this.triggerEmergencyEscalation(sessionId, alert)
@@ -502,7 +502,7 @@ export class EnhancedTelemedicineRealtime {
     }
 
     // Log quality monitoring for compliance
-    console.log(
+    console.warn(
       `📊 Connection quality report for session ${sessionId}:`,
       qualityReports,
     )
@@ -549,7 +549,7 @@ export class EnhancedTelemedicineRealtime {
     const quality = this.calculateConnectionQuality(presence.connectionQuality)
 
     if (quality === 'poor') {
-      console.log(
+      console.warn(
         `⚠️ Poor connection quality detected for user ${presence.userId} in session ${sessionId}`,
       )
 
@@ -639,7 +639,7 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
     message: TelemedicineMessage,
   ): Promise<void> {
-    console.log(`🚨 EMERGENCY MESSAGE in session ${sessionId}:`, message)
+    console.warn(`🚨 EMERGENCY MESSAGE in session ${sessionId}:`, message)
 
     // Broadcast emergency alert to all participants
     const channel = this.channels.get(sessionId)
@@ -690,7 +690,7 @@ export class EnhancedTelemedicineRealtime {
     sessionId: string,
     update: SessionUpdate,
   ): Promise<void> {
-    console.log(`🚨 Emergency update in session ${sessionId}:`, update)
+    console.warn(`🚨 Emergency update in session ${sessionId}:`, update)
 
     // Trigger emergency escalation if configured
     if (update.metadata.emergencyProtocol) {
@@ -706,7 +706,7 @@ export class EnhancedTelemedicineRealtime {
     alertData: any,
   ): Promise<void> {
     // This would integrate with hospital emergency systems
-    console.log(
+    console.warn(
       `🆘 Emergency escalation triggered for session ${sessionId}:`,
       alertData,
     )
@@ -738,7 +738,7 @@ export class EnhancedTelemedicineRealtime {
         }
       }
 
-      console.log(`✅ Telemedicine session ${sessionId} ended and cleaned up`)
+      console.warn(`✅ Telemedicine session ${sessionId} ended and cleaned up`)
     }
 
     // Stop connection quality monitoring if no active sessions
@@ -818,7 +818,7 @@ export class EnhancedTelemedicineRealtime {
       this.connectionQualityMonitor = null
     }
 
-    console.log('✅ Enhanced Telemedicine Realtime service cleaned up')
+    console.warn('✅ Enhanced Telemedicine Realtime service cleaned up')
   }
 }
 

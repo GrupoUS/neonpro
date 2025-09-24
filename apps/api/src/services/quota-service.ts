@@ -88,7 +88,7 @@ export async function resetQuota(
   period: 'daily' | 'monthly' | 'perMinute' | 'perHour' = 'daily',
 ): Promise<void> {
   // Mock implementation for contract testing
-  console.log(`Quota reset for ${identifier} (${period})`)
+  console.warn(`Quota reset for ${identifier} (${period})`)
 }
 
 /**
@@ -114,5 +114,5 @@ export async function updateQuotaConfig(
   config: QuotaConfig,
 ): Promise<void> {
   // Mock implementation for contract testing
-  console.log(`Quota config updated for ${identifier}:`, config)
+  console.warn(`Quota config updated for ${identifier}:`, config)
 }

@@ -41,7 +41,7 @@ function ContraindicationAnalysisPage() {
       onExportReport={async (analysis) => {
         try {
           // Implementation for exporting report
-          console.log('Exporting contraindication analysis:', analysis)
+          console.warn('Exporting contraindication analysis:', analysis)
           return analysis
         } catch (error) {
           console.error('Error exporting report:', error)

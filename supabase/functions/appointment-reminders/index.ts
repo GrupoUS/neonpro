@@ -306,7 +306,7 @@ async function getAppointmentDetails(appointmentId: string): Promise<any> {
 async function sendWhatsAppMessage(
   phone: string,
   message: string,
-  templateType: string = 'text',
+  _templateType: string = 'text',
 ): Promise<DeliveryStatus> {
   if (!WHATSAPP_TOKEN) {
     return {

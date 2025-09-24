@@ -188,7 +188,7 @@ export class LGPDComplianceService {
         .lt('data_retention_until', new Date().toISOString())
 
       if (expiredPatients) {
-        console.log(
+        console.warn(
           `Found ${expiredPatients.length} patients past retention period`,
         )
 

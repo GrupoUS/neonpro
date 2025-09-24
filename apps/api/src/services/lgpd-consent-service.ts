@@ -513,7 +513,7 @@ export class LGPDConsentService {
   ): Promise<void> {
     // Handle data deletion/anonymization when consent is withdrawn
     // This would trigger appropriate data handling based on the purpose
-    console.log(
+    console.warn(
       `Handling consent withdrawal for patient ${patientId}, purpose: ${purpose}`,
     )
 

@@ -47,7 +47,7 @@ function TreatmentGuidelinesPage() {
       onGuidelineSelect={async (guideline) => {
         try {
           // Handle guideline selection (e.g., track usage, bookmark, etc.)
-          console.log('Guideline selected:', guideline)
+          console.warn('Guideline selected:', guideline)
           return guideline
         } catch (error) {
           console.error('Error selecting guideline:', error)

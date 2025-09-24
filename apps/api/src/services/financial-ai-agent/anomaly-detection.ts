@@ -334,7 +334,7 @@ export class AnomalyDetectionService {
    */
   private initializeMLModels(): void {
     // In a real implementation, this would load or train ML models
-    console.log('Initializing ML models for anomaly detection...')
+    console.warn('Initializing ML models for anomaly detection...')
 
     // Mock model initialization
     this.mlModels.set('isolation_forest', {
@@ -1337,7 +1337,7 @@ export class AnomalyDetectionService {
    */
   private async sendAlertNotification(alert: AnomalyAlert): Promise<void> {
     // In a real implementation, this would send notifications via email, SMS, webhook, etc.
-    console.log(`Anomaly Alert: ${alert.description} (${alert.severity})`)
+    console.warn(`Anomaly Alert: ${alert.description} (${alert.severity})`)
 
     // Check escalation rules
     const escalationRule = this.config.escalationRules.find((rule) =>
@@ -1345,7 +1345,7 @@ export class AnomalyDetectionService {
     )
 
     if (escalationRule) {
-      console.log(
+      console.warn(
         `Escalating alert: ${escalationRule.action} to ${escalationRule.recipients.join(', ')}`,
       )
     }

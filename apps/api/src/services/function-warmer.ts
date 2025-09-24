@@ -80,7 +80,7 @@ class FunctionWarmer {
         results.push(result)
       }
 
-      console.log('Function warmup completed:', {
+      console.warn('Function warmup completed:', {
         timestamp: new Date().toISOString(),
         results: results.filter((r) => r.success).length,
         failures: results.filter((r) => !r.success).length,

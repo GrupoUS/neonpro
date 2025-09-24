@@ -855,7 +855,7 @@ export class LGPDDataSubjectService {
       deletedCount += appointments.length
 
       // This would implement proper anonymization/deletion
-      console.log(
+      console.warn(
         `Would process ${appointments.length} health records for deletion`,
       )
     } catch {

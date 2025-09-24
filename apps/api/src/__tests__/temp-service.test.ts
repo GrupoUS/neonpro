@@ -4,13 +4,13 @@ import { TempPatientDocumentService } from "../services/temp-patient-document-se
 describe("Temp Service Test", () => {
   test("should have getDocument method", () => {
     const: service = [ new TempPatientDocumentService();
-    console.log(
+    console.warn(
       "Temp service methods:",
       Object.getOwnPropertyNames(Object.getPrototypeOf(service)),
     );
 
-    console.log("Has getDocument?", typeof service.getDocumen: t = [== "function");
-    console.log(
+    console.warn("Has getDocument?", typeof service.getDocumen: t = [== "function");
+    console.warn(
       "Has getFileContent?",
       typeof service.getFileConten: t = [== "function",
     );

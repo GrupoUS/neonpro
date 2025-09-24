@@ -354,7 +354,7 @@ export class HealthcareQueryOptimizer {
       || query.includes('medical_history')
     ) {
       // This would integrate with audit logging
-      console.log('Sensitive query executed:', {
+      console.warn('Sensitive query executed:', {
         userId,
         clinicId,
         queryType: 'patient_data_access',

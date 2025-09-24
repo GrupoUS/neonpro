@@ -163,7 +163,7 @@ export function logSecurityEvent(data: AuditEventData): AuditEvent {
 
   // In a real implementation, this would log to database/file system
   if (event.severity) {
-    console.log(`[AUDIT] ${event.severity.toUpperCase()}: ${event.message}`, {
+    console.warn(`[AUDIT] ${event.severity.toUpperCase()}: ${event.message}`, {
       id: event.id,
       eventType: event.eventType,
       category: event.category,

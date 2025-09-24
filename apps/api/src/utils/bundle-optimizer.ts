@@ -83,7 +83,7 @@ export async function importHealthcareModule<T = any>(
     const loadTime = performance.now() - startTime
 
     // Log performance metrics for healthcare optimization
-    console.log(
+    console.warn(
       `Healthcare module loaded: ${modulePath} in ${Math.round(loadTime)}ms`,
     )
 
@@ -165,7 +165,7 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
     }
 
     const loadTime = performance.now() - startTime
-    console.log(
+    console.warn(
       `Critical healthcare modules preloaded in ${Math.round(loadTime)}ms`,
     )
   } catch {

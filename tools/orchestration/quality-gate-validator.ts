@@ -324,7 +324,7 @@ class QualityGateValidator {
           ],
         }
       }
-    } catch (error) {
+    } catch (_error) {
       return {
         gate: 'healthcare_compliance',
         status: 'failed',

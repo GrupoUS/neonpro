@@ -506,7 +506,7 @@ export class DataMaskingService {
 
       // In production, this would write to your audit log system
       this.auditLog.push(logEntry)
-      console.log('[Data Masking Audit]', JSON.stringify(logEntry, null, 2))
+      console.warn('[Data Masking Audit]', JSON.stringify(logEntry, null, 2))
     } catch {
       console.error('Error logging masking activity:', error)
     }

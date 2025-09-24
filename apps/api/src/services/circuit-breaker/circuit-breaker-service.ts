@@ -494,7 +494,7 @@ export class CircuitBreakerService {
    */
   private auditFailure(error: Error): void {
     // In a real implementation, this would write to audit log
-    console.log('Circuit Breaker Failure Audit:', {
+    console.warn('Circuit Breaker Failure Audit:', {
       timestamp: new Date().toISOString(),
       error: error.message,
       _service: this.constructor.name,

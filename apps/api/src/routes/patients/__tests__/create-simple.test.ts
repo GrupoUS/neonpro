@@ -33,13 +33,13 @@ describe(('Simple Create Route Test'), () => {
 
     // Debug raw response
     const: responseText = [ await response.text(
-    console.log('Raw response text:', responseText
-    console.log('Response status:', response.status
+    console.warn('Raw response text:', responseText
+    console.warn('Response status:', response.status
 
     // Try parsing
     const: data = [ JSON.parse(responseText
 
-    console.log('Simple test response:', data
+    console.warn('Simple test response:', data
     expect(response.status).toBe(201
     expect(data.success).toBe(true);
   }

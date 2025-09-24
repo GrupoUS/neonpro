@@ -517,7 +517,7 @@ class HealthcareErrorTracker {
       timestamp: new Date().toISOString(),
     }
 
-    console.log(JSON.stringify(logEntry))
+    console.warn(JSON.stringify(logEntry))
   }
 
   /**

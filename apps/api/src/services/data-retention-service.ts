@@ -451,7 +451,7 @@ export class DataRetentionService {
   }> {
     try {
       // This would integrate with your data deletion service
-      console.log(`Executing deletion for job ${job.id} on ${job.dataSource}`)
+      console.warn(`Executing deletion for job ${job.id} on ${job.dataSource}`)
 
       // Simulate deletion process
       const affectedCount = await this.simulateDataDeletion(
@@ -490,7 +490,7 @@ export class DataRetentionService {
     hasErrors: boolean
   }> {
     try {
-      console.log(
+      console.warn(
         `Executing anonymization for job ${job.id} on ${job.dataSource}`,
       )
 
@@ -531,7 +531,7 @@ export class DataRetentionService {
     hasErrors: boolean
   }> {
     try {
-      console.log(`Executing archival for job ${job.id} on ${job.dataSource}`)
+      console.warn(`Executing archival for job ${job.id} on ${job.dataSource}`)
 
       // Simulate archival process
       const affectedCount = await this.simulateDataArchival(
@@ -570,7 +570,7 @@ export class DataRetentionService {
     hasErrors: boolean
   }> {
     try {
-      console.log(`Executing flagging for job ${job.id} on ${job.dataSource}`)
+      console.warn(`Executing flagging for job ${job.id} on ${job.dataSource}`)
 
       // Simulate flagging process
       const affectedCount = await this.simulateDataFlagging(
@@ -626,7 +626,7 @@ export class DataRetentionService {
     _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would execute actual DELETE operations
-    console.log(
+    console.warn(
       `Deleting data from ${dataSource} with identifier ${dataIdentifier}`,
     )
     return Math.floor(Math.random() * 950) + 50 // Simulate 50-1000 records deleted
@@ -640,7 +640,7 @@ export class DataRetentionService {
     _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would execute UPDATE operations to anonymize data
-    console.log(
+    console.warn(
       `Anonymizing data from ${dataSource} with identifier ${dataIdentifier}`,
     )
     return Math.floor(Math.random() * 980) + 20 // Simulate 20-1000 records anonymized
@@ -654,7 +654,7 @@ export class DataRetentionService {
     _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would move data to archival storage
-    console.log(
+    console.warn(
       `Archiving data from ${dataSource} with identifier ${dataIdentifier}`,
     )
     return Math.floor(Math.random() * 990) + 10 // Simulate 10-1000 records archived
@@ -668,7 +668,7 @@ export class DataRetentionService {
     _dataIdentifier: string,
   ): Promise<number> {
     // In production, this would add flags to records for review
-    console.log(
+    console.warn(
       `Flagging data from ${dataSource} with identifier ${dataIdentifier}`,
     )
     return Math.floor(Math.random() * 990) + 10 // Simulate 10-1000 records flagged
@@ -743,7 +743,7 @@ export class DataRetentionService {
       `Scheduled cleanup job ${job.id} for ${job.dataSource} will execute on ${job.scheduledDate.toISOString()}`
 
     // In production, this would integrate with your notification service
-    console.log('[Cleanup Notification]', message)
+    console.warn('[Cleanup Notification]', message)
   }
 
   /**
@@ -757,7 +757,7 @@ export class DataRetentionService {
     const message =
       `Cleanup job ${job.id} completed successfully. Processed ${execution.recordsProcessed} records, affected ${execution.recordsAffected} records.`
 
-    console.log('[Completion Notification]', message)
+    console.warn('[Completion Notification]', message)
   }
 
   /**
@@ -772,7 +772,7 @@ export class DataRetentionService {
       execution.errors[0]?.error || 'Unknown error'
     }`
 
-    console.log('[Error Notification]', message)
+    console.warn('[Error Notification]', message)
   }
 
   /**

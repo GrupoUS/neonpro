@@ -16,7 +16,7 @@ describe('GET /api/ai/sessions/{sessionId} - Contract Test', () => {
     try {
       app = (await import('../../src/app')).default;
     } catch (error) {
-      console.log('Expected failure: App not available during TDD phase')
+      console.warn('Expected failure: App not available during TDD phase')
     }
   });
 

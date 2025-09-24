@@ -118,7 +118,7 @@ export class PWANativeDeviceService {
       this.setupEventListeners()
       this.isInitialized = true
 
-      console.log('NeonPro Native Device Service initialized successfully')
+      console.warn('NeonPro Native Device Service initialized successfully')
     } catch (error) {
       console.error('Failed to initialize Native Device Service:', error)
       throw error
@@ -264,12 +264,12 @@ export class PWANativeDeviceService {
   }
 
   private handleOnline(): void {
-    console.log('Device online - syncing pending operations')
+    console.warn('Device online - syncing pending operations')
     this.syncPendingOperations()
   }
 
   private handleOffline(): void {
-    console.log('Device offline - enabling offline mode')
+    console.warn('Device offline - enabling offline mode')
   }
 
   private handlePermissionChange = (event: any): void => {
@@ -281,12 +281,12 @@ export class PWANativeDeviceService {
   }
 
   private handleAppInstalled(): void {
-    console.log('NeonPro PWA installed successfully')
+    console.warn('NeonPro PWA installed successfully')
     this.updateCapabilityUsage('notifications')
   }
 
   private handleBeforeInstall(event: any): void {
-    console.log('PWA install prompt available')
+    console.warn('PWA install prompt available')
     event.preventDefault()
   }
 
@@ -681,7 +681,7 @@ export class PWANativeDeviceService {
 
   private async syncPendingOperations(): Promise<void> {
     // Sync pending photos, contacts, calendar events, etc.
-    console.log('Syncing pending operations...')
+    console.warn('Syncing pending operations...')
 
     // Implementation would depend on backend sync endpoints
   }

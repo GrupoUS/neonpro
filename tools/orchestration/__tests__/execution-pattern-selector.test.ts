@@ -16,12 +16,12 @@ describe("ExecutionPatternSelector", () => {
   let selector: ExecutionPatternSelector;
 
   beforeEach(() => {
-    selector = new ExecutionPatternSelector(
-  }
+    selector = new ExecutionPatternSelector();
+  });
 
   afterEach(() => {
     // Cleanup if needed
-  }
+  });
 
   describe("Pattern Selection", () => {
     it("should select sequential pattern for low complexity features", async () => {
@@ -43,12 +43,12 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 1000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.workflowType).toBe("sequential"
-      expect(result.coordinationPattern).toBe("sequential"
+      expect(result.workflowType).toBe("sequential");
+      expect(result.coordinationPattern).toBe("sequential");
       expect(result.executionStrategy.parallel).toBe(false);
-    }
+    });
 
     it("should select parallel pattern for medium complexity features", async () => {
       const context = {
@@ -69,12 +69,12 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 5000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.workflowType).toBe("parallel"
-      expect(result.coordinationPattern).toBe("parallel"
+      expect(result.workflowType).toBe("parallel");
+      expect(result.coordinationPattern).toBe("parallel");
       expect(result.executionStrategy.parallel).toBe(true);
-    }
+    });
 
     it("should select hierarchical pattern for high complexity features", async () => {
       const context = {
@@ -95,12 +95,12 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 10000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.workflowType).toBe("hierarchical"
-      expect(result.coordinationPattern).toBe("hierarchical"
+      expect(result.workflowType).toBe("hierarchical");
+      expect(result.coordinationPattern).toBe("hierarchical");
       expect(result.executionStrategy.parallel).toBe(true);
-    }
+    });
 
     it("should select event-driven pattern for healthcare compliance features", async () => {
       const context = {
@@ -121,13 +121,13 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 8000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.workflowType).toBe("event-driven"
-      expect(result.coordinationPattern).toBe("event-driven"
-      expect(result.optimization.compliance).toBeGreaterThan(0.8
-    }
-  }
+      expect(result.workflowType).toBe("event-driven");
+      expect(result.coordinationPattern).toBe("event-driven");
+      expect(result.optimization.compliance).toBeGreaterThan(0.8);
+    });
+  });
 
   describe("Agent Selection", () => {
     it("should select appropriate primary agents", async () => {
@@ -149,11 +149,11 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 3000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.agentSelection.primaryAgents).toContain("test"
-      expect(result.agentSelection.primaryAgents.length).toBeGreaterThan(0
-    }
+      expect(result.agentSelection.primaryAgents).toContain("test");
+      expect(result.agentSelection.primaryAgents.length).toBeGreaterThan(0);
+    });
 
     it("should include support agents for complex features", async () => {
       const context = {
@@ -174,12 +174,12 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 10000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.agentSelection.supportAgents.length).toBeGreaterThan(0
-      expect(result.agentSelection.parallelAgents.length).toBeGreaterThan(0
-    }
-  }
+      expect(result.agentSelection.supportAgents.length).toBeGreaterThan(0);
+      expect(result.agentSelection.parallelAgents.length).toBeGreaterThan(0);
+    });
+  });
 
   describe("Optimization Scoring", () => {
     it("should provide high performance score for performance-required features", async () => {
@@ -201,10 +201,10 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 2000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.optimization.performance).toBeGreaterThan(0.7
-    }
+      expect(result.optimization.performance).toBeGreaterThan(0.7);
+    });
 
     it("should provide high compliance score for healthcare features", async () => {
       const context = {
@@ -225,11 +225,11 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 4000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.optimization.compliance).toBeGreaterThan(0.8
-    }
-  }
+      expect(result.optimization.compliance).toBeGreaterThan(0.8);
+    });
+  });
 
   describe("Risk Assessment", () => {
     it("should identify risks for complex features", async () => {
@@ -251,14 +251,14 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 15000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.risks.length).toBeGreaterThan(0
-      expect(result.mitigations.length).toBeGreaterThan(0
+      expect(result.risks.length).toBeGreaterThan(0);
+      expect(result.mitigations.length).toBeGreaterThan(0);
       expect(result.mitigations.length).toBeGreaterThanOrEqual(
         result.risks.length,
-      
-    }
+      );
+    });
 
     it("should provide appropriate justification for pattern selection", async () => {
       const context = {
@@ -279,12 +279,12 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 1000,
       };
 
-      const result = await selector.selectOptimalPattern(context
+      const result = await selector.selectOptimalPattern(context);
 
-      expect(result.justification.length).toBeGreaterThan(0
-      expect(typeof result.justification[0]).toBe("string"
-    }
-  }
+      expect(result.justification.length).toBeGreaterThan(0);
+      expect(typeof result.justification[0]).toBe("string");
+    });
+  });
 
   describe("Edge Cases", () => {
     it("should handle minimal context gracefully", async () => {
@@ -306,12 +306,12 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 500,
       };
 
-      const result = await selector.selectOptimalPattern(minimalContext
+      const result = await selector.selectOptimalPattern(minimalContext);
 
-      expect(result.workflowType).toBeDefined(
-      expect(result.coordinationPattern).toBeDefined(
-      expect(result.agentSelection.primaryAgents.length).toBeGreaterThan(0
-    }
+      expect(result.workflowType).toBeDefined();
+      expect(result.coordinationPattern).toBeDefined();
+      expect(result.agentSelection.primaryAgents.length).toBeGreaterThan(0);
+    });
 
     it("should handle large agent counts", async () => {
       const largeContext = {
@@ -332,10 +332,10 @@ describe("ExecutionPatternSelector", () => {
         estimatedDuration: 20000,
       };
 
-      const result = await selector.selectOptimalPattern(largeContext
+      const result = await selector.selectOptimalPattern(largeContext);
 
-      expect(result.executionStrategy.batchSize).toBeGreaterThan(0
-      expect(result.agentSelection.parallelAgents.length).toBeGreaterThan(0
-    }
-  }
-}
+      expect(result.executionStrategy.batchSize).toBeGreaterThan(0);
+      expect(result.agentSelection.parallelAgents.length).toBeGreaterThan(0);
+    });
+  });
+});

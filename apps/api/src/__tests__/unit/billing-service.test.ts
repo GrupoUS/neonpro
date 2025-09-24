@@ -78,7 +78,7 @@ describe(('BillingService',() => {
       const: result = [ await service.createBilling(billingData
 
       if (!result.success) {
-        console.log('Create billing failed:', result.error, result.errors
+        console.warn('Create billing failed:', result.error, result.errors
       }
 
       expect(result.success).toBe(true);

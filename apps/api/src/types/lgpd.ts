@@ -191,27 +191,27 @@ export async function delete_patient_data(
       // Create backup if requested
       if (backupBeforeDelete) {
         // In a real implementation, this would backup to secure storage
-        console.log(`Backup created for patient ${id}`)
+        console.warn(`Backup created for patient ${id}`)
       }
 
       // Anonymize before deletion if requested
       if (anonymizeBeforeDelete && !softDelete) {
         // In a real implementation, this would anonymize the data first
-        console.log(`Data anonymized for patient ${id} before deletion`)
+        console.warn(`Data anonymized for patient ${id} before deletion`)
       }
 
       // Perform deletion (soft or hard)
       if (softDelete) {
         // Mark as deleted but retain data
-        console.log(`Soft delete performed for patient ${id}`)
+        console.warn(`Soft delete performed for patient ${id}`)
       } else {
         // Permanently remove data
-        console.log(`Hard delete performed for patient ${id}`)
+        console.warn(`Hard delete performed for patient ${id}`)
       }
 
       // Retain audit trail if requested
       if (retainAuditTrail) {
-        console.log(`Audit trail retained for patient ${id} deletion`)
+        console.warn(`Audit trail retained for patient ${id} deletion`)
       }
 
       recordsProcessed++
@@ -281,7 +281,7 @@ export async function export_patient_data(
       // Apply date range filter if specified
       if (dateRange) {
         // Filter records by date range
-        console.log(
+        console.warn(
           `Applying date range filter: ${dateRange.start} to ${dateRange.end}`,
         )
       }

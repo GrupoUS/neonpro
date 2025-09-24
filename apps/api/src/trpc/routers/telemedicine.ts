@@ -583,7 +583,7 @@ export const telemedicineRouter = router({
         // );
 
         // Temporary signal handling - just log for now
-        console.log('Signal sent:', {
+        console.warn('Signal sent:', {
           sessionId: input.sessionId,
           fromUserId: ctx.userId,
           targetParticipant: input.targetParticipant,

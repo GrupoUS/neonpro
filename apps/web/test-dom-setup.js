@@ -49,11 +49,11 @@ Object.defineProperty(global, 'URL', {
   configurable: true,
 })
 
-console.log('✅ DOM setup successful')
-console.log('document:', typeof document, document ? 'exists' : 'missing')
-console.log('window:', typeof window, window ? 'exists' : 'missing')
-console.log('navigator:', typeof navigator, navigator ? 'exists' : 'missing')
-console.log('localStorage:', typeof localStorage, localStorage ? 'exists' : 'missing')
+console.warn('✅ DOM setup successful')
+console.warn('document:', typeof document, document ? 'exists' : 'missing')
+console.warn('window:', typeof window, window ? 'exists' : 'missing')
+console.warn('navigator:', typeof navigator, navigator ? 'exists' : 'missing')
+console.warn('localStorage:', typeof localStorage, localStorage ? 'exists' : 'missing')
 
 // Test basic DOM manipulation
 const testDiv = document.createElement('div')
@@ -61,8 +61,8 @@ testDiv.textContent = 'Test Content'
 testDiv.setAttribute('data-testid', 'test-div')
 document.body.appendChild(testDiv)
 
-console.log('✅ DOM manipulation successful')
-console.log('Test div content:', document.querySelector('[data-testid="test-div"]')?.textContent)
+console.warn('✅ DOM manipulation successful')
+console.warn('Test div content:', document.querySelector('[data-testid="test-div"]')?.textContent)
 
 // Test testing-library queries
 try {
@@ -78,10 +78,10 @@ try {
   }
 
   const foundElement = screen.getByTestId('test-div')
-  console.log('✅ Testing-library style queries successful')
-  console.log('Found element:', foundElement.textContent)
+  console.warn('✅ Testing-library style queries successful')
+  console.warn('Found element:', foundElement.textContent)
 } catch (error) {
   console.error('❌ Testing-library style queries failed:', error.message)
 }
 
-console.log('🎉 All DOM setup tests passed!')
+console.warn('🎉 All DOM setup tests passed!')

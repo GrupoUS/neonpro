@@ -104,7 +104,7 @@ async function initializeRealtimeService() {
       supabaseUrl,
       supabaseKey,
     )
-    console.log('✅ Enhanced Telemedicine Realtime service initialized')
+    console.warn('✅ Enhanced Telemedicine Realtime service initialized')
   }
   return realtimeService
 }
@@ -143,7 +143,7 @@ export const realtimeTelemedicineRouter = router({
         )
 
         // Log session creation for LGPD compliance
-        console.log(`🏥 Telemedicine session created:`, {
+        console.warn(`🏥 Telemedicine session created:`, {
           sessionId: input.sessionId,
           participantCount: input.participants.length,
           sessionType: input.sessionType,
@@ -446,7 +446,7 @@ export const realtimeTelemedicineRouter = router({
         await service.endTelemedicineSession(input.sessionId)
 
         // Log session completion for LGPD compliance
-        console.log(`🏁 Telemedicine session ended:`, {
+        console.warn(`🏁 Telemedicine session ended:`, {
           sessionId: input.sessionId,
           reason: input.reason,
           finalStats,
@@ -544,7 +544,7 @@ export const realtimeTelemedicineRouter = router({
         const _service = await initializeRealtimeService()
 
         // This would trigger emergency protocols
-        console.log(`🚨 EMERGENCY ALERT:`, {
+        console.warn(`🚨 EMERGENCY ALERT:`, {
           sessionId: input.sessionId,
           alertType: input.alertType,
           severity: input.severity,

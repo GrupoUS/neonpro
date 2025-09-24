@@ -542,7 +542,7 @@ export class SecurityHeadersService {
       this.cspReports.push(violation)
 
       // Log violation for security monitoring
-      console.log('[CSP Violation]', JSON.stringify(violation, null, 2))
+      console.warn('[CSP Violation]', JSON.stringify(violation, null, 2))
 
       // Store in database for analysis
       // In production, this would write to your security monitoring system
@@ -581,7 +581,7 @@ export class SecurityHeadersService {
    */
   private async storeCSPViolation(_violation: any): Promise<void> {
     // Mock implementation - would integrate with your security monitoring system
-    console.log('Storing CSP violation in security monitoring system')
+    console.warn('Storing CSP violation in security monitoring system')
   }
 
   /**
@@ -589,7 +589,7 @@ export class SecurityHeadersService {
    */
   private async triggerSecurityAlert(violation: any): Promise<void> {
     // Mock implementation - would integrate with your alerting system
-    console.log('Security Alert: High-risk CSP violation detected', violation)
+    console.warn('Security Alert: High-risk CSP violation detected', violation)
   }
 
   /**

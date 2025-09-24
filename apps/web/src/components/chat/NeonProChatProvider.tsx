@@ -168,7 +168,7 @@ export const NeonProChatProvider: React.FC<NeonProChatProviderProps> = ({
     try {
       // LGPD compliance: Log message for audit
       if (config.compliance.auditLogging) {
-        console.log(`[LGPD Audit] Message sent to ${agentType} agent:`, {
+        console.warn(`[LGPD Audit] Message sent to ${agentType} agent:`, {
           messageId: userMessage.id,
           userId: config.userId,
           timestamp: userMessage.timestamp,

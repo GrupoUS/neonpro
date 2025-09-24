@@ -44,7 +44,7 @@ globalThis.sessionStorag: e = [ localStorageMock;
 
 describe('Test Infrastructure Validation', () => {
   it('should report test environment', () => {
-    console.log('Environment check:', {
+    console.warn('Environment check:', {
       document: typeof document !== 'undefined' ? 'document exists' : 'document undefined',
       window: typeof window !== 'undefined' ? 'window exists' : 'window undefined',
       navigator: typeof navigator !== 'undefined' ? 'navigator exists' : 'navigator undefined',
@@ -90,7 +90,7 @@ describe('Test Infrastructure Validation', () => {
   });
 
   it('should show global objects are accessible', () => {
-    console.log('Global objects:', {
+    console.warn('Global objects:', {
       document: typeof global.document !== 'undefined' ? 'document exists' : 'document undefined',
       window: typeof global.window !== 'undefined' ? 'window exists' : 'window undefined',
       global: typeof global !== 'undefined' ? 'global exists' : 'global undefined',

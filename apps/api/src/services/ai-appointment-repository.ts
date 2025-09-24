@@ -1016,7 +1016,7 @@ export class AIAppointmentRepository {
 
   private async logPredictionUpdate(appointmentId: string, predictionData: any): Promise<void> {
     // Log prediction updates for model training and audit purposes
-    console.log('Prediction updated:', { appointmentId, predictionData })
+    console.warn('Prediction updated:', { appointmentId, predictionData })
   }
 
   private generateCacheKey(prefix: string, options: any): string {

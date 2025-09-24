@@ -25,15 +25,13 @@ let deferredPrompt: any
 function setupPWAEventListeners() {
   // Service Worker registration
   if ('serviceWorker' in navigator) {
-    const handleLoad = () => {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then((registration) => {
-          console.log('ServiceWorker registration successful with scope: ', registration.scope)
-        })
-        .catch((error) => {
-          console.log('ServiceWorker registration failed: ', error)
-        })
+    const handleLoad = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js')
+        console.warn('ServiceWorker registration successful with scope: ', registration.scope)
+      } catch (error) {
+        console.error('ServiceWorker registration failed: ', error)
+      }
     }
 
     window.addEventListener('load', handleLoad) // Store for cleanup
@@ -58,16 +56,15 @@ function setupPWAEventListeners() {
         installButton.removeEventListener('click', existingCleanup)
       }
 
-      const handleInstallClick = () => {
+      const handleInstallClick = async () => {
         deferredPrompt.prompt()
-        deferredPrompt.userChoice.then((choiceResult: any) => {
-          if (choiceResult.outcome === 'accepted') {
-            console.log('User accepted the install prompt')
-          } else {
-            console.log('User dismissed the install prompt')
-          }
-          deferredPrompt = null
-        })
+        const choiceResult: any = await deferredPrompt.userChoice
+        if (choiceResult.outcome === 'accepted') {
+          console.warn('User accepted the install prompt')
+        } else {
+          console.warn('User dismissed the install prompt')
+        }
+        deferredPrompt = null
       }
 
       installButton.addEventListener('click', handleInstallClick)
@@ -77,7 +74,7 @@ function setupPWAEventListeners() {
 
   // App installed
   const handleAppInstalled = () => {
-    console.log('PWA was installed')
+    console.warn('PWA was installed')
     const installButton = document.getElementById('pwa-install-button')
     if (installButton) {
       installButton.style.display = 'none'
@@ -86,14 +83,14 @@ function setupPWAEventListeners() {
 
   // Online status
   const handleOnline = () => {
-    console.log('App is online')
+    console.warn('App is online')
     document.body.classList.remove('offline')
     document.body.classList.add('online')
   }
 
   // Offline status
   const handleOffline = () => {
-    console.log('App is offline')
+    console.warn('App is offline')
     document.body.classList.remove('online')
     document.body.classList.add('offline')
   }

@@ -508,7 +508,7 @@ export class CopilotKitSessionIntegration {
 
       ws.onopen = () => {
         this.activeConnections.set(sessionId, ws)
-        console.log(`CopilotKit WebSocket connected for session ${sessionId}`)
+        console.warn(`CopilotKit WebSocket connected for session ${sessionId}`)
       }
 
       ws.onmessage = async (event) => {
@@ -522,7 +522,7 @@ export class CopilotKitSessionIntegration {
 
       ws.onclose = () => {
         this.activeConnections.delete(sessionId)
-        console.log(`CopilotKit WebSocket disconnected for session ${sessionId}`)
+        console.warn(`CopilotKit WebSocket disconnected for session ${sessionId}`)
       }
 
       ws.onerror = (error) => {
@@ -652,7 +652,7 @@ export class CopilotKitSessionIntegration {
 
   private initializeAestheticServices(): void {
     // TODO: Initialize aesthetic services based on available dependencies
-    console.log('Aesthetic services initialization would go here')
+    console.warn('Aesthetic services initialization would go here')
   }
 
   private initializeSecurityValidators(): void {
@@ -770,7 +770,7 @@ export class CopilotKitSessionIntegration {
     details: any,
   ): Promise<void> {
     // TODO: Implement activity logging for compliance and analytics
-    console.log(`[${sessionId}] ${activityType}:`, details)
+    console.warn(`[${sessionId}] ${activityType}:`, details)
   }
 
   private generateMessageId(): string {
@@ -803,17 +803,17 @@ export class CopilotKitSessionIntegration {
 
   private async processRealtimeMessage(sessionId: string, message: any): Promise<void> {
     // TODO: Implement realtime message processing
-    console.log('Realtime message received:', message)
+    console.warn('Realtime message received:', message)
   }
 
   private async processStatusUpdate(sessionId: string, message: any): Promise<void> {
     // TODO: Implement status update processing
-    console.log('Status update received:', message)
+    console.warn('Status update received:', message)
   }
 
   private async processActionResult(sessionId: string, message: any): Promise<void> {
     // TODO: Implement action result processing
-    console.log('Action result received:', message)
+    console.warn('Action result received:', message)
   }
 
   private async executeScheduleAppointment(

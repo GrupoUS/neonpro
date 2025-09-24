@@ -96,10 +96,10 @@ class SecureLogger {
 
     switch (level) {
       case 'debug':
-        console.debug(formattedMessage)
+        console.warn(formattedMessage)
         break
       case 'info':
-        console.info(formattedMessage)
+        console.warn(formattedMessage)
         break
       case 'warn':
         console.warn(formattedMessage)
@@ -108,7 +108,7 @@ class SecureLogger {
         console.error(formattedMessage)
         break
       default:
-        console.log(formattedMessage)
+        console.warn(formattedMessage)
     }
   }
 

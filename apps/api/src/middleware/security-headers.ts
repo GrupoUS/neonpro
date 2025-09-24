@@ -352,7 +352,7 @@ export function healthcareSecurityHeadersMiddleware(
   next: NextFunction,
 ): void {
   const logger: Logger = {
-    logSystemEvent: (event: string, data: any) => console.log(`[${event}]`, data),
+    logSystemEvent: (event: string, data: any) => console.warn(`[${event}]`, data),
     logError: (event: string, data: any) => console.error(`[${event}]`, data),
   }
 

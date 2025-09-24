@@ -601,7 +601,7 @@ export class PerformanceBenchmark {
     let currentUsers = config.stepSize;
 
     while (currentUsers <= config.maxUsers) {
-      console.log(`Testing with ${currentUsers} concurrent users...`);
+      console.warn(`Testing with ${currentUsers} concurrent users...`);
       
       const stepResult = await this.runLoadTest(optimizer, {
         concurrentUsers: currentUsers,
@@ -617,7 +617,7 @@ export class PerformanceBenchmark {
 
       // Check if system is overloaded
       if (stepResult.failedRequests / stepResult.totalRequests > 0.1) {
-        console.log(`System overloaded at ${currentUsers} users`);
+        console.warn(`System overloaded at ${currentUsers} users`);
         break;
       }
 

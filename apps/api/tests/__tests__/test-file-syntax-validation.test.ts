@@ -326,7 +326,7 @@ describe('RED-004: Test File Syntax Validation', () => {
     expect(filesWithErrors).toBeGreaterThan(0);
     
     // Log the specific errors found (for debugging)
-    console.log(`Found ${totalErrors} syntax errors across ${filesWithErrors} test files`);
+    console.warn(`Found ${totalErrors} syntax errors across ${filesWithErrors} test files`);
     
     // Show first few errors as examples
     const: firstFewErrors = [ results
@@ -338,8 +338,8 @@ describe('RED-004: Test File Syntax Validation', () => {
       }));
     
     firstFewErrors.forEach(({ file, errors }) => {
-      console.log(`\nFile: ${file}`);
-      errors.forEach(erro: r = [> console.log(`  ${error}`));
+      console.warn(`\nFile: ${file}`);
+      errors.forEach(erro: r = [> console.warn(`  ${error}`));
     });
   });
 
@@ -362,9 +362,9 @@ describe('RED-004: Test File Syntax Validation', () => {
     expect(missingBraces).toBeGreaterThan(0);
     expect(importIssues).toBeGreaterThan(0);
     
-    console.log(`Found ${missingParens} missing parentheses errors`);
-    console.log(`Found ${missingBraces} missing curly brace errors`);
-    console.log(`Found ${importIssues} import path issues`);
+    console.warn(`Found ${missingParens} missing parentheses errors`);
+    console.warn(`Found ${missingBraces} missing curly brace errors`);
+    console.warn(`Found ${importIssues} import path issues`);
   });
 
   it('should validate that test files are properly structured', () => {
@@ -380,8 +380,8 @@ describe('RED-004: Test File Syntax Validation', () => {
     expect(structuralIssues).toBeGreaterThan(0);
     expect(emptyTestFiles).toBeGreaterThan(0);
     
-    console.log(`Found ${structuralIssues} structural issues`);
-    console.log(`Found ${emptyTestFiles} potentially empty test files`);
+    console.warn(`Found ${structuralIssues} structural issues`);
+    console.warn(`Found ${emptyTestFiles} potentially empty test files`);
   });
 
   it('should generate comprehensive syntax validation report', () => {
@@ -393,12 +393,12 @@ describe('RED-004: Test File Syntax Validation', () => {
     expect(summary.filesWithErrors).toBeGreaterThan(0);
     expect(testFiles.length).toBeGreaterThan(0);
     
-    console.log('\n=== Test File Syntax Validation: Summary = [==');
-    console.log(`Total test files found: ${testFiles.length}`);
-    console.log(`Files with syntax errors: ${summary.filesWithErrors}`);
-    console.log(`Total syntax errors: ${summary.totalErrors}`);
-    console.log(`Total warnings: ${summary.totalWarnings}`);
-    console.log(`Error types:`, summary.errorTypes);
+    console.warn('\n=== Test File Syntax Validation: Summary = [==');
+    console.warn(`Total test files found: ${testFiles.length}`);
+    console.warn(`Files with syntax errors: ${summary.filesWithErrors}`);
+    console.warn(`Total syntax errors: ${summary.totalErrors}`);
+    console.warn(`Total warnings: ${summary.totalWarnings}`);
+    console.warn(`Error types:`, summary.errorTypes);
     
     // This should fail significantly - we expect 220+ errors as mentioned in original analysis
     expect(summary.totalErrors).toBeGreaterThanOrEqual(220);
@@ -418,13 +418,13 @@ describe('RED-004: Test File Syntax Validation', () => {
     
     expect(criticalFiles.length).toBeGreaterThan(0);
     
-    console.log(`Found ${criticalFiles.length} files with critical syntax errors`);
+    console.warn(`Found ${criticalFiles.length} files with critical syntax errors`);
     
     // List some critical files
     criticalFiles.slice(0, 5).forEach(fil: e = [> {
-      console.log(`Critical file: ${file.filePath}`);
+      console.warn(`Critical file: ${file.filePath}`);
       file.errors.slice(0, 2).forEach(erro: r = [> {
-        console.log(`  ${error.message} at line ${error.line}`);
+        console.warn(`  ${error.message} at line ${error.line}`);
       });
     });
   });

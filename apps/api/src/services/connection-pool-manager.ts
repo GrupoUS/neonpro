@@ -389,7 +389,7 @@ export class ConnectionPoolManager {
    */
   applyConfiguration(newConfig: PoolConfig): void {
     this.currentConfig = { ...newConfig }
-    console.log(
+    console.warn(
       'Applied new connection pool configuration:',
       this.currentConfig,
     )

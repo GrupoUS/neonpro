@@ -8,15 +8,13 @@ import { router } from './router'
 // Service Worker Registration
 export function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    const handleLoad = () => {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then((registration) => {
-          console.log('SW registered: ', registration)
-        })
-        .catch((registrationError) => {
-          console.log('SW registration failed: ', registrationError)
-        })
+    const handleLoad = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js')
+        console.warn('SW registered: ', registration)
+      } catch (registrationError) {
+        console.warn('SW registration failed: ', registrationError)
+      }
     }
 
     window.addEventListener('load', handleLoad) // Store for cleanup
@@ -42,7 +40,7 @@ export function setupPWAInstallHandlers() {
   }
 
   const handleAppInstalled = () => {
-    console.log('PWA was installed')
+    console.warn('PWA was installed')
     window.dispatchEvent(new CustomEvent('pwa-installed'))
   }
 
@@ -99,12 +97,12 @@ function App() {
 
     // Set up online/offline event listeners
     const handleOnline = () => {
-      console.log('App is online')
+      console.warn('App is online')
       window.dispatchEvent(new CustomEvent('app-online'))
     }
 
     const handleOffline = () => {
-      console.log('App is offline')
+      console.warn('App is offline')
       window.dispatchEvent(new CustomEvent('app-offline'))
     }
 

@@ -1068,7 +1068,7 @@ Responda APENAS em formato JSON:
     prediction: NoShowPrediction,
   ): Promise<void> {
     // In real implementation, this would log to audit database
-    console.log(
+    console.warn(
       `Audit: No-show prediction generated for patient ${prediction.patientId}`,
       {
         predictionId: prediction.id,

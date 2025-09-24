@@ -46,7 +46,7 @@ export class TestUtils {
     const violations: any = await this.page.accessibility.snapshot()
 
     if (violations) {
-      console.log('🔍 Accessibility violations found:', violations)
+      console.warn('🔍 Accessibility violations found:', violations)
     }
 
     return violations
@@ -115,7 +115,7 @@ export class TestUtils {
       }
       return null
     })
-    console.log('📊 Performance metrics:', performanceMetrics)
+    console.warn('📊 Performance metrics:', performanceMetrics)
     return performanceMetrics
   }
 

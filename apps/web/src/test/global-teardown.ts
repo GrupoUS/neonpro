@@ -18,5 +18,5 @@ afterAll(() => {
   vi.clearAllMocks()
   vi.resetAllMocks()
 
-  console.log('🧪 Test environment teardown complete')
+  console.warn('🧪 Test environment teardown complete')
 })

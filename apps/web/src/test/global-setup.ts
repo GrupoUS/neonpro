@@ -57,7 +57,7 @@ beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' })
 
   // Setup global test configurations
-  console.log('🧪 Test environment setup complete')
+  console.warn('🧪 Test environment setup complete')
 
   // Mock global APIs for consistent testing
   Object.defineProperty(global.window, 'matchMedia', {

@@ -31,7 +31,7 @@ describe('AI Service Files - Unused Imports', () => {
         && !line.includes('*')
         && line.trim() !== ')
       
-      console.log('AgentError usage found:', agentErrorUsage
+      console.warn('AgentError usage found:', agentErrorUsage
       expect(agentErrorUsage).toHaveLength(0
 
       // QueryIntent should not be used anywhere except import

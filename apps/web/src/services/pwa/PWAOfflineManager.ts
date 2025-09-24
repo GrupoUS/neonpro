@@ -94,7 +94,7 @@ export class PWAOfflineManager {
         setTimeout(() => this.processAllQueues(), 1000)
       }
 
-      console.log('NeonPro Offline Manager initialized successfully')
+      console.warn('NeonPro Offline Manager initialized successfully')
     } catch (error) {
       console.error('Failed to initialize Offline Manager:', error)
       throw error
@@ -203,7 +203,7 @@ export class PWAOfflineManager {
 
   private handleOnline(): void {
     this.isOnline = true
-    console.log('Device online - starting sync process')
+    console.warn('Device online - starting sync process')
 
     if (this.settings.autoSync) {
       this.processAllQueues()
@@ -212,7 +212,7 @@ export class PWAOfflineManager {
 
   private handleOffline(): void {
     this.isOnline = false
-    console.log('Device offline - enabling offline mode')
+    console.warn('Device offline - enabling offline mode')
   }
 
   // Queue Management
@@ -639,7 +639,7 @@ export class PWAOfflineManager {
         const registration = await navigator.serviceWorker.ready
         // @ts-ignore - SyncManager may not be in all TypeScript definitions
         await registration.sync.register('neonpro-sync')
-        console.log('Background sync registered')
+        console.warn('Background sync registered')
       } catch (error) {
         console.error('Error registering background sync:', error)
       }

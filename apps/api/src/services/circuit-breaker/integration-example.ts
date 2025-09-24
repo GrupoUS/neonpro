@@ -137,7 +137,7 @@ export class AguiServiceWithCircuitBreaker {
    */
   private async storeMessageInDatabase(message: any): Promise<void> {
     // Database operation would go here
-    console.log('Storing message in database:', message.id)
+    console.warn('Storing message in database:', message.id)
   }
 
   /**
@@ -145,7 +145,7 @@ export class AguiServiceWithCircuitBreaker {
    */
   private createRagAgentFallback() {
     return async (error: Error, _context?: RequestContext) => {
-      console.log('RAG Agent fallback activated:', error.message)
+      console.warn('RAG Agent fallback activated:', error.message)
 
       // For healthcare-critical queries, provide a safe response
       if (context?.metadata?.dataClassification === 'restricted') {
@@ -178,7 +178,7 @@ export class AguiServiceWithCircuitBreaker {
    */
   private createDatabaseFallback() {
     return async (error: Error, _context?: RequestContext) => {
-      console.log('Database fallback activated:', error.message)
+      console.warn('Database fallback activated:', error.message)
 
       // For database failures, we might want to queue the operation
       // or temporarily store in memory/cache
@@ -388,7 +388,7 @@ export class GoogleCalendarServiceWithCircuitBreaker {
 
   private createCalendarFallback() {
     return async (error: Error, _context?: RequestContext) => {
-      console.log('Google Calendar fallback activated:', error.message)
+      console.warn('Google Calendar fallback activated:', error.message)
 
       // For calendar sync failures, return a failure response
       // The system can retry later or use local storage
@@ -489,7 +489,7 @@ export class AIAgentServiceWithCircuitBreaker {
 
   private createAIAgentFallback() {
     return async (error: Error, _context?: RequestContext) => {
-      console.log('AI Agent fallback activated:', error.message)
+      console.warn('AI Agent fallback activated:', error.message)
 
       // For healthcare-critical AI requests, provide a safe response
       if (context?.metadata?.dataClassification === 'restricted') {
@@ -583,7 +583,7 @@ export function setupHealthMonitoring(services: ServiceDependency[]) {
 
   // Set up event listeners for alerts
   healthChecker.onEvent((event) => {
-    console.log('Health Check Event:', {
+    console.warn('Health Check Event:', {
       type: event.type,
       _service: event.serviceName,
       status: event.currentStatus,

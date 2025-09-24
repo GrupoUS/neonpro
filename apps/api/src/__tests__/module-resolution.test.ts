@@ -238,7 +238,7 @@ describe("Module Resolution - TDD RED Phase", () => {
 
       // Should fail initially - multiple module resolution issues
       expect(totalIssues).toBeGreaterThan(0);
-      console.log(`🔴 Module Resolution Issues: ${totalIssues} identified`);
+      console.warn(`🔴 Module Resolution Issues: ${totalIssues} identified`);
     });
 
     it("should document specific error patterns for fixing", () => {

@@ -52,7 +52,7 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
     }
 
     // Log successful access
-    console.log(
+    console.warn(
       `RLS Patient Access: User ${userId} (${userRole}) accessed ${patients?.length || 0} patients`,
     )
 
@@ -137,7 +137,7 @@ rlsPatients.get(
       }
 
       // Log successful access
-      console.log(
+      console.warn(
         `RLS Patient Detail Access: User ${userId} accessed patient ${patientId}`,
       )
 
@@ -195,7 +195,7 @@ rlsPatients.get(
       }
 
       // Log successful access
-      console.log(
+      console.warn(
         `RLS Appointment Access: User ${userId} accessed ${
           appointments?.length || 0
         } appointments for patient ${patientId}`,
@@ -249,7 +249,7 @@ rlsPatients.get(
       }
 
       // Log successful access
-      console.log(
+      console.warn(
         `RLS Consent Access: User ${userId} accessed consent records for patient ${patientId}`,
       )
 

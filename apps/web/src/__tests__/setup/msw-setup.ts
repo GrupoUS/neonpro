@@ -274,12 +274,12 @@ const server = setupServer(
 
 beforeAll(() => {
   server.listen({ onUnhandledRequest: 'error' })
-  console.log('🌐 MSW server started for integration tests')
+  console.warn('🌐 MSW server started for integration tests')
 })
 
 afterAll(() => {
   server.close()
-  console.log('🔌 MSW server stopped')
+  console.warn('🔌 MSW server stopped')
 })
 
 afterEach(() => {
@@ -325,4 +325,4 @@ export const mockApi = {
   },
 }
 
-console.log('🔧 MSW setup complete with default handlers')
+console.warn('🔧 MSW setup complete with default handlers')

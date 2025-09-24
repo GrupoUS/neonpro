@@ -626,7 +626,7 @@ export class EnhancedLGPDConsentService {
     consent: EnhancedConsentRecord,
   ): Promise<void> {
     // This would integrate with your data deletion service
-    console.log(`Executing immediate deletion for consent ${consent.id}`)
+    console.warn(`Executing immediate deletion for consent ${consent.id}`)
 
     // Log deletion activity
     await this.logConsentActivity('data_deleted', consent.id, {
@@ -640,7 +640,7 @@ export class EnhancedLGPDConsentService {
    */
   private async anonymizeData(consent: EnhancedConsentRecord): Promise<void> {
     // This would integrate with your data anonymization service
-    console.log(`Executing data anonymization for consent ${consent.id}`)
+    console.warn(`Executing data anonymization for consent ${consent.id}`)
 
     // Log anonymization activity
     await this.logConsentActivity('data_anonymized', consent.id, {
@@ -661,7 +661,7 @@ export class EnhancedLGPDConsentService {
     )
 
     // This would create a scheduled job for data deletion
-    console.log(
+    console.warn(
       `Scheduling deletion for consent ${consent.id} at ${deletionDate}`,
     )
 
@@ -683,7 +683,7 @@ export class EnhancedLGPDConsentService {
     cleanupDate.setDate(cleanupDate.getDate() + retentionPeriod)
 
     // This would integrate with your job scheduling system
-    console.log(`Scheduled cleanup for consent ${consentId} at ${cleanupDate}`)
+    console.warn(`Scheduled cleanup for consent ${consentId} at ${cleanupDate}`)
   }
 
   /**
@@ -727,7 +727,7 @@ export class EnhancedLGPDConsentService {
     withdrawal: ConsentWithdrawalRecord,
   ): Promise<void> {
     // This would integrate with your notification service
-    console.log(`Sending withdrawal confirmation to patient ${patientId}`)
+    console.warn(`Sending withdrawal confirmation to patient ${patientId}`)
 
     // Update confirmation status
     await this.supabase

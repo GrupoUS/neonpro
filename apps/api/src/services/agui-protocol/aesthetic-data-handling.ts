@@ -1364,7 +1364,7 @@ export class AestheticDataHandlingService {
   private async archiveData(subjectId: string, dataType: string): Promise<void> {
     // Implementation for data archival
     // This would move data to long-term storage
-    console.log(`Archiving ${dataType} for subject ${subjectId}`)
+    console.warn(`Archiving ${dataType} for subject ${subjectId}`)
   }
 
   // Compliance Validation

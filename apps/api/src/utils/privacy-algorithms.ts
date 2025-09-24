@@ -345,7 +345,7 @@ export class PrivacyAlgorithms {
 
       if (originalIdentifier) {
         // Log reversal for audit
-        console.log(
+        console.warn(
           `Pseudonym reversed: ${pseudonym} -> [REDACTED] for purpose: ${purpose}`,
         )
       }
@@ -627,7 +627,7 @@ export class PrivacyAlgorithms {
     _expirationDays?: number,
   ): Promise<void> {
     // In production, store in secure key-value store with proper encryption
-    console.log(
+    console.warn(
       `Storing pseudonym mapping: ${pseudonym} for purpose: ${purpose}`,
     )
   }
@@ -637,7 +637,7 @@ export class PrivacyAlgorithms {
     purpose: string,
   ): Promise<string | null> {
     // In production, retrieve from secure key-value store
-    console.log(
+    console.warn(
       `Retrieving pseudonym mapping: ${pseudonym} for purpose: ${purpose}`,
     )
     return null // Placeholder
