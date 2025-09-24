@@ -71,7 +71,7 @@ describe('AgentCoordinator', () => {
     expect(codeReviewer?.recommendations).toEqual([]);
     const securityAuditor = summary.results['test-auditor'];
     expect(securityAuditor?.metrics.vulnerabilities).toBe(0);
-  }
+  });
 
   it('throws when hierarchical coordination lacks a primary agent', async () => {
     const coordinator = new AgentCoordinator({
